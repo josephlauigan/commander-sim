@@ -219,7 +219,7 @@ Y'shtola needs 2 second copies. Tick each card you already have; the rest are yo
 | Grand Abolisher | [ ] |
 | Silence | [ ] |
 
-### Second copies of cards that Y'shtola's box also holds (10)
+### Second copies of cards that Y'shtola's box also holds (9)
 
 Y'shtola keeps her copy of each of these, so the new deck needs another one. The last column shows any other deck whose
 list also holds a copy.
@@ -233,22 +233,25 @@ list also holds a copy.
 | Path to Exile | The Ur-Dragon, Aragorn, Cloud | [ ] |
 | Sheoldred, the Apocalypse | Sheoldred | [ ] |
 | Skyclave Apparition | Aragorn, Cloud | [ ] |
-| Talisman of Hierarchy | Thanos (Cali) | [ ] |
 | Toxic Deluge | no other deck | [ ] |
 | Urborg, Tomb of Yawgmoth | Thanos (Cali) | [ ] |
 
-### Cards that another deck's list already holds (6)
+### Cards that another deck's list already holds (7)
 
 That deck keeps its copy, so the new deck needs another one.
 
 | Card | Deck that holds a copy | Have it? |
 |---|---|---|
+| Chrome Mox | Y'shtola | [ ] |
 | Elesh Norn, Mother of Machines | Thanos (Cali) | [ ] |
 | Ephemerate | Aragorn, Thanos (Cali) | [ ] |
 | Giver of Runes | Cloud | [ ] |
 | Plaza of Heroes | Cloud, Thanos (Cali) | [ ] |
 | The One Ring | The Ur-Dragon, Sheoldred, Thanos (Cali) | [ ] |
 | Vito, Thorn of the Dusk Rose | Sheoldred | [ ] |
+
+Chrome Mox: the Tymna/Thrasios box holds one copy (in the Spare pile above) and Y'shtola's list plays one too, so
+Yoshimaru/Tymna needs a second copy.
 
 ### Cards that no deck list holds (43)
 
@@ -285,12 +288,12 @@ That deck keeps its copy, so the new deck needs another one.
 | Solitude | [ ] |
 | Sorin, Vengeful Bloodlord | [ ] |
 | Sun Titan | [ ] |
+| Sunpearl Kirin | [ ] |
 | Syr Vondam, Sunstar Exemplar | [ ] |
 | Takenuma, Abandoned Mire | [ ] |
+| Thalia, Heretic Cathar | [ ] |
 | The Eternal Wanderer | [ ] |
 | The Meathook Massacre | [ ] |
-| The Mind Stone | [ ] |
-| The Seriema | [ ] |
 | The Wandering Emperor | [ ] |
 | Vault of Champions | [ ] |
 | Vindicate | [ ] |
@@ -319,7 +322,7 @@ That deck keeps its copy, so the new deck needs another one.
 
 - **Silence and Grand Abolisher:** one copy of each is in the Tymna/Thrasios box. They stay there for Yoshimaru/Tymna;
   Y'shtola gets second copies (section 3).
-- **The 10 cards in "Second copies of cards that Y'shtola's box also holds":** each deck keeps its own copy.
+- **The 9 cards in "Second copies of cards that Y'shtola's box also holds":** each deck keeps its own copy.
 - **The 9 cards that both boxes already hold:** nothing moves. Arcane Signet, Command Tower, Demonic Tutor, Godless Shrine, Marsh Flats, Orcish Bowmasters, Scrubland, Sol Ring, Vampiric Tutor.
 
 ## 6. Not done yet
