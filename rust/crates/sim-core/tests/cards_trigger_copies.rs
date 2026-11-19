@@ -294,3 +294,15 @@ fn a_strionic_resonator_copy_adds_exactly_one_resolution_to_a_doubled_trigger() 
     assert_eq!(gray_merchant_drain(true, false), 2 * one, "Delney: two triggers");
     assert_eq!(gray_merchant_drain(true, true), 3 * one, "Delney's two triggers and one copy of one of them");
 }
+
+// ------------------------------------------------------------------ Harmonic Prodigy adds like the others
+#[test]
+fn isshin_and_harmonic_prodigy_make_three_triggers_not_four() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    perm(&mut g, P0, "Harmonic Prodigy");
+    let w = perm(&mut g, P0, "World Shaper"); // a Shaman: whenever it attacks, mill three cards
+    let lib = g.player(P0).library.len();
+    combat::attack_triggers(&mut g, P0, &[w], P1).unwrap();
+    assert_eq!(lib - g.player(P0).library.len(), 9, "1 + Isshin + Prodigy: three triggers milling three");
+}
