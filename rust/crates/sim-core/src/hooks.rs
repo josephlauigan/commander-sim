@@ -296,7 +296,7 @@ pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::PermId, u32) -> 
 pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
 /// steal_draw(g, src, p): Notion Thief takes p's extra draw
 pub type StealDrawFn = fn(&Game, Src, PlayerId) -> bool;
-/// trigger_copies(g, src, p, kind, x): extra copies of p's triggered abilities ('etb', 'dies', 'landfall')
+/// trigger_copies(g, src, p, kind, x): extra copies of p's triggered abilities ('etb', 'dies', 'landfall', 'attack', 'cast')
 pub type TriggerCopiesFn = fn(&Game, Src, PlayerId, Sym, Option<PermId>) -> i32;
 /// search_limit(g, src, p): p may only search the top n cards (Aven Mindcensor)
 pub type SearchLimitFn = fn(&Game, Src, PlayerId) -> Option<u32>;
