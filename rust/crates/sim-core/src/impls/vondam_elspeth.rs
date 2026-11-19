@@ -140,15 +140,7 @@ pub fn left_with(g: &mut Game, m: PermId, dying: Option<Sym>) -> Res {
             Some(cause) => (Event::Dies, Call::Dies { m, cause }),
             None => (Event::ExiledFromBf, Call::Leaves { m }),
         };
-        ts.push(Trigger {
-            controller: x.owner,
-            src: Some(v),
-            act: TrigAct::Hook { event, call },
-            name: None,
-            known: false,
-            imp: None,
-            cast_etb: false,
-        });
+        ts.push(Trigger::new(x.owner, Some(v), TrigAct::Hook { event, call }));
     }
     queue_triggers(g, ts)
 }

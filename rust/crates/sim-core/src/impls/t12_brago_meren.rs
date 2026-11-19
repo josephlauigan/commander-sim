@@ -342,16 +342,8 @@ pub fn creature_left(g: &mut Game, m: PermId) -> Res {
         if waiting {
             continue;
         }
-        let t = Trigger {
-            controller: p,
-            src: Some(s),
-            act: TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } },
-            name: None,
-            known: false,
-            imp: None,
-            cast_etb: false,
-        };
-        queue_triggers(g, vec![t])?;
+        let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
+        queue_triggers(g, vec![Trigger::new(p, Some(s), act)])?;
     }
     Ok(())
 }

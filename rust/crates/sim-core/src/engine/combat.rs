@@ -501,8 +501,8 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
     }
     let copies = 1 + repl::trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
-    for _ in 0..copies {
-        new.extend(attack_triggers_once(g, p, atk, d)?);
+    for k in 0..copies {
+        new.extend(attack_triggers_once(g, p, atk, d, k > 0)?); // each pass after the first is a repeat of the triggers
         if g.over {
             break;
         }
@@ -514,7 +514,7 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
     Ok(new.into_iter().filter(|&x| g.perm(x).tapped && g.perm(x).on_bf && g.perm(x).owner == p).collect())
 }
 
-fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, repeat: bool) -> Res<Vec<PermId>> {
     let mut new = vec![];
     for &m in atk {
         let Some(c) = g.perm(m).cd else { continue };
@@ -597,8 +597,13 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
     }
     if g.dsl_on {
         g.new_attackers.clear();
-        let fired =
-            crate::dsl::Fired { attackers: atk.to_vec(), defender: Some(d), player: Some(p), ..Default::default() };
+        let fired = crate::dsl::Fired {
+            attackers: atk.to_vec(),
+            defender: Some(d),
+            player: Some(p),
+            repeat,
+            ..Default::default()
+        };
         crate::dsl::fire(g, "attack", fired)?;
         new.append(&mut g.new_attackers); // attacking tokens its triggers made
     }
@@ -608,7 +613,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
     new.extend(crate::impls::t0_zurgo::attack_keywords(g, p, atk, d)?); // t0-zurgo: myriad, attack counts
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
-        fire_trigger(g, Event::Attack, Call::Attack { p, atk: atk.to_vec(), d })?;
+        hooks::fire_trigger_pass(g, Event::Attack, Call::Attack { p, atk: atk.to_vec(), d }, repeat)?;
         new.append(&mut g.new_attackers);
     }
     Ok(new)

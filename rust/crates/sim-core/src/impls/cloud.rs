@@ -124,7 +124,8 @@ fn doubling_cloud(g: &Game, s: PermId) -> Option<PermId> {
     } else {
         return None;
     };
-    (g.perm(cloud).on_bf && !g.perm(cloud).phased && !equipment_on(g, cloud).is_empty()).then_some(cloud)
+    (g.perm(cloud).on_bf && !g.perm(cloud).phased && !g.perm(cloud).neutered && !equipment_on(g, cloud).is_empty())
+        .then_some(cloud)
 }
 
 /// a trigger of `s` triggers an additional time (Cloud, Midgar Mercenary): asked by `stack::queue_triggers`

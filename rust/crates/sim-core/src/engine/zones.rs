@@ -554,30 +554,15 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
             if imp.runs_at_once(Event::Leaves) {
                 (imp.leaves.unwrap())(g, m, m)?; // an effect ending
             } else {
-                let t = Trigger {
-                    controller: p,
-                    src: Some(m),
-                    act: TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } },
-                    name: None,
-                    known: false,
-                    imp: None,
-                    cast_etb: false,
-                };
-                queue_triggers(g, vec![t])?; // "when it leaves" (Oblivion Ring)
+                let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
+                queue_triggers(g, vec![Trigger::new(p, Some(m), act)])?; // "when it leaves" (Oblivion Ring)
             }
         }
     }
     if on {
         for s in crate::impls::t0_giada::sleuths_for(g, m) {
-            let t = Trigger {
-                controller: g.perm(s).owner,
-                src: Some(s),
-                act: TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } },
-                name: None,
-                known: false,
-                imp: None,
-                cast_etb: false,
-            };
+            let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
+            let t = Trigger::new(g.perm(s).owner, Some(s), act);
             queue_triggers(g, vec![t])?; // Angelic Sleuth: another permanent of yours with counters left
         }
     }
@@ -854,20 +839,12 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if selfdies {
         let n = 1 + repl::trigger_copies(g, p, "dies", Some(m));
         let imp = g.registry.get(g.perm(m).cd.unwrap()).copied().unwrap();
-        for _ in 0..n {
+        for k in 0..n {
             if imp.runs_at_once(Event::SelfDies) {
                 (imp.self_dies.unwrap())(g, m, m, cause)?;
             } else {
-                let t = Trigger {
-                    controller: p,
-                    src: Some(m),
-                    act: TrigAct::Hook { event: Event::SelfDies, call: Call::Dies { m, cause } },
-                    name: None,
-                    known: false,
-                    imp: None,
-                    cast_etb: false,
-                };
-                queue_triggers(g, vec![t])?;
+                let act = TrigAct::Hook { event: Event::SelfDies, call: Call::Dies { m, cause } };
+                queue_triggers(g, vec![Trigger { repeat: k > 0, ..Trigger::new(p, Some(m), act) }])?;
             }
         }
     }
@@ -899,19 +876,13 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         && !token
         && let Some(Val::Int(n)) = g.perm(m).data.get(DataKey::RivazExile).cloned()
     {
-        for _ in 0..n * (1 + repl::trigger_copies(g, p, "dies", Some(m))) as i64 {
-            queue_triggers(
-                g,
-                vec![Trigger {
-                    controller: p,
-                    src: Some(m),
-                    act: TrigAct::RivazExile { m },
-                    name: None,
-                    known: false,
-                    imp: None,
-                    cast_etb: false,
-                }],
-            )?;
+        let times = 1 + repl::trigger_copies(g, p, "dies", Some(m));
+        for _ in 0..n {
+            // one grant, once per time its trigger happens: the first is the original, the rest are repeats
+            for k in 0..times {
+                let t = Trigger { repeat: k > 0, ..Trigger::new(p, Some(m), TrigAct::RivazExile { m }) };
+                queue_triggers(g, vec![t])?;
+            }
         }
     }
     Ok(())
@@ -1087,9 +1058,13 @@ pub fn exiled_from_bf(g: &mut Game, m: PermId, back: Option<PermId>) -> Res {
 /// battlefield when m left: only listeners born by then hear it (None: all of them)
 fn exiled_from_bf_upto(g: &mut Game, m: PermId, last_born: Option<u32>) -> Res {
     if !g.hooks.is_empty() {
-        hooks::fire_trigger_where(g, Event::ExiledFromBf, Call::Leaves { m }, &|g, s| {
-            last_born.is_none_or(|b| g.perm(s).born <= b)
-        })?;
+        hooks::fire_trigger_where(
+            g,
+            Event::ExiledFromBf,
+            Call::Leaves { m },
+            &|g, s| last_born.is_none_or(|b| g.perm(s).born <= b),
+            false,
+        )?;
     }
     if g.cur_batch.is_some() && g.is_creature(m) {
         crate::impls::vondam_elspeth::left_with(g, m, None)?; // Syr Vondam, if he left earlier in this wipe
@@ -1099,16 +1074,8 @@ fn exiled_from_bf_upto(g: &mut Game, m: PermId, last_born: Option<u32>) -> Res {
         if imp.runs_at_once(Event::SelfExiled) {
             (imp.self_exiled.unwrap())(g, m, m)?;
         } else {
-            let t = Trigger {
-                controller: g.perm(m).owner,
-                src: Some(m),
-                act: TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } },
-                name: None,
-                known: false,
-                imp: None,
-                cast_etb: false,
-            };
-            queue_triggers(g, vec![t])?;
+            let act = TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } };
+            queue_triggers(g, vec![Trigger::new(g.perm(m).owner, Some(m), act)])?;
         }
     }
     Ok(())
@@ -1397,18 +1364,16 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if !g.hooks.is_empty() {
         reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon
     }
-    for _ in 0..reps {
+    for k in 0..reps {
         if g.over {
             return Ok(());
         }
         let t = Trigger {
-            controller: p,
-            src: Some(m),
-            act: TrigAct::EtbOnce { p, m },
             name: Some(name),
             known: true,
             imp: Some(imp),
-            cast_etb: false,
+            repeat: k > 0,
+            ..Trigger::new(p, Some(m), TrigAct::EtbOnce { p, m })
         };
         queue_triggers(g, vec![t])?;
     }
@@ -1856,13 +1821,13 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
 pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     lands_entered(g, p)?;
     let copies = 1 + repl::trigger_copies(g, p, "landfall", None); // Ancient Greenwarden
-    for _ in 0..copies {
-        landfall_once(g, p)?;
+    for k in 0..copies {
+        landfall_once(g, p, k > 0)?; // each pass after the first is a repeat of the landfall triggers
     }
     Ok(())
 }
 
-fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
+fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
     for r in find(g, p, Tag::Landfall2) {
         if crate::human::is_human(g, p) {
             // "choose one": a 2/2 Cat Beast, or a +1/+1 counter on each creature you control and vigilance until end of turn
@@ -1903,10 +1868,10 @@ fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     if g.dsl_on {
-        crate::dsl::fire(g, "landfall", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+        crate::dsl::fire(g, "landfall", crate::dsl::Fired { player: Some(p), repeat, ..Default::default() })?;
     }
     if !g.hooks.is_empty() {
-        fire_trigger(g, Event::Landfall, Call::Player { p })?;
+        hooks::fire_trigger_pass(g, Event::Landfall, Call::Player { p }, repeat)?;
     }
     cardcode::gy_landfall(g, p)
 }

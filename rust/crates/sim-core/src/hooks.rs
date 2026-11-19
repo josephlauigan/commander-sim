@@ -296,7 +296,7 @@ pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::PermId, u32) -> 
 pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
 /// steal_draw(g, src, p): Notion Thief takes p's extra draw
 pub type StealDrawFn = fn(&Game, Src, PlayerId) -> bool;
-/// trigger_copies(g, src, p, kind, x): extra copies of p's triggered abilities ('etb', 'dies', 'landfall')
+/// trigger_copies(g, src, p, kind, x): extra copies of p's triggered abilities ('etb', 'dies', 'landfall', 'attack', 'cast')
 pub type TriggerCopiesFn = fn(&Game, Src, PlayerId, Sym, Option<PermId>) -> i32;
 /// search_limit(g, src, p): p may only search the top n cards (Aven Mindcensor)
 pub type SearchLimitFn = fn(&Game, Src, PlayerId) -> Option<u32>;
@@ -1139,6 +1139,19 @@ pub struct Trigger {
     pub imp: Option<f64>,
     /// an enters trigger of a permanent that was cast
     pub cast_etb: bool,
+    /// one of the additional times an event made this ability trigger (a Panharmonicon-style copy, or a clone that
+    /// `stack::queue_triggers` made for Cloud, Delney or Roaming Throne), not the first. The effects add up (CR 603.2d),
+    /// so `queue_triggers` makes its own additional triggers only for the ones that are not repeats. Not a copy on the
+    /// stack (`stack::copy_trigger`).
+    pub repeat: bool,
+}
+
+impl Trigger {
+    /// a trigger that waits for a hook, an ability or the engine's enter effects to resolve: not known for sure, no
+    /// name, not a repeat
+    pub fn new(controller: PlayerId, src: Option<PermId>, act: TrigAct) -> Trigger {
+        Trigger { controller, src, act, name: None, known: false, imp: None, cast_etb: false, repeat: false }
+    }
 }
 
 /// What a trigger does when it resolves.
