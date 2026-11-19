@@ -240,7 +240,7 @@ pub fn throne_extra(g: &Game, src: PermId) -> usize {
     }
     named(g, x.owner, THRONE)
         .into_iter()
-        .filter(|&t| t != src && chosen(g, t).is_some_and(|k| has_type(g, src, k)))
+        .filter(|&t| t != src && !g.perm(t).neutered && chosen(g, t).is_some_and(|k| has_type(g, src, k)))
         .count()
 }
 
