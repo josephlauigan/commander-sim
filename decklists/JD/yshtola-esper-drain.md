@@ -21,13 +21,13 @@ She does three jobs in this deck:
 - **She draws cards.** Any player counts, you included, and she checks at *every* end step, yours and the opponents'.
 - **She is the thing the table attacks.** A 2/4 dies to most removal, so most of the guide below is about keeping her alive or winning without her.
 
-**Twenty-eight spells trigger her.** The trigger is on cast, so a countered spell still drains.
+**Twenty-nine spells trigger her.** The trigger is on cast, so a countered spell still drains.
 
 | Type | Spells of mana value 3 or more |
 |---|---|
 | Artifacts (2) | Coalition Relic, Palantír of Orthanc |
 | Enchantments (10) | Arrest, Exquisite Blood, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety |
-| Instants (5) | Absorb, Anguished Unmaking, Force of Will, Generous Gift, Your Fate Ends Here |
+| Instants (6) | Absorb, Anguished Unmaking, Force of Will, Generous Gift, Mindbreak Trap, Your Fate Ends Here |
 | Sorceries (10) | Austere Command, Cast Away Doubt, Debt to the Deathless, Diabolic Tutor, Doomsday, Exsanguinate (X of 1 or more), Farewell, Read the Bones, Ringsight, Toxic Deluge |
 | Planeswalkers (1) | Teferi, Time Raveler |
 
@@ -211,7 +211,7 @@ Without one of them, cast Doomsday in your own main phase and use a pile that st
 
 **Go now or hold?**
 
-- **Go now** when the kill is on the table (Line 1 with a start ready, an X drain that finishes the opponents), when the blue players are tapped low, or when you hold two pieces of protection (Counterspell, Disdainful Stroke, Force of Will, Mistrise Village).
+- **Go now** when the kill is on the table (Line 1 with a start ready, an X drain that finishes the opponents), when the blue players are tapped low, or when you hold two pieces of protection (Counterspell, Absorb, Disdainful Stroke, Force of Will, Mistrise Village).
 - **Hold** when a combo deck (Kinnan, Urza, Zur) has the mana for its kill next turn: keep Counterspell, Absorb, Disdainful Stroke, Mindbreak Trap or Force of Will up, and spend the rest on instant-speed trigger spells (Generous Gift, Anguished Unmaking, Prayer of Binding) at their end step.
 - **Hold** the second piece of Line 1 until you can start the loop the same turn (8 mana with Bond out and Y'shtola on the battlefield). Every turn a lone piece sits on the table is a turn for a Cyclonic Rift or a removal spell to find it.
 - **Oracle line (Line 5):** go when both halves are in hand, {U}{U}{B} are untapped and a lock (Silence, Teferi, or Grand Abolisher or Voice of Victory already on the battlefield) or a spare counter is ready, or when the blue players are tapped out. There is one Oracle (Doomsday can pile it from the graveyard, but that is the slower line): wait a turn rather than cast it into two open blue players with no lock or counter.
@@ -368,8 +368,8 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 | Situation | Tutor | Target | Why, and what to watch for |
 |---|---|---|---|
 | A combo is one piece from winning on their next turn, and you hold a counter | None: pass with the mana up (Counterspell {U}{U}, Absorb {W}{U}{U}, Disdainful Stroke {1}{U}, Force of Will) | Vampiric Tutor or Mystical Tutor only after they pass the danger point, at their end step | Mana spent on a tutor is mana not spent on the counter. Disdainful Stroke stops only a spell with mana value 4 or more; no counter stops an ability (Walking Ballista, Urza's activation) |
-| The same, and your hand has no counter | Demonic Tutor on your turn with the counter mana left over | Disdainful Stroke against a piece with mana value 4 or more; Counterspell, Absorb or Force of Will against a cheaper piece | The tutor must leave the counter's mana untapped: {1}{B} plus {1}{U} is 4 mana, or {1}{B} plus {U}{U}. Keep a second blue card in hand to pitch to Force of Will |
-| A combo spell is on the stack, a Rhystic Study trigger is waiting above it, one blue mana is open | Mystical Tutor in response to the trigger | Disdainful Stroke, Counterspell or Absorb | If the opponent does not pay {1}, you draw the counter before the combo resolves and can cast it (3 mana in all). If they pay, you have only moved a card to the top |
+| The same, and your hand has no counter | Demonic Tutor on your turn with the counter mana left over | Disdainful Stroke against a piece with mana value 4 or more; Counterspell, Absorb or Force of Will against a cheaper piece | The tutor must leave the counter's mana untapped: {1}{B} plus {1}{U} is 4 mana, {1}{B} plus {U}{U} is 4, and {1}{B} plus {W}{U}{U} is 5 for Absorb. Keep a second blue card in hand to pitch to Force of Will |
+| A combo spell is on the stack, a Rhystic Study trigger is waiting above it, one blue mana is open | Mystical Tutor in response to the trigger | Disdainful Stroke, Counterspell or Absorb | If the opponent does not pay {1}, you draw the counter before the combo resolves and can cast it (3 mana in all with Counterspell or Disdainful Stroke, 4 with Absorb). If they pay, you have only moved a card to the top |
 | The combo piece is on the battlefield and the table cannot kill it by destroying (Heliod, Sun-Crowned; undying creatures; a piece with indestructible) | Mystical Tutor, Demonic Tutor | Anguished Unmaking (exile, costs 3 life), Prayer of Binding ({3}{W}, flash, exile and 2 life for you), Skyclave Apparition (mana value 4 or less) | Generous Gift destroys, which indestructible and undying pieces survive. Anguished Unmaking and Prayer are mana value 3 or more: they trigger her on an opponent's turn |
 | A creature carries the combo (Kinnan, a mana creature) before their turn | Demonic Tutor, Vampiric Tutor | Fatal Push (mana value 2 or less, or 4 with revolt), Go for the Throat, Path to Exile; Orcish Bowmasters for a 1-toughness piece | These are mana value 1 or 2 and do not trigger her, but they cost one or two mana and leave a counter up. Fatal Push cannot hit mana value 3 or more without revolt, and Go for the Throat cannot hit a Spellskite or Walking Ballista |
 | A sweeper or Cyclonic Rift is coming and Bond and Blood are on your board | Mystical Tutor, Demonic Tutor | Counterspell, Absorb or Force of Will; Disdainful Stroke against a wipe of mana value 4 or more | Teferi's Protection is out of the deck, so nothing protects the board once the wipe resolves: only a counter does. Cast the second piece of Line 1 only when the loop can start at once |
@@ -423,7 +423,7 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 #### What to fetch first
 
 1. **Turns 1 to 3, Y'shtola not yet out:** the colour or rock that lets you cast her on turn 3 or 4 (Command Tower, Arcane Signet, a Mox, Sol Ring). Rhystic Study or Smothering Tithe if the mana is fine.
-2. **A game-ending threat on the table:** the answer to it before any engine piece. Disdainful Stroke (mana value 4 or more) or Counterspell for a spell, Anguished Unmaking for a permanent; the deck has no protection against a wipe or a lethal attack now, so keep a counter up.
+2. **A game-ending threat on the table:** the answer to it before any engine piece. Disdainful Stroke (mana value 4 or more), Counterspell or Absorb for a spell, Anguished Unmaking for a permanent; the deck has no protection against a wipe or a lethal attack now, so keep a counter up.
 3. **A piece of the Oracle line in hand:** fetch the missing half before anything else (Consultation if Oracle is in hand, Oracle if Consultation is), then a lock: Silence, or Grand Abolisher or Voice of Victory a turn early (Line 5). This comes before Sanguine Bond: it wins the game instead of starting a drain.
 4. **Y'shtola out, neither piece:** Sanguine Bond, then Exquisite Blood.
 5. **Bond out, Blood missing:** Exquisite Blood, from an opponent's end step, with a 3-mana trigger spell for the same turn.
@@ -454,7 +454,7 @@ Y'shtola is the engine, but the win turn is Bond and Blood on the battlefield an
 
 1. **Mistrise Village first** ({U}, {T}: the next spell you cast this turn can't be countered). It beats Force of Will, Counterspell, Mana Drain and Swan Song on the spell that matters. It is one tap, so it costs the Village's mana too.
 2. **A lock, when you hold one:** Silence ({W}) stops every opponent from casting spells this turn, Grand Abolisher and Voice of Victory ({1}{W}) do the same on your turn only, and Teferi, Time Raveler leaves them only sorcery-speed casting. Silence, Voice and Teferi stop no abilities; Grand Abolisher stops activated abilities of artifacts, creatures and enchantments on your turn. The two creatures can be countered or killed before the turn, so cast them early, and Silence can itself be answered by a counter (free, or paid from open mana). For a spell cast on an opponent's turn (Doomsday at an end step) only Silence and Teferi help. See Line 5.
-3. **A counter behind it:** Disdainful Stroke ({1}{U}, a spell with mana value 4 or more), Counterspell ({U}{U}), Force of Will (pay 1 life and exile a blue card). Bait with a cheaper spell first if the opponent has one counter and you have two threats.
+3. **A counter behind it:** Disdainful Stroke ({1}{U}, a spell with mana value 4 or more), Counterspell ({U}{U}), Absorb ({W}{U}{U}), Force of Will (pay 1 life and exile a blue card). Bait with a cheaper spell first if the opponent has one counter and you have two threats.
 4. **Cast the kill when the counters are tapped.** Mana Drain and Counterspell need {U}{U}, so the best window is the turn after the blue players tapped out on their own turn.
 5. **Her trigger resolves even if the spell is countered.** A countered Debt still drains 2 from each opponent and gains 2 for Bond.
 6. **Against Cyclonic Rift** (Kinnan, Urza, Zur and Miirym all run it; overload at seven mana bounces your whole board): don't rely on a long board. Cast the second piece of Line 1 when the loop can start at once.

@@ -12,7 +12,7 @@ its draw is also forced, which shortens a Doomsday pile, and its {W}{W} sits bad
 the t5 games in the 11/07 analyze run: Urza 13.2%, Kinnan 12.9%, Zur 9.4%, Yawgmoth 8.4%), and it is a spell of mana value
 3, so it triggers her (2 to each opponent, and the trigger resolves first even if Absorb is countered). Its own 3 life is a
 separate gain, so Sanguine Bond and Marauding Blight-Priest each fire on it. Cast on an opponent's turn it is the second
-trigger toward her end-step draw. The list now has 28 triggering spells (27 before), 14 creatures (15), five counters
+trigger toward her end-step draw. The list now has 29 triggering spells (28 before; the 11/15 Mindbreak Trap entry left the Trap, a mana value 4 instant, out of the guide's count, and this entry corrects it), 14 creatures (15), five counters
 (Absorb, Counterspell, Disdainful Stroke, Force of Will, Mindbreak Trap; four before) and 18 instants (17). The average mana value is
 unchanged (both cards cost 3).
 What it costs: {W}{U}{U} on 13 blue lands, the same colour strain as Counterspell, Mindbreak Trap and Oracle, plus one {W};
