@@ -1676,7 +1676,10 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
         n += 1;
     }
     let t = g.perm(src).cd.map(|c| &g.db.get(c).tags);
-    if t.is_some_and(|t| (t.has(Tag::Shaman) || t.has(Tag::Wizard)) && !t.has(Tag::Prodigy)) && has(g, q, Tag::Prodigy)
+    // Harmonic Prodigy, like the other effects, applies to the original trigger, not to a repeat of the whole event
+    if !kw.repeat
+        && t.is_some_and(|t| (t.has(Tag::Shaman) || t.has(Tag::Wizard)) && !t.has(Tag::Prodigy))
+        && has(g, q, Tag::Prodigy)
     {
         n += 1;
     }
