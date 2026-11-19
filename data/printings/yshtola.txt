@@ -75,7 +75,6 @@
 1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Urza's Cave (mh3) 234
 1 Vampiric Tutor (soa) 100
-1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal (fin) 329
 1 Watery Grave (rvr) 301
 1 Y'shtola, Night's Blessed (fic) 207
 1 Your Fate Ends Here (fra) 24

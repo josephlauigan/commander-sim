@@ -27,18 +27,19 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 
 | Pile | Stays in its own box | From Tymna/Thrasios box | From Y'shtola box | To find | Total |
 |---|---|---|---|---|---|
-| New Yoshimaru/Tymna | 21 + 1 basic Swamp | n/a | 4 | 59 + 15 basics | 100 |
+| New Yoshimaru/Tymna | 22 + 1 basic Swamp | n/a | 4 | 58 + 15 basics | 100 |
 | New Y'shtola | 88 | 10 | n/a | 2 | 100 |
-| Spare | n/a | 68 | 8 | n/a | 76 |
+| Spare | n/a | 67 | 8 | n/a | 75 |
 
 ## 1. The Tymna/Thrasios box
 
-### Stays in the box: New Yoshimaru/Tymna (21 cards)
+### Stays in the box: New Yoshimaru/Tymna (22 cards)
 
 Tymna stays as a commander. Thrasios leaves and Yoshimaru takes his place in the command zone.
 
 - Arcane Signet
 - Arid Mesa
+- Chrome Mox
 - Command Tower
 - Deadly Rollick
 - Demonic Tutor
@@ -76,11 +77,11 @@ The box also holds 1 Swamp, which stays.
 
 Silence and Grand Abolisher are the other two package cards. They do not move: see section 5.
 
-### To the Spare pile (68 cards)
+### To the Spare pile (67 cards)
 
-Thrasios, Triton Hero goes here. The 68 cards are two groups.
+Thrasios, Triton Hero goes here. The 67 cards are two groups.
 
-**Cards that neither new list plays (56):**
+**Cards that neither new list plays (55):**
 
 - Ad Nauseam
 - Ancient Tomb
@@ -94,7 +95,6 @@ Thrasios, Triton Hero goes here. The 68 cards are two groups.
 - Cabal Ritual
 - Cavern of Souls
 - Chain of Vapor
-- Chrome Mox
 - Diabolic Intent
 - Eladamri's Call
 - Elvish Spirit Guide
@@ -154,7 +154,7 @@ Thrasios, Triton Hero goes here. The 68 cards are two groups.
 - Underground Sea
 - Watery Grave
 
-The Tymna/Thrasios box is now empty except for the 21 cards that stay and the Swamp.
+The Tymna/Thrasios box is now empty except for the 22 cards that stay and the Swamp.
 
 ## 2. The Y'shtola box
 
@@ -203,12 +203,12 @@ Second copies to find (2):
 
 ### Last step: put the decks together
 
-Put the New Yoshimaru/Tymna pile into the Tymna/Thrasios box, together with the 21 cards that stayed and the Swamp:
+Put the New Yoshimaru/Tymna pile into the Tymna/Thrasios box, together with the 22 cards that stayed and the Swamp:
 it is now the Yoshimaru/Tymna deck. The Y'shtola box now holds her 100 cards.
 
 ## 3. Cards to find
 
-New Yoshimaru/Tymna needs 59 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
+New Yoshimaru/Tymna needs 58 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
 15 basic lands (10 Plains and 6 Swamp in the list, less the Swamp that is already in the box). New
 Y'shtola needs 2 second copies. Tick each card you already have; the rest are yours to buy or borrow.
 
@@ -219,7 +219,7 @@ Y'shtola needs 2 second copies. Tick each card you already have; the rest are yo
 | Grand Abolisher | [ ] |
 | Silence | [ ] |
 
-### Second copies of cards that Y'shtola's box also holds (10)
+### Second copies of cards that Y'shtola's box also holds (9)
 
 Y'shtola keeps her copy of each of these, so the new deck needs another one. The last column shows any other deck whose
 list also holds a copy.
@@ -233,7 +233,6 @@ list also holds a copy.
 | Path to Exile | The Ur-Dragon, Aragorn, Cloud | [ ] |
 | Sheoldred, the Apocalypse | Sheoldred | [ ] |
 | Skyclave Apparition | Aragorn, Cloud | [ ] |
-| Talisman of Hierarchy | Thanos (Cali) | [ ] |
 | Toxic Deluge | no other deck | [ ] |
 | Urborg, Tomb of Yawgmoth | Thanos (Cali) | [ ] |
 
@@ -285,12 +284,12 @@ That deck keeps its copy, so the new deck needs another one.
 | Solitude | [ ] |
 | Sorin, Vengeful Bloodlord | [ ] |
 | Sun Titan | [ ] |
+| Sunpearl Kirin | [ ] |
 | Syr Vondam, Sunstar Exemplar | [ ] |
 | Takenuma, Abandoned Mire | [ ] |
+| Thalia, Heretic Cathar | [ ] |
 | The Eternal Wanderer | [ ] |
 | The Meathook Massacre | [ ] |
-| The Mind Stone | [ ] |
-| The Seriema | [ ] |
 | The Wandering Emperor | [ ] |
 | Vault of Champions | [ ] |
 | Vindicate | [ ] |
@@ -307,11 +306,11 @@ That deck keeps its copy, so the new deck needs another one.
 
 ## 4. Check the counts
 
-- **New Yoshimaru/Tymna:** 21 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
-  Y'shtola box + 59 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
+- **New Yoshimaru/Tymna:** 22 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
+  Y'shtola box + 58 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
   Tymna the Weaver).
 - **New Y'shtola:** 88 in the box + 10 from the Tymna/Thrasios box + 2 second copies = 100.
-- **Spare:** 68 from the Tymna/Thrasios box + 8 from the Y'shtola box = 76 cards.
+- **Spare:** 67 from the Tymna/Thrasios box + 8 from the Y'shtola box = 75 cards.
 - Check each pile against the import list at the end of its deck document. Every card appears once, except basic lands
   (Yoshimaru/Tymna: 10 Plains and 6 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
 
@@ -319,7 +318,7 @@ That deck keeps its copy, so the new deck needs another one.
 
 - **Silence and Grand Abolisher:** one copy of each is in the Tymna/Thrasios box. They stay there for Yoshimaru/Tymna;
   Y'shtola gets second copies (section 3).
-- **The 10 cards in "Second copies of cards that Y'shtola's box also holds":** each deck keeps its own copy.
+- **The 9 cards in "Second copies of cards that Y'shtola's box also holds":** each deck keeps its own copy.
 - **The 9 cards that both boxes already hold:** nothing moves. Arcane Signet, Command Tower, Demonic Tutor, Godless Shrine, Marsh Flats, Orcish Bowmasters, Scrubland, Sol Ring, Vampiric Tutor.
 
 ## 6. Not done yet
@@ -331,3 +330,5 @@ That deck keeps its copy, so the new deck needs another one.
   replaced with Disdainful Stroke on 2026-11-13.
 - The deck documents have not been updated for the purchases: the Yoshimaru/Tymna document has no Buys row, and the
   Y'shtola document does not mention the two second copies. The Simulator rows change at the rewire step.
+- This document predates the 2026-11-15 Y'shtola swaps (Mox Diamond, Chrome Mox and Mindbreak Trap in; Talisman of
+  Progress, Talisman of Hierarchy and Urborg Syphon-Mage out), so it does not track those cards.

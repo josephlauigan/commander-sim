@@ -3,6 +3,36 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-18: Venat, Heart of Hydaelyn // Hydaelyn => Absorb (JD's choice, not simulated)
+Absorb ({W}{U}{U} instant, counter target spell and you gain 3 life; mana value 3; not a Game Changer, so the list stays
+at 16 and Bracket 4) takes Venat's slot. Why: Venat is a creature, so it never triggers Y'shtola, and its draw needs a
+legendary spell, of which the list has only seven others (Y'shtola, Augustin, Zur, Sheoldred, Loran, Teferi, Palantír);
+its draw is also forced, which shortens a Doomsday pile, and its {W}{W} sits badly beside the {U}{U} of Oracle and the
+{B}{B}{B} of Doomsday. Absorb is a counter that aims at the deck's largest documented loss (fast combos took about 44% of
+the t5 games in the 11/07 analyze run: Urza 13.2%, Kinnan 12.9%, Zur 9.4%, Yawgmoth 8.4%), and it is a spell of mana value
+3, so it triggers her (2 to each opponent, and the trigger resolves first even if Absorb is countered). Its own 3 life is a
+separate gain, so Sanguine Bond and Marauding Blight-Priest each fire on it. Cast on an opponent's turn it is the second
+trigger toward her end-step draw. The list now has 29 triggering spells (28 before; the 11/15 Mindbreak Trap entry left the Trap, a mana value 4 instant, out of the guide's count, and this entry corrects it), 14 creatures (15), five counters
+(Absorb, Counterspell, Disdainful Stroke, Force of Will, Mindbreak Trap; four before) and 18 instants (17). The average mana value is
+unchanged (both cards cost 3).
+What it costs: {W}{U}{U} on 13 blue lands, the same colour strain as Counterspell, Mindbreak Trap and Oracle, plus one {W};
+Augustin's discount does not help it (no generic mana in the cost); it stops spells only,
+not abilities (Kinnan's and Urza's activations, Walking Ballista); and it is dead against a table with nothing worth
+countering, where Venat at least drew a card on a legendary spell. The Hydaelyn side ({7}: exile a nonland permanent, then
+an indestructible 4/4) leaves with it.
+What the numbers said before: the only measurement of Venat is 10/09, Secure the Wastes => Venat, +0.1 +-0.8 (adaptive,
+paired, 1,000 games per tier), neutral, on an older list; the changelog's tuning notes already named it one of the weakest
+slots (a creature, so no trigger, and the legendary spells are few); in the 11/07 analyze run it was in neither the best
+nor the worst win-rate list. Nothing has measured Absorb in this deck. Absorb is modelled (cards.json DSL: counter any
+spell, then gain 3; `engine/stack.rs`; one of the engine's counterspell-AI cards in `data/audit.toml`), and
+`cardgen audit --mine` shows the list all Full. `data/plans/yshtola.toml` has no counterspell group, so no plan change;
+`data/printings/yshtola.txt` loses Venat's line and has no Absorb printing yet (JD's to supply).
+Check in the next run: a paired `--swap` (Venat out, Absorb in) against t5 with the explain breakdown: Absorb's drawn,
+cast and stuck-in-hand numbers ({U}{U} is the risk), whether the share of games lost to combos (44%) falls, how often the
+AI casts it into a combo spell rather than an early play, and the game-shape lines (survival, win round, mana at turns 4
+and 8). A neutral result would only say the old slot was neutral too; a drop in stuck-in-hand cards or in combo losses is
+what would justify it.
+
 ## 2026-11-15: Talisman of Progress and Talisman of Hierarchy => Mox Diamond and Chrome Mox (JD's choice, not simulated)
 Mox Diamond and Chrome Mox ({0} artifacts, both Game Changers: the list goes from 14 to 16, still Bracket 4) take the
 two Talismans' slots. Why: both are one turn faster than a two-mana rock and cost no life (the Talismans cost 1 life per
