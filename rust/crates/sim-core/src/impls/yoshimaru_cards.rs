@@ -39,8 +39,8 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 /// again inside one resolution before the sweep is not seen, because `add_land` records no entry). Both are stack
 /// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Delney, Torpor Orb and Hushbringer act on them
 /// (engine limit: Elesh Norn, Mother of Machines neither adds a trigger nor stops an opponent's: its model, the `mother`
-/// tag, acts on compiled enters triggers only, shared with every card-code enters trigger, a ticket before this deck is
-/// registered).
+/// tag, acts only on the engine's tag-driven enter effects (`zones::do_etb`, token and Crusade counts), not on card-code
+/// or compiled triggers; a later PR).
 /// A creature land is counted by the land event only (a token copy of a legendary land that is also a creature fires
 /// both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
