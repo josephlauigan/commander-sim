@@ -5,8 +5,8 @@
 
 use sim_core::dsl::{self, Fired};
 use sim_core::engine::hooks::fire_trigger;
-use sim_core::engine::{combat, turn, zones};
-use sim_core::hooks::{Call, Event};
+use sim_core::engine::{combat, stack, turn, zones};
+use sim_core::hooks::{Call, Event, TrigAct, Trigger};
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::{DataKey, Game, Step, Val};
 use sim_core::testkit::*;
@@ -146,6 +146,15 @@ fn delney_and_roaming_throne_make_three_triggers() {
     let life = g.player(P0).life;
     perm(&mut g, P0, "Mother of Runes");
     assert_eq!(g.player(P0).life, life + 3, "1 + Throne + Delney");
+}
+
+fn queued(g: &Game, src: PermId) -> Vec<&Trigger> {
+    g.trig_queue.iter().filter(|t| t.src == Some(src)).collect()
+}
+
+fn flush(g: &mut Game) {
+    g.resolving = 0;
+    stack::flush_triggers(g).unwrap();
 }
 
 // ------------------------------------------------------------------ Cloud
@@ -351,4 +360,29 @@ fn a_neutered_delney_does_not_add_a_trigger() {
     let life = g.player(P0).life;
     perm(&mut g, P0, "Mother of Runes");
     assert_eq!(g.player(P0).life, life + 1, "Delney has lost his abilities");
+}
+
+// ------------------------------------------------------------------ the dies loops keep the original of each grant
+#[test]
+fn selfdies_and_rivaz_two_grants_keep_the_original_of_each_grant() {
+    let mut g = tbl();
+    for name in ["Teysa Karlov", "Drivnod, Carnage Dominus"] {
+        perm(&mut g, P0, name);
+    }
+    let c = perm(&mut g, P0, "Carrier Thrall");
+    g.perm_mut(c).data.set(DataKey::RivazExile, Val::Int(2));
+    let cd = g.perm(c).card();
+    g.resolving = 1;
+    zones::die(&mut g, c, "destroy").unwrap();
+    let selfdies: Vec<_> =
+        queued(&g, c).into_iter().filter(|t| matches!(t.act, TrigAct::Hook { event: Event::SelfDies, .. })).collect();
+    assert_eq!(selfdies.iter().map(|t| t.repeat).collect::<Vec<_>>(), [false, true, true]);
+    let rivaz: Vec<_> = queued(&g, c).into_iter().filter(|t| matches!(t.act, TrigAct::RivazExile { .. })).collect();
+    assert_eq!(rivaz.iter().map(|t| t.repeat).collect::<Vec<_>>(), [false, true, true, false, true, true]);
+    let before = tokens(&g, P0);
+    flush(&mut g);
+    assert_eq!(tokens(&g, P0) - before, 3, "1 + Teysa + Drivnod Scions");
+    assert!(!g.player(P0).gy.contains(&cd));
+    assert!(g.player(P0).exile.contains(&cd), "Rivaz's grants exile the card");
+    assert!(g.trig_queue.is_empty());
 }
