@@ -3,6 +3,7 @@
 //! Starfield Vocalist, Ancient Greenwarden, Teysa Karlov, Isshin) and the controller-based ones (Cloud, Delney, Roaming
 //! Throne) are counted together: the old engine multiplied the second kind into the first.
 
+use sim_core::dsl::{self, Fired};
 use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::{combat, turn, zones};
 use sim_core::hooks::{Call, Event};
@@ -305,4 +306,49 @@ fn isshin_and_harmonic_prodigy_make_three_triggers_not_four() {
     let lib = g.player(P0).library.len();
     combat::attack_triggers(&mut g, P0, &[w], P1).unwrap();
     assert_eq!(lib - g.player(P0).library.len(), 9, "1 + Isshin + Prodigy: three triggers milling three");
+}
+
+// ------------------------------------------------------------------ a doubler that has lost its abilities adds nothing
+#[test]
+fn a_neutered_cloud_does_not_double_his_equipment() {
+    let mut g = tbl();
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    let mask = perm(&mut g, P0, "Mask of Memory");
+    g.perm_mut(mask).attached = Some(cl);
+    let fire = |g: &mut Game| {
+        g.resolving = 1;
+        g.trig_queue.clear();
+        let hit = Fired { attacker: Some(cl), defender: Some(P1), dmg: Some(2), ..Default::default() };
+        dsl::fire(g, "combat_damage", hit).unwrap();
+        waiting(g, mask)
+    };
+    assert_eq!(fire(&mut g), 2, "control: Cloud doubles the Mask's trigger");
+    g.perm_mut(cl).neutered = true;
+    assert_eq!(fire(&mut g), 1, "Cloud has lost all abilities");
+}
+
+#[test]
+fn a_neutered_roaming_throne_does_not_add_a_trigger() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Roaming Throne");
+    g.perm_mut(t).data.set(DataKey::Ctype, Val::Str("human"));
+    perm(&mut g, P0, "Soul Warden");
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, life + 2, "control: 1 + Throne");
+    g.perm_mut(t).neutered = true;
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, life + 1, "Throne has lost its abilities");
+}
+
+#[test]
+fn a_neutered_delney_does_not_add_a_trigger() {
+    let mut g = tbl();
+    let d = perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, "Soul Warden");
+    g.perm_mut(d).neutered = true;
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, life + 1, "Delney has lost his abilities");
 }
