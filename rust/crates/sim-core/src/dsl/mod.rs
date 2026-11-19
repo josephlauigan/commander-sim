@@ -1585,6 +1585,9 @@ pub struct Fired {
     pub attacker: Option<PermId>,
     /// --- Tier 3 (korvold): the combat damage dealt ("create that many Treasure tokens": X in the trigger)
     pub dmg: Option<i32>,
+    /// this firing is itself an additional time its event happened (Ancient Greenwarden's landfall, Isshin's attacks):
+    /// its triggers are repeats (`Trigger::repeat`)
+    pub repeat: bool,
 }
 
 /// An event happened: every compiled triggered ability that cares puts a trigger on the queue. Python's `dsl.fire`.
@@ -1630,15 +1633,13 @@ fn fire_inner(g: &mut Game, event: &str, kw: &Fired) -> Res {
                 let ctxs = trigger_matches(g, q, src, a, kw);
                 let mut entries = vec![];
                 for ctx in ctxs {
-                    for _ in 0..reps {
+                    for k in 0..reps {
+                        let act = TrigAct::Dsl { p: q, src, card: cd, idx: idx as u16, ctx: Box::new(ctx.clone()) };
                         entries.push(Trigger {
-                            controller: q,
-                            src: Some(src),
-                            act: TrigAct::Dsl { p: q, src, card: cd, idx: idx as u16, ctx: Box::new(ctx.clone()) },
                             name: Some("trigger"),
                             known: true,
-                            imp: None,
-                            cast_etb: false,
+                            repeat: kw.repeat || k > 0, // one ctx per trigger: its first time is the original
+                            ..Trigger::new(q, Some(src), act)
                         });
                     }
                 }

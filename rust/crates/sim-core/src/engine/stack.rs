@@ -31,28 +31,22 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     for t in &mut entries {
         t.cast_etb = g.last_cast_etb;
     }
-    // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
-    let extra: Vec<Trigger> =
-        entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
+    // Effects that make a trigger happen an additional time add up (CR 603.2d: a trigger happens 1 + n times, and such an
+    // effect does not apply to what another one made). So each trigger that is not itself a repeat (a Panharmonicon-style
+    // copy made where the event was fired) gets one extra per Cloud, Delney and Roaming Throne that applies to it.
+    let mut extra = vec![];
+    for t in entries.iter().filter(|t| !t.repeat) {
+        let k = t.src.map_or(0, |s| {
+            // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
+            usize::from(crate::impls::cloud::doubles(g, s))
+                // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers again
+                + crate::impls::t45_heliod_zur::delney_extra(g, s)
+                // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
+                + crate::impls::t45_urdragon::throne_extra(g, s)
+        });
+        extra.extend(std::iter::repeat_n(Trigger { repeat: true, ..t.clone() }, k));
+    }
     entries.extend(extra);
-    // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers an additional time
-    let delney: Vec<Trigger> = entries
-        .iter()
-        .flat_map(|t| {
-            let k = t.src.map_or(0, |s| crate::impls::t45_heliod_zur::delney_extra(g, s));
-            std::iter::repeat_n(t.clone(), k)
-        })
-        .collect();
-    entries.extend(delney);
-    // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
-    let throne: Vec<Trigger> = entries
-        .iter()
-        .flat_map(|t| {
-            let k = t.src.map_or(0, |s| crate::impls::t45_urdragon::throne_extra(g, s));
-            std::iter::repeat_n(t.clone(), k)
-        })
-        .collect();
-    entries.extend(throne);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }

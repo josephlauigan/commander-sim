@@ -676,16 +676,8 @@ fn ob_lose(g: &mut Game, src: Src, q: PlayerId, n: i32) -> Res {
         g.perm_mut(src).data.set(DataKey::ObBatch, Val::List(nv));
         return Ok(());
     }
-    let t = Trigger {
-        controller: o,
-        src: Some(src),
-        act: TrigAct::Hook { event: Event::LoseLife, call: Call::Life { p: o, n: 0 } },
-        name: None,
-        known: false,
-        imp: None,
-        cast_etb: false,
-    };
-    crate::engine::stack::queue_triggers(g, vec![t])?;
+    let act = TrigAct::Hook { event: Event::LoseLife, call: Call::Life { p: o, n: 0 } };
+    crate::engine::stack::queue_triggers(g, vec![Trigger::new(o, Some(src), act)])?;
     let (w, s) = ob_key(g);
     g.perm_mut(src).data.set(DataKey::ObBatch, Val::List(vec![Val::Int(w), Val::Int(s), Val::Player(q)]));
     Ok(())

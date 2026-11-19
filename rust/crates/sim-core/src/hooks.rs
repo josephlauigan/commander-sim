@@ -1139,6 +1139,19 @@ pub struct Trigger {
     pub imp: Option<f64>,
     /// an enters trigger of a permanent that was cast
     pub cast_etb: bool,
+    /// one of the additional times an event made this ability trigger (a Panharmonicon-style copy, or a clone that
+    /// `stack::queue_triggers` made for Cloud, Delney or Roaming Throne), not the first. The effects add up (CR 603.2d),
+    /// so `queue_triggers` makes its own additional triggers only for the ones that are not repeats. Not a copy on the
+    /// stack (`stack::copy_trigger`).
+    pub repeat: bool,
+}
+
+impl Trigger {
+    /// a trigger that waits for a hook, an ability or the engine's enter effects to resolve: not known for sure, no
+    /// name, not a repeat
+    pub fn new(controller: PlayerId, src: Option<PermId>, act: TrigAct) -> Trigger {
+        Trigger { controller, src, act, name: None, known: false, imp: None, cast_etb: false, repeat: false }
+    }
 }
 
 /// What a trigger does when it resolves.

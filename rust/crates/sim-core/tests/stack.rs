@@ -97,15 +97,7 @@ fn an_enters_trigger_waits_for_the_spell_to_finish() {
 fn the_active_players_triggers_go_on_the_stack_first() {
     let mut g = table(&["seph", "cloud", "sauron"]);
     g.active = Some(P1);
-    let t = |q| Trigger {
-        controller: q,
-        src: None,
-        act: TrigAct::EtbOnce { p: q, m: PermId(0) },
-        name: None,
-        known: true,
-        imp: None,
-        cast_etb: false,
-    };
+    let t = |q| Trigger { known: true, ..Trigger::new(q, None, TrigAct::EtbOnce { p: q, m: PermId(0) }) };
     let order: Vec<PlayerId> = stack::apnap(&g, vec![t(P0), t(P2), t(P1)]).iter().map(|t| t.controller).collect();
     assert_eq!(order, [P1, P2, P0]); // so they resolve last
 }

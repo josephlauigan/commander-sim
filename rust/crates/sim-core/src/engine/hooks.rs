@@ -161,12 +161,24 @@ pub fn fire_sba(g: &mut Game) -> Res {
 /// `CI.fire` for an event in `TRIGGER_EVENTS`, with its copies: a dies trigger once more per Teysa Karlov, an enters
 /// trigger that goes on the stack once more per Panharmonicon.
 pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
-    fire_trigger_where(g, e, call, &|_, _| true)
+    fire_trigger_where(g, e, call, &|_, _| true, false)
+}
+
+/// `fire_trigger` for a pass of a loop that fires the whole event once more for each additional time (Ancient
+/// Greenwarden's landfall, Isshin's attacks): with `repeat` its triggers are repeats (`Trigger::repeat`), not firsts
+pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Res {
+    fire_trigger_where(g, e, call, &|_, _| true, repeat)
 }
 
 /// `fire_trigger`, for the hooked permanents `keep` accepts (a blink fires after the creature is back, and what entered
 /// with it never saw it leave: `zones::exiled_from_bf`)
-pub fn fire_trigger_where(g: &mut Game, e: Event, call: Call, keep: &dyn Fn(&Game, PermId) -> bool) -> Res {
+pub fn fire_trigger_where(
+    g: &mut Game,
+    e: Event,
+    call: Call,
+    keep: &dyn Fn(&Game, PermId) -> bool,
+    repeat: bool,
+) -> Res {
     // Hushbringer: a creature entering (a land that is also a creature) sets off nothing
     if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
         && g.is_creature(*m)
@@ -203,7 +215,7 @@ pub fn fire_trigger_where(g: &mut Game, e: Event, call: Call, keep: &dyn Fn(&Gam
                 })
                 .sum::<i32>();
         }
-        for _ in 0..reps.max(1) {
+        for k in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
             if imp.runs_at_once(e) || !e.is_trigger() {
                 run_hook(g, src, e, &call)?;
@@ -211,15 +223,8 @@ pub fn fire_trigger_where(g: &mut Game, e: Event, call: Call, keep: &dyn Fn(&Gam
                     return Ok(());
                 }
             } else {
-                entries.push(Trigger {
-                    controller: owner,
-                    src: Some(src),
-                    act: TrigAct::Hook { event: e, call: call.clone() },
-                    name: None,
-                    known: false,
-                    imp: None,
-                    cast_etb: false,
-                });
+                let act = TrigAct::Hook { event: e, call: call.clone() };
+                entries.push(Trigger { repeat: repeat || k > 0, ..Trigger::new(owner, Some(src), act) });
             }
         }
     }
