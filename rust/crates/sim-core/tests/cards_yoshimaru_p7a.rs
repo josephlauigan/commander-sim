@@ -7,6 +7,7 @@ use play_common::*;
 use sim_core::human::human::{human_main, respond};
 use sim_core::human::{Target, legal};
 use sim_core::state::Step;
+use sim_core::state::{DataKey, Val};
 use std::collections::VecDeque;
 use std::sync::{Arc, Mutex};
 
@@ -256,4 +257,107 @@ fn emperor_minus_two_offers_only_tapped_creatures_of_any_controller() {
     assert_eq!(creatures, 1, "only the tapped one: {:?}", q.choices);
     assert!(!g.perm(own_tapped).on_bf, "your own tapped creature is a legal target");
     assert_eq!(g.player(P0).life, 42);
+}
+
+// ------------------------------------------------------------------ Eiganjo, Seat of the Empire
+const EIG: &str = "Eiganjo, Seat of the Empire";
+
+fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).gy.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+/// a Pithing Needle of P1's that names `name`
+fn needle(g: &mut Game, name: &str) {
+    let n = perm(g, P1, "Pithing Needle");
+    let c = card(g, name);
+    g.perm_mut(n).data.set(DataKey::Imprint, Val::Card(c));
+}
+
+/// P1 attacks with a tapped Llanowar Elves
+fn eig_combat(g: &mut Game) -> PermId {
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let atk = perm(g, P1, "Llanowar Elves");
+    g.perm_mut(atk).tapped = true;
+    g.in_combat = vec![atk];
+    atk
+}
+
+fn channel() -> Vec<Value> {
+    vec![json!({"do": "cast", "card": 0})]
+}
+
+#[test]
+fn eiganjo_channel_deals_4_damage_to_an_attacker_at_instant_speed() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let tg = ans_target(&g, "Eiganjo", Target::Perm(atk));
+    let h = respond_play(&mut g, channel(), vec![tg]);
+    assert!(!g.perm(atk).on_bf, "{:?}", h.told());
+    assert!(in_gy(&g, P0, EIG), "discarded as a cost");
+    assert_eq!(pool_total(&g, P0), 0);
+}
+
+#[test]
+fn eiganjo_costs_one_less_for_each_legendary_creature_you_control() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    perm(&mut g, P0, "Yoshimaru, Ever Faithful");
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1)]); // {2}{W} less two: {W}
+    respond_play(&mut g, channel(), vec![]);
+    assert!(!g.perm(atk).on_bf && in_gy(&g, P0, EIG));
+}
+
+#[test]
+fn eiganjo_without_the_mana_is_refused() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 1)]); // {2}{W}: one short
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(g.perm(atk).on_bf && !in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("channel Eiganjo"), "{:?}", h.told());
+}
+
+#[test]
+fn eiganjo_targets_only_attacking_and_blocking_creatures_of_any_controller() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    let blocker = perm(&mut g, P0, "Mother of Runes");
+    g.blocking = vec![blocker];
+    perm(&mut g, P1, "Birds of Paradise"); // in neither
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("Eiganjo")).expect("asks the target");
+    assert_eq!(q.choices.iter().filter(|c| c.starts_with("Llanowar") || c.starts_with("Mother")).count(), 2);
+    assert!(!q.choices.iter().any(|c| c.contains("Birds of Paradise")), "{:?}", q.choices);
+    assert!(!g.perm(atk).on_bf, "the first choice (the attacker) took the damage");
+}
+
+#[test]
+fn eiganjo_needs_an_attacking_or_blocking_creature() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(!in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("attacking or blocking"), "{:?}", h.told());
+}
+
+#[test]
+fn pithing_needle_naming_eiganjo_stops_the_channel() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    needle(&mut g, EIG);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(g.perm(atk).on_bf && !in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("Pithing Needle"), "{:?}", h.told());
 }
