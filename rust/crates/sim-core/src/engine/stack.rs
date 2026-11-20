@@ -72,7 +72,10 @@ pub fn note_leaving(g: &mut Game, m: PermId) {
         x.on_bf
             && !x.phased
             && !x.neutered
-            && matches!(x.name, "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne")
+            && matches!(
+                x.name,
+                "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne" | "Harmonic Prodigy"
+            )
     }) {
         return; // No source doubler: do not change permanent data in other decks.
     }
