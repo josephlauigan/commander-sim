@@ -1052,3 +1052,142 @@ fn an_opponents_elesh_leaves_cavern_of_souls_naming_a_type() {
     let l = land_drop(&mut g, P0, "Cavern of Souls");
     assert!(g.perm(l).data.get(DataKey::Ctype).is_some(), "as it enters, choose a creature type");
 }
+
+// ================================================================== round 4 (the census's failures)
+fn static_aura_under_an_opponents_elesh(name: &str, becomes_land: bool) {
+    let mut g = tbl();
+    let e = perm(&mut g, P1, ELESH);
+    g.perm_mut(e).eot_kw.push("shroud");
+    let target = perm(&mut g, P1, "Serra Angel");
+    let c = hand(&mut g, P0, &[name])[0];
+    assert!(
+        sim_core::engine::cast::cast_card(
+            &mut g,
+            P0,
+            c,
+            "hand",
+            sim_core::state::Ctx { target: Some(target), ..Default::default() }
+        )
+        .unwrap()
+    );
+    if becomes_land {
+        assert!(!g.is_creature(target), "{name}: the type change is a static effect of the Aura");
+        assert_eq!(g.player(P1).lands.len(), 1);
+    } else {
+        assert!(g.perm(target).neutered, "{name}: losing all abilities is a static effect of the Aura");
+        assert_eq!(
+            (sim_core::engine::chars::power(&g, target), sim_core::engine::chars::toughness(&g, target)),
+            (0, 1)
+        );
+    }
+}
+
+#[test]
+fn an_opponents_elesh_leaves_darksteel_mutations_static_effect() {
+    static_aura_under_an_opponents_elesh("Darksteel Mutation", false);
+}
+
+#[test]
+fn an_opponents_elesh_leaves_reprobations_static_effect() {
+    static_aura_under_an_opponents_elesh("Reprobation", false);
+}
+
+#[test]
+fn an_opponents_elesh_leaves_imprisoned_in_the_moons_static_effect() {
+    static_aura_under_an_opponents_elesh("Imprisoned in the Moon", true);
+}
+
+#[test]
+fn an_opponents_elesh_leaves_song_of_the_dryads_static_effect() {
+    static_aura_under_an_opponents_elesh("Song of the Dryads", true);
+}
+
+#[test]
+fn an_opponents_elesh_blanks_wan_shi_tongs_enters_payload_but_not_its_x() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    lands(&mut g, P0, "Island", 4, false);
+    let c = hand(&mut g, P0, &["Wan Shi Tong, Librarian"])[0];
+    let before = g.player(P0).hand.len();
+    assert!(sim_core::impls::t6_legends2::wan_go(&mut g, P0, c.0 as i64).unwrap());
+    let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd == Some(c)).unwrap();
+    assert_eq!(g.perm(m).plus, 0, "the When-enters counters are blanked");
+    assert_eq!(g.player(P0).hand.len(), before - 1, "and so is its draw");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_prison_sentences_scry_but_not_its_lock() {
+    use sim_core::control::Answer;
+    use std::sync::Arc;
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let host = perm(&mut g, P1, "Serra Angel");
+    let (a, b) = (card(&g, "Plains"), card(&g, "Island"));
+    g.player_mut(P0).library = vec![b, a];
+    let h = Arc::new(sim_core::human::script::ScriptHuman::from_fn(|r| {
+        if r.kind == "choose" || r.kind == "target" {
+            Answer::Pick(0)
+        } else {
+            Answer::Action(serde_json::json!({"do":"pass"}))
+        }
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h.clone());
+    let c = hand(&mut g, P0, &["Prison Sentence"])[0];
+    assert!(
+        sim_core::engine::cast::cast_card(
+            &mut g,
+            P0,
+            c,
+            "hand",
+            sim_core::state::Ctx { target: Some(host), ..Default::default() }
+        )
+        .unwrap()
+    );
+    let aura = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd == Some(c)).unwrap();
+    assert_eq!(g.perm(aura).attached, Some(host), "the lock still attaches");
+    assert_eq!(
+        h.asked().iter().filter(|r| r.prompt.starts_with("Scry:")).count(),
+        0,
+        "its When-enters scry is blanked"
+    );
+}
+
+#[test]
+fn rest_in_peaces_enters_trigger_exiles_the_graveyards_and_an_opponents_elesh_blanks_it() {
+    // "When this enchantment enters, exile all graveyards" is a trigger; "if a card would be put into a graveyard ...
+    // exile it instead" is a replacement that never reaches the cards already there
+    for elesh in [false, true] {
+        let mut g = tbl();
+        if elesh {
+            elesh_opp(&mut g);
+        }
+        let victim = card(&g, "Grave Titan");
+        g.player_mut(P1).gy.push(victim);
+        let c = hand(&mut g, P0, &["Rest in Peace"])[0];
+        assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", sim_core::state::Ctx::default()).unwrap());
+        assert_eq!(g.player(P1).gy.contains(&victim), elesh, "elesh={elesh}");
+        // what is put there from now on is exiled either way
+        let m = perm(&mut g, P0, "Mother of Runes");
+        let cd = g.perm(m).cd.unwrap();
+        zones::die(&mut g, m, "destroy").unwrap();
+        assert!(!g.player(P0).gy.contains(&cd) && g.player(P0).exile.contains(&cd), "elesh={elesh}");
+        assert_eq!(g.player(P1).gy.contains(&victim), elesh, "elesh={elesh}: the sweep leaves the spared card alone");
+    }
+}
+
+#[test]
+fn an_opponents_elesh_blanks_talon_gates_phasing_when_it_is_put_in_to_defend() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let attacker = perm(&mut g, P1, "Grave Titan");
+    lands(&mut g, P0, "Wastes", 4, false);
+    let c = hand(&mut g, P0, &["Talon Gates of Madara"])[0];
+    let f = g.registry.get(c).unwrap().hand_defend.unwrap();
+    let mut atk = vec![attacker];
+    let mut assign = vec![];
+    f(&mut g, c, P0, P1, &mut atk, &mut assign).unwrap();
+    assert!(!g.player(P0).hand.contains(&c), "the paid ability still puts Gates onto the battlefield");
+    assert!(!g.perm(attacker).phased, "its When-enters phasing is blanked");
+    assert_eq!(atk, vec![attacker]);
+}
