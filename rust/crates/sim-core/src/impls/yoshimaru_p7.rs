@@ -1,7 +1,7 @@
 //! The Yoshimaru / Tymna deck, part 7a: the person paths and models that were missing.
 //!
 //! # The Wandering Emperor
-//! {2}{W}{W}, flash, loyalty 4. "As long as The Wandering Emperor entered this turn, you may activate her loyalty
+//! {2}{W}{W}, flash, loyalty 3. "As long as The Wandering Emperor entered this turn, you may activate her loyalty
 //! abilities any time you could cast an instant" (`human/cards.rs` `loyalty`: a person's timing check).
 //! - +1: put a +1/+1 counter on up to one target creature (any player's); it gains first strike until end of turn
 //!   (`emp_plus`, shared by the person's walker in `human/walkers.rs`).
@@ -207,7 +207,9 @@ fn takenuma_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, cost, "B", false) {
         return Ok(false);
     }
-    pay(g, p, cost, "B", false)?;
+    if !pay(g, p, cost, "B", false)? {
+        return Ok(false);
+    }
     takenuma_channel(g, p, c)?;
     Ok(true)
 }
