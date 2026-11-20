@@ -613,7 +613,6 @@ fn ondu(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// **Boon of the Spirit Realm**: constellation (it or another enchantment): a blessing counter on it; your creatures
 /// get +1/+1 per blessing counter (`creature_pt`, evaluated while `g.selfpt` is on)
 fn boon(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    g.selfpt = true;
     if !ench_entered(g, src, m, true) {
         return Ok(());
     }
@@ -1059,7 +1058,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, NESSIAN)?.etb = Some(nessian);
     r.card(db, DOOMWAKE)?.etb = Some(doomwake);
     r.card(db, ONDU)?.etb = Some(ondu);
-    r.card(db, BOON)?.etb = Some(boon);
+    let c = r.card(db, BOON)?;
+    c.etb = Some(boon);
+    c.as_enters = Some(super::partials::selfpt_as); // its anthem is a static: live as it enters
     r.creature_pt.push(boon_pt);
     let c = r.card(db, KHALNI)?;
     c.landfall = Some(khalni_landfall);

@@ -595,8 +595,7 @@ fn valkyrie_enters(g: &mut Game, src: Src, m: PermId) -> Res {
 
 fn valkyrie_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        g.selfpt = true;
-        return Ok(());
+        return Ok(()); // "another Angel or Cleric"; its size rule went live as it entered (`as_enters`)
     }
     valkyrie_enters(g, src, m)
 }
@@ -855,6 +854,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.attack = Some(choir_attack);
     let c = r.card(db, "Righteous Valkyrie")?;
     c.etb = Some(valkyrie_etb);
+    c.as_enters = Some(super::partials::selfpt_as);
     c.tokens_enter = Some(valkyrie_tokens);
     at_once(c, Event::TokensEnter);
     *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
