@@ -249,3 +249,71 @@ fn haliya_token_adapter_gets_source_extras_only_from_its_queued_triggers() {
     token(&mut g, P0, 1);
     assert_eq!(g.player(P0).life, life + 2, "one original plus Delney, counted only once");
 }
+
+#[test]
+fn haliya_throne_two_soldier_tokens_queue_two_triggers_each() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, "Haliya, Guided by Light");
+    let throne = perm(&mut g, P0, "Roaming Throne");
+    g.perm_mut(throne).data.set(DataKey::Ctype, Val::Str("soldier"));
+    let life = g.player(P0).life;
+    // Hold resolution so the per-token trigger count is checked as well as its life payload.
+    g.resolving += 1;
+    let toks =
+        zones::make_tokens(&mut g, P0, zones::Tokens { types: vec!["soldier"], ..zones::Tokens::new(2, 1) }).unwrap();
+    for t in toks {
+        assert_eq!(
+            g.trig_queue
+                .iter()
+                .filter(|tr| {
+                    tr.src == Some(h)
+                        && matches!(&tr.act, sim_core::hooks::TrigAct::Hook {
+                        event: Event::Etb, call: Call::Etb { m, .. }
+                    } if *m == t)
+                })
+                .count(),
+            2,
+            "one original plus Throne per Soldier token"
+        );
+    }
+    g.resolving -= 1;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).life - life, 4, "four life, never eight");
+}
+
+// Probe the dispatch count directly: source extras belong only to the original event pass.
+#[test]
+fn run_now_enters_triggers_get_source_extras_only_on_the_original_pass() {
+    fn payload(g: &mut Game, src: PermId, _p: PlayerId) -> sim_core::flow::Res {
+        let owner = g.perm(src).owner;
+        g.player_mut(owner).life += 1;
+        Ok(())
+    }
+    for e in [Event::Etb, Event::LandEnters, Event::Landfall, Event::TokensEnter, Event::TokenCreated] {
+        let mut g = tbl();
+        perm(&mut g, P0, DELNEY);
+        let h = perm(&mut g, P0, "Haliya, Guided by Light");
+        g.perm_mut(h).plus = -1;
+        let mut registry = sim_core::hooks::Registry::new(&g.db);
+        let imp = registry.card(&g.db, "Haliya, Guided by Light").unwrap();
+        imp.etb = Some(|g, s, p, _| payload(g, s, p));
+        imp.land_enters = Some(|g, s, p, _| payload(g, s, p));
+        imp.landfall = Some(payload);
+        imp.tokens_enter = Some(|g, s, p, _| payload(g, s, p));
+        imp.token_created = Some(|g, s, p, _, _| payload(g, s, p));
+        *imp = imp.at_once(e).enter_trigger(e);
+        g.registry = std::sync::Arc::new(registry);
+        let call = match e {
+            Event::Etb | Event::LandEnters => Call::Etb { p: P0, m: h },
+            Event::Landfall => Call::Player { p: P0 },
+            Event::TokensEnter => Call::Tokens { p: P0, toks: vec![h] },
+            Event::TokenCreated => Call::ArtifactTokens { p: P0, kinds: vec!["treasure"], n: 1 },
+            _ => unreachable!(),
+        };
+        for repeat in [false, true] {
+            let life = g.player(P0).life;
+            sim_core::engine::hooks::fire_trigger_pass(&mut g, e, call.clone(), repeat).unwrap();
+            assert_eq!(g.player(P0).life - life, if repeat { 1 } else { 2 }, "{e:?}, repeat={repeat}");
+        }
+    }
+}
