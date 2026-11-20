@@ -1,0 +1,2 @@
+# card | event | class | behaviour test (M) | note
+# T whole hook is an enters-caused trigger; S not a trigger; M mixed; N not enter-caused. See tests/enters_inventory.rs.
