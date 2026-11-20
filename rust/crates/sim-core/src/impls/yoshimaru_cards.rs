@@ -38,7 +38,7 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 /// the lands on the battlefield: played, fetched, put onto the battlefield, a token copy; a land that enters and leaves
 /// again inside one resolution before the sweep is not seen, because `add_land` records no entry). Both are stack
 /// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Elesh Norn, Mother of Machines (an additional
-/// trigger of yours; an opponent's stops it, `hooks::enter_blanked`), Delney, Torpor Orb and Hushbringer act on them.
+/// trigger of yours; an opponent's stops it, `hooks::enter_blanked`), Delney and Hushbringer act on them.
 /// A creature land is counted by the land event only (a token copy of a legendary land that is also a creature fires
 /// both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
