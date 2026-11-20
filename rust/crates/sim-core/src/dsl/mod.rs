@@ -1592,19 +1592,24 @@ pub struct Fired {
 
 /// An event happened: every compiled triggered ability that cares puts a trigger on the queue. Python's `dsl.fire`.
 pub fn fire(g: &mut Game, event: &str, kw: Fired) -> Res {
+    fire_where(g, event, kw, &|_, _| true)
+}
+
+/// Fire for eligible listener controllers, preserving controller/source order across event-copy passes.
+pub fn fire_where(g: &mut Game, event: &str, kw: Fired, keep: &dyn Fn(&Game, PlayerId) -> bool) -> Res {
     if !active(g) || g.over || g.dsl_depth > MAX_DEPTH {
         return Ok(());
     }
     g.dsl_depth += 1;
-    let r = fire_inner(g, event, &kw);
+    let r = fire_inner(g, event, &kw, keep);
     g.dsl_depth -= 1;
     r
 }
 
-fn fire_inner(g: &mut Game, event: &str, kw: &Fired) -> Res {
+fn fire_inner(g: &mut Game, event: &str, kw: &Fired, keep: &dyn Fn(&Game, PlayerId) -> bool) -> Res {
     for i in 0..g.players.len() {
         let q = PlayerId(i as u8);
-        if !g.player(q).alive {
+        if !g.player(q).alive || !keep(g, q) {
             continue;
         }
         if matches!(event, "etb" | "landfall") && crate::engine::hooks::enter_blanked(g, q, kw.perm) {
@@ -1690,7 +1695,7 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
         n += repl::trigger_copies(g, q, "dies", kw.perm);
     }
     if event == "etb" {
-        n += repl::trigger_copies(g, q, "etb", kw.perm);
+        n += crate::engine::hooks::enter_copies(g, q, kw.perm) as i32;
     }
     n
 }

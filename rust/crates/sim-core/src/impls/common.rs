@@ -2494,7 +2494,9 @@ fn bog(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
         }
         return Ok(());
     }
-    if let Some(q) = worst_gy(g, p)
+    // Each enters instance chooses again; an empty graveyard's recursion engine must not win the next pick.
+    let candidates: Vec<_> = opps(g, p).into_iter().filter(|&q| !g.player(q).gy.is_empty()).collect();
+    if let Some(q) = max_by(&candidates, |q| gy_worth(g, p, q))
         && gy_worth(g, p, q) > 0.0
     {
         exile_gy(g, q, Some("Bojuka Bog"));

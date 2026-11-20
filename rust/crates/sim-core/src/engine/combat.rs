@@ -499,20 +499,36 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
             pl.attackers.push(m);
         }
     }
-    let copies = 1 + repl::trigger_copies(g, p, "attack", None); // Isshin
+    let inline = (has(g, p, Tag::Rabble)
+        || has(g, p, Tag::Marchesa)
+        || atk.iter().any(|&m| {
+            let x = g.perm(m);
+            ATTACK_TRIGGER_TAGS.iter().any(|&t| card_tag(g, m, t))
+                || equipped(g, m, Tag::Animist)
+                || ["dethrone", "battle cry", "mentor"].iter().any(|k| kw(g, m, k))
+                || crate::impls::t0_zurgo::has_myriad(g, m, false)
+                || (x.token && (x.ttypes.contains(&"pest") || x.data.get(DataKey::Land).is_some()))
+        })
+        || g.player(p)
+            .perms
+            .iter()
+            .any(|&m| !g.perm(m).phased && (kw(g, m, "exalted") || card_name(g, m) == Some("Legion Loyalty"))))
+    .then_some(p);
+    let copies = hooks::listener_copies(g, Event::Attack, "attack", inline);
+    let passes = 1 + copies.iter().copied().max().unwrap_or(0);
     let mut new = vec![];
     // one attack event: no queued trigger of it resolves before every pass has triggered (CR 603.3), so a creature a
     // queued trigger puts onto the battlefield (Kaalia's Angel) is not a listener of a later pass. Held only when there
     // is a later pass. The inline payloads in `attack_triggers_once` (Sun Titan, Necromancer, Kylox, ...) and run-now
     // hooks still act during their pass, before its dispatch: what they put in hears this attack (existing gap).
-    let hold = copies > 1;
+    let hold = passes > 1;
     if hold {
         g.resolving += 1;
     }
     let mut r = Ok(());
-    for k in 0..copies {
+    for k in 0..passes {
         // each pass after the first is a repeat of the triggers
-        match attack_triggers_once(g, p, atk, d, k > 0) {
+        match attack_triggers_once(g, p, atk, d, k, &copies) {
             Ok(v) => new.extend(v),
             Err(e) => {
                 r = Err(e);
@@ -539,9 +555,18 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
     Ok(new.into_iter().filter(|&x| g.perm(x).tapped && g.perm(x).on_bf && g.perm(x).owner == p).collect())
 }
 
-fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, repeat: bool) -> Res<Vec<PermId>> {
+fn attack_triggers_once(
+    g: &mut Game,
+    p: PlayerId,
+    atk: &[PermId],
+    d: PlayerId,
+    pass: i32,
+    copies: &[i32],
+) -> Res<Vec<PermId>> {
+    let repeat = pass > 0;
+    let own_pass = copies[p.0 as usize] >= pass;
     let mut new = vec![];
-    for &m in atk {
+    for &m in if own_pass { atk } else { &[] } {
         let Some(c) = g.perm(m).cd else { continue };
         let t = g.db.get(c).tags.clone();
         let name = g.db.get(c).name.to_string();
@@ -645,7 +670,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, 
         }
     }
     let rab = find(g, p, Tag::Rabble);
-    if !rab.is_empty() && trigger_window(g, p, Some(rab[0]), "a Citizen per attacker", None)? {
+    if own_pass && !rab.is_empty() && trigger_window(g, p, Some(rab[0]), "a Citizen per attacker", None)? {
         make_tokens(g, p, Tokens::new((rab.len() * atk.len()) as u32, 1))?; // Rabble Rousing: one Citizen per attacker
     }
     if g.dsl_on {
@@ -657,16 +682,24 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, 
             repeat,
             ..Default::default()
         };
-        crate::dsl::fire(g, "attack", fired)?;
+        crate::dsl::fire_where(g, "attack", fired, &|_, q| copies[q.0 as usize] >= pass)?;
         new.append(&mut g.new_attackers); // attacking tokens its triggers made
     }
-    crate::impls::cloud::plan_milestone(g, p, atk); // the cloud deck's plan online
-    new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
-    new.extend(cardcode::keyword_attack(g, p, atk, d)?);
-    new.extend(crate::impls::t0_zurgo::attack_keywords(g, p, atk, d)?); // t0-zurgo: myriad, attack counts
+    if own_pass {
+        crate::impls::cloud::plan_milestone(g, p, atk); // the cloud deck's plan online
+        new.extend(crate::impls::cloud::jocasta_attack(g, p, atk)?); // Jocasta returns from the graveyard attacking
+        new.extend(cardcode::keyword_attack(g, p, atk, d)?);
+        new.extend(crate::impls::t0_zurgo::attack_keywords(g, p, atk, d)?); // t0-zurgo: myriad, attack counts
+    }
     if !g.hooks.is_empty() {
         g.new_attackers.clear();
-        hooks::fire_trigger_pass(g, Event::Attack, Call::Attack { p, atk: atk.to_vec(), d }, repeat)?;
+        hooks::fire_trigger_where(
+            g,
+            Event::Attack,
+            Call::Attack { p, atk: atk.to_vec(), d },
+            &|g, s| copies[g.perm(s).owner.0 as usize] >= pass,
+            repeat,
+        )?;
         new.append(&mut g.new_attackers);
     }
     Ok(new)

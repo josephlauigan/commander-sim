@@ -206,7 +206,7 @@ pub fn goad_attackers(g: &mut Game, p: PlayerId, groups: &mut Vec<(PlayerId, Vec
 // ------------------------------------------------------------------ attack: counts, myriad, Within Range
 /// does attacker m have myriad: printed, granted until end of turn (Ironwill Forger), by Legion Loyalty, or by an
 /// equipped Blade of Selves
-fn has_myriad(g: &Game, m: PermId, loyalty: bool) -> bool {
+pub(crate) fn has_myriad(g: &Game, m: PermId, loyalty: bool) -> bool {
     let x = g.perm(m);
     if x.eot_kw.contains(&"myriad") || loyalty {
         return true;
@@ -1078,13 +1078,6 @@ fn loyalty_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ================================================================== Windbrisk Heights
-fn hidden(g: &Game, l: PermId) -> Option<CardId> {
-    match g.perm(l).data.get(DataKey::Hidden) {
-        Some(Val::Card(c)) => Some(*c),
-        _ => None,
-    }
-}
-
 /// Hideaway 4: look at the top four cards, exile one face down, the rest go to the bottom in a random order. The AI
 /// keeps the most expensive nonland card (it is cast for free).
 fn windbrisk_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
@@ -1106,14 +1099,13 @@ fn windbrisk_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     remove_first(&mut top, best);
     g.rng.shuffle(&mut top);
     g.player_mut(p).library.splice(0..0, top);
-    g.perm_mut(l).data.set(DataKey::Hidden, Val::Card(best));
+    super::lands::hide_card(g, l, best);
     crate::glog!(g, "    Windbrisk Heights hides a card");
     Ok(())
 }
 
 /// {W},{T}: play the exiled card without paying its mana cost if you attacked with three or more creatures this turn
 fn windbrisk_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    let Some(c) = hidden(g, l) else { return Ok(vec![]) };
     let pl = g.player(p);
     if post.is_none() || g.perm(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
         return Ok(vec![]);
@@ -1121,16 +1113,22 @@ fn windbrisk_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -
     if !crate::impls::lands::can_pay_without(g, p, l, 0, "W") {
         return Ok(vec![]);
     }
-    Ok(vec![Opt {
-        utility: 1.5 + g.db.get(c).cmc as f64 / 3.0,
-        label: format!("Windbrisk Heights ({})", g.db.get(c).name),
-        act: Some(Action::Plan { f: windbrisk_go, arg: l.0 as i64 }),
-    }])
+    Ok(super::lands::hidden(g, l)
+        .into_iter()
+        .map(|c| Opt {
+            utility: 1.5 + g.db.get(c).cmc as f64 / 3.0,
+            label: format!("Windbrisk Heights ({})", g.db.get(c).name),
+            act: Some(Action::Plan { f: windbrisk_go, arg: l.0 as i64 | ((c.0 as i64) << 32) }),
+        })
+        .collect())
 }
 
 fn windbrisk_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = PermId(arg as u32);
-    let Some(c) = hidden(g, l) else { return Ok(false) };
+    let c = CardId((arg >> 32) as u16);
+    if !super::lands::hidden(g, l).contains(&c) {
+        return Ok(false);
+    }
     let pl = g.player(p);
     if !pl.lands.contains(&l) || g.perm(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
         return Ok(false);
@@ -1139,7 +1137,7 @@ fn windbrisk_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(l).tapped = true;
-    g.perm_mut(l).data.set(DataKey::Hidden, Val::None);
+    super::lands::take_hidden(g, l, c);
     let what = format!("play {}", g.db.get(c).name);
     if !ability_window_card(g, p, g.perm(l).card(), &what, None, None)? {
         return Ok(true);

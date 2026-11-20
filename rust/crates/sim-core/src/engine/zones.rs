@@ -342,7 +342,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     }
     if k > 0 && !blank {
         if has(g, p, Tag::Crusade) {
-            let copies = 1 + repl::trigger_copies(g, p, "etb", Some(out[0]));
+            let copies = 1 + hooks::enter_copies(g, p, Some(out[0])) as i32;
             let n = k * find(g, p, Tag::Crusade).len() as i32 * copies;
             for m in g.player(p).perms.clone() {
                 if g.is_creature(m) {
@@ -352,14 +352,16 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
             }
         }
         if has(g, p, Tag::Warleader) {
+            let copies = 1 + hooks::enter_copies(g, p, Some(out[0])) as i32;
             for q in g.opps(p).collect::<Vec<_>>() {
-                lose_life(g, q, k, Some(p), "drain", Some(true))?; // Warleader's Call deals damage
+                lose_life(g, q, k * copies, Some(p), "drain", Some(true))?; // Warleader's Call deals damage
             }
         }
         if has(g, p, Tag::Wisp) && pw <= 2 {
-            // Wispdrinker Vampire: each listener's own source extras, with no event copies in this round.
+            // I1: event copies and each listener's source extras add once.
             for w in find(g, p, Tag::Wisp) {
-                for _ in 0..1 + crate::engine::stack::extra_for(g, w) {
+                for _ in 0..1 + hooks::enter_copies(g, p, Some(out[0])) as usize + crate::engine::stack::extra_for(g, w)
+                {
                     let opps: Vec<_> = g.opps(p).collect();
                     for &q in &opps {
                         lose_life(g, q, k, Some(p), "drain", None)?;
@@ -372,10 +374,14 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     if k > 0 && !blank && has(g, p, Tag::Uprising) {
         // Garruk's Uprising: a card for each token with power 4 or more ("whenever a creature with power 4 or
         // greater you control enters" counts tokens; Titania's 5/3 Elementals)
-        let big = out.iter().filter(|&&m| epow(g, m) >= 4).count() as u32;
-        draw(g, p, big, false)?;
+        let big: Vec<_> = out.iter().copied().filter(|&m| epow(g, m) >= 4).collect();
+        if let Some(&m) = big.first() {
+            draw(g, p, big.len() as u32 * (1 + hooks::enter_copies(g, p, Some(m))), false)?;
+        }
     }
-    shards_trigger(g, p, k)?;
+    if let Some(&m) = out.first() {
+        shards_trigger(g, p, k, Some(m))?;
+    }
     if g.dsl_on {
         for &x in &out {
             crate::dsl::fire(g, "etb", crate::dsl::Fired { perm: Some(x), owner: Some(p), ..Default::default() })?;
@@ -392,11 +398,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
 }
 
 /// Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment
-pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32) -> Res {
+pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32, entering: Option<PermId>) -> Res {
     if k <= 0 || !has(g, p, Tag::Shards) || hooks::enter_blanked(g, p, None) {
         return Ok(());
     }
-    let reps = k * if has(g, p, Tag::Mother) { 2 } else { 1 };
+    let reps = k * (1 + hooks::enter_copies(g, p, entering) as i32);
     if crate::human::is_human(g, p) {
         // practice mode: you may destroy one, your pick
         for _ in 0..reps {
@@ -489,7 +495,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if !hooks::enter_blanked(g, p, Some(m)) {
         if has(g, p, Tag::Crusade) {
-            let n = find(g, p, Tag::Crusade).len() as i32 * (1 + repl::trigger_copies(g, p, "etb", Some(m)));
+            let n = find(g, p, Tag::Crusade).len() as i32 * (1 + hooks::enter_copies(g, p, Some(m)) as i32);
             for x in g.player(p).perms.clone() {
                 if g.is_creature(x) {
                     let y = g.perm_mut(x);
@@ -498,13 +504,14 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             }
         }
         if has(g, p, Tag::Warleader) {
+            let copies = 1 + hooks::enter_copies(g, p, Some(m)) as i32;
             for q in g.opps(p).collect::<Vec<_>>() {
-                lose_life(g, q, 1, Some(p), "drain", Some(true))?; // Warleader's Call deals damage
+                lose_life(g, q, copies, Some(p), "drain", Some(true))?; // Warleader's Call deals damage
             }
         }
         if has(g, p, Tag::Wisp) && epow(g, m) <= 2 && !card_tag(g, m, Tag::Wisp) {
             for w in find(g, p, Tag::Wisp) {
-                for _ in 0..1 + crate::engine::stack::extra_for(g, w) {
+                for _ in 0..1 + hooks::enter_copies(g, p, Some(m)) as usize + crate::engine::stack::extra_for(g, w) {
                     let opps: Vec<_> = g.opps(p).collect();
                     for &q in &opps {
                         lose_life(g, q, 1, Some(p), "drain", None)?;
@@ -514,10 +521,10 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             }
         }
         if has(g, p, Tag::Uprising) && epow(g, m) >= 4 {
-            draw(g, p, 1, false)?;
+            draw(g, p, 1 + hooks::enter_copies(g, p, Some(m)), false)?;
         }
     }
-    shards_trigger(g, p, 1)
+    shards_trigger(g, p, 1, Some(m))
 }
 
 // ------------------------------------------------------------------ leaving
@@ -1871,16 +1878,19 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
 
 pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     lands_entered(g, p)?;
-    let copies = 1 + repl::trigger_copies(g, p, "landfall", None); // Ancient Greenwarden
+    let inline =
+        (has(g, p, Tag::Landfall2) || g.player(p).lands.iter().any(|&l| card_tag(g, l, Tag::Fotd))).then_some(p);
+    let copies = hooks::listener_copies(g, Event::Landfall, "landfall", inline);
+    let passes = 1 + copies.iter().copied().max().unwrap_or(0);
     // one landfall event: no queued trigger of it resolves before every pass has triggered (CR 603.3), so what an
     // earlier pass makes (a Scute Swarm's copy) is not a listener of a later one. Held only when there is a later pass.
-    let hold = copies > 1;
+    let hold = passes > 1;
     if hold {
         g.resolving += 1;
     }
     let mut r = Ok(());
-    for k in 0..copies {
-        r = landfall_once(g, p, k > 0); // each pass after the first is a repeat of the landfall triggers
+    for k in 0..passes {
+        r = landfall_once(g, p, k, &copies); // each pass after the first is a repeat of the landfall triggers
         if r.is_err() || g.over {
             break;
         }
@@ -1895,11 +1905,13 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
+fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32]) -> Res {
+    let repeat = pass > 0;
+    let own_pass = copies[p.0 as usize] >= pass;
     // an opponent's Elesh Norn, Mother of Machines: the permanents' landfall effects below don't trigger (the
     // compiled and card-code ones are blanked where they fire, a graveyard card's not at all)
     let blanked = hooks::enter_blanked(g, p, None);
-    let felidars = if blanked { vec![] } else { find(g, p, Tag::Landfall2) };
+    let felidars = if blanked || !own_pass { vec![] } else { find(g, p, Tag::Landfall2) };
     for r in felidars {
         if crate::human::is_human(g, p) {
             // "choose one": a 2/2 Cat Beast, or a +1/+1 counter on each creature you control and vigilance until end of turn
@@ -1933,17 +1945,28 @@ fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
     let mut names: Vec<CardId> = lands.iter().map(|&l| g.perm(l).card()).collect();
     names.sort();
     names.dedup();
-    if !blanked && fields > 0 && names.len() >= 7 {
+    if own_pass && !blanked && fields > 0 && names.len() >= 7 {
         // Field of the Dead: 7+ lands with different names
         for _ in 0..fields {
             make_tokens(g, p, Tokens { color: Some(Colors::from_letters("B")), ..Tokens::new(1, 2) })?;
         }
     }
     if g.dsl_on {
-        crate::dsl::fire(g, "landfall", crate::dsl::Fired { player: Some(p), repeat, ..Default::default() })?;
+        crate::dsl::fire_where(
+            g,
+            "landfall",
+            crate::dsl::Fired { player: Some(p), repeat, ..Default::default() },
+            &|_, q| copies[q.0 as usize] >= pass,
+        )?;
     }
     if !g.hooks.is_empty() {
-        hooks::fire_trigger_pass(g, Event::Landfall, Call::Player { p }, repeat)?;
+        hooks::fire_trigger_where(
+            g,
+            Event::Landfall,
+            Call::Player { p },
+            &|g, s| copies[g.perm(s).owner.0 as usize] >= pass,
+            repeat,
+        )?;
     }
     if repeat { Ok(()) } else { cardcode::gy_landfall(g, p) } // a graveyard card's ability is no permanent's: once
 }
