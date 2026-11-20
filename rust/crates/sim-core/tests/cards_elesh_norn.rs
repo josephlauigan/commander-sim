@@ -714,7 +714,8 @@ fn tome_of_legends_commander_page_is_blanked_by_an_opponents_elesh() {
     assert_eq!(g.perm(t).data.int(DataKey::Counters), 2, "an opponent's Elesh blanks that trigger");
 }
 
-// ================================================================== Tome, setup hooks, End-Raze, anthems, Ikoria and lands under Elesh
+// ===================================================================================================================
+// Tome, setup hooks, End-Raze, anthems, Ikoria and lands under Elesh
 /// a permanent put onto the battlefield with no enters event (a fixture for firing one by hand)
 fn raw(g: &mut Game, p: PlayerId, name: &str) -> PermId {
     let cd = card(g, name);
@@ -1053,7 +1054,8 @@ fn an_opponents_elesh_leaves_cavern_of_souls_naming_a_type() {
     assert!(g.perm(l).data.get(DataKey::Ctype).is_some(), "as it enters, choose a creature type");
 }
 
-// ================================================================== static Auras, Prison Sentence, Wan Shi Tong, Rest in Peace, Talon Gates
+// ===================================================================================================================
+// static Auras, Prison Sentence, Wan Shi Tong, Rest in Peace, Talon Gates
 fn static_aura_under_an_opponents_elesh(name: &str, becomes_land: bool) {
     let mut g = tbl();
     let e = perm(&mut g, P1, ELESH);
@@ -1203,7 +1205,10 @@ fn kenriths_transformation_applies_its_elk_as_a_static_effect_and_only_its_draw_
             let e = perm(&mut g, P1, ELESH);
             g.perm_mut(e).eot_kw.push("shroud"); // the Aura picks Serra Angel
         }
+        // pval 3 first (the first pick takes the first of equals), then a second creature of pval 3: once Serra Angel
+        // is an Elk (pval 2.5) a second pick would take the second creature and neuter it too
         let target = perm(&mut g, P1, "Serra Angel");
+        let second = perm(&mut g, P1, "Goblin Chainwhirler");
         let c = hand(&mut g, P0, &["Kenrith's Transformation"])[0];
         let before = g.player(P0).hand.len();
         assert!(
@@ -1219,6 +1224,9 @@ fn kenriths_transformation_applies_its_elk_as_a_static_effect_and_only_its_draw_
         assert!(g.perm(target).neutered, "elesh={elesh}: loses all abilities");
         assert_eq!((g.perm(target).pow, g.perm(target).tgh), (3, 3), "elesh={elesh}: a 3/3 Elk");
         assert!(g.perm(target).data.truthy(DataKey::Elk), "elesh={elesh}");
+        assert!(!g.perm(second).neutered, "elesh={elesh}: the removal is applied once");
+        let neutered = g.player(P1).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).neutered).count();
+        assert_eq!(neutered, 1, "elesh={elesh}: exactly one creature is neutered");
         assert_eq!(
             g.player(P0).hand.len(),
             if elesh { before - 1 } else { before },
