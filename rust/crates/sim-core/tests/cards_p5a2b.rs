@@ -493,3 +493,27 @@ fn haliya_queue_adapter_event_and_source_copies_are_counted_once() {
     token(&mut g, A, 1);
     assert_eq!(g.player(A).life - before, 3);
 }
+
+#[test]
+fn bog_does_not_retarget_an_empty_graveyard_with_a_recursion_engine() {
+    let mut g = tbl();
+    perm(&mut g, A, E);
+    perm(&mut g, B, "Meren of Clan Nel Toth");
+    let titan = take(&mut g, B, "Grave Titan");
+    let bloodghast = take(&mut g, C, "Bloodghast");
+    g.player_mut(B).gy.push(titan);
+    g.player_mut(C).gy.push(bloodghast);
+    play_land(&mut g, "Bojuka Bog");
+    assert!(g.player(B).gy.is_empty() && g.player(C).gy.is_empty());
+}
+
+#[test]
+fn isshin_repeats_myriad_granted_by_blade_of_selves() {
+    let mut g = tbl();
+    perm(&mut g, A, "Isshin, Two Heavens as One");
+    let a = token(&mut g, A, 2);
+    let blade = perm(&mut g, A, "Blade of Selves");
+    g.perm_mut(blade).attached = Some(a);
+    let new = combat::attack_triggers(&mut g, A, &[a], B).unwrap();
+    assert_eq!(new.len(), 4, "two other opponents, twice");
+}
