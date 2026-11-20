@@ -654,12 +654,18 @@ fn white_cards(g: &Game, p: PlayerId, c: CardId) -> Vec<CardId> {
     g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).colors.has('W')).collect()
 }
 
+/// evoking is casting Solitude for an alternative cost: the cast restrictions (Rule of Law, Grand Abolisher,
+/// Teferi, Time Raveler, split second ...) apply, and so do the cost increases (Sphere of Resistance, Defense Grid)
+fn evoke_allowed(g: &Game, p: PlayerId, c: CardId) -> bool {
+    castable(g, p, c, "hand") && crate::engine::altcost::tax_payable(g, p, c)
+}
+
 /// evoke by exiling a white card from hand (free, instant speed). A person may evoke whenever they hold a white card
 /// and picks it (the enters trigger asks for the target); the AI evokes against the best opposing creature when it
 /// is worth at least 6, exiling its least wanted white card
 fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if crate::human::is_human(g, p) {
-        if white_cards(g, p, c).is_empty() {
+        if white_cards(g, p, c).is_empty() || !evoke_allowed(g, p, c) {
             return Ok(vec![]);
         }
         let label = "evoke Solitude: exile a white card from your hand".to_string();
@@ -669,7 +675,7 @@ fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
     if can_pay_spell(g, p, c, gn, &pips, false) && post.is_some() {
         return Ok(vec![]);
     }
-    let whites = !white_cards(g, p, c).is_empty();
+    let whites = !white_cards(g, p, c).is_empty() && evoke_allowed(g, p, c);
     let Some(t) = best_opp_creature(g, p, |_, _| true) else { return Ok(vec![]) };
     if !whites || pval(g, t) < 6.0 {
         return Ok(vec![]);
@@ -709,6 +715,9 @@ fn solitude_pick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// exile white card x from p's hand as the cost and cast Solitude c with it: opponents may counter it; if it enters,
 /// the enters trigger (its exile) is followed by the evoke sacrifice
 fn evoke_solitude(g: &mut Game, p: PlayerId, c: CardId, x: CardId) -> Res<bool> {
+    if !evoke_allowed(g, p, c) || !crate::engine::altcost::pay_tax(g, p, c)? {
+        return Ok(false); // nothing is paid or exiled
+    }
     remove_card(&mut g.player_mut(p).hand, x);
     g.player_mut(p).exile.push(x);
     remove_card(&mut g.player_mut(p).hand, c);
