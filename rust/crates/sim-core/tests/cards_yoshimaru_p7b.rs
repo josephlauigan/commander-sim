@@ -4,7 +4,6 @@
 
 mod play_common;
 use play_common::*;
-use sim_core::impls::galadriel::eot_returns;
 use sim_core::state::Step;
 use std::sync::{Arc, Mutex};
 
@@ -39,12 +38,24 @@ fn person(g: &mut Game, words: &[&str]) -> Arc<ScriptHuman> {
     h
 }
 
+/// the beginning of an end step: what was exiled until then comes back
+fn end_step(g: &mut Game) {
+    sim_core::cardcode::delayed_end_step(g, P0).unwrap();
+}
+
 fn asks(h: &ScriptHuman, word: &str) -> Vec<Request> {
     h.asked().into_iter().filter(|r| r.prompt.contains(word)).collect()
 }
 
+/// the permanent is on the battlefield under p: a land among p's lands (and not among the permanents), anything else
+/// among the permanents
 fn on_bf(g: &Game, p: PlayerId, name: &str) -> bool {
-    has_perm(g, p, name) || g.player(p).lands.iter().any(|&l| g.perm(l).on_bf && g.perm(l).name == name)
+    if ["Island", "Plains", "Mountain", "Swamp", "Forest"].contains(&name) {
+        g.player(p).lands.iter().any(|&l| g.perm(l).on_bf && g.perm(l).name == name)
+            && !g.player(p).perms.iter().any(|&m| g.perm(m).name == name)
+    } else {
+        has_perm(g, p, name)
+    }
 }
 
 fn in_exile(g: &Game, p: PlayerId, name: &str) -> bool {
@@ -74,7 +85,7 @@ fn flickerwisp_asks_a_person_for_any_other_permanent_lands_included_and_it_is_ma
     assert!(!c.iter().any(|x| x.contains("no target") || x.contains("none")), "the target is mandatory: {c:?}");
     assert!(!on_bf(&g, P1, "Island") && in_exile(&g, P1, "Island"), "the land is exiled");
     assert!(on_bf(&g, P1, "Sol Ring"), "only the chosen one");
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P1, "Island") && !in_exile(&g, P1, "Island"), "it returns at the end step under its owner");
 }
 
@@ -87,7 +98,7 @@ fn flickerwisp_exiles_the_token_a_person_picks_for_good() {
     perm(&mut g, P0, "Flickerwisp");
     assert_eq!(asks(&h, "Flickerwisp").len(), 1, "the person picks: {:?}", h.asked());
     assert!(!g.perm(t).on_bf, "the token is exiled");
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(!g.player(P1).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token), "a token never returns");
     assert!(on_bf(&g, P1, "Island"), "the land stayed");
 }
@@ -97,11 +108,11 @@ fn flickerwisp_returns_a_card_exiled_in_an_end_step_at_the_next_end_step_only() 
     let mut g = tbl();
     lands(&mut g, P1, "Island", 1, false);
     g.step = Step::End;
-    eot_returns(&mut g).unwrap(); // the beginning of this end step: nothing waits yet
+    end_step(&mut g); // the beginning of this end step: nothing waits yet
     let _h = person(&mut g, &["Island"]);
     perm(&mut g, P0, "Flickerwisp");
     assert!(in_exile(&g, P1, "Island"));
-    eot_returns(&mut g).unwrap(); // the next end step
+    end_step(&mut g); // the next end step
     assert!(on_bf(&g, P1, "Island"), "back at the beginning of the next end step");
 }
 
@@ -117,7 +128,7 @@ fn flickerwisp_doubled_asks_a_person_once_per_instance_and_exiles_two_targets() 
     assert_eq!(q.len(), 2, "one question per instance: {:?}", h.asked());
     assert!(!on_bf(&g, P1, "Island") && !on_bf(&g, P1, "Mountain"), "two targets exiled");
     assert!(q.iter().any(|r| !r.choices.iter().any(|c| c.contains("Island"))), "the second ask no longer offers it");
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P1, "Island") && on_bf(&g, P1, "Mountain"), "both return");
 }
 
@@ -128,7 +139,7 @@ fn flickerwisp_ai_can_exile_a_land_when_it_is_the_only_other_permanent() {
     lands(&mut g, P1, "Island", 1, false);
     perm(&mut g, P0, "Flickerwisp");
     assert!(!on_bf(&g, P1, "Island") && in_exile(&g, P1, "Island"), "{:?}", g.player(P1).lands);
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P1, "Island"));
 }
 
@@ -247,7 +258,7 @@ fn ennis_asks_a_person_for_up_to_one_other_creature_they_control() {
     assert!(!c.iter().any(|x| x.starts_with("Ennis")), "'other': {c:?}");
     assert!(c.iter().any(|x| x.contains("none") || x.contains("no target")), "'up to one': {c:?}");
     assert!(!g.perm(wall).on_bf && in_exile(&g, P0, "Wall of Omens"));
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P0, "Wall of Omens"), "it returns at the end step");
 }
 
@@ -267,7 +278,7 @@ fn ennis_exiles_a_token_for_good_and_it_is_no_card_for_the_counter() {
     let _h = person(&mut g, &["oken"]);
     let e = perm(&mut g, P0, "Ennis, Debate Moderator");
     assert!(!g.perm(t).on_bf);
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token));
     sim_core::engine::turn::end_step(&mut g, P0).unwrap();
     assert_eq!(g.perm(e).plus, 0, "a token is not a card put into exile");
@@ -281,7 +292,7 @@ fn ennis_returns_a_creature_it_exiled_under_its_owners_control() {
     let _h = person(&mut g, &["Wall of Omens"]);
     perm(&mut g, P0, "Ennis, Debate Moderator");
     assert!(in_exile(&g, P1, "Wall of Omens"), "owned by P1: it goes to P1's exile");
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P1, "Wall of Omens") && !on_bf(&g, P0, "Wall of Omens"), "back under its owner's control");
 }
 
@@ -295,6 +306,6 @@ fn ennis_doubled_asks_a_person_once_per_instance() {
     perm(&mut g, P0, "Ennis, Debate Moderator");
     assert_eq!(asks(&h, "Ennis").len(), 2, "{:?}", h.asked());
     assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "two creatures exiled");
-    eot_returns(&mut g).unwrap();
+    end_step(&mut g);
     assert!(on_bf(&g, P0, "Helitrooper") && on_bf(&g, P0, "Armory Automaton"));
 }
