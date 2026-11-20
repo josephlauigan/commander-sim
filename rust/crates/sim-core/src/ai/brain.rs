@@ -617,6 +617,19 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
             g.last_x = x as i32;
         }
     }
+    if let Some(f) = g.registry.get(c).and_then(|i| i.cast_x)
+        && d.xcount > 0
+        && !d.tag(Tag::Tokx)
+        && !d.tag(Tag::Xtutor)
+    {
+        // a card whose code chooses its own X: paid with the cost, as the spell is cast (visible on the stack)
+        let spare = total_mana_spell(g, p, c, cv) / d.xcount;
+        let x = f(g, p, c, spare).min(spare);
+        if x > 0 {
+            pay_spell(g, p, c, x * d.xcount, "", cv)?;
+        }
+        ctx.x = x as i32;
+    }
     if d.has_dsl() {
         additional_cost(g, p, c, false)?;
     }

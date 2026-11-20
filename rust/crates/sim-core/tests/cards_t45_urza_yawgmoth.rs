@@ -416,14 +416,15 @@ fn nine_lives_familiar_returns_at_the_end_step_with_one_fewer_counter() {
 #[test]
 fn meathook_massacre_pays_x_and_shrinks_every_creature() {
     let mut g = yawg();
-    lands(&mut g, P0, "Swamp", 2, false);
+    lands(&mut g, P0, "Swamp", 4, false); // {B}{B} and X = 2
     let mine = perm(&mut g, P0, "Sheoldred, the Apocalypse");
     let small = perm(&mut g, P1, "Ornithopter");
     let t2 = token(&mut g, P1, 2);
     let big = perm(&mut g, P1, "Sheoldred, the Apocalypse");
     let life = g.player(P0).life;
-    cast_enter(&mut g, P0, "The Meathook Massacre");
-    assert_eq!(total_mana(&g, P0, false), 0, "X = 2 paid");
+    let c = hand(&mut g, P0, &["The Meathook Massacre"])[0];
+    assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
+    assert_eq!(total_mana(&g, P0, false), 0, "X = 2 paid as it is cast");
     assert!(!g.perm(small).on_bf && !g.perm(t2).on_bf, "-2/-2 kills the 0/2 and the 2/2");
     assert!(g.perm(big).on_bf && g.perm(mine).on_bf && etgh(&g, mine) == 3);
     assert_eq!(g.player(P0).life, life + 2, "an opposing creature dying: you gain 1");

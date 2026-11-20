@@ -1111,6 +1111,9 @@ pub struct Enter {
     /// it is a token from the start (a token copy): whatever takes it away on entering (an Aura with nothing to enchant)
     /// leaves no card behind
     pub token: bool,
+    /// the X the permanent spell was cast with (or a copy of that spell has): kept on the permanent as `DataKey::CastX`,
+    /// where its enter trigger reads it (The Meathook Massacre). 0 for a permanent that did not enter from a cast
+    pub x: i32,
 }
 
 impl Default for Enter {
@@ -1124,6 +1127,7 @@ impl Default for Enter {
             plus: 0,
             exc: None,
             token: false,
+            x: 0,
         }
     }
 }
@@ -1211,6 +1215,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     x.born = born;
     if how.rivaz_exile > 0 {
         x.data.set(DataKey::RivazExile, Val::Int(how.rivaz_exile as i64));
+    }
+    if how.x > 0 {
+        x.data.set(DataKey::CastX, Val::Int(how.x as i64));
     }
     if loyalty.is_some() {
         x.loyalty = Some(v_loy); // Doubling Season: twice the loyalty; Vorinclex
@@ -1324,19 +1331,28 @@ pub fn mox_discard_key(g: &Game, p: PlayerId, c: CardId) -> f64 {
 
 /// a token that's a copy of card cd (Scute Swarm, Kiki-Jiki, Helm of the Host ...)
 pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<PermId>> {
-    enter_token_copy_with(g, p, cd, None)
+    enter_token_copy_inner(g, p, cd, None, 0)
+}
+
+/// the token a copy of a permanent spell becomes: it keeps the spell's X (CR 707.10)
+pub fn enter_token_copy_x(g: &mut Game, p: PlayerId, cd: CardId, x: i32) -> Res<Option<PermId>> {
+    enter_token_copy_inner(g, p, cd, None, x)
 }
 
 /// a token copy with exceptions ("except it's a 0/1 white Illusion", "it's an artifact in addition"): they apply as it
 /// enters, so its own enters triggers see them
 pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<CopyExc>) -> Res<Option<PermId>> {
+    enter_token_copy_inner(g, p, cd, exc, 0)
+}
+
+fn enter_token_copy_inner(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<CopyExc>, x: i32) -> Res<Option<PermId>> {
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
     if have >= TOKEN_CAP {
         return Ok(None);
     }
     // --- Tiers 4/5 (urdragon): its enter triggers wait until it is a token ("another nontoken Dragon": Miirym)
     g.resolving += 1;
-    let r = enter(g, p, cd, Enter { exc, token: true, ..Enter::default() });
+    let r = enter(g, p, cd, Enter { exc, token: true, x, ..Enter::default() });
     if let Ok(m) = r {
         g.perm_mut(m).token = true;
     }

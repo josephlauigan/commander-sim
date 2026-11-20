@@ -1162,7 +1162,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         return Ok(());
     }
     if perm && zone == "copy" {
-        enter_token_copy(g, p, c)?; // a copy of a permanent spell becomes a token
+        crate::engine::zones::enter_token_copy_x(g, p, c, ctx.x)?; // a copy of a permanent spell becomes a token, with its X
         return Ok(());
     }
     if perm {
@@ -1182,8 +1182,12 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         }
         g.entering_spent = ctx.mana_spent; // Chalice of the Void: X is half the mana paid
         let prev = std::mem::replace(&mut g.cast_target, ctx.target); // an Aura's target, chosen as cast
-        let r =
-            enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, rivaz_exile: ctx.rivaz_exile, ..Enter::default() });
+        let r = enter(
+            g,
+            p,
+            c,
+            Enter { was_cast: true, orig: ctx.owner, rivaz_exile: ctx.rivaz_exile, x: ctx.x, ..Enter::default() },
+        );
         g.cast_target = prev;
         let m = r?;
         if g.player(p).is_commander(c) {
@@ -1536,7 +1540,7 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) -> Ctx
 /// moves either way.
 pub fn copy_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>, cast: bool) -> Res {
     if g.db.get(c).perm && !cast {
-        enter_token_copy(g, p, c)?;
+        crate::engine::zones::enter_token_copy_x(g, p, c, ctx.map_or(0, |x| x.x))?;
         return Ok(());
     }
     let ctx = if crate::human::is_human(g, p) {

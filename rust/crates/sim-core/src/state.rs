@@ -256,6 +256,8 @@ pub enum DataKey {
     /// practice mode: the exiled cards a person's Dauthi Voidwalker lets them play this turn (a `Val::List`: the turn
     /// stamp, then the cards; `human::gaps_c::dauthi_permits`)
     Dauthi,
+    /// the X a permanent spell was cast with (Int, set as it enters: `Enter::x`); absent when it did not enter from a cast
+    CastX,
 }
 
 /// A value in per-card state.
