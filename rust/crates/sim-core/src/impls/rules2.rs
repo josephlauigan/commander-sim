@@ -649,13 +649,27 @@ fn emperor_flash(
 }
 
 // ================================================================== evoke: Solitude
-/// evoke by exiling a white card from hand (free, instant speed): exile the best opposing creature
+/// the white cards in p's hand other than c (white is the card's colour)
+fn white_cards(g: &Game, p: PlayerId, c: CardId) -> Vec<CardId> {
+    g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).colors.has('W')).collect()
+}
+
+/// evoke by exiling a white card from hand (free, instant speed). A person may evoke whenever they hold a white card
+/// and picks it (the enters trigger asks for the target); the AI evokes against the best opposing creature when it
+/// is worth at least 6, exiling its least wanted white card
 fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if crate::human::is_human(g, p) {
+        if white_cards(g, p, c).is_empty() {
+            return Ok(vec![]);
+        }
+        let label = "evoke Solitude: exile a white card from your hand".to_string();
+        return Ok(vec![plan(0.0, label, solitude_pick_go, c.0 as i64)]);
+    }
     let (gn, pips) = cost_of(g, p, c);
     if can_pay_spell(g, p, c, gn, &pips, false) && post.is_some() {
         return Ok(vec![]);
     }
-    let whites = g.player(p).hand.iter().any(|&x| x != c && g.db.get(x).pips.contains('W'));
+    let whites = !white_cards(g, p, c).is_empty();
     let Some(t) = best_opp_creature(g, p, |_, _| true) else { return Ok(vec![]) };
     if !whites || pval(g, t) < 6.0 {
         return Ok(vec![]);
@@ -669,14 +683,41 @@ fn solitude_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || !g.perm(t).on_bf {
         return Ok(false);
     }
-    let whites: Vec<CardId> =
-        g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).pips.contains('W')).collect();
+    let whites = white_cards(g, p, c);
     let Some(x) = min_by(&whites, |x| card_worth(g, p, x, false)) else { return Ok(false) };
+    evoke_solitude(g, p, c, x)
+}
+
+/// a person's evoke: they pick the white card to exile (backing out does nothing)
+fn solitude_pick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let whites = white_cards(g, p, c);
+    if whites.is_empty() {
+        return Ok(false);
+    }
+    let labels: Vec<String> = whites.iter().map(|&x| crate::human::choices::card_label(g, x)).collect();
+    let prompt = "Solitude (evoke): exile which white card from your hand?";
+    let Some(k) = crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("cancel"), None)? else {
+        return Ok(true); // backed out before anything was paid
+    };
+    evoke_solitude(g, p, c, whites[k])
+}
+
+/// exile white card x from p's hand as the cost and cast Solitude c with it: opponents may counter it; if it enters,
+/// the enters trigger (its exile) is followed by the evoke sacrifice
+fn evoke_solitude(g: &mut Game, p: PlayerId, c: CardId, x: CardId) -> Res<bool> {
     remove_card(&mut g.player_mut(p).hand, x);
     g.player_mut(p).exile.push(x);
     remove_card(&mut g.player_mut(p).hand, c);
     crate::glog!(g, "  {} evokes Solitude (exiling {})", pname(g, p), g.db.get(x).name);
     on_cast(g, p, c)?;
+    if !counter_window(g, p, c, 6.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(true);
+    }
     let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
     if on(g, p, m) {
         die(g, m, "sac")?;
