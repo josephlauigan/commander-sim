@@ -3,6 +3,7 @@
 
 mod play_common;
 use play_common::*;
+use sim_core::ai::brain;
 use sim_core::engine::{cast, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::state::{Ctx, DataKey};
@@ -316,4 +317,116 @@ fn a_person_can_warp_haliya_for_w() {
     let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("Haliya is out");
     assert!(g.perm(m).data.truthy(DataKey::Warp));
     assert_eq!(pool_total(&g, P0), 0, "paid {{W}}");
+}
+
+// ------------------------------------------------------------------ The Meathook Massacre
+// "When The Meathook Massacre enters, each creature gets -X/-X until end of turn. Whenever a creature you control dies,
+// each opponent loses 1 life. Whenever a creature an opponent controls dies, you gain 1 life." X is chosen as it is
+// cast: it is on the stack with the spell, where the table sees it.
+const MEATHOOK: &str = "The Meathook Massacre";
+
+/// answer X with `x`, recording every question asked
+fn x_answer(x: u32, asked: std::sync::Arc<std::sync::Mutex<Vec<(String, Vec<String>)>>>) -> F {
+    Box::new(move |r: &Request| {
+        asked.lock().unwrap().push((r.prompt.to_string(), r.choices.iter().map(|c| c.to_string()).collect()));
+        let want = format!("X = {x}");
+        Answer::Pick(
+            r.choices.iter().position(|c| *c == want).unwrap_or_else(|| panic!("no {want} in {:?}", r.choices)),
+        )
+    })
+}
+
+fn board_for_meathook(g: &mut Game) -> (PermId, PermId, PermId, PermId) {
+    let mine = perm(g, P0, "Sheoldred, the Apocalypse");
+    let small = perm(g, P1, "Ornithopter");
+    let t2 = token(g, P1, 2);
+    let big = perm(g, P1, "Sheoldred, the Apocalypse");
+    (mine, small, t2, big)
+}
+
+#[test]
+fn meathook_ai_chooses_x_as_it_casts_and_the_table_sees_it_on_the_stack() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 4, false);
+    let (mine, small, t2, big) = board_for_meathook(&mut g);
+    let c = hand(&mut g, P0, &[MEATHOOK])[0];
+    // an opponent who is a person gets priority with the spell on the stack
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let s2 = seen.clone();
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            s2.lock().unwrap().push(r.data.clone());
+        }
+        Answer::Action(json!({"do": "pass"}))
+    }));
+    g.humans.add(P1, h);
+    let life = g.player(P0).life;
+    assert!(brain::do_cast(&mut g, P0, c, None).unwrap());
+    let seen = seen.lock().unwrap();
+    let spell = seen
+        .iter()
+        .flat_map(|d| d["stack"].as_array().cloned().unwrap_or_default())
+        .find(|it| it["name"] == MEATHOOK && it["kind"] == "spell")
+        .expect("the spell was on the stack for the table");
+    assert_eq!(spell["x"], 2, "X = 2 is chosen as it is cast and shown with the spell: {spell}");
+    assert_eq!(total_mana(&g, P0), 0, "X = 2 and {{B}}{{B}} paid");
+    assert!(!g.perm(small).on_bf && !g.perm(t2).on_bf, "-2/-2 kills the 0/2 and the 2/2");
+    assert!(g.perm(big).on_bf && g.perm(mine).on_bf);
+    assert_eq!(g.player(P0).life, life + 2, "two opposing creatures died: you gain 1 for each");
+}
+
+fn total_mana(g: &Game, p: PlayerId) -> u32 {
+    sim_core::engine::mana::total_mana(g, p, false)
+}
+
+#[test]
+fn meathook_person_chooses_x_at_the_cast_and_the_enter_trigger_uses_it() {
+    let mut g = tbl();
+    let (mine, small, t2, big) = board_for_meathook(&mut g);
+    hand(&mut g, P0, &[MEATHOOK]);
+    pool(&mut g, P0, &[('B', 2), ('C', 4)]);
+    let asked = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), x_answer(2, asked.clone())]);
+    let a = asked.lock().unwrap();
+    assert!(a[0].0.contains("The Meathook Massacre: choose X"), "{a:?}");
+    assert_eq!(a.len(), 1, "X is asked once, at the cast: {a:?}");
+    assert_eq!(pool_total(&g, P0), 2, "X = 2 and {{B}}{{B}} paid; nothing more is taken as it enters");
+    assert!(!g.perm(small).on_bf && !g.perm(t2).on_bf, "each creature got -2/-2");
+    assert!(g.perm(big).on_bf && g.perm(mine).on_bf);
+}
+
+#[test]
+fn meathook_cast_with_x_zero_shrinks_nothing_and_takes_no_more_mana() {
+    let mut g = tbl();
+    let (_mine, small, t2, _big) = board_for_meathook(&mut g);
+    hand(&mut g, P0, &[MEATHOOK]);
+    pool(&mut g, P0, &[('B', 2), ('C', 4)]);
+    let asked = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), x_answer(0, asked.clone())]);
+    assert_eq!(pool_total(&g, P0), 4, "X = 0: only {{B}}{{B}} is paid");
+    assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "-0/-0");
+    assert!(has_perm(&g, P0, MEATHOOK));
+}
+
+#[test]
+fn meathook_that_enters_without_being_cast_has_x_zero() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 4, false);
+    let (_mine, small, t2, _big) = board_for_meathook(&mut g);
+    perm(&mut g, P0, MEATHOOK);
+    assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "no X was chosen: nothing shrinks");
+    assert_eq!(total_mana(&g, P0), 4, "and no mana is paid");
+}
+
+#[test]
+fn meathook_drains_when_your_creature_dies_and_gains_when_an_opponents_does() {
+    let mut g = tbl();
+    perm(&mut g, P0, MEATHOOK);
+    let mine = perm(&mut g, P0, "Mother of Runes");
+    let theirs = perm(&mut g, P1, "Mother of Runes");
+    let (l0, l1, l2) = (g.player(P0).life, g.player(P1).life, g.player(P2).life);
+    zones::die(&mut g, mine, "destroy").unwrap();
+    assert_eq!((g.player(P1).life, g.player(P2).life), (l1 - 1, l2 - 1), "each opponent loses 1");
+    zones::die(&mut g, theirs, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, l0 + 1, "you gain 1");
 }
