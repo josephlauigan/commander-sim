@@ -729,7 +729,7 @@ fn raw(g: &mut Game, p: PlayerId, name: &str) -> PermId {
 fn commander_event(g: &mut Game) {
     use sim_core::engine::hooks::fire_trigger;
     use sim_core::hooks::{Call, Event};
-    let m = raw(g, P0, "Heliod, Sun-Crowned");
+    let m = raw(g, P0, "Mother of Runes"); // a creature: Panharmonicon counts it (Heliod is not one without devotion)
     g.perm_mut(m).is_cmd = true;
     fire_trigger(g, Event::Etb, Call::Etb { p: P0, m }).unwrap();
 }

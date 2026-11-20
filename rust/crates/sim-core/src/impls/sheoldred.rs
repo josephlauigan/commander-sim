@@ -1221,15 +1221,16 @@ fn add_pages(g: &mut Game, m: PermId, n: i32) {
     g.perm_mut(m).data.set(DataKey::Counters, Val::Int(k + n as i64));
 }
 
-/// Tome of Legends: it enters with a page counter, and gets one whenever your commander enters
+/// Tome of Legends: it enters with a page counter (a replacement, CR 614.1c)
+fn tome_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
+    add_pages(g, m, 1);
+    Ok(())
+}
+
+/// ... and gets one whenever your commander enters (a triggered ability: the dispatcher blanks and copies it)
 fn tome_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m == src {
+    if m != src && g.perm(m).is_cmd && g.perm(m).owner == owner(g, src) && on_bf(g, src) {
         add_pages(g, src, 1);
-    } else if g.perm(m).is_cmd && g.perm(m).owner == owner(g, src) && on_bf(g, src) {
-        // "Whenever your commander enters or attacks, put a page counter" is a triggered ability
-        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(m)) {
-            add_pages(g, src, 1);
-        }
     }
     Ok(())
 }
@@ -1581,7 +1582,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::partials::at_once(c, Event::Crew, true);
     let c = r.card(db, "Tome of Legends")?;
     c.etb = Some(tome_etb);
-    *c = c.enter_setup(crate::hooks::Event::Etb); // mixed: it enters with a page counter (setup), a commander entering adds one (trigger)
+    c.as_enters = Some(tome_as_enters);
     c.attack = Some(tome_attack);
     c.options = Some(tome_options);
     c.prio = Some(tome_prio);

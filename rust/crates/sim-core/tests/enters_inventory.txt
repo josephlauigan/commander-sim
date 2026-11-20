@@ -414,7 +414,7 @@ Tireless Tracker | Landfall | T
 Tishana's Tidebinder | Etb | T
 Titania, Protector of Argoth | Etb | T
 Tocasia's Welcome | Etb | T
-Tome of Legends | Etb | M | an_opponents_elesh_does_not_take_tome_of_legends_page_counter tome_of_legends_commander_page_is_blanked_by_an_opponents_elesh | mixed: setup (counters) plus a trigger part through `enters_trigger_times`
+Tome of Legends | Etb | T |  | its commander trigger; the page it enters with is `as_enters`
 Touch the Spirit Realm | Etb | T
 Trail of Crumbs | Etb | T
 Tribute Mage | Etb | T
