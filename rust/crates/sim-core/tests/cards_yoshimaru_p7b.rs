@@ -779,3 +779,25 @@ fn palace_jailer_exiles_a_land_creature_a_person_picks_and_it_returns_as_a_land(
     assert_eq!(n_lands(&g, P1, "Dryad Arbor"), 1, "back exactly once, as a land");
     assert_eq!(n_perms(&g, P1, "Dryad Arbor"), 0);
 }
+
+// ------------------------------------------------------------------ the AI's Flickerwisp aims
+#[test]
+fn flickerwisp_ai_in_an_end_step_leaves_its_own_tapped_land_alone() {
+    // exiled in an end step, a land is away through the whole next turn: its own tapped land is no good pick
+    let mut g = tbl();
+    g.step = Step::End;
+    let mine = lands(&mut g, P0, "Plains", 1, true)[0];
+    lands(&mut g, P1, "Island", 1, true);
+    perm(&mut g, P0, "Flickerwisp");
+    assert!(g.perm(mine).on_bf, "its own land stays");
+    assert!(in_exile(&g, P1, "Island"), "the opponent's tapped land is the least bad pick");
+}
+
+#[test]
+fn flickerwisp_ai_does_not_aim_at_a_creature_with_protection_from_white() {
+    let mut g = tbl();
+    let b = perm(&mut g, P1, "Malakir Bloodwitch");
+    perm(&mut g, P0, "Flickerwisp");
+    assert!(g.perm(b).on_bf, "a white source can't target it");
+    assert!(!in_exile(&g, P1, "Malakir Bloodwitch"));
+}
