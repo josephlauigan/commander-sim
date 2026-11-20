@@ -671,3 +671,25 @@ fn a_shock_land_the_ais_flickerwisp_returns_untapped_costs_two_life() {
     assert!(!g.perm(back).tapped, "the AI pays early in the game");
     assert_eq!(g.player(P0).life, life - 2, "an untapped shock land is paid for");
 }
+
+// ------------------------------------------------------------------ a blinked double-faced land card
+// A double-faced card put onto the battlefield from exile enters front face up: Witch-Blessed Meadow comes back as
+// Witch Enchanter (CR 712.11), a creature, whose enters trigger destroys an artifact or enchantment an opponent controls.
+#[test]
+fn felidar_blinking_witch_blessed_meadow_returns_witch_enchanter_and_its_trigger_asks() {
+    const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
+    let mut g = tbl();
+    let ring = perm(&mut g, P1, "Sol Ring");
+    perm(&mut g, P1, "Mind Stone");
+    lands(&mut g, P0, WITCH, 1, false);
+    let h = person_rules(&mut g, &[("exile one of your permanents", "Witch"), ("Witch Enchanter", "Sol Ring")]);
+    perm(&mut g, P0, "Felidar Guardian");
+    let cd = card(&g, WITCH);
+    let back: Vec<_> =
+        g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(cd)).collect();
+    assert_eq!(back.len(), 1, "Witch Enchanter is among the permanents");
+    assert!(g.is_creature(back[0]), "front face up: a creature");
+    assert!(!g.player(P0).lands.iter().any(|&l| g.perm(l).on_bf), "and no longer a land");
+    assert!(!asks(&h, "Witch Enchanter").is_empty(), "its enters trigger asks: {:?}", h.asked());
+    assert!(!g.perm(ring).on_bf, "and destroys the artifact the person picked");
+}
