@@ -477,3 +477,5 @@ Youthful Valkyrie | Etb | T
 Youthful Valkyrie | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Zealous Conscripts | Etb | T
 _____ Goblin | Etb | T
+Tocasia's Welcome | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
+Welcoming Vampire | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token

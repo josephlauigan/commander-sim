@@ -172,8 +172,10 @@ fn assert_queue_adapter_runs_once_and_is_blanked(card_name: &str, e: Event) {
     for owner in [PlayerId(0), PlayerId(1)] {
         let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
         perm(&mut g, owner, "Delney, Streetwise Lookout");
-        perm(&mut g, owner, "Panharmonicon");
+        perm(&mut g, owner, "Starfield Vocalist");
         let src = perm(&mut g, owner, card_name);
+        // An enchantment adapter can be animated too: exercise its source extras with the same Delney fixture.
+        g.perm_mut(src).exc.add_types = sim_core::cards::Types::CREATURE;
         let power = sim_core::engine::values::epow(&g, src);
         g.perm_mut(src).plus += 2 - power;
         assert!(sim_core::engine::stack::extra_for(&g, src) > 0, "{card_name}: source doubler fixture");

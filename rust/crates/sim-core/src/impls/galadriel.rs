@@ -1070,8 +1070,7 @@ fn mangara_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
 /// draw a card
 fn tocasia(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
-    let Some(cd) = g.perm(m).cd else { return Ok(()) };
-    if g.perm(m).owner != o || !g.is_creature(m) || g.db.get(cd).cmc > 3 {
+    if g.perm(m).owner != o || !g.is_creature(m) || g.perm(m).cd.is_some_and(|cd| g.db.get(cd).cmc > 3) {
         return Ok(());
     }
     let k = intern(&format!("tocasia{}", src.0));
@@ -1764,7 +1763,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Mangara, the Diplomat")?;
     c.attack = Some(mangara_attack);
     c.cast = Some(mangara_cast);
-    r.card(db, "Tocasia's Welcome")?.etb = Some(tocasia);
+    let c = r.card(db, "Tocasia's Welcome")?;
+    c.etb = Some(tocasia);
+    c.tokens_enter = Some(crate::engine::hooks::queue_etb_per_token);
+    *c = c.enter_queues(Event::TokensEnter);
     r.token_pt.push(voice_pt);
     let c = r.card(db, "Voice of Resurgence")?;
     c.cast = Some(voice_cast);
