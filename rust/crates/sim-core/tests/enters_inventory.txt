@@ -434,6 +434,7 @@ Tireless Tracker | Landfall | T
 Tishana's Tidebinder | Etb | T
 Titania, Protector of Argoth | Etb | T
 Tocasia's Welcome | Etb | T
+Tocasia's Welcome | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
 Tome of Legends | Etb | T |  | its commander trigger; the page it enters with is `as_enters`
 Touch the Spirit Realm | Etb | T
 Trail of Crumbs | Etb | T
@@ -461,6 +462,7 @@ Walking Ballista | Etb | S
 Weftstalker Ardent | Etb | T
 Weftstalker Ardent | TokenCreated | T
 Welcoming Vampire | Etb | T
+Welcoming Vampire | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
 Whirler Rogue | Etb | T
 White Mage's Staff | Etb | T
 Whitemane Lion | Etb | T
@@ -477,5 +479,3 @@ Youthful Valkyrie | Etb | T
 Youthful Valkyrie | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Zealous Conscripts | Etb | T
 _____ Goblin | Etb | T
-Tocasia's Welcome | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
-Welcoming Vampire | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
