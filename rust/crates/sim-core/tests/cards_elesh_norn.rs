@@ -670,7 +670,7 @@ fn opponent_elesh_blanks_meathook_massacre() {
     let target = perm(&mut g, P1, "Mother of Runes");
     lands(&mut g, P0, "Swamp", 8, false);
     let c = take(&mut g, P0, "The Meathook Massacre");
-    zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, ..Default::default() }).unwrap();
+    zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, x: 1, ..Default::default() }).unwrap();
     assert!(g.perm(target).on_bf, "Meathook's enters -X/-X is blanked");
     assert!(g.perm(elesh).on_bf);
 }
