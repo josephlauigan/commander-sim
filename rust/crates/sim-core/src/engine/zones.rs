@@ -1591,8 +1591,12 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if t.has(Tag::Wurm) {
         for &q in &opps {
             for x in g.player(q).perms.clone() {
-                if g.is_creature(x) && etgh(g, x) <= 2 {
-                    die(g, x, "destroy")?; // the 2 life is its dies trigger ('wurmdrain', in die_rest)
+                if g.is_creature(x) && !g.perm(x).phased {
+                    g.perm_mut(x).eot_pt.0 -= 2;
+                    g.perm_mut(x).eot_pt.1 -= 2;
+                    if etgh(g, x) <= 0 {
+                        die(g, x, "sba")?; // the 2 life is its dies trigger ('wurmdrain', in die_rest)
+                    }
                 }
             }
         }

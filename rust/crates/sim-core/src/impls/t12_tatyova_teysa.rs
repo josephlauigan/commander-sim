@@ -186,11 +186,12 @@ fn bonny_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let beau = g.player(o).perms.iter().any(|&x| live(g, x) && g.perm(x).token && &*g.perm(x).name == "Beau");
+    let made = lands_token(g, o, "Beau", "U", vec!["ox"], &[])?;
     if beau {
-        crate::glog!(g, "    {} already has Beau (the legend rule keeps one)", pname(g, o));
-        return Ok(());
+        for t in made {
+            die(g, t, "sba")?; // It still entered; the legend rule keeps the earlier Beau.
+        }
     }
-    lands_token(g, o, "Beau", "U", vec!["ox"], &[])?;
     crate::glog!(g, "    {} creates Beau ({} lands)", pname(g, o), g.player(o).lands.len());
     Ok(())
 }
