@@ -1718,7 +1718,7 @@ note = "instant: destroy target creature or planeswalker; the additional cost is
 tags = "pow=1 tgh=4"
 dsl = []
 status = "Full"
-note = "enters: you may exile another target permanent you control, then return it under its owner's control. A person picks any other permanent they control, lands and tokens included (a token is exiled for good, a land returns as a land), or none; the AI blinks its best enters permanent (never a token, Felidar Guardian or Restoration Angel: that loop is a combo). A chain of blinks stops after three links for the AI and ten for a person, and the log says so"
+note = "enters: you may exile another target permanent you control, then return it under its owner's control. A person picks any other permanent they control, lands and tokens included (a token is exiled for good; a land returns as a land, a shock land asks a person whether to pay its life; a double-faced land card returns front face up), or none; the AI blinks its best enters permanent (never a token, Felidar Guardian or Restoration Angel: that loop is a combo). A chain of blinks stops after three links for the AI and ten for a person, and the log says so"
 
 ["Felidar Umbra"]
 types = "E"
@@ -3553,7 +3553,7 @@ note = "each opponent's spell: they discard a junk card (or any card when low on
 tags = "human pow=2"
 dsl = []
 status = "Full"
-note = "two enters triggers: you become the monarch (end-step draw, taken by combat damage), and exile target creature an opponent controls until an opponent becomes the monarch (a person picks the creature and must pick one; the AI takes the best worth 1 or more; a token is gone). The exile is kept by the game, not the Jailer: it ends when an opponent of the Jailer's controller becomes the monarch, whatever happens to the Jailer or its controller. A monarch who leaves the game passes the crown to the player whose turn it is, else the next in turn order"
+note = "two enters triggers: you become the monarch (end-step draw, taken by combat damage), and exile target creature an opponent controls until an opponent becomes the monarch (a person picks the creature and must pick one, a land creature included; the AI takes the best worth 1 or more; a token is gone). The exile is kept by the game, not the Jailer: it ends when an opponent of the Jailer's controller becomes the monarch, whatever happens to the Jailer or its controller. A monarch who leaves the game passes the crown to the player whose turn it is, else the next in turn order"
 
 ["Palantír of Orthanc"]
 types = "A"
@@ -7033,7 +7033,7 @@ note = "can't be blocked by creatures with power 3 or greater (cardcode::evasion
 tags = "leg human pow=1 tgh=1"
 dsl = []
 status = "Full"
-note = "when it enters, exile up to one other target creature you control (a person picks it or none, a token included; the AI takes the best by bulk_white::reenter_value: Cloud first), back under its owner's control at the beginning of the next end step (a token is gone); at the beginning of your end step, if cards were put into exile this turn (a permanent leaving for exile, its own included), a +1/+1 counter on Ennis. Cards that go to exile from hand, graveyard or the stack (foretell, flashback) don't count"
+note = "when it enters, exile up to one other target creature you control (a person picks it or none, a token included, a land creature too; the AI takes the best by bulk_white::reenter_value: Cloud first), back under its owner's control at the beginning of the next end step (a token is gone); at the beginning of your end step, if cards were put into exile this turn (a permanent leaving for exile, its own included), a +1/+1 counter on Ennis. Cards that go to exile from hand, graveyard or the stack (foretell, flashback) don't count"
 
 ["Stormfront Riders"]
 tags = "human pow=4 tgh=3 fly"
