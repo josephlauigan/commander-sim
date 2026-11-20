@@ -955,7 +955,11 @@ fn gates_defend(
     g.player_mut(d).hand.remove(i);
     let l = g.add_land(d, c, false);
     crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(d).name);
-    if ability_window_card(g, d, c, "target creature phases out", None, Some(big))? && g.perm(big).on_bf {
+    // "When this land enters, up to one target creature phases out": a triggered ability
+    if crate::engine::hooks::enters_trigger_times(g, d, Some(l)) > 0
+        && ability_window_card(g, d, c, "target creature phases out", None, Some(big))?
+        && g.perm(big).on_bf
+    {
         g.perm_mut(big).phased = true;
         if !g.control_links.is_empty() {
             crate::engine::control::end_links(g);
@@ -964,7 +968,6 @@ fn gates_defend(
         atk.retain(|&a| a != big);
         crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(big).name);
     }
-    let _ = l;
     crate::engine::zones::landfall(g, d)
 }
 
