@@ -647,3 +647,87 @@ fn the_ai_blinks_its_own_creature_and_it_returns_even_if_charming_prince_leaves_
     sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
     assert!(has_perm(&g, P0, "Elvish Visionary"));
 }
+
+// ------------------------------------------------------------------ Solitude
+const SOL: &str = "Solitude";
+
+fn evoke_alts(g: &mut Game, c: sim_core::ids::CardId) -> Vec<String> {
+    sim_core::human::alt::hand_alts(g, P0, c).unwrap().into_iter().map(|a| a.0).collect()
+}
+
+/// P1 holds Counterspell with {U}{U} in the pool, and answers a spell with it
+fn counterspell_seat(g: &mut Game) -> Arc<ScriptHuman> {
+    hand(g, P1, &["Counterspell"]);
+    pool(g, P1, &[('U', 2)]);
+    seat(g, P1, vec![act(json!({"do": "cast", "card": 0})), pass(), pass(), pass(), pass()])
+}
+
+/// P1 was given priority on the Solitude spell itself (not only on its enters trigger) and countered it there
+fn countered_as_a_spell(h: &ScriptHuman) {
+    let first = h.asked().into_iter().next().expect("the opponent got priority");
+    assert!(first.prompt.contains("casts Solitude"), "{}", first.prompt);
+}
+
+#[test]
+fn a_person_may_evoke_solitude_whenever_a_white_card_is_in_hand() {
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    pool(&mut g, P0, &[('W', 2), ('C', 3)]); // the person could cast it for {3}{W}{W} too
+    seat_rules(&mut g, vec![]);
+    let alts = evoke_alts(&mut g, c);
+    assert!(alts.iter().any(|a| a.contains("evoke")), "{alts:?}");
+}
+
+#[test]
+fn a_person_is_not_offered_evoke_without_another_white_card() {
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &[SOL, "Island", "Mulldrifter"])[0];
+    seat_rules(&mut g, vec![]);
+    assert!(evoke_alts(&mut g, c).is_empty());
+}
+
+#[test]
+fn a_person_evokes_solitude_and_picks_the_white_card_to_exile() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares", "Path to Exile"]);
+    let h = play(
+        &mut g,
+        cast0(),
+        vec![ans_word("Solitude: which?", "evoke"), ans_word("which white card", "Path to Exile")],
+    );
+    assert!(asked(&h, "which white card"));
+    assert!(exiled(&g, P0, "Path to Exile"), "the picked card was exiled");
+    assert!(in_hand(&g, P0, "Swords to Plowshares"));
+    assert!(in_gy(&g, P0, SOL), "sacrificed after it entered");
+    assert!(!has_perm(&g, P0, SOL));
+}
+
+#[test]
+fn an_evoked_solitude_can_be_countered() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    let h1 = counterspell_seat(&mut g);
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    countered_as_a_spell(&h1);
+    assert!(in_gy(&g, P0, SOL) && exiled(&g, P0, "Swords to Plowshares"), "the cost was paid");
+    assert!(g.perm(big).on_bf, "it never entered: no exile trigger");
+    assert!(in_gy(&g, P1, "Counterspell"));
+}
+
+#[test]
+fn the_ais_evoked_solitude_can_be_countered_too() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Grave Titan");
+    let h1 = counterspell_seat(&mut g);
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    let opts = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1, "the AI evokes against a worthwhile creature");
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    countered_as_a_spell(&h1);
+    assert!(in_gy(&g, P0, SOL) && exiled(&g, P0, "Swords to Plowshares"));
+    assert!(g.perm(big).on_bf, "countered: the exile trigger never happened");
+    assert!(in_gy(&g, P1, "Counterspell"));
+}
