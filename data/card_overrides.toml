@@ -3564,7 +3564,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied; one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest)"
 
 ["Paradise Druid"]
 status = "Full"
@@ -3911,7 +3911,7 @@ note = "recurs itself when there is a sacrifice outlet"
 tags = "human pow=1 tgh=3"
 dsl = []
 status = "Full"
-note = "each artifact (cast or token) entering under your control deals 1 to each opponent; a batch of artifact tokens is one trigger per token, each with its own additional triggers"
+note = "each artifact (cast or token) entering under your control deals 1 to each opponent; a batch of artifact tokens is one trigger per token, each with its own additional triggers (one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest))"
 
 ["Reckless Impulse"]
 types = "S"
