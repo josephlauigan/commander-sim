@@ -33,10 +33,16 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     }
     // Effects that make a trigger happen an additional time add up (CR 603.2d: a trigger happens 1 + n times, and such an
     // effect does not apply to what another one made). So each trigger that is not itself a repeat (a Panharmonicon-style
-    // copy made where the event was fired) gets one extra per Cloud, Delney and Roaming Throne that applies to it.
+    // copy made where the event was fired) gets its cast-event copies plus the source extras that apply to it.
     let mut extra = vec![];
     for t in entries.iter().filter(|t| !t.repeat) {
-        let k = t.src.map_or(0, |s| extra_for(g, s));
+        let event = match &t.act {
+            TrigAct::Hook { event: crate::hooks::Event::Cast, .. } => {
+                crate::engine::hooks::total_trigger_copies(g, t.controller, "cast", t.src).max(0) as usize
+            }
+            _ => 0,
+        };
+        let k = event + t.src.map_or(0, |s| extra_for(g, s));
         extra.extend(std::iter::repeat_n(Trigger { repeat: true, ..t.clone() }, k));
     }
     entries.extend(extra);

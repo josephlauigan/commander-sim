@@ -2361,10 +2361,10 @@ fn storm_copycast(g: &mut Game, src: Src, p: PlayerId, effect: u8) -> Res {
 }
 
 // ------------------------------------------------------------------ Alania, Divergent Storm
-/// mine.alania_triggers: Alania triggers once, +1 with Veyran (a cast instant or sorcery), +1 more with Harmonic
-/// Prodigy (a Wizard)
-fn alania_triggers(g: &Game, p: PlayerId) -> u32 {
-    1 + has(g, p, Tag::Veyran) as u32 + has(g, p, Tag::Prodigy) as u32
+/// Veyran's event copy of Alania's cast trigger. For kind "cast", x is the trigger source;
+/// the queue adds this only to originals, alongside source extras such as Prodigy.
+fn alania_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
+    i32::from(kind == "cast" && x == Some(src) && g.perm(src).owner == p && has(g, p, Tag::Veyran))
 }
 
 /// mine.alania_pick: the AI: which opponent draws the card for a copy of c, or None to decline. A copied counterspell
@@ -2401,32 +2401,27 @@ fn alania(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     let ctx = cast_ctx(g, c);
     let name = g.db.get(c).name.to_string();
     let hum = human_of(g, p).is_some();
-    for _ in 0..alania_triggers(g, p) {
-        let opps: Vec<PlayerId> = g.opps(p).collect();
-        if opps.is_empty() || g.over {
-            return Ok(());
-        }
-        if !hum && alania_pick(g, p, c, &opps).is_none() {
-            return Ok(());
-        }
-        if !trigger_window(g, p, Some(src), &format!("copy {name}"), None)? {
-            continue;
-        }
-        let opps: Vec<PlayerId> = g.opps(p).collect();
-        if opps.is_empty() {
-            return Ok(());
-        }
-        let q = if hum { choices::alania(g, p, c, &opps)? } else { alania_pick(g, p, c, &opps) };
-        let Some(q) = q else {
-            if !hum {
-                return Ok(()); // the AI's answer is the same for each trigger
-            }
-            continue;
-        };
-        draw(g, q, 1, false)?;
-        crate::glog!(g, "    Alania: {} draws a card, {} copies {name}", g.player(q).name, g.player(p).name);
-        crate::engine::cast::copy_spell(g, p, c, ctx.as_ref(), false)?;
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() || g.over {
+        return Ok(());
     }
+    if !hum && alania_pick(g, p, c, &opps).is_none() {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), &format!("copy {name}"), None)? {
+        return Ok(());
+    }
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() {
+        return Ok(());
+    }
+    let q = if hum { choices::alania(g, p, c, &opps)? } else { alania_pick(g, p, c, &opps) };
+    let Some(q) = q else {
+        return Ok(());
+    };
+    draw(g, q, 1, false)?;
+    crate::glog!(g, "    Alania: {} draws a card, {} copies {name}", g.player(q).name, g.player(p).name);
+    crate::engine::cast::copy_spell(g, p, c, ctx.as_ref(), false)?;
     Ok(())
 }
 
@@ -4765,7 +4760,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let k = r.card(db, "Thousand-Year Storm")?;
     k.cast = Some(storm);
     k.copycast = Some(storm_copycast);
-    r.card(db, "Alania, Divergent Storm")?.cast = Some(alania);
+    let c = r.card(db, "Alania, Divergent Storm")?;
+    c.cast = Some(alania);
+    c.trigger_copies = Some(alania_copies);
     r.card(db, "Ral, Storm Conduit")?.options = Some(ral);
     for (name, ..) in PREPARED {
         r.card(db, name)?.options = Some(prepared_opt);
