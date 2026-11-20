@@ -505,3 +505,145 @@ fn the_ai_does_not_channel_takenuma_with_nothing_worth_returning() {
     set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
     assert!(takenuma_options(&mut g).is_empty());
 }
+
+// ------------------------------------------------------------------ Charming Prince
+const PRINCE: &str = "Charming Prince";
+
+/// a person at P0 who passes priority and answers a question by `rules` (the first choice otherwise)
+fn seat_rules(g: &mut Game, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        for (key, word) in &rules {
+            if r.prompt.contains(key.as_str())
+                && let Some(i) = r.choices.iter().position(|c| c.contains(word.as_str()))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+fn mode_question(h: &ScriptHuman) -> Request {
+    h.asked().into_iter().find(|r| r.prompt.contains("Charming Prince: choose one")).expect("asks the mode")
+}
+
+fn steal(g: &mut Game, to: PlayerId, m: PermId) {
+    assert!(sim_core::engine::control::gain_control(g, to, m, sim_core::engine::control::Duration::Permanent));
+}
+
+#[test]
+fn charming_prince_gives_a_person_all_three_modes() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    let q = mode_question(&h);
+    assert_eq!(q.choices.len(), 3, "{:?}", q.choices);
+    assert!(q.choices[0].contains("Scry 2") || q.choices[0].contains("scry 2"), "{:?}", q.choices);
+    assert!(q.choices[2].contains("exile"), "{:?}", q.choices);
+    assert_eq!(g.player(P0).life, 43);
+    assert!(g.perm(elves).on_bf);
+}
+
+#[test]
+fn charming_prince_offers_no_exile_mode_without_another_creature_you_own() {
+    let mut g = tbl();
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 2);
+}
+
+#[test]
+fn charming_prince_scry_asks_the_person_about_each_card() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Mulldrifter", "Karn Liberated"]);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "cry 2".into())]);
+    perm(&mut g, P0, PRINCE);
+    let scry: Vec<_> = h.asked().into_iter().filter(|r| r.prompt.starts_with("Scry")).collect();
+    assert_eq!(scry.len(), 2, "scry 2 looks at two cards");
+    assert_eq!(g.player(P0).life, 40);
+}
+
+#[test]
+fn charming_prince_exiles_a_creature_you_own_and_it_returns_at_the_end_step() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(elves).on_bf && exiled(&g, P0, "Llanowar Elves"));
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "back at the beginning of the next end step");
+}
+
+#[test]
+fn the_creature_still_returns_when_charming_prince_leaves_first() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    let prince = perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(elves).on_bf, "exiled by the Prince");
+    sim_core::engine::zones::die(&mut g, prince, "destroy").unwrap();
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "the return does not depend on the Prince");
+}
+
+#[test]
+fn charming_prince_may_exile_a_creature_you_own_that_an_opponent_controls() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    steal(&mut g, P1, elves);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 3, "an opponent's control does not matter");
+    assert!(!g.perm(elves).on_bf);
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "returned under your control");
+    assert!(!has_perm(&g, P1, "Llanowar Elves"));
+}
+
+#[test]
+fn charming_prince_may_not_exile_a_creature_you_control_but_do_not_own() {
+    let mut g = tbl();
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    steal(&mut g, P0, theirs);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 2, "no exile mode: you do not own it");
+    assert!(g.perm(theirs).on_bf);
+}
+
+#[test]
+fn a_token_you_own_that_charming_prince_exiles_is_gone() {
+    let mut g = tbl();
+    let tok = token(&mut g, P0, 1);
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(tok).on_bf);
+    assert!(g.eot_returns.is_empty(), "a token does not come back");
+}
+
+#[test]
+fn the_ai_does_not_exile_a_creature_it_controls_but_does_not_own() {
+    let mut g = tbl();
+    let theirs = perm(&mut g, P1, "Elvish Visionary");
+    steal(&mut g, P0, theirs);
+    perm(&mut g, P0, PRINCE);
+    assert!(g.perm(theirs).on_bf && g.player(P0).perms.contains(&theirs), "not its to exile");
+    assert!(g.eot_returns.is_empty());
+}
+
+#[test]
+fn the_ai_blinks_its_own_creature_and_it_returns_even_if_charming_prince_leaves_first() {
+    let mut g = tbl();
+    let vis = perm(&mut g, P0, "Elvish Visionary");
+    let prince = perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(vis).on_bf, "the AI blinks a creature with an enters trigger");
+    sim_core::engine::zones::die(&mut g, prince, "destroy").unwrap();
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Elvish Visionary"));
+}
