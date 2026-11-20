@@ -126091,9 +126091,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Channel — {3}{B}, Discard ~: Mill three cards, then return a creature or planeswalker card from your graveyard to your hand. This ability costs {1} less to activate for each legendary creature you control.   [partly: this ability costs {1} less to activate for each legendary creature you control]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,

@@ -158,7 +158,7 @@ fn shrouded(g: &Game, t: PermId) -> bool {
 
 /// may a spell or ability of o's target t: on the battlefield and not phased out; shroud stops everyone, hexproof (the
 /// keyword, a Helm, Swiftfoot Boots, ...) only the opponents of its controller
-fn may_target(g: &Game, o: PlayerId, t: PermId) -> bool {
+pub fn may_target(g: &Game, o: PlayerId, t: PermId) -> bool {
     let x = g.perm(t);
     x.on_bf && !x.phased && if x.owner == o { !shrouded(g, t) } else { !untargetable(g, t) }
 }

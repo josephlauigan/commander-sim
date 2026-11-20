@@ -558,14 +558,13 @@ fn charming_prince_blinks_until_the_end_step() {
     let mut g = table(&["brago-azorius-blink-control", "sauron"]);
     perm(&mut g, P0, "Wall of Omens");
     stack::settle_stack(&mut g).unwrap();
-    let p = perm(&mut g, P0, "Charming Prince");
+    perm(&mut g, P0, "Charming Prince");
     stack::settle_stack(&mut g).unwrap();
     assert!(named(&g, P0, "Wall of Omens").is_empty());
-    assert_eq!(g.player(P0).oath_return, [card(&g, "Wall of Omens")]);
-    let f = g.registry.get(card(&g, "Charming Prince")).unwrap().end_step.unwrap();
-    f(&mut g, p, P1).unwrap(); // any player's end step
+    assert_eq!(g.eot_returns, [(P0, card(&g, "Wall of Omens"))]);
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap(); // the beginning of the next end step
     assert_eq!(named(&g, P0, "Wall of Omens").len(), 1);
-    assert!(g.player(P0).oath_return.is_empty());
+    assert!(g.eot_returns.is_empty());
 }
 
 #[test]

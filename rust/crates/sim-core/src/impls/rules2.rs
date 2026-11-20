@@ -19,7 +19,7 @@ use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::values::{epow, etgh, has_type, pval, untargetable};
+use crate::engine::values::{colors_of, epow, etgh, has_type, protected_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, Tokens, die, draw, enter, enter_token_copy, exile_perm, land_ramp, leave, make_artifact_tokens, make_tokens,
     max_by, min_by, searchable,
@@ -649,13 +649,33 @@ fn emperor_flash(
 }
 
 // ================================================================== evoke: Solitude
-/// evoke by exiling a white card from hand (free, instant speed): exile the best opposing creature
+/// the white cards in p's hand other than c (white is the card's colour)
+fn white_cards(g: &Game, p: PlayerId, c: CardId) -> Vec<CardId> {
+    g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).colors.has('W')).collect()
+}
+
+/// evoking is casting Solitude for an alternative cost: the cast restrictions (Rule of Law, Grand Abolisher,
+/// Teferi, Time Raveler, split second ...) apply, and so do the cost increases (Sphere of Resistance, Defense Grid)
+fn evoke_allowed(g: &Game, p: PlayerId, c: CardId) -> bool {
+    castable(g, p, c, "hand") && crate::engine::altcost::tax_payable(g, p, c)
+}
+
+/// evoke by exiling a white card from hand (free, instant speed). A person may evoke whenever they hold a white card
+/// and picks it (the enters trigger asks for the target); the AI evokes against the best opposing creature when it
+/// is worth at least 6, exiling its least wanted white card
 fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if crate::human::is_human(g, p) {
+        if white_cards(g, p, c).is_empty() || !evoke_allowed(g, p, c) {
+            return Ok(vec![]);
+        }
+        let label = "evoke Solitude: exile a white card from your hand".to_string();
+        return Ok(vec![plan(0.0, label, solitude_pick_go, c.0 as i64)]);
+    }
     let (gn, pips) = cost_of(g, p, c);
     if can_pay_spell(g, p, c, gn, &pips, false) && post.is_some() {
         return Ok(vec![]);
     }
-    let whites = g.player(p).hand.iter().any(|&x| x != c && g.db.get(x).pips.contains('W'));
+    let whites = !white_cards(g, p, c).is_empty() && evoke_allowed(g, p, c);
     let Some(t) = best_opp_creature(g, p, |_, _| true) else { return Ok(vec![]) };
     if !whites || pval(g, t) < 6.0 {
         return Ok(vec![]);
@@ -669,16 +689,48 @@ fn solitude_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || !g.perm(t).on_bf {
         return Ok(false);
     }
-    let whites: Vec<CardId> =
-        g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).pips.contains('W')).collect();
+    let whites = white_cards(g, p, c);
     let Some(x) = min_by(&whites, |x| card_worth(g, p, x, false)) else { return Ok(false) };
+    evoke_solitude(g, p, c, x)
+}
+
+/// a person's evoke: they pick the white card to exile (backing out does nothing)
+fn solitude_pick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let whites = white_cards(g, p, c);
+    if whites.is_empty() {
+        return Ok(false);
+    }
+    let labels: Vec<String> = whites.iter().map(|&x| crate::human::choices::card_label(g, x)).collect();
+    let prompt = "Solitude (evoke): exile which white card from your hand?";
+    let Some(k) = crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("cancel"), None)? else {
+        return Ok(true); // backed out before anything was paid
+    };
+    evoke_solitude(g, p, c, whites[k])
+}
+
+/// exile white card x from p's hand as the cost and cast Solitude c with it: opponents may counter it; if it enters,
+/// the enters trigger (its exile) is followed by the evoke sacrifice
+fn evoke_solitude(g: &mut Game, p: PlayerId, c: CardId, x: CardId) -> Res<bool> {
+    if !evoke_allowed(g, p, c) || !crate::engine::altcost::pay_tax(g, p, c)? {
+        return Ok(false); // nothing is paid or exiled
+    }
     remove_card(&mut g.player_mut(p).hand, x);
     g.player_mut(p).exile.push(x);
     remove_card(&mut g.player_mut(p).hand, c);
     crate::glog!(g, "  {} evokes Solitude (exiling {})", pname(g, p), g.db.get(x).name);
     on_cast(g, p, c)?;
+    if !counter_window(g, p, c, 6.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(true);
+    }
     let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    if on(g, p, m) {
+    // the sacrifice is a triggered ability that uses the stack: it can be responded to (a blink in response keeps
+    // Solitude: the new object is not sacrificed)
+    if on(g, p, m) && trigger_window(g, p, Some(m), "evoke: sacrifice Solitude", None)? && on(g, p, m) {
         die(g, m, "sac")?;
     }
     Ok(true)
@@ -1528,41 +1580,86 @@ fn displacer_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// blinks your best ETB creature until the end step, else 3 life
+/// Charming Prince: choose one: scry 2; you gain 3 life; exile another target creature you own, then return it to the
+/// battlefield under your control at the beginning of the next end step (`g.eot_returns`, so it does not depend on the
+/// Prince staying). A person picks the mode; the AI blinks its best creature with an enters trigger, else gains 3 life.
 fn prince(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = g.perm(src).owner;
-    if !trigger_window(g, o, Some(src), "blink a creature or gain 3 life", None)? {
+    if !trigger_window(g, o, Some(src), "scry 2, gain 3 life, or blink a creature", None)? {
         return Ok(());
     }
-    let cs: Vec<PermId> = g
-        .player(o)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&x| x != src && g.is_creature(x) && !g.perm(x).token && g.perm(x).cd.is_some() && etb_val(g, x) > 0.0)
-        .collect();
+    let cands = prince_targets(g, o, src);
+    if crate::human::is_human(g, o) {
+        return prince_person(g, o, &cands);
+    }
+    let cs: Vec<PermId> =
+        cands.into_iter().filter(|&x| !g.perm(x).token && g.perm(x).cd.is_some() && etb_val(g, x) > 0.0).collect();
     if let Some(t) = max_by(&cs, |x| etb_val(g, x)) {
-        leave(g, t)?;
-        let cd = g.perm(t).cd.unwrap();
-        g.player_mut(o).oath_return.push(cd);
-        crate::glog!(g, "    Charming Prince exiles {} until the end step", g.perm(t).name);
-        crate::engine::zones::exiled_from_bf(g, t, None)?;
+        prince_blink(g, o, t)?;
     } else {
         gain(g, o, 3)?;
     }
     Ok(())
 }
 
-/// the blinked creature returns at the end step (any player's: Python doesn't check whose)
-fn prince_back(g: &mut Game, src: Src, _p: PlayerId) -> Res {
-    let o = g.perm(src).owner;
-    for cd in g.player(o).oath_return.clone() {
-        enter(g, o, cd, Enter::default())?;
+/// the creatures o owns that Charming Prince `src` may target: on the battlefield under anyone's control (an
+/// opponent's control of it does not matter), hexproof, shroud and protection from white respected
+fn prince_targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
+    let white = colors_of(g, src);
+    g.players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&x| {
+            x != src
+                && g.perm(x).orig == o
+                && g.is_creature(x)
+                && super::vondam_elspeth::may_target(g, o, x)
+                && !protected_from(g, x, white)
+        })
+        .collect()
+}
+
+fn prince_person(g: &mut Game, o: PlayerId, cands: &[PermId]) -> Res {
+    let mut labels = vec!["scry 2".to_string(), "you gain 3 life".to_string()];
+    if !cands.is_empty() {
+        labels
+            .push("exile another target creature you own, then return it at the beginning of the next end step".into());
     }
-    g.player_mut(o).oath_return.clear();
+    let k = crate::human::choices::choose(g, o, "choose", "Charming Prince: choose one", &labels, None, None)?;
+    match k.unwrap_or(1) {
+        0 => crate::ai::topdeck::scry(g, o, 2, false)?,
+        2 => {
+            let prompt = "Charming Prince: exile which creature you own?";
+            if let Some(t) = crate::human::cards::pick_perm(g, o, "target", prompt, cands, None)? {
+                prince_blink(g, o, t)?;
+            }
+        }
+        _ => gain(g, o, 3)?,
+    }
+    Ok(())
+}
+
+/// exile t (a token is gone for good); its card returns under o's control at the beginning of the next end step
+fn prince_blink(g: &mut Game, o: PlayerId, t: PermId) -> Res {
+    // an opponent controls it: its ward triggers (pay it or the ability is countered)
+    if g.perm(t).owner != o && !crate::engine::ward::pay_ward(g, o, t)? {
+        return Ok(());
+    }
+    let x = g.perm(t);
+    let (card, token, name) = (x.phys.or(x.cd), x.token, x.name);
+    exile_perm(g, t)?;
+    if let Some(c) = card
+        && !token
+        && g.player(o).exile.contains(&c)
+    {
+        g.eot_returns.push((o, c));
+        crate::glog!(g, "    Charming Prince exiles {name} until the beginning of the next end step");
+    } else {
+        crate::glog!(g, "    Charming Prince exiles {name}");
+    }
     Ok(())
 }
 
@@ -2099,8 +2196,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Eldrazi Displacer")?.options = Some(displacer);
     let c = r.card(db, "Charming Prince")?;
     c.etb = Some(prince);
-    c.end_step = Some(prince_back);
-    at_once(c, Event::EndStep, true);
     // pumps
     r.card(db, "Battle Cry Goblin")?.options = Some(bcg_pump);
     let c = r.card(db, "Purphoros, God of the Forge")?;

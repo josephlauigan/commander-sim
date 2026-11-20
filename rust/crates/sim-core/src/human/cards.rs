@@ -403,7 +403,10 @@ fn land_tapped(g: &Game, l: PermId, what: &str) -> Why {
 /// cards._loyalty: why a loyalty ability of m costing `cost` can't be activated now (sorcery speed, once per turn,
 /// enough loyalty)
 pub(super) fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
-    if let Some(why) = legal::sorcery_timing(g, p) {
+    // The Wandering Emperor: "As long as she entered this turn, you may activate her loyalty abilities any time you
+    // could cast an instant" (a blinked one is a new object, so it counts again)
+    let any_time = &*g.perm(m).name == "The Wandering Emperor" && crate::impls::t6_thanos::entered_this_turn(g, m);
+    if !any_time && let Some(why) = legal::sorcery_timing(g, p) {
         return Some(why.replace("do that", "activate a loyalty ability"));
     }
     if !crate::impls::mine::pw_once(g, m) {
@@ -1442,6 +1445,67 @@ fn sokenzan(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     Ok(None)
 }
 
+/// Eiganjo, Seat of the Empire: channel {2}{W}, discard it: 4 damage to target attacking or blocking creature (any
+/// player's), at instant speed; {1} less for each legendary creature you control. Pithing Needle stops it.
+fn eiganjo(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if crate::impls::t6_stax::needle_stops(g, &cname(g, c)) {
+        return Ok(Some("Pithing Needle names Eiganjo: its activated abilities can't be activated.".into()));
+    }
+    let none = crate::cards::Colors::NONE;
+    let cre = crate::impls::yoshimaru_p7::combatants(g, p, none);
+    if cre.is_empty() {
+        return Ok(Some("Eiganjo needs an attacking or blocking creature to target.".into()));
+    }
+    let n = crate::impls::t6_lands::eiganjo_cost(g, p);
+    if let Some(why) = super::mana::cost_problem(g, p, n, "W") {
+        return Ok(Some(format!("Can't channel Eiganjo. {why}")));
+    }
+    let prompt = "Eiganjo: 4 damage to which attacking or blocking creature?";
+    let Some(t) = pick_perm(g, p, "target", prompt, &cre, Some("cancel"))? else { return Ok(None) };
+    super::mana::pay_from_pool(g, p, n, "W");
+    let pl = g.player_mut(p);
+    if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+        pl.hand.remove(i);
+    }
+    pl.gy.push(c);
+    let what = format!("4 damage to {}", g.perm(t).name);
+    crate::glog!(g, "  {} channels Eiganjo: {}", pname(g, p), what);
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), &what, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now = crate::impls::yoshimaru_p7::combatants(g, p, none);
+            let prompt = "The copy of Eiganjo's ability: 4 damage to which attacking or blocking creature?";
+            if !now.is_empty()
+                && let Some(x) = pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if crate::impls::yoshimaru_p7::combatants(g, p, none).contains(&t) {
+            // real damage: a creature with toughness over 4 survives with it marked
+            super::choices::apply_damage_by(g, p, Target::Perm(t), 4, "Eiganjo", "burn", None)?;
+        }
+        Ok(())
+    })?;
+    Ok(None)
+}
+
+/// Takenuma, Abandoned Mire: channel {3}{B}, discard it: mill three cards, then return a creature or planeswalker card
+/// from your graveyard to your hand; {1} less for each legendary creature you control. Pithing Needle stops it.
+fn takenuma(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if crate::impls::t6_stax::needle_stops(g, &cname(g, c)) {
+        return Ok(Some("Pithing Needle names Takenuma: its activated abilities can't be activated.".into()));
+    }
+    let n = crate::impls::yoshimaru_p7::takenuma_cost(g, p);
+    if let Some(why) = super::mana::cost_problem(g, p, n, "B") {
+        return Ok(Some(format!("Can't channel Takenuma. {why}")));
+    }
+    super::mana::pay_from_pool(g, p, n, "B");
+    crate::impls::yoshimaru_p7::takenuma_channel(g, p, c)?;
+    Ok(None)
+}
+
 /// cards._insight
 fn insight(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     if let Some(why) = legal::sorcery_timing(g, p) {
@@ -1492,6 +1556,14 @@ fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
         "Sokenzan, Crucible of Defiance" => {
             vec![("channel ({3}{R}, {1} less per legendary creature): two 1/1 Spirits with haste", sokenzan)]
         }
+        "Takenuma, Abandoned Mire" => vec![(
+            "channel ({3}{B}, {1} less per legendary creature), discard it: mill three, then return a creature or planeswalker card",
+            takenuma,
+        )],
+        "Eiganjo, Seat of the Empire" => vec![(
+            "channel ({2}{W}, {1} less per legendary creature), discard it: 4 damage to target attacking or blocking creature",
+            eiganjo,
+        )],
         "Bloodsoaked Insight // Sanguine Morass" => {
             vec![("Bloodsoaked Insight: an opponent's top three, playable until the end of your next turn", insight)]
         }

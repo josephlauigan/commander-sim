@@ -1,0 +1,888 @@
+//! Person paths of the Yoshimaru / Tymna deck, part A: the cards a person could not play (or could not play fully)
+//! though the AI could. Each test seats a person at P0, asks for the action and checks what the person was asked and
+//! what happened. Oracle text rules every expectation.
+
+mod play_common;
+use play_common::*;
+use sim_core::human::human::{human_main, respond};
+use sim_core::human::{Target, legal};
+use sim_core::state::Step;
+use sim_core::state::{DataKey, Val};
+use std::collections::VecDeque;
+use std::sync::{Arc, Mutex};
+
+type Rule = (String, String);
+
+fn ans_word(key: &str, word: &str) -> Rule {
+    (key.to_string(), word.to_string())
+}
+
+fn ans_target(g: &Game, key: &str, x: Target) -> Rule {
+    (key.to_string(), legal::describe_target(g, P0, x))
+}
+
+/// the person takes `action` at the first priority, answers by `rules` (the first that fits; the first choice when
+/// none does) and passes at every other priority
+fn play(g: &mut Game, action: Value, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let first = Mutex::new(Some(action));
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return match first.lock().unwrap().take() {
+                Some(a) => Answer::Action(a),
+                None => Answer::Action(json!({"do": "pass"})),
+            };
+        }
+        for (key, word) in &rules {
+            if r.prompt.contains(key.as_str())
+                && let Some(i) = r.choices.iter().position(|c| c.contains(word.as_str()))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    human_main(g, P0, false).unwrap();
+    h
+}
+
+fn use_perm(g: &mut Game, m: PermId, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let i = g.player(P0).perms.iter().position(|&x| x == m).unwrap();
+    play(g, json!({"do": "use", "perm": i}), rules)
+}
+
+/// the person has priority in a window on someone else's turn (`respond`): `actions` are taken one at a time at the
+/// priority questions (then it passes), the other questions are answered by `rules`
+fn respond_play(g: &mut Game, actions: Vec<Value>, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let queue = Mutex::new(VecDeque::from(actions));
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return match queue.lock().unwrap().pop_front() {
+                Some(a) => Answer::Action(a),
+                None => Answer::Action(json!({"do": "pass"})),
+            };
+        }
+        for (key, word) in &rules {
+            if r.prompt.contains(key.as_str())
+                && let Some(i) = r.choices.iter().position(|c| c.contains(word.as_str()))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    respond(g, P0, "P1's declare attackers step", None, None).unwrap();
+    h
+}
+
+fn tbl() -> Game {
+    let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
+    g.active = Some(P0);
+    g
+}
+
+fn asked(h: &ScriptHuman, word: &str) -> bool {
+    h.asked().iter().any(|r| r.prompt.contains(word))
+}
+
+fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
+    g.perm(m).eot_kw.iter().any(|k| *k == kw)
+}
+
+// ------------------------------------------------------------------ Mother of Runes
+#[test]
+fn mother_of_runes_gives_another_creature_the_chosen_protection() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let other = perm(&mut g, P0, "Llanowar Elves");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(other));
+    let h = use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "red")]);
+    assert!(asked(&h, "protection from what"));
+    assert!(has_kw(&g, other, "pro_R"), "{:?}", g.perm(other).eot_kw);
+    assert!(g.perm(mom).tapped);
+}
+
+#[test]
+fn mother_of_runes_may_target_herself_and_has_five_colours_only() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(mom));
+    let h = use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "blue")]);
+    assert!(has_kw(&g, mom, "pro_U"), "{:?}", g.perm(mom).eot_kw);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("protection from what")).expect("asks the colour");
+    let colours = q.choices.iter().filter(|c| c.starts_with("protection from")).count();
+    assert_eq!(colours, 5, "{:?}", q.choices);
+    assert!(!q.choices.iter().any(|c| c.contains("colorless")), "{:?}", q.choices);
+}
+
+#[test]
+fn mother_of_runes_is_refused_while_summoning_sick() {
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Mother of Runes");
+    let mom = sim_core::engine::zones::enter(
+        &mut g,
+        P0,
+        c,
+        sim_core::engine::zones::Enter { sick: true, ..Default::default() },
+    )
+    .unwrap();
+    let h = use_perm(&mut g, mom, vec![]);
+    assert!(!g.perm(mom).tapped);
+    assert!(h.told().iter().any(|t| t.1.contains("summoning sickness")), "{:?}", h.told());
+}
+
+// ------------------------------------------------------------------ The Wandering Emperor
+const EMP: &str = "The Wandering Emperor";
+
+/// P1's turn, its combat: a tapped attacker of P1's
+fn opp_attack(g: &mut Game) -> PermId {
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let atk = perm(g, P1, "Llanowar Elves");
+    g.perm_mut(atk).tapped = true;
+    atk
+}
+
+/// the loyalty The Wandering Emperor enters with
+fn emp_start(g: &Game) -> i32 {
+    g.db.get(card(g, EMP)).start_loyalty.expect("a planeswalker")
+}
+
+fn use_emp(i: usize) -> Value {
+    json!({"do": "use", "perm": i})
+}
+
+fn exiled(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).exile.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+#[test]
+fn emperor_flashed_in_on_the_attack_exiles_a_tapped_attacker() {
+    let mut g = tbl();
+    let atk = opp_attack(&mut g);
+    hand(&mut g, P0, &[EMP]);
+    pool(&mut g, P0, &[('W', 2), ('C', 2)]);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(
+        &mut g,
+        vec![json!({"do": "cast", "card": 0}), use_emp(0)],
+        vec![ans_word("which ability", "-2"), tg],
+    );
+    assert!(!g.perm(atk).on_bf && exiled(&g, P1, "Llanowar Elves"), "{:?}", h.told());
+    let e = perms_named(&g, P0, EMP)[0];
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) - 2));
+    assert_eq!(g.player(P0).life, 42, "gains 2");
+}
+
+#[test]
+fn emperor_that_did_not_enter_this_turn_is_sorcery_speed_on_an_opponents_turn() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    g.turn_enter = g.enter_no; // she entered on an earlier turn
+    let atk = opp_attack(&mut g);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(&mut g, vec![use_emp(0)], vec![ans_word("which ability", "-2"), tg]);
+    assert!(g.perm(atk).on_bf, "not exiled");
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g)), "no loyalty paid");
+    assert!(told_last(&h).contains("isn't your turn"), "{:?}", h.told());
+}
+
+#[test]
+fn emperor_activates_once_per_turn_even_in_the_flash_window() {
+    let mut g = tbl();
+    let atk = opp_attack(&mut g);
+    hand(&mut g, P0, &[EMP]);
+    pool(&mut g, P0, &[('W', 2), ('C', 2)]);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(
+        &mut g,
+        vec![json!({"do": "cast", "card": 0}), use_emp(0), use_emp(0)],
+        vec![ans_word("which ability", "-1"), ans_word("which ability", "-2"), tg],
+    );
+    let e = perms_named(&g, P0, EMP)[0];
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) - 1), "the first ability (-1) was paid once: {:?}", h.told());
+    assert!(told_last(&h).contains("already used a loyalty ability"), "{:?}", h.told());
+    assert!(g.perm(atk).on_bf);
+}
+
+#[test]
+fn emperor_plus_one_gives_an_opponents_creature_a_counter_and_first_strike() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(theirs));
+    respond_play(&mut g, vec![use_emp(0)], vec![ans_word("which ability", "+1"), tg]);
+    assert_eq!(g.perm(theirs).plus, 1);
+    assert!(has_kw(&g, theirs, "first strike"), "{:?}", g.perm(theirs).eot_kw);
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) + 1));
+}
+
+#[test]
+fn emperor_plus_one_may_have_no_target_and_still_gains_loyalty() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    let mine = perm(&mut g, P0, "Llanowar Elves");
+    let h = use_perm(&mut g, e, vec![ans_word("which ability", "+1"), ans_word("up to one", "no target")]);
+    assert!(asked(&h, "up to one") || asked(&h, "Wandering Emperor +1"));
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) + 1));
+    assert_eq!(g.perm(mine).plus, 0);
+}
+
+#[test]
+fn emperor_minus_one_makes_a_white_samurai_with_vigilance() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    use_perm(&mut g, e, vec![ans_word("which ability", "-1")]);
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a token");
+    assert!(g.perm(t).vig, "vigilance");
+    assert_eq!((g.perm(t).pow, g.perm(t).tgh), (2, 2));
+    assert!(g.perm(t).ttypes.iter().any(|ty| *ty == "samurai"));
+    assert!(sim_core::engine::values::colors_of(&g, t).has('W'));
+}
+
+#[test]
+fn emperor_minus_two_offers_only_tapped_creatures_of_any_controller() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    let own_tapped = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(own_tapped).tapped = true;
+    let _untapped = perm(&mut g, P1, "Llanowar Elves");
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(own_tapped));
+    let h = use_perm(&mut g, e, vec![ans_word("which ability", "-2"), tg]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("which tapped creature")).expect("asks the target");
+    let creatures = q.choices.iter().filter(|c| c.contains("Llanowar")).count();
+    assert_eq!(creatures, 1, "only the tapped one: {:?}", q.choices);
+    assert!(!g.perm(own_tapped).on_bf, "your own tapped creature is a legal target");
+    assert_eq!(g.player(P0).life, 42);
+}
+
+// ------------------------------------------------------------------ Eiganjo, Seat of the Empire
+const EIG: &str = "Eiganjo, Seat of the Empire";
+
+fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).gy.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+/// a Pithing Needle of P1's that names `name`
+fn needle(g: &mut Game, name: &str) {
+    let n = perm(g, P1, "Pithing Needle");
+    let c = card(g, name);
+    g.perm_mut(n).data.set(DataKey::Imprint, Val::Card(c));
+}
+
+/// P1 attacks with a tapped Llanowar Elves
+fn eig_combat(g: &mut Game) -> PermId {
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let atk = perm(g, P1, "Llanowar Elves");
+    g.perm_mut(atk).tapped = true;
+    g.in_combat = vec![atk];
+    atk
+}
+
+fn channel() -> Vec<Value> {
+    vec![json!({"do": "cast", "card": 0})]
+}
+
+#[test]
+fn eiganjo_channel_deals_4_damage_to_an_attacker_at_instant_speed() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let tg = ans_target(&g, "Eiganjo", Target::Perm(atk));
+    let h = respond_play(&mut g, channel(), vec![tg]);
+    assert!(!g.perm(atk).on_bf, "{:?}", h.told());
+    assert!(in_gy(&g, P0, EIG), "discarded as a cost");
+    assert_eq!(pool_total(&g, P0), 0);
+}
+
+#[test]
+fn eiganjo_costs_one_less_for_each_legendary_creature_you_control() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    perm(&mut g, P0, "Yoshimaru, Ever Faithful");
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1)]); // {2}{W} less two: {W}
+    respond_play(&mut g, channel(), vec![]);
+    assert!(!g.perm(atk).on_bf && in_gy(&g, P0, EIG));
+}
+
+#[test]
+fn eiganjo_without_the_mana_is_refused() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 1)]); // {2}{W}: one short
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(g.perm(atk).on_bf && !in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("channel Eiganjo"), "{:?}", h.told());
+}
+
+#[test]
+fn eiganjo_targets_only_attacking_and_blocking_creatures_of_any_controller() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    let blocker = perm(&mut g, P0, "Mother of Runes");
+    g.blocking = vec![blocker];
+    perm(&mut g, P1, "Birds of Paradise"); // in neither
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("Eiganjo")).expect("asks the target");
+    assert_eq!(q.choices.iter().filter(|c| c.starts_with("Llanowar") || c.starts_with("Mother")).count(), 2);
+    assert!(!q.choices.iter().any(|c| c.contains("Birds of Paradise")), "{:?}", q.choices);
+    assert!(!g.perm(atk).on_bf, "the first choice (the attacker) took the damage");
+}
+
+#[test]
+fn eiganjo_needs_an_attacking_or_blocking_creature() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(!in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("attacking or blocking"), "{:?}", h.told());
+}
+
+#[test]
+fn pithing_needle_naming_eiganjo_stops_the_channel() {
+    let mut g = tbl();
+    let atk = eig_combat(&mut g);
+    needle(&mut g, EIG);
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    let h = respond_play(&mut g, channel(), vec![]);
+    assert!(g.perm(atk).on_bf && !in_gy(&g, P0, EIG));
+    assert!(told_last(&h).contains("Pithing Needle"), "{:?}", h.told());
+}
+
+// ------------------------------------------------------------------ Takenuma, Abandoned Mire
+const TAKE: &str = "Takenuma, Abandoned Mire";
+
+fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+/// p's library: the last name is the top card
+fn set_library(g: &mut Game, p: PlayerId, names: &[&str]) {
+    let cs: Vec<_> = names.iter().map(|n| card(g, n)).collect();
+    g.player_mut(p).library = cs;
+}
+
+fn to_gy(g: &mut Game, p: PlayerId, names: &[&str]) {
+    for n in names {
+        let c = take(g, p, n);
+        g.player_mut(p).gy.push(c);
+    }
+}
+
+fn cast0() -> Value {
+    json!({"do": "cast", "card": 0})
+}
+
+#[test]
+fn takenuma_channel_mills_three_then_returns_the_creature_or_walker_the_person_picks() {
+    let mut g = tbl();
+    to_gy(&mut g, P0, &["Elvish Visionary"]);
+    set_library(&mut g, P0, &["Island", "Karn Liberated", "Island", "Mulldrifter"]); // the top three are milled
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![ans_word("Takenuma", "Karn Liberated")]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("Takenuma")).expect("asks which to return");
+    for want in ["Elvish Visionary", "Mulldrifter", "Karn Liberated"] {
+        assert!(q.choices.iter().any(|c| c.contains(want)), "{want} is a candidate: {:?}", q.choices);
+    }
+    assert!(!q.choices.iter().any(|c| c.contains("Island")), "{:?}", q.choices);
+    assert!(in_hand(&g, P0, "Karn Liberated"), "a planeswalker card just milled counts");
+    assert!(in_gy(&g, P0, TAKE) && in_gy(&g, P0, "Mulldrifter") && in_gy(&g, P0, "Elvish Visionary"));
+    assert_eq!(g.player(P0).library.len(), 1);
+}
+
+#[test]
+fn takenuma_returns_the_only_candidate_without_asking() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(!asked(&h, "Takenuma"), "nothing to choose");
+    assert!(in_hand(&g, P0, "Mulldrifter"), "mandatory: the milled creature comes back");
+}
+
+#[test]
+fn takenuma_with_nothing_to_return_still_mills_three() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, TAKE));
+    assert_eq!(g.player(P0).library.len(), 1);
+    assert_eq!(g.player(P0).hand.len(), 0);
+}
+
+#[test]
+fn takenuma_costs_one_less_for_each_legendary_creature_you_control() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 2)]); // {3}{B} less one
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, TAKE) && in_hand(&g, P0, "Mulldrifter"));
+}
+
+#[test]
+fn takenuma_without_the_mana_is_refused() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 2)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(in_hand(&g, P0, TAKE) && g.player(P0).library.len() == 4);
+    assert!(told_last(&h).contains("channel Takenuma"), "{:?}", h.told());
+}
+
+#[test]
+fn pithing_needle_naming_takenuma_stops_the_channel() {
+    let mut g = tbl();
+    needle(&mut g, TAKE);
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(in_hand(&g, P0, TAKE));
+    assert!(told_last(&h).contains("Pithing Needle"), "{:?}", h.told());
+}
+
+/// the AI's hand option for Takenuma (the plays its brain may choose from)
+fn takenuma_options(g: &mut Game) -> Vec<sim_core::hooks::Opt> {
+    let c = card(g, TAKE);
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Takenuma has a hand option");
+    f(g, c, P0, Some(false)).unwrap()
+}
+
+#[test]
+fn the_ai_channels_takenuma_for_the_best_creature_card() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    to_gy(&mut g, P0, &["Mulldrifter"]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    let opts = takenuma_options(&mut g);
+    assert_eq!(opts.len(), 1, "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(in_gy(&g, P0, TAKE) && in_hand(&g, P0, "Mulldrifter"));
+    assert_eq!(g.player(P0).library.len(), 1, "milled three");
+}
+
+#[test]
+fn the_ai_pays_one_less_for_each_legendary_creature() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    to_gy(&mut g, P0, &["Mulldrifter"]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    let before = sim_core::engine::mana::total_mana(&g, P0, false);
+    let opts = takenuma_options(&mut g);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    let spent = before - sim_core::engine::mana::total_mana(&g, P0, false);
+    assert_eq!(spent, 3, "{{3}}{{B}} less one");
+}
+
+#[test]
+fn the_ai_does_not_channel_takenuma_with_nothing_worth_returning() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    assert!(takenuma_options(&mut g).is_empty());
+}
+
+// ------------------------------------------------------------------ Charming Prince
+const PRINCE: &str = "Charming Prince";
+
+/// a person at P0 who passes priority and answers a question by `rules` (the first choice otherwise)
+fn seat_rules(g: &mut Game, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        for (key, word) in &rules {
+            if r.prompt.contains(key.as_str())
+                && let Some(i) = r.choices.iter().position(|c| c.contains(word.as_str()))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+fn mode_question(h: &ScriptHuman) -> Request {
+    h.asked().into_iter().find(|r| r.prompt.contains("Charming Prince: choose one")).expect("asks the mode")
+}
+
+fn steal(g: &mut Game, to: PlayerId, m: PermId) {
+    assert!(sim_core::engine::control::gain_control(g, to, m, sim_core::engine::control::Duration::Permanent));
+}
+
+#[test]
+fn charming_prince_gives_a_person_all_three_modes() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    let q = mode_question(&h);
+    assert_eq!(q.choices.len(), 3, "{:?}", q.choices);
+    assert!(q.choices[0].contains("Scry 2") || q.choices[0].contains("scry 2"), "{:?}", q.choices);
+    assert!(q.choices[2].contains("exile"), "{:?}", q.choices);
+    assert_eq!(g.player(P0).life, 43);
+    assert!(g.perm(elves).on_bf);
+}
+
+#[test]
+fn charming_prince_offers_no_exile_mode_without_another_creature_you_own() {
+    let mut g = tbl();
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 2);
+}
+
+#[test]
+fn charming_prince_scry_asks_the_person_about_each_card() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Mulldrifter", "Karn Liberated"]);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "cry 2".into())]);
+    perm(&mut g, P0, PRINCE);
+    let scry: Vec<_> = h.asked().into_iter().filter(|r| r.prompt.starts_with("Scry")).collect();
+    assert_eq!(scry.len(), 2, "scry 2 looks at two cards");
+    assert_eq!(g.player(P0).life, 40);
+}
+
+#[test]
+fn charming_prince_exiles_a_creature_you_own_and_it_returns_at_the_end_step() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(elves).on_bf && exiled(&g, P0, "Llanowar Elves"));
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "back at the beginning of the next end step");
+}
+
+#[test]
+fn the_creature_still_returns_when_charming_prince_leaves_first() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    let prince = perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(elves).on_bf, "exiled by the Prince");
+    sim_core::engine::zones::die(&mut g, prince, "destroy").unwrap();
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "the return does not depend on the Prince");
+}
+
+#[test]
+fn charming_prince_may_exile_a_creature_you_own_that_an_opponent_controls() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    steal(&mut g, P1, elves);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 3, "an opponent's control does not matter");
+    assert!(!g.perm(elves).on_bf);
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Llanowar Elves"), "returned under your control");
+    assert!(!has_perm(&g, P1, "Llanowar Elves"));
+}
+
+#[test]
+fn charming_prince_may_not_exile_a_creature_you_control_but_do_not_own() {
+    let mut g = tbl();
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    steal(&mut g, P0, theirs);
+    let h = seat_rules(&mut g, vec![("choose one".into(), "gain 3".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert_eq!(mode_question(&h).choices.len(), 2, "no exile mode: you do not own it");
+    assert!(g.perm(theirs).on_bf);
+}
+
+#[test]
+fn a_token_you_own_that_charming_prince_exiles_is_gone() {
+    let mut g = tbl();
+    let tok = token(&mut g, P0, 1);
+    seat_rules(&mut g, vec![("choose one".into(), "exile".into())]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(tok).on_bf);
+    assert!(g.eot_returns.is_empty(), "a token does not come back");
+}
+
+#[test]
+fn the_ai_does_not_exile_a_creature_it_controls_but_does_not_own() {
+    let mut g = tbl();
+    let theirs = perm(&mut g, P1, "Elvish Visionary");
+    steal(&mut g, P0, theirs);
+    perm(&mut g, P0, PRINCE);
+    assert!(g.perm(theirs).on_bf && g.player(P0).perms.contains(&theirs), "not its to exile");
+    assert!(g.eot_returns.is_empty());
+}
+
+#[test]
+fn the_ai_blinks_its_own_creature_and_it_returns_even_if_charming_prince_leaves_first() {
+    let mut g = tbl();
+    let vis = perm(&mut g, P0, "Elvish Visionary");
+    let prince = perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(vis).on_bf, "the AI blinks a creature with an enters trigger");
+    sim_core::engine::zones::die(&mut g, prince, "destroy").unwrap();
+    sim_core::impls::galadriel::eot_returns(&mut g).unwrap();
+    assert!(has_perm(&g, P0, "Elvish Visionary"));
+}
+
+// ------------------------------------------------------------------ Solitude
+const SOL: &str = "Solitude";
+
+fn evoke_alts(g: &mut Game, c: sim_core::ids::CardId) -> Vec<String> {
+    sim_core::human::alt::hand_alts(g, P0, c).unwrap().into_iter().map(|a| a.0).collect()
+}
+
+/// P1 holds Counterspell with {U}{U} in the pool, and answers a spell with it
+fn counterspell_seat(g: &mut Game) -> Arc<ScriptHuman> {
+    hand(g, P1, &["Counterspell"]);
+    pool(g, P1, &[('U', 2)]);
+    seat(g, P1, vec![act(json!({"do": "cast", "card": 0})), pass(), pass(), pass(), pass()])
+}
+
+/// P1 was given priority on the Solitude spell itself (not only on its enters trigger) and countered it there
+fn countered_as_a_spell(h: &ScriptHuman) {
+    let first = h.asked().into_iter().next().expect("the opponent got priority");
+    assert!(first.prompt.contains("casts Solitude"), "{}", first.prompt);
+}
+
+#[test]
+fn a_person_may_evoke_solitude_whenever_a_white_card_is_in_hand() {
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    pool(&mut g, P0, &[('W', 2), ('C', 3)]); // the person could cast it for {3}{W}{W} too
+    seat_rules(&mut g, vec![]);
+    let alts = evoke_alts(&mut g, c);
+    assert!(alts.iter().any(|a| a.contains("evoke")), "{alts:?}");
+}
+
+#[test]
+fn a_person_is_not_offered_evoke_without_another_white_card() {
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &[SOL, "Island", "Mulldrifter"])[0];
+    seat_rules(&mut g, vec![]);
+    assert!(evoke_alts(&mut g, c).is_empty());
+}
+
+#[test]
+fn a_person_evokes_solitude_and_picks_the_white_card_to_exile() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares", "Path to Exile"]);
+    let h = play(
+        &mut g,
+        cast0(),
+        vec![ans_word("Solitude: which?", "evoke"), ans_word("which white card", "Path to Exile")],
+    );
+    assert!(asked(&h, "which white card"));
+    assert!(exiled(&g, P0, "Path to Exile"), "the picked card was exiled");
+    assert!(in_hand(&g, P0, "Swords to Plowshares"));
+    assert!(in_gy(&g, P0, SOL), "sacrificed after it entered");
+    assert!(!has_perm(&g, P0, SOL));
+}
+
+#[test]
+fn an_evoked_solitude_can_be_countered() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    let h1 = counterspell_seat(&mut g);
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    countered_as_a_spell(&h1);
+    assert!(in_gy(&g, P0, SOL) && exiled(&g, P0, "Swords to Plowshares"), "the cost was paid");
+    assert!(g.perm(big).on_bf, "it never entered: no exile trigger");
+    assert!(in_gy(&g, P1, "Counterspell"));
+}
+
+#[test]
+fn the_ais_evoked_solitude_can_be_countered_too() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Grave Titan");
+    let h1 = counterspell_seat(&mut g);
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    let opts = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1, "the AI evokes against a worthwhile creature");
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    countered_as_a_spell(&h1);
+    assert!(in_gy(&g, P0, SOL) && exiled(&g, P0, "Swords to Plowshares"));
+    assert!(g.perm(big).on_bf, "countered: the exile trigger never happened");
+    assert!(in_gy(&g, P1, "Counterspell"));
+}
+
+#[test]
+fn eiganjo_four_damage_does_not_kill_a_six_toughness_creature() {
+    let mut g = tbl();
+    let atk = perm(&mut g, P1, "Grave Titan");
+    g.in_combat = vec![atk];
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, EIG));
+    assert!(g.perm(atk).on_bf, "6/6 with four damage must survive");
+}
+
+#[test]
+fn rule_of_law_stops_a_second_spell_even_when_evoked() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Rule of Law");
+    let prior = card(&g, "Llanowar Elves");
+    sim_core::engine::cast::on_cast(&mut g, P0, prior).unwrap();
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_hand(&g, P0, SOL), "Rule of Law forbids a second spell even for evoke");
+    assert!(!exiled(&g, P0, "Swords to Plowshares"));
+}
+
+#[test]
+fn sphere_of_resistance_tax_is_still_required_for_evoke() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sphere of Resistance");
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_hand(&g, P0, SOL), "cannot pay the additional {{1}} with no mana");
+    assert!(!exiled(&g, P0, "Swords to Plowshares"));
+}
+
+#[test]
+fn the_ais_evoke_is_not_offered_under_rule_of_law() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P1, "Rule of Law");
+    let prior = card(&g, "Llanowar Elves");
+    sim_core::engine::cast::on_cast(&mut g, P0, prior).unwrap();
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty());
+}
+
+#[test]
+fn the_ai_does_not_evoke_when_it_cannot_pay_the_sphere_tax() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P1, "Sphere of Resistance");
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "no mana for the {{1}}");
+}
+
+/// P1 holds Counterspell with {U}{U} in the pool and passes every priority, so it is asked at each window
+fn passing_opponent(g: &mut Game) -> Arc<ScriptHuman> {
+    hand(g, P1, &["Counterspell"]);
+    pool(g, P1, &[('U', 2)]);
+    let h = Arc::new(ScriptHuman::from_fn(|r| {
+        if r.kind == "priority" { Answer::Action(json!({"do": "pass"})) } else { Answer::Pick(0) }
+    }));
+    g.humans.add(P1, h.clone());
+    h
+}
+
+fn was_offered_the_sacrifice(h: &ScriptHuman) -> bool {
+    h.asked().iter().any(|r| r.kind == "priority" && r.prompt.contains("evoke: sacrifice"))
+}
+
+#[test]
+fn a_persons_evoke_sacrifice_goes_on_the_stack() {
+    let mut g = tbl();
+    let h1 = passing_opponent(&mut g);
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_gy(&g, P0, SOL));
+    let prompts: Vec<_> = h1.asked().iter().map(|r| r.prompt.clone()).collect();
+    assert!(was_offered_the_sacrifice(&h1), "{prompts:?}");
+}
+
+#[test]
+fn the_ais_evoke_sacrifice_goes_on_the_stack() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    let h1 = passing_opponent(&mut g);
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    let opts = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(in_gy(&g, P0, SOL));
+    assert!(was_offered_the_sacrifice(&h1));
+}
+
+#[test]
+fn mother_of_runes_cannot_target_a_shrouded_creature() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).eot_kw.push("shroud");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(elf));
+    use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "red")]);
+    assert!(!has_kw(&g, elf, "pro_R"), "shrouded creature illegally gained protection");
+}
+
+#[test]
+fn mother_of_runes_cannot_target_a_creature_with_protection_from_white() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).eot_kw.push("pro_W");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(elf));
+    use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "red")]);
+    assert!(!has_kw(&g, elf, "pro_R"), "protection from Mother's white source makes the target illegal");
+}
+
+#[test]
+fn a_rings_copy_giving_protection_from_white_fizzles_the_original() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    perm(&mut g, P0, "Rings of Brighthearth");
+    pool(&mut g, P0, &[('C', 2)]);
+    let copy_tg = ans_target(&g, "The copy of Mother", Target::Perm(elf));
+    let original_tg = ans_target(&g, "Mother of Runes: which", Target::Perm(elf));
+    let h = use_perm(
+        &mut g,
+        mom,
+        vec![
+            copy_tg,
+            original_tg,
+            ans_word("The copy of Mother of Runes' ability: protection", "white"),
+            ans_word("Mother of Runes: protection", "red"),
+            ans_word("Rings", "pay"),
+        ],
+    );
+    assert!(asked(&h, "The copy of Mother"), "copy actually resolved");
+    assert!(has_kw(&g, elf, "pro_W"));
+    assert!(!has_kw(&g, elf, "pro_R"), "the original must fizzle after the copy grants protection from white");
+}
+
+#[test]
+fn charming_prince_pays_ward_on_a_creature_you_own_that_an_opponent_controls() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Grave Titan");
+    steal(&mut g, P1, t);
+    perm(&mut g, P1, "Hexing Squelcher");
+    seat_rules(&mut g, vec![ans_word("choose one", "exile"), ans_word("exile which creature", "Grave Titan")]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(t).on_bf, "the Titan was the target");
+    assert_eq!(g.player(P0).life, 38, "ward granted by Hexing Squelcher costs 2 life");
+}

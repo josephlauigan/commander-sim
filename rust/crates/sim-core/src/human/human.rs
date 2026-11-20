@@ -278,7 +278,8 @@ pub fn can_respond(g: &Game, q: PlayerId) -> bool {
     }
     if g.player(q).hand.iter().any(|&c| {
         let d = g.db.get(c);
-        legal::instant_speed(g, q, c) && d.cmc <= have && !d.land
+        (legal::instant_speed(g, q, c) && d.cmc <= have && !d.land)
+            || crate::impls::yoshimaru_p7::eiganjo_ready(g, q, c, have) // a channel from the hand
     }) {
         return true;
     }
