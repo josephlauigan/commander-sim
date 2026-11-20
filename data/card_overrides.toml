@@ -3564,7 +3564,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food or Clue token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied"
 
 ["Paradise Druid"]
 status = "Full"

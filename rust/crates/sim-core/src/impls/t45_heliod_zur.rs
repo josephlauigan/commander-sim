@@ -20,7 +20,7 @@
 //!   the best creature card from your graveyard returns, gain its toughness). Level 1's "plus 1" is compiled.
 //! - Daxos, Blessed by the Sun: toughness equal to your devotion to white (its life gain is compiled).
 //! - Felidar Sovereign: your upkeep with 40 or more life: you win.
-//! - Haliya, Guided by Light: it or another creature or artifact of yours enters (a Treasure, Food or Clue token too):
+//! - Haliya, Guided by Light: it or another creature or artifact of yours enters (a Treasure, Food, Clue or Blood token too):
 //!   gain 1; your end step, draw if you gained 3 or more this turn; warp {W}.
 //! - Linden, the Steadfast Queen: each white creature of yours that attacks: gain 1 life.
 //! - Serra Ascendant: +5/+5 and flying with 30 or more life.
@@ -534,7 +534,7 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// this turn. Warp {W}". A nonland creature or artifact permanent entering is the engine's enters event; a land that is
 /// a creature or an artifact comes through the land event (`Event::LandEnters`; a land that was already there when she
 /// came in is not counted); a creature token comes through the tokens event (`Event::TokensEnter`), which queues one of
-/// her enters triggers per token (`hooks::queue_etb_per_token`); a Treasure, Food or Clue token (counters on the
+/// her enters triggers per token (`hooks::queue_etb_per_token`); a Treasure, Food, Clue or Blood token (counters on the
 /// player in the engine) is an artifact entering too, one trigger each (the dispatcher queues a batch as one entry per
 /// token), and arrives through `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's
 /// Treasures, a compiled investigate, a spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except
@@ -591,7 +591,7 @@ fn haliya_token_entries(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) ->
     crate::engine::hooks::queue_etb_per_token(g, src, p, &toks)
 }
 
-/// a Treasure, Food or Clue token you create is an artifact entering: one life each
+/// a Treasure, Food, Clue or Blood token you create is an artifact entering: one life each
 fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res {
     if p != trigger_controller(g, src) {
         return Ok(());

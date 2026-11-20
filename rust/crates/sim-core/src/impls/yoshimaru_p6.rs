@@ -1,6 +1,6 @@
 //! Cards of the Yoshimaru / Tymna blink deck whose Oracle text needs card code beyond the compiled patterns (the P6 set):
 //! Sunpearl Kirin. (Haliya, Guided by Light is in `t45_heliod_zur.rs` and The Meathook Massacre in
-//! `t45_urza_yawgmoth.rs`, where those cards were already modelled.) Each card's text is in the doc comment above its
+//! `t45_urza_yawgmoth.rs`, where their other code is.) Each card's text is in the doc comment above its
 //! code.
 
 use crate::cards::CardDb;
@@ -67,11 +67,10 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 
 // ================================================================== Sunpearl Kirin
 /// **Sunpearl Kirin** ({1}{W} 2/1 Kirin, flash, flying): "When this creature enters, return up to one other target
-/// nonland permanent you control to its owner's hand. If it was a token, draw a card." The compiled text had no
-/// target and drew a card unconditionally; the card's tags carry no draw (data/card_overrides.toml) and this code does
-/// the whole trigger. A permanent goes back to its owner's hand (a commander as the engine's bounce does); a token
-/// ceases to exist and its controller draws a card; a Treasure, Food, Clue or Blood token (counters on the player in
-/// the engine) is returned the same way. The trigger does not depend on Kirin still being on the battlefield, and the
+/// nonland permanent you control to its owner's hand. If it was a token, draw a card." The card's tags carry no draw
+/// (data/card_overrides.toml): this code does the whole trigger. A permanent goes back to its owner's hand (a
+/// commander as the engine's bounce does); a token ceases to exist and its controller draws a card; a Treasure, Food,
+/// Clue or Blood token (counters on the player in the engine) is returned the same way. The trigger does not depend on Kirin still being on the battlefield, and the
 /// permanent must be a legal target for it (`values::untargetable_by_its_controller`: shroud, Lightning Greaves,
 /// Whispersilk Cloak, protection from a colour Kirin has now; hexproof does not stop its controller). The target is
 /// chosen as the trigger resolves, after the table's window (the engine

@@ -473,6 +473,7 @@ fn meathook_person_chooses_x_at_the_cast_and_the_enter_trigger_uses_it() {
     assert!(g.perm(big).on_bf && g.perm(mine).on_bf);
 }
 
+// guard: passes before and after the fix
 #[test]
 fn meathook_cast_with_x_zero_shrinks_nothing_and_takes_no_more_mana() {
     let mut g = tbl();
@@ -486,6 +487,7 @@ fn meathook_cast_with_x_zero_shrinks_nothing_and_takes_no_more_mana() {
     assert!(has_perm(&g, P0, MEATHOOK));
 }
 
+// guard: passes before and after the fix
 #[test]
 fn meathook_that_enters_without_being_cast_has_x_zero() {
     let mut g = tbl();
@@ -496,6 +498,7 @@ fn meathook_that_enters_without_being_cast_has_x_zero() {
     assert_eq!(total_mana(&g, P0), 4, "and no mana is paid");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn meathook_drains_when_your_creature_dies_and_gains_when_an_opponents_does() {
     let mut g = tbl();
@@ -509,7 +512,7 @@ fn meathook_drains_when_your_creature_dies_and_gains_when_an_opponents_does() {
     assert_eq!(g.player(P0).life, l0 + 1, "you gain 1");
 }
 
-// ------------------------------------------------------------------ round 2: triggers that outlive their source
+// ------------------------------------------------------------------ triggers that outlive their source
 fn flush(g: &mut Game) {
     g.resolving -= 1;
     stack::flush_triggers(g).unwrap();
@@ -581,7 +584,7 @@ fn haliyas_end_step_trigger_always_triggers_and_checks_the_life_as_it_resolves()
     assert!(matches!(r, Err(sim_core::flow::Stop::Probe(_))), "it triggers with no life gained: {r:?}");
 }
 
-// ------------------------------------------------------------------ round 2: legality
+// ------------------------------------------------------------------ legality
 #[test]
 fn kirin_cannot_target_its_controllers_shrouded_permanent() {
     let mut g = tbl();
@@ -647,7 +650,7 @@ fn a_warped_haliya_is_not_recast_from_exile_under_drannith_magistrate() {
     assert!(opts(&mut g).is_empty(), "opponents can't cast spells from anywhere but their hand");
 }
 
-// ------------------------------------------------------------------ round 3: the enters dispatcher
+// ------------------------------------------------------------------ the enters dispatcher
 // Elesh Norn, Mother of Machines: "If a permanent entering causes a triggered ability of a permanent you control to
 // trigger, that ability triggers an additional time. Permanents entering don't cause abilities of permanents your
 // opponents control to trigger." Panharmonicon: the same for an artifact or creature entering. Starfield Vocalist: the
@@ -719,6 +722,7 @@ fn an_opponents_elesh_blanks_haliyas_life_but_the_tokens_still_enter() {
     assert_eq!(g.player(P0).life, l0, "nor does a permanent");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn delney_does_not_copy_haliyas_triggers_because_she_has_power_3() {
     let mut g = tbl();
@@ -742,6 +746,7 @@ fn panharmonicon_doubles_haliyas_life_for_each_treasure_of_a_batch() {
     assert_eq!(g.player(P0).life, l0 + 4, "two Treasures, each 1 + Panharmonicon");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn kirins_enter_trigger_doubles_under_the_event_doublers_and_blanks_under_an_opponents_elesh() {
     // two 1/1 tokens: each trigger returns one of them and draws a card
@@ -780,6 +785,7 @@ fn meathook_with(x: u32, setup: impl Fn(&mut Game)) -> (Game, PermId, PermId) {
     (g, small, t2)
 }
 
+// guard: passes before and after the fix
 #[test]
 fn meathooks_enter_trigger_doubles_under_elesh_and_a_vocalist_and_blanks_under_an_opponents_elesh() {
     let (g, small, t2) = meathook_with(1, |_| {});
@@ -798,6 +804,7 @@ fn meathooks_enter_trigger_doubles_under_elesh_and_a_vocalist_and_blanks_under_a
     assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "an opponent's Elesh Norn: nothing shrinks");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn panharmonicon_does_not_double_meathook_because_it_is_an_enchantment() {
     let (g, small, t2) = meathook_with(1, |g| {
@@ -806,7 +813,7 @@ fn panharmonicon_does_not_double_meathook_because_it_is_an_enchantment() {
     assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "neither an artifact nor a creature entering: one trigger");
 }
 
-// ------------------------------------------------------------------ round 4: a triggered ability keeps its controller
+// ------------------------------------------------------------------ a triggered ability keeps its controller
 // CR 603.3a: a triggered ability is controlled by whoever controlled its source as it triggered; a change of control of
 // the source afterwards does not change it (113.8: it exists independently of its source).
 fn steal(g: &mut Game, by: PlayerId, m: PermId) {
@@ -868,6 +875,7 @@ fn haliyas_end_step_trigger_keeps_its_controller_when_she_is_stolen() {
     assert_eq!(g.player(P1).library.len(), 5, "the thief draws nothing");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn a_stolen_haliya_triggers_for_her_new_controller_only() {
     let mut g = tbl();
@@ -886,7 +894,7 @@ fn a_stolen_haliya_triggers_for_her_new_controller_only() {
     assert_eq!(g.player(P1).library.len(), 4, "and her new controller's end step draws");
 }
 
-// ------------------------------------------------------------------ round 4: creature tokens, one trigger per token, lands
+// ------------------------------------------------------------------ creature tokens, one trigger per token, lands
 // "Whenever Haliya or another creature or artifact you control enters": a creature token entering is a creature entering
 // (it triggers her), each artifact entering is its own triggered ability (CR 603.2c), and a land that is also a creature
 // or an artifact counts.
@@ -1074,7 +1082,7 @@ fn an_opponents_elesh_blanks_haliyas_life_for_a_creature_land() {
     assert_eq!(g.player(P0).life, life, "no entering causes her trigger");
 }
 
-// ------------------------------------------------------------------ round 4: the warp exile is a delayed trigger
+// ------------------------------------------------------------------ the warp exile is a delayed trigger
 // Warp: "Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn."
 // The exile is set up as the spell resolves; it does not depend on the creature's abilities, on who controls it at the
 // end step or on a new object (a blink) being the creature that was cast.
@@ -1147,6 +1155,7 @@ fn a_warped_haliya_blinked_as_she_enters_is_a_new_object_without_the_delayed_exi
     assert!(g.perm(m).on_bf, "the blinked Haliya is a new object, not the creature that was cast for warp");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn a_countered_warped_haliya_leaves_nothing_to_exile() {
     let mut g = tbl();
@@ -1192,7 +1201,7 @@ fn trinisphere_raises_haliyas_warp_cost_to_three() {
     assert_eq!(pool_total(&g, P0), 0, "Trinisphere raises the warp cost {{W}} to {{2}}{{W}}");
 }
 
-// ------------------------------------------------------------------ round 5: Kirin's Blood token and source colours
+// ------------------------------------------------------------------ Kirin's Blood token and source colours
 #[test]
 fn kirin_can_return_a_blood_token_for_a_card() {
     let mut g = tbl();
@@ -1224,7 +1233,7 @@ fn kirins_targets_are_checked_against_the_actual_colours_of_the_source() {
     }
 }
 
-// ------------------------------------------------------------------ round 5: Meathook's enter trigger with X = 0
+// ------------------------------------------------------------------ Meathook's enter trigger with X = 0
 /// every priority question the table is asked: its stack, as the questions show it (every player passes)
 fn observe_stack(g: &mut Game) -> std::sync::Arc<std::sync::Mutex<Vec<Value>>> {
     let seen = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
@@ -1257,6 +1266,7 @@ fn meathooks_enter_trigger_with_x_zero_is_still_put_on_the_stack() {
     );
 }
 
+// guard: passes before and after the fix
 #[test]
 fn meathook_with_x_zero_at_an_ai_table_changes_no_stack_count_rng_or_life() {
     let mut g = tbl();
@@ -1270,11 +1280,11 @@ fn meathook_with_x_zero_at_an_ai_table_changes_no_stack_count_rng_or_life() {
     assert_eq!(g.players.iter().map(|q| q.life).collect::<Vec<_>>(), lives);
 }
 
-// ------------------------------------------------------------------ round 5: the warp exile goes on the stack with the draw
+// ------------------------------------------------------------------ the warp exile goes on the stack with the draw
 // Both are "at the beginning of the next end step" triggers of the same controller: they are put on the stack together
 // and their controller orders them (CR 603.3b).
 #[test]
-fn the_warp_exile_is_on_the_stack_with_hailyas_end_step_draw() {
+fn the_warp_exile_is_on_the_stack_with_haliyas_end_step_draw() {
     let mut g = tbl();
     stock_library(&mut g, P0, 8);
     warped_haliya(&mut g);
@@ -1316,6 +1326,7 @@ fn a_person_may_resolve_the_warp_exile_first_so_a_ghostform_return_gains_the_lif
     assert_eq!(g.player(P0).library.len(), 7, "the exile first, the life, then the draw resolves with 3 life gained");
 }
 
+// guard: passes before and after the fix
 #[test]
 fn a_blink_in_response_to_the_warp_exile_leaves_the_new_object_alone() {
     let mut g = tbl();
@@ -1345,6 +1356,7 @@ fn a_blink_in_response_to_the_warp_exile_leaves_the_new_object_alone() {
     assert!(!g.player(P0).exile.contains(&c));
 }
 
+// guard: passes before and after the fix
 #[test]
 fn a_phased_out_warped_haliya_uses_up_the_delayed_exile() {
     let mut g = tbl();
