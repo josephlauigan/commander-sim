@@ -808,3 +808,176 @@ fn a_stolen_haliya_triggers_for_her_new_controller_only() {
     hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P1 }).unwrap();
     assert_eq!(g.player(P1).library.len(), 4, "and her new controller's end step draws");
 }
+
+// ------------------------------------------------------------------ round 4: creature tokens, one trigger per token, lands
+// "Whenever Haliya or another creature or artifact you control enters": a creature token entering is a creature entering
+// (it triggers her), each artifact entering is its own triggered ability (CR 603.2c), and a land that is also a creature
+// or an artifact counts.
+#[test]
+fn haliya_gains_for_each_ordinary_creature_token() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(3, 1)).unwrap();
+    assert_eq!(g.player(P0).life - life, 3, "three creature tokens entering are three triggers");
+}
+
+#[test]
+fn panharmonicon_doubles_haliyas_life_for_each_creature_token() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert_eq!(g.player(P0).life - life, 4, "two creature tokens, each 1 + Panharmonicon");
+}
+
+#[test]
+fn your_own_elesh_doubles_haliyas_life_for_each_creature_token() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert_eq!(g.player(P0).life - life, 4, "two creature tokens, each 1 + Elesh Norn");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_haliyas_life_for_creature_tokens_but_they_enter() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    perm(&mut g, P1, ELESH);
+    let life = g.player(P0).life;
+    let toks = zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert_eq!(toks.len(), 2);
+    assert!(toks.iter().all(|&t| g.perm(t).on_bf), "the tokens are there");
+    assert_eq!(g.player(P0).life, life, "no entering causes Haliya's trigger");
+}
+
+#[test]
+fn an_artifact_creature_token_and_a_treasure_are_two_enters_not_three() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    let spec = zones::Tokens { types: vec!["artifact"], ..zones::Tokens::new(1, 1) };
+    zones::make_tokens(&mut g, P0, spec).unwrap();
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life - life, 2, "the artifact creature once, the Treasure once");
+}
+
+/// how many stack items a priority question showed at most, whose name contains `who` and text `what`
+fn most_items_seen(
+    g: &mut Game,
+    who: &'static str,
+    what: &'static str,
+) -> std::sync::Arc<std::sync::Mutex<Vec<usize>>> {
+    let counts = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let out = counts.clone();
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            let n = r.data["stack"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|x| {
+                    x["name"].as_str().is_some_and(|s| s.contains(who))
+                        && x["text"].as_str().is_some_and(|s| s.contains(what))
+                })
+                .count();
+            out.lock().unwrap().push(n);
+        }
+        Answer::Action(json!({"do": "pass"}))
+    }));
+    h.set_autopass("stack");
+    g.humans.add(P1, h.clone());
+    g.humans.add(P0, h);
+    counts
+}
+
+#[test]
+fn each_artifact_token_entering_is_its_own_haliya_trigger_on_the_stack() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let counts = most_items_seen(&mut g, "Haliya", "gain 1");
+    zones::add_treasure(&mut g, P0, 3).unwrap();
+    let c = counts.lock().unwrap();
+    assert_eq!(c.iter().copied().max(), Some(3), "three artifact entries trigger three distinct abilities: {c:?}");
+}
+
+#[test]
+fn each_artifact_token_entering_is_its_own_fireweaver_trigger() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Reckless Fireweaver");
+    let counts = most_items_seen(&mut g, "Fireweaver", "1 damage");
+    let (l1, l2) = (g.player(P1).life, g.player(P2).life);
+    zones::add_treasure(&mut g, P0, 3).unwrap();
+    let c = counts.lock().unwrap();
+    assert_eq!(c.iter().copied().max(), Some(3), "three artifacts entering: three triggers of 1 damage: {c:?}");
+    assert_eq!((g.player(P1).life, g.player(P2).life), (l1 - 3, l2 - 3), "3 damage in all");
+}
+
+#[test]
+fn a_copy_of_one_haliya_token_trigger_gains_one_extra() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    pool(&mut g, P0, &[('C', 2)]);
+    let idx = g.player(P0).perms.iter().position(|&m| m == cam).unwrap();
+    let mut used = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !used && r.prompt.contains("Haliya") && !r.prompt.contains("copy of") {
+                used = true;
+                return Answer::Action(json!({"do":"use","perm":idx}));
+            }
+            return Answer::Action(json!({"do":"pass"}));
+        }
+        Answer::Pick(0)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    let life = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 3).unwrap();
+    assert!(g.perm(cam).tapped, "the Camera was actually activated");
+    assert_eq!(g.player(P0).life - life, 4, "three original triggers plus one copied trigger");
+}
+
+/// p plays this land card from the hand: the land event (and landfall) come with the real play
+fn play_land(g: &mut Game, p: PlayerId, name: &str) -> PermId {
+    let c = take(g, p, name);
+    sim_core::engine::turn::play_land_card(g, p, c, "plays").unwrap();
+    *g.player(p).lands.last().unwrap()
+}
+
+#[test]
+fn haliya_gains_for_a_creature_land_and_an_artifact_land_but_not_a_basic() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    play_land(&mut g, P0, "Forest");
+    assert_eq!(g.player(P0).life, life, "a basic land is neither a creature nor an artifact");
+    play_land(&mut g, P0, "Dryad Arbor");
+    assert_eq!(g.player(P0).life - life, 1, "a land creature entering");
+    play_land(&mut g, P0, "Darksteel Citadel");
+    assert_eq!(g.player(P0).life - life, 2, "an artifact land entering");
+}
+
+#[test]
+fn panharmonicon_doubles_haliyas_life_for_a_creature_land() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    play_land(&mut g, P0, "Dryad Arbor");
+    assert_eq!(g.player(P0).life - life, 2, "1 + Panharmonicon");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_haliyas_life_for_a_creature_land() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    perm(&mut g, P1, ELESH);
+    let life = g.player(P0).life;
+    play_land(&mut g, P0, "Dryad Arbor");
+    assert_eq!(g.player(P0).life, life, "no entering causes her trigger");
+}
