@@ -183,7 +183,7 @@ pub fn live(d: &CardDef, resolve_hook: bool) -> Vec<(Tag, Exec)> {
                 }
             }
         }
-        for &k in &ENTER_STATIC_TAGS[..5] {
+        for &k in ENTER_STATIC_TAGS.iter().filter(|&&k| k != Tag::Rem) {
             if t.has(k) {
                 v.push((k, Exec::EnterStatic));
             }
