@@ -4,8 +4,10 @@
 
 mod play_common;
 use play_common::*;
-use sim_core::human::human::human_main;
+use sim_core::human::human::{human_main, respond};
 use sim_core::human::{Target, legal};
+use sim_core::state::Step;
+use std::collections::VecDeque;
 use std::sync::{Arc, Mutex};
 
 type Rule = (String, String);
@@ -46,6 +48,31 @@ fn play(g: &mut Game, action: Value, rules: Vec<Rule>) -> Arc<ScriptHuman> {
 fn use_perm(g: &mut Game, m: PermId, rules: Vec<Rule>) -> Arc<ScriptHuman> {
     let i = g.player(P0).perms.iter().position(|&x| x == m).unwrap();
     play(g, json!({"do": "use", "perm": i}), rules)
+}
+
+/// the person has priority in a window on someone else's turn (`respond`): `actions` are taken one at a time at the
+/// priority questions (then it passes), the other questions are answered by `rules`
+fn respond_play(g: &mut Game, actions: Vec<Value>, rules: Vec<Rule>) -> Arc<ScriptHuman> {
+    let queue = Mutex::new(VecDeque::from(actions));
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return match queue.lock().unwrap().pop_front() {
+                Some(a) => Answer::Action(a),
+                None => Answer::Action(json!({"do": "pass"})),
+            };
+        }
+        for (key, word) in &rules {
+            if r.prompt.contains(key.as_str())
+                && let Some(i) = r.choices.iter().position(|c| c.contains(word.as_str()))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    respond(g, P0, "P1's declare attackers step", None, None).unwrap();
+    h
 }
 
 fn tbl() -> Game {
@@ -102,4 +129,131 @@ fn mother_of_runes_is_refused_while_summoning_sick() {
     let h = use_perm(&mut g, mom, vec![]);
     assert!(!g.perm(mom).tapped);
     assert!(h.told().iter().any(|t| t.1.contains("summoning sickness")), "{:?}", h.told());
+}
+
+// ------------------------------------------------------------------ The Wandering Emperor
+const EMP: &str = "The Wandering Emperor";
+
+/// P1's turn, its combat: a tapped attacker of P1's
+fn opp_attack(g: &mut Game) -> PermId {
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let atk = perm(g, P1, "Llanowar Elves");
+    g.perm_mut(atk).tapped = true;
+    atk
+}
+
+/// the loyalty The Wandering Emperor enters with
+fn emp_start(g: &Game) -> i32 {
+    g.db.get(card(g, EMP)).start_loyalty.expect("a planeswalker")
+}
+
+fn use_emp(i: usize) -> Value {
+    json!({"do": "use", "perm": i})
+}
+
+fn exiled(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).exile.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+#[test]
+fn emperor_flashed_in_on_the_attack_exiles_a_tapped_attacker() {
+    let mut g = tbl();
+    let atk = opp_attack(&mut g);
+    hand(&mut g, P0, &[EMP]);
+    pool(&mut g, P0, &[('W', 2), ('C', 2)]);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(
+        &mut g,
+        vec![json!({"do": "cast", "card": 0}), use_emp(0)],
+        vec![ans_word("which ability", "-2"), tg],
+    );
+    assert!(!g.perm(atk).on_bf && exiled(&g, P1, "Llanowar Elves"), "{:?}", h.told());
+    let e = perms_named(&g, P0, EMP)[0];
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) - 2));
+    assert_eq!(g.player(P0).life, 42, "gains 2");
+}
+
+#[test]
+fn emperor_that_did_not_enter_this_turn_is_sorcery_speed_on_an_opponents_turn() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    g.turn_enter = g.enter_no; // she entered on an earlier turn
+    let atk = opp_attack(&mut g);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(&mut g, vec![use_emp(0)], vec![ans_word("which ability", "-2"), tg]);
+    assert!(g.perm(atk).on_bf, "not exiled");
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g)), "no loyalty paid");
+    assert!(told_last(&h).contains("isn't your turn"), "{:?}", h.told());
+}
+
+#[test]
+fn emperor_activates_once_per_turn_even_in_the_flash_window() {
+    let mut g = tbl();
+    let atk = opp_attack(&mut g);
+    hand(&mut g, P0, &[EMP]);
+    pool(&mut g, P0, &[('W', 2), ('C', 2)]);
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(atk));
+    let h = respond_play(
+        &mut g,
+        vec![json!({"do": "cast", "card": 0}), use_emp(0), use_emp(0)],
+        vec![ans_word("which ability", "-1"), ans_word("which ability", "-2"), tg],
+    );
+    let e = perms_named(&g, P0, EMP)[0];
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) - 1), "the first ability (-1) was paid once: {:?}", h.told());
+    assert!(told_last(&h).contains("already used a loyalty ability"), "{:?}", h.told());
+    assert!(g.perm(atk).on_bf);
+}
+
+#[test]
+fn emperor_plus_one_gives_an_opponents_creature_a_counter_and_first_strike() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    g.active = Some(P1);
+    g.step = Step::Combat;
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(theirs));
+    respond_play(&mut g, vec![use_emp(0)], vec![ans_word("which ability", "+1"), tg]);
+    assert_eq!(g.perm(theirs).plus, 1);
+    assert!(has_kw(&g, theirs, "first strike"), "{:?}", g.perm(theirs).eot_kw);
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) + 1));
+}
+
+#[test]
+fn emperor_plus_one_may_have_no_target_and_still_gains_loyalty() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    let mine = perm(&mut g, P0, "Llanowar Elves");
+    let h = use_perm(&mut g, e, vec![ans_word("which ability", "+1"), ans_word("up to one", "no target")]);
+    assert!(asked(&h, "up to one") || asked(&h, "Wandering Emperor +1"));
+    assert_eq!(g.perm(e).loyalty, Some(emp_start(&g) + 1));
+    assert_eq!(g.perm(mine).plus, 0);
+}
+
+#[test]
+fn emperor_minus_one_makes_a_white_samurai_with_vigilance() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    use_perm(&mut g, e, vec![ans_word("which ability", "-1")]);
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a token");
+    assert!(g.perm(t).vig, "vigilance");
+    assert_eq!((g.perm(t).pow, g.perm(t).tgh), (2, 2));
+    assert!(g.perm(t).ttypes.iter().any(|ty| *ty == "samurai"));
+    assert!(sim_core::engine::values::colors_of(&g, t).has('W'));
+}
+
+#[test]
+fn emperor_minus_two_offers_only_tapped_creatures_of_any_controller() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, EMP);
+    let own_tapped = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(own_tapped).tapped = true;
+    let _untapped = perm(&mut g, P1, "Llanowar Elves");
+    let tg = ans_target(&g, "Wandering Emperor", Target::Perm(own_tapped));
+    let h = use_perm(&mut g, e, vec![ans_word("which ability", "-2"), tg]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("which tapped creature")).expect("asks the target");
+    let creatures = q.choices.iter().filter(|c| c.contains("Llanowar")).count();
+    assert_eq!(creatures, 1, "only the tapped one: {:?}", q.choices);
+    assert!(!g.perm(own_tapped).on_bf, "your own tapped creature is a legal target");
+    assert_eq!(g.player(P0).life, 42);
 }
