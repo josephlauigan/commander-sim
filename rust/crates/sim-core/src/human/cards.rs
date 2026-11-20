@@ -1483,7 +1483,8 @@ fn eiganjo(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
             }
         }
         if crate::impls::yoshimaru_p7::combatants(g, p, none).contains(&t) {
-            crate::engine::removal::apply_removal(g, Some(p), t, "dmg4", None)?;
+            // real damage: a creature with toughness over 4 survives with it marked
+            super::choices::apply_damage_by(g, p, Target::Perm(t), 4, "Eiganjo", "burn", None)?;
         }
         Ok(())
     })?;
