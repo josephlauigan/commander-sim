@@ -55,6 +55,36 @@ fn solemn_delney_wipe_draws_two_in_either_order() {
     }
 }
 
+fn solemn_surviving_delney_wipe() -> (Game, sim_core::ids::PermId) {
+    let mut g = tbl();
+    let d = perm(&mut g, A, DELNEY);
+    let s = perm(&mut g, A, "Solemn Simulacrum");
+    g.perm_mut(s).eot_kw.push("indestructible");
+    wipe(&mut g);
+    assert!(!g.perm(d).on_bf);
+    assert!(g.perm(s).on_bf);
+    g.perm_mut(s).eot_kw.clear();
+    (g, s)
+}
+
+#[test]
+fn solemn_surviving_delney_wipe_draws_once_when_destroyed_alone() {
+    let (mut g, s) = solemn_surviving_delney_wipe();
+    let before = g.player(A).hand.len();
+    zones::die(&mut g, s, "destroy").unwrap();
+    assert!(!g.perm(s).on_bf);
+    assert_eq!(g.player(A).hand.len() - before, 1);
+}
+
+#[test]
+fn solemn_surviving_delney_wipe_draws_once_in_a_later_wipe() {
+    let (mut g, s) = solemn_surviving_delney_wipe();
+    let before = g.player(A).hand.len();
+    wipe(&mut g);
+    assert!(!g.perm(s).on_bf);
+    assert_eq!(g.player(A).hand.len() - before, 1);
+}
+
 // 35: a surviving listener uses the pre-wipe count even after Delney has left.
 #[test]
 fn surviving_elas_looks_back_for_delney_first_or_last() {
