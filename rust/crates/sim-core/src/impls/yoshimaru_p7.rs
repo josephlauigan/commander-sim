@@ -90,7 +90,8 @@ pub fn emp_samurai(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
 
 // ------------------------------------------------------------------ lands that are exiled and come back (part 7b)
 // A land is listed in `Player::lands`, not among the permanents, and `zones::enter` puts a card into `perms`: so a land
-// that is exiled and returns (Flickerwisp, Felidar Guardian) goes out by `remove_land` and comes in by `land_enters`.
+// that is exiled and returns (Flickerwisp, Felidar Guardian) goes out by `remove_land` and comes in by `land_enters`
+// (`t2::blink_inner` does it for a blink).
 
 /// land m leaves the battlefield for its owner's exile
 pub fn exile_land(g: &mut Game, m: PermId) -> Res {
@@ -126,16 +127,6 @@ pub fn land_enters(g: &mut Game, p: PlayerId, cd: CardId) -> Res<PermId> {
     crate::cardcode::land_etb(g, p, l)?;
     crate::engine::turn::land_arrives(g, p, l, cd)?;
     Ok(l)
-}
-
-/// land m is exiled and returns under its owner's control at once: a new object (the permanent it came back as)
-pub fn blink_land(g: &mut Game, m: PermId) -> Res<PermId> {
-    let (cd, orig, ctrl) = (g.perm(m).cd.unwrap(), g.perm(m).orig, g.perm(m).owner);
-    crate::engine::turn::remove_land(g, ctrl, m, None);
-    let n = land_enters(g, orig, cd)?;
-    crate::engine::zones::exiled_from_bf(g, m, Some(n))?;
-    crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
-    Ok(n)
 }
 
 /// the beginning of the end step: land cards waiting in `g.eot_returns` (exiled until then) come back under their

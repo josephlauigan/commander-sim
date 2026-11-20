@@ -156,15 +156,25 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     r.map(Some)
 }
 
-/// t2._blink
+/// t2._blink: the card goes out of the battlefield and comes back as a new object. A land is listed apart from the
+/// permanents (`remove_land` takes it out); what comes back is decided by the card: a land card enters as a land
+/// (`land_enters`), any other as a permanent, so a double-faced land card (Witch-Blessed Meadow) returns front face up.
 fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
-    if g.player(g.perm(m).owner).lands.contains(&m) {
-        return super::yoshimaru_p7::blink_land(g, m); // a land is listed apart from the permanents
-    }
     let (cd, orig, cmd) = (g.perm(m).cd.unwrap(), g.perm(m).orig, g.perm(m).is_cmd);
-    leave(g, m)?;
-    let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
+    let ctrl = g.perm(m).owner;
+    if g.player(ctrl).lands.contains(&m) {
+        crate::engine::turn::remove_land(g, ctrl, m, None);
+    } else {
+        leave(g, m)?;
+    }
+    let n = if g.db.get(cd).land {
+        super::yoshimaru_p7::land_enters(g, orig, cd)?
+    } else {
+        enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?
+    };
     g.perm_mut(n).is_cmd = cmd;
+    // (a land has no entry number, so no leaves-the-battlefield listener hears a blinked land: they are all about
+    // creatures)
     exiled_from_bf(g, m, Some(n))?;
     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
     Ok(n)
