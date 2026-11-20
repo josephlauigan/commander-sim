@@ -606,3 +606,68 @@ fn the_ais_emperor_minus_two_still_exiles_an_opposing_tapped_creature_and_gains_
     assert!(in_exile(&g, P1, "Baneslayer Angel"));
     assert_eq!(g.player(P0).life, life + 2);
 }
+
+// ------------------------------------------------------------------ lands that return: shock lands
+// "As Godless Shrine enters, you may pay 2 life. If you don't, it enters tapped." (however it enters)
+/// a person at P0 who answers a question whose prompt contains `prompt` with the first choice containing `choice`
+fn person_rules(g: &mut Game, rules: &[(&str, &str)]) -> Arc<ScriptHuman> {
+    let rules: Vec<(String, String)> = rules.iter().map(|(p, c)| (p.to_string(), c.to_string())).collect();
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        for (p, c) in &rules {
+            if r.prompt.contains(p.as_str())
+                && let Some(k) = r.choices.iter().position(|x| x.contains(c.as_str()))
+            {
+                return Answer::Pick(k);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
+    g.player(p).lands.iter().copied().find(|&l| g.perm(l).on_bf && g.perm(l).name == name)
+}
+
+#[test]
+fn a_shock_land_a_person_blinks_asks_whether_to_pay_life_and_pays_it() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Godless Shrine", 1, true);
+    let life = g.player(P0).life;
+    let h = person_rules(&mut g, &[("exile one of your permanents", "Godless"), ("pay 2 life", "yes")]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert_eq!(asks(&h, "pay 2 life").len(), 1, "{:?}", h.asked());
+    let l = land_named(&g, P0, "Godless Shrine").expect("it came back");
+    assert!(!g.perm(l).tapped, "paid: untapped");
+    assert_eq!(g.player(P0).life, life - 2);
+}
+
+#[test]
+fn a_shock_land_a_person_blinks_enters_tapped_when_they_decline_to_pay() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Godless Shrine", 1, false);
+    let life = g.player(P0).life;
+    let h = person_rules(&mut g, &[("exile one of your permanents", "Godless"), ("pay 2 life", "no")]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert_eq!(asks(&h, "pay 2 life").len(), 1, "{:?}", h.asked());
+    let l = land_named(&g, P0, "Godless Shrine").expect("it came back");
+    assert!(g.perm(l).tapped, "not paid: tapped");
+    assert_eq!(g.player(P0).life, life);
+}
+
+#[test]
+fn a_shock_land_the_ais_flickerwisp_returns_untapped_costs_two_life() {
+    let mut g = tbl();
+    let l = lands(&mut g, P0, "Godless Shrine", 1, true)[0];
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Flickerwisp");
+    assert!(!g.perm(l).on_bf, "its own tapped land is the AI's pick");
+    end_step(&mut g);
+    let back = land_named(&g, P0, "Godless Shrine").expect("it returns");
+    assert!(!g.perm(back).tapped, "the AI pays early in the game");
+    assert_eq!(g.player(P0).life, life - 2, "an untapped shock land is paid for");
+}
