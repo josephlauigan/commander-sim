@@ -1177,3 +1177,91 @@ fn meathook_with_x_zero_at_an_ai_table_changes_no_stack_count_rng_or_life() {
     assert_eq!(format!("{:?}", g.rng), rng, "and no random number is drawn");
     assert_eq!(g.players.iter().map(|q| q.life).collect::<Vec<_>>(), lives);
 }
+
+// ------------------------------------------------------------------ round 5: the warp exile goes on the stack with the draw
+// Both are "at the beginning of the next end step" triggers of the same controller: they are put on the stack together
+// and their controller orders them (CR 603.3b).
+#[test]
+fn the_warp_exile_is_on_the_stack_with_hailyas_end_step_draw() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 8);
+    warped_haliya(&mut g);
+    let st = g.turn_stamp();
+    g.player_mut(P0).gained_turn = Some((st, 3));
+    let seen = observe_stack(&mut g);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    let seen = seen.lock().unwrap();
+    let text = |it: &Value, w: &str| it["text"].as_str().is_some_and(|s| s.contains(w));
+    let together = seen.iter().any(|d| {
+        let s = d["stack"].as_array().unwrap();
+        s.iter().any(|x| text(x, "draw a card")) && s.iter().any(|x| text(x, "exile the warped"))
+    });
+    assert!(together, "both beginning-of-end-step abilities are on the stack before priority; observed {seen:?}");
+}
+
+#[test]
+fn a_person_may_resolve_the_warp_exile_first_so_a_ghostform_return_gains_the_life_for_the_draw() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 8);
+    let (_, h) = warped_haliya(&mut g);
+    g.attach_to = Some(h);
+    let aura = perm(&mut g, P0, "Kaya's Ghostform");
+    g.attach_to = None;
+    assert_eq!(g.perm(aura).attached, Some(h));
+    let st = g.turn_stamp();
+    g.player_mut(P0).gained_turn = Some((st, 2));
+    let (human, asked) = person(&mut g, |r| {
+        if r.prompt == "Your triggers: which resolves first?" { choice_with(r, "exile the warped") } else { Some(0) }
+    });
+    human.set_autopass("all");
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(
+        asked.lock().unwrap().iter().any(|(_, cs)| cs.iter().any(|x| x.contains("exile the warped"))),
+        "the exile is one of the triggers the person orders"
+    );
+    assert!(has_perm(&g, P0, HALIYA), "Kaya's Ghostform returned her");
+    assert_eq!(g.player(P0).gained_turn.unwrap().1, 3, "the returned Haliya gave the third life");
+    assert_eq!(g.player(P0).library.len(), 7, "the exile first, the life, then the draw resolves with 3 life gained");
+}
+
+#[test]
+fn a_blink_in_response_to_the_warp_exile_leaves_the_new_object_alone() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 8);
+    let (c, h) = warped_haliya(&mut g);
+    pool(&mut g, P0, &[('W', 1)]);
+    hand(&mut g, P0, &["Ephemerate"]);
+    let mut used = false;
+    let human = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !used && r.prompt.contains("exile the warped") {
+                used = true;
+                return Answer::Action(json!({"do": "cast", "card": 0}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        Answer::Pick(r.choices.iter().position(|s| s.contains("Haliya")).unwrap_or(0))
+    }));
+    human.set_autopass("all");
+    g.humans.add(P0, human);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(g.player(P0).exile.contains(&card(&g, "Ephemerate")), "Ephemerate was cast in response");
+    assert!(!g.perm(h).on_bf, "the old object is gone");
+    let new = perms_named(&g, P0, HALIYA)[0];
+    assert_ne!(new, h);
+    assert!(g.perm(new).on_bf, "the new object stays");
+    assert!(!g.player(P0).exile.contains(&c));
+}
+
+#[test]
+fn a_phased_out_warped_haliya_uses_up_the_delayed_exile() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 8);
+    let (c, m) = warped_haliya(&mut g);
+    g.perm_mut(m).phased = true;
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(g.perm(m).on_bf && !g.player(P0).exile.contains(&c), "phased out: the exile does nothing");
+    g.perm_mut(m).phased = false;
+    sim_core::engine::turn::end_step(&mut g, P1).unwrap();
+    assert!(g.perm(m).on_bf, "and it is used up: the next end step does not exile her");
+}
