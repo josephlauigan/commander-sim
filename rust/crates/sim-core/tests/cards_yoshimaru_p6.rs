@@ -277,12 +277,12 @@ fn haliya_warp_is_cast_for_w_exiled_at_the_end_step_and_still_draws() {
     assert!(!opts.is_empty(), "warp is offered: {{2}}{{W}} is out of reach and a Sol Ring follows");
     assert!(run_plan(&mut g, opts.pop().unwrap(), P0));
     let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("Haliya is out");
-    assert!(g.perm(m).data.truthy(DataKey::Warp));
+    assert!(g.perm(m).data.get(DataKey::WarpExile).is_some(), "the delayed exile is set up");
     assert_eq!(g.player(P0).life, l0 + 1, "she gained 1 as she entered");
     perm(&mut g, P0, "Sol Ring");
     perm(&mut g, P0, "Mother of Runes");
     assert_eq!(g.player(P0).life, l0 + 3);
-    end_step(&mut g, m);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
     assert!(!g.perm(m).on_bf, "exiled at the beginning of the end step");
     assert!(g.player(P0).exile.contains(&c), "in exile");
     assert_eq!(g.player(P0).library.len(), 4, "her end-step trigger was already on the stack: the card is drawn");
@@ -316,7 +316,7 @@ fn a_person_can_warp_haliya_for_w() {
     assert!(label.contains("{W}"), "{label}");
     assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
     let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("Haliya is out");
-    assert!(g.perm(m).data.truthy(DataKey::Warp));
+    assert!(g.perm(m).data.get(DataKey::WarpExile).is_some(), "the delayed exile is set up");
     assert_eq!(pool_total(&g, P0), 0, "paid {{W}}");
 }
 

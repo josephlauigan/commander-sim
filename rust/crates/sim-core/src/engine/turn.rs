@@ -932,6 +932,16 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             _ => None,
         })
         .collect();
+    // a warped permanent's delayed exile is captured the same way: one cast during this step waits for the next
+    let warp_exiles: Vec<_> = g
+        .players
+        .iter()
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter_map(|m| match g.perm(m).data.get(crate::state::DataKey::WarpExile) {
+            Some(crate::state::Val::Player(q)) => Some((*q, m)),
+            _ => None,
+        })
+        .collect();
     cardcode::necro_deliver(g, p)?;
     cardcode::delayed_end_step(g, p)?; // Marchesa, The Eternal Wanderer, Eerie Interlude, Memory Jar
     if g.doomed_turn == Some(p) {
@@ -964,6 +974,9 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::EotSac) {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
         }
+    }
+    for (q, m) in warp_exiles {
+        crate::impls::generic_paths::warp_exile(g, q, m)?; // after the end-step triggers (Haliya's draw) have resolved
     }
     for (q, m) in sneak_sacs {
         g.perm_mut(m).data.set(crate::state::DataKey::SneakAttack, crate::state::Val::Bool(true));

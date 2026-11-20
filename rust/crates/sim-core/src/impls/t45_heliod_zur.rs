@@ -543,13 +543,16 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// Mother of Machines blanks them and Panharmonicon, Starfield Vocalist and your own Elesh Norn add a trigger, per
 /// token, from the dispatcher; Delney does not (she has power 3). Her triggers do not depend on her still being on the
 /// battlefield when they resolve, and each keeps the controller it had when it triggered
-/// (`hooks::trigger_controller`). Warp {W}: cast from the hand for {W} (plus any cost increase) and exiled at the
-/// beginning of the next end step; its card then waits in its owner's exile and can be cast for its mana cost on a later
-/// turn (`generic_paths::warped_in_exile`: the AI's option and a person's cast from exile). Her end-step draw is a
-/// trigger of its own: it is put on the stack at the beginning of her controller's end step even as the warp exiles
-/// her, so the card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first
-/// main phase when the {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two,
-/// the draw) or, when the full cost is out of reach this turn, for one more; a person is always offered the warp.
+/// (`hooks::trigger_controller`). Warp {W}: cast from the hand for {W} (plus any cost increase, and Trinisphere's floor
+/// on the total) and exiled at the beginning of the next end step by a delayed trigger of the caster's that the cast
+/// made (`generic_paths::warp_exile`, run by `turn::end_step`): it is set on the permanent the spell became, not on a
+/// newer object (a blink in response), and it does not depend on her abilities or on who controls her by then. Her card
+/// then waits in its owner's exile and its owner can cast it for its mana cost on a later turn
+/// (`generic_paths::warped_in_exile`: the AI's option and a person's cast from exile). Her end-step draw is a trigger of
+/// its own: it is put on the stack at the beginning of her controller's end step even as the warp exiles her, so the
+/// card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first main phase when
+/// the {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two, the draw) or,
+/// when the full cost is out of reach this turn, for one more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     // (a land, whatever else it is, comes through the land event)
     if p != trigger_controller(g, src)
@@ -605,35 +608,25 @@ fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) ->
 }
 
 /// your end step: the trigger always triggers and the "if you've gained 3 or more life this turn" is checked as it
-/// resolves (not an intervening if), whether or not Haliya is still there; a warped Haliya is exiled at the beginning
-/// of the next end step (whose ever it is)
+/// resolves (not an intervening if), whether or not Haliya is still there. (A warped Haliya's exile is a delayed
+/// trigger of its own: `generic_paths::warp_exile`, run by `turn::end_step`.)
 fn haliya_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    let o = trigger_controller(g, src);
-    if p == o && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))? {
+    if p == trigger_controller(g, src)
+        && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))?
+    {
         let st = g.turn_stamp();
         let gained = g.player(p).gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
         if gained >= 3 {
             draw(g, p, 1, false)?;
         }
     }
-    if !g.perm(src).on_bf || !g.perm(src).data.truthy(DataKey::Warp) {
-        return Ok(());
-    }
-    let Some(c) = g.perm(src).cd else { return Ok(()) };
-    g.perm_mut(src).data.remove(DataKey::Warp);
-    crate::glog!(g, "    {HALIYA} (warp) is exiled");
-    exile_perm(g, src)?;
-    let st = g.turn_stamp();
-    g.player_mut(o).flag_turn.insert(crate::impls::generic_paths::warp_flag(HALIYA), st);
-    if !g.player(o).exile.contains(&c) {
-        g.player_mut(o).exile.push(c);
-    }
     Ok(())
 }
 
-/// the warp cost {W}, with the cost increases on the card (taxes) on top
+/// the warp cost {W}, with the cost increases on the card (taxes) on top, and Trinisphere's floor on the total
 fn haliya_warp_extra(g: &Game, p: PlayerId, c: CardId) -> u32 {
-    cost_of(g, p, c).0.saturating_sub(g.db.get(c).generic)
+    let extra = cost_of(g, p, c).0.saturating_sub(g.db.get(c).generic);
+    extra.max((crate::engine::hooks::max_min_cost(g, p, c) - 1).max(0) as u32) // ({W} is one of the three)
 }
 
 /// enters the card would make this turn if warped now: Haliya herself, then the creature and artifact cards in hand the
@@ -698,10 +691,17 @@ pub(crate) fn haliya_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !pay_spell(g, p, c, extra, "W", false)? {
         return Ok(false);
     }
+    let mark = g.enter_no;
     cast_card(g, p, c, "hand", Ctx::default())?;
-    let found = g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
+    // the permanent the spell became: the first of this card to enter since the cast (a blink in response to its enters
+    // trigger makes a newer object, which was not cast for its warp cost), if it is still there
+    let found = (0..g.perms.len() as u32)
+        .map(PermId)
+        .filter(|&m| g.perm(m).cd == Some(c) && !g.perm(m).token && g.perm(m).born > mark)
+        .min_by_key(|&m| g.perm(m).born)
+        .filter(|&m| g.perm(m).on_bf);
     if let Some(m) = found {
-        g.perm_mut(m).data.set(DataKey::Warp, Val::Bool(true));
+        g.perm_mut(m).data.set(DataKey::WarpExile, Val::Player(p)); // the exile is a delayed trigger of the caster's
     }
     Ok(true)
 }

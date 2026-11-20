@@ -16,12 +16,13 @@
 use crate::cards::CardDb;
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
+use crate::engine::stack::trigger_window;
 use crate::engine::values::has;
-use crate::engine::zones::{discard_cards, draw};
+use crate::engine::zones::{discard_cards, draw, exile_perm};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, Game};
+use crate::state::{Ctx, DataKey, Game};
 use crate::sym::intern;
 use crate::tag::Tag;
 
@@ -224,6 +225,31 @@ pub fn warped_in_exile(g: &Game, p: PlayerId) -> Vec<CardId> {
         .filter(|&c| g.db.get(c).has_kw("warp"))
         .filter(|&c| pl.flag_turn.get(&warp_flag(&g.db.get(c).name)).is_some_and(|&w| w != st))
         .collect()
+}
+
+/// A warped permanent's delayed exile (Warp: "Exile this creature at the beginning of the next end step, then you may cast
+/// it from exile on a later turn"), made by the cast as the spell resolved: it does not depend on the permanent's
+/// abilities, and `caster` controls it. `turn::end_step` runs it for each permanent marked `DataKey::WarpExile` (captured
+/// as the step begins), after the end-step triggers have been put on the stack and resolved. The card goes to its owner's
+/// exile (a commander to the command zone: no later cast), and its owner may cast it on a later turn.
+pub fn warp_exile(g: &mut Game, caster: PlayerId, m: PermId) -> Res {
+    g.perm_mut(m).data.remove(DataKey::WarpExile); // used up either way
+    if !g.perm(m).on_bf || g.perm(m).phased {
+        return Ok(());
+    }
+    let Some(c) = g.perm(m).cd else { return Ok(()) };
+    let name = format!("exile the warped {}", g.db.get(c).name);
+    if !trigger_window(g, caster, Some(m), &name, None)? || !g.perm(m).on_bf || g.perm(m).phased {
+        return Ok(());
+    }
+    crate::glog!(g, "    {} (warp) is exiled", g.db.get(c).name);
+    exile_perm(g, m)?;
+    let owner = g.perm(m).orig;
+    if g.player(owner).exile.contains(&c) {
+        let (st, key) = (g.turn_stamp(), warp_flag(&g.db.get(c).name));
+        g.player_mut(owner).flag_turn.insert(key, st);
+    }
+    Ok(())
 }
 
 /// a warped card leaves p's exile as p casts it (and is no longer waiting there)
