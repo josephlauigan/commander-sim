@@ -981,3 +981,121 @@ fn an_opponents_elesh_blanks_haliyas_life_for_a_creature_land() {
     play_land(&mut g, P0, "Dryad Arbor");
     assert_eq!(g.player(P0).life, life, "no entering causes her trigger");
 }
+
+// ------------------------------------------------------------------ round 4: the warp exile is a delayed trigger
+// Warp: "Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn."
+// The exile is set up as the spell resolves; it does not depend on the creature's abilities, on who controls it at the
+// end step or on a new object (a blink) being the creature that was cast.
+fn warped_haliya(g: &mut Game) -> (sim_core::ids::CardId, PermId) {
+    g.step = sim_core::state::Step::Main1;
+    pool(g, P0, &[('W', 1)]);
+    let c = hand(g, P0, &[HALIYA])[0];
+    person(g, |_| None);
+    let o = sim_core::human::alt::hand_alts(g, P0, c).unwrap().into_iter().find(|(l, _)| l.contains("warp")).unwrap().1;
+    assert!(sim_core::human::alt::run(g, P0, c, &o).unwrap().is_none());
+    (c, perms_named(g, P0, HALIYA)[0])
+}
+
+#[test]
+fn a_warped_haliya_that_lost_her_abilities_is_still_exiled_at_the_end_step() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let (c, m) = warped_haliya(&mut g);
+    g.perm_mut(m).neutered = true;
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(m).on_bf, "warp set up a delayed exile; losing abilities does not remove it");
+    assert!(g.player(P0).exile.contains(&c));
+}
+
+#[test]
+fn a_stolen_warped_haliya_is_exiled_once_in_her_owners_exile_and_the_owner_may_cast_her() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let (c, m) = warped_haliya(&mut g);
+    steal(&mut g, P1, m);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(m).on_bf);
+    assert!(g.player(P0).exile.contains(&c), "the card is in its owner's exile");
+    assert!(!g.player(P1).exile.contains(&c), "one physical card is in one exile only");
+    g.round += 1;
+    assert!(sim_core::impls::generic_paths::warped_in_exile(&g, P0).contains(&c), "its owner may cast it later");
+    assert!(sim_core::impls::generic_paths::warped_in_exile(&g, P1).is_empty(), "the thief may not");
+}
+
+#[test]
+fn a_warped_haliya_blinked_as_she_enters_is_a_new_object_without_the_delayed_exile() {
+    let mut g = tbl();
+    g.step = sim_core::state::Step::Main1;
+    stock_library(&mut g, P0, 8);
+    pool(&mut g, P0, &[('W', 2)]);
+    let c = hand(&mut g, P0, &[HALIYA, "Ephemerate"])[0];
+    let mut used = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !used && r.prompt.contains("Haliya") && r.prompt.contains("gain 1") {
+                used = true;
+                return Answer::Action(json!({"do":"cast","card":0}));
+            }
+            return Answer::Action(json!({"do":"pass"}));
+        }
+        Answer::Pick(r.choices.iter().position(|c| c.contains("Haliya")).unwrap_or(0))
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    let o = sim_core::human::alt::hand_alts(&mut g, P0, c)
+        .unwrap()
+        .into_iter()
+        .find(|(l, _)| l.contains("warp"))
+        .unwrap()
+        .1;
+    assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
+    assert!(g.player(P0).exile.contains(&card(&g, "Ephemerate")), "Ephemerate resolved and rebounded");
+    let m = perms_named(&g, P0, HALIYA)[0];
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(g.perm(m).on_bf, "the blinked Haliya is a new object, not the creature that was cast for warp");
+}
+
+#[test]
+fn a_countered_warped_haliya_leaves_nothing_to_exile() {
+    let mut g = tbl();
+    g.step = sim_core::state::Step::Main1;
+    pool(&mut g, P0, &[('W', 1)]);
+    let c = hand(&mut g, P0, &[HALIYA])[0];
+    hand(&mut g, P1, &["Counterspell"]);
+    pool(&mut g, P1, &[('U', 2)]);
+    person(&mut g, |_| None);
+    let mut used = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !used && r.prompt.contains("casts Haliya") {
+                used = true;
+                return Answer::Action(json!({"do":"cast","card":0}));
+            }
+            return Answer::Action(json!({"do":"pass"}));
+        }
+        Answer::Pick(0)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P1, h);
+    let o = sim_core::human::alt::hand_alts(&mut g, P0, c)
+        .unwrap()
+        .into_iter()
+        .find(|(l, _)| l.contains("warp"))
+        .unwrap()
+        .1;
+    assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
+    assert!(g.player(P1).gy.contains(&card(&g, "Counterspell")), "the counter was cast");
+    assert!(!has_perm(&g, P0, HALIYA));
+    assert!(g.player(P0).gy.contains(&c));
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(sim_core::impls::generic_paths::warped_in_exile(&g, P0).is_empty());
+}
+
+#[test]
+fn trinisphere_raises_haliyas_warp_cost_to_three() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Trinisphere");
+    pool(&mut g, P0, &[('C', 2)]);
+    warped_haliya(&mut g);
+    assert_eq!(pool_total(&g, P0), 0, "Trinisphere raises the warp cost {{W}} to {{2}}{{W}}");
+}
