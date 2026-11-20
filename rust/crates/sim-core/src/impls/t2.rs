@@ -134,14 +134,20 @@ fn best_target_any_dealt(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>)
     })
 }
 
+/// how deep a chain of blinks nests before it stops: three for the AI (a chain is a combo, not a loop, here); a person
+/// chooses every link, so theirs may run on (and the end is logged)
+const PERSON_BLINK_DEPTH: u32 = 10;
+
 /// t2.blink: exile m and return it under its owner's control (ETBs again, untapped, summoning sick); the permanent
-/// it came back as, None if it didn't (a token, or a blink chain three deep: those are combos, not loops here)
+/// it came back as, None if it didn't (a token, or a blink chain at its depth limit: those are combos, not loops here)
 pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     let x = g.perm(m);
     if x.token || x.cd.is_none() || !x.on_bf {
         return Ok(None);
     }
-    if g.blink_depth >= 3 {
+    let cap = if crate::human::is_human(g, p) { PERSON_BLINK_DEPTH } else { 3 };
+    if g.blink_depth >= cap {
+        crate::glog!(g, "    {} is not blinked: the blink chain stops at {cap} links", g.perm(m).name);
         return Ok(None);
     }
     g.blink_depth += 1;
@@ -152,6 +158,9 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
 
 /// t2._blink
 fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
+    if g.player(g.perm(m).owner).lands.contains(&m) {
+        return super::yoshimaru_p7::blink_land(g, m); // a land is listed apart from the permanents
+    }
     let (cd, orig, cmd) = (g.perm(m).cd.unwrap(), g.perm(m).orig, g.perm(m).is_cmd);
     leave(g, m)?;
     let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
@@ -212,19 +221,19 @@ fn human_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, rocks: boo
     flicker_choice(g, src, p, cands)
 }
 
-/// the person picks what to flicker from `cands` (or nothing) and it is blinked
-fn flicker_choice(g: &mut Game, src: PermId, p: PlayerId, mut cands: Vec<PermId>) -> Res {
+/// the person picks what to flicker from `cands` (or nothing) and it is blinked (a token is exiled for good)
+pub(crate) fn flicker_choice(g: &mut Game, src: PermId, p: PlayerId, mut cands: Vec<PermId>) -> Res {
     cands.retain(|&m| on(g, p, m));
     if cands.is_empty() {
         return Ok(());
     }
-    let labels: Vec<String> = cands.iter().map(|&m| g.perm(m).name.to_string()).collect();
+    let labels: Vec<String> =
+        cands.iter().map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m))).collect();
     let prompt = format!("{}: exile one of your permanents, then return it?", cname(g, src));
     let Some(k) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("no"), None)? else {
         return Ok(());
     };
-    blink(g, p, cands[k])?;
-    Ok(())
+    crate::human::cards::blink(g, p, cands[k])
 }
 
 /// t2.end_step_flicker: Soulherder, Conjurer's Closet, Teleportation Circle: at the beginning of your end step, you

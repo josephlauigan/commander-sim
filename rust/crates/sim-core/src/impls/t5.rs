@@ -526,12 +526,21 @@ pub(crate) fn kiki_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<b
     Ok(true)
 }
 
-/// blinks your best ETB permanent (Kiki loop is a combo)
+/// blinks your best ETB permanent (Kiki loop is a combo). A person picks any other permanent they control, lands and
+/// tokens included (a token is exiled for good), or none.
 fn felidar(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        let mine = |g: &Game| super::yoshimaru_p7::targets_from(g, o, src, |g, x| x != src && g.perm(x).owner == o);
+        if mine(g).is_empty() || !trigger_window(g, o, Some(src), "blink a permanent", None)? {
+            return Ok(());
+        }
+        let cands = mine(g);
+        return super::t2::flicker_choice(g, src, o, cands);
+    }
     let mut cands: Vec<PermId> = g
         .player(o)
         .perms
