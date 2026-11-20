@@ -136,3 +136,60 @@ fn prodigy_spellseeker_queues_two_searches() {
     perm(&mut g, A, "Spellseeker");
     assert_eq!(g.player(A).hand.len() - before, 2);
 }
+
+// Census payload checks: repeated instances must preserve the actual Oracle effects.
+#[test]
+fn doubled_thundermaw_damage_accumulates_on_surviving_fliers() {
+    for toughness in [2, 4] {
+        let mut g = tbl();
+        perm(&mut g, A, "Panharmonicon");
+        let t = token(&mut g, B, toughness);
+        g.perm_mut(t).fly = true;
+        perm(&mut g, A, "Thundermaw Hellkite");
+        assert_eq!(g.perm(t).on_bf, toughness > 2);
+        if toughness > 2 {
+            assert!(g.perm(t).tapped);
+            assert_eq!(sim_core::human::combos::marked(&g, t), 2);
+        }
+    }
+}
+#[test]
+fn doubled_massacre_wurm_shrink_accumulates_and_ignores_indestructible() {
+    let mut g = tbl();
+    perm(&mut g, A, "Panharmonicon");
+    let t = token(&mut g, B, 4);
+    g.perm_mut(t).eot_kw.push("indestructible");
+    perm(&mut g, A, "Massacre Wurm");
+    assert!(!g.perm(t).on_bf);
+}
+#[test]
+fn doubled_bonny_creates_a_second_beau_before_the_legend_rule() {
+    let mut g = tbl();
+    lands(&mut g, A, "Forest", 5, false);
+    perm(&mut g, A, "Panharmonicon");
+    perm(&mut g, A, "Impact Tremors");
+    let before = g.player(B).life;
+    perm(&mut g, A, "Bonny Pall, Clearcutter");
+    assert_eq!(before - g.player(B).life, 6, "Bonny and both Beaus enter, each with two Tremors instances");
+    assert_eq!(g.player(A).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).name == "Beau").count(), 1);
+}
+#[test]
+fn doubled_aura_exile_links_return_both_cards() {
+    use sim_core::engine::cast;
+    for aura in ["Chains of Custody", "Sheltered by Ghosts"] {
+        let mut g = tbl();
+        perm(&mut g, A, "Starfield Vocalist");
+        let host = perm(&mut g, A, "Serra Angel");
+        let a = perm(&mut g, B, "Myr Battlesphere");
+        let b = perm(&mut g, B, "Steel Hellkite");
+        let c = hand(&mut g, A, &[aura])[0];
+        lands(&mut g, A, "Plains", 5, false);
+        cast::cast_card(&mut g, A, c, "hand", Ctx { target: Some(host), ..Default::default() }).unwrap();
+        assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "{aura}");
+        let m = *g.player(A).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).unwrap();
+        zones::die(&mut g, m, "destroy").unwrap();
+        for n in ["Myr Battlesphere", "Steel Hellkite"] {
+            assert!(g.player(B).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).name == n), "{aura}: {n}");
+        }
+    }
+}
