@@ -209,6 +209,12 @@ pub fn untargetable(g: &Game, m: PermId) -> bool {
     })
 }
 
+/// m can't be the target of a spell or ability of its own controller that comes from a source of these colours: shroud
+/// (the keyword, Lightning Greaves, Whispersilk Cloak) and protection from one of them. Hexproof does not stop it.
+pub fn untargetable_by_its_controller(g: &Game, m: PermId, source: Colors) -> bool {
+    crate::impls::zur::untargetable_by_you(g, m) || equipped(g, m, Tag::Cloak) || protected_from(g, m, source)
+}
+
 /// q can't be the target of opponents' spells and abilities (Shalai, Voice of Plenty)
 pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
     crate::engine::hooks::any_player_hexproof(g, q)

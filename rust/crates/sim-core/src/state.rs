@@ -69,6 +69,10 @@ pub enum DataKey {
     EotSac,
     /// Sneak Attack: activating player until the next end step, then Bool(true); grants lasting haste.
     SneakAttack,
+    /// a permanent cast for its warp cost: the player who cast it (`Val::Player`). Its delayed exile at the beginning of
+    /// the next end step is put on the stack by `turn::end_step` with the beginning-of-end-step triggers
+    /// (`TrigAct::WarpExile`, `generic_paths::warp_exile`), whatever the permanent can do by then
+    WarpExile,
     /// The player a phased-out permanent phased out under (`Val::Player`): it phases in at that player's untap step
     /// wherever it is by then (a Silumgar steal that ended, any change of control while phased out; see
     /// `control::note_phase_holder`). Every site that phases a permanent in or takes it off the battlefield must clear it.
@@ -256,6 +260,8 @@ pub enum DataKey {
     /// practice mode: the exiled cards a person's Dauthi Voidwalker lets them play this turn (a `Val::List`: the turn
     /// stamp, then the cards; `human::gaps_c::dauthi_permits`)
     Dauthi,
+    /// the X a permanent spell was cast with (Int, set as it enters: `Enter::x`); absent when it did not enter from a cast
+    CastX,
 }
 
 /// A value in per-card state.
@@ -1387,6 +1393,8 @@ pub struct Game {
     pub trig_probe: bool,
     /// the stack item of the trigger being resolved (by id)
     pub trig_current: Option<u32>,
+    /// the source and controller of the hook trigger being probed or resolved (`hooks::trigger_controller`)
+    pub trig_ctl: Option<(PermId, PlayerId)>,
     /// ids of trigger items that have a copy which resolved (Peter Parker's Camera): the hook runs its effect again
     /// for each, before the original (`stack::take_copies`)
     pub trig_copies: Vec<u32>,
@@ -1603,6 +1611,7 @@ impl Game {
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
+            trig_ctl: None,
             trig_copies: vec![],
             last_counter: None,
             bounced_spell: false,

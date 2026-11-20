@@ -135,12 +135,13 @@ function showStack(req) {
   const top = req.data.stack[0];
   const what = (x) => (x.text ? x.text.split(': ').slice(1).join(': ') || x.text : x.name);
   const head = top.kind && top.kind !== 'spell' ? `${top.controller}: ${what(top)}`
-    : req.data.caster ? `${req.data.caster} casts ${top.name}` : 'On the stack';
+    : req.data.caster ? `${req.data.caster} casts ${top.name}${top.x ? ` · X=${top.x}` : ''}` : 'On the stack';
   opps.after(el('section', { class: 'stackbar', 'aria-label': 'The stack' },
     el('div', { class: 'cards' }, req.data.stack.map((x) => el('figure', { class: 'item' + (x.kind && x.kind !== 'spell' ? ' ability' : '') },
       cardOf(forSeat(images, seatOf(x.controller)), x.name, { size: 'sm' }),
       x.controller ? el('figcaption', {}, el('b', {}, x.controller),
         x.kind && x.kind !== 'spell' ? ` · ${x.kind === 'trigger' ? 'trigger' : 'ability'}: ${what(x)}` : '',
+        x.x ? ` · X=${x.x}` : '',
         x.target ? ` → ${x.target}` : '') : null))),
     el('div', {}, el('h3', {}, head),
       order.length ? el('div', { class: 'order' }, el('b', {}, 'Priority: '), order.flatMap((o, i) => (i ? [' → ', o] : [o]))) : null)));

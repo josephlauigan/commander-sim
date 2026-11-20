@@ -868,7 +868,7 @@ fn run(
         }
         "clue" => {
             let k = n(g, ctx);
-            g.player_mut(p).clues += k.max(0) as u32;
+            zones::make_artifact_tokens(g, p, "Clue", k)?;
         }
         "gain_life" => {
             let mut k = n(g, ctx) * e.mult.unwrap_or(1);

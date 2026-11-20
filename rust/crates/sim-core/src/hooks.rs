@@ -373,6 +373,9 @@ pub type EachCombatFn = fn(&mut Game, Src, PlayerId) -> Res;
 pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
 pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
+/// the X the AI pays when it casts a card with {X} in its cost: (g, p, c, spare) -> X, where `spare` is the mana left
+/// after the rest of the cost (the engine pays at most that)
+pub type CastXFn = fn(&Game, PlayerId, CardId, u32) -> u32;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
 pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 /// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
@@ -412,7 +415,7 @@ pub enum SlotClass {
 /// Every `CardImpl` slot's class, in field order: the one place a slot is classed. `at_once` is not a slot (it marks
 /// how other slots run). `options` / `gy_options` / `hand_options` / `land_options` build the plays the AI may pick;
 /// `prio`, `spell_imp` and `pval` are numbers it ranks by.
-pub const SLOT_CLASS: [(&str, SlotClass); 103] = [
+pub const SLOT_CLASS: [(&str, SlotClass); 104] = [
     ("etb", SlotClass::Rule),
     ("enter_copy", SlotClass::Rule),
     ("leaves", SlotClass::Rule),
@@ -514,6 +517,7 @@ pub const SLOT_CLASS: [(&str, SlotClass); 103] = [
     ("proliferate_extra", SlotClass::Rule),
     ("saga", SlotClass::Rule),
     ("self_cost", SlotClass::Rule),
+    ("cast_x", SlotClass::Ai),
     ("aura", SlotClass::Rule),
     ("walker", SlotClass::Rule),
 ];
@@ -661,6 +665,8 @@ pub struct CardImpl {
     pub saga: Option<(SagaWantsFn, SagaLoreFn)>,
     /// engine.SELF_COST: generic mana added to (+) or taken off (-) the card's own cost (Draco's domain, delve)
     pub self_cost: Option<PrioFn>,
+    /// the AI's X for a spell cast with {X} in its cost (The Meathook Massacre): chosen as the spell is cast
+    pub cast_x: Option<CastXFn>,
     /// an Aura's bonus, keywords and host rule (common.AURA; set by `impls::common::aura`)
     pub aura: Option<&'static crate::impls::common::AuraSpec>,
     /// a planeswalker's loyalty abilities for the walker framework (common.WALKERS; set by `impls::common::walker`)
@@ -686,7 +692,7 @@ pub struct CardImpl {
 impl CardImpl {
     /// Every slot by name, and whether it is filled. Destructuring the struct makes a new field a compile error here
     /// until it is listed, and the test `every_slot_has_a_class` then needs its class in `SLOT_CLASS`.
-    pub fn slot_fill(&self) -> [(&'static str, bool); 103] {
+    pub fn slot_fill(&self) -> [(&'static str, bool); 104] {
         let CardImpl {
             etb,
             enter_copy,
@@ -789,6 +795,7 @@ impl CardImpl {
             proliferate_extra,
             saga,
             self_cost,
+            cast_x,
             aura,
             walker,
             at_once: _,
@@ -897,6 +904,7 @@ impl CardImpl {
             ("proliferate_extra", proliferate_extra.is_some()),
             ("saga", saga.is_some()),
             ("self_cost", self_cost.is_some()),
+            ("cast_x", cast_x.is_some()),
             ("aura", aura.is_some()),
             ("walker", walker.is_some()),
         ]
@@ -1197,6 +1205,9 @@ impl Trigger {
 pub enum TrigAct {
     /// A dies-exile ability granted to a spell by Rivaz.
     RivazExile { m: PermId },
+    /// a warped permanent's delayed exile (`generic_paths::warp_exile`), put on the stack with the other
+    /// beginning-of-end-step triggers
+    WarpExile { caster: PlayerId, m: PermId },
     /// a card's hook for this event (found again in the registry by its source's card)
     Hook { event: Event, call: Call },
     /// the engine's tag-driven enter effects (Python's `etb_once`)

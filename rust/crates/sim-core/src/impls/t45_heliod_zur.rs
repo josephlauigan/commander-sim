@@ -20,8 +20,8 @@
 //!   the best creature card from your graveyard returns, gain its toughness). Level 1's "plus 1" is compiled.
 //! - Daxos, Blessed by the Sun: toughness equal to your devotion to white (its life gain is compiled).
 //! - Felidar Sovereign: your upkeep with 40 or more life: you win.
-//! - Haliya, Guided by Light: it or another creature or artifact of yours enters: gain 1; your end step, draw if you
-//!   gained 3 or more this turn. Left out: warp, and Treasure / Food / Clue tokens (counters here) as artifacts.
+//! - Haliya, Guided by Light: it or another creature or artifact of yours enters (a Treasure, Food, Clue or Blood token too):
+//!   gain 1; your end step, draw if you gained 3 or more this turn; warp {W}.
 //! - Linden, the Steadfast Queen: each white creature of yours that attacks: gain 1 life.
 //! - Serra Ascendant: +5/+5 and flying with 30 or more life.
 //! - Voice of the Blessed: flying and vigilance with 4+ counters, indestructible with 10+ (its counters are compiled).
@@ -42,7 +42,8 @@
 //!   colourless land (a Wastes) for good.
 
 use crate::cards::{CardDb, Types};
-use crate::engine::cast::cast_card;
+use crate::engine::cast::{cast_card, castable};
+use crate::engine::hooks::trigger_controller;
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::removal::apply_removal;
@@ -526,28 +527,184 @@ fn felidar_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 // ================================================================== Haliya, Guided by Light
-/// it or another creature or artifact you control enters: gain 1 life
+const HALIYA: &str = "Haliya, Guided by Light";
+
+/// **Haliya, Guided by Light** ({2}{W} 3/3, legendary Human Soldier): "Whenever Haliya or another creature or artifact
+/// you control enters, you gain 1 life. At the beginning of your end step, draw a card if you've gained 3 or more life
+/// this turn. Warp {W}". A nonland creature or artifact permanent entering is the engine's enters event; a land that is
+/// a creature or an artifact comes through the land event (`Event::LandEnters`; a land that was already there when she
+/// came in is not counted); a creature token comes through the tokens event (`Event::TokensEnter`), which queues one of
+/// her enters triggers per token (`hooks::queue_etb_per_token`); a Treasure, Food, Clue or Blood token (counters on the
+/// player in the engine) is an artifact entering too, one trigger each (the dispatcher queues a batch as one entry per
+/// token), and arrives through `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's
+/// Treasures, a compiled investigate, a spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except
+/// Xorn's extra Treasure (Xorn's own model adds it directly, which fires nothing). All four of her enters hooks are
+/// enters-caused triggers (the tokens and token-creation hooks are marked `enter_trigger`): an opponent's Elesh Norn,
+/// Mother of Machines blanks them and Panharmonicon, Starfield Vocalist and your own Elesh Norn add a trigger, per
+/// token, from the dispatcher; Delney does not (she has power 3). Her triggers do not depend on her still being on the
+/// battlefield when they resolve, and each keeps the controller it had when it triggered
+/// (`hooks::trigger_controller`). Warp {W}: cast from the hand for {W} (plus any cost increase, and Trinisphere's floor
+/// on the total) and exiled at the beginning of the next end step by a delayed trigger of the caster's that the cast
+/// made (`generic_paths::warp_exile`, put on the stack by `turn::end_step` with the beginning-of-end-step triggers, so
+/// her controller orders it with her draw): it is set on the permanent the spell became, not on a
+/// newer object (a blink in response), and it does not depend on her abilities or on who controls her by then. Her card
+/// then waits in its owner's exile and its owner can cast it for its mana cost on a later turn
+/// (`generic_paths::warped_in_exile`: the AI's option and a person's cast from exile). Her end-step draw is a trigger of
+/// its own: it is put on the stack at the beginning of her controller's end step even as the warp exiles her, so the
+/// card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first main phase when
+/// the {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two, the draw) or,
+/// when the full cost is out of reach this turn, for one more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if p != owner(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
+    // (a land, whatever else it is, comes through the land event)
+    if p != trigger_controller(g, src)
+        || g.perm(m).cd.is_some_and(|c| g.db.get(c).land)
+        || !(m == src || g.is_creature(m) || is_artifact(g, m))
+    {
         return Ok(());
     }
+    haliya_life(g, src, p)
+}
+
+/// the life, after the trigger's window (the table may respond; a countered trigger does nothing)
+fn haliya_life(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
         return Ok(());
     }
     gain(g, p, 1)
 }
 
-/// your end step: draw a card if you gained 3 or more life this turn
+/// a land that is a creature or an artifact entered (one that entered before Haliya did is not counted)
+fn haliya_land(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m.0 <= src.0 || p != trigger_controller(g, src) || !(g.is_creature(m) || is_artifact(g, m)) {
+        return Ok(());
+    }
+    haliya_life(g, src, p)
+}
+
+/// creature tokens entered under p's control (it runs at once, so p is compared with her controller now): one trigger
+/// for each, as for any creature entering
+fn haliya_token_entries(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
+    if p != owner(g, src) {
+        return Ok(());
+    }
+    let toks: Vec<PermId> = toks.iter().copied().filter(|&t| g.is_creature(t) || is_artifact(g, t)).collect();
+    crate::engine::hooks::queue_etb_per_token(g, src, p, &toks)
+}
+
+/// a Treasure, Food, Clue or Blood token you create is an artifact entering: one life each
+fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res {
+    if p != trigger_controller(g, src) {
+        return Ok(());
+    }
+    for k in 0..n {
+        if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
+            continue;
+        }
+        if k > 0 {
+            g.tick()?; // a separate event each
+        }
+        gain(g, p, 1)?;
+    }
+    Ok(())
+}
+
+/// your end step: the trigger always triggers and the "if you've gained 3 or more life this turn" is checked as it
+/// resolves (not an intervening if), whether or not Haliya is still there. (A warped Haliya's exile is a delayed
+/// trigger of its own, stacked with this one: `generic_paths::warp_exile`, from `turn::end_step`.)
 fn haliya_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) || !live(g, src) {
-        return Ok(());
+    if p == trigger_controller(g, src)
+        && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))?
+    {
+        let st = g.turn_stamp();
+        let gained = g.player(p).gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
+        if gained >= 3 {
+            draw(g, p, 1, false)?;
+        }
     }
-    let st = g.turn_stamp();
-    let gained = |g: &Game| g.player(p).gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
-    if gained(g) < 3 || !trigger_window(g, p, Some(src), "draw a card", Some(2.0))? {
-        return Ok(());
+    Ok(())
+}
+
+/// the warp cost {W}, with the cost increases on the card (taxes) on top, and Trinisphere's floor on the total
+fn haliya_warp_extra(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let extra = cost_of(g, p, c).0.saturating_sub(g.db.get(c).generic);
+    extra.max((crate::engine::hooks::max_min_cost(g, p, c) - 1).max(0) as u32) // ({W} is one of the three)
+}
+
+/// enters the card would make this turn if warped now: Haliya herself, then the creature and artifact cards in hand the
+/// rest of the mana pays for, cheapest first
+fn haliya_warp_enters(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    let mut spare = total_mana(g, p, false).saturating_sub(1 + haliya_warp_extra(g, p, c));
+    let mut costs: Vec<u32> = g
+        .player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&x| {
+            let d = g.db.get(x);
+            x != c && !d.land && (d.creature || d.types.has(Types::ARTIFACT))
+        })
+        .map(|x| {
+            let (gn, pips) = cost_of(g, p, x);
+            gn + pips.chars().count() as u32
+        })
+        .collect();
+    costs.sort_unstable();
+    let mut n = 1;
+    for k in costs {
+        if k > spare {
+            break;
+        }
+        spare -= k;
+        n += 1;
     }
-    draw(g, p, 1, false)
+    n
+}
+
+fn haliya_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false)
+        || g.active != Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !castable(g, p, c, "hand")
+        || !can_pay_spell(g, p, c, haliya_warp_extra(g, p, c), "W", false)
+    {
+        return Ok(vec![]);
+    }
+    let (cg, cp) = cost_of(g, p, c);
+    let full = can_pay_spell(g, p, c, cg, &cp, false);
+    let enters = haliya_warp_enters(g, p, c);
+    if !(enters >= 3 || (!full && enters >= 2)) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 2.5,
+        label: format!("{HALIYA} (warp)"),
+        act: Some(Action::Plan { f: haliya_warp, arg: c.0 as i64 }),
+    }])
+}
+
+/// Warp {W}: cast it from the hand for {W}; it is exiled at the beginning of the next end step
+pub(crate) fn haliya_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let extra = haliya_warp_extra(g, p, c);
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, extra, "W", false) {
+        return Ok(false);
+    }
+    if !pay_spell(g, p, c, extra, "W", false)? {
+        return Ok(false);
+    }
+    let mark = g.enter_no;
+    cast_card(g, p, c, "hand", Ctx::default())?;
+    // the permanent the spell became: the first of this card to enter since the cast (a blink in response to its enters
+    // trigger makes a newer object, which was not cast for its warp cost), if it is still there
+    let found = (0..g.perms.len() as u32)
+        .map(PermId)
+        .filter(|&m| g.perm(m).cd == Some(c) && !g.perm(m).token && g.perm(m).born > mark)
+        .min_by_key(|&m| g.perm(m).born)
+        .filter(|&m| g.perm(m).on_bf);
+    if let Some(m) = found {
+        g.perm_mut(m).data.set(DataKey::WarpExile, Val::Player(p)); // the exile is a delayed trigger of the caster's
+    }
+    Ok(true)
 }
 
 // ================================================================== Linden, the Steadfast Queen
@@ -802,10 +959,16 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.upkeep = Some(felidar_upkeep);
         c.pval = Some(6.0); // a win at the next upkeep: removal looks at it first
     }
-    if has("Haliya, Guided by Light") {
-        let c = r.card(db, "Haliya, Guided by Light")?;
+    if has(HALIYA) {
+        let c = r.card(db, HALIYA)?;
         c.etb = Some(haliya_etb);
+        c.land_enters = Some(haliya_land);
+        c.token_created = Some(haliya_tokens);
+        *c = c.enter_trigger(Event::TokenCreated); // "Whenever ... another creature or artifact you control enters"
+        c.tokens_enter = Some(haliya_token_entries);
+        *c = c.enter_trigger(Event::TokensEnter); // the same trigger for a creature token (a hook that runs now)
         c.end_step = Some(haliya_end);
+        c.hand_options = Some(haliya_hand);
     }
     if has("Linden, the Steadfast Queen") {
         r.card(db, "Linden, the Steadfast Queen")?.attack = Some(linden_attack);

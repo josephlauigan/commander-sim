@@ -114,6 +114,8 @@ pub fn stack_view(g: &Game) -> Vec<Value> {
         });
         if it.kind != StackKind::Spell {
             d["text"] = json!(it.name);
+        } else if it.ctx.x > 0 {
+            d["x"] = json!(it.ctx.x); // the X it was cast with
         }
         if let Some(t) = it.ctx.counter {
             if let Some(tc) = g.stack.iter().find(|x| x.id == t).and_then(|x| x.card) {

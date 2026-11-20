@@ -168,6 +168,11 @@ fn forced_hand(g: &Game, c: CardId) -> Option<(String, Opt)> {
         "Susurian Voidborn" => {
             forced("warp {B}: cast it for {B}; exiled at the end of the turn", kefka::voidborn_warp, n)
         }
+        "Haliya, Guided by Light" => forced(
+            "warp {W}: cast it for {W}; exiled at the end of the turn",
+            crate::impls::t45_heliod_zur::haliya_warp,
+            n,
+        ),
         "Perigee Beckoner" => {
             forced("warp {1}{B}: cast it for {1}{B}; exiled at the end of the turn", sheoldred::warp_go, n)
         }

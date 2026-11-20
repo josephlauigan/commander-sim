@@ -3564,7 +3564,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade)"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied; one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest)"
 
 ["Paradise Druid"]
 status = "Full"
@@ -3911,7 +3911,7 @@ note = "recurs itself when there is a sacrifice outlet"
 tags = "human pow=1 tgh=3"
 dsl = []
 status = "Full"
-note = "each artifact (cast or token) entering under your control deals 1 to each opponent"
+note = "each artifact (cast or token) entering under your control deals 1 to each opponent; a batch of artifact tokens is one trigger per token, each with its own additional triggers (one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest))"
 
 ["Reckless Impulse"]
 types = "S"
@@ -4738,6 +4738,12 @@ note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 paths_ok = "the hand-written resolve does the card; the compiled spell, the exile only (no Incubator), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X artifact creature)"
+
+["Sunpearl Kirin"]
+tags = "pow=2 tgh=1 fly flash"
+dsl = []
+status = "Full"
+note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food, Clue or Blood token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). The trigger does not depend on Kirin still being there and keeps the controller it had when it triggered (stealing Kirin in response changes nothing); the permanent must be a legal target for the Kirin that triggered, checked against that Kirin's colours as they are now (shroud, Lightning Greaves, Whispersilk Cloak and protection from a colour Kirin has stop its own controller: a green token copy of Kirin is not stopped by protection from white). A person chooses the permanent, or none, as the trigger resolves, after the table's window (the engine's convention for a hand-written trigger's target); the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food, Clue or Blood. The trigger is an enters-caused ability like any queued enters hook: an opponent's Elesh Norn, Mother of Machines blanks it, and Panharmonicon (Kirin is a creature), Starfield Vocalist and your own Elesh Norn add one more, each with its own target"
 
 ["Survival of the Fittest"]
 types = "E"

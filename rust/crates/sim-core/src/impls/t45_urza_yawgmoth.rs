@@ -40,9 +40,9 @@
 //!   -1/-1 counter dying returns under your control.
 //! - Nine-Lives Familiar: eight revival counters when cast; dying with one, it returns at the next end step with one
 //!   fewer.
-//! - The Meathook Massacre: X is paid as it enters (the X that kills the most opposing value for the least of yours,
-//!   with the mana left); every creature gets -X/-X until end of turn. Its drain halves are compiled. Left out:
-//!   opponents' protection spells in answer to the enter trigger.
+//! - The Meathook Massacre: X is chosen and paid as it is cast (a person is asked; the AI takes the X that kills the
+//!   most opposing value for the least of yours, with the mana left); its enters trigger gives every creature -X/-X
+//!   until end of turn. Its drain halves are compiled.
 //!
 //! Combos (chained into combos::all): Basalt Monolith + Forensic Gadgeteer (a mana sink wins); Hullbreaker Horror with
 //! Urza or Sol Ring and free artifacts cast between each other; Reassembling Skeleton / Gravecrawler + Pitiless
@@ -53,7 +53,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, grants_flash};
 use crate::engine::life::{check_state, gain};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, pval};
@@ -804,16 +804,32 @@ fn meathook_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if x > 0 && v >= 6.0 { 68 } else { 44 }
 }
 
-/// as it enters (cast): X from the mana left, then each creature gets -X/-X until end of turn
+/// the AI's X, chosen as the spell is cast (`CardImpl::cast_x`): the one that kills the most opposing value for the least
+/// of its own, with the mana left after {B}{B}
+fn meathook_cast_x(g: &Game, p: PlayerId, _c: CardId, spare: u32) -> u32 {
+    meathook_x(g, p, spare).0.max(0) as u32
+}
+
+/// **The Meathook Massacre** ({X}{B}{B}, legendary enchantment): "When The Meathook Massacre enters, each creature gets
+/// -X/-X until end of turn. Whenever a creature you control dies, each opponent loses 1 life. Whenever a creature an
+/// opponent controls dies, you gain 1 life." X is chosen as the spell is cast and paid with the cost: a person is
+/// asked as they cast it (the engine's X question for every {X} spell), the AI's X comes from `meathook_x`
+/// (`CardImpl::cast_x`). It is on the stack with the spell (`Ctx::x`, shown to a person who may respond) and stays on the
+/// permanent (`DataKey::CastX`, set as it enters) for the enters trigger, which uses it even if mana appears or
+/// disappears meanwhile. Engine-wide X-spell limits: the counter checks read the printed mana value (not X), and a cost
+/// reduction does not apply to {X}. A permanent that enters any other way (blinked, put onto the
+/// battlefield) has X = 0: its trigger still goes on the stack and does nothing. The enters trigger goes on the stack
+/// (the table may respond; a countered trigger does nothing; an opponent's Elesh Norn, Mother of Machines blanks it, your own Elesh Norn and a Starfield
+/// Vocalist add one more, Panharmonicon does not: an enchantment); every creature on the battlefield gets -X/-X and those with toughness 0 or less die together.
+/// The two dies triggers are compiled.
 fn meathook_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m != src || !g.last_cast_etb {
+    if m != src {
         return Ok(());
     }
-    let (x, _) = meathook_x(g, p, total_mana(g, p, false));
-    if x <= 0 || !pay(g, p, x as u32, "", false)? {
-        return Ok(());
-    }
-    if !trigger_window(g, p, Some(src), &format!("The Meathook Massacre: each creature gets -{x}/-{x}"), None)? {
+    let x = g.perm(src).data.int(DataKey::CastX) as i32;
+    let imp = if x <= 0 { Some(0.0) } else { None }; // nothing to answer: no AI spends a counter on it
+    if !trigger_window(g, p, Some(src), &format!("The Meathook Massacre: each creature gets -{x}/-{x}"), imp)? || x <= 0
+    {
         return Ok(());
     }
     crate::glog!(g, "    The Meathook Massacre: X = {x}");
@@ -1006,9 +1022,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::SelfDies, true);
     let c = r.card(db, MEATHOOK)?;
     c.etb = Some(meathook_etb);
-    at_once(c, Event::Etb, true);
-    *c = c.enter_trigger(Event::Etb); // its enters trigger, run at once
     c.prio = Some(meathook_prio);
+    c.cast_x = Some(meathook_cast_x);
     r.card(db, JAR)?.prio = Some(jar_prio);
     Ok(())
 }
