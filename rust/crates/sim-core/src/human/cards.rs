@@ -1490,6 +1490,21 @@ fn eiganjo(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     Ok(None)
 }
 
+/// Takenuma, Abandoned Mire: channel {3}{B}, discard it: mill three cards, then return a creature or planeswalker card
+/// from your graveyard to your hand; {1} less for each legendary creature you control. Pithing Needle stops it.
+fn takenuma(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if crate::impls::t6_stax::needle_stops(g, &cname(g, c)) {
+        return Ok(Some("Pithing Needle names Takenuma: its activated abilities can't be activated.".into()));
+    }
+    let n = crate::impls::yoshimaru_p7::takenuma_cost(g, p);
+    if let Some(why) = super::mana::cost_problem(g, p, n, "B") {
+        return Ok(Some(format!("Can't channel Takenuma. {why}")));
+    }
+    super::mana::pay_from_pool(g, p, n, "B");
+    crate::impls::yoshimaru_p7::takenuma_channel(g, p, c)?;
+    Ok(None)
+}
+
 /// cards._insight
 fn insight(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     if let Some(why) = legal::sorcery_timing(g, p) {
@@ -1540,6 +1555,10 @@ fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
         "Sokenzan, Crucible of Defiance" => {
             vec![("channel ({3}{R}, {1} less per legendary creature): two 1/1 Spirits with haste", sokenzan)]
         }
+        "Takenuma, Abandoned Mire" => vec![(
+            "channel ({3}{B}, {1} less per legendary creature), discard it: mill three, then return a creature or planeswalker card",
+            takenuma,
+        )],
         "Eiganjo, Seat of the Empire" => vec![(
             "channel ({2}{W}, {1} less per legendary creature), discard it: 4 damage to target attacking or blocking creature",
             eiganjo,

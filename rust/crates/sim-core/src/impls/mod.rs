@@ -229,5 +229,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     yoshimaru_cards::register(&mut r, db)?; // --- yoshimaru
     sorin::register(&mut r, db)?; // --- yoshimaru: Sorin, Vengeful Bloodlord
     vondam_elspeth::register(&mut r, db)?; // --- yoshimaru: Syr Vondam, Sunstar Exemplar
+    yoshimaru_p7::register(&mut r, db)?; // --- yoshimaru (P7a): Takenuma's channel
     Ok(r)
 }

@@ -8,6 +8,14 @@
 //! - -1: a 2/2 white Samurai creature token with vigilance (`emp_samurai`).
 //! - -2: exile target tapped creature (any player's, your own included); you gain 2 life (`human/walkers.rs`).
 //!
+//! # Takenuma, Abandoned Mire
+//! Channel {3}{B}, discard it: mill three cards, then return a creature or planeswalker card from your graveyard to your
+//! hand; {1} less for each legendary creature you control. The return is mandatory when there is such a card, and a
+//! card just milled counts (`takenuma_effect`, shared). The AI's `hand_options` (`takenuma_options`) channels it in
+//! its first main phase with six lands to play when a creature or planeswalker card worth 3 or more mana is already
+//! in the graveyard (the mill is not counted on) and the library will not run dry; it takes the card the AI wants
+//! most. A person's is `human/cards.rs` (`takenuma`): they pick the card when there is a choice.
+//!
 //! # Eiganjo, Seat of the Empire
 //! Channel {2}{W}, discard it: 4 damage to target attacking or blocking creature; {1} less for each legendary creature
 //! you control. The AI's channel is `t6_lands.rs` (`hand_defend` / `hand_blocks`); a person's is `human/cards.rs`
@@ -15,13 +23,18 @@
 //! lists the creatures it may aim at (`combatants`) and when the person's declare-blockers stop is worth it
 //! (`eiganjo_ready`).
 
-use crate::cards::Colors;
+use super::t3::plan;
+use crate::cards::{CardDb, Colors, Types};
+use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
+use crate::engine::tutors::card_worth;
 use crate::engine::values::{colors_of, protected_from};
-use crate::engine::zones::{Tokens, make_tokens};
+use crate::engine::zones::{Tokens, make_tokens, max_by, mill};
 use crate::flow::Res;
+use crate::hooks::{Opt, Registry};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
+use crate::tag::Tag;
 
 const EMPEROR: &str = "The Wandering Emperor";
 
@@ -88,4 +101,118 @@ pub fn eiganjo_ready(g: &Game, q: PlayerId, c: CardId, have: u32) -> bool {
         && !super::t6_stax::needle_stops(g, name)
         && have > super::t6_lands::eiganjo_cost(g, q)
         && !combatants(g, q, Colors::NONE).is_empty()
+}
+
+// ------------------------------------------------------------------ Takenuma, Abandoned Mire
+const TAKENUMA: &str = "Takenuma, Abandoned Mire";
+
+/// legendary creatures p controls (phased-out ones do not count)
+fn legendary_creatures(g: &Game, p: PlayerId) -> u32 {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.is_creature(m) && !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg)))
+        .count() as u32
+}
+
+/// the generic part of Takenuma's channel for p: {3} less {1} for each legendary creature (the {B} is always paid)
+pub fn takenuma_cost(g: &Game, p: PlayerId) -> u32 {
+    3u32.saturating_sub(legendary_creatures(g, p))
+}
+
+/// the creature and planeswalker cards in p's graveyard
+fn takenuma_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
+    g.player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            d.creature || d.types.has(Types::PLANESWALKER)
+        })
+        .collect()
+}
+
+/// the effect: mill three cards, then return a creature or planeswalker card from the graveyard to the hand (a card
+/// just milled counts; with none, nothing is returned). The AI takes the one it wants most, a person picks (asked only
+/// when there is more than one).
+fn takenuma_effect(g: &mut Game, p: PlayerId) -> Res {
+    mill(g, p, 3)?;
+    let cs = takenuma_cards(g, p);
+    let pick = match cs.len() {
+        0 => None,
+        1 => Some(cs[0]),
+        _ if crate::human::is_human(g, p) => {
+            let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+            let prompt = "Takenuma: return which creature or planeswalker card to your hand?";
+            crate::human::choices::choose(g, p, "choose", prompt, &labels, None, None)?.map(|k| cs[k])
+        }
+        _ => max_by(&cs, |c| card_worth(g, p, c, false)),
+    };
+    if let Some(c) = pick
+        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
+    {
+        g.player_mut(p).gy.remove(i);
+        g.player_mut(p).hand.push(c);
+        g.player_mut(p).seen.insert(c);
+        crate::glog!(g, "    {} returns {} to hand (Takenuma)", g.player(p).name, g.db.get(c).name);
+    }
+    Ok(())
+}
+
+/// p channels Takenuma c, its cost paid: discarded as a cost, then the ability on the stack
+pub fn takenuma_channel(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    let pl = g.player_mut(p);
+    if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+        pl.hand.remove(i);
+    }
+    pl.gy.push(c);
+    crate::glog!(
+        g,
+        "  {} channels Takenuma: mill three, then return a creature or planeswalker card",
+        g.player(p).name
+    );
+    let what = "mill three cards, then return a creature or planeswalker card";
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), what, None, None, 0.0, |g, _| takenuma_effect(g, p))?;
+    Ok(())
+}
+
+/// the AI's channel: in its first main phase, with six lands to play (as for Sokenzan: a land is worth more early),
+/// when a creature or planeswalker card worth 3+ mana (or that the AI wants) is already in the graveyard
+fn takenuma_options(g: &mut Game, _c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let cost = takenuma_cost(g, p);
+    let pl = g.player(p);
+    let lands = pl.lands.len() + pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
+    if post != Some(false)
+        || lands < 6
+        || pl.library.len() <= 3
+        || super::t6_stax::needle_stops(g, TAKENUMA)
+        || !can_pay(g, p, cost, "B", false)
+    {
+        return Ok(vec![]);
+    }
+    let best = takenuma_cards(g, p)
+        .into_iter()
+        .map(|c| card_worth(g, p, c, false).max(10.0 * g.db.get(c).cmc as f64))
+        .fold(0.0, f64::max);
+    if best < 30.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![plan(1.0 + (best / 60.0).min(1.5), "channel Takenuma".into(), takenuma_go, cost as i64)])
+}
+
+fn takenuma_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let cost = arg as u32;
+    let Some(c) = g.db.id(TAKENUMA) else { return Ok(false) };
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, cost, "B", false) {
+        return Ok(false);
+    }
+    pay(g, p, cost, "B", false)?;
+    takenuma_channel(g, p, c)?;
+    Ok(true)
+}
+
+pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, TAKENUMA)?.hand_options = Some(takenuma_options);
+    Ok(())
 }

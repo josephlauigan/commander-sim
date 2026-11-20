@@ -10025,7 +10025,9 @@ paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Ph
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Takenuma, Abandoned Mire"]
-paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}), and no card code channels it from the hand (not modeled); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+status = "Full"
+note = "channel {3}{B} (less per legendary creature you control), discard: mill three, then return a creature or planeswalker card (mandatory when there is one; a just-milled card counts). The AI channels it in its first main phase with six lands to play when a creature or planeswalker card worth 3+ mana is already in the graveyard; a person picks the card (impls/yoshimaru_p7.rs, human/cards.rs)"
+paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}); card code: the channel from the hand (impls/yoshimaru_p7.rs takenuma_options, a person's in human/cards.rs), and the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Treasure Vault"]
 status = "Full"
