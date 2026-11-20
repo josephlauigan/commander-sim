@@ -4,8 +4,9 @@
 mod play_common;
 use play_common::*;
 use sim_core::ai::brain;
-use sim_core::engine::{cast, zones};
+use sim_core::engine::{cast, hooks, stack, zones};
 use sim_core::hooks::{Action, Opt};
+use sim_core::hooks::{Call, Event};
 use sim_core::state::{Ctx, DataKey};
 use sim_core::sym::intern;
 
@@ -429,4 +430,140 @@ fn meathook_drains_when_your_creature_dies_and_gains_when_an_opponents_does() {
     assert_eq!((g.player(P1).life, g.player(P2).life), (l1 - 1, l2 - 1), "each opponent loses 1");
     zones::die(&mut g, theirs, "destroy").unwrap();
     assert_eq!(g.player(P0).life, l0 + 1, "you gain 1");
+}
+
+// ------------------------------------------------------------------ round 2: triggers that outlive their source
+fn flush(g: &mut Game) {
+    g.resolving -= 1;
+    stack::flush_triggers(g).unwrap();
+}
+
+#[test]
+fn kirins_trigger_resolves_even_if_kirin_is_gone() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let t = token(&mut g, P0, 1);
+    g.resolving += 1;
+    let k = perm(&mut g, P0, "Sunpearl Kirin");
+    zones::die(&mut g, k, "destroy").unwrap();
+    flush(&mut g);
+    assert!(!g.perm(t).on_bf, "a queued enters trigger resolves without its source");
+    assert_eq!(g.player(P0).hand.len(), 1);
+}
+
+#[test]
+fn haliyas_enter_trigger_resolves_even_if_she_is_gone() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let l = g.player(P0).life;
+    g.resolving += 1;
+    perm(&mut g, P0, "Mother of Runes");
+    let h = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == HALIYA).unwrap();
+    zones::die(&mut g, h, "destroy").unwrap();
+    flush(&mut g);
+    assert_eq!(g.player(P0).life, l + 1, "the queued trigger still gains the life");
+}
+
+#[test]
+fn haliyas_token_triggers_resolve_even_if_she_is_gone() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HALIYA);
+    let l = g.player(P0).life;
+    g.resolving += 1;
+    zones::add_treasure(&mut g, P0, 3).unwrap();
+    zones::die(&mut g, h, "destroy").unwrap();
+    flush(&mut g);
+    assert_eq!(g.player(P0).life - l, 3, "triggers already generated survive her removal");
+}
+
+#[test]
+fn haliyas_end_step_draw_resolves_even_if_she_is_gone() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let h = perm(&mut g, P0, HALIYA);
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    g.resolving += 1;
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P0 }).unwrap();
+    zones::die(&mut g, h, "destroy").unwrap();
+    flush(&mut g);
+    assert_eq!(g.player(P0).library.len(), 4, "the end-step trigger is on the stack: the card is drawn");
+}
+
+#[test]
+fn haliyas_end_step_trigger_always_triggers_and_checks_the_life_as_it_resolves() {
+    // "draw a card if you've gained 3 or more life this turn" is not an intervening if: with no life gained the trigger
+    // still goes on the stack (the probe reaches its window)
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HALIYA);
+    let c = g.perm(h).cd.unwrap();
+    let f = g.registry.get(c).and_then(|i| i.end_step).unwrap();
+    g.player_mut(P0).gained_turn = None;
+    g.trig_probe = true;
+    let r = f(&mut g, h, P0);
+    g.trig_probe = false;
+    assert!(matches!(r, Err(sim_core::flow::Stop::Probe(_))), "it triggers with no life gained: {r:?}");
+}
+
+// ------------------------------------------------------------------ round 2: legality
+#[test]
+fn kirin_cannot_target_its_controllers_shrouded_permanent() {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, "Selfless Spirit");
+    let boots = perm(&mut g, P0, "Lightning Greaves");
+    g.perm_mut(boots).attached = Some(v);
+    perm(&mut g, P0, "Solitude");
+    let (_h, asked) = person(&mut g, |r| choice_with(r, "Solitude"));
+    perm(&mut g, P0, "Sunpearl Kirin");
+    let a = asked.lock().unwrap();
+    assert!(
+        !a.iter().any(|(_, cs)| cs.iter().any(|c| c.contains("Selfless Spirit"))),
+        "shroud stops its controller: {a:?}"
+    );
+    assert!(a.iter().any(|(_, cs)| cs.iter().any(|c| c.contains("Solitude"))), "the unshrouded one is offered: {a:?}");
+}
+
+#[test]
+fn kirin_cannot_target_a_permanent_with_protection_from_white() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let v = perm(&mut g, P0, "Skyclave Apparition");
+    g.perm_mut(v).eot_kw.push("pro_W");
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert!(g.perm(v).on_bf, "the AI does not return a permanent Kirin can't target");
+}
+
+#[test]
+fn warp_is_not_offered_or_cast_under_rule_of_law() {
+    let mut g = tbl();
+    g.step = sim_core::state::Step::Main1;
+    perm(&mut g, P0, "Rule of Law");
+    lands(&mut g, P0, "Plains", 2, false);
+    pool(&mut g, P0, &[('W', 1)]);
+    let c = hand(&mut g, P0, &[HALIYA, "Sol Ring"])[0];
+    let sol = card(&g, "Sol Ring");
+    cast::cast_card(&mut g, P0, sol, "hand", Ctx::default()).unwrap();
+    hand(&mut g, P0, &["Ornithopter", "Memnite"]);
+    assert!(!cast::castable(&g, P0, c, "hand"), "the one spell this turn is cast");
+    assert!(hook_opts(&mut g, c).is_empty(), "no warp option for the AI");
+    // the warp play itself checks it too (a person's menu offers it unchecked; its code must still refuse)
+    person(&mut g, |_| None);
+    if let Some((_, o)) = sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap().into_iter().find(|(l, _)| l.contains("warp")) {
+        assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_some(), "the warp is refused");
+    }
+    assert!(!has_perm(&g, P0, HALIYA), "it was not cast");
+}
+
+#[test]
+fn a_warped_haliya_is_not_recast_from_exile_under_drannith_magistrate() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 3, false);
+    let c = card(&g, HALIYA);
+    g.player_mut(P0).exile.push(c);
+    let st = g.turn_stamp();
+    g.player_mut(P0).flag_turn.insert(intern("haliya_warped"), st);
+    g.round += 1;
+    let opts = |g: &mut Game| sim_core::impls::generic_paths::exile_options(g, P0, Some(false)).unwrap();
+    assert_eq!(opts(&mut g).len(), 1, "castable without the Magistrate");
+    perm(&mut g, P1, "Drannith Magistrate");
+    assert!(opts(&mut g).is_empty(), "opponents can't cast spells from anywhere but their hand");
 }
