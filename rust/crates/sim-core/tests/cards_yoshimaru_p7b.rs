@@ -141,3 +141,90 @@ fn flickerwisp_ai_exiles_its_own_tapped_land_not_an_untapped_one() {
     assert!(!g.perm(ls[0]).on_bf, "the tapped land comes back untapped");
     assert!(g.perm(ls[1]).on_bf, "the untapped one stays");
 }
+
+// ------------------------------------------------------------------ Felidar Guardian
+// "When this creature enters, you may exile another target permanent you control, then return that card to the
+// battlefield under its owner's control."
+#[test]
+fn felidar_asks_a_person_for_another_permanent_they_control_and_blinks_it() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sol Ring");
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    lands(&mut g, P0, "Plains", 1, false);
+    token(&mut g, P0, 2);
+    let hand = g.player(P0).hand.len();
+    let h = person(&mut g, &["Wall of Omens"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    let q = asks(&h, "Felidar Guardian");
+    assert_eq!(q.len(), 1, "one question: {:?}", h.asked());
+    let c = &q[0].choices;
+    assert!(c.iter().any(|x| x.contains("Plains")), "a land you control is a legal target: {c:?}");
+    assert!(c.iter().any(|x| x.contains("Wall of Omens")), "{c:?}");
+    assert!(!c.iter().any(|x| x.contains("Sol Ring")), "an opponent's permanent is not: {c:?}");
+    assert!(!c.iter().any(|x| x.starts_with("Felidar Guardian")), "'another': {c:?}");
+    assert!(c.iter().any(|x| x.contains("no") || x.contains("none")), "'you may': a way out: {c:?}");
+    assert!(!g.perm(wall).on_bf && on_bf(&g, P0, "Wall of Omens"), "blinked: a new object");
+    assert_eq!(g.player(P0).hand.len(), hand + 1, "and it entered again: Wall of Omens draws");
+}
+
+#[test]
+fn felidar_lets_a_person_blink_nothing() {
+    let mut g = tbl();
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    let hand = g.player(P0).hand.len();
+    let _h = person(&mut g, &["no"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert!(g.perm(wall).on_bf, "not exiled");
+    assert_eq!(g.player(P0).hand.len(), hand);
+}
+
+#[test]
+fn felidar_exiles_a_token_a_person_picks_for_good() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 3);
+    let _h = person(&mut g, &["token"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert!(!g.perm(t).on_bf, "the token is exiled");
+    assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token), "and does not come back");
+}
+
+#[test]
+fn felidar_blinks_a_tapped_land_it_returns_untapped() {
+    let mut g = tbl();
+    let ls = lands(&mut g, P0, "Plains", 1, true);
+    let _h = person(&mut g, &["Plains"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert!(!g.perm(ls[0]).on_bf, "the old land is gone");
+    let back: Vec<_> = g.player(P0).lands.iter().copied().filter(|&l| g.perm(l).on_bf).collect();
+    assert_eq!(back.len(), 1, "one land on the battlefield");
+    assert!(!g.perm(back[0]).tapped, "it returned untapped");
+}
+
+#[test]
+fn felidar_doubled_asks_a_person_once_per_instance() {
+    let mut g = tbl();
+    let ls = lands(&mut g, P0, "Plains", 2, true);
+    perm(&mut g, P0, "Panharmonicon");
+    let h = person(&mut g, &["tapped", "tapped"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert_eq!(asks(&h, "Felidar Guardian").len(), 2, "{:?}", h.asked());
+    assert!(ls.iter().all(|&l| !g.perm(l).on_bf), "both lands were blinked");
+    let back: Vec<_> = g.player(P0).lands.iter().copied().filter(|&l| g.perm(l).on_bf).collect();
+    assert_eq!(back.len(), 2);
+    assert!(back.iter().all(|&l| !g.perm(l).tapped), "both came back untapped");
+}
+
+#[test]
+fn felidar_chain_driven_by_a_person_is_not_cut_at_three_and_a_cap_is_logged() {
+    let mut g = tbl();
+    g.log = Some(vec![]);
+    perm(&mut g, P0, "Felidar Guardian");
+    // every Felidar that enters blinks the other one: a loop the person drives by choosing it each time
+    let h = person(&mut g, &["Felidar Guardian"; 12]);
+    perm(&mut g, P0, "Felidar Guardian");
+    let n = asks(&h, "Felidar Guardian").len();
+    assert!(n > 3, "a person's chain runs past three links, asked {n} times");
+    let log = g.log.as_ref().unwrap().join("\n");
+    assert!(log.contains("blink chain"), "the cap is not silent: {log}");
+    assert_eq!(g.blink_depth, 0);
+}
