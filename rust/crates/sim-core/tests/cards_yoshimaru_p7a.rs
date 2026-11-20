@@ -827,3 +827,50 @@ fn the_ais_evoke_sacrifice_goes_on_the_stack() {
     assert!(in_gy(&g, P0, SOL));
     assert!(was_offered_the_sacrifice(&h1));
 }
+
+#[test]
+fn mother_of_runes_cannot_target_a_shrouded_creature() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).eot_kw.push("shroud");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(elf));
+    use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "red")]);
+    assert!(!has_kw(&g, elf, "pro_R"), "shrouded creature illegally gained protection");
+}
+
+#[test]
+fn mother_of_runes_cannot_target_a_creature_with_protection_from_white() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(elf).eot_kw.push("pro_W");
+    let tg = ans_target(&g, "Mother of Runes", Target::Perm(elf));
+    use_perm(&mut g, mom, vec![tg, ans_word("protection from what", "red")]);
+    assert!(!has_kw(&g, elf, "pro_R"), "protection from Mother's white source makes the target illegal");
+}
+
+#[test]
+fn a_rings_copy_giving_protection_from_white_fizzles_the_original() {
+    let mut g = tbl();
+    let mom = perm(&mut g, P0, "Mother of Runes");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    perm(&mut g, P0, "Rings of Brighthearth");
+    pool(&mut g, P0, &[('C', 2)]);
+    let copy_tg = ans_target(&g, "The copy of Mother", Target::Perm(elf));
+    let original_tg = ans_target(&g, "Mother of Runes: which", Target::Perm(elf));
+    let h = use_perm(
+        &mut g,
+        mom,
+        vec![
+            copy_tg,
+            original_tg,
+            ans_word("The copy of Mother of Runes' ability: protection", "white"),
+            ans_word("Mother of Runes: protection", "red"),
+            ans_word("Rings", "pay"),
+        ],
+    );
+    assert!(asked(&h, "The copy of Mother"), "copy actually resolved");
+    assert!(has_kw(&g, elf, "pro_W"));
+    assert!(!has_kw(&g, elf, "pro_R"), "the original must fizzle after the copy grants protection from white");
+}
