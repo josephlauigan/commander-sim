@@ -386,3 +386,152 @@ fn selfdies_and_rivaz_two_grants_keep_the_original_of_each_grant() {
     assert!(g.player(P0).exile.contains(&cd), "Rivaz's grants exile the card");
     assert!(g.trig_queue.is_empty());
 }
+
+// ------------------------------------------------------------------ one landfall event: every listener is the event's own
+const GREENWARDEN: &str = "Ancient Greenwarden";
+const SCUTE: &str = "Scute Swarm";
+
+fn scutes(g: &Game) -> usize {
+    g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == SCUTE).count()
+}
+
+/// six lands in play, so a Scute Swarm's landfall makes a copy of itself
+fn six_lands(g: &mut Game) {
+    lands(g, P0, "Forest", 6, false);
+}
+
+#[test]
+fn greenwarden_and_one_scute_make_two_copies_not_three() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    perm(&mut g, P0, GREENWARDEN);
+    perm(&mut g, P0, SCUTE);
+    land(&mut g, "Plains");
+    assert_eq!(scutes(&g), 3, "the Scute's landfall happens twice; the copies it made are not listeners of this event");
+}
+
+#[test]
+fn greenwarden_and_two_scutes_make_four_copies_not_six() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    perm(&mut g, P0, GREENWARDEN);
+    perm(&mut g, P0, SCUTE);
+    perm(&mut g, P0, SCUTE);
+    land(&mut g, "Plains");
+    assert_eq!(scutes(&g), 6, "two Scutes, two triggers each");
+}
+
+#[test]
+fn a_scute_copy_does_not_hear_the_landfall_that_made_it() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, GREENWARDEN);
+    perm(&mut g, P0, SCUTE);
+    land(&mut g, "Plains");
+    assert_eq!(scutes(&g) - 1, 3, "1 + Greenwarden + Delney, from the one Scute that was there");
+}
+
+#[test]
+fn a_scute_alone_with_six_lands_makes_one_copy() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    perm(&mut g, P0, SCUTE);
+    land(&mut g, "Plains");
+    assert_eq!(scutes(&g), 2);
+}
+
+#[test]
+fn a_scute_under_a_held_resolution_makes_three_copies() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, GREENWARDEN);
+    perm(&mut g, P0, SCUTE);
+    let c = take(&mut g, P0, "Plains");
+    g.resolving = 1;
+    g.add_land_entering(P0, c, false);
+    zones::landfall(&mut g, P0).unwrap();
+    assert_eq!(g.trig_queue.iter().filter(|t| &*g.perm(t.src.unwrap()).name == SCUTE).count(), 3);
+    flush(&mut g);
+    assert_eq!(scutes(&g) - 1, 3);
+}
+
+#[test]
+fn without_a_copier_the_landfall_triggers_queue_in_the_same_order_and_nothing_is_held() {
+    let mut g = tbl();
+    six_lands(&mut g);
+    let explorer = perm(&mut g, P0, "Icetill Explorer"); // compiled: landfall, mill a card
+    let scute = perm(&mut g, P0, SCUTE);
+    let c = take(&mut g, P0, "Plains");
+    g.resolving = 1;
+    g.add_land_entering(P0, c, false);
+    zones::landfall(&mut g, P0).unwrap();
+    let order: Vec<_> = g.trig_queue.iter().map(|t| t.src).collect();
+    assert_eq!(order, [Some(explorer), Some(scute)], "the compiled abilities, then the card code's hooks");
+    assert_eq!(g.resolving, 1, "the caller's hold is untouched");
+    flush(&mut g);
+    // not held: a land played with no copier resolves its triggers inside the landfall
+    let before = scutes(&g);
+    land(&mut g, "Plains");
+    assert_eq!(scutes(&g) - before, before, "each Scute makes one copy");
+    assert!(g.trig_queue.is_empty());
+    assert_eq!(g.resolving, 0);
+}
+
+// A guard, not a red test: Bloodghast leaves the graveyard on the first pass, so a second pass would find nothing. The
+// `!repeat` gate on `gy_landfall` is rules-correct (a graveyard card's ability is no permanent's, so no copier applies)
+// and has no observable effect with today's pool (Bloodghast is the only `gy_landfall` card).
+#[test]
+fn greenwarden_returns_a_graveyard_bloodghast_once() {
+    let mut g = tbl();
+    perm(&mut g, P0, GREENWARDEN);
+    let b = take(&mut g, P0, "Bloodghast");
+    g.player_mut(P0).gy.push(b);
+    land(&mut g, "Plains");
+    let on_bf = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Bloodghast").count();
+    assert_eq!(on_bf, 1);
+    assert!(!g.player(P0).gy.contains(&b));
+}
+
+// Bloodghast is milled by Icetill Explorer's trigger of this landfall. At base pass 1 resolves that mill before pass 1's
+// graveyard landfall, so Bloodghast returns; under the hold nothing of the event resolves first, so it stays milled.
+// (Without a copier the old order still returns it: a separate existing difference.)
+#[test]
+fn bloodghast_milled_by_the_landfall_does_not_hear_that_landfall_under_a_copier() {
+    let mut g = tbl();
+    perm(&mut g, P0, GREENWARDEN);
+    perm(&mut g, P0, "Icetill Explorer");
+    let b = take(&mut g, P0, "Bloodghast");
+    g.player_mut(P0).library.push(b);
+    land(&mut g, "Plains");
+    assert!(g.player(P0).gy.contains(&b), "milled by this landfall, so not a listener of it");
+    let on_bf = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Bloodghast").count();
+    assert_eq!(on_bf, 0);
+}
+
+#[test]
+fn isshin_and_kaalia_do_not_let_the_angel_kaalia_put_in_hear_the_attack() {
+    let mut g = table(&["isshin-mardu-attack-triggers", "seph", "cloud"]);
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    let k = perm(&mut g, P0, "Kaalia of the Vast");
+    let a = token(&mut g, P0, 1);
+    let b = token(&mut g, P0, 1);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Aurelia, the Law Above"]);
+    let new = combat::attack_triggers(&mut g, P0, &[k, a, b], P1).unwrap();
+    let aurelia = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Aurelia, the Law Above");
+    assert!(aurelia.is_some_and(|m| g.perm(m).on_bf), "Kaalia put Aurelia onto the battlefield attacking");
+    assert_eq!(new, [aurelia.unwrap()], "and she joins the attack");
+    assert_eq!(g.player(P0).hand.len(), 0, "Aurelia was not there when the three creatures attacked: no draw");
+}
+
+#[test]
+fn isshin_and_adeline_attack_with_the_tokens_of_both_passes() {
+    let mut g = table(&["isshin-mardu-attack-triggers", "seph", "cloud", "sauron"]);
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    let a = perm(&mut g, P0, "Adeline, Resplendent Cathar");
+    let new = combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
+    assert_eq!(new.len(), 6, "a Human token for each of 3 opponents, twice");
+    assert!(new.iter().all(|&m| g.perm(m).token && g.perm(m).tapped));
+}

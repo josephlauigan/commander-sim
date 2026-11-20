@@ -1839,8 +1839,25 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
 pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     lands_entered(g, p)?;
     let copies = 1 + repl::trigger_copies(g, p, "landfall", None); // Ancient Greenwarden
+    // one landfall event: no queued trigger of it resolves before every pass has triggered (CR 603.3), so what an
+    // earlier pass makes (a Scute Swarm's copy) is not a listener of a later one. Held only when there is a later pass.
+    let hold = copies > 1;
+    if hold {
+        g.resolving += 1;
+    }
+    let mut r = Ok(());
     for k in 0..copies {
-        landfall_once(g, p, k > 0)?; // each pass after the first is a repeat of the landfall triggers
+        r = landfall_once(g, p, k > 0); // each pass after the first is a repeat of the landfall triggers
+        if r.is_err() || g.over {
+            break;
+        }
+    }
+    if hold {
+        g.resolving -= 1;
+    }
+    r?;
+    if hold && g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(())
 }
@@ -1895,7 +1912,7 @@ fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
     if !g.hooks.is_empty() {
         hooks::fire_trigger_pass(g, Event::Landfall, Call::Player { p }, repeat)?;
     }
-    cardcode::gy_landfall(g, p)
+    if repeat { Ok(()) } else { cardcode::gy_landfall(g, p) } // a graveyard card's ability is no permanent's: once
 }
 
 /// search for a basic land and put it into your hand. Every such search in the pool reveals the land (landcycling,
