@@ -143,7 +143,10 @@ pub fn lock_attach(g: &mut Game, a: PermId, host: PermId) -> Res<bool> {
     g.bf_ver += 1;
     crate::glog!(g, "    {} enchants {} ({})", card_name(g, a), g.perm(host).name, pname(g, owner(g, host)));
     if card_name(g, a) == "Prison Sentence" {
-        crate::cardcode::scry(g, owner(g, a), 2, false)?;
+        // "When this Aura enters, scry 2": a triggered ability (the lock is the Aura's static effect)
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, a), Some(a)) {
+            crate::cardcode::scry(g, owner(g, a), 2, false)?;
+        }
     }
     if card_name(g, a) == "Kasmina's Transmutation" {
         crate::impls::bulk_blue::kasmina_attach(g, a, host); // loses all abilities, base 1/1 (bulk_blue.rs)
