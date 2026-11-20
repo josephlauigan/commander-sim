@@ -1181,7 +1181,7 @@ fn abduction(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 fn abduction_untap(g: &mut Game, p: PlayerId, src: PermId, t: PermId) -> Res {
     g.perm_mut(src).data.set(DataKey::Abducted, Val::Perm(t)); // remembered: the creature is detached as it dies
     // "When this Aura enters, untap enchanted creature" is a triggered ability; gaining control is not
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(src)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(src), Some(src)) {
         if trigger_window(g, p, Some(src), &format!("untap {}", name_of(g, t)), None)? && controls(g, p, t) {
             g.perm_mut(t).tapped = false;
         }

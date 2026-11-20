@@ -616,7 +616,7 @@ pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let m = enter(g, p, c, Enter { was_cast: true, sick: false, ..Enter::default() })?;
     // "When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards": a triggered ability
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(m)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(m), Some(m)) {
         repl::put_plus(g, m, x);
         draw(g, p, (x / 2) as u32, false)?;
     }

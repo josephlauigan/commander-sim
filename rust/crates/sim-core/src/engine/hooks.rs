@@ -96,6 +96,24 @@ pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Opt
     hooked(g, Event::TriggerCopies).iter().map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x)).sum()
 }
 
+/// Event doublers' additional instances caused by entering. None denotes an artifact token only.
+/// For a land, each copier contributes the larger of its landfall and etb counts, counted once.
+pub fn enter_copies(g: &Game, controller: PlayerId, entering: Option<PermId>) -> u32 {
+    let land = entering.is_some_and(|m| g.player(g.perm(m).owner).lands.contains(&m));
+    let n = if land {
+        hooked(g, Event::TriggerCopies)
+            .iter()
+            .map(|(s, i)| {
+                let f = i.trigger_copies.unwrap();
+                f(g, *s, controller, "landfall", entering).max(f(g, *s, controller, "etb", entering))
+            })
+            .sum::<i32>()
+    } else {
+        total_trigger_copies(g, controller, "etb", entering)
+    };
+    n.max(0) as u32
+}
+
 /// a player-count static summed (no_graveyard)
 pub fn total_player(g: &Game, e: Event, p: PlayerId) -> i32 {
     hooked(g, e)
@@ -203,7 +221,7 @@ pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
 /// How many times a triggered ability of `controller`'s permanent, caused by `entering` (None: a land, or tokens),
 /// happens: for a hook that mixes an enters-caused trigger with what happens as the permanent enters
 /// (`enter_setup`), which loops only its trigger part this many times. 0 under an opponent's live Elesh Norn, else 1.
-pub fn enters_trigger_times(g: &Game, controller: PlayerId, entering: Option<PermId>) -> u32 {
+pub fn enters_trigger_times(g: &Game, controller: PlayerId, _src: Option<PermId>, entering: Option<PermId>) -> u32 {
     if enter_blanked(g, controller, entering) { 0 } else { 1 }
 }
 
@@ -278,16 +296,7 @@ pub fn fire_trigger_where(
             && trig
             && !now
         {
-            // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature.
-            // One source adds one trigger per entering permanent, whichever of the two kinds it answers to (Starfield
-            // Vocalist answers to both): the larger of its two counts, summed over the sources
-            reps += hooked(g, Event::TriggerCopies)
-                .iter()
-                .map(|(s, i)| {
-                    let f = i.trigger_copies.unwrap();
-                    f(g, *s, owner, "landfall", Some(*m)).max(f(g, *s, owner, "etb", Some(*m)))
-                })
-                .sum::<i32>();
+            reps += enter_copies(g, owner, Some(*m)) as i32;
         }
         // one entry per artifact token of a batch made (a hook that runs now sees the batch as it is)
         let parts: Vec<Call> = match &call {

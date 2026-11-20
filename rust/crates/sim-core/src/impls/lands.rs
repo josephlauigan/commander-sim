@@ -890,7 +890,7 @@ fn sanctuary(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     }
     // "When this land enters, if you control three or more other Islands, you may put target instant or sorcery card
     // from your graveyard on top of your library": a triggered ability
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) {
         if islands < 3 {
             break;
         }

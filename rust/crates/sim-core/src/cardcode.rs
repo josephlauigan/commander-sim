@@ -810,7 +810,8 @@ pub fn land_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     // "When this land enters": a triggered ability, which an opponent's Elesh Norn stops (`enter_trigger`). What a land
     // does as it enters (a name or type chosen, a face, a lore counter, untapped) and City of Traitors' "when you play
     // another land" happen anyway; a hook that mixes the two loops `enters_trigger_times` over its trigger part.
-    let times = if i.is_enter_trigger(Event::LandEtb) { hooks::enters_trigger_times(g, p, Some(l)) } else { 1 };
+    let times =
+        if i.is_enter_trigger(Event::LandEtb) { hooks::enters_trigger_times(g, p, Some(l), Some(l)) } else { 1 };
     for _ in 0..times {
         f(g, p, l)?;
     }

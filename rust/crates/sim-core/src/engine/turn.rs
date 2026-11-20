@@ -390,7 +390,7 @@ fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     // Glacial Chasm's and a bounceland's "When this land enters": triggered abilities (an opponent's Elesh Norn stops them)
-    let times = crate::engine::hooks::enters_trigger_times(g, p, Some(l));
+    let times = crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l));
     if t.has(Tag::Chasm) {
         g.player_mut(p).chasm_age = 0; // cumulative upkeep bookkeeping, not part of the trigger
         for _ in 0..times {

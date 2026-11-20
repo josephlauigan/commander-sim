@@ -278,7 +278,7 @@ fn aura_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         f(g, owner(g, src), src, host)?;
     }
     if let Some(f) = spec.when_enters {
-        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(src)) {
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(src), Some(src)) {
             f(g, owner(g, src), src, host)?;
         }
     }

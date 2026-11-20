@@ -36,19 +36,31 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     // copy made where the event was fired) gets one extra per Cloud, Delney and Roaming Throne that applies to it.
     let mut extra = vec![];
     for t in entries.iter().filter(|t| !t.repeat) {
-        let k = t.src.map_or(0, |s| {
-            // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
-            usize::from(crate::impls::cloud::doubles(g, s))
-                // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers again
-                + crate::impls::t45_heliod_zur::delney_extra(g, s)
-                // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
-                + crate::impls::t45_urdragon::throne_extra(g, s)
-        });
+        let k = t.src.map_or(0, |s| extra_for(g, s));
         extra.extend(std::iter::repeat_n(Trigger { repeat: true, ..t.clone() }, k));
     }
     entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
+}
+
+/// Additional instances of src's triggered ability (CR 603.2d): apply only to originals, never repeats.
+pub fn extra_for(g: &Game, src: PermId) -> usize {
+    if let Some(n) = lki_extra(g, src) {
+        return n;
+    }
+    extra_live(g, src)
+}
+
+fn extra_live(g: &Game, src: PermId) -> usize {
+    usize::from(crate::impls::cloud::doubles(g, src))
+        + crate::impls::t45_heliod_zur::delney_extra(g, src)
+        + crate::impls::t45_urdragon::throne_extra(g, src)
+}
+
+// Source last-known information is added in the later LKI round.
+fn lki_extra(_g: &Game, _src: PermId) -> Option<usize> {
+    None
 }
 
 pub fn flush_triggers(g: &mut Game) -> Res {
