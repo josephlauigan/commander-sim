@@ -9,6 +9,7 @@ use crate::flow::Res;
 use crate::hooks::{Call, CardImpl, Event, TrigAct, Trigger};
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
+use crate::tag::Tag;
 
 /// (source permanent, its card code) for every live permanent handling event e
 pub fn hooked(g: &Game, e: Event) -> Vec<(PermId, CardImpl)> {
@@ -170,6 +171,21 @@ pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Re
     fire_trigger_where(g, e, call, &|_, _| true, repeat)
 }
 
+/// Elesh Norn, Mother of Machines: "Permanents entering the battlefield don't cause abilities of permanents your
+/// opponents control to trigger." True when an opponent of `controller` has one on the battlefield (not phased out,
+/// abilities on): a triggered ability of one of `controller`'s permanents is not caused by `entering` (None: a land
+/// or tokens, whichever the caller has no single permanent for). Only triggers are blanked: what happens as a permanent
+/// enters (a name chosen, counters, an Aura attaching, devour) and the abilities of cards in other zones (a
+/// graveyard landfall) still happen.
+pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) -> bool {
+    g.opps(controller).any(|q| {
+        g.player(q).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Mother))
+        })
+    })
+}
+
 /// `fire_trigger`, for the hooked permanents `keep` accepts (a blink fires after the creature is back, and what entered
 /// with it never saw it leave: `zones::exiled_from_bf`)
 pub fn fire_trigger_where(
@@ -186,12 +202,19 @@ pub fn fire_trigger_where(
     {
         return Ok(());
     }
+    let enters = matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter);
+    let entering = if let Call::Etb { m, .. } = &call { Some(*m) } else { None };
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
         if !keep(g, src) {
             continue;
         }
         let owner = g.perm(src).owner;
+        // an opponent's Elesh Norn: no trigger of this permanent is caused by the entering (a hook marked at once is
+        // either a trigger run at once or what happens as it enters, which stays)
+        if enters && (!imp.runs_at_once(e) || imp.is_at_once_trigger(e)) && enter_blanked(g, owner, entering) {
+            continue;
+        }
         let mut reps = 1;
         if let (Event::Dies, Call::Dies { m, .. }) = (e, &call) {
             reps += total_trigger_copies(g, owner, "dies", Some(*m));

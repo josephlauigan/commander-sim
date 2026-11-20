@@ -666,6 +666,10 @@ pub struct CardImpl {
     /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
     /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
     pub at_once: u128,
+    /// the events whose at-once hook is a real triggered ability (Thassa's Oracle's enters trigger), not what happens
+    /// as the permanent enters (counters, a name, an Aura attaching): Elesh Norn, Mother of Machines blanks the first
+    /// kind of an opponent's permanent only. A bit per `Event`, a subset of `at_once`.
+    pub at_once_trigger: u128,
 }
 
 impl CardImpl {
@@ -777,6 +781,7 @@ impl CardImpl {
             aura,
             walker,
             at_once: _,
+            at_once_trigger: _,
         } = self;
         [
             ("etb", etb.is_some()),
@@ -903,6 +908,16 @@ impl CardImpl {
 
     pub fn runs_at_once(&self, e: Event) -> bool {
         self.at_once >> (e as u32) & 1 == 1
+    }
+
+    /// Mark an at-once hook as a real triggered ability (see `at_once_trigger`).
+    pub fn at_once_trigger(mut self, e: Event) -> CardImpl {
+        self.at_once_trigger |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn is_at_once_trigger(&self, e: Event) -> bool {
+        self.at_once_trigger >> (e as u32) & 1 == 1
     }
 
     /// Python's `CI.live(name)` (`name in HOOKS`): the card handles an event, rather than only having a table entry

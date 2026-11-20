@@ -857,6 +857,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(valkyrie_etb);
     c.tokens_enter = Some(valkyrie_tokens);
     at_once(c, Event::TokensEnter);
+    *c = c.at_once_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
     r.creature_pt.push(valkyrie_pt);
     let c = r.card(db, "Sephara, Sky's Blade")?;
     c.grant_kw = Some(sephara_kw);
@@ -868,11 +869,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(youthful_etb);
     c.tokens_enter = Some(youthful_tokens);
     at_once(c, Event::TokensEnter);
+    *c = c.at_once_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
     let c = r.card(db, "Bishop of Wings")?;
     c.etb = Some(bishop_etb);
     c.tokens_enter = Some(bishop_tokens);
     c.dies = Some(bishop_dies);
     at_once(c, Event::TokensEnter);
+    *c = c.at_once_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
     r.card(db, "Linvala, the Preserver")?.etb = Some(linvala_etb);
     register_temple(r, db)?;
     register_speaker(r, db)?;

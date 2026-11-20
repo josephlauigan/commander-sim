@@ -2269,6 +2269,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(plume);
     c.tokens_enter = Some(plume_tokens);
     at_once(c, Event::TokensEnter, true);
+    *c = c.at_once_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
     r.card(db, "Pileated Provisioner")?.etb = Some(provisioner);
     r.card(db, "Stirring Hopesinger")?.cast = Some(hopesinger);
     let c = r.card(db, "Desperate Futurescribe")?;

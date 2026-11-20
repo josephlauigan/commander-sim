@@ -696,6 +696,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, ERTAI)?;
     c.etb = Some(ertai_etb);
     at_once(c, Event::Etb, true);
+    *c = c.at_once_trigger(Event::Etb); // its enters trigger, run at once
     let c = r.card(db, SPIDER_WOMAN)?;
     c.enters_tapped = Some(spider_tapped);
     r.creature_pt.push(magda_pt);

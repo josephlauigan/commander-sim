@@ -278,7 +278,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     if n == 0 {
         return Ok(out);
     }
-    let blank = opp_has(g, p, Tag::Mother);
+    let blank = hooks::enter_blanked(g, p, None);
     let (mut pw, mut tg, mut sick) = (spec.pow, spec.tgh, spec.sick);
     if has(g, p, Tag::Jinnie) && pw < 2 && !spec.attacking {
         (pw, tg, sick) = (2, Some(2), false); // Jinnie Fay: 2/2 Cats with haste instead
@@ -380,7 +380,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
 
 /// Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment
 pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32) -> Res {
-    if k <= 0 || !has(g, p, Tag::Shards) || opp_has(g, p, Tag::Mother) {
+    if k <= 0 || !has(g, p, Tag::Shards) || hooks::enter_blanked(g, p, None) {
         return Ok(());
     }
     let reps = k * if has(g, p, Tag::Mother) { 2 } else { 1 };
@@ -474,7 +474,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if etgh(g, m) <= 0 && !g.perm(m).army {
         return die(g, m, "sba");
     }
-    if !opp_has(g, p, Tag::Mother) {
+    if !hooks::enter_blanked(g, p, Some(m)) {
         if has(g, p, Tag::Crusade) {
             let n = find(g, p, Tag::Crusade).len() as i32 * (1 + repl::trigger_copies(g, p, "etb", Some(m)));
             for x in g.player(p).perms.clone() {
@@ -1352,7 +1352,7 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
 /// the tag-driven enter effects: as it enters (etb_static), then its triggered ones on the stack (etb_once)
 pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let cd = g.perm(m).cd.unwrap();
-    if g.db.get(cd).has_dsl() || opp_has(g, p, Tag::Mother) {
+    if g.db.get(cd).has_dsl() || hooks::enter_blanked(g, p, Some(m)) {
         return Ok(()); // the ability language handles its abilities
     }
     let mut reps = 1;
@@ -1828,7 +1828,11 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
-    for r in find(g, p, Tag::Landfall2) {
+    // an opponent's Elesh Norn, Mother of Machines: the permanents' landfall effects below don't trigger (the
+    // compiled and card-code ones are blanked where they fire, a graveyard card's not at all)
+    let blanked = hooks::enter_blanked(g, p, None);
+    let felidars = if blanked { vec![] } else { find(g, p, Tag::Landfall2) };
+    for r in felidars {
         if crate::human::is_human(g, p) {
             // "choose one": a 2/2 Cat Beast, or a +1/+1 counter on each creature you control and vigilance until end of turn
             if !trigger_window(g, p, Some(r), "choose one: a 2/2 Cat, or +1/+1 counters and vigilance", None)? {
@@ -1861,7 +1865,7 @@ fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
     let mut names: Vec<CardId> = lands.iter().map(|&l| g.perm(l).card()).collect();
     names.sort();
     names.dedup();
-    if fields > 0 && names.len() >= 7 {
+    if !blanked && fields > 0 && names.len() >= 7 {
         // Field of the Dead: 7+ lands with different names
         for _ in 0..fields {
             make_tokens(g, p, Tokens { color: Some(Colors::from_letters("B")), ..Tokens::new(1, 2) })?;
