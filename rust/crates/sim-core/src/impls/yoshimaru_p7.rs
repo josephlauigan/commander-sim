@@ -7,12 +7,20 @@
 //!   (`emp_plus`, shared by the person's walker in `human/walkers.rs`).
 //! - -1: a 2/2 white Samurai creature token with vigilance (`emp_samurai`).
 //! - -2: exile target tapped creature (any player's, your own included); you gain 2 life (`human/walkers.rs`).
+//!
+//! # Eiganjo, Seat of the Empire
+//! Channel {2}{W}, discard it: 4 damage to target attacking or blocking creature; {1} less for each legendary creature
+//! you control. The AI's channel is `t6_lands.rs` (`hand_defend` / `hand_blocks`); a person's is `human/cards.rs`
+//! (`eiganjo`: any player's attacking or blocking creature, at instant speed, Pithing Needle respected). This file
+//! lists the creatures it may aim at (`combatants`) and when the person's declare-blockers stop is worth it
+//! (`eiganjo_ready`).
 
+use crate::cards::Colors;
 use crate::engine::repl;
 use crate::engine::values::{colors_of, protected_from};
 use crate::engine::zones::{Tokens, make_tokens};
 use crate::flow::Res;
-use crate::ids::{PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 
 const EMPEROR: &str = "The Wandering Emperor";
@@ -47,4 +55,37 @@ pub fn emp_samurai(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
         g.perm_mut(t).vig = true;
     }
     Ok(toks)
+}
+
+// ------------------------------------------------------------------ Eiganjo, Seat of the Empire
+/// the attacking and blocking creatures an ability of p's (from a source of colours `source`) may target: on the
+/// battlefield, hexproof and shroud respected, protection from the source's colours (from colorless: a colorless
+/// source) too
+pub fn combatants(g: &Game, p: PlayerId, source: Colors) -> Vec<PermId> {
+    let mut fighting = g.in_combat.clone();
+    for &x in &g.blocking {
+        if !fighting.contains(&x) {
+            fighting.push(x);
+        }
+    }
+    fighting
+        .into_iter()
+        .filter(|&x| {
+            g.perm(x).on_bf
+                && g.player(g.perm(x).owner).perms.contains(&x)
+                && g.is_creature(x)
+                && super::vondam_elspeth::may_target(g, p, x)
+                && !protected_from(g, x, source)
+        })
+        .collect()
+}
+
+/// card c in q's hand is Eiganjo and q could channel it now (`have` is the mana q has): a reason to stop at the declare
+/// blockers step, as an instant would be
+pub fn eiganjo_ready(g: &Game, q: PlayerId, c: CardId, have: u32) -> bool {
+    let name = &*g.db.get(c).name;
+    name == "Eiganjo, Seat of the Empire"
+        && !super::t6_stax::needle_stops(g, name)
+        && have > super::t6_lands::eiganjo_cost(g, q)
+        && !combatants(g, q, Colors::NONE).is_empty()
 }
