@@ -1,0 +1,475 @@
+# card | event | class | behaviour test (M) | note
+# T whole hook is an enters-caused trigger; S not a trigger; M mixed; N not enter-caused. See tests/enters_inventory.rs.
+
+Abduction | Etb | M | opponent_elesh_blanks_abduction_untap_but_not_control | control and attaching are setup; the untap is the trigger
+Accursed Marauder | Etb | T
+Acidic Slime | Etb | T
+Additive Evolution | Etb | T
+Admonition Angel | Landfall | T
+Aesi, Tyrant of Gyre Strait | Landfall | T
+Aether Hub | LandEtb | T |  | "When this land enters": a trigger
+Agent of Treachery | Etb | T
+Airlift Chaplain | Etb | T
+Ajani Fells the Godsire | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Ajani's Chosen | Etb | T
+All That Glitters | Etb | S
+All-Fates Stalker | Etb | T
+Alpharael, Dreaming Acolyte | Etb | T
+Ancestral Mask | Etb | S
+Angel of Invention | Etb | T
+Angel of Serenity | Etb | T
+Angel of Vitality | Etb | S
+Angel of the Ruins | Etb | T
+Angelic Destiny | Etb | S
+Angelic Field Marshal | Etb | S
+Angelic Gift | Etb | M | opponent_elesh_blanks_angelic_gift_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Anikthea, Hand of Erebos | Etb | T
+Apex Witchstalker | Etb | T
+Archaeomancer's Map | Etb | T
+Archaeomancer's Map | Landfall | T
+Archangel Avacyn // Avacyn, the Purifier | Etb | T
+Archon of Sun's Grace | Etb | T
+Armored Ascension | Etb | S
+Armory Automaton | Etb | T
+Astral Dragon | Etb | T
+Avenger of Zendikar | Etb | T
+Avenger of Zendikar | Landfall | T
+Avengers Quinjet | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+Banishing Light | Etb | T
+Barkchannel Pathway // Tidechannel Pathway | LandEtb | S |  | a face choice as it enters
+Batterskull | Etb | T
+Battle Mastery | Etb | S
+Battle at the Helvault | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Battle for Bretagard | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Beetleback Chief | Etb | T
+Benevolent Blessing | Etb | S
+Binding the Old Gods | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Bishop of Wings | Etb | T
+Bishop of Wings | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Blackblade Reforged | Etb | S
+Blightstep Pathway // Searstep Pathway | LandEtb | S |  | a face choice as it enters
+Bloodghast | Etb | S
+Bloodline Keeper // Lord of Lineage | Etb | S
+Bloodthirsty Adversary | Etb | T
+Bojuka Bog | LandEtb | T |  | "When this land enters": a trigger
+Bone Devourer | Etb | S
+Bonny Pall, Clearcutter | Etb | T
+Boon of the Spirit Realm | Etb | T
+Boughside Wanderers | Etb | T
+Braids's Frightful Return | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Branchloft Pathway // Boulderloft Pathway | LandEtb | S |  | a face choice as it enters
+Breath of Fury | Etb | S
+Bronze Guardian | Etb | S |  | a state registration (size rule)
+Burglar Rat | Etb | T
+Cacophony Unleashed | Etb | T
+Calix, Guided by Fate | Etb | T
+Canyon Crawler | Etb | T
+Captain America, Living Legend | Etb | S |  | a state registration (its untap rule reads a flag)
+Captain America, Team Leader | Etb | T
+Captain Marvel, Apex Avenger | Etb | S |  | a state registration (its counter rule reads a flag)
+Carth the Lion | Etb | T
+Cartouche of Solidarity | Etb | M | opponent_elesh_blanks_cartouche_token | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Cast Out | Etb | T
+Cavern of Souls | LandEtb | S |  | as it enters, choose a creature type
+Celestial Mantle | Etb | S
+Chains of Custody | Etb | M | opponent_elesh_blanks_chains_of_custody_exile | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Chalice of the Void | Etb | S
+Charcoal Diamond | Etb | S
+Charming Prince | Etb | T
+Chatterfang, Squirrel General | TokenCreated | N |  | a replacement of the creating
+Chittering Rats | Etb | T
+Chittering Witch | Etb | T
+Cho-Manno's Blessing | Etb | S
+Clearwater Pathway // Murkwater Pathway | LandEtb | S |  | a face choice as it enters
+Cloud of Faeries | Etb | T
+Cloud, Midgar Mercenary | Etb | T
+Cloudfin Raptor | Etb | T
+Cloudfin Raptor | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Cloudstone Curio | Etb | T
+Coat of Arms | Etb | S
+Coiling Oracle | Etb | T
+Coldsteel Heart | Etb | S
+Composer of Spring | Etb | T
+Contagion Engine | Etb | T
+Corroding Dragonstorm | Etb | T
+Courser of Kruphix | Landfall | T
+Court of Ardenvale | Etb | T
+Court of Grace | Etb | T
+Crackdown | Etb | S
+Crackling Spellslinger | Etb | T
+Craterhoof Behemoth | Etb | T
+Crown of Skemfar | Etb | S
+Curiosity | Etb | S
+Curse of Opulence | Etb | S
+Dack Fayden, Helping Hand | Etb | T
+Dakkon Blackblade | Etb | S |  | a state registration (size rule)
+Daxos, Blessed by the Sun | Etb | S
+Daybreak Coronet | Etb | S
+Deluge Virtuoso | Etb | T
+Demonic Embrace | Etb | S
+Demonlord Belzenlok | Etb | T
+Derevi, Empyrial Tactician | Etb | T
+Detention Sphere | Etb | T
+Diplomatic Immunity | Etb | S
+Docent of Perfection // Final Iteration | Etb | S
+Doomwake Giant | Etb | T
+Dragon Tempest | Etb | T
+Dragon's Hoard | Etb | T
+Dragonlord Silumgar | Etb | T
+Dragoon's Lance | Etb | T
+Dreamtide Whale | Etb | S
+Druid Class | Landfall | T
+Duplicant | Etb | T
+Dwynen's Elite | Etb | T
+Edgar, Charmed Groom // Edgar Markov's Coffin | Etb | S
+Eidolon of Blossoms | Etb | T
+Eidolon of Countless Battles | Etb | S
+Elderfang Disciple | Etb | T
+Elrond, Lord of Rivendell | Etb | T
+Elrond, Lord of Rivendell | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Elvish Archdruid | Etb | S
+Elvish Harbinger | Etb | T
+Elvish Reclaimer | Etb | S
+Elvish Rejuvenator | Etb | T
+Elvish Warmaster | Etb | T
+Embercleave | Etb | T
+Emeria Shepherd | Landfall | T
+Emiel the Blessed | Etb | T
+Empyrial Armor | Etb | S
+Emry, Lurker of the Loch | Etb | T
+Endurance | Etb | T
+Ennis, Debate Moderator | Etb | T
+Erebos, Bleak-Hearted | Etb | S
+Ertai Resurrected | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+Esika's Chariot | Etb | T
+Ethereal Armor | Etb | S
+Evolution Sage | Landfall | T
+Ezuri, Stalker of Spheres | Etb | T
+Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Face of Divinity | Etb | S
+Faeburrow Elder | Etb | S |  | a state registration (size rule)
+Feather of Flight | Etb | M | opponent_elesh_blanks_feather_of_flight_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Felidar Guardian | Etb | T
+Felidar Umbra | Etb | S
+Fiend Hunter | Etb | T
+Fiery Emancipation | Etb | S
+Fighter Class | Etb | T
+Fire Diamond | Etb | S
+Flickerform | Etb | S
+Flickering Ward | Etb | S
+Flickerwisp | Etb | T
+Forerunner of the Legion | Etb | T
+Forerunner of the Legion | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Forge Anew | Etb | T
+Formidable Speaker | Etb | T
+Freestrider Commando | Etb | S |  | enters with counters: a replacement
+Frost Titan | Etb | T
+Galadriel, Light of Valinor | Etb | T
+Garland, Royal Kidnapper | Etb | T
+Genesis Chamber | Etb | T
+Genesis Hydra | Etb | S
+Ghoulish Impetus | Etb | S
+Giada, Font of Hope | Etb | S
+Giada, Font of Hope | TokensEnter | S
+Gift of Immortality | Etb | S
+Gilded Goose | Etb | T
+Gilgamesh, Master-at-Arms | Etb | T
+Goblin Chainwhirler | Etb | T
+Goblin Engineer | Etb | T
+Goblin Instigator | Etb | T
+Goblin Matron | Etb | T
+Goblin Recruiter | Etb | T
+Goblin Ringleader | Etb | T
+Godo, Bandit Warlord | Etb | T
+Gonti, Lord of Luxury | Etb | T
+Grasp of Fate | Etb | T
+Gravblade Heavy | Etb | S |  | a state registration (size rule)
+Grinding Station | Etb | T
+Grishnákh, Brash Instigator | Etb | T
+Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun | Etb | T
+Gryff's Boon | Etb | S
+Guardian Project | Etb | T
+Haliya, Guided by Light | Etb | T
+Hammer of Nazahn | Etb | T
+Hancock, Ghoulish Mayor | Etb | S
+Harald, King of Skemfar | Etb | T
+Heliod's Pilgrim | Etb | T
+Heliod, God of the Sun | Etb | S
+Heliod, Sun-Crowned | Etb | S
+Hellkite Courser | Etb | T
+Heraldic Banner | Etb | S
+Hero of Iroas | Etb | N |  | heroic is caused by casting a spell that targets it; the hook watches an Aura entering as its stand-in
+Hero's Blade | Etb | T
+Holy Mantle | Etb | S
+Hostage Taker | Etb | T
+Hyena Umbra | Etb | S
+Idolized | Etb | S
+Impact Tremors | Etb | T
+Impact Tremors | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Inferno Titan | Etb | T
+Infestation Expert | Etb | T
+Intellect Devourer | Etb | T
+Intruder Alarm | Etb | T
+Iroas, God of Victory | Etb | S |  | a state registration (devotion)
+Isochron Scepter | Etb | T
+Jodah, the Unifier | Etb | S
+Journey to Eternity // Atzal, Cave of Eternity | Etb | S
+Journey to Nowhere | Etb | T
+Kaalia, Zenith Seeker | Etb | T
+Kaito, Bane of Nightmares | Etb | S
+Kaldra Compleat | Etb | T
+Kappa Cannoneer | Etb | T
+Kaya's Ghostform | Etb | S
+Keeper of the Quiet Hour | Etb | T
+Kefka, Court Mage // Kefka, Ruler of Ruin | Etb | T
+Khalni Heart Expedition | Landfall | T
+Kindred Discovery | Etb | T
+Knight of the White Orchid | Etb | T
+Kogla, the Titan Ape | Etb | T
+Kor Outfitter | Etb | T
+Kor Skyfisher | Etb | T
+Kor Spiritdancer | Etb | S
+Korvold, Fae-Cursed King | Etb | T
+Kraum, Ludevic's Opus | Etb | S |  | bookkeeping of the turn it came down
+Lagrella, the Magpie | Etb | T
+Lathliss, Dragon Queen | Etb | T
+Latulla's Orders | Etb | S
+Lena, Selfless Champion | Etb | T
+Light of Promise | Etb | S
+Light-Paws, Emperor's Voice | Etb | T
+Linvala, the Preserver | Etb | T
+Loki's Scepter | Etb | T
+Loran of the Third Path | Etb | T
+Lotus Field | LandEtb | T |  | "When this land enters": a trigger
+Love Song of Night and Day | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Loyal Warhound | Etb | T
+Lumra, Bellow of the Woods | Etb | T
+Mabel, Bitter Recluse | Etb | T
+Magitek Scythe | Etb | T
+Magnetic Snuffler | Etb | T
+Malcator, Purity Overseer | Etb | T
+Malcator, Purity Overseer | TokenCreated | N |  | bookkeeping for its end-step check; its enters trigger is the Etb row
+Mammoth Umbra | Etb | S
+Mana Echoes | Etb | T
+Mana Echoes | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Mantle of the Ancients | Etb | M | opponent_elesh_blanks_mantle_of_ancients_return | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Marchesa, the Black Rose | Etb | S
+Marionette Apprentice | Etb | T
+Marionette Master | Etb | T
+Marwyn, the Nurturer | Etb | T
+Mask of Law and Grace | Etb | S
+Massacre Girl | Etb | T
+Matterbending Mage | Etb | T
+Mentor of the Meek | Etb | T
+Merciless Executioner | Etb | T
+Metallic Mimic | Etb | S
+Miirym, Sentinel Wyrm | Etb | T
+Mindseeker Oculus | Etb | T
+Mirkwood Bats | TokenCreated | N |  | a creation trigger (whenever you create or sacrifice a token), not an enters trigger
+Mirrorworks | Etb | T
+Mithril Coat | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+Mogg War Marshal | Etb | T
+Moonshaker Cavalry | Etb | T
+Moraug, Fury of Akoum | Landfall | T
+Mortuary Mire | LandEtb | T |  | "When this land enters": a trigger
+Moss Diamond | Etb | S |  | enters tapped
+Mosswort Bridge | LandEtb | T |  | "When this land enters": a trigger
+Mouth of the Storm | Etb | T
+Multani, Yavimaya's Avatar | Etb | S
+Muxus, Goblin Grandee | Etb | T
+Mystic Sanctuary | LandEtb | M | an_opponents_elesh_blanks_mystic_sanctuarys_return an_opponents_elesh_leaves_mystic_sanctuary_untapped | enters untapped is a replacement; the return is a trigger
+Necrosquito | Etb | S |  | enters with counters, size rule
+Needleverge Pathway // Pillarverge Pathway | LandEtb | S |  | a face choice as it enters
+Nessian Wanderer | Etb | T
+Nine-Lives Familiar | Etb | S
+Nissa of Shadowed Boughs | Landfall | T |  | a trigger that runs at once (marked enter_trigger)
+Nissa, Resurgent Animist | Landfall | T
+Norn's Choirmaster | Etb | T
+Oath of Teferi | Etb | T
+Ob Nixilis, the Adversary | Etb | S
+Oblivion Ring | Etb | T
+Ogre Battledriver | Etb | T
+Omnath, Locus of Rage | Landfall | T
+On Serra's Wings | Etb | S
+Ondu Spiritdancer | Etb | T
+Oreskos Explorer | Etb | T
+Palace Jailer | Etb | T
+Paradox Surveyor | Etb | T
+Pariah | Etb | S
+Patchwork Banner | Etb | S
+Perigee Beckoner | Etb | T
+Peter Parker's Camera | Etb | S
+Petrified Hamlet | LandEtb | M | an_opponents_elesh_blanks_petrified_hamlets_naming | City of Traitors' check is setup; the naming is a trigger
+Phyrexian Delver | Etb | T
+Phyrexian Revoker | Etb | S |  | as it enters, choose a name
+Pia Nalaar | Etb | T
+Pileated Provisioner | Etb | T
+Pithing Needle | Etb | S
+Plaguecrafter | Etb | T
+Plan for All Outcomes | Etb | T
+Plumecreed Mentor | Etb | T
+Plumecreed Mentor | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Polluted Bonds | Landfall | T
+Portal to Phyrexia | Etb | T
+Prayer of Binding | Etb | T
+Preston, the Vanisher | Etb | T
+Primeval Titan | Etb | T
+Puresteel Paladin | Etb | T
+Purphoros, God of the Forge | Etb | T
+Purphoros, God of the Forge | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Rabble Rousing | Etb | T
+Radiant Solar | Etb | T
+Ral and the Implicit Maze | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Rancor | Etb | S
+Reality Acid | Etb | S
+Reckless Fireweaver | Etb | T
+Reckless Fireweaver | TokenCreated | T
+Recruiter of the Guard | Etb | T
+Reflector Mage | Etb | T
+Rescue, Pepper Potts | Etb | T
+Rest in Peace | Etb | T
+Restless Bloodseeker // Bloodsoaked Reveler | Etb | S |  | a state registration (size rule)
+Restoration Angel | Etb | T
+Retreat to Coralhelm | Landfall | T
+Rhythm of the Wild | Etb | S
+Ribskiff | Etb | T
+Righteous Valkyrie | Etb | T
+Righteous Valkyrie | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Riptide Gearhulk | Etb | T
+Rishkar, Peema Renegade | Etb | T
+Roil Elemental | Landfall | T
+Rooftop Assassin | Etb | T
+Rousing Read | Etb | M | opponent_elesh_blanks_rousing_read_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Ruthless Technomancer | Etb | T
+Sage's Reverie | Etb | M | opponent_elesh_blanks_sages_reverie_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Sakashima's Protege | Etb | S
+Samurai's Katana | Etb | T
+Satoru, the Infiltrator | Etb | T
+Scarlet Spider, Kaine | Etb | T
+Scourge of Valkas | Etb | T
+Scute Swarm | Landfall | T
+Secluded Courtyard | Etb | S
+Secluded Courtyard | LandEtb | S |  | as it enters, choose a creature type
+Selvala, Heart of the Wilds | Etb | T
+Sentinel's Eyes | Etb | S
+Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel | Etb | T
+Serra Ascendant | Etb | S
+Setessan Champion | Etb | T
+Shaman of the Pack | Etb | T
+Shardmage's Rescue | Etb | S
+Sheltered by Ghosts | Etb | M | opponent_elesh_blanks_sheltered_by_ghosts_exile | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Shield of Duty and Reason | Etb | S
+Shielded by Faith | Etb | S |  | its whenever-a-creature-enters trigger is not modelled; the hook only attaches the Aura
+Shrieking Drake | Etb | T
+Siege-Gang Commander | Etb | T
+Sigarda's Aid | Etb | T
+Silverblade Paladin | Etb | T
+Skycoach Conductor // All Aboard | Etb | S |  | enters prepared
+Smaug, Wicked Worm | Etb | T
+Snake Umbra | Etb | S
+Solitude | Etb | T
+Soul Enervation | Etb | T
+Soul of Windgrace | Etb | T
+Soul-Guide Lantern | Etb | T
+Specimen Freighter | Etb | T
+Spectra Ward | Etb | S
+Spellseeker | Etb | T
+Spelunking | Etb | T
+Spider Umbra | Etb | S
+Spine of Ish Sah | Etb | T
+Spirit Link | Etb | S
+Spirit Mantle | Etb | S
+Springbloom Druid | Etb | T
+Springheart Nantuko | Landfall | T
+Springleaf Drum | Etb | S
+Squire's Lightblade | Etb | T
+Stadium Tidalmage | Etb | T
+Star Compass | Etb | S |  | enters tapped
+Starfield of Nyx | Etb | S
+Static Net | Etb | T
+Static Prison | Etb | T
+Steel of the Godhead | Etb | S
+Sticky Fingers | Etb | S
+Stoneforge Mystic | Etb | T
+Stoneskin | Etb | S
+Stormfront Riders | Etb | T
+Strength of the Harvest // Haven of the Harvest | Etb | S
+Strixhaven Skycoach | Etb | T
+Studious First-Year | Etb | S |  | enters prepared
+Summon: Bahamut | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Sylvan Messenger | Etb | T
+Tainted Observer | Etb | T
+Talon Gates of Madara | LandEtb | M | an_opponents_elesh_blanks_talon_gates_phasing | City of Traitors' check is setup; the phasing is a trigger
+Tannuk, Memorial Ensign | Landfall | T
+Tataru Taru | Etb | T
+Tenured Concocter | Etb | S |  | a state registration (size rule)
+Terror of the Peaks | Etb | T
+Terror of the Peaks | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Tezzeret, Cruel Captain | Etb | T
+Thassa's Oracle | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+The Binding of the Titans | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Cruelty of Gix | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Eldest Reborn | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Meathook Massacre | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+The Mending of Dominaria | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Mightstone and Weakstone | Etb | T
+The Mind Stone | Etb | S |  | indestructible, a static
+The One Ring | Etb | T
+The Seriema | Etb | T
+The Soul Stone | Etb | S |  | indestructible, a static
+The Wasp, Winsome Avenger | Etb | T
+Thornbite Staff | Etb | S |  | Approximate: the Oracle's Shaman-enters trigger is not modelled (the hook attaches the Staff to Krenko)
+Thran Power Suit | Etb | S
+Thrasios, Triton Hero | Etb | S |  | bookkeeping of the turn it came down
+Three Tree City | LandEtb | S |  | as it enters, choose a creature type
+Thundermaw Hellkite | Etb | T
+Tiamat | Etb | T
+Timely Ward | Etb | S
+Tireless Provisioner | Landfall | T
+Tireless Tracker | Landfall | T
+Tishana's Tidebinder | Etb | T
+Titania, Protector of Argoth | Etb | T
+Tocasia's Welcome | Etb | T
+Tome of Legends | Etb | T |  | its commander trigger; the page it enters with is `as_enters`
+Touch the Spirit Realm | Etb | T
+Trail of Crumbs | Etb | T
+Tribute Mage | Etb | T
+Triskelion | Etb | S
+Trophy Mage | Etb | T
+Twilight Diviner | Etb | T
+Twinblade Blessing | Etb | S
+Tymna the Weaver | Etb | S |  | bookkeeping of the turn it came down
+Ulna Alley Shopkeep | Etb | S |  | a state registration (size rule)
+Unquestioned Authority | Etb | M | opponent_elesh_blanks_unquestioned_authority_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
+Ureni of the Unwritten | Etb | T
+Uro, Titan of Nature's Wrath | Etb | T
+Urza's Saga | LandEtb | S |  | its lore counter is put as it enters (CR 714.3a)
+Urza, Lord High Artificer | Etb | T
+Valakut Exploration | Landfall | T
+Vampire Socialite | Etb | M | opponent_elesh_blanks_socialites_own_enters_trigger_but_keeps_the_replacement | mixed: setup (counters) plus a trigger part through `enters_trigger_times`
+Vampire Socialite | TokensEnter | S
+Vault Plunderer | Etb | T
+Venomous Brutalizer | Etb | T
+Vibrance | Etb | T
+Void Winnower | Etb | S
+Volatile Stormdrake | Etb | T
+Walking Ballista | Etb | S
+Weftstalker Ardent | Etb | T
+Weftstalker Ardent | TokenCreated | T
+Welcoming Vampire | Etb | T
+Whirler Rogue | Etb | T
+White Mage's Staff | Etb | T
+Whitemane Lion | Etb | T
+Windbrisk Heights | LandEtb | T |  | "When this land enters": a trigger
+Wingcrafter | Etb | T
+Witch Enchanter // Witch-Blessed Meadow | LandEtb | S |  | the face a modal card enters as is not an ability
+Worn Powerstone | Etb | S
+Xande, Dark Mage | Etb | S |  | a state registration (size rule)
+Xorn | TokenCreated | N |  | a replacement of the creating
+Yorion, Sky Nomad | Etb | T
+Yoshimaru, Ever Faithful | Etb | T
+Yoshimaru, Ever Faithful | LandEnters | T
+Youthful Valkyrie | Etb | T
+Youthful Valkyrie | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Zealous Conscripts | Etb | T
+_____ Goblin | Etb | T

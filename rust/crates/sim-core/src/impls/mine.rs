@@ -4752,6 +4752,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Necromancy")?.hand_options = Some(necro_flash);
     let k = r.card(db, BAHAMUT)?;
     k.etb = Some(bahamut_enters);
+    *k = k.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
     k.main1 = Some(bahamut_main1);
     at_once(k, Event::Main1, true); // main1 isn't a triggered event in Python: its hooks run at once
     k.as_enters = Some(bahamut_as_enters);

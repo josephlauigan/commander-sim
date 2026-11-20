@@ -1336,9 +1336,12 @@ pub fn daydream(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-/// Feather of Flight: draw a card as it enters
-fn feather_draw(g: &mut Game, p: PlayerId, _a: PermId, _h: PermId) -> Res {
-    draw(g, p, 1, false)
+/// Feather of Flight: "When this Aura enters, draw a card"
+fn feather_draw(g: &mut Game, p: PlayerId, a: PermId, _h: PermId) -> Res {
+    if trigger_window(g, p, Some(a), "draw a card", None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(())
 }
 
 /// alela._feather_host: a creature without flying first
@@ -1348,8 +1351,14 @@ fn feather_host(g: &mut Game, p: PlayerId, a: PermId) -> Res<Option<PermId>> {
 }
 
 /// flash; draw a card; +1/+0 and flying (on a creature without flying)
-static FEATHER: AuraSpec =
-    AuraSpec { pow: 1, tgh: 0, kws: &["flying"], on_etb: Some(feather_draw), host_pick: Some(feather_host), ..AURA };
+static FEATHER: AuraSpec = AuraSpec {
+    pow: 1,
+    tgh: 0,
+    kws: &["flying"],
+    when_enters: Some(feather_draw),
+    host_pick: Some(feather_host),
+    ..AURA
+};
 
 /// Ajani Fells the Godsire: I: exile an opposing creature with power 3+ ...
 fn ajani(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
@@ -2257,6 +2266,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(prison_prio);
     let c = r.card(db, "Aether Hub")?;
     c.land_etb = Some(hub_etb);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, you get {E}"
     c.land_cols = Some(hub_cols);
     c.on_tap_land = Some(hub_tap);
     r.card(db, "Airlift Chaplain")?.etb = Some(chaplain);
@@ -2269,6 +2279,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(plume);
     c.tokens_enter = Some(plume_tokens);
     at_once(c, Event::TokensEnter, true);
+    *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens, run at once
     r.card(db, "Pileated Provisioner")?.etb = Some(provisioner);
     r.card(db, "Stirring Hopesinger")?.cast = Some(hopesinger);
     let c = r.card(db, "Desperate Futurescribe")?;
@@ -2298,6 +2309,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     aura(r, db, "Feather of Flight", &FEATHER)?;
     let c = r.card(db, "Ajani Fells the Godsire")?;
     c.etb = Some(ajani);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
     c.upkeep = Some(ajani_lore);
     c.saga = Some((super::common::saga_by_choice, |g, p, m| ajani_lore(g, m, p))); // a person's proliferate
     c.prio = Some(ajani_prio);

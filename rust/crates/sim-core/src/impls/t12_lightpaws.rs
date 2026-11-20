@@ -261,12 +261,12 @@ fn pariah_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 static ASCENSION: AuraSpec = AuraSpec { kws: &["flying"], bonus: Some(ascension), ..AURA };
-static GIFT: AuraSpec = AuraSpec { kws: &["flying"], on_etb: Some(gift_etb), ..AURA };
+static GIFT: AuraSpec = AuraSpec { kws: &["flying"], when_enters: Some(gift_etb), ..AURA };
 static BENEVOLENT_SPEC: AuraSpec = AuraSpec { on_etb: Some(crate::impls::bulk_white::chomanno_etb), ..AURA };
-static CHAINS_SPEC: AuraSpec = AuraSpec { on_etb: Some(chains_etb), ..AURA };
+static CHAINS_SPEC: AuraSpec = AuraSpec { when_enters: Some(chains_etb), ..AURA };
 static DIVINITY: AuraSpec = AuraSpec { pow: 2, tgh: 2, ..AURA };
 static HOLY: AuraSpec = AuraSpec { pow: 2, tgh: 2, kws: &["unblockable"], ..AURA };
-static MANTLE: AuraSpec = AuraSpec { bonus: Some(mantle_bonus), on_etb: Some(mantle_etb), ..AURA };
+static MANTLE: AuraSpec = AuraSpec { bonus: Some(mantle_bonus), when_enters: Some(mantle_etb), ..AURA };
 static MASK: AuraSpec = AuraSpec { prot: "BR", ..AURA };
 static SHIELD: AuraSpec = AuraSpec { prot: "GU", ..AURA };
 static PARIAH_SPEC: AuraSpec = AuraSpec { host_ok: Some(pariah_ok), ..AURA };

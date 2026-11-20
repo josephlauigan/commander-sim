@@ -278,7 +278,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     if n == 0 {
         return Ok(out);
     }
-    let blank = opp_has(g, p, Tag::Mother);
+    let blank = hooks::enter_blanked(g, p, None);
     let (mut pw, mut tg, mut sick) = (spec.pow, spec.tgh, spec.sick);
     if has(g, p, Tag::Jinnie) && pw < 2 && !spec.attacking {
         (pw, tg, sick) = (2, Some(2), false); // Jinnie Fay: 2/2 Cats with haste instead
@@ -380,7 +380,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
 
 /// Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment
 pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32) -> Res {
-    if k <= 0 || !has(g, p, Tag::Shards) || opp_has(g, p, Tag::Mother) {
+    if k <= 0 || !has(g, p, Tag::Shards) || hooks::enter_blanked(g, p, None) {
         return Ok(());
     }
     let reps = k * if has(g, p, Tag::Mother) { 2 } else { 1 };
@@ -474,7 +474,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if etgh(g, m) <= 0 && !g.perm(m).army {
         return die(g, m, "sba");
     }
-    if !opp_has(g, p, Tag::Mother) {
+    if !hooks::enter_blanked(g, p, Some(m)) {
         if has(g, p, Tag::Crusade) {
             let n = find(g, p, Tag::Crusade).len() as i32 * (1 + repl::trigger_copies(g, p, "etb", Some(m)));
             for x in g.player(p).perms.clone() {
@@ -1352,17 +1352,17 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
 /// the tag-driven enter effects: as it enters (etb_static), then its triggered ones on the stack (etb_once)
 pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let cd = g.perm(m).cd.unwrap();
-    if g.db.get(cd).has_dsl() || opp_has(g, p, Tag::Mother) {
+    if g.db.get(cd).has_dsl() {
         return Ok(()); // the ability language handles its abilities
     }
-    let mut reps = if has(g, p, Tag::Mother) && g.db.get(cd).creature { 2 } else { 1 };
-    etb_static(g, p, m)?;
-    if !etb_triggers(g, cd) {
+    etb_static(g, p, m)?; // as it enters, not triggered: an opponent's Elesh Norn leaves it alone
+    if hooks::enter_blanked(g, p, Some(m)) || !etb_triggers(g, cd) {
         return Ok(());
     }
     let (name, imp) = etb_text(g, cd);
+    let mut reps = 1;
     if !g.hooks.is_empty() {
-        reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon
+        reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon, Elesh Norn
     }
     for k in 0..reps {
         if g.over {
@@ -1381,7 +1381,7 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 }
 
 /// enters-the-battlefield tags that are triggered abilities (the rest: as it enters, or static)
-pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
+pub const ETB_TRIGGER_TAGS: [Tag; 19] = [
     Tag::Chromemox,
     Tag::Recruit,
     Tag::Titan,
@@ -1400,10 +1400,20 @@ pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
     Tag::Uprising,
     Tag::Tok,
     Tag::Tokbig,
+    Tag::Endraze,
 ];
 pub const ETB_SCRYFALL_TAGS: [Tag; 4] = [Tag::Tut, Tag::Treas, Tag::Drainetb, Tag::Edictetb];
 /// removal kinds that are Auras locking the target down
 pub const LOCK_KINDS: [&str; 5] = ["arrest", "pacify", "encrust", "kasmina", "coerce"];
+/// removal kinds that are Auras changing what the enchanted permanent is (Kenrith's Transformation, Darksteel Mutation,
+/// Song of the Dryads, Imprisoned in the Moon, Reprobation): static effects of the Aura, not enters triggers
+pub const STATIC_AURA_KINDS: [&str; 5] = ["elk", "mutate", "forest", "moon", "coward"];
+
+/// is a `rem` kind with `etb` a static effect of an Aura (all the lock and static Aura kinds are Auras; attached as
+/// it resolves), not a triggered ability?
+pub fn rem_is_static(kind: &str) -> bool {
+    LOCK_KINDS.contains(&kind) || STATIC_AURA_KINDS.contains(&kind)
+}
 
 pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     let d = g.db.get(cd);
@@ -1416,7 +1426,7 @@ pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && !LOCK_KINDS.contains(&r)
+        && !rem_is_static(r)
     {
         return true;
     }
@@ -1426,7 +1436,7 @@ pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
 /// what an enters trigger is called on the stack, and how much it matters
 pub fn etb_text(g: &Game, cd: CardId) -> (Sym, f64) {
     let t = &g.db.get(cd).tags;
-    if t.has(Tag::Rem) && t.has(Tag::Etb) {
+    if t.has(Tag::Rem) && t.has(Tag::Etb) && !t.str(Tag::Rem).is_some_and(rem_is_static) {
         return ("remove a permanent", 6.0);
     }
     for (k, v) in [
@@ -1465,7 +1475,7 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && LOCK_KINDS.contains(&r)
+        && rem_is_static(r)
     {
         crate::engine::removal::etb_removal(g, p, m)?; // an Aura: attached as it resolves
     }
@@ -1477,11 +1487,6 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             die(g, x, "sac")?;
         }
         repl::put_plus(g, m, 2 * toks.len() as i32);
-    }
-    if t.has(Tag::Endraze) {
-        let pl = g.player_mut(p);
-        pl.pumpadd += 2;
-        pl.trample = true;
     }
     if t.has(Tag::Spider) {
         // Old Fat Spider: hexproof on your best creature (like Boots)
@@ -1503,6 +1508,19 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if t.has(Tag::Chromemox) {
         crate::engine::tutors::chrome_imprint(g, p, m)?;
+    }
+    if t.has(Tag::Endraze) {
+        // End-Raze Forerunners: other creatures you control get +2/+2 and gain vigilance and trample until end of turn:
+        // the ones there as it resolves (CR 611.2c), not the source and not a later entrant
+        let others: Vec<PermId> =
+            g.player(p).perms.iter().copied().filter(|&x| x != m && g.is_creature(x) && !g.perm(x).phased).collect();
+        for x in others {
+            let y = g.perm_mut(x);
+            y.eot_pt.0 += 2;
+            y.eot_pt.1 += 2;
+            crate::impls::partials::eot_kw(g, x, "vigilance");
+            crate::impls::partials::eot_kw(g, x, "trample");
+        }
     }
     if t.has(Tag::Recruit) {
         crate::engine::tutors::tutor(g, p, "cre2", "Imperial Recruiter")?; // Imperial Recruiter: creature with power 2 or less
@@ -1588,7 +1606,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && !LOCK_KINDS.contains(&r)
+        && !rem_is_static(r)
     {
         crate::engine::removal::etb_removal(g, p, m)?;
     }
@@ -1828,7 +1846,11 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
-    for r in find(g, p, Tag::Landfall2) {
+    // an opponent's Elesh Norn, Mother of Machines: the permanents' landfall effects below don't trigger (the
+    // compiled and card-code ones are blanked where they fire, a graveyard card's not at all)
+    let blanked = hooks::enter_blanked(g, p, None);
+    let felidars = if blanked { vec![] } else { find(g, p, Tag::Landfall2) };
+    for r in felidars {
         if crate::human::is_human(g, p) {
             // "choose one": a 2/2 Cat Beast, or a +1/+1 counter on each creature you control and vigilance until end of turn
             if !trigger_window(g, p, Some(r), "choose one: a 2/2 Cat, or +1/+1 counters and vigilance", None)? {
@@ -1861,7 +1883,7 @@ fn landfall_once(g: &mut Game, p: PlayerId, repeat: bool) -> Res {
     let mut names: Vec<CardId> = lands.iter().map(|&l| g.perm(l).card()).collect();
     names.sort();
     names.dedup();
-    if fields > 0 && names.len() >= 7 {
+    if !blanked && fields > 0 && names.len() >= 7 {
         // Field of the Dead: 7+ lands with different names
         for _ in 0..fields {
             make_tokens(g, p, Tokens { color: Some(Colors::from_letters("B")), ..Tokens::new(1, 2) })?;

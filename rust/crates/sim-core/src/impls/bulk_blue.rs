@@ -675,7 +675,7 @@ fn rousing_etb(g: &mut Game, p: PlayerId, a: PermId, _host: PermId) -> Res {
     Ok(())
 }
 
-static ROUSING: AuraSpec = AuraSpec { pow: 1, tgh: 1, kws: &["flying"], on_etb: Some(rousing_etb), ..AURA };
+static ROUSING: AuraSpec = AuraSpec { pow: 1, tgh: 1, kws: &["flying"], when_enters: Some(rousing_etb), ..AURA };
 
 /// Unfathomable Truths (devoid: colourless, which an instant never shows on the battlefield or to anything the
 /// decks run): draw three cards and create a 0/1 colourless Eldrazi Spawn token

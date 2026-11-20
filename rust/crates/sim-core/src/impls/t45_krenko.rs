@@ -45,7 +45,7 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{card_name, has_type, pval, subtypes, threat};
 use crate::engine::zones::{Enter, Tokens, die, enter, make_tokens, max_by, min_by, sac_worth};
 use crate::flow::Res;
-use crate::hooks::{Action, Opt, Registry, Src};
+use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::state::{DataKey, Game, Step, Val};
@@ -558,10 +558,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, ECHOES)?;
         c.etb = Some(echoes_etb);
         c.tokens_enter = Some(echoes_tokens);
+        *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
     }
     for n in ["Impact Tremors", "Purphoros, God of the Forge"] {
         if has(n) {
-            r.card(db, n)?.tokens_enter = Some(tremor_tokens);
+            let c = r.card(db, n)?;
+            c.tokens_enter = Some(tremor_tokens);
+            *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
         }
     }
     if has(KING) {

@@ -577,10 +577,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Presumed Dead")?.resolve = Some(presumed_resolve);
     let c = r.card(db, BRAIDS)?;
     c.etb = Some(braids_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
     c.upkeep = Some(braids_lore);
     c.saga = Some((super::common::saga_by_choice, |g, p, m| braids_lore(g, m, p))); // a person's proliferate
     let c = r.card(db, GIX)?;
     c.etb = Some(gix_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
     c.upkeep = Some(gix_lore);
     c.saga = Some((super::common::saga_by_choice, |g, p, m| gix_lore(g, m, p)));
     let c = r.card(db, "Grave Betrayal")?;

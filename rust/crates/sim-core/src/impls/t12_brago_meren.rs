@@ -77,6 +77,7 @@ const FLICKER: &str = "Ghostly Flicker";
 const ACID: &str = "Reality Acid";
 const GEARHULK: &str = "Riptide Gearhulk";
 const VOCALIST: &str = "Starfield Vocalist";
+const ELESH_MOTHER: &str = "Elesh Norn, Mother of Machines";
 const RESONATOR: &str = "Strionic Resonator";
 const TIME_WIPE: &str = "Time Wipe";
 const YORION: &str = "Yorion, Sky Nomad";
@@ -619,7 +620,9 @@ fn third_from_top(g: &mut Game, actor: PlayerId, m: PermId) -> Res {
 
 // ================================================================== Starfield Vocalist
 /// If a permanent entering the battlefield causes a triggered ability of a permanent you control to trigger, that
-/// ability triggers an additional time (enters triggers and landfall).
+/// ability triggers an additional time (enters triggers and landfall). Elesh Norn, Mother of Machines has the same
+/// first ability; her second (an opponent's permanents' abilities don't trigger from a permanent entering) is
+/// `engine::hooks::enter_blanked`.
 fn vocalist_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, _x: Option<PermId>) -> i32 {
     let s = g.perm(src);
     (matches!(kind, "etb" | "landfall") && p == s.owner && s.on_bf && !s.phased && !s.neutered) as i32
@@ -981,6 +984,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(acid_prio);
     r.card(db, GEARHULK)?.etb = Some(gearhulk_etb);
     r.card(db, VOCALIST)?.trigger_copies = Some(vocalist_copies);
+    r.card(db, ELESH_MOTHER)?.trigger_copies = Some(vocalist_copies);
     r.card(db, TIME_WIPE)?.resolve = Some(time_wipe_resolve);
     r.card(db, YORION)?.etb = Some(yorion_etb);
     let c = r.card(db, BURIED)?;

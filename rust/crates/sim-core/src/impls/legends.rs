@@ -259,7 +259,8 @@ pub fn jodah_payable(g: &Game, p: PlayerId) -> bool {
 
 const KALDRA: [&str; 3] = ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"];
 
-/// Mithril Coat: attach it to a legendary creature you control as it enters: Jodah first. In practice mode "target
+/// Mithril Coat: "When Mithril Coat enters, attach it to target legendary creature you control" (a triggered ability,
+/// run at once: marked `enter_trigger`, so an opponent's Elesh Norn blanks it): Jodah first. In practice mode "target
 /// legendary creature you control" is the person's pick (one legendary creature is a forced choice and is not asked)
 fn coat_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && g.perm(src).attached.is_none() {
@@ -1977,6 +1978,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Mithril Coat")?;
     c.etb = Some(coat_etb);
     at_once(c, Event::Etb, true);
+    *c = c.enter_trigger(Event::Etb);
     r.card(db, "Command Beacon")?.land_options = Some(beacon);
     let c = r.card(db, "Maelstrom Nexus")?;
     c.cast = Some(nexus);

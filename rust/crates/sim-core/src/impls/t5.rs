@@ -78,7 +78,6 @@ fn bottom_random(g: &mut Game, p: PlayerId, mut top: Vec<CardId>) {
 /// Construct token (+1/+1 per artifact)
 fn urza(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        g.selfpt = true;
         let o = owner(g, src);
         if !trigger_window(g, o, Some(src), "create a Construct", None)? {
             return Ok(());
@@ -1046,6 +1045,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // Urza, Lord High Artificer
     let c = r.card(db, "Urza, Lord High Artificer")?;
     c.etb = Some(urza);
+    c.as_enters = Some(super::partials::selfpt_as); // the Construct's size rule is a static
     c.extra_mana = Some(urza_mana);
     c.options = Some(urza_five);
     r.token_pt.push(construct_bonus);

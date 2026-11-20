@@ -805,10 +805,16 @@ pub fn land_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
         crate::impls::yoshimaru_cards::moon_land_face(g, l);
         return Ok(());
     }
-    match imp_of(g, g.perm(l).card()).and_then(|i| i.land_etb) {
-        Some(f) => f(g, p, l),
-        None => Ok(()),
+    let Some(i) = imp_of(g, g.perm(l).card()) else { return Ok(()) };
+    let Some(f) = i.land_etb else { return Ok(()) };
+    // "When this land enters": a triggered ability, which an opponent's Elesh Norn stops (`enter_trigger`). What a land
+    // does as it enters (a name or type chosen, a face, a lore counter, untapped) and City of Traitors' "when you play
+    // another land" happen anyway; a hook that mixes the two loops `enters_trigger_times` over its trigger part.
+    let times = if i.is_enter_trigger(Event::LandEtb) { hooks::enters_trigger_times(g, p, Some(l)) } else { 1 };
+    for _ in 0..times {
+        f(g, p, l)?;
     }
+    Ok(())
 }
 
 /// CI.total(g, 'extra_lands', p): extra land drops (Exploration, Azusa ...)

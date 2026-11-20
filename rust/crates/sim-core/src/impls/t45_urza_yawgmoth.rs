@@ -1007,6 +1007,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, MEATHOOK)?;
     c.etb = Some(meathook_etb);
     at_once(c, Event::Etb, true);
+    *c = c.enter_trigger(Event::Etb); // its enters trigger, run at once
     c.prio = Some(meathook_prio);
     r.card(db, JAR)?.prio = Some(jar_prio);
     Ok(())

@@ -471,7 +471,7 @@ fn panharmonicon(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) 
     if kind != "etb" || p != s.owner || s.phased {
         return 0;
     }
-    let Some(m) = x else { return 0 };
+    let Some(m) = x else { return 1 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
     let art = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
     (g.is_creature(m) || art) as i32
 }
@@ -1180,8 +1180,11 @@ fn abduction(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 /// galadriel._abduction_untap
 fn abduction_untap(g: &mut Game, p: PlayerId, src: PermId, t: PermId) -> Res {
     g.perm_mut(src).data.set(DataKey::Abducted, Val::Perm(t)); // remembered: the creature is detached as it dies
-    if trigger_window(g, p, Some(src), &format!("untap {}", name_of(g, t)), None)? && controls(g, p, t) {
-        g.perm_mut(t).tapped = false;
+    // "When this Aura enters, untap enchanted creature" is a triggered ability; gaining control is not
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(src)) {
+        if trigger_window(g, p, Some(src), &format!("untap {}", name_of(g, t)), None)? && controls(g, p, t) {
+            g.perm_mut(t).tapped = false;
+        }
     }
     Ok(())
 }
@@ -1495,10 +1498,8 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if let Some(l) = land {
         // not the land drop: onto the battlefield tapped
         let lid = g.add_land(p, l, true);
-        if !crate::engine::mana::moon_land(g, lid)
-            && let Some(f) = g.registry.get(l).filter(|i| i.live()).and_then(|i| i.land_etb)
-        {
-            f(g, p, lid)?;
+        if !crate::engine::mana::moon_land(g, lid) {
+            crate::cardcode::land_etb(g, p, lid)?; // its "When this land enters" trigger: an opponent's Elesh stops it
         }
         crate::glog!(g, "    Planar Genesis: {} puts {} onto the battlefield tapped", pname(g, p), g.db.get(l).name);
         landfall(g, p)?;
@@ -1774,6 +1775,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Abduction")?;
     c.etb = Some(abduction); // no trigger_window of its own: at once
     at_once(c, Event::Etb, true);
+    // mixed: it takes control as it enters (setup, runs now); `abduction_untap` is the trigger part
     c.dies = Some(abduction_dies);
     c.leaves = Some(abduction_leaves);
     at_once(c, Event::Leaves, true);

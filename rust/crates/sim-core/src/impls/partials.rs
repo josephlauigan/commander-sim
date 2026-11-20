@@ -39,6 +39,13 @@ pub(crate) fn at_once(c: &mut CardImpl, e: Event, yes: bool) {
     }
 }
 
+/// as it enters, the card's own size rule goes live (`Game::selfpt`): a state registration, shared by Righteous
+/// Valkyrie, Boon of the Spirit Realm and Urza, Lord High Artificer
+pub(crate) fn selfpt_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
+    g.selfpt = true;
+    Ok(())
+}
+
 /// common.best_opp_creature: the most valuable targetable creature of p's opponents that passes `pred`
 pub(crate) fn best_opp_creature(g: &Game, p: PlayerId, pred: impl Fn(&Game, PermId) -> bool) -> Option<PermId> {
     common::best_opp_creature(g, p, |m| pred(g, m))
@@ -3323,6 +3330,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Heartless Act")?.resolve = Some(heartless);
     let c = r.card(db, "Hero of Iroas")?;
     c.etb = Some(hero_heroic);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // heroic is caused by a cast, not by an entering
     at_once(c, Event::Etb, false);
     r.card(db, "Jagged-Scar Archers")?.options = Some(archers_options);
     let c = r.card(db, "Jaxis, the Troublemaker")?;

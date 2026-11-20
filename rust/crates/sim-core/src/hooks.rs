@@ -63,6 +63,7 @@ pub enum Event {
     LandColorless,
     LandDefend,
     LandEnters,
+    LandEtb,
     LandGy,
     LandMana,
     LandOptions,
@@ -109,7 +110,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 84] = [
+pub const EVENTS: [(Event, &str); 85] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -150,6 +151,7 @@ pub const EVENTS: [(Event, &str); 84] = [
     (Event::LandColorless, "land_colorless"),
     (Event::LandDefend, "land_defend"),
     (Event::LandEnters, "land_enters"),
+    (Event::LandEtb, "land_etb"),
     (Event::LandGy, "land_gy"),
     (Event::LandMana, "land_mana"),
     (Event::LandOptions, "land_options"),
@@ -666,6 +668,19 @@ pub struct CardImpl {
     /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
     /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
     pub at_once: u128,
+    /// the events whose hook is wholly an enters-caused triggered ability (Thassa's Oracle's, a Treasure watcher's):
+    /// an opponent's Elesh Norn, Mother of Machines blanks it and the event doublers copy it. The default for a hook
+    /// of `Etb`, `LandEnters` or `Landfall` that goes on the stack; a hook that runs at once (or a `TokensEnter` or
+    /// `TokenCreated` hook) needs this bit. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger`.
+    pub enter_trigger: u128,
+    /// the events whose QUEUED hook is a triggered ability that the entering did not cause (a Saga's chapter I, which
+    /// triggers on the lore counter, CR 714.2b; Hero of Iroas' heroic, which a cast causes): the dispatcher neither
+    /// blanks nor copies it for the enters, while Cloud, Delney and Roaming Throne still copy it. Setup (enters tapped,
+    /// enters with counters, a name chosen as it enters, a static or state registration, an Aura attaching) is not a
+    /// triggered ability and never waits in the queue: its hook runs at once (`at_once`), and a hook that mixes it with
+    /// a trigger part runs at once too and loops `engine::hooks::enters_trigger_times` for that part. A bit per
+    /// `Event`; never set together with `enter_trigger`.
+    pub enter_setup: u128,
 }
 
 impl CardImpl {
@@ -777,6 +792,8 @@ impl CardImpl {
             aura,
             walker,
             at_once: _,
+            enter_trigger: _,
+            enter_setup: _,
         } = self;
         [
             ("etb", etb.is_some()),
@@ -905,6 +922,26 @@ impl CardImpl {
         self.at_once >> (e as u32) & 1 == 1
     }
 
+    /// Mark the hook for e as wholly an enters-caused triggered ability (see `enter_trigger`).
+    pub fn enter_trigger(mut self, e: Event) -> CardImpl {
+        self.enter_trigger |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn is_enter_trigger(&self, e: Event) -> bool {
+        self.enter_trigger >> (e as u32) & 1 == 1
+    }
+
+    /// Mark the hook for e as not an enters-caused trigger, or mixed (see `enter_setup`).
+    pub fn enter_setup(mut self, e: Event) -> CardImpl {
+        self.enter_setup |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn is_enter_setup(&self, e: Event) -> bool {
+        self.enter_setup >> (e as u32) & 1 == 1
+    }
+
     /// Python's `CI.live(name)` (`name in HOOKS`): the card handles an event, rather than only having a table entry
     /// (PVAL, SPELL_PRIO, DYN_MANA, LAND_ETB ...). A live card's permanents go in `g.hooks`.
     pub fn live(&self) -> bool {
@@ -972,6 +1009,7 @@ impl CardImpl {
             Event::HandDefend => self.hand_defend.is_some(),
             Event::LandDefend => self.land_defend.is_some(),
             Event::LandEnters => self.land_enters.is_some(),
+            Event::LandEtb => self.land_etb.is_some(),
             Event::LandOptions => self.land_options.is_some(),
             Event::LandUpkeep => self.land_upkeep.is_some(),
             Event::GyDies => self.gy_dies.is_some(),

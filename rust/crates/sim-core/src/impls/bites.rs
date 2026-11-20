@@ -422,5 +422,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Tenured Concocter")?;
     c.self_pt = Some(concocter_pt);
     c.etb = Some(selfpt_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // a state registration (its size rule)
     Ok(())
 }

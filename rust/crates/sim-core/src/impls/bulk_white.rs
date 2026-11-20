@@ -1326,6 +1326,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // Bronze Guardian
     let c = r.card(db, GUARDIAN)?;
     c.etb = Some(selfpt_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // a state registration (its size rule)
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(guardian_pt);
     // the catch-up ramp

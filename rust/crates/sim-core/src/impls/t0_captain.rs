@@ -1041,14 +1041,17 @@ fn sac_defend(
 // ------------------------------------------------------------------ registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, CAP_TL)?.etb = Some(cap_team);
-    r.card(db, LEGEND)?.etb = Some(legend_etb);
+    let c = r.card(db, LEGEND)?;
+    c.etb = Some(legend_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // a state registration
     let c = r.card(db, MARVEL)?;
     c.etb = Some(marvel_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // a state registration
     let c = r.card(db, QUINJET)?;
     c.etb = Some(quinjet_etb);
     c.attack = Some(quinjet_attack);
     c.crew = Some(quinjet_crew);
-    *c = c.at_once(crate::hooks::Event::Crew).at_once(crate::hooks::Event::Etb);
+    *c = c.at_once(crate::hooks::Event::Crew).at_once(crate::hooks::Event::Etb).enter_trigger(crate::hooks::Event::Etb);
     r.card(db, "Folk Hero")?.cast = Some(folk_hero);
     r.card(db, "Jarvis, Earth's Mightiest Butler")?.cast = Some(jarvis);
     let c = r.card(db, "Director Nick Fury")?;

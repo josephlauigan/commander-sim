@@ -1607,6 +1607,9 @@ fn fire_inner(g: &mut Game, event: &str, kw: &Fired) -> Res {
         if !g.player(q).alive {
             continue;
         }
+        if matches!(event, "etb" | "landfall") && crate::engine::hooks::enter_blanked(g, q, kw.perm) {
+            continue; // an opponent's Elesh Norn, Mother of Machines
+        }
         let mut srcs = g.player(q).perms.clone();
         srcs.extend(land_sources(g, q)); // Phase 3: lands' compiled triggers, after the other permanents'
         if let Some(x) = kw.dying

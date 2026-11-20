@@ -751,6 +751,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, GISELA)?.sba = Some(|_, _| Ok(()));
     let c = r.card(db, IROAS)?;
     c.etb = Some(iroas_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // a state registration (devotion)
     c.sba = Some(iroas_sba);
     c.grant_kw = Some(iroas_indestructible);
     r.card(db, "Slayers' Stronghold")?.land_options = Some(stronghold_options);

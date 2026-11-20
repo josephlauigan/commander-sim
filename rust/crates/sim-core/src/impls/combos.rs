@@ -1513,7 +1513,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let oracle = r.card(db, "Thassa's Oracle")?;
     oracle.etb = Some(oracle_etb);
     oracle.prio = Some(oracle_prio);
-    *oracle = oracle.at_once(crate::hooks::Event::Etb); // no trigger window: it runs as it enters
+    *oracle = oracle.at_once(crate::hooks::Event::Etb).enter_trigger(crate::hooks::Event::Etb); // its enters trigger, run at once
     Ok(())
 }
 

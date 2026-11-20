@@ -112,7 +112,8 @@ pub fn n_auras(g: &Game, p: PlayerId) -> i32 {
 // ======================================================== Auras
 /// (g, p: the Aura's controller, the Aura, the creature it enchants) -> (dp, dt)
 pub type AuraBonusFn = fn(&Game, PlayerId, PermId, PermId) -> (i32, i32);
-/// on_etb(g, p, the Aura, its host): what the Aura does as it enters (its enter trigger; attaching is not)
+/// on_etb / when_enters(g, p, the Aura, its host): what the Aura does as it enters (an as-enters choice, counters), or
+/// its "When this Aura enters" triggered ability (attaching, as the Aura spell resolves, is neither)
 pub type AuraEtbFn = fn(&mut Game, PlayerId, PermId, PermId) -> Res;
 /// host_ok(g, p, m): m may carry this Aura (Daybreak Coronet: an enchanted creature)
 pub type HostOkFn = fn(&Game, PlayerId, PermId) -> bool;
@@ -133,7 +134,11 @@ pub struct AuraSpec {
     pub prot: &'static str,
     /// whose creature it goes on: 'own', 'opp', 'either'
     pub target: &'static str,
+    /// what happens as it enters (a colour chosen, vanishing counters): not a triggered ability, so an opponent's Elesh
+    /// Norn leaves it alone
     pub on_etb: Option<AuraEtbFn>,
+    /// "When this Aura enters, ...": a triggered ability, run `enters_trigger_times` times
+    pub when_enters: Option<AuraEtbFn>,
     pub host_ok: Option<HostOkFn>,
     /// where it goes when it leaves: Some("always") back to hand (Rancor), Some("host_dies") (Angelic Destiny)
     pub back: Option<&'static str>,
@@ -154,6 +159,7 @@ pub const AURA: AuraSpec = AuraSpec {
     prot: "",
     target: "own",
     on_etb: None,
+    when_enters: None,
     host_ok: None,
     back: None,
     host_pick: None,
@@ -167,6 +173,7 @@ pub fn aura(r: &mut Registry, db: &CardDb, name: &str, spec: &'static AuraSpec) 
     c.aura = Some(spec);
     c.etb = Some(aura_etb);
     *c = c.at_once(Event::Etb); // no trigger_window of its own: it attaches as it enters
+    // attaching is setup (runs now); `when_enters` is a trigger, and `aura_etb` loops `enters_trigger_times` for it
     Ok(())
 }
 
@@ -269,6 +276,11 @@ fn aura_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     crate::glog!(g, "    {} enchants {}", card_name(g, src), name_of(g, host));
     if let Some(f) = spec.on_etb {
         f(g, owner(g, src), src, host)?;
+    }
+    if let Some(f) = spec.when_enters {
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(src)) {
+            f(g, owner(g, src), src, host)?;
+        }
     }
     Ok(())
 }
@@ -486,7 +498,7 @@ static AURAS: &[(&str, AuraSpec)] = &[
     ("Battle Mastery", AuraSpec { kws: &["double strike"], ..AURA }),
     (
         "Cartouche of Solidarity",
-        AuraSpec { pow: 1, tgh: 1, kws: &["first strike"], on_etb: Some(cartouche_etb), ..AURA },
+        AuraSpec { pow: 1, tgh: 1, kws: &["first strike"], when_enters: Some(cartouche_etb), ..AURA },
     ),
     // Partial: +3/+3; the life-doubling combat trigger is modeled in a hook
     ("Celestial Mantle", AuraSpec { pow: 3, tgh: 3, ..AURA }),
@@ -504,11 +516,11 @@ static AURAS: &[(&str, AuraSpec)] = &[
     ("Hyena Umbra", AuraSpec { pow: 1, tgh: 1, kws: &["first strike"], umbra: true, ..AURA }),
     ("Mammoth Umbra", AuraSpec { pow: 3, tgh: 3, kws: &["vigilance"], umbra: true, ..AURA }),
     ("On Serra's Wings", AuraSpec { pow: 1, tgh: 1, kws: &["flying", "vigilance", "lifelink"], ..AURA }),
-    ("Sage's Reverie", AuraSpec { bonus: Some(reverie), on_etb: Some(reverie_etb), ..AURA }),
+    ("Sage's Reverie", AuraSpec { bonus: Some(reverie), when_enters: Some(reverie_etb), ..AURA }),
     // Partial: +1/+1 vigilance; escape not modeled
     ("Sentinel's Eyes", AuraSpec { pow: 1, tgh: 1, kws: &["vigilance"], ..AURA }),
     // Approximate: O-Ring effect on entry; +1/+0 and lifelink; its ward is not modeled
-    ("Sheltered by Ghosts", AuraSpec { pow: 1, kws: &["lifelink"], on_etb: Some(sheltered_etb), ..AURA }),
+    ("Sheltered by Ghosts", AuraSpec { pow: 1, kws: &["lifelink"], when_enters: Some(sheltered_etb), ..AURA }),
     // Approximate: indestructible; moving it is not modeled
     ("Shielded by Faith", AuraSpec { kws: &["indestructible"], ..AURA }),
     ("Spectra Ward", AuraSpec { pow: 2, tgh: 2, prot: "WUBRG", ..AURA }),
@@ -519,7 +531,7 @@ static AURAS: &[(&str, AuraSpec)] = &[
     // Approximate: indestructible; flash on a commander not modeled
     ("Timely Ward", AuraSpec { kws: &["indestructible"], ..AURA }),
     // Approximate: draw on entry; protection from creatures read as unblockable
-    ("Unquestioned Authority", AuraSpec { kws: &["unblockable"], on_etb: Some(draw1_etb), ..AURA }),
+    ("Unquestioned Authority", AuraSpec { kws: &["unblockable"], when_enters: Some(draw1_etb), ..AURA }),
     ("Ancestral Mask", AuraSpec { bonus: Some(ancestral_mask), ..AURA }),
     ("Rancor", AuraSpec { pow: 2, kws: &["trample"], back: Some("always"), ..AURA }),
     // Full: +1/+1, draw on damage to an opponent (hook), umbra armor
@@ -1342,8 +1354,17 @@ pub fn exile_gy(g: &mut Game, q: PlayerId, by: Option<&str>) {
     );
 }
 
-/// Rest in Peace (Approximate): graveyards are exiled on entry and then kept empty (cards are exiled as soon as
-/// state-based checks run; dies triggers still happen); undying/persist stop
+/// Rest in Peace (Approximate): "When this enchantment enters, exile all graveyards" is its enters trigger (`rip`);
+/// "if a card would be put into a graveyard, exile it instead" is a replacement, approximated by keeping the graveyards
+/// empty (cards are exiled as soon as state-based checks run; dies triggers still happen; undying/persist stop). The
+/// cards already in a graveyard as it entered are left to the trigger (`rip_as_enters` remembers them): when an
+/// opponent's Elesh Norn blanks the trigger they stay.
+fn rip_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
+    let cards: Vec<Val> = g.players.iter().flat_map(|q| q.gy.iter().map(|&c| Val::Card(c))).collect();
+    g.perm_mut(m).data.set(DataKey::Spared, Val::List(cards));
+    Ok(())
+}
+
 fn rip(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && trigger_window(g, owner(g, src), Some(src), "exile all graveyards", None)? {
         for i in 0..g.players.len() {
@@ -1356,12 +1377,23 @@ fn rip(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-fn rip_sweep(g: &mut Game, _src: Src) -> Res {
+fn rip_sweep(g: &mut Game, src: Src) -> Res {
+    let spared: Vec<CardId> = match g.perm(src).data.get(DataKey::Spared) {
+        Some(Val::List(v)) => v.iter().filter_map(|x| if let Val::Card(c) = x { Some(*c) } else { None }).collect(),
+        _ => vec![],
+    };
+    let mut still = vec![];
     for q in g.players.iter_mut() {
         if q.alive && !q.gy.is_empty() {
-            let gy = std::mem::take(&mut q.gy);
-            q.exile.extend(gy);
+            let (keep, gone): (Vec<CardId>, Vec<CardId>) =
+                std::mem::take(&mut q.gy).into_iter().partition(|c| spared.contains(c));
+            still.extend(keep.iter().map(|&c| Val::Card(c)));
+            q.gy = keep;
+            q.exile.extend(gone);
         }
+    }
+    if !spared.is_empty() {
+        g.perm_mut(src).data.set(DataKey::Spared, Val::List(still)); // a card that left and came back is not spared
     }
     Ok(())
 }
@@ -3557,7 +3589,9 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.draw = Some(trawler_draw);
     r.card(db, "Ephemerate")?.rebound = Some(ephemerate_rebound);
     // graveyard hate
-    r.card(db, "Bojuka Bog")?.land_etb = Some(bog);
+    let c = r.card(db, "Bojuka Bog")?;
+    c.land_etb = Some(bog);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, exile target player's graveyard"
     let c = r.card(db, "Dauthi Voidwalker")?;
     c.sba = Some(dauthi_sweep);
     c.options = Some(dauthi_play);
@@ -3701,15 +3735,18 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Mind Stone")?.options = Some(mind_stone);
     let c = r.card(db, "The Soul Stone")?;
     c.etb = Some(soul_stone_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // indestructible, a static
     c.options = Some(soul_stone);
     c.upkeep = Some(soul_stone_upkeep);
     let c = r.card(db, "The Mind Stone")?;
     c.etb = Some(soul_stone_etb);
+    *c = c.at_once(crate::hooks::Event::Etb); // indestructible, a static
     c.options = Some(the_mind_stone);
     c.end_step = Some(the_mind_stone_end);
     super::partials::at_once(c, Event::EndStep, true); // end_step_flicker opens its own trigger window
     let c = r.card(db, "Rest in Peace")?;
     c.etb = Some(rip);
+    c.as_enters = Some(rip_as_enters);
     c.sba = Some(rip_sweep);
     c.no_graveyard = Some(rip_nogy);
     r.card(db, "Hero of Bladehold")?.attack = Some(hero);
