@@ -19,7 +19,7 @@ use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::values::{epow, etgh, has_type, pval, untargetable};
+use crate::engine::values::{colors_of, epow, etgh, has_type, protected_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, Tokens, die, draw, enter, enter_token_copy, exile_perm, land_ramp, leave, make_artifact_tokens, make_tokens,
     max_by, min_by, searchable,
@@ -1528,41 +1528,82 @@ fn displacer_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// blinks your best ETB creature until the end step, else 3 life
+/// Charming Prince: choose one: scry 2; you gain 3 life; exile another target creature you own, then return it to the
+/// battlefield under your control at the beginning of the next end step (`g.eot_returns`, so it does not depend on the
+/// Prince staying). A person picks the mode; the AI blinks its best creature with an enters trigger, else gains 3 life.
 fn prince(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = g.perm(src).owner;
-    if !trigger_window(g, o, Some(src), "blink a creature or gain 3 life", None)? {
+    if !trigger_window(g, o, Some(src), "scry 2, gain 3 life, or blink a creature", None)? {
         return Ok(());
     }
-    let cs: Vec<PermId> = g
-        .player(o)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&x| x != src && g.is_creature(x) && !g.perm(x).token && g.perm(x).cd.is_some() && etb_val(g, x) > 0.0)
-        .collect();
+    let cands = prince_targets(g, o, src);
+    if crate::human::is_human(g, o) {
+        return prince_person(g, o, &cands);
+    }
+    let cs: Vec<PermId> =
+        cands.into_iter().filter(|&x| !g.perm(x).token && g.perm(x).cd.is_some() && etb_val(g, x) > 0.0).collect();
     if let Some(t) = max_by(&cs, |x| etb_val(g, x)) {
-        leave(g, t)?;
-        let cd = g.perm(t).cd.unwrap();
-        g.player_mut(o).oath_return.push(cd);
-        crate::glog!(g, "    Charming Prince exiles {} until the end step", g.perm(t).name);
-        crate::engine::zones::exiled_from_bf(g, t, None)?;
+        prince_blink(g, o, t)?;
     } else {
         gain(g, o, 3)?;
     }
     Ok(())
 }
 
-/// the blinked creature returns at the end step (any player's: Python doesn't check whose)
-fn prince_back(g: &mut Game, src: Src, _p: PlayerId) -> Res {
-    let o = g.perm(src).owner;
-    for cd in g.player(o).oath_return.clone() {
-        enter(g, o, cd, Enter::default())?;
+/// the creatures o owns that Charming Prince `src` may target: on the battlefield under anyone's control (an
+/// opponent's control of it does not matter), hexproof, shroud and protection from white respected
+fn prince_targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
+    let white = colors_of(g, src);
+    g.players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&x| {
+            x != src
+                && g.perm(x).orig == o
+                && g.is_creature(x)
+                && super::vondam_elspeth::may_target(g, o, x)
+                && !protected_from(g, x, white)
+        })
+        .collect()
+}
+
+fn prince_person(g: &mut Game, o: PlayerId, cands: &[PermId]) -> Res {
+    let mut labels = vec!["scry 2".to_string(), "you gain 3 life".to_string()];
+    if !cands.is_empty() {
+        labels
+            .push("exile another target creature you own, then return it at the beginning of the next end step".into());
     }
-    g.player_mut(o).oath_return.clear();
+    let k = crate::human::choices::choose(g, o, "choose", "Charming Prince: choose one", &labels, None, None)?;
+    match k.unwrap_or(1) {
+        0 => crate::ai::topdeck::scry(g, o, 2, false)?,
+        2 => {
+            let prompt = "Charming Prince: exile which creature you own?";
+            if let Some(t) = crate::human::cards::pick_perm(g, o, "target", prompt, cands, None)? {
+                prince_blink(g, o, t)?;
+            }
+        }
+        _ => gain(g, o, 3)?,
+    }
+    Ok(())
+}
+
+/// exile t (a token is gone for good); its card returns under o's control at the beginning of the next end step
+fn prince_blink(g: &mut Game, o: PlayerId, t: PermId) -> Res {
+    let x = g.perm(t);
+    let (card, token, name) = (x.phys.or(x.cd), x.token, x.name);
+    exile_perm(g, t)?;
+    if let Some(c) = card
+        && !token
+        && g.player(o).exile.contains(&c)
+    {
+        g.eot_returns.push((o, c));
+        crate::glog!(g, "    Charming Prince exiles {name} until the beginning of the next end step");
+    } else {
+        crate::glog!(g, "    Charming Prince exiles {name}");
+    }
     Ok(())
 }
 
@@ -2099,8 +2140,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Eldrazi Displacer")?.options = Some(displacer);
     let c = r.card(db, "Charming Prince")?;
     c.etb = Some(prince);
-    c.end_step = Some(prince_back);
-    at_once(c, Event::EndStep, true);
     // pumps
     r.card(db, "Battle Cry Goblin")?.options = Some(bcg_pump);
     let c = r.card(db, "Purphoros, God of the Forge")?;
