@@ -874,3 +874,15 @@ fn a_rings_copy_giving_protection_from_white_fizzles_the_original() {
     assert!(has_kw(&g, elf, "pro_W"));
     assert!(!has_kw(&g, elf, "pro_R"), "the original must fizzle after the copy grants protection from white");
 }
+
+#[test]
+fn charming_prince_pays_ward_on_a_creature_you_own_that_an_opponent_controls() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Grave Titan");
+    steal(&mut g, P1, t);
+    perm(&mut g, P1, "Hexing Squelcher");
+    seat_rules(&mut g, vec![ans_word("choose one", "exile"), ans_word("exile which creature", "Grave Titan")]);
+    perm(&mut g, P0, PRINCE);
+    assert!(!g.perm(t).on_bf, "the Titan was the target");
+    assert_eq!(g.player(P0).life, 38, "ward granted by Hexing Squelcher costs 2 life");
+}
