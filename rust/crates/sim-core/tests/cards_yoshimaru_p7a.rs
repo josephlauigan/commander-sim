@@ -731,3 +731,15 @@ fn the_ais_evoked_solitude_can_be_countered_too() {
     assert!(g.perm(big).on_bf, "countered: the exile trigger never happened");
     assert!(in_gy(&g, P1, "Counterspell"));
 }
+
+#[test]
+fn eiganjo_four_damage_does_not_kill_a_six_toughness_creature() {
+    let mut g = tbl();
+    let atk = perm(&mut g, P1, "Grave Titan");
+    g.in_combat = vec![atk];
+    hand(&mut g, P0, &[EIG]);
+    pool(&mut g, P0, &[('W', 1), ('C', 2)]);
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, EIG));
+    assert!(g.perm(atk).on_bf, "6/6 with four damage must survive");
+}
