@@ -728,7 +728,9 @@ fn evoke_solitude(g: &mut Game, p: PlayerId, c: CardId, x: CardId) -> Res<bool> 
         return Ok(true);
     }
     let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    if on(g, p, m) {
+    // the sacrifice is a triggered ability that uses the stack: it can be responded to (a blink in response keeps
+    // Solitude: the new object is not sacrificed)
+    if on(g, p, m) && trigger_window(g, p, Some(m), "evoke: sacrifice Solitude", None)? && on(g, p, m) {
         die(g, m, "sac")?;
     }
     Ok(true)
