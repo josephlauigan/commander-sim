@@ -845,6 +845,21 @@ fn haliya_gains_for_each_ordinary_creature_token() {
     assert_eq!(g.player(P0).life - life, 3, "three creature tokens entering are three triggers");
 }
 
+// Hushbringer: "Creatures entering the battlefield or dying don't cause abilities to trigger."
+#[test]
+fn hushbringer_stops_haliyas_trigger_for_creature_tokens_but_not_for_a_treasure() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    perm(&mut g, P1, "Hushbringer");
+    let life = g.player(P0).life;
+    let toks = zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert!(toks.iter().all(|&t| g.perm(t).on_bf), "the tokens are there");
+    assert_eq!(g.player(P0).life, life, "creatures entering cause no triggers");
+    // guard: a Treasure is an artifact, not a creature, so it still triggers
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, life + 1, "an artifact that is not a creature still triggers her");
+}
+
 #[test]
 fn panharmonicon_doubles_haliyas_life_for_each_creature_token() {
     let mut g = tbl();
