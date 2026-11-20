@@ -123339,8 +123339,7 @@
     "pow": "2",
     "tgh": "1",
     "fly": true,
-    "flash": true,
-    "draw": "1"
+    "flash": true
    },
    "pow": 2,
    "tgh": 1,
@@ -123358,7 +123357,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

@@ -56,11 +56,11 @@ fn stock_library(g: &mut Game, p: PlayerId, n: usize) {
 #[test]
 fn kirin_asks_a_person_which_permanent_to_return_and_returns_that_one() {
     let mut g = tbl();
-    stock_library(&mut g, P0, 5);
     perm(&mut g, P0, "Solitude");
     perm(&mut g, P0, "Selfless Spirit");
     perm(&mut g, P1, "Sol Ring");
     lands(&mut g, P0, "Plains", 2, false);
+    stock_library(&mut g, P0, 5);
     let (_h, asked) = person(&mut g, |r| choice_with(r, "Selfless Spirit"));
     perm(&mut g, P0, "Sunpearl Kirin");
     let a = asked.lock().unwrap();
@@ -108,8 +108,8 @@ fn kirin_draws_only_when_the_returned_permanent_was_a_token() {
 #[test]
 fn kirin_with_no_other_nonland_permanent_asks_nothing_and_draws_nothing() {
     let mut g = tbl();
-    stock_library(&mut g, P0, 5);
     lands(&mut g, P0, "Plains", 2, false);
+    stock_library(&mut g, P0, 5);
     let (_h, asked) = person(&mut g, |_| Some(0));
     perm(&mut g, P0, "Sunpearl Kirin");
     assert!(asked.lock().unwrap().is_empty(), "no target to choose");

@@ -4739,6 +4739,12 @@ paths_ok = "the hand-written resolve does the card; the compiled spell, the exil
 status = "Full"
 note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X artifact creature)"
 
+["Sunpearl Kirin"]
+tags = "pow=2 tgh=1 fly flash"
+dsl = []
+status = "Full"
+note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food or Clue token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). A person chooses the permanent, or none, after the trigger's window; the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food or Clue"
+
 ["Survival of the Fittest"]
 types = "E"
 tags = ""
