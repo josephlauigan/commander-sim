@@ -544,6 +544,7 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     let on = g.perm(m).on_bf;
     if on {
         crate::impls::vondam_elspeth::leaving(g, m); // Syr Vondam: his power as he leaves, and the wipe he leaves in
+        crate::engine::stack::note_leaving(g, m);
     }
     if g.is_creature(m) && g.perm(m).plus > 0 && on && has(g, p, Tag::Ozolith) {
         let n = g.perm(m).plus;

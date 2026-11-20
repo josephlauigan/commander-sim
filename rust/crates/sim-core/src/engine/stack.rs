@@ -18,7 +18,7 @@ use crate::flow::{Probe, Res, Stop};
 use crate::hooks::{TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::satsum::SatSum;
-use crate::state::{Ctx, Game, StackItem, StackKind};
+use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -58,9 +58,42 @@ fn extra_live(g: &Game, src: PermId) -> usize {
         + crate::impls::t45_urdragon::throne_extra(g, src)
 }
 
-// Source last-known information is added in the later LKI round.
-fn lki_extra(_g: &Game, _src: PermId) -> Option<usize> {
-    None
+/// Everything a leave must remember, before battlefield membership or attachments change.
+/// A wipe records all sources at its first leave, including listeners that survive it (CR 603.10a).
+pub fn note_leaving(g: &mut Game, m: PermId) {
+    if !g.perms.iter().any(|x| {
+        x.on_bf
+            && !x.phased
+            && !x.neutered
+            && matches!(x.name, "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne")
+    }) {
+        return; // No source doubler: do not change permanent data in other decks.
+    }
+    let batch = g.cur_batch.unwrap_or(0);
+    if g.cur_batch.is_some() && extra_record(g, m).is_some_and(|(_, b)| b == batch) {
+        return;
+    }
+    let sources = if g.cur_batch.is_some() {
+        g.perms.iter().enumerate().filter(|(_, x)| x.on_bf).map(|(i, _)| PermId(i as u32)).collect()
+    } else {
+        vec![m]
+    };
+    for src in sources {
+        let n = extra_live(g, src);
+        g.perm_mut(src).data.set(DataKey::LkiExtra, Val::List(vec![Val::Int(n as i64), Val::Int(batch as i64)]));
+    }
+}
+
+fn extra_record(g: &Game, src: PermId) -> Option<(usize, u32)> {
+    match g.perm(src).data.get(DataKey::LkiExtra) {
+        Some(Val::List(v)) if v.len() == 2 => Some((v[0].int() as usize, v[1].int() as u32)),
+        _ => None,
+    }
+}
+
+fn lki_extra(g: &Game, src: PermId) -> Option<usize> {
+    let (n, b) = extra_record(g, src)?;
+    (!g.perm(src).on_bf || g.cur_batch == Some(b)).then_some(n)
 }
 
 pub fn flush_triggers(g: &mut Game) -> Res {
