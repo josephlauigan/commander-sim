@@ -125,3 +125,14 @@ fn blinked_solemn_after_delney_leaves_draws_once() {
     assert_eq!(g.player(A).hand.len() - before, 1);
     assert_eq!(stack::extra_for(&g, back), 0);
 }
+
+// 38: a real queued Wizard hook gains the same extras as compiled triggers.
+#[test]
+fn prodigy_spellseeker_queues_two_searches() {
+    let mut g = tbl();
+    perm(&mut g, A, "Harmonic Prodigy");
+    g.player_mut(A).library = ["Counterspell", "Swords to Plowshares", "Brainstorm"].map(|n| card(&g, n)).to_vec();
+    let before = g.player(A).hand.len();
+    perm(&mut g, A, "Spellseeker");
+    assert_eq!(g.player(A).hand.len() - before, 2);
+}
