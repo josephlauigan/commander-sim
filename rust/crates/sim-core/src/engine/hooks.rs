@@ -186,6 +186,23 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
     })
 }
 
+/// Is the hook of `imp` for event `e` an enters-caused triggered ability (so an opponent's Elesh Norn blanks it and the
+/// event doublers copy it)? A hook of `Etb`, `LandEnters` or `Landfall` that goes on the stack is, unless it is marked
+/// `enter_setup`; a hook that runs now (marked at once, or an event outside `TRIGGER_EVENTS`: every `TokensEnter` and
+/// `TokenCreated` hook) is not, unless it is marked `enter_trigger`.
+pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
+    let now = imp.runs_at_once(e) || !e.is_trigger();
+    imp.is_enter_trigger(e)
+        || (matches!(e, Event::Etb | Event::LandEnters | Event::Landfall) && !now && !imp.is_enter_setup(e))
+}
+
+/// How many times a triggered ability of `controller`'s permanent, caused by `entering` (None: a land, or tokens),
+/// happens: for a hook that mixes an enters-caused trigger with what happens as the permanent enters
+/// (`enter_setup`), which loops only its trigger part this many times. 0 under an opponent's live Elesh Norn, else 1.
+pub fn enters_trigger_times(g: &Game, controller: PlayerId, entering: Option<PermId>) -> u32 {
+    if enter_blanked(g, controller, entering) { 0 } else { 1 }
+}
+
 /// `fire_trigger`, for the hooked permanents `keep` accepts (a blink fires after the creature is back, and what entered
 /// with it never saw it leave: `zones::exiled_from_bf`)
 pub fn fire_trigger_where(
@@ -202,7 +219,8 @@ pub fn fire_trigger_where(
     {
         return Ok(());
     }
-    let enters = matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter);
+    let enters =
+        matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter | Event::TokenCreated);
     let entering = if let Call::Etb { m, .. } = &call { Some(*m) } else { None };
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
@@ -210,9 +228,10 @@ pub fn fire_trigger_where(
             continue;
         }
         let owner = g.perm(src).owner;
-        // an opponent's Elesh Norn: no trigger of this permanent is caused by the entering (a hook marked at once is
-        // either a trigger run at once or what happens as it enters, which stays)
-        if enters && (!imp.runs_at_once(e) || imp.is_at_once_trigger(e)) && enter_blanked(g, owner, entering) {
+        let now = imp.runs_at_once(e) || !e.is_trigger();
+        let trig = enter_hook_is_trigger(&imp, e);
+        // an opponent's Elesh Norn: no trigger of this permanent is caused by the entering
+        if enters && trig && enter_blanked(g, owner, entering) {
             continue;
         }
         let mut reps = 1;
@@ -220,12 +239,14 @@ pub fn fire_trigger_where(
             reps += total_trigger_copies(g, owner, "dies", Some(*m));
         }
         if let (Event::Etb, Call::Etb { m, .. }) = (e, &call)
-            && !imp.runs_at_once(e)
+            && trig
+            && !now
         {
             reps += total_trigger_copies(g, owner, "etb", Some(*m));
         }
         if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
-            && !imp.runs_at_once(e)
+            && trig
+            && !now
         {
             // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature.
             // One source adds one trigger per entering permanent, whichever of the two kinds it answers to (Starfield
@@ -240,7 +261,7 @@ pub fn fire_trigger_where(
         }
         for k in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
-            if imp.runs_at_once(e) || !e.is_trigger() {
+            if now {
                 run_hook(g, src, e, &call)?;
                 if g.over {
                     return Ok(());

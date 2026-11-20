@@ -966,7 +966,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Nissa of Shadowed Boughs")?;
     c.landfall = Some(nissa_landfall);
     at_once(c, Event::Landfall, true);
-    *c = c.at_once_trigger(Event::Landfall); // its landfall trigger, run at once
+    *c = c.enter_trigger(Event::Landfall); // its landfall trigger, run at once
     let c = r.card(db, "Realms Uncharted")?;
     c.resolve = Some(realms_resolve);
     c.prio = Some(realms_prio);

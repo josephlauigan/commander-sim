@@ -2044,7 +2044,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(hydra_prio);
     c.etb = Some(hydra_etb);
     at_once(c, Event::Etb, true);
-    *c = c.at_once_trigger(Event::Etb); // its enters trigger, run at once
+    *c = c.enter_trigger(Event::Etb); // its enters trigger, run at once
     let c = r.card(db, "Lagrella, the Magpie")?;
     c.etb = Some(lagrella_etb);
     c.leaves = Some(lagrella_leaves);

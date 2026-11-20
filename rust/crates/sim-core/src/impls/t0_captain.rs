@@ -1048,10 +1048,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(quinjet_etb);
     c.attack = Some(quinjet_attack);
     c.crew = Some(quinjet_crew);
-    *c = c
-        .at_once(crate::hooks::Event::Crew)
-        .at_once(crate::hooks::Event::Etb)
-        .at_once_trigger(crate::hooks::Event::Etb);
+    *c = c.at_once(crate::hooks::Event::Crew).at_once(crate::hooks::Event::Etb).enter_trigger(crate::hooks::Event::Etb);
     r.card(db, "Folk Hero")?.cast = Some(folk_hero);
     r.card(db, "Jarvis, Earth's Mightiest Butler")?.cast = Some(jarvis);
     let c = r.card(db, "Director Nick Fury")?;

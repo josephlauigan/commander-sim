@@ -666,10 +666,16 @@ pub struct CardImpl {
     /// triggered-event hooks that run at once instead of going on the stack: Python's hooks without a
     /// `trigger_window` call (cardimpl `converted` is false). A bit per `Event`.
     pub at_once: u128,
-    /// the events whose at-once hook is a real triggered ability (Thassa's Oracle's enters trigger), not what happens
-    /// as the permanent enters (counters, a name, an Aura attaching): Elesh Norn, Mother of Machines blanks the first
-    /// kind of an opponent's permanent only. A bit per `Event`, a subset of `at_once`.
-    pub at_once_trigger: u128,
+    /// the events whose hook is wholly an enters-caused triggered ability (Thassa's Oracle's, a Treasure watcher's):
+    /// an opponent's Elesh Norn, Mother of Machines blanks it and the event doublers copy it. The default for a hook
+    /// of `Etb`, `LandEnters` or `Landfall` that goes on the stack; a hook that runs at once (or a `TokensEnter` or
+    /// `TokenCreated` hook) needs this bit. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger`.
+    pub enter_trigger: u128,
+    /// the events whose hook is not an enters-caused trigger, or is mixed and guards its own trigger part with
+    /// `engine::hooks::enters_trigger_times`: an enters-with counter, "enters tapped", a name chosen as it enters, a
+    /// static or state registration, a Saga's lore counter, an Aura attaching. It is never blanked or copied by the
+    /// dispatcher. A bit per `Event`; never set together with `enter_trigger`.
+    pub enter_setup: u128,
 }
 
 impl CardImpl {
@@ -781,7 +787,8 @@ impl CardImpl {
             aura,
             walker,
             at_once: _,
-            at_once_trigger: _,
+            enter_trigger: _,
+            enter_setup: _,
         } = self;
         [
             ("etb", etb.is_some()),
@@ -910,14 +917,24 @@ impl CardImpl {
         self.at_once >> (e as u32) & 1 == 1
     }
 
-    /// Mark an at-once hook as a real triggered ability (see `at_once_trigger`).
-    pub fn at_once_trigger(mut self, e: Event) -> CardImpl {
-        self.at_once_trigger |= 1u128 << (e as u32);
+    /// Mark the hook for e as wholly an enters-caused triggered ability (see `enter_trigger`).
+    pub fn enter_trigger(mut self, e: Event) -> CardImpl {
+        self.enter_trigger |= 1u128 << (e as u32);
         self
     }
 
-    pub fn is_at_once_trigger(&self, e: Event) -> bool {
-        self.at_once_trigger >> (e as u32) & 1 == 1
+    pub fn is_enter_trigger(&self, e: Event) -> bool {
+        self.enter_trigger >> (e as u32) & 1 == 1
+    }
+
+    /// Mark the hook for e as not an enters-caused trigger, or mixed (see `enter_setup`).
+    pub fn enter_setup(mut self, e: Event) -> CardImpl {
+        self.enter_setup |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn is_enter_setup(&self, e: Event) -> bool {
+        self.enter_setup >> (e as u32) & 1 == 1
     }
 
     /// Python's `CI.live(name)` (`name in HOOKS`): the card handles an event, rather than only having a table entry
