@@ -966,7 +966,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.token_created = Some(haliya_tokens);
         *c = c.enter_trigger(Event::TokenCreated); // "Whenever ... another creature or artifact you control enters"
         c.tokens_enter = Some(haliya_token_entries);
-        *c = c.enter_trigger(Event::TokensEnter); // the same trigger for a creature token (a hook that runs now)
+        *c = c.enter_queues(Event::TokensEnter); // queues the real triggers once per token; blanked as a trigger
         c.end_step = Some(haliya_end);
         c.hand_options = Some(haliya_hand);
     }

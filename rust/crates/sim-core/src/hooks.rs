@@ -679,6 +679,10 @@ pub struct CardImpl {
     /// of `Etb`, `LandEnters` or `Landfall` that goes on the stack; a hook that runs at once (or a `TokensEnter` or
     /// `TokenCreated` hook) needs this bit. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger`.
     pub enter_trigger: u128,
+    /// a run-now hook that only queues the real triggers (one per token); they get their own event copies and
+    /// source extras when queued. Still an enters-caused trigger for blanking, but the dispatcher runs it once.
+    /// A bit per `Event`; implies `enter_trigger`.
+    pub enter_queues: u128,
     /// the events whose QUEUED hook is a triggered ability that the entering did not cause (a Saga's chapter I, which
     /// triggers on the lore counter, CR 714.2b; Hero of Iroas' heroic, which a cast causes): the dispatcher neither
     /// blanks nor copies it for the enters, while Cloud, Delney and Roaming Throne still copy it. Setup (enters tapped,
@@ -800,6 +804,7 @@ impl CardImpl {
             walker,
             at_once: _,
             enter_trigger: _,
+            enter_queues: _,
             enter_setup: _,
         } = self;
         [
@@ -938,6 +943,16 @@ impl CardImpl {
 
     pub fn is_enter_trigger(&self, e: Event) -> bool {
         self.enter_trigger >> (e as u32) & 1 == 1
+    }
+
+    /// Mark a run-now hook that queues the real enters triggers (see `enter_queues`).
+    pub fn enter_queues(mut self, e: Event) -> CardImpl {
+        self.enter_queues |= 1u128 << (e as u32);
+        self.enter_trigger(e)
+    }
+
+    pub fn is_enter_queues(&self, e: Event) -> bool {
+        self.enter_queues >> (e as u32) & 1 == 1
     }
 
     /// Mark the hook for e as not an enters-caused trigger, or mixed (see `enter_setup`).

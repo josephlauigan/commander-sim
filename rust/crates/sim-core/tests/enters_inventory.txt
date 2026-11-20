@@ -192,7 +192,7 @@ Guardian Project | Etb | T
 Haliya, Guided by Light | Etb | T
 Haliya, Guided by Light | LandEnters | T
 Haliya, Guided by Light | TokenCreated | T
-Haliya, Guided by Light | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
+Haliya, Guided by Light | TokensEnter | T |  | enter_queues: runs once; queues each token's real triggers
 Hammer of Nazahn | Etb | T
 Hancock, Ghoulish Mayor | Etb | S
 Harald, King of Skemfar | Etb | T

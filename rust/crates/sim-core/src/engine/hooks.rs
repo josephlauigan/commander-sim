@@ -211,7 +211,8 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
 /// event doublers copy it)? A hook of `Etb`, `LandEnters` or `Landfall` that goes on the stack is, unless it is marked
 /// `enter_setup` (a triggered ability that the entering did not cause: a Saga's chapter I); a hook that runs now
 /// (marked at once, or an event outside `TRIGGER_EVENTS`: every `TokensEnter`, `TokenCreated` and `LandEtb` hook) is
-/// not, unless it is marked `enter_trigger`. So setup, which is no triggered ability, never waits in the queue.
+/// not, unless it is marked `enter_trigger` (also implied by `enter_queues`). A queue adapter stays a trigger
+/// for blanking, but runs once: its queued triggers receive the copies. Setup never waits in the queue.
 pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
     let now = imp.runs_at_once(e) || !e.is_trigger();
     imp.is_enter_trigger(e)
@@ -228,8 +229,8 @@ pub fn enters_trigger_times(g: &Game, controller: PlayerId, _src: Option<PermId>
 /// A `TokensEnter` hook whose ability is one enters trigger per token (Haliya): queue src's `Etb` hook once for each token
 /// still on the battlefield, as `fire_trigger_where` does for one permanent entering (Panharmonicon-style additional
 /// times as repeats; Cloud, Delney and Roaming Throne through `queue_triggers`). The caller's hook is marked
-/// `enter_trigger`, so the dispatcher has already blanked it under an opponent's Elesh Norn. (Hushbringer: a creature
-/// token entering triggers nothing.)
+/// `enter_queues`, so the dispatcher blanks it under an opponent's Elesh Norn and runs it only once.
+/// (Hushbringer: a creature token entering triggers nothing.)
 pub fn queue_etb_per_token(g: &mut Game, src: PermId, p: PlayerId, toks: &[PermId]) -> Res {
     let owner = g.perm(src).owner;
     let mut entries = vec![];
@@ -297,6 +298,13 @@ pub fn fire_trigger_where(
             && !now
         {
             reps += enter_copies(g, owner, Some(*m)) as i32;
+        }
+        // Queue adapters run once: the real triggers get event copies and source extras when queued.
+        // Landfall's later event-copy passes already repeat the hook, so only the original gains source extras.
+        if imp.is_enter_queues(e) {
+            reps = 1;
+        } else if enters && trig && now && !repeat {
+            reps += crate::engine::stack::extra_for(g, src) as i32;
         }
         // one entry per artifact token of a batch made (a hook that runs now sees the batch as it is)
         let parts: Vec<Call> = match &call {
