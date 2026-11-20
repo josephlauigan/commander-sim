@@ -1,0 +1,137 @@
+# card | [category] Oracle/code reason; non-fixture rows must remain necessary.
+Agent of Treachery | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Angel of Despair | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Angel of Finality | [exhausted] The first chosen graveyard is emptied; the extra instance can affect a different player's graveyard, so the original player's graveyard metrics do not repeat (graveyard target selection).
+Angel of Serenity | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Anikthea, Hand of Erebos | [exhausted] Only one eligible card is in the fixture's graveyard (one non-Aura enchantment or Equipment); the first instance uses it and the queued extra has no second card.
+Animate Dead | [deferred] Generic permanent cast returns before the Rean tag resolver; this entry path models no reanimation payload even without Elesh. Dedicated reanimation-plan coverage is outside this census.
+Archon of Sun's Grace | [fixture] The standard observer entrants contain no enchantment; their constellation/enchantment-enter condition is not exercised (the own-entry path remains checked).
+Armory Automaton | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Aura Shards | [fixture] shards_trigger destroys the best artifact in one seat then another seat's artifact; the fixed per-seat numeric projection cannot equal two removals in the first seat.
+Auramancer | [exhausted] Only one eligible card is in the fixture's graveyard (one non-Aura enchantment or Equipment); the first instance uses it and the queued extra has no second card.
+Authority of the Consuls | [fixture] Every standard observer entrant belongs to the observer's controller; the opponent-controlled entrant guard is not exercised.
+Avengers Quinjet | [exhausted] quinjet_trigger uses the fixture's only Hero in hand; there is no second Hero in hand or graveyard for the extra instance.
+Badgermole Cub | [deferred] Earthbend entry is explicitly unmodelled (Partial in card_overrides.toml); only its body and extra mana are implemented.
+Banishing Light | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Bloodghast | [fixture] The observer pass installs the source on the battlefield, while its landfall ability operates only from the graveyard (gy_landfall).
+Bloodthirsty Adversary | [exhausted] adversary_etb pays with the available mana on its first instance; repeating the optional payment has fewer resources and eligible spells.
+Bojuka Bog | [exhausted] The first chosen graveyard is emptied; the extra instance can affect a different player's graveyard, so the original player's graveyard metrics do not repeat (graveyard target selection).
+Bonny Pall, Clearcutter | [nonlinear] Both Beau tokens enter, but the legend rule leaves only one live token; entry/death side effects are tested separately rather than expecting twice the final token count.
+Brokers Hideout | [deferred] Its entry sacrifice/search is unmodelled on play_land_card: only lr/lrt tags exist; no LandEtb payload runs without Elesh.
+Cacophony Unleashed | [exhausted] The first cast-entry instance wipes the nonenchantment creatures; the extra has no victims, and its animation remains the same 6/6.
+Calix, Guided by Fate | [fixture] The AI can put the extra counter/pump on the copier creature instead of the original target; sentinel state is deliberately normalized out of the census.
+Captain America, Team Leader | [fixture] The standard observer creature is Serra Angel and the vanilla tokens are not Heroes; the another-Hero guard is not exercised.
+Cast Out | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Chains of Custody | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Cloud of Faeries | [idempotent] The first faeries hook untaps the remaining tapped lands; the extra instance finds them untapped.
+Cloudshift | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Cloudstone Curio | [fixture] curio_etb rejects all fixture return candidates through rebuy_value >= 2; none offers the recast value required by the AI optional return.
+Composer of Spring | [fixture] The standard observer entrants contain no enchantment; their constellation/enchantment-enter condition is not exercised (the own-entry path remains checked).
+Contagion Engine | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
+Court of Ardenvale | [idempotent] become_monarch sets the same controller each time; repeating it has no additional state effect.
+Court of Grace | [idempotent] become_monarch sets the same controller each time; repeating it has no additional state effect.
+Crackling Spellslinger | [idempotent] The enters hook sets the same next-spell storm flag on each instance.
+Craterhoof Behemoth | [nonlinear] hoof_etb scales each pump with the live creature count; a live creature copier adds both a recipient and one to X, so summed pump exceeds the baseline increment.
+Deepglow Skate | [nonlinear] Each queued Skate instance doubles the current counters; one counter becomes two then four, giving increments one then two.
+Defy Death | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Doomwake Giant | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
+Dragon Tempest | [idempotent] The standard cast entrant is a non-Dragon flier; tempest_etb grants the same haste keyword again, and no Dragon-damage clause is exercised.
+Dragon's Hoard | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
+Dragonlord Silumgar | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Elvish Warmaster | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
+Endurance | [exhausted] The first chosen graveyard is emptied; the extra instance can affect a different player's graveyard, so the original player's graveyard metrics do not repeat (graveyard target selection).
+Forge Anew | [exhausted] Only one eligible card is in the fixture's graveyard (one non-Aura enchantment or Equipment); the first instance uses it and the queued extra has no second card.
+Galadhrim Brigade | [fixture] Squad was not paid for the cast, so the entry hook has zero squad tokens to create.
+Geralf's Messenger | [fixture] The queued extra drain selects the now-more-threatening other opponent; the original opponent's life metric is not decremented twice.
+Ghostly Flicker | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Goblin Ringleader | [exhausted] The successive revealed library slices contain different eligible Goblins/Angels; the extra queued reveal is not an identical hand/library delta.
+Grasp of Fate | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Grinding Station | [idempotent] Its may-untap trigger sees an already untapped Station; all standard artifact entrants leave it untapped.
+Guardian Project | [fixture] The cast Serra Angel shares its name with a fixture creature; tokens do not qualify, so the nontoken distinct-name condition is never met.
+Hero's Blade | [fixture] No standard observer entrant is legendary; the legendary-creature attach guard is not exercised.
+Heroic Return | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Hydroelectric Specimen // Hydroelectric Laboratory | [fixture] No single-target instant or sorcery is waiting on the stack for the entry trigger to redirect; its land face is not the tested entry.
+Intruder Alarm | [idempotent] alarm_etb finds no tapped fixture creatures; all standard creatures enter untapped, so repeating untap changes nothing.
+Invasion of Ikoria // Zilortha, Apex of Ikoria | [fixture] The census's any-face type rule includes Zilortha, but the entering front is a nonartifact Battle: Panharmonicon correctly adds no search; Elesh and Vocalist do.
+Isochron Scepter | [deferred] Multiple imprints overwrite DataKey::Imprint; retaining every linked instant requires the t4 activation and combos::scepter to consume a list. This linked-activation change is outside the source/event-copy paths; the fixture itself has only one imprintable instant.
+Jadar, Ghoulcaller of Nephalia | [deferred] Tok=1 entry proxy invents an ETB for an end-step ability. Correcting the underlying card model is outside the source/event-copy scope.
+Kaalia, Zenith Seeker | [exhausted] The successive revealed library slices contain different eligible Goblins/Angels; the extra queued reveal is not an identical hand/library delta.
+Kazuul, Tyrant of the Cliffs | [deferred] Tok=1 entry proxy invents an ETB for an opponent-attacking ability. Correcting the underlying card model is outside the source/event-copy scope.
+Kindred Discovery | [fixture] Raw observer installation bypasses the as-enters creature-type choice; the hook has no chosen type to match against the standard entrants.
+Knight of the White Orchid | [intervening-if] The fixture starts one land behind; the first search equalizes land counts, so the extra resolution fails the more-lands condition.
+Kor Outfitter | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Lathliss, Dragon Queen | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
+Light-Paws, Emperor's Voice | [fixture] The standard observer entrants contain neither an Aura nor an Equipment; the cast-Aura or Equipment-enter guard is not exercised.
+Linvala, the Preserver | [fixture] Every seat starts at 50 life, and no opponent has more creatures after Linvala enters; neither intervening-if condition fires.
+Living Death | [deferred] Explicit simultaneous-entry ticket; its batch returns creatures and the added Elesh body also changes the sacrificed/reanimated population.
+Loki's Scepter | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Loran of the Third Path | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Loyal Warhound | [intervening-if] The fixture starts one land behind; the first search equalizes land counts, so the extra resolution fails the more-lands condition.
+Marwyn, the Nurturer | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
+Massacre Wurm | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
+Mavren Fein, Dusk Apostle | [deferred] Tok=1 entry proxy invents an ETB for an attack ability. Correcting the underlying card model is outside the source/event-copy scope.
+Meteor Golem | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Miirym, Sentinel Wyrm | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
+Mithril Coat | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Mossborn Hydra | [fixture] Raw observer installation bypasses its enters-with counter; the 0/0 dies before landfall can double a counter, so this is not an exercised trigger.
+Nessian Wanderer | [fixture] The standard observer entrants contain no enchantment; their constellation/enchantment-enter condition is not exercised (the own-entry path remains checked).
+Nest of Scarabs | [deferred] Tok=2 entry proxy invents an ETB for placing -1/-1 counters. Correcting the underlying card model is outside the source/event-copy scope.
+Norn's Choirmaster | [fixture] No standard observer entrant is a commander; raw observer installation is not an entry event.
+Oath of Teferi | [exhausted] oath_cands offers only Thraben Inspector as a worthwhile blink in the fixture; the first instance exiles it and the extra has no second worthwhile candidate.
+Ob Nixilis, the Fallen | [fixture] The queued extra drain selects the now-more-threatening other opponent; the original opponent's life metric is not decremented twice.
+Oblivion Ring | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Ondu Spiritdancer | [fixture] The standard observer entrants contain no enchantment; their constellation/enchantment-enter condition is not exercised (the own-entry path remains checked).
+Orcish Bowmasters | [nonlinear] The first amass instance creates the Army, while the extra adds a counter to that Army; removal targeting can also switch seats, so final token and removal metrics are nonlinear.
+Perigee Beckoner | [fixture] The AI can put the extra counter/pump on the copier creature instead of the original target; sentinel state is deliberately normalized out of the census.
+Petrified Hamlet | [idempotent] The mixed land hook chooses the same land name on each instance; naming is idempotent.
+Phyrexian Delver | [nonlinear] The extra reanimation/exile chooses a creature with a different mana value/power, so the linked life change differs from the first instance.
+Polluted Bonds | [fixture] Every standard observer entrant belongs to the observer's controller; the opponent-controlled entrant guard is not exercised.
+Portable Hole | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Prayer of Binding | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Preston, the Vanisher | [fixture] The only standard nontoken creature is cast; the tokens are tokens, so the another-nontoken-not-cast guard is not exercised.
+Prison Sentence | [idempotent] The mixed Aura helper repeats scry 2; the retained library top remains the same in this deterministic fixture (the separate C3 test counts both scry calls).
+Puresteel Paladin | [fixture] The standard observer entrants contain neither an Aura nor an Equipment; the cast-Aura or Equipment-enter guard is not exercised.
+Purphoros, God of the Forge | [fixture] Its own entry has no Oracle enters trigger; its self-entry classification sees devotion/body bookkeeping. The observer creature and token paths exercise the actual another-creature trigger.
+Reanimate | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Reclamation Sage | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Rest in Peace | [exhausted] rip_etb exiles every graveyard on its first instance; the extra has no cards left to exile.
+Retreat to Coralhelm | [idempotent] The landfall hook chooses untap on the same land; the extra instance finds the chosen land untapped.
+Retreat to Kazandu | [fixture] The AI can put the extra counter/pump on the copier creature instead of the original target; sentinel state is deliberately normalized out of the census.
+Return Upon the Tide | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Riveteers Overlook | [deferred] Its entry sacrifice/search is unmodelled on play_land_card: only lr/lrt tags exist; no LandEtb payload runs without Elesh.
+Rooftop Assassin | [fixture] No opposing fixture creature was dealt damage this turn; the entry hook has no legal damaged-creature target.
+Sarkhan, Soul Aflame | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
+Satoru, the Infiltrator | [deferred] The current hook rejects every cast entry via last_cast_etb; Oracle also permits zero-mana casts, which this census uses. That branch is unmodelled.
+Satyr Wayfinder | [fixture] The first top-four slice contains no land and the next contains one; wayfinder mills four then three, although both instances reveal four.
+Scourge of Valkas | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Selvala, Heart of the Wilds | [fixture] The 4-power standard entrants do not exceed the fixture Serra Angels' power (and the copier can be larger); the strict greatest-power guard is not exercised.
+Setessan Champion | [fixture] The standard observer entrants contain no enchantment; their constellation/enchantment-enter condition is not exercised (the own-entry path remains checked).
+Shaman of the Pack | [fixture] The queued extra drain selects the now-more-threatening other opponent; the original opponent's life metric is not decremented twice.
+Sheltered by Ghosts | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Sigarda's Aid | [fixture] The standard observer entrants contain neither an Aura nor an Equipment; the cast-Aura or Equipment-enter guard is not exercised.
+Silverblade Paladin | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Skemfar Shadowsage | [nonlinear] The compiled model uses creatures_you_control for X; a creature copier increases X on both instances, so numeric OVER is scalar growth rather than extra trigger instances (the shared-type approximation is separate).
+Skyclave Apparition | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Solitude | [nonlinear] The extra reanimation/exile chooses a creature with a different mana value/power, so the linked life change differs from the first instance.
+Soul of Windgrace | [exhausted] soul_pick takes a land from another graveyard on the extra instance; the first graveyard's single Island is already used.
+Static Prison | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Tataru Taru | [once-per-turn] Both enters draws repeat, but tataru_draw creates only one Treasure per turn from the opponent's draws.
+Temple of Epiphany | [deferred] Entry scry is absent from the current land model (only colors and tapped tags); no baseline scry to suppress.
+Terror of the Peaks | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Tezzeret, Cruel Captain | [fixture] Raw observer installation bypasses starting loyalty; its artifact-enter hook requires existing loyalty and therefore cannot exercise its counter increment.
+The Meathook Massacre | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
+The One Ring | [idempotent] The cast-entry hook sets the same protection-until-next-turn flag again.
+The Wasp, Winsome Avenger | [idempotent] wasp_etb grants hexproof to the same chosen Hero each time; the keyword does not stack.
+Thornbite Staff | [deferred] The existing Thornbite Staff model lacks its Shaman-enter attach trigger; adding the missing card ability is outside the source/event-copy paths.
+Thousand-Faced Shadow | [fixture] The fixture casts it without an attack in progress; the enters-from-hand-while-attacking condition is false.
+Tocasia's Welcome | [once-per-turn] The original and additional token-entry triggers queue, but the existing once-per-turn guard permits only one draw; a later batch in the same turn also adds no draw.
+Tome of Legends | [fixture] No standard observer entrant is a commander; raw observer installation is not an entry event.
+Touch the Spirit Realm | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Vampire Socialite | [fixture] No opponent lost life this turn and no subsequent Vampire enters; neither the own intervening-if nor observer Vampire path is exercised.
+Venser, Shaper Savant | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Vibrance | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Victimize | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
+Welcoming Vampire | [once-per-turn] The original and additional token-entry triggers queue, but the existing once-per-turn guard permits only one draw; a later batch in the same turn also adds no draw.
+Wingcrafter | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Wolverine Riders | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
+Yorion, Sky Nomad | [exhausted] yorion_etb exiles all worthwhile owned nonland permanents at once; none remains for the extra instance.

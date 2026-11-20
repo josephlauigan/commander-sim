@@ -11,7 +11,11 @@
 //! `card | [fixture] or [deferred] reason`. [fixture] means this fixture cannot exercise the card's guard (no later
 //! entrant, a target is missing, the extra body changes an AI choice: say which); [deferred] means a named existing model
 //! or ticket outside P5b. A row whose card now agrees is fine to leave; a new disagreement must be fixed or reasoned.
-//! The own-Elesh columns (does the trigger happen twice) are measured and printed, never asserted: they are P5a-2's input.
+//! The original opponent test still prints its own-Elesh columns. The acceptance test below asserts all nine modes:
+//! baseline, opponent Elesh live/inert, own Elesh live/inert, own Vocalist live/inert and own Panharmonicon live/inert.
+//! It also installs each observer without firing its own entry, then separately casts a 4/4, creates a 1/1 and a 4/4,
+//! drops a basic land and creates a Treasure. Its reviewed exceptions are in `enters_census_double_allow.txt`;
+//! unexplained rows and stale non-fixture rows fail, and numeric over-counts require a nonlinear explanation.
 //! `CENSUS_CARD=<name>` runs one card; `ENTERS_CENSUS_REPORT=<file>` writes the full table.
 
 use sim_core::engine::{cast, turn, zones};
