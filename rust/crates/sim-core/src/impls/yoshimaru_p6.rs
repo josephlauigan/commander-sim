@@ -4,9 +4,8 @@
 //! code.
 
 use crate::cards::CardDb;
-use crate::cards::Colors;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{pval, untargetable_by_its_controller};
+use crate::engine::values::{colors_of, pval, untargetable_by_its_controller};
 use crate::engine::zones::{bounce, draw, leave};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
@@ -16,8 +15,8 @@ use crate::state::Game;
 
 const KIRIN: &str = "Sunpearl Kirin";
 
-/// what Sunpearl Kirin can return: a permanent, or one of the Treasure, Food and Clue tokens the engine keeps as
-/// counters on the player (a Treasure is a nonland permanent too)
+/// what Sunpearl Kirin can return: a permanent, or one of the Treasure, Food, Clue and Blood tokens the engine keeps as
+/// counters on the player (each is a nonland permanent too)
 #[derive(Clone, Copy, PartialEq)]
 enum Back {
     Perm(PermId),
@@ -29,20 +28,21 @@ fn live(g: &Game, m: PermId) -> bool {
     x.on_bf && !x.phased
 }
 
-/// another nonland permanent p controls (a creature that is also a land, by a card or by a token, is a land)
-fn nonland(g: &Game, p: PlayerId, m: PermId) -> bool {
+/// another nonland permanent p controls (a creature that is also a land, by a card or by a token, is a land) that
+/// `src`, with the colours it has now, may target
+fn nonland(g: &Game, p: PlayerId, m: PermId, src: PermId) -> bool {
     live(g, m)
         && g.perm(m).owner == p
         && !g.player(p).lands.contains(&m)
         && g.perm(m).cd.is_none_or(|c| !g.db.get(c).land)
-        && !untargetable_by_its_controller(g, m, Colors::from_letters("W"))
+        && !untargetable_by_its_controller(g, m, colors_of(g, src))
 }
 
 fn candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<Back> {
     let mut v: Vec<Back> =
-        g.player(p).perms.iter().copied().filter(|&m| m != src && nonland(g, p, m)).map(Back::Perm).collect();
+        g.player(p).perms.iter().copied().filter(|&m| m != src && nonland(g, p, m, src)).map(Back::Perm).collect();
     let pl = g.player(p);
-    for (kind, n) in [("Treasure", pl.treasures), ("Food", pl.foods), ("Clue", pl.clues)] {
+    for (kind, n) in [("Treasure", pl.treasures), ("Food", pl.foods), ("Clue", pl.clues), ("Blood", pl.bloods)] {
         if n > 0 {
             v.push(Back::Token(kind));
         }
@@ -52,13 +52,14 @@ fn candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<Back> {
 
 fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
     match b {
-        Back::Perm(m) => m != src && nonland(g, p, m),
+        Back::Perm(m) => m != src && nonland(g, p, m, src),
         Back::Token(k) => {
             let pl = g.player(p);
             match k {
                 "Treasure" => pl.treasures > 0,
                 "Food" => pl.foods > 0,
-                _ => pl.clues > 0,
+                "Clue" => pl.clues > 0,
+                _ => pl.bloods > 0,
             }
         }
     }
@@ -69,17 +70,17 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 /// nonland permanent you control to its owner's hand. If it was a token, draw a card." The compiled text had no
 /// target and drew a card unconditionally; the card's tags carry no draw (data/card_overrides.toml) and this code does
 /// the whole trigger. A permanent goes back to its owner's hand (a commander as the engine's bounce does); a token
-/// ceases to exist and its controller draws a card; a Treasure, Food or Clue token (counters on the player in the
-/// engine) is returned the same way. The trigger does not depend on Kirin still being on the battlefield, and the
+/// ceases to exist and its controller draws a card; a Treasure, Food, Clue or Blood token (counters on the player in
+/// the engine) is returned the same way. The trigger does not depend on Kirin still being on the battlefield, and the
 /// permanent must be a legal target for it (`values::untargetable_by_its_controller`: shroud, Lightning Greaves,
-/// Whispersilk Cloak, protection from white; hexproof does not stop its controller). The target is chosen as the trigger
-/// resolves, after the table's window (the engine
+/// Whispersilk Cloak, protection from a colour Kirin has now; hexproof does not stop its controller). The target is
+/// chosen as the trigger resolves, after the table's window (the engine
 /// probes a trigger up to its first window, so a question before it would be asked twice; the same order every card with
 /// a chosen target uses): it does nothing if there is nothing to return. A person chooses among every candidate, or none
 /// ("up to one"). The AI returns the permanent whose enter effect is worth replaying most (`mine::flicker_worth`, at
 /// least 2, the Displacer Kitten threshold; never a commander, a stolen permanent or one carrying counters it would
 /// lose), or a token worth less than the card it draws (`pval` under 1: a 1/1 or 2/2 token); it never returns a
-/// Treasure, Food or Clue.
+/// Treasure, Food, Clue or Blood.
 fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(()); // (p is who controlled Kirin as she entered: the trigger's controller, whoever has her now)
@@ -142,7 +143,8 @@ fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
             match k {
                 "Treasure" => pl.sac_treasure(),
                 "Food" => pl.foods -= 1,
-                _ => pl.clues -= 1,
+                "Clue" => pl.clues -= 1,
+                _ => pl.bloods -= 1,
             }
             crate::glog!(g, "    Sunpearl Kirin returns a {k} token to its owner's hand: it ceases to exist");
             true
@@ -158,7 +160,7 @@ fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 /// card is worth over the token (1.5 less its worth, when positive and more than half a card)
 fn ai_choice(g: &Game, p: PlayerId, src: PermId) -> Option<Back> {
     let mut best: Option<(Back, f64)> = None;
-    for m in g.player(p).perms.iter().copied().filter(|&m| m != src && nonland(g, p, m)) {
+    for m in g.player(p).perms.iter().copied().filter(|&m| m != src && nonland(g, p, m, src)) {
         let x = g.perm(m);
         if x.is_cmd {
             continue;
