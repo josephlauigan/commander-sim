@@ -7,6 +7,7 @@ Acidic Slime | Etb | T
 Additive Evolution | Etb | T
 Admonition Angel | Landfall | T
 Aesi, Tyrant of Gyre Strait | Landfall | T
+Aether Hub | LandEtb | T |  | "When this land enters": a trigger
 Agent of Treachery | Etb | T
 Airlift Chaplain | Etb | T
 Ajani Fells the Godsire | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
@@ -35,6 +36,7 @@ Avenger of Zendikar | Etb | T
 Avenger of Zendikar | Landfall | T
 Avengers Quinjet | Etb | T |  | a trigger that runs at once (marked enter_trigger)
 Banishing Light | Etb | T
+Barkchannel Pathway // Tidechannel Pathway | LandEtb | S |  | a face choice as it enters
 Batterskull | Etb | T
 Battle Mastery | Etb | S
 Battle at the Helvault | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
@@ -45,14 +47,17 @@ Binding the Old Gods | Etb | N |  | chapter I triggers on the lore counter (CR 7
 Bishop of Wings | Etb | T
 Bishop of Wings | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Blackblade Reforged | Etb | S
+Blightstep Pathway // Searstep Pathway | LandEtb | S |  | a face choice as it enters
 Bloodghast | Etb | S
 Bloodline Keeper // Lord of Lineage | Etb | S
 Bloodthirsty Adversary | Etb | T
+Bojuka Bog | LandEtb | T |  | "When this land enters": a trigger
 Bone Devourer | Etb | S
 Bonny Pall, Clearcutter | Etb | T
 Boon of the Spirit Realm | Etb | T
 Boughside Wanderers | Etb | T
 Braids's Frightful Return | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Branchloft Pathway // Boulderloft Pathway | LandEtb | S |  | a face choice as it enters
 Breath of Fury | Etb | S
 Bronze Guardian | Etb | S |  | a state registration (size rule)
 Burglar Rat | Etb | T
@@ -65,6 +70,7 @@ Captain Marvel, Apex Avenger | Etb | S |  | a state registration (its counter ru
 Carth the Lion | Etb | T
 Cartouche of Solidarity | Etb | M | opponent_elesh_blanks_cartouche_token | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
 Cast Out | Etb | T
+Cavern of Souls | LandEtb | S |  | as it enters, choose a creature type
 Celestial Mantle | Etb | S
 Chains of Custody | Etb | M | opponent_elesh_blanks_chains_of_custody_exile | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
 Chalice of the Void | Etb | S
@@ -74,6 +80,7 @@ Chatterfang, Squirrel General | TokenCreated | N |  | a replacement of the creat
 Chittering Rats | Etb | T
 Chittering Witch | Etb | T
 Cho-Manno's Blessing | Etb | S
+Clearwater Pathway // Murkwater Pathway | LandEtb | S |  | a face choice as it enters
 Cloud of Faeries | Etb | T
 Cloud, Midgar Mercenary | Etb | T
 Cloudfin Raptor | Etb | T
@@ -233,6 +240,7 @@ Light-Paws, Emperor's Voice | Etb | T
 Linvala, the Preserver | Etb | T
 Loki's Scepter | Etb | T
 Loran of the Third Path | Etb | T
+Lotus Field | LandEtb | T |  | "When this land enters": a trigger
 Love Song of Night and Day | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Loyal Warhound | Etb | T
 Lumra, Bellow of the Woods | Etb | T
@@ -263,11 +271,15 @@ Mithril Coat | Etb | T |  | a trigger that runs at once (marked enter_trigger)
 Mogg War Marshal | Etb | T
 Moonshaker Cavalry | Etb | T
 Moraug, Fury of Akoum | Landfall | T
+Mortuary Mire | LandEtb | T |  | "When this land enters": a trigger
 Moss Diamond | Etb | S |  | enters tapped
+Mosswort Bridge | LandEtb | T |  | "When this land enters": a trigger
 Mouth of the Storm | Etb | T
 Multani, Yavimaya's Avatar | Etb | S
 Muxus, Goblin Grandee | Etb | T
+Mystic Sanctuary | LandEtb | M | an_opponents_elesh_blanks_mystic_sanctuarys_return an_opponents_elesh_leaves_mystic_sanctuary_untapped | enters untapped is a replacement; the return is a trigger
 Necrosquito | Etb | S |  | enters with counters, size rule
+Needleverge Pathway // Pillarverge Pathway | LandEtb | S |  | a face choice as it enters
 Nessian Wanderer | Etb | T
 Nine-Lives Familiar | Etb | S
 Nissa of Shadowed Boughs | Landfall | T |  | a trigger that runs at once (marked enter_trigger)
@@ -287,6 +299,7 @@ Pariah | Etb | S
 Patchwork Banner | Etb | S
 Perigee Beckoner | Etb | T
 Peter Parker's Camera | Etb | S
+Petrified Hamlet | LandEtb | M | an_opponents_elesh_blanks_petrified_hamlets_naming | City of Traitors' check is setup; the naming is a trigger
 Phyrexian Delver | Etb | T
 Phyrexian Revoker | Etb | S |  | as it enters, choose a name
 Pia Nalaar | Etb | T
@@ -336,6 +349,7 @@ Scarlet Spider, Kaine | Etb | T
 Scourge of Valkas | Etb | T
 Scute Swarm | Landfall | T
 Secluded Courtyard | Etb | S
+Secluded Courtyard | LandEtb | S |  | as it enters, choose a creature type
 Selvala, Heart of the Wilds | Etb | T
 Sentinel's Eyes | Etb | S
 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel | Etb | T
@@ -385,6 +399,7 @@ Studious First-Year | Etb | S |  | enters prepared
 Summon: Bahamut | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Sylvan Messenger | Etb | T
 Tainted Observer | Etb | T
+Talon Gates of Madara | LandEtb | M | an_opponents_elesh_blanks_talon_gates_phasing | City of Traitors' check is setup; the phasing is a trigger
 Tannuk, Memorial Ensign | Landfall | T
 Tataru Taru | Etb | T
 Tenured Concocter | Etb | S |  | a state registration (size rule)
@@ -406,6 +421,7 @@ The Wasp, Winsome Avenger | Etb | T
 Thornbite Staff | Etb | S |  | Approximate: the Oracle's Shaman-enters trigger is not modelled (the hook attaches the Staff to Krenko)
 Thran Power Suit | Etb | S
 Thrasios, Triton Hero | Etb | S |  | bookkeeping of the turn it came down
+Three Tree City | LandEtb | S |  | as it enters, choose a creature type
 Thundermaw Hellkite | Etb | T
 Tiamat | Etb | T
 Timely Ward | Etb | S
@@ -427,6 +443,7 @@ Ulna Alley Shopkeep | Etb | S |  | a state registration (size rule)
 Unquestioned Authority | Etb | M | opponent_elesh_blanks_unquestioned_authority_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
 Ureni of the Unwritten | Etb | T
 Uro, Titan of Nature's Wrath | Etb | T
+Urza's Saga | LandEtb | S |  | its lore counter is put as it enters (CR 714.3a)
 Urza, Lord High Artificer | Etb | T
 Valakut Exploration | Landfall | T
 Vampire Socialite | Etb | M | opponent_elesh_blanks_socialites_own_enters_trigger_but_keeps_the_replacement | mixed: setup (counters) plus a trigger part through `enters_trigger_times`
@@ -443,7 +460,9 @@ Welcoming Vampire | Etb | T
 Whirler Rogue | Etb | T
 White Mage's Staff | Etb | T
 Whitemane Lion | Etb | T
+Windbrisk Heights | LandEtb | T |  | "When this land enters": a trigger
 Wingcrafter | Etb | T
+Witch Enchanter // Witch-Blessed Meadow | LandEtb | S |  | the face a modal card enters as is not an ability
 Worn Powerstone | Etb | S
 Xande, Dark Mage | Etb | S |  | a state registration (size rule)
 Xorn | TokenCreated | N |  | a replacement of the creating

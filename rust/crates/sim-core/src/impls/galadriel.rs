@@ -1498,10 +1498,8 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if let Some(l) = land {
         // not the land drop: onto the battlefield tapped
         let lid = g.add_land(p, l, true);
-        if !crate::engine::mana::moon_land(g, lid)
-            && let Some(f) = g.registry.get(l).filter(|i| i.live()).and_then(|i| i.land_etb)
-        {
-            f(g, p, lid)?;
+        if !crate::engine::mana::moon_land(g, lid) {
+            crate::cardcode::land_etb(g, p, lid)?; // its "When this land enters" trigger: an opponent's Elesh stops it
         }
         crate::glog!(g, "    Planar Genesis: {} puts {} onto the battlefield tapped", pname(g, p), g.db.get(l).name);
         landfall(g, p)?;

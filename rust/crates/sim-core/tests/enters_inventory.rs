@@ -1,4 +1,4 @@
-//! Every registry hook on an enters event, classified by hand against the card's Oracle text. Elesh Norn, Mother of
+//! Every registry hook on an enters event (Etb, LandEnters, LandEtb, Landfall, TokensEnter, TokenCreated), classified by hand against the card's Oracle text. Elesh Norn, Mother of
 //! Machines blanks an opponent's enters-caused triggered abilities, and the event doublers add to them; neither may
 //! touch what happens as a permanent enters (an enters-with counter, enters tapped, a name chosen, a Saga's lore
 //! counter, an Aura attaching). The dispatcher (`engine::hooks::enter_hook_is_trigger`) decides from the hook's
@@ -17,7 +17,8 @@ use sim_core::hooks::Event;
 use sim_core::testkit::*;
 use std::collections::{BTreeMap, BTreeSet};
 
-const EVENTS: [Event; 5] = [Event::Etb, Event::LandEnters, Event::Landfall, Event::TokensEnter, Event::TokenCreated];
+const EVENTS: [Event; 6] =
+    [Event::Etb, Event::LandEnters, Event::LandEtb, Event::Landfall, Event::TokensEnter, Event::TokenCreated];
 
 /// (card, event) -> (dispatcher says trigger, both bits set, runs now)
 fn registry_rows() -> BTreeMap<(String, String), (bool, bool, bool)> {
@@ -27,6 +28,10 @@ fn registry_rows() -> BTreeMap<(String, String), (bool, bool, bool)> {
         let Some(c) = g.db.id(&d.name) else { continue };
         let Some(i) = g.registry.get(c) else { continue };
         for e in EVENTS {
+            // every land without code of its own has City of Traitors' check as its land hook: not a row
+            if e == Event::LandEtb && sim_core::impls::t6_lands::is_default_land_etb(i) {
+                continue;
+            }
             if i.handles(e) {
                 let now = i.runs_at_once(e) || !e.is_trigger();
                 let both = i.is_enter_trigger(e) && i.is_enter_setup(e);

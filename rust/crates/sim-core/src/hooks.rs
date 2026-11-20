@@ -63,6 +63,7 @@ pub enum Event {
     LandColorless,
     LandDefend,
     LandEnters,
+    LandEtb,
     LandGy,
     LandMana,
     LandOptions,
@@ -109,7 +110,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 84] = [
+pub const EVENTS: [(Event, &str); 85] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -150,6 +151,7 @@ pub const EVENTS: [(Event, &str); 84] = [
     (Event::LandColorless, "land_colorless"),
     (Event::LandDefend, "land_defend"),
     (Event::LandEnters, "land_enters"),
+    (Event::LandEtb, "land_etb"),
     (Event::LandGy, "land_gy"),
     (Event::LandMana, "land_mana"),
     (Event::LandOptions, "land_options"),
@@ -1007,6 +1009,7 @@ impl CardImpl {
             Event::HandDefend => self.hand_defend.is_some(),
             Event::LandDefend => self.land_defend.is_some(),
             Event::LandEnters => self.land_enters.is_some(),
+            Event::LandEtb => self.land_etb.is_some(),
             Event::LandOptions => self.land_options.is_some(),
             Event::LandUpkeep => self.land_upkeep.is_some(),
             Event::GyDies => self.gy_dies.is_some(),

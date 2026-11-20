@@ -37,6 +37,11 @@ fn brass_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
 // ================================================================== City of Traitors
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
+/// is this land's `land_etb` hook just the City of Traitors check every land without code of its own gets (`register`)?
+pub fn is_default_land_etb(i: &crate::hooks::CardImpl) -> bool {
+    i.land_etb.is_some_and(|f| f as usize == traitors_check as crate::hooks::LandEtbFn as usize)
+}
+
 pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let mine: Vec<PermId> =
         g.player(p).lands.iter().copied().filter(|&x| x != l && name_of(g, x) == "City of Traitors").collect();
@@ -397,7 +402,11 @@ fn orchard_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
 /// utility land), most copies first. The chosen card is kept on the Hamlet (`DataKey::Imprint`, a `Val::Card`).
 /// Nothing yet stops the named lands' abilities, or gives them {T}: Add {C}: engine-needs-lands.md
 fn hamlet_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
-    traitors_check(g, p, l)?;
+    traitors_check(g, p, l)?; // caused by a land being played, not by this one entering
+    // "When this land enters, choose a land card name": a triggered ability
+    if crate::engine::hooks::enters_trigger_times(g, p, Some(l)) == 0 {
+        return Ok(());
+    }
     let mut seen: Vec<(CardId, u32)> = vec![];
     for q in g.opps(p).collect::<Vec<_>>() {
         for &x in &g.player(q).lands {
@@ -880,8 +889,10 @@ fn gates_phase(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<PermId>> {
 
 /// played from hand (the land drop): the City of Traitors check and the enter trigger
 fn gates_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
-    traitors_check(g, p, l)?;
-    gates_phase(g, p, l)?;
+    traitors_check(g, p, l)?; // caused by a land being played, not by this one entering
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+        gates_phase(g, p, l)?;
+    }
     Ok(())
 }
 
@@ -895,7 +906,10 @@ fn gates_put(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<PermId>> {
     g.player_mut(p).hand.remove(i);
     let l = g.add_land(p, c, false);
     crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(p).name);
-    let t = gates_phase(g, p, l)?;
+    let mut t = None;
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+        t = gates_phase(g, p, l)?;
+    }
     crate::engine::zones::landfall(g, p)?;
     Ok(t)
 }

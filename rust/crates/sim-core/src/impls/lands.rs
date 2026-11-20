@@ -886,10 +886,16 @@ fn is_island(g: &Game, l: PermId) -> bool {
 fn sanctuary(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let islands = g.player(p).lands.iter().filter(|&&x| x != l && is_island(g, x)).count();
     if islands >= 3 {
-        g.perm_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false; // enters untapped: a replacement
+    }
+    // "When this land enters, if you control three or more other Islands, you may put target instant or sorcery card
+    // from your graveyard on top of your library": a triggered ability
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+        if islands < 3 {
+            break;
+        }
         let cs: Vec<CardId> =
             g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).instant || g.db.get(c).sorcery).collect();
-        // "you may put target instant or sorcery card from your graveyard on top of your library": a person picks, or declines
         let pick = if crate::human::is_human(g, p) {
             let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
             if labels.is_empty() {
@@ -1129,9 +1135,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, SOKENZAN)?.hand_options = Some(sokenzan);
     r.card(db, "Tolaria West")?.hand_options = Some(tolaria);
     r.card(db, "Kor Haven")?.land_defend = Some(kor_haven);
-    r.card(db, "Mortuary Mire")?.land_etb = Some(mortuary);
-    r.card(db, "Mystic Sanctuary")?.land_etb = Some(sanctuary);
-    r.card(db, "Mosswort Bridge")?.land_etb = Some(mosswort);
+    let c = r.card(db, "Mortuary Mire")?;
+    c.land_etb = Some(mortuary);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, you may put target creature card on top"
+    r.card(db, "Mystic Sanctuary")?.land_etb = Some(sanctuary); // mixed: untapped is a replacement, the return a trigger
+    let c = r.card(db, "Mosswort Bridge")?;
+    c.land_etb = Some(mosswort);
+    *c = c.enter_trigger(Event::LandEtb); // Hideaway 4: "When this land enters"
     r.card(db, "Emeria, the Sky Ruin")?.land_upkeep = Some(emeria);
     for (name, _) in VIVID {
         if db.id(name).is_none() {

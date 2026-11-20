@@ -389,28 +389,35 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
 fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
+    // Glacial Chasm's and a bounceland's "When this land enters": triggered abilities (an opponent's Elesh Norn stops them)
+    let times = crate::engine::hooks::enters_trigger_times(g, p, Some(l));
     if t.has(Tag::Chasm) {
-        // Glacial Chasm: when it enters, sacrifice a land
-        g.player_mut(p).chasm_age = 0;
-        let others: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&x| g.perm(x).card() != c).collect();
-        let x = min_by(&others, |x| (!g.perm(x).tapped) as i32 as f64 * 10.0 + land_colors_now(g, p, x).count() as f64)
-            .unwrap_or(l);
-        let cd = g.perm(x).card();
-        remove_land(g, p, x, Some(Zone::Gy));
-        crate::glog!(g, "    sacrifices {}", g.db.get(cd).name);
+        g.player_mut(p).chasm_age = 0; // cumulative upkeep bookkeeping, not part of the trigger
+        for _ in 0..times {
+            // Glacial Chasm: when it enters, sacrifice a land
+            let others: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&x| g.perm(x).card() != c).collect();
+            let x =
+                min_by(&others, |x| (!g.perm(x).tapped) as i32 as f64 * 10.0 + land_colors_now(g, p, x).count() as f64)
+                    .unwrap_or(l);
+            let cd = g.perm(x).card();
+            remove_land(g, p, x, Some(Zone::Gy));
+            crate::glog!(g, "    sacrifices {}", g.db.get(cd).name);
+        }
     }
     if t.has(Tag::Bounceland) {
-        // Izzet Boilerworks returns another land
-        let others: Vec<PermId> = g
-            .player(p)
-            .lands
-            .iter()
-            .copied()
-            .filter(|&x| g.perm(x).card() != c && !g.db.get(g.perm(x).card()).tag(Tag::Bounceland))
-            .collect();
-        // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
-        let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
-        remove_land(g, p, x, Some(Zone::Hand));
+        for _ in 0..times {
+            // Izzet Boilerworks returns another land
+            let others: Vec<PermId> = g
+                .player(p)
+                .lands
+                .iter()
+                .copied()
+                .filter(|&x| g.perm(x).card() != c && !g.db.get(g.perm(x).card()).tag(Tag::Bounceland))
+                .collect();
+            // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
+            let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
+            remove_land(g, p, x, Some(Zone::Hand));
+        }
     }
     landfall(g, p)?;
     if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {

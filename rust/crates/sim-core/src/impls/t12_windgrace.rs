@@ -982,7 +982,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Icetill Explorer")?;
     c.extra_lands = Some(extra_land);
     c.lands_from_gy = Some(extra_land);
-    r.card(db, LOTUS)?.land_etb = Some(lotus_etb);
+    let c = r.card(db, LOTUS)?;
+    c.land_etb = Some(lotus_etb);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, sacrifice two lands"
     r.card(db, "Lumra, Bellow of the Woods")?.etb = Some(lumra_etb);
     let c = r.card(db, "Mina and Denn, Wildborn")?;
     c.extra_lands = Some(extra_land);

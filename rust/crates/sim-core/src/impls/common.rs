@@ -3569,7 +3569,9 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.draw = Some(trawler_draw);
     r.card(db, "Ephemerate")?.rebound = Some(ephemerate_rebound);
     // graveyard hate
-    r.card(db, "Bojuka Bog")?.land_etb = Some(bog);
+    let c = r.card(db, "Bojuka Bog")?;
+    c.land_etb = Some(bog);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, exile target player's graveyard"
     let c = r.card(db, "Dauthi Voidwalker")?;
     c.sba = Some(dauthi_sweep);
     c.options = Some(dauthi_play);

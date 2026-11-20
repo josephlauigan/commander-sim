@@ -1182,6 +1182,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Legion Loyalty")?.prio = Some(loyalty_prio);
     let c = r.card(db, "Windbrisk Heights")?;
     c.land_etb = Some(windbrisk_etb);
+    *c = c.enter_trigger(crate::hooks::Event::LandEtb); // Hideaway 4: "When this land enters"
     c.land_options = Some(windbrisk_options);
     register_x_cards(r, db)?;
     register_heath(r, db)?;

@@ -2266,6 +2266,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(prison_prio);
     let c = r.card(db, "Aether Hub")?;
     c.land_etb = Some(hub_etb);
+    *c = c.enter_trigger(Event::LandEtb); // "When this land enters, you get {E}"
     c.land_cols = Some(hub_cols);
     c.on_tap_land = Some(hub_tap);
     r.card(db, "Airlift Chaplain")?.etb = Some(chaplain);
