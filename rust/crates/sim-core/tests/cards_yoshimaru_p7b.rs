@@ -452,3 +452,100 @@ fn palace_jailer_creature_stays_when_its_controller_takes_the_monarchy_back() {
     sim_core::cardcode::become_monarch(&mut g, P2).unwrap(); // any other opponent
     assert!(on_bf(&g, P1, "Baneslayer Angel"), "any opponent becoming the monarch returns it");
 }
+
+// ------------------------------------------------------------------ Solitude
+// "Flash, lifelink. When this creature enters, exile up to one other target creature. That creature's controller gains
+// life equal to its power. Evoke: exile a white card from your hand."
+const SOL: &str = "Solitude";
+
+#[test]
+fn solitude_asks_a_person_for_up_to_one_other_creature_and_its_controller_gains_its_power() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P0, "Wall of Omens");
+    let life = g.player(P1).life;
+    let h = person(&mut g, &["Baneslayer"]);
+    perm(&mut g, P0, SOL);
+    let q = asks(&h, "Solitude");
+    assert_eq!(q.len(), 1, "one question: {:?}", h.asked());
+    let c = &q[0].choices;
+    assert!(c.iter().any(|x| x.contains("Baneslayer")) && c.iter().any(|x| x.contains("Wall of Omens")), "{c:?}");
+    assert!(!c.iter().any(|x| x.starts_with(SOL)), "'other': {c:?}");
+    assert!(c.iter().any(|x| x.contains("none") || x.contains("no target")), "'up to one': {c:?}");
+    assert!(in_exile(&g, P1, "Baneslayer Angel"));
+    assert_eq!(g.player(P1).life, life + 5, "its controller gains life equal to its power");
+}
+
+#[test]
+fn solitude_may_exile_a_creature_of_the_persons_own_and_they_gain_its_power() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P0, "Selfless Spirit");
+    let (mine, theirs) = (g.player(P0).life, g.player(P1).life);
+    let _h = person(&mut g, &["Selfless Spirit"]);
+    perm(&mut g, P0, SOL);
+    assert!(in_exile(&g, P0, "Selfless Spirit"));
+    assert_eq!(g.player(P0).life, mine + 2);
+    assert_eq!(g.player(P1).life, theirs, "the opponent gains nothing");
+    assert!(on_bf(&g, P1, "Baneslayer Angel"));
+}
+
+#[test]
+fn solitude_lets_a_person_exile_nothing() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    let life = g.player(P1).life;
+    let h = person(&mut g, &["none"]);
+    perm(&mut g, P0, SOL);
+    assert_eq!(asks(&h, "Solitude").len(), 1, "{:?}", h.asked());
+    assert!(on_bf(&g, P1, "Baneslayer Angel"));
+    assert_eq!(g.player(P1).life, life);
+}
+
+#[test]
+fn solitude_doubled_asks_a_person_once_per_instance() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P1, "Wall of Omens");
+    perm(&mut g, P0, "Panharmonicon");
+    let life = g.player(P1).life;
+    let h = person(&mut g, &["Baneslayer", "Grave Titan"]);
+    perm(&mut g, P0, SOL);
+    assert_eq!(asks(&h, "Solitude").len(), 2, "{:?}", h.asked());
+    assert!(in_exile(&g, P1, "Baneslayer Angel") && in_exile(&g, P1, "Grave Titan"));
+    assert!(on_bf(&g, P1, "Wall of Omens"));
+    assert_eq!(g.player(P1).life, life + 5 + 6, "each exile gains its own creature's power");
+}
+
+#[test]
+fn an_evoked_solitude_exiles_what_the_person_picks_and_is_then_sacrificed() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    let life = g.player(P1).life;
+    let words = ["evoke", "Baneslayer"].map(String::from);
+    let first = Mutex::new(true);
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return if std::mem::take(&mut *first.lock().unwrap()) {
+                Answer::Action(json!({"do": "cast", "card": 0}))
+            } else {
+                Answer::Action(json!({"do": "pass"}))
+            };
+        }
+        for w in &words {
+            if let Some(k) = r.choices.iter().position(|c| c.contains(w.as_str())) {
+                return Answer::Pick(k);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(!asks(&h, "Solitude: exile up to one").is_empty(), "the person picks the target: {:?}", h.asked());
+    assert!(in_exile(&g, P1, "Baneslayer Angel"));
+    assert_eq!(g.player(P1).life, life + 5);
+    assert!(!has_perm(&g, P0, SOL), "the evoke sacrifice comes after the exile");
+    assert!(g.player(P0).gy.contains(&card(&g, SOL)));
+}
