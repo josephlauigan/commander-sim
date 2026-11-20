@@ -1099,3 +1099,35 @@ fn trinisphere_raises_haliyas_warp_cost_to_three() {
     warped_haliya(&mut g);
     assert_eq!(pool_total(&g, P0), 0, "Trinisphere raises the warp cost {{W}} to {{2}}{{W}}");
 }
+
+// ------------------------------------------------------------------ round 5: Kirin's Blood token and source colours
+#[test]
+fn kirin_can_return_a_blood_token_for_a_card() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    sim_core::impls::sheoldred::make_blood(&mut g, P0, 1).unwrap();
+    let (_h, asked) = person(&mut g, |r| choice_with(r, "Blood"));
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert_eq!(asked.lock().unwrap().len(), 1, "a Blood token is a nonland permanent: it is offered");
+    assert_eq!(g.player(P0).bloods, 0, "the Blood token is returned: it ceases to exist");
+    assert_eq!(g.player(P0).library.len(), 4, "it was a token: a card is drawn");
+}
+
+#[test]
+fn kirins_targets_are_checked_against_the_actual_colours_of_the_source() {
+    // protection from white stops a white Kirin only; a green token copy of Kirin is not stopped by it, and protection
+    // from green stops the green copy
+    for (protection, offered) in [("pro_W", true), ("pro_G", false)] {
+        let mut g = tbl();
+        let spirit = perm(&mut g, P0, "Selfless Spirit");
+        g.perm_mut(spirit).eot_kw.push(protection);
+        let (_h, asked) = person(&mut g, |_| None);
+        let c = card(&g, "Sunpearl Kirin");
+        let green =
+            sim_core::state::CopyExc { colors: Some(sim_core::cards::Colors::from_letters("G")), ..Default::default() };
+        let m = zones::enter_token_copy_with(&mut g, P0, c, Some(green)).unwrap().unwrap();
+        assert_eq!(sim_core::engine::values::colors_of(&g, m), sim_core::cards::Colors::from_letters("G"));
+        let seen = asked.lock().unwrap().iter().any(|(_, cs)| cs.iter().any(|x| x.contains("Selfless Spirit")));
+        assert_eq!(seen, offered, "a green copy of Kirin and a permanent with {protection}");
+    }
+}
