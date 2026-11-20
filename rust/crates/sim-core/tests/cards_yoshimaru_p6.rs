@@ -283,7 +283,7 @@ fn haliya_warp_is_cast_for_w_exiled_at_the_end_step_and_still_draws() {
     end_step(&mut g, m);
     assert!(!g.perm(m).on_bf, "exiled at the beginning of the end step");
     assert!(g.player(P0).exile.contains(&c), "in exile");
-    assert_eq!(g.player(P0).hand.len(), 1, "her end-step trigger was already on the stack: the card is drawn");
+    assert_eq!(g.player(P0).library.len(), 4, "her end-step trigger was already on the stack: the card is drawn");
     assert!(sim_core::impls::generic_paths::warped_in_exile(&g, P0).is_empty(), "not on the turn it was exiled");
     g.round += 1;
     assert_eq!(sim_core::impls::generic_paths::warped_in_exile(&g, P0), vec![c], "castable on a later turn");

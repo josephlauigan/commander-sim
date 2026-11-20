@@ -1584,7 +1584,7 @@ fn provisioner(g: &mut Game, src: Src, p: PlayerId) -> Res {
 /// landfall: investigate
 fn tracker(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.perm(src).owner == p && trigger_window(g, p, Some(src), "investigate", None)? {
-        g.player_mut(p).clues += 1;
+        crate::engine::zones::make_artifact_tokens(g, p, "Clue", 1)?;
     }
     Ok(())
 }

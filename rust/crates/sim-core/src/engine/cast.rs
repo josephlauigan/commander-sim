@@ -1351,7 +1351,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         )?;
     }
     if t.has(Tag::Clue) {
-        g.player_mut(p).clues += 1;
+        crate::engine::zones::make_artifact_tokens(g, p, "Clue", 1)?;
     }
     if let Some(spec) = t.str(Tag::Mktok) {
         // auto-tagged token spells  n:power:flying

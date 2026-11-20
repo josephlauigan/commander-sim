@@ -9,7 +9,8 @@
 //! - **Yawgmoth's Will**: cast when the graveyard pays for it: a storm card (Brain Freeze, Grapeshot) with the mana
 //!   to cast it after the Will, or three cheap spells that fit in the mana left. It was Kefka's hand AI
 //!   (`kefka::will_options`, already written for "a deck that isn't built around it").
-//! - **Susurian Voidborn**: cast from exile on a later turn after its warp (the warp itself is `kefka::voidborn_hand`).
+//! - **Susurian Voidborn**, **Haliya, Guided by Light**: cast from exile on a later turn after their warp (the warp itself
+//!   is `kefka::voidborn_hand` and `t45_heliod_zur::haliya_hand`).
 //!   It was Kefka's hand AI (`kefka::kefka_options`); `brain::hook_options` calls `exile_options`.
 
 use crate::cards::CardDb;
@@ -27,6 +28,7 @@ use crate::tag::Tag;
 const ARCHIVIST: &str = "Jace's Archivist";
 const WILL: &str = "Yawgmoth's Will";
 const VOIDBORN: &str = "Susurian Voidborn";
+const HALIYA: &str = "Haliya, Guided by Light";
 
 fn human(g: &Game, p: PlayerId) -> bool {
     crate::human::is_human(g, p)
@@ -170,38 +172,41 @@ fn will_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-// ------------------------------------------------------------------ Susurian Voidborn
-/// the warped Voidborn in p's exile (exiled by its warp at an end step: `kefka::voidborn_end`), castable for its
-/// mana cost on a later turn, on p's turn in a main phase
+// ------------------------------------------------------------------ Susurian Voidborn, Haliya
+/// the warped Voidborn or Haliya in p's exile (exiled by its warp at an end step: `kefka::voidborn_end`,
+/// `t45_heliod_zur::haliya_end`), castable for its mana cost on a later turn, on p's turn in a main phase
 pub fn exile_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() || g.active != Some(p) || human(g, p) {
         return Ok(vec![]);
     }
     let st = g.turn_stamp();
-    let Some(&when) = g.player(p).flag_turn.get(&intern("voidborn_warped")) else { return Ok(vec![]) };
-    if when == st {
-        return Ok(vec![]);
+    let mut out = vec![];
+    for (name, utility) in [(VOIDBORN, 4.5), (HALIYA, 4.0)] {
+        let Some(&when) = g.player(p).flag_turn.get(&warp_flag(name)) else { continue };
+        if when == st {
+            continue;
+        }
+        let Some(c) = g.player(p).exile.iter().copied().find(|&c| &*g.db.get(c).name == name) else { continue };
+        let (cg, cp) = cost_of(g, p, c);
+        if !can_pay_spell(g, p, c, cg, &cp, false) {
+            continue;
+        }
+        out.push(Opt {
+            utility,
+            label: format!("{name} (from exile)"),
+            act: Some(Action::Plan { f: warped_from_exile, arg: c.0 as i64 }),
+        });
     }
-    let Some(c) = g.player(p).exile.iter().copied().find(|&c| &*g.db.get(c).name == VOIDBORN) else {
-        return Ok(vec![]);
-    };
-    let (cg, cp) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, cg, &cp, false) {
-        return Ok(vec![]);
-    }
-    Ok(vec![Opt {
-        utility: 4.5,
-        label: "Susurian Voidborn (from exile)".into(),
-        act: Some(Action::Plan { f: voidborn_from_exile, arg: c.0 as i64 }),
-    }])
+    Ok(out)
 }
 
 // ------------------------------------------------------------------ warp: casting the exiled card on a later turn
 /// The turn flag a warped creature's end-step exile leaves on its owner: Susurian Voidborn (`kefka`), Perigee Beckoner
 /// (`sheoldred`) and Elrond's warpers (`blue_cards::warped_key`).
-fn warp_flag(name: &str) -> crate::sym::Sym {
+pub(crate) fn warp_flag(name: &str) -> crate::sym::Sym {
     match name {
         VOIDBORN => intern("voidborn_warped"),
+        HALIYA => intern("haliya_warped"),
         "Perigee Beckoner" => intern("beckoner_warped"),
         _ => intern(&format!("elrond_warped_{name}")),
     }
@@ -228,15 +233,14 @@ pub fn warp_leaves_exile(g: &mut Game, p: PlayerId, c: CardId) {
     pl.flag_turn.shift_remove(&key);
 }
 
-fn voidborn_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+fn warped_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (cg, cp) = cost_of(g, p, c);
     if !g.player(p).exile.contains(&c) || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
     pay_spell(g, p, c, cg, &cp, false)?;
-    g.player_mut(p).exile.take(c);
-    g.player_mut(p).flag_turn.shift_remove(&intern("voidborn_warped"));
+    warp_leaves_exile(g, p, c);
     cast_card(g, p, c, "lib", Ctx::default())?;
     Ok(true)
 }
