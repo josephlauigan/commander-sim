@@ -868,7 +868,7 @@ fn end_raze_two_triggers_add_toughness_not_only_power() {
     let other = perm(&mut g, P0, "Mother of Runes");
     let end = perm(&mut g, P0, "End-Raze Forerunners");
     assert_eq!(sim_core::engine::chars::toughness(&g, other), 5, "1 + 4");
-    assert_eq!(sim_core::engine::chars::power(&g, end), 3, "the source is not pumped");
+    assert_eq!(sim_core::engine::chars::power(&g, end), 7, "its own 7 power: the source is not pumped");
 }
 
 #[test]

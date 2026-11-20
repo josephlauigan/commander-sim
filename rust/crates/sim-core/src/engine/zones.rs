@@ -1501,10 +1501,17 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         crate::engine::tutors::chrome_imprint(g, p, m)?;
     }
     if t.has(Tag::Endraze) {
-        // End-Raze Forerunners: when it enters, other creatures you control get +2/+2 and gain vigilance and trample
-        let pl = g.player_mut(p);
-        pl.pumpadd += 2;
-        pl.trample = true;
+        // End-Raze Forerunners: other creatures you control get +2/+2 and gain vigilance and trample until end of turn:
+        // the ones there as it resolves (CR 611.2c), not the source and not a later entrant
+        let others: Vec<PermId> =
+            g.player(p).perms.iter().copied().filter(|&x| x != m && g.is_creature(x) && !g.perm(x).phased).collect();
+        for x in others {
+            let y = g.perm_mut(x);
+            y.eot_pt.0 += 2;
+            y.eot_pt.1 += 2;
+            crate::impls::partials::eot_kw(g, x, "vigilance");
+            crate::impls::partials::eot_kw(g, x, "trample");
+        }
     }
     if t.has(Tag::Recruit) {
         crate::engine::tutors::tutor(g, p, "cre2", "Imperial Recruiter")?; // Imperial Recruiter: creature with power 2 or less
