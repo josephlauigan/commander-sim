@@ -1644,6 +1644,10 @@ fn prince_person(g: &mut Game, o: PlayerId, cands: &[PermId]) -> Res {
 
 /// exile t (a token is gone for good); its card returns under o's control at the beginning of the next end step
 fn prince_blink(g: &mut Game, o: PlayerId, t: PermId) -> Res {
+    // an opponent controls it: its ward triggers (pay it or the ability is countered)
+    if g.perm(t).owner != o && !crate::engine::ward::pay_ward(g, o, t)? {
+        return Ok(());
+    }
     let x = g.perm(t);
     let (card, token, name) = (x.phys.or(x.cd), x.token, x.name);
     exile_perm(g, t)?;
