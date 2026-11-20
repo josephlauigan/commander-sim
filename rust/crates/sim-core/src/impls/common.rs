@@ -1354,8 +1354,17 @@ pub fn exile_gy(g: &mut Game, q: PlayerId, by: Option<&str>) {
     );
 }
 
-/// Rest in Peace (Approximate): graveyards are exiled on entry and then kept empty (cards are exiled as soon as
-/// state-based checks run; dies triggers still happen); undying/persist stop
+/// Rest in Peace (Approximate): "When this enchantment enters, exile all graveyards" is its enters trigger (`rip`);
+/// "if a card would be put into a graveyard, exile it instead" is a replacement, approximated by keeping the graveyards
+/// empty (cards are exiled as soon as state-based checks run; dies triggers still happen; undying/persist stop). The
+/// cards already in a graveyard as it entered are left to the trigger (`rip_as_enters` remembers them): when an
+/// opponent's Elesh Norn blanks the trigger they stay.
+fn rip_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
+    let cards: Vec<Val> = g.players.iter().flat_map(|q| q.gy.iter().map(|&c| Val::Card(c))).collect();
+    g.perm_mut(m).data.set(DataKey::Spared, Val::List(cards));
+    Ok(())
+}
+
 fn rip(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && trigger_window(g, owner(g, src), Some(src), "exile all graveyards", None)? {
         for i in 0..g.players.len() {
@@ -1368,12 +1377,23 @@ fn rip(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-fn rip_sweep(g: &mut Game, _src: Src) -> Res {
+fn rip_sweep(g: &mut Game, src: Src) -> Res {
+    let spared: Vec<CardId> = match g.perm(src).data.get(DataKey::Spared) {
+        Some(Val::List(v)) => v.iter().filter_map(|x| if let Val::Card(c) = x { Some(*c) } else { None }).collect(),
+        _ => vec![],
+    };
+    let mut still = vec![];
     for q in g.players.iter_mut() {
         if q.alive && !q.gy.is_empty() {
-            let gy = std::mem::take(&mut q.gy);
-            q.exile.extend(gy);
+            let (keep, gone): (Vec<CardId>, Vec<CardId>) =
+                std::mem::take(&mut q.gy).into_iter().partition(|c| spared.contains(c));
+            still.extend(keep.iter().map(|&c| Val::Card(c)));
+            q.gy = keep;
+            q.exile.extend(gone);
         }
+    }
+    if !spared.is_empty() {
+        g.perm_mut(src).data.set(DataKey::Spared, Val::List(still)); // a card that left and came back is not spared
     }
     Ok(())
 }
@@ -3726,6 +3746,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::partials::at_once(c, Event::EndStep, true); // end_step_flicker opens its own trigger window
     let c = r.card(db, "Rest in Peace")?;
     c.etb = Some(rip);
+    c.as_enters = Some(rip_as_enters);
     c.sba = Some(rip_sweep);
     c.no_graveyard = Some(rip_nogy);
     r.card(db, "Hero of Bladehold")?.attack = Some(hero);

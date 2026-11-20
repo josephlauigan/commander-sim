@@ -213,6 +213,9 @@ pub enum DataKey {
     Unbl,
     Used,
     Voice,
+    /// Rest in Peace: the cards that were already in a graveyard as it entered (a `Val::List` of `Val::Card`): its
+    /// replacement never reaches them, and its enters trigger (an opponent's Elesh Norn may blank it) exiles them
+    Spared,
     Void,
     Voja,
     /// Susurian Voidborn was cast for its warp cost (exiled at the next end step)
