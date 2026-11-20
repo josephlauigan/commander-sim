@@ -39,8 +39,8 @@ pub(crate) fn at_once(c: &mut CardImpl, e: Event, yes: bool) {
     }
 }
 
-/// as it enters, the card's own size rule goes live (`Game::selfpt`): a state registration, shared by the hooks that
-/// used to set it from an enters trigger (Righteous Valkyrie, Boon of the Spirit Realm, Urza, Lord High Artificer)
+/// as it enters, the card's own size rule goes live (`Game::selfpt`): a state registration, shared by Righteous
+/// Valkyrie, Boon of the Spirit Realm and Urza, Lord High Artificer
 pub(crate) fn selfpt_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
     g.selfpt = true;
     Ok(())

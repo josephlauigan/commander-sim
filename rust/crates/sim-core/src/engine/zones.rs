@@ -1409,7 +1409,8 @@ pub const LOCK_KINDS: [&str; 5] = ["arrest", "pacify", "encrust", "kasmina", "co
 /// Song of the Dryads, Imprisoned in the Moon, Reprobation): static effects of the Aura, not enters triggers
 pub const STATIC_AURA_KINDS: [&str; 5] = ["elk", "mutate", "forest", "moon", "coward"];
 
-/// is a `rem` kind with `etb` a static effect of an Aura (attached as it resolves), not a triggered ability?
+/// is a `rem` kind with `etb` a static effect of an Aura (all the lock and static Aura kinds are Auras; attached as
+/// it resolves), not a triggered ability?
 pub fn rem_is_static(kind: &str) -> bool {
     LOCK_KINDS.contains(&kind) || STATIC_AURA_KINDS.contains(&kind)
 }
@@ -1435,7 +1436,7 @@ pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
 /// what an enters trigger is called on the stack, and how much it matters
 pub fn etb_text(g: &Game, cd: CardId) -> (Sym, f64) {
     let t = &g.db.get(cd).tags;
-    if t.has(Tag::Rem) && t.has(Tag::Etb) {
+    if t.has(Tag::Rem) && t.has(Tag::Etb) && !t.str(Tag::Rem).is_some_and(rem_is_static) {
         return ("remove a permanent", 6.0);
     }
     for (k, v) in [
