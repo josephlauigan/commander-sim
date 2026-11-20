@@ -228,3 +228,73 @@ fn felidar_chain_driven_by_a_person_is_not_cut_at_three_and_a_cap_is_logged() {
     assert!(log.contains("blink chain"), "the cap is not silent: {log}");
     assert_eq!(g.blink_depth, 0);
 }
+// ------------------------------------------------------------------ Ennis, Debate Moderator
+// "When Ennis enters, exile up to one other target creature you control. Return that card to the battlefield under its
+// owner's control at the beginning of the next end step."
+#[test]
+fn ennis_asks_a_person_for_up_to_one_other_creature_they_control() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    token(&mut g, P0, 2);
+    let h = person(&mut g, &["Wall of Omens"]);
+    perm(&mut g, P0, "Ennis, Debate Moderator");
+    let q = asks(&h, "Ennis");
+    assert_eq!(q.len(), 1, "{:?}", h.asked());
+    let c = &q[0].choices;
+    assert!(c.iter().any(|x| x.contains("Wall of Omens")) && c.iter().any(|x| x.contains("oken")), "{c:?}");
+    assert!(!c.iter().any(|x| x.contains("Baneslayer")), "only your own creatures: {c:?}");
+    assert!(!c.iter().any(|x| x.starts_with("Ennis")), "'other': {c:?}");
+    assert!(c.iter().any(|x| x.contains("none") || x.contains("no target")), "'up to one': {c:?}");
+    assert!(!g.perm(wall).on_bf && in_exile(&g, P0, "Wall of Omens"));
+    eot_returns(&mut g).unwrap();
+    assert!(on_bf(&g, P0, "Wall of Omens"), "it returns at the end step");
+}
+
+#[test]
+fn ennis_lets_a_person_exile_nothing() {
+    let mut g = tbl();
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    let _h = person(&mut g, &["none"]);
+    perm(&mut g, P0, "Ennis, Debate Moderator");
+    assert!(g.perm(wall).on_bf);
+}
+
+#[test]
+fn ennis_exiles_a_token_for_good_and_it_is_no_card_for_the_counter() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 3);
+    let _h = person(&mut g, &["oken"]);
+    let e = perm(&mut g, P0, "Ennis, Debate Moderator");
+    assert!(!g.perm(t).on_bf);
+    eot_returns(&mut g).unwrap();
+    assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token));
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(g.perm(e).plus, 0, "a token is not a card put into exile");
+}
+
+#[test]
+fn ennis_returns_a_creature_it_exiled_under_its_owners_control() {
+    let mut g = tbl();
+    let stolen = perm(&mut g, P1, "Wall of Omens");
+    sim_core::engine::control::steal(&mut g, P0, stolen, sim_core::engine::control::Duration::Permanent).unwrap();
+    let _h = person(&mut g, &["Wall of Omens"]);
+    perm(&mut g, P0, "Ennis, Debate Moderator");
+    assert!(in_exile(&g, P1, "Wall of Omens"), "owned by P1: it goes to P1's exile");
+    eot_returns(&mut g).unwrap();
+    assert!(on_bf(&g, P1, "Wall of Omens") && !on_bf(&g, P0, "Wall of Omens"), "back under its owner's control");
+}
+
+#[test]
+fn ennis_doubled_asks_a_person_once_per_instance() {
+    let mut g = tbl();
+    let a = perm(&mut g, P0, "Helitrooper");
+    let b = perm(&mut g, P0, "Armory Automaton");
+    perm(&mut g, P0, "Panharmonicon");
+    let h = person(&mut g, &["Helitrooper", "Armory Automaton"]);
+    perm(&mut g, P0, "Ennis, Debate Moderator");
+    assert_eq!(asks(&h, "Ennis").len(), 2, "{:?}", h.asked());
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "two creatures exiled");
+    eot_returns(&mut g).unwrap();
+    assert!(on_bf(&g, P0, "Helitrooper") && on_bf(&g, P0, "Armory Automaton"));
+}
