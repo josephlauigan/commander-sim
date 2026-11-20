@@ -188,7 +188,8 @@ pub fn exile_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
         }
         let Some(c) = g.player(p).exile.iter().copied().find(|&c| &*g.db.get(c).name == name) else { continue };
         let (cg, cp) = cost_of(g, p, c);
-        if !can_pay_spell(g, p, c, cg, &cp, false) {
+        // (cast from exile is a cast from the "lib" zone to the can_cast hooks: Drannith Magistrate stops it)
+        if !crate::engine::cast::castable(g, p, c, "lib") || !can_pay_spell(g, p, c, cg, &cp, false) {
             continue;
         }
         out.push(Opt {
@@ -236,7 +237,10 @@ pub fn warp_leaves_exile(g: &mut Game, p: PlayerId, c: CardId) {
 fn warped_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (cg, cp) = cost_of(g, p, c);
-    if !g.player(p).exile.contains(&c) || !can_pay_spell(g, p, c, cg, &cp, false) {
+    if !g.player(p).exile.contains(&c)
+        || !crate::engine::cast::castable(g, p, c, "lib")
+        || !can_pay_spell(g, p, c, cg, &cp, false)
+    {
         return Ok(false);
     }
     pay_spell(g, p, c, cg, &cp, false)?;

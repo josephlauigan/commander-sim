@@ -815,8 +815,9 @@ fn meathook_cast_x(g: &Game, p: PlayerId, _c: CardId, spare: u32) -> u32 {
 /// opponent controls dies, you gain 1 life." X is chosen as the spell is cast and paid with the cost: a person is
 /// asked as they cast it (the engine's X question for every {X} spell), the AI's X comes from `meathook_x`
 /// (`CardImpl::cast_x`). It is on the stack with the spell (`Ctx::x`, shown to a person who may respond) and stays on the
-/// permanent (`DataKey::CastX`, set as it enters) for the enters trigger, so a counterspell sees it and the trigger
-/// uses it even if mana appears or disappears meanwhile. A permanent that enters any other way (blinked, put onto the
+/// permanent (`DataKey::CastX`, set as it enters) for the enters trigger, which uses it even if mana appears or
+/// disappears meanwhile. Engine-wide X-spell limits: the counter checks read the printed mana value (not X), and a cost
+/// reduction does not apply to {X}. A permanent that enters any other way (blinked, put onto the
 /// battlefield) has X = 0 and shrinks nothing. The enters trigger goes on the stack (the table may respond; a countered
 /// trigger does nothing); every creature on the battlefield gets -X/-X and those with toughness 0 or less die together.
 /// The two dies triggers are compiled.

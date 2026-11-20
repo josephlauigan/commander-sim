@@ -42,7 +42,7 @@
 //!   colourless land (a Wastes) for good.
 
 use crate::cards::{CardDb, Types};
-use crate::engine::cast::cast_card;
+use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::removal::apply_removal;
@@ -533,15 +533,16 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// this turn. Warp {W}". A creature or artifact permanent entering is the engine's enters event; a Treasure, Food or
 /// Clue token (counters on the player in the engine) is an artifact entering too, one trigger each, and arrives through
 /// `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's Treasures, a compiled investigate, a
-/// spell or Tireless Tracker's Clue, Academy Manufactor's three kinds). Warp {W}: cast from the hand for {W} (plus any
+/// spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except Xorn's extra Treasure (Xorn's own
+/// model adds it directly). Her triggers do not depend on her still being on the battlefield when they resolve. Warp {W}: cast from the hand for {W} (plus any
 /// cost increase) and exiled at the beginning of the next end step; its card then waits in its owner's exile and can be
 /// cast for its mana cost on a later turn (`generic_paths::warped_in_exile`: the AI's option and a person's cast from
 /// exile). Her end-step draw is a trigger of its own: it is put on the stack at the beginning of her controller's end
-/// step even as the warp exiles her, so the card is still drawn. The AI warps her in the first main phase when the
+/// step even as the warp exiles her, so the card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first main phase when the
 /// {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two, the draw) or, when
 /// the full cost is out of reach this turn, for one more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if p != owner(g, src) || !live(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
+    if p != owner(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
         return Ok(());
     }
     if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
@@ -552,11 +553,11 @@ fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 
 /// a Treasure, Food or Clue token you create is an artifact entering: one life each
 fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res {
-    if p != owner(g, src) || !live(g, src) {
+    if p != owner(g, src) {
         return Ok(());
     }
     for k in 0..n {
-        if !live(g, src) || !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
+        if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
             continue;
         }
         if k > 0 {
@@ -567,17 +568,15 @@ fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) ->
     Ok(())
 }
 
-/// your end step: draw a card if you gained 3 or more life this turn; a warped Haliya is exiled at the beginning of
-/// the next end step (whose ever it is)
+/// your end step: the trigger always triggers and the "if you've gained 3 or more life this turn" is checked as it
+/// resolves (not an intervening if), whether or not Haliya is still there; a warped Haliya is exiled at the beginning
+/// of the next end step (whose ever it is)
 fn haliya_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if !live(g, src) {
-        return Ok(());
-    }
     let o = owner(g, src);
-    if p == o {
+    if p == o && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))? {
         let st = g.turn_stamp();
         let gained = g.player(p).gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
-        if gained >= 3 && trigger_window(g, p, Some(src), "draw a card", Some(2.0))? {
+        if gained >= 3 {
             draw(g, p, 1, false)?;
         }
     }
@@ -635,6 +634,7 @@ fn haliya_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     if post != Some(false)
         || g.active != Some(p)
         || !g.player(p).hand.contains(&c)
+        || !castable(g, p, c, "hand")
         || !can_pay_spell(g, p, c, haliya_warp_extra(g, p, c), "W", false)
     {
         return Ok(vec![]);
@@ -656,7 +656,7 @@ fn haliya_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 pub(crate) fn haliya_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let extra = haliya_warp_extra(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, extra, "W", false) {
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, extra, "W", false) {
         return Ok(false);
     }
     if !pay_spell(g, p, c, extra, "W", false)? {

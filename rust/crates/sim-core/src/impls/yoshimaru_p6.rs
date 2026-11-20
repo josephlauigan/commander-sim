@@ -4,8 +4,9 @@
 //! code.
 
 use crate::cards::CardDb;
+use crate::cards::Colors;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::pval;
+use crate::engine::values::{pval, untargetable_by_its_controller};
 use crate::engine::zones::{bounce, draw, leave};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
@@ -34,6 +35,7 @@ fn nonland(g: &Game, p: PlayerId, m: PermId) -> bool {
         && g.perm(m).owner == p
         && !g.player(p).lands.contains(&m)
         && g.perm(m).cd.is_none_or(|c| !g.db.get(c).land)
+        && !untargetable_by_its_controller(g, m, Colors::from_letters("W"))
 }
 
 fn candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<Back> {
@@ -68,7 +70,10 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 /// target and drew a card unconditionally; the card's tags carry no draw (data/card_overrides.toml) and this code does
 /// the whole trigger. A permanent goes back to its owner's hand (a commander as the engine's bounce does); a token
 /// ceases to exist and its controller draws a card; a Treasure, Food or Clue token (counters on the player in the
-/// engine) is returned the same way. The target is chosen as the trigger resolves, after the table's window (the engine
+/// engine) is returned the same way. The trigger does not depend on Kirin still being on the battlefield, and the
+/// permanent must be a legal target for it (`values::untargetable_by_its_controller`: shroud, Lightning Greaves,
+/// Whispersilk Cloak, protection from white; hexproof does not stop its controller). The target is chosen as the trigger
+/// resolves, after the table's window (the engine
 /// probes a trigger up to its first window, so a question before it would be asked twice; the same order every card with
 /// a chosen target uses): it does nothing if there is nothing to return. A person chooses among every candidate, or none
 /// ("up to one"). The AI returns the permanent whose enter effect is worth replaying most (`mine::flicker_worth`, at
@@ -76,8 +81,8 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 /// lose), or a token worth less than the card it draws (`pval` under 1: a 1/1 or 2/2 token); it never returns a
 /// Treasure, Food or Clue.
 fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m != src || !live(g, src) || g.perm(src).owner != p {
-        return Ok(());
+    if m != src || g.perm(src).owner != p {
+        return Ok(()); // the trigger does not depend on Kirin still being there
     }
     let human = crate::human::is_human(g, p);
     let mut ai_pick = None;

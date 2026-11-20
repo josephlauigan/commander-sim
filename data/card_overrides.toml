@@ -4743,7 +4743,7 @@ note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X 
 tags = "pow=2 tgh=1 fly flash"
 dsl = []
 status = "Full"
-note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food or Clue token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). A person chooses the permanent, or none, after the trigger's window; the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food or Clue"
+note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food or Clue token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). The trigger does not depend on Kirin still being there; the permanent must be a legal target (shroud, Lightning Greaves, Whispersilk Cloak and protection from white stop its own controller). A person chooses the permanent, or none, as the trigger resolves, after the table's window (the engine's convention for a hand-written trigger's target); the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food or Clue"
 
 ["Survival of the Fittest"]
 types = "E"

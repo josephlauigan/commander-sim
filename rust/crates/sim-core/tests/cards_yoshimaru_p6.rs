@@ -547,7 +547,9 @@ fn warp_is_not_offered_or_cast_under_rule_of_law() {
     assert!(hook_opts(&mut g, c).is_empty(), "no warp option for the AI");
     // the warp play itself checks it too (a person's menu offers it unchecked; its code must still refuse)
     person(&mut g, |_| None);
-    if let Some((_, o)) = sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap().into_iter().find(|(l, _)| l.contains("warp")) {
+    if let Some((_, o)) =
+        sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap().into_iter().find(|(l, _)| l.contains("warp"))
+    {
         assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_some(), "the warp is refused");
     }
     assert!(!has_perm(&g, P0, HALIYA), "it was not cast");
