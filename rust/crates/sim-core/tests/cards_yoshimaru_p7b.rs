@@ -549,3 +549,60 @@ fn an_evoked_solitude_exiles_what_the_person_picks_and_is_then_sacrificed() {
     assert!(!has_perm(&g, P0, SOL), "the evoke sacrifice comes after the exile");
     assert!(g.player(P0).gy.contains(&card(&g, SOL)));
 }
+
+// ------------------------------------------------------------------ The Wandering Emperor, the AI's half
+// "+1: Put a +1/+1 counter on up to one target creature. It gains first strike until end of turn. -1: Create a 2/2 white
+// Samurai creature token with vigilance. -2: Exile target tapped creature. You gain 2 life."
+const EMP: &str = "The Wandering Emperor";
+
+/// the AI at P0 uses the loyalty ability of the Emperor `m` whose label ends with `sign` ("+1", "-2"), if it offers it
+fn ai_uses(g: &mut Game, m: PermId, sign: &str) -> bool {
+    let cd = g.perm(m).cd.unwrap();
+    let f = g.registry.get(cd).and_then(|i| i.options).expect("the Emperor has options");
+    let opts = f(g, m, P0, Some(true)).unwrap();
+    let Some(o) = opts.iter().find(|o| o.label.ends_with(sign)) else { return false };
+    sim_core::ai::act::perform(g, P0, o.act.as_ref().unwrap()).unwrap()
+}
+
+#[test]
+fn the_ais_emperor_plus_one_puts_a_counter_and_first_strike_on_its_creature() {
+    let mut g = tbl();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let emp = perm(&mut g, P0, EMP);
+    let loyalty = g.perm(emp).loyalty;
+    assert!(ai_uses(&mut g, emp, "+1"));
+    assert_eq!(g.perm(elves).plus, 1, "a +1/+1 counter");
+    assert!(g.perm(elves).eot_kw.iter().any(|k| *k == "first strike"), "{:?}", g.perm(elves).eot_kw);
+    assert_eq!(g.perm(emp).loyalty, loyalty.map(|l| l + 1));
+}
+
+#[test]
+fn the_ais_emperor_plus_one_with_no_creature_just_adds_loyalty() {
+    let mut g = tbl();
+    let emp = perm(&mut g, P0, EMP);
+    let loyalty = g.perm(emp).loyalty;
+    assert!(ai_uses(&mut g, emp, "+1"));
+    assert_eq!(g.perm(emp).loyalty, loyalty.map(|l| l + 1));
+}
+
+#[test]
+fn the_ais_emperor_minus_one_makes_a_samurai_with_vigilance() {
+    let mut g = tbl();
+    let emp = perm(&mut g, P0, EMP);
+    assert!(ai_uses(&mut g, emp, "-1"));
+    let samurai: Vec<_> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token).collect();
+    assert_eq!(samurai.len(), 1);
+    assert!(g.perm(samurai[0]).vig, "the Samurai has vigilance");
+}
+
+#[test]
+fn the_ais_emperor_minus_two_still_exiles_an_opposing_tapped_creature_and_gains_two() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Baneslayer Angel");
+    g.perm_mut(big).tapped = true;
+    let emp = perm(&mut g, P0, EMP);
+    let life = g.player(P0).life;
+    assert!(ai_uses(&mut g, emp, "-2"));
+    assert!(in_exile(&g, P1, "Baneslayer Angel"));
+    assert_eq!(g.player(P0).life, life + 2);
+}
