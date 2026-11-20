@@ -787,3 +787,43 @@ fn the_ai_does_not_evoke_when_it_cannot_pay_the_sphere_tax() {
     let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
     assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "no mana for the {{1}}");
 }
+
+/// P1 holds Counterspell with {U}{U} in the pool and passes every priority, so it is asked at each window
+fn passing_opponent(g: &mut Game) -> Arc<ScriptHuman> {
+    hand(g, P1, &["Counterspell"]);
+    pool(g, P1, &[('U', 2)]);
+    let h = Arc::new(ScriptHuman::from_fn(|r| {
+        if r.kind == "priority" { Answer::Action(json!({"do": "pass"})) } else { Answer::Pick(0) }
+    }));
+    g.humans.add(P1, h.clone());
+    h
+}
+
+fn was_offered_the_sacrifice(h: &ScriptHuman) -> bool {
+    h.asked().iter().any(|r| r.kind == "priority" && r.prompt.contains("evoke: sacrifice"))
+}
+
+#[test]
+fn a_persons_evoke_sacrifice_goes_on_the_stack() {
+    let mut g = tbl();
+    let h1 = passing_opponent(&mut g);
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_gy(&g, P0, SOL));
+    let prompts: Vec<_> = h1.asked().iter().map(|r| r.prompt.clone()).collect();
+    assert!(was_offered_the_sacrifice(&h1), "{prompts:?}");
+}
+
+#[test]
+fn the_ais_evoke_sacrifice_goes_on_the_stack() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    let h1 = passing_opponent(&mut g);
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    let opts = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(in_gy(&g, P0, SOL));
+    assert!(was_offered_the_sacrifice(&h1));
+}
