@@ -68,7 +68,7 @@ fn every_enters_hook_is_classified_and_the_dispatcher_agrees() {
     let reg = registry_rows();
     let tab = table_rows();
     let mut bad = vec![];
-    for (k, (trig, both, _)) in &reg {
+    for (k, (trig, both, now)) in &reg {
         let Some((class, _)) = tab.get(k) else {
             bad.push(format!("no row for {} {}", k.0, k.1));
             continue;
@@ -77,6 +77,15 @@ fn every_enters_hook_is_classified_and_the_dispatcher_agrees() {
             bad.push(format!("{} {}: class {class:?} is not T, S, M or N", k.0, k.1));
         } else if *both {
             bad.push(format!("{} {}: marked both enter_trigger and enter_setup", k.0, k.1));
+        } else if class == "S" && !now {
+            bad.push(format!(
+                "{} {}: setup is not a triggered ability, so it runs as the permanent enters, never from the queue",
+                k.0, k.1
+            ));
+        } else if class == "M" && !now {
+            bad.push(format!("{} {}: a mixed hook decides at the event, so it runs now", k.0, k.1));
+        } else if !now && class != "T" && class != "N" {
+            bad.push(format!("{} {}: a queued hook that is not caused by the entering is N", k.0, k.1));
         } else if (class == "T") != *trig {
             bad.push(format!(
                 "{} {}: row says {class}, the dispatcher treats it as {}",

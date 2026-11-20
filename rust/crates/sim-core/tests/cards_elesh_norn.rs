@@ -495,14 +495,6 @@ fn a_sagas_lore_counter_is_a_game_rule_not_an_enters_trigger_so_elesh_neither_bl
 }
 
 #[test]
-fn end_raze_forerunners_pump_is_an_enters_trigger_that_your_elesh_adds_to() {
-    let mut g = tbl();
-    perm(&mut g, P0, ELESH);
-    perm(&mut g, P0, "End-Raze Forerunners");
-    assert_eq!(g.player(P0).pumpadd, 4, "+2/+2 for each of two triggers");
-}
-
-#[test]
 fn panharmonicon_adds_a_trigger_to_a_treasure_entering() {
     let mut g = tbl();
     perm(&mut g, P0, PANHARM);
@@ -684,15 +676,6 @@ fn opponent_elesh_blanks_meathook_massacre() {
 }
 
 #[test]
-fn opponent_elesh_blanks_end_raze_pump() {
-    let mut g = tbl();
-    perm(&mut g, P0, "Mother of Runes");
-    elesh_opp(&mut g);
-    perm(&mut g, P0, "End-Raze Forerunners");
-    assert_eq!(g.player(P0).pumpadd, 0, "Forerunners' When-enters pump trigger must be blanked");
-}
-
-#[test]
 fn opponent_elesh_blanks_socialites_own_enters_trigger_but_keeps_the_replacement() {
     let mut g = tbl();
     elesh_opp(&mut g);
@@ -729,4 +712,343 @@ fn tome_of_legends_commander_page_is_blanked_by_an_opponents_elesh() {
     elesh_opp(&mut g);
     fire_trigger(&mut g, Event::Etb, Call::Etb { p: P0, m: cmd }).unwrap();
     assert_eq!(g.perm(t).data.int(DataKey::Counters), 2, "an opponent's Elesh blanks that trigger");
+}
+
+// ================================================================== round 3 (ported from the adversarial review)
+/// a permanent put onto the battlefield with no enters event (a fixture for firing one by hand)
+fn raw(g: &mut Game, p: PlayerId, name: &str) -> PermId {
+    let cd = card(g, name);
+    let m = g.new_perm(p, Some(cd), "", 0, 0);
+    g.perm_mut(m).on_bf = true;
+    g.player_mut(p).perms.push(m);
+    g.hooks.push(m);
+    m
+}
+
+/// your commander enters: the enters event, fired by hand
+fn commander_event(g: &mut Game) {
+    use sim_core::engine::hooks::fire_trigger;
+    use sim_core::hooks::{Call, Event};
+    let m = raw(g, P0, "Heliod, Sun-Crowned");
+    g.perm_mut(m).is_cmd = true;
+    fire_trigger(g, Event::Etb, Call::Etb { p: P0, m }).unwrap();
+}
+
+fn pages(g: &Game, m: PermId) -> i64 {
+    g.perm(m).data.int(DataKey::Counters)
+}
+
+fn throne_centaur(g: &mut Game) {
+    let throne = perm(g, P0, "Roaming Throne");
+    g.perm_mut(throne).data.set(DataKey::Ctype, Val::Str("centaur"));
+}
+
+// ------------------------------------------------------------------ Tome of Legends: a replacement and a trigger
+#[test]
+fn tomes_commander_trigger_still_doubles_with_panharmonicon() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    commander_event(&mut g);
+    assert_eq!(pages(&g, tome), 3, "its page as it enters, then 1 + Panharmonicon for the commander");
+}
+
+#[test]
+fn tomes_commander_trigger_still_doubles_with_a_vocalist() {
+    let mut g = tbl();
+    perm(&mut g, P0, VOCALIST);
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    commander_event(&mut g);
+    assert_eq!(pages(&g, tome), 3);
+}
+
+#[test]
+fn tomes_blanking_is_decided_when_the_commander_enters_not_when_the_trigger_resolves() {
+    let mut g = tbl();
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    g.resolving = 1;
+    commander_event(&mut g);
+    raw(&mut g, P1, ELESH);
+    g.resolving = 0;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(pages(&g, tome), 2, "an Elesh that came later cannot erase a trigger that already happened");
+}
+
+#[test]
+fn a_blanked_tome_trigger_does_not_come_back_when_elesh_leaves() {
+    let mut g = tbl();
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    let elesh = perm(&mut g, P1, ELESH);
+    g.resolving = 1;
+    commander_event(&mut g);
+    zones::bounce(&mut g, elesh).unwrap();
+    g.resolving = 0;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(pages(&g, tome), 1, "the commander entered under Elesh: no page");
+}
+
+#[test]
+fn tomes_commander_trigger_adds_up_with_elesh_panharmonicon_and_a_vocalist() {
+    let mut g = tbl();
+    for s in [ELESH, PANHARM, VOCALIST] {
+        perm(&mut g, P0, s);
+    }
+    let tome = perm(&mut g, P0, "Tome of Legends");
+    commander_event(&mut g);
+    assert_eq!(pages(&g, tome), 5, "one page as it enters + 1 + three additional triggers");
+}
+
+// ------------------------------------------------------------------ setup is not a triggered ability: no source copies
+#[test]
+fn freestrider_is_not_copied_by_roaming_throne() {
+    let mut g = tbl();
+    throne_centaur(&mut g);
+    let m = perm(&mut g, P0, "Freestrider Commando");
+    assert_eq!(g.perm(m).plus, 2, "enters WITH counters is not a triggered ability");
+}
+
+#[test]
+fn freestrider_is_not_copied_by_delney() {
+    use sim_core::engine::hooks::fire_trigger;
+    use sim_core::hooks::{Call, Event};
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let m = raw(&mut g, P0, "Freestrider Commando");
+    g.perm_mut(m).eot_pt = (-2, 0);
+    fire_trigger(&mut g, Event::Etb, Call::Etb { p: P0, m }).unwrap();
+    assert_eq!(g.perm(m).plus, 2, "Delney must not copy a replacement");
+}
+
+#[test]
+fn freestrider_is_not_copied_by_roaming_throne_under_an_opponents_elesh() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    throne_centaur(&mut g);
+    let m = perm(&mut g, P0, "Freestrider Commando");
+    assert_eq!(g.perm(m).plus, 2);
+}
+
+#[test]
+fn a_creature_saga_still_triggers_twice_under_roaming_throne() {
+    // chapter I of a creature Saga is a triggered ability of a creature: Throne's additional trigger is legal
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Roaming Throne");
+    g.perm_mut(t).data.set(DataKey::Ctype, Val::Str("dragon"));
+    perm(&mut g, P0, "Summon: Bahamut");
+    let n = g.player(P0).stats.get(&sim_core::sym::intern("bahamut_chapters")).copied().unwrap_or(0);
+    assert_eq!(n, 2, "chapter I: 1 + Throne");
+}
+
+// ------------------------------------------------------------------ End-Raze Forerunners: the creatures there now
+#[test]
+fn end_raze_pumps_the_other_creatures_you_control_once_per_trigger() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    let other = perm(&mut g, P0, "Mother of Runes");
+    let end = perm(&mut g, P0, "End-Raze Forerunners");
+    assert_eq!(g.perm(other).eot_pt, (4, 4), "+2/+2 for each of two triggers");
+    assert_eq!(g.perm(end).eot_pt, (0, 0), "other creatures only");
+    let later = perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.perm(later).eot_pt, (0, 0), "the recipients are fixed as it resolves");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_the_end_raze_pump() {
+    let mut g = tbl();
+    let other = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    perm(&mut g, P0, "End-Raze Forerunners");
+    assert_eq!(g.perm(other).eot_pt, (0, 0));
+}
+
+#[test]
+fn end_raze_two_triggers_add_toughness_not_only_power() {
+    let mut g = tbl();
+    perm(&mut g, P0, VOCALIST);
+    let other = perm(&mut g, P0, "Mother of Runes");
+    let end = perm(&mut g, P0, "End-Raze Forerunners");
+    assert_eq!(sim_core::engine::chars::toughness(&g, other), 5, "1 + 4");
+    assert_eq!(sim_core::engine::chars::power(&g, end), 3, "the source is not pumped");
+}
+
+#[test]
+fn end_raze_other_creatures_gain_vigilance_and_trample() {
+    let mut g = tbl();
+    let other = perm(&mut g, P0, "Mother of Runes");
+    perm(&mut g, P0, "End-Raze Forerunners");
+    assert!(sim_core::dsl::has_kw(&g, other, "vigilance"));
+    assert!(sim_core::dsl::has_kw(&g, other, "trample"));
+}
+
+// ------------------------------------------------------------------ a static hidden in a trigger's hook
+#[test]
+fn righteous_valkyries_anthem_survives_an_opponents_elesh() {
+    let mut g = tbl();
+    g.player_mut(P0).life = 50;
+    let other = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    perm(&mut g, P0, "Righteous Valkyrie");
+    assert_eq!(sim_core::engine::chars::power(&g, other), 3, "+2/+2 above starting life + 7 is a static");
+}
+
+#[test]
+fn boons_blessing_counter_anthem_survives_an_opponents_elesh() {
+    let mut g = tbl();
+    let other = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    let boon = perm(&mut g, P0, "Boon of the Spirit Realm");
+    assert_eq!(pages(&g, boon), 0, "its constellation trigger is blanked");
+    g.perm_mut(boon).data.set(DataKey::Counters, Val::Int(2));
+    assert_eq!(sim_core::engine::chars::power(&g, other), 3, "the anthem is a static");
+}
+
+// ------------------------------------------------------------------ Invasion of Ikoria
+#[test]
+fn an_opponents_elesh_blanks_invasion_of_ikorias_search_but_not_its_defense() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let creature = take(&mut g, P0, "Elvish Mystic");
+    g.player_mut(P0).gy.push(creature);
+    let spell = take(&mut g, P0, "Invasion of Ikoria // Zilortha, Apex of Ikoria");
+    sim_core::engine::cast::resolve(&mut g, P0, spell, &sim_core::state::Ctx { x: 1, ..Default::default() }, "hand")
+        .unwrap();
+    let battle = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd == Some(spell)).unwrap();
+    assert_eq!(sim_core::impls::card_models3::defense(&g, battle), 6, "defense counters are setup");
+    assert!(sim_core::impls::card_models3::protector(&g, battle).is_some(), "the protector is chosen as it enters");
+    assert!(g.player(P0).gy.contains(&creature), "the Siege's enters search is blanked");
+}
+
+// ------------------------------------------------------------------ lands
+fn land_drop(g: &mut Game, p: PlayerId, name: &str) -> PermId {
+    let c = take(g, p, name);
+    let before = g.perms.len();
+    turn::play_land_card(g, p, c, "plays").unwrap();
+    (before..g.perms.len()).map(|i| PermId(i as u32)).find(|&m| g.perm(m).cd == Some(c)).unwrap()
+}
+
+#[test]
+fn an_opponents_elesh_blanks_bojuka_bogs_exile() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let c = take(&mut g, P1, "Grave Titan");
+    g.player_mut(P1).gy.push(c);
+    land_drop(&mut g, P0, "Bojuka Bog");
+    assert!(g.player(P1).gy.contains(&c));
+}
+
+#[test]
+fn an_opponents_elesh_blanks_aether_hubs_energy() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let before = g.player(P0).energy;
+    land_drop(&mut g, P0, "Aether Hub");
+    assert_eq!(g.player(P0).energy, before);
+}
+
+#[test]
+fn an_opponents_elesh_blanks_lotus_fields_sacrifice() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    elesh_opp(&mut g);
+    land_drop(&mut g, P0, "Lotus Field");
+    assert_eq!(g.player(P0).lands.len(), 3);
+}
+
+#[test]
+fn an_opponents_elesh_blanks_mortuary_mires_return() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let c = take(&mut g, P0, "Mother of Runes");
+    g.player_mut(P0).gy.push(c);
+    land_drop(&mut g, P0, "Mortuary Mire");
+    assert!(g.player(P0).gy.contains(&c));
+}
+
+#[test]
+fn an_opponents_elesh_blanks_mystic_sanctuarys_return() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 3, false);
+    elesh_opp(&mut g);
+    let c = take(&mut g, P0, "Counterspell");
+    g.player_mut(P0).gy.push(c);
+    land_drop(&mut g, P0, "Mystic Sanctuary");
+    assert!(g.player(P0).gy.contains(&c), "the return is a trigger");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_the_hideaway_of_mosswort_bridge_and_windbrisk_heights() {
+    for name in ["Mosswort Bridge", "Windbrisk Heights"] {
+        let mut g = tbl();
+        elesh_opp(&mut g);
+        let land = land_drop(&mut g, P0, name);
+        assert!(!g.perm(land).data.truthy(DataKey::Hidden), "{name}: Hideaway is an enters trigger");
+    }
+}
+
+#[test]
+fn an_opponents_elesh_blanks_petrified_hamlets_naming() {
+    let mut g = tbl();
+    lands(&mut g, P1, "War Room", 1, false);
+    elesh_opp(&mut g);
+    let land = land_drop(&mut g, P0, "Petrified Hamlet");
+    assert!(!g.perm(land).data.truthy(DataKey::Imprint), "it says When, not As");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_talon_gates_phasing() {
+    let mut g = tbl();
+    let elesh = perm(&mut g, P1, ELESH);
+    land_drop(&mut g, P0, "Talon Gates of Madara");
+    assert!(!g.perm(elesh).phased);
+}
+
+#[test]
+fn an_opponents_elesh_blanks_a_bouncelands_return_and_glacial_chasms_sacrifice() {
+    for name in ["Izzet Boilerworks", "Glacial Chasm"] {
+        let mut g = tbl();
+        lands(&mut g, P0, "Island", 1, false);
+        elesh_opp(&mut g);
+        land_drop(&mut g, P0, name);
+        assert_eq!(g.player(P0).lands.len(), 2, "{name}");
+    }
+}
+
+// the lands' own enters rules stay
+#[test]
+fn an_opponents_elesh_leaves_urzas_sagas_lore_counter() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let l = land_drop(&mut g, P0, "Urza's Saga");
+    assert!(g.player(P0).sagas.iter().any(|s| s.0 == l), "a Saga's lore counter is put as it enters");
+}
+
+#[test]
+fn an_opponents_elesh_leaves_mystic_sanctuary_untapped() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 3, false);
+    elesh_opp(&mut g);
+    let l = land_drop(&mut g, P0, "Mystic Sanctuary");
+    assert!(!g.perm(l).tapped, "the untapped entry is a replacement");
+}
+
+#[test]
+fn an_opponents_elesh_leaves_city_of_traitors_sacrificed_when_you_play_another_land() {
+    // "when you play another land" is caused by a land being played, not by one entering
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let city = land_drop(&mut g, P0, "City of Traitors");
+    land_drop(&mut g, P0, "Plains");
+    assert!(!g.player(P0).lands.contains(&city));
+}
+
+#[test]
+fn an_opponents_elesh_leaves_cavern_of_souls_naming_a_type() {
+    use sim_core::control::Answer;
+    use sim_core::human::script::ScriptHuman;
+    use std::sync::Arc;
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    g.humans.add(P0, Arc::new(ScriptHuman::from_fn(|_| Answer::Pick(0))));
+    let l = land_drop(&mut g, P0, "Cavern of Souls");
+    assert!(g.perm(l).data.get(DataKey::Ctype).is_some(), "as it enters, choose a creature type");
 }
