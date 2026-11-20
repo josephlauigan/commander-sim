@@ -104,6 +104,10 @@ fn every_enters_hook_is_classified_and_the_dispatcher_agrees() {
                 EVENTS.into_iter().find(|e| format!("{e:?}") == k.1).unwrap(),
             );
         }
+        // I3: a mixed hook owns its helper loop; the dispatcher must never multiply that hook too.
+        if class == "M" {
+            assert!(*now && !trig && !queues, "{k:?}: enters_trigger_times belongs outside dispatcher T hooks");
+        }
         if !matches!(class.as_str(), "T" | "S" | "M" | "N") {
             bad.push(format!("{} {}: class {class:?} is not T, S, M or N", k.0, k.1));
         } else if *both {
