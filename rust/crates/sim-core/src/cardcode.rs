@@ -718,6 +718,7 @@ pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
     }
     g.monarch = Some(p);
     crate::glog!(g, "    {} becomes the monarch", g.player(p).name);
+    crate::impls::t2::jail_release(g, p)?; // Palace Jailer: what an opponent of its controller's crown frees
     crate::impls::garland::crown_moved(g, p);
     if g.garland {
         garland_check(g);

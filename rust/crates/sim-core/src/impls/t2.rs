@@ -292,29 +292,75 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
 }
 
 // ======================================================== monarch, Palace Jailer
-/// monarch (end-step draw, taken by combat damage); exiles a creature until an opponent becomes the monarch
+/// Palace Jailer: "When this creature enters, you become the monarch." and, as a second trigger of its own (a Stifle
+/// on one leaves the other), "When this creature enters, exile target creature an opponent controls until an opponent
+/// becomes the monarch."
 fn jailer(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
-    if !trigger_window(g, o, Some(src), "become the monarch; exile a creature", Some(5.0))? {
+    if trigger_window(g, o, Some(src), "become the monarch", Some(5.0))? {
+        crate::cardcode::become_monarch(g, o)?;
+    }
+    jailer_exile(g, src, o)
+}
+
+/// the Jailer's second trigger: the target is mandatory for a person (any creature an opponent controls); the AI takes
+/// its most valuable one when it is worth at least 1. The creature is linked to the game, not to the Jailer: it
+/// returns when an opponent of its controller becomes the monarch (`jail_release`), whatever happened to the Jailer.
+pub fn jailer_exile(g: &mut Game, src: PermId, o: PlayerId) -> Res {
+    let human = crate::human::is_human(g, o);
+    let targets =
+        |g: &Game| super::yoshimaru_p7::targets_from(g, o, src, |g, x| g.perm(x).owner != o && g.is_creature(x));
+    let wanted = |g: &Game| max_by(&targets(g), |m| pval(g, m)).filter(|&t| pval(g, t) >= 1.0);
+    if if human { targets(g).is_empty() } else { wanted(g).is_none() } {
         return Ok(());
     }
-    crate::cardcode::become_monarch(g, o)?;
-    if on(g, o, src) {
-        oring_exile(g, src, o, |g, x| g.is_creature(x), false, false)?;
+    if !trigger_window(g, o, Some(src), "exile a creature until an opponent becomes the monarch", Some(5.0))? {
+        return Ok(());
+    }
+    let t = if human {
+        let cands = targets(g);
+        crate::human::gaps_t2::pick_target(
+            g,
+            o,
+            &cands,
+            "Palace Jailer: exile which creature an opponent controls?",
+            None,
+        )?
+    } else {
+        wanted(g)
+    };
+    let Some(t) = t else { return Ok(()) };
+    let src_cd = g.perm(src).cd;
+    apply_removal(g, Some(o), t, "exile", src_cd)?;
+    let x = g.perm(t);
+    if !x.on_bf && !x.token {
+        let (cd, orig) = (x.phys.or(x.cd).unwrap(), x.orig);
+        if !g.player(orig).is_commander(cd) && g.player(orig).exile.contains(&cd) {
+            let e = super::common::link_exiled(g, orig, cd, src);
+            g.jailed.push((o, e));
+        }
     }
     Ok(())
 }
 
-/// an opponent became the monarch: what the Jailer exiled returns
-fn jailer_lose(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) {
-        oring_return(g, src)?;
+/// p became the monarch: what the Jailers exiled returns when p is an opponent of the Jailer's controller. The link
+/// outlives the Jailer, and the controller's leaving the game (its opponents are still its opponents: CR 800.4i).
+pub fn jail_release(g: &mut Game, p: PlayerId) -> Res {
+    if g.jailed.is_empty() {
+        return Ok(());
     }
-    if !g.perm(src).data.is_empty() {
-        g.perm_mut(src).data.set(DataKey::Oring, Val::List(vec![]));
+    let (release, keep): (Vec<_>, Vec<_>) = std::mem::take(&mut g.jailed).into_iter().partition(|&(c, _)| c != p);
+    g.jailed = keep;
+    for (_, e) in release {
+        let Some((cd, o, i)) = super::common::linked(g, &e) else { continue };
+        if g.player(o).alive {
+            g.player_mut(o).exile.remove(i);
+            enter(g, o, cd, Enter::default())?;
+            crate::glog!(g, "    {} returns to the battlefield", g.db.get(cd).name);
+        }
     }
     Ok(())
 }
@@ -1618,7 +1664,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // monarch, Palace Jailer
     let c = r.card(db, "Palace Jailer")?;
     c.etb = Some(jailer);
-    c.monarch = Some(jailer_lose);
     // Brago and blink
     r.card(db, "Brago, King Eternal")?.combat_damage = Some(brago);
     let c = r.card(db, "Soulherder")?;

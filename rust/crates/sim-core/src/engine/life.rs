@@ -295,6 +295,15 @@ pub fn check_state(g: &mut Game) -> Res {
             eliminate(g, PlayerId(i as u8));
         }
     }
+    // the monarch left the game: the player whose turn it is becomes the monarch; if that player has left too, the next
+    // one in turn order
+    if let Some(m) = g.monarch.filter(|&m| !g.player(m).alive) {
+        let from = g.active.unwrap_or(m);
+        let next = Some(from).filter(|&a| g.player(a).alive).or_else(|| g.after(from).find(|&q| g.player(q).alive));
+        if let Some(n) = next {
+            crate::cardcode::become_monarch(g, n)?;
+        }
+    }
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     if alive.len() <= 1 && !g.goldfish {
         g.over = true;

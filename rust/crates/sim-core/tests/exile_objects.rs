@@ -7,7 +7,7 @@ use sim_core::engine::exile::{ExileId, ExileZone};
 use sim_core::engine::turn;
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::state::{DataKey, Game, Val};
+use sim_core::state::{Game, Val};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
@@ -42,8 +42,9 @@ fn until_leaves_returns_the_object_it_exiled() {
     assert!(g.player(P1).exile.contains(&c));
     let i = g.player(P1).exile.iter().position(|&x| x == c).unwrap();
     assert_eq!(g.player(P1).exile.obj(i).until, Some(j), "linked to the Jailer");
-    let Some(Val::List(held)) = g.perm(j).data.get(DataKey::Oring) else { panic!("the Jailer holds it") };
-    assert!(matches!(&held[0], Val::List(e) if e.len() == 3), "[card, owner, exile id]");
+    let [(who, Val::List(held))] = &g.jailed[..] else { panic!("the game holds it") };
+    assert_eq!(*who, P0, "the Jailer's controller");
+    assert_eq!(held.len(), 3, "[card, owner, exile id]");
     // the card leaves exile (cast from exile, say) and something else exiles it again
     assert!(g.player_mut(P1).exile.take(c));
     g.player_mut(P1).exile.push(c);

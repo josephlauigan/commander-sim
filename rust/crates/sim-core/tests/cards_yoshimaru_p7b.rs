@@ -428,10 +428,27 @@ fn palace_jailer_doubled_asks_a_person_once_per_instance_and_exiles_two_creature
     let mut g = tbl();
     perm(&mut g, P1, "Baneslayer Angel");
     perm(&mut g, P1, "Wall of Omens");
+    perm(&mut g, P1, "Llanowar Elves");
     perm(&mut g, P0, "Panharmonicon");
     let h = person(&mut g, &["Baneslayer", "Wall"]);
     perm(&mut g, P0, "Palace Jailer");
     assert_eq!(asks(&h, "Palace Jailer").len(), 2, "{:?}", h.asked());
-    assert_eq!(exiled_creatures(&g, P1), 2, "both are exiled");
+    assert_eq!(exiled_creatures(&g, P1), 2, "two are exiled, the one nobody picked stays");
+    assert!(on_bf(&g, P1, "Llanowar Elves"));
     assert_eq!(g.monarch, Some(P0));
+}
+#[test]
+fn palace_jailer_creature_stays_when_its_controller_takes_the_monarchy_back() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Palace Jailer"); // nothing to exile yet; P0 is the monarch
+    let j = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == "Palace Jailer").unwrap();
+    g.monarch = Some(P1); // the monarch trigger did nothing (it was countered): an opponent holds the crown
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    sim_core::impls::t2::jailer_exile(&mut g, j, P0).unwrap();
+    assert!(in_exile(&g, P1, "Baneslayer Angel"), "exiled though an opponent is the monarch");
+    sim_core::cardcode::become_monarch(&mut g, P0).unwrap(); // the Jailer's controller takes it
+    assert!(in_exile(&g, P1, "Baneslayer Angel"), "nothing returns when its controller becomes the monarch");
+    assert!(!g.perm(t).on_bf);
+    sim_core::cardcode::become_monarch(&mut g, P2).unwrap(); // any other opponent
+    assert!(on_bf(&g, P1, "Baneslayer Angel"), "any opponent becoming the monarch returns it");
 }
