@@ -282,6 +282,14 @@ fn ennis_exiles_a_token_for_good_and_it_is_no_card_for_the_counter() {
     assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token));
     sim_core::engine::turn::end_step(&mut g, P0).unwrap();
     assert_eq!(g.perm(e).plus, 0, "a token is not a card put into exile");
+
+    // a card exiled the same way is
+    let mut g = tbl();
+    perm(&mut g, P0, "Wall of Omens");
+    let _h = person(&mut g, &["Wall of Omens"]);
+    let e = perm(&mut g, P0, "Ennis, Debate Moderator");
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(g.perm(e).plus, 1, "a card put into exile gives the counter");
 }
 
 #[test]
@@ -437,6 +445,7 @@ fn palace_jailer_doubled_asks_a_person_once_per_instance_and_exiles_two_creature
     assert!(on_bf(&g, P1, "Llanowar Elves"));
     assert_eq!(g.monarch, Some(P0));
 }
+
 #[test]
 fn palace_jailer_creature_stays_when_its_controller_takes_the_monarchy_back() {
     let mut g = tbl();
@@ -576,6 +585,7 @@ fn the_ais_emperor_plus_one_puts_a_counter_and_first_strike_on_its_creature() {
     assert_eq!(g.perm(emp).loyalty, loyalty.map(|l| l + 1));
 }
 
+// Control: with no creature to aim at the +1 only adds loyalty.
 #[test]
 fn the_ais_emperor_plus_one_with_no_creature_just_adds_loyalty() {
     let mut g = tbl();
@@ -595,8 +605,9 @@ fn the_ais_emperor_minus_one_makes_a_samurai_with_vigilance() {
     assert!(g.perm(samurai[0]).vig, "the Samurai has vigilance");
 }
 
+// Control: the -2 takes an opposing tapped creature.
 #[test]
-fn the_ais_emperor_minus_two_still_exiles_an_opposing_tapped_creature_and_gains_two() {
+fn the_ais_emperor_minus_two_exiles_an_opposing_tapped_creature_and_gains_two() {
     let mut g = tbl();
     let big = perm(&mut g, P1, "Baneslayer Angel");
     g.perm_mut(big).tapped = true;
@@ -800,4 +811,90 @@ fn flickerwisp_ai_does_not_aim_at_a_creature_with_protection_from_white() {
     perm(&mut g, P0, "Flickerwisp");
     assert!(g.perm(b).on_bf, "a white source can't target it");
     assert!(!in_exile(&g, P1, "Malakir Bloodwitch"));
+}
+
+// ------------------------------------------------------------------ what a returned land does as it enters
+#[test]
+fn a_land_flickerwisp_returns_gives_its_owner_landfall() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Island", 1, false);
+    perm(&mut g, P1, "Tatyova, Benthic Druid");
+    let (hand, life) = (g.player(P1).hand.len(), g.player(P1).life);
+    let _h = person(&mut g, &["Island"]);
+    perm(&mut g, P0, "Flickerwisp");
+    assert!(in_exile(&g, P1, "Island"));
+    end_step(&mut g);
+    assert!(on_bf(&g, P1, "Island"));
+    assert_eq!(g.player(P1).hand.len(), hand + 1, "landfall: Tatyova draws for the owner");
+    assert_eq!(g.player(P1).life, life + 1);
+}
+
+#[test]
+fn a_gain_land_flickerwisp_returns_gains_life_and_enters_tapped() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Scoured Barrens", 1, false);
+    let life = g.player(P1).life;
+    let _h = person(&mut g, &["Scoured Barrens"]);
+    perm(&mut g, P0, "Flickerwisp");
+    end_step(&mut g);
+    let l = land_named(&g, P1, "Scoured Barrens").expect("it returns");
+    assert!(g.perm(l).tapped);
+    assert_eq!(g.player(P1).life, life + 1, "its enters trigger");
+}
+
+#[test]
+fn a_bounceland_flickerwisp_returns_returns_another_land_to_its_owners_hand() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Island", 1, false);
+    lands(&mut g, P1, "Izzet Boilerworks", 1, false);
+    let hand = g.player(P1).hand.len();
+    let _h = person(&mut g, &["Izzet Boilerworks"]);
+    perm(&mut g, P0, "Flickerwisp");
+    end_step(&mut g);
+    assert!(land_named(&g, P1, "Izzet Boilerworks").is_some());
+    assert_eq!(g.player(P1).hand.len(), hand + 1, "a land goes back to the hand");
+    assert!(land_named(&g, P1, "Island").is_none(), "the other land");
+}
+
+#[test]
+fn a_legendary_land_felidar_blinks_puts_a_counter_on_yoshimaru() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, "Yoshimaru, Ever Faithful");
+    lands(&mut g, P0, "Eiganjo, Seat of the Empire", 1, false);
+    let before = g.perm(y).plus;
+    let _h = person(&mut g, &["Eiganjo"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    assert_eq!(g.perm(y).plus, before + 1, "a legendary permanent entered");
+}
+
+// ------------------------------------------------------------------ Palace Jailer: its controller leaves, copies
+#[test]
+fn palace_jailer_creature_returns_when_a_third_player_takes_the_crown_after_its_controller_left() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    let _h = person(&mut g, &["Baneslayer"]);
+    perm(&mut g, P0, "Palace Jailer");
+    g.monarch = Some(P2);
+    g.active = Some(P2);
+    sim_core::engine::life::lose_life(&mut g, P0, 40, Some(P2), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.player(P0).alive);
+    assert_eq!(g.monarch, Some(P2), "the monarch is unchanged");
+    assert!(in_exile(&g, P1, "Baneslayer Angel"), "nothing has freed it yet");
+    sim_core::cardcode::become_monarch(&mut g, P1).unwrap();
+    assert!(on_bf(&g, P1, "Baneslayer Angel"), "its controller's opponents are still its opponents: it returns");
+}
+
+#[test]
+fn palace_jailer_doubled_by_delney_asks_a_person_once_per_instance() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P1, "Wall of Omens");
+    perm(&mut g, P1, "Llanowar Elves");
+    perm(&mut g, P0, "Delney, Streetwise Lookout");
+    let h = person(&mut g, &["Baneslayer", "Wall"]);
+    perm(&mut g, P0, "Palace Jailer");
+    assert_eq!(asks(&h, "Palace Jailer").len(), 2, "{:?}", h.asked());
+    assert_eq!(exiled_creatures(&g, P1), 2, "two are exiled");
+    assert!(on_bf(&g, P1, "Llanowar Elves"));
 }
