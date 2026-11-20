@@ -478,7 +478,7 @@ fn wispdrinker_event_and_source_extras_add_on_both_paths() {
         } else {
             perm(&mut g, A, "Llanowar Elves");
         }
-        assert_eq!([g.player(A).life - before[0], before[1] - g.player(B).life], [9, 3]);
+        assert_eq!([g.player(A).life - before[0], before[1] - g.player(B).life], [3, 3]);
     }
 }
 

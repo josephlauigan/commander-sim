@@ -224,7 +224,7 @@ fn wispdrinker_delney_small_nontoken_drains_twice() {
     let (life, before) = (g.player(P0).life, opp_life(&g));
     perm(&mut g, P0, "Llanowar Elves");
     assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
-    assert_eq!(g.player(P0).life, life + 6);
+    assert_eq!(g.player(P0).life, life + 2);
 }
 #[test]
 fn wispdrinker_delney_small_token_drains_twice() {
@@ -234,7 +234,7 @@ fn wispdrinker_delney_small_token_drains_twice() {
     let (life, before) = (g.player(P0).life, opp_life(&g));
     token(&mut g, P0, 1);
     assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
-    assert_eq!(g.player(P0).life, life + 6);
+    assert_eq!(g.player(P0).life, life + 2);
 }
 
 // P6's TokensEnter adapter queues the real ETB triggers. Dispatcher-level source extras would count them twice.

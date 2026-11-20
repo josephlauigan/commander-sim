@@ -366,7 +366,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
                     for &q in &opps {
                         lose_life(g, q, k, Some(p), "drain", None)?;
                     }
-                    gain(g, p, k * opps.len() as i32)?;
+                    gain(g, p, k)?;
                 }
             }
         }
@@ -509,14 +509,14 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
                 lose_life(g, q, copies, Some(p), "drain", Some(true))?; // Warleader's Call deals damage
             }
         }
-        if has(g, p, Tag::Wisp) && epow(g, m) <= 2 && !card_tag(g, m, Tag::Wisp) {
-            for w in find(g, p, Tag::Wisp) {
+        if has(g, p, Tag::Wisp) && epow(g, m) <= 2 {
+            for w in find(g, p, Tag::Wisp).into_iter().filter(|&w| w != m) {
                 for _ in 0..1 + hooks::enter_copies(g, p, Some(m)) as usize + crate::engine::stack::extra_for(g, w) {
                     let opps: Vec<_> = g.opps(p).collect();
                     for &q in &opps {
                         lose_life(g, q, 1, Some(p), "drain", None)?;
                     }
-                    gain(g, p, opps.len() as i32)?;
+                    gain(g, p, 1)?;
                 }
             }
         }
