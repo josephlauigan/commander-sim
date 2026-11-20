@@ -1355,7 +1355,7 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if g.db.get(cd).has_dsl() || opp_has(g, p, Tag::Mother) {
         return Ok(()); // the ability language handles its abilities
     }
-    let mut reps = if has(g, p, Tag::Mother) && g.db.get(cd).creature { 2 } else { 1 };
+    let mut reps = 1;
     etb_static(g, p, m)?;
     if !etb_triggers(g, cd) {
         return Ok(());
