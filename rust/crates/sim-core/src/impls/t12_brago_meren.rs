@@ -443,7 +443,13 @@ fn wisp_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn exile_until_end(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let x = g.perm(m);
     let (q, card, token) = (x.orig, x.phys.or(x.cd), x.token);
-    if x.owner == p {
+    if g.player(x.owner).lands.contains(&m) {
+        // a land is listed apart from the permanents; an opponent's may have ward
+        if x.owner != p && !crate::engine::ward::pay_ward(g, p, m)? {
+            return Ok(());
+        }
+        super::yoshimaru_p7::exile_land(g, m)?;
+    } else if x.owner == p {
         exile_perm(g, m)?;
     } else {
         apply_removal(g, Some(p), m, "exile", None)?;

@@ -386,7 +386,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
 
 /// what a land does as it enters, however it came (played, or a token copy of it): Glacial Chasm's sacrifice, a
 /// bounceland's return, landfall, a fetch land cracked at once
-fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
+pub(crate) fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     // Glacial Chasm's and a bounceland's "When this land enters": triggered abilities (an opponent's Elesh Norn stops them)
