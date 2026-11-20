@@ -519,10 +519,19 @@ fn isshin_and_kaalia_do_not_let_the_angel_kaalia_put_in_hear_the_attack() {
     let b = token(&mut g, P0, 1);
     g.player_mut(P0).hand.clear();
     hand(&mut g, P0, &["Aurelia, the Law Above"]);
-    combat::attack_triggers(&mut g, P0, &[k, a, b], P1).unwrap();
-    assert!(
-        g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == "Aurelia, the Law Above"),
-        "Kaalia put Aurelia onto the battlefield attacking"
-    );
+    let new = combat::attack_triggers(&mut g, P0, &[k, a, b], P1).unwrap();
+    let aurelia = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Aurelia, the Law Above");
+    assert!(aurelia.is_some_and(|m| g.perm(m).on_bf), "Kaalia put Aurelia onto the battlefield attacking");
+    assert_eq!(new, [aurelia.unwrap()], "and she joins the attack");
     assert_eq!(g.player(P0).hand.len(), 0, "Aurelia was not there when the three creatures attacked: no draw");
+}
+
+#[test]
+fn isshin_and_adeline_attack_with_the_tokens_of_both_passes() {
+    let mut g = table(&["isshin-mardu-attack-triggers", "seph", "cloud", "sauron"]);
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    let a = perm(&mut g, P0, "Adeline, Resplendent Cathar");
+    let new = combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
+    assert_eq!(new.len(), 6, "a Human token for each of 3 opponents, twice");
+    assert!(new.iter().all(|&m| g.perm(m).token && g.perm(m).tapped));
 }

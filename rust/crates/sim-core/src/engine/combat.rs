@@ -501,11 +501,36 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
     }
     let copies = 1 + repl::trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
+    // one attack event: no queued trigger of it resolves before every pass has triggered (CR 603.3), so a creature a
+    // queued trigger puts onto the battlefield (Kaalia's Angel) is not a listener of a later pass. Held only when there
+    // is a later pass. The inline payloads in `attack_triggers_once` (Sun Titan, Necromancer, Kylox, ...) and run-now
+    // hooks still act during their pass, before its dispatch: what they put in hears this attack (existing gap).
+    let hold = copies > 1;
+    if hold {
+        g.resolving += 1;
+    }
+    let mut r = Ok(());
     for k in 0..copies {
-        new.extend(attack_triggers_once(g, p, atk, d, k > 0)?); // each pass after the first is a repeat of the triggers
+        // each pass after the first is a repeat of the triggers
+        match attack_triggers_once(g, p, atk, d, k > 0) {
+            Ok(v) => new.extend(v),
+            Err(e) => {
+                r = Err(e);
+                break;
+            }
+        }
         if g.over {
             break;
         }
+    }
+    if hold {
+        g.resolving -= 1;
+    }
+    r?;
+    if hold && g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        g.new_attackers.clear();
+        crate::engine::stack::flush_triggers(g)?;
+        new.append(&mut g.new_attackers); // the attacking tokens the held triggers made
     }
     if !g.over {
         new.extend(crate::impls::t45_winota::gy_attack(g, p, atk)?); // --- Tiers 4/5 (winota): Phoenix Chick
