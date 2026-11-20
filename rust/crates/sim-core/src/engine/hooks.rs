@@ -210,11 +210,13 @@ pub fn enters_trigger_times(g: &Game, controller: PlayerId, entering: Option<Per
 /// A `TokensEnter` hook whose ability is one enters trigger per token (Haliya): queue src's `Etb` hook once for each token
 /// still on the battlefield, as `fire_trigger_where` does for one permanent entering (Panharmonicon-style additional
 /// times as repeats; Cloud, Delney and Roaming Throne through `queue_triggers`). The caller's hook is marked
-/// `enter_trigger`, so the dispatcher has already blanked it under an opponent's Elesh Norn.
+/// `enter_trigger`, so the dispatcher has already blanked it under an opponent's Elesh Norn. (Hushbringer: a creature
+/// token entering triggers nothing.)
 pub fn queue_etb_per_token(g: &mut Game, src: PermId, p: PlayerId, toks: &[PermId]) -> Res {
     let owner = g.perm(src).owner;
     let mut entries = vec![];
-    for &t in toks.iter().filter(|&&t| g.perm(t).on_bf) {
+    let hushed = crate::engine::repl::hushed(g);
+    for &t in toks.iter().filter(|&&t| g.perm(t).on_bf && !(hushed && g.is_creature(t))) {
         let reps = 1 + total_trigger_copies(g, owner, "etb", Some(t));
         for k in 0..reps.max(1) {
             let act = TrigAct::Hook { event: Event::Etb, call: Call::Etb { p, m: t } };
