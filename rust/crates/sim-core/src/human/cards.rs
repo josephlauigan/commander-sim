@@ -403,7 +403,10 @@ fn land_tapped(g: &Game, l: PermId, what: &str) -> Why {
 /// cards._loyalty: why a loyalty ability of m costing `cost` can't be activated now (sorcery speed, once per turn,
 /// enough loyalty)
 pub(super) fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
-    if let Some(why) = legal::sorcery_timing(g, p) {
+    // The Wandering Emperor: "As long as she entered this turn, you may activate her loyalty abilities any time you
+    // could cast an instant" (a blinked one is a new object, so it counts again)
+    let any_time = &*g.perm(m).name == "The Wandering Emperor" && crate::impls::t6_thanos::entered_this_turn(g, m);
+    if !any_time && let Some(why) = legal::sorcery_timing(g, p) {
         return Some(why.replace("do that", "activate a loyalty ability"));
     }
     if !crate::impls::mine::pw_once(g, m) {

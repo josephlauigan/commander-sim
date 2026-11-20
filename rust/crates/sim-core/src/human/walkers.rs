@@ -28,6 +28,7 @@ use crate::engine::chars::card_types;
 use crate::engine::values::{colors_of, protected_from, untargetable};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::impls::yoshimaru_p7 as emp;
 use crate::state::{DataKey, Game, Val};
 
 /// the abilities of p's walker m named `nm` that this file provides, or None
@@ -93,6 +94,15 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
                 "You get an emblem with \"Artifacts, creatures, enchantments, and lands you control have indestructible.\"",
                 elspeth_emblem,
             ),
+        ]),
+        "The Wandering Emperor" => walker(&[
+            (
+                1,
+                "put a +1/+1 counter on up to one target creature. It gains first strike until end of turn.",
+                emperor_plus,
+            ),
+            (-1, "create a 2/2 white Samurai creature token with vigilance.", emperor_samurai),
+            (-2, "exile target tapped creature. You gain 2 life.", emperor_minus2),
         ]),
         "Sorin, Vengeful Bloodlord" => {
             let mut v = walker(&[(2, "1 damage to target player or planeswalker", sorin_plus)]);
@@ -492,6 +502,49 @@ fn venser_minus1(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 
 fn venser_minus8(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
     go(move |g| crate::impls::alela::venser_emblem(g, p, m))
+}
+
+// ------------------------------------------------------------------ The Wandering Emperor
+/// +1: up to one target creature (any player's): asked before the loyalty is paid; "no target" still pays it
+fn emperor_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    let cands = permanents(g, p, |g, x| emp::emp_legal(g, p, m, x));
+    if cands.is_empty() {
+        return go(|_| Ok(()));
+    }
+    let prompt = "The Wandering Emperor +1: put a +1/+1 counter on up to one target creature (it gains first strike)";
+    let Some(t) = pick_one(g, p, prompt, &cands, true)? else { return go(|_| Ok(())) };
+    go(move |g| {
+        // still a legal target as it resolves, and a ward on it is paid or the ability is countered
+        if emp::emp_legal(g, p, m, t) && crate::engine::ward::pay_ward(g, p, t)? {
+            emp::emp_plus(g, p, t)?;
+        }
+        Ok(())
+    })
+}
+
+fn emperor_samurai(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| emp::emp_samurai(g, p).map(|_| ()))
+}
+
+/// -2: target tapped creature, any player's (your own included): exiled, and you gain 2 life
+fn emperor_minus2(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    let cands = permanents(g, p, |g, x| g.perm(x).tapped && emp::emp_legal(g, p, m, x));
+    if cands.is_empty() {
+        return Ok(Ready::Why("There is no tapped creature to target.".into()));
+    }
+    let Some(t) = pick_one(g, p, "The Wandering Emperor -2: exile which tapped creature?", &cands, false)? else {
+        return Ok(Ready::Cancel);
+    };
+    go(move |g| {
+        // a target that is no longer a tapped creature it may target fizzles the whole ability: no life either
+        if g.perm(t).tapped && emp::emp_legal(g, p, m, t) {
+            crate::engine::removal::apply_removal(g, Some(p), t, "exile", None)?;
+            if !g.perm(t).on_bf {
+                crate::engine::life::gain(g, p, 2)?;
+            }
+        }
+        Ok(())
+    })
 }
 
 // ------------------------------------------------------------------ Sorin, Vengeful Bloodlord
