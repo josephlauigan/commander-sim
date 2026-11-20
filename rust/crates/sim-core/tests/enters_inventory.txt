@@ -190,7 +190,9 @@ Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun | Etb | T
 Gryff's Boon | Etb | S
 Guardian Project | Etb | T
 Haliya, Guided by Light | Etb | T
+Haliya, Guided by Light | LandEnters | T
 Haliya, Guided by Light | TokenCreated | T
+Haliya, Guided by Light | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Hammer of Nazahn | Etb | T
 Hancock, Ghoulish Mayor | Etb | S
 Harald, King of Skemfar | Etb | T

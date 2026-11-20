@@ -531,29 +531,60 @@ const HALIYA: &str = "Haliya, Guided by Light";
 
 /// **Haliya, Guided by Light** ({2}{W} 3/3, legendary Human Soldier): "Whenever Haliya or another creature or artifact
 /// you control enters, you gain 1 life. At the beginning of your end step, draw a card if you've gained 3 or more life
-/// this turn. Warp {W}". A creature or artifact permanent entering is the engine's enters event; a Treasure, Food or
-/// Clue token (counters on the player in the engine) is an artifact entering too, one trigger each, and arrives through
-/// `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's Treasures, a compiled investigate, a
-/// spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except Xorn's extra Treasure (Xorn's own
-/// model adds it directly, which fires nothing). Both of her enters hooks are enters-caused triggers (the token hook is
-/// marked `enter_trigger`): an opponent's Elesh Norn, Mother of Machines blanks them and Panharmonicon, Starfield
-/// Vocalist and your own Elesh Norn add a trigger, per token, from the dispatcher; Delney does not (she has power 3).
-/// Her triggers do not depend on her still being on the battlefield when they resolve. Warp {W}: cast from the hand for
-/// {W} (plus any cost increase) and exiled at the beginning of the next end step; its card then waits in its owner's
-/// exile and can be cast for its mana cost on a later turn (`generic_paths::warped_in_exile`: the AI's option and a
-/// person's cast from exile). Her end-step draw is a trigger of its own: it is put on the stack at the beginning of her
-/// controller's end step even as the warp exiles her, so the card is still drawn if she has gained the life by the time
-/// it resolves. The AI warps her in the first main phase when the {W} leaves enough mana for two more creature or
-/// artifact cards (three enters: her own and two, the draw) or, when the full cost is out of reach this turn, for one
-/// more; a person is always offered the warp.
+/// this turn. Warp {W}". A nonland creature or artifact permanent entering is the engine's enters event; a land that is
+/// a creature or an artifact comes through the land event (`Event::LandEnters`; a land that was already there when she
+/// came in is not counted); a creature token comes through the tokens event (`Event::TokensEnter`), which queues one of
+/// her enters triggers per token (`hooks::queue_etb_per_token`); a Treasure, Food or Clue token (counters on the
+/// player in the engine) is an artifact entering too, one trigger each (the dispatcher queues a batch as one entry per
+/// token), and arrives through `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's
+/// Treasures, a compiled investigate, a spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except
+/// Xorn's extra Treasure (Xorn's own model adds it directly, which fires nothing). All four of her enters hooks are
+/// enters-caused triggers (the tokens and token-creation hooks are marked `enter_trigger`): an opponent's Elesh Norn,
+/// Mother of Machines blanks them and Panharmonicon, Starfield Vocalist and your own Elesh Norn add a trigger, per
+/// token, from the dispatcher; Delney does not (she has power 3). Her triggers do not depend on her still being on the
+/// battlefield when they resolve, and each keeps the controller it had when it triggered
+/// (`hooks::trigger_controller`). Warp {W}: cast from the hand for {W} (plus any cost increase) and exiled at the
+/// beginning of the next end step; its card then waits in its owner's exile and can be cast for its mana cost on a later
+/// turn (`generic_paths::warped_in_exile`: the AI's option and a person's cast from exile). Her end-step draw is a
+/// trigger of its own: it is put on the stack at the beginning of her controller's end step even as the warp exiles
+/// her, so the card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first
+/// main phase when the {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two,
+/// the draw) or, when the full cost is out of reach this turn, for one more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if p != trigger_controller(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
+    // (a land, whatever else it is, comes through the land event)
+    if p != trigger_controller(g, src)
+        || g.perm(m).cd.is_some_and(|c| g.db.get(c).land)
+        || !(m == src || g.is_creature(m) || is_artifact(g, m))
+    {
         return Ok(());
     }
+    haliya_life(g, src, p)
+}
+
+/// the life, after the trigger's window (the table may respond; a countered trigger does nothing)
+fn haliya_life(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
         return Ok(());
     }
     gain(g, p, 1)
+}
+
+/// a land that is a creature or an artifact entered (one that entered before Haliya did is not counted)
+fn haliya_land(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m.0 <= src.0 || p != trigger_controller(g, src) || !(g.is_creature(m) || is_artifact(g, m)) {
+        return Ok(());
+    }
+    haliya_life(g, src, p)
+}
+
+/// creature tokens entered under p's control (it runs at once, so p is compared with her controller now): one trigger
+/// for each, as for any creature entering
+fn haliya_token_entries(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
+    if p != owner(g, src) {
+        return Ok(());
+    }
+    let toks: Vec<PermId> = toks.iter().copied().filter(|&t| g.is_creature(t) || is_artifact(g, t)).collect();
+    crate::engine::hooks::queue_etb_per_token(g, src, p, &toks)
 }
 
 /// a Treasure, Food or Clue token you create is an artifact entering: one life each
@@ -930,8 +961,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if has(HALIYA) {
         let c = r.card(db, HALIYA)?;
         c.etb = Some(haliya_etb);
+        c.land_enters = Some(haliya_land);
         c.token_created = Some(haliya_tokens);
         *c = c.enter_trigger(Event::TokenCreated); // "Whenever ... another creature or artifact you control enters"
+        c.tokens_enter = Some(haliya_token_entries);
+        *c = c.enter_trigger(Event::TokensEnter); // the same trigger for a creature token (a hook that runs now)
         c.end_step = Some(haliya_end);
         c.hand_options = Some(haliya_hand);
     }

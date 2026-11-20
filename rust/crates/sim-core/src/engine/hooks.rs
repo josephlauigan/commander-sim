@@ -207,8 +207,28 @@ pub fn enters_trigger_times(g: &Game, controller: PlayerId, entering: Option<Per
     if enter_blanked(g, controller, entering) { 0 } else { 1 }
 }
 
+/// A `TokensEnter` hook whose ability is one enters trigger per token (Haliya): queue src's `Etb` hook once for each token
+/// still on the battlefield, as `fire_trigger_where` does for one permanent entering (Panharmonicon-style additional
+/// times as repeats; Cloud, Delney and Roaming Throne through `queue_triggers`). The caller's hook is marked
+/// `enter_trigger`, so the dispatcher has already blanked it under an opponent's Elesh Norn.
+pub fn queue_etb_per_token(g: &mut Game, src: PermId, p: PlayerId, toks: &[PermId]) -> Res {
+    let owner = g.perm(src).owner;
+    let mut entries = vec![];
+    for &t in toks.iter().filter(|&&t| g.perm(t).on_bf) {
+        let reps = 1 + total_trigger_copies(g, owner, "etb", Some(t));
+        for k in 0..reps.max(1) {
+            let act = TrigAct::Hook { event: Event::Etb, call: Call::Etb { p, m: t } };
+            entries.push(Trigger { repeat: k > 0, ..Trigger::new(owner, Some(src), act) });
+        }
+    }
+    crate::engine::stack::queue_triggers(g, entries)
+}
+
 /// `fire_trigger`, for the hooked permanents `keep` accepts (a blink fires after the creature is back, and what entered
-/// with it never saw it leave: `zones::exiled_from_bf`)
+/// with it never saw it leave: `zones::exiled_from_bf`). A queued enters-caused `TokenCreated` hook (Haliya, Reckless
+/// Fireweaver, Weftstalker Ardent) goes on the stack once for each artifact token made, as each is its own triggered
+/// ability (CR 603.2c): a batch of n is n entries of one token, up to `zones::TOKEN_CAP` of them with the rest in the
+/// last, and each of them has its own additional triggers.
 pub fn fire_trigger_where(
     g: &mut Game,
     e: Event,
@@ -267,6 +287,19 @@ pub fn fire_trigger_where(
                 })
                 .sum::<i32>();
         }
+        // one entry per artifact token of a batch made (a hook that runs now sees the batch as it is)
+        let parts: Vec<Call> = match &call {
+            Call::ArtifactTokens { p, kinds, n } if e == Event::TokenCreated && trig && !now && *n > 1 => {
+                let cap = (*n as usize).min(crate::engine::zones::TOKEN_CAP);
+                (0..cap)
+                    .map(|i| {
+                        let n = if i + 1 == cap { *n - (cap as i32 - 1) } else { 1 };
+                        Call::ArtifactTokens { p: *p, kinds: kinds.clone(), n }
+                    })
+                    .collect()
+            }
+            _ => vec![call.clone()],
+        };
         for k in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
             if now {
@@ -278,8 +311,10 @@ pub fn fire_trigger_where(
                     return Ok(());
                 }
             } else {
-                let act = TrigAct::Hook { event: e, call: call.clone() };
-                entries.push(Trigger { repeat: repeat || k > 0, ..Trigger::new(owner, Some(src), act) });
+                for part in &parts {
+                    let act = TrigAct::Hook { event: e, call: part.clone() };
+                    entries.push(Trigger { repeat: repeat || k > 0, ..Trigger::new(owner, Some(src), act) });
+                }
             }
         }
     }
