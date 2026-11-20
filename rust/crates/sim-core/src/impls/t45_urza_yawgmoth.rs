@@ -818,8 +818,8 @@ fn meathook_cast_x(g: &Game, p: PlayerId, _c: CardId, spare: u32) -> u32 {
 /// permanent (`DataKey::CastX`, set as it enters) for the enters trigger, which uses it even if mana appears or
 /// disappears meanwhile. Engine-wide X-spell limits: the counter checks read the printed mana value (not X), and a cost
 /// reduction does not apply to {X}. A permanent that enters any other way (blinked, put onto the
-/// battlefield) has X = 0 and shrinks nothing. The enters trigger goes on the stack (the table may respond; a countered
-/// trigger does nothing; an opponent's Elesh Norn, Mother of Machines blanks it, your own Elesh Norn and a Starfield
+/// battlefield) has X = 0: its trigger still goes on the stack and does nothing. The enters trigger goes on the stack
+/// (the table may respond; a countered trigger does nothing; an opponent's Elesh Norn, Mother of Machines blanks it, your own Elesh Norn and a Starfield
 /// Vocalist add one more, Panharmonicon does not: an enchantment); every creature on the battlefield gets -X/-X and those with toughness 0 or less die together.
 /// The two dies triggers are compiled.
 fn meathook_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
@@ -827,10 +827,9 @@ fn meathook_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let x = g.perm(src).data.int(DataKey::CastX) as i32;
-    if x <= 0 {
-        return Ok(());
-    }
-    if !trigger_window(g, p, Some(src), &format!("The Meathook Massacre: each creature gets -{x}/-{x}"), None)? {
+    let imp = if x <= 0 { Some(0.0) } else { None }; // nothing to answer: no AI spends a counter on it
+    if !trigger_window(g, p, Some(src), &format!("The Meathook Massacre: each creature gets -{x}/-{x}"), imp)? || x <= 0
+    {
         return Ok(());
     }
     crate::glog!(g, "    The Meathook Massacre: X = {x}");
