@@ -58,7 +58,7 @@ use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::{apply_removal, apply_wipe};
 use crate::engine::stack::{ability_window, ability_window_card, flush_triggers, queue_triggers, trigger_window};
 use crate::engine::tutors::shuffle_library;
-use crate::engine::values::{epow, pval, untargetable};
+use crate::engine::values::{colors_of, epow, protected_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, agent_for, agent_take, bounce, die, draw, enter, enter_token_copy, exile_perm, landfall, max_by, min_by,
 };
@@ -68,7 +68,7 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::impls::t2::{blink, blink_value};
-use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
+use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Step, Val};
 use crate::sym::Sym;
 
 const AGENT: &str = "Agent of Treachery";
@@ -373,7 +373,9 @@ fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
             return -5.0; // a token is gone; a stolen permanent returns to its owner
         }
         if is_land {
-            return if x.tapped { 0.8 } else { -3.0 }; // a tapped land comes back untapped; an untapped one is mana lost
+            // a tapped land comes back untapped (not when it is away through the whole next turn: exiled in an end
+            // step); an untapped one is mana lost
+            return if x.tapped && g.step != Step::End { 0.8 } else { -3.0 };
         }
         if is_named(g, m, ACID) {
             return x.attached.filter(|&h| live(g, h)).map_or(0.0, |h| pval(g, h) + 1.0);
@@ -403,7 +405,13 @@ fn wisp_pick(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
         .iter()
         .filter(|q| q.alive)
         .flat_map(|q| q.perms.iter().chain(q.lands.iter()).copied())
-        .filter(|&m| m != src && live(g, m) && wisp_worth(g, p, src, m) > f64::NEG_INFINITY)
+        .filter(|&m| {
+            m != src
+                && live(g, m)
+                && !protected_from(g, m, colors_of(g, src))
+                && !super::tymna_cards::hexproof_from(g, m, colors_of(g, src))
+                && wisp_worth(g, p, src, m) > f64::NEG_INFINITY
+        })
         .collect();
     max_by(&cs, |m| wisp_worth(g, p, src, m))
 }
