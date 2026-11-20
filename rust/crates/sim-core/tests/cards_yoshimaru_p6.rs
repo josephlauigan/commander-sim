@@ -728,3 +728,83 @@ fn panharmonicon_does_not_double_meathook_because_it_is_an_enchantment() {
     });
     assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "neither an artifact nor a creature entering: one trigger");
 }
+
+// ------------------------------------------------------------------ round 4: a triggered ability keeps its controller
+// CR 603.3a: a triggered ability is controlled by whoever controlled its source as it triggered; a change of control of
+// the source afterwards does not change it (113.8: it exists independently of its source).
+fn steal(g: &mut Game, by: PlayerId, m: PermId) {
+    use sim_core::engine::control::{Duration, gain_control};
+    assert!(gain_control(g, by, m, Duration::Permanent), "control of the source changed");
+}
+
+#[test]
+fn kirins_trigger_keeps_its_controller_when_kirin_is_stolen() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let t = token(&mut g, P0, 1);
+    g.resolving += 1;
+    let k = perm(&mut g, P0, "Sunpearl Kirin");
+    steal(&mut g, P1, k);
+    flush(&mut g);
+    assert!(!g.perm(t).on_bf, "the trigger is still P0's: it returns P0's token");
+    assert_eq!(g.player(P0).library.len(), 4, "and P0 draws");
+}
+
+#[test]
+fn haliyas_token_triggers_keep_their_controller_when_she_is_stolen() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    g.resolving += 1;
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    steal(&mut g, P1, h);
+    flush(&mut g);
+    assert_eq!(g.player(P0).life - life, 2, "P0's queued token triggers survive the change of control");
+}
+
+#[test]
+fn haliyas_enter_trigger_keeps_its_controller_when_she_is_stolen() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HALIYA);
+    let life = g.player(P0).life;
+    let l1 = g.player(P1).life;
+    g.resolving += 1;
+    perm(&mut g, P0, "Mother of Runes");
+    steal(&mut g, P1, h);
+    flush(&mut g);
+    assert_eq!(g.player(P0).life - life, 1, "the trigger P0 had when the creature entered gains P0's life");
+    assert_eq!(g.player(P1).life, l1, "not the thief's");
+}
+
+#[test]
+fn haliyas_end_step_trigger_keeps_its_controller_when_she_is_stolen() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    stock_library(&mut g, P1, 5);
+    let h = perm(&mut g, P0, HALIYA);
+    sim_core::engine::life::gain(&mut g, P0, 3).unwrap();
+    g.resolving += 1;
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P0 }).unwrap();
+    steal(&mut g, P1, h);
+    flush(&mut g);
+    assert_eq!(g.player(P0).library.len(), 4, "P0's end-step trigger is still P0's: P0 draws");
+    assert_eq!(g.player(P1).library.len(), 5, "the thief draws nothing");
+}
+
+#[test]
+fn a_stolen_haliya_triggers_for_her_new_controller_only() {
+    let mut g = tbl();
+    stock_library(&mut g, P1, 5);
+    let h = perm(&mut g, P0, HALIYA);
+    steal(&mut g, P1, h);
+    let (l0, l1) = (g.player(P0).life, g.player(P1).life);
+    perm(&mut g, P0, "Mother of Runes");
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, l0, "her old controller's permanents no longer set her off");
+    perm(&mut g, P1, "Mother of Runes");
+    zones::add_treasure(&mut g, P1, 1).unwrap();
+    assert_eq!(g.player(P1).life - l1, 2, "her new controller's do");
+    sim_core::engine::life::gain(&mut g, P1, 1).unwrap();
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P1 }).unwrap();
+    assert_eq!(g.player(P1).library.len(), 4, "and her new controller's end step draws");
+}
