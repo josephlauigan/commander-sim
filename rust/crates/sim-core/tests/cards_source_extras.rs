@@ -1,4 +1,4 @@
-//! P5a-2b source doublers: each original gets its extras once (CR 603.2d).
+//! Source doublers: each original gets its extras once (CR 603.2d).
 use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::{combat, life, turn, zones};
 use sim_core::hooks::{Call, Event};
@@ -42,7 +42,7 @@ fn tymna_position() -> Game {
     g
 }
 
-// Design 8: two original instances, each pays two and draws two.
+// Two original instances each pay two and draw two.
 #[test]
 fn tymna_delney_pays_and_draws_twice() {
     let mut g = tymna_position();
@@ -51,8 +51,7 @@ fn tymna_delney_pays_and_draws_twice() {
     assert_eq!((g.player(P0).life, g.player(P0).hand.len()), (life - 4, cards + 4));
 }
 
-// Design 9 control: resuming the copy at Main2 cannot reopen the beginning-of-phase trigger.
-// The absolute four-card count is asserted separately by design 8.
+// Control: resuming the copy at Main2 cannot reopen the beginning-of-phase trigger.
 #[test]
 fn tymna_main2_search_copy_does_not_draw_again() {
     let mut g = tymna_position();
@@ -237,13 +236,13 @@ fn wispdrinker_delney_small_token_drains_twice() {
     assert_eq!(g.player(P0).life, life + 2);
 }
 
-// P6's TokensEnter adapter queues the real ETB triggers. Dispatcher-level source extras would count them twice.
+// The TokensEnter adapter queues the real ETB triggers. Dispatcher-level source extras would count them twice.
 #[test]
 fn haliya_token_adapter_gets_source_extras_only_from_its_queued_triggers() {
     let mut g = tbl();
     perm(&mut g, P0, DELNEY);
     let h = perm(&mut g, P0, "Haliya, Guided by Light");
-    g.perm_mut(h).plus = -1; // a -1/-1 counter: Haliya is now power two, so Delney applies
+    g.perm_mut(h).plus = -1; // a -1/-1 counter: Haliya has power two, so Delney applies
     assert_eq!(sim_core::engine::values::epow(&g, h), 2);
     let life = g.player(P0).life;
     token(&mut g, P0, 1);

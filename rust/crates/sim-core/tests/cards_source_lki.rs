@@ -1,4 +1,4 @@
-//! P5a-2b C4/C5: source last-known copies and the shared Prodigy path.
+//! Source last-known copies and the shared Prodigy path.
 use sim_core::engine::{removal, stack, zones};
 use sim_core::ids::PlayerId;
 use sim_core::state::{Ctx, Game};
@@ -17,7 +17,7 @@ fn wipe(g: &mut Game) {
     removal::apply_wipe(g, A, "destroy", None, &Ctx::default()).unwrap();
 }
 
-// 32: the source is already off the battlefield when its Leaves hook is queued.
+// The source is already off the battlefield when its Leaves hook is queued.
 #[test]
 fn departed_skyclave_delney_makes_two_three_three_illusions() {
     let mut g = tbl();
@@ -32,7 +32,7 @@ fn departed_skyclave_delney_makes_two_three_three_illusions() {
     assert!(made.iter().all(|&m| g.perm(m).token && g.perm(m).pow == 3 && g.perm(m).tgh == 3));
 }
 
-// 33/34: compiled self-dies, alone and in either wipe order.
+// Compiled self-dies, alone and in either wipe order.
 #[test]
 fn solemn_delney_dying_alone_draws_two() {
     let mut g = tbl();
@@ -85,7 +85,7 @@ fn solemn_surviving_delney_wipe_draws_once_in_a_later_wipe() {
     assert_eq!(g.player(A).hand.len() - before, 1);
 }
 
-// 35: a surviving listener uses the pre-wipe count even after Delney has left.
+// A surviving listener uses the pre-wipe count even after Delney has left.
 #[test]
 fn surviving_elas_looks_back_for_delney_first_or_last() {
     for delney_first in [true, false] {
@@ -111,7 +111,7 @@ fn surviving_elas_looks_back_for_delney_first_or_last() {
     }
 }
 
-// 36: Vondam has already left when left_with queues his trigger; Teysa adds to Delney.
+// A departed Vondam retains Delney's extra; Teysa's copies add to Delney's.
 #[test]
 fn departed_vondam_left_with_keeps_delney() {
     let mut g = tbl();
@@ -133,7 +133,7 @@ fn departed_carrier_thrall_teysa_and_delney_make_three_scions() {
     assert_eq!(tokens(&g, A) - before, 3);
 }
 
-// 37: these controls compile and pass before the new DataKey exists.
+// Controls: no source doubler writes no record, and a blinked permanent carries no previous record.
 #[test]
 fn wipe_without_source_doublers_writes_no_lki_extra() {
     let mut g = tbl();
@@ -156,7 +156,7 @@ fn blinked_solemn_after_delney_leaves_draws_once() {
     assert_eq!(stack::extra_for(&g, back), 0);
 }
 
-// 38: a real queued Wizard hook gains the same extras as compiled triggers.
+// A real queued Wizard hook gains the same extras as compiled triggers.
 #[test]
 fn prodigy_spellseeker_queues_two_searches() {
     let mut g = tbl();

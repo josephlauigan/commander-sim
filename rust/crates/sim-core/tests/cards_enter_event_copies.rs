@@ -1,4 +1,4 @@
-//! P5a-2b C3: event copies are additive and belong to each listener's controller.
+//! Event copies are additive and belong to each listener's controller.
 use sim_core::cardcode;
 use sim_core::control::Answer;
 use sim_core::engine::{cast, combat, hooks, turn, zones};
@@ -41,7 +41,7 @@ fn human(g: &mut Game) -> Arc<sim_core::human::script::ScriptHuman> {
     h
 }
 
-// 20: source and event copies add, never multiply each other.
+// Source and event copies add, never multiply each other.
 #[test]
 fn terror_token_panharmonicon_and_throne() {
     for throne in [false, true] {
@@ -58,7 +58,7 @@ fn terror_token_panharmonicon_and_throne() {
     }
 }
 
-// 21, 22, 23: inline watchers, both creature entry routes.
+// Inline watchers, both creature entry routes.
 #[test]
 fn uprising_draws_twice_for_token_and_nontoken() {
     for tok in [false, true] {
@@ -118,7 +118,7 @@ fn shards_own_elesh_control_destroys_two() {
     shards(E, false);
 }
 
-// 24: TokensEnter hooks see creature characteristics, not the artifact-token None convention.
+// TokensEnter hooks see creature characteristics, not the artifact-token None convention.
 #[test]
 fn token_hooks_get_event_copies() {
     for (listener, copier, n, damage) in [("Impact Tremors", PAN, 2, 4), ("Purphoros, God of the Forge", VOC, 1, 4)] {
@@ -140,7 +140,7 @@ fn valkyrie_own_elesh_angel_token_gains_eight() {
     assert_eq!(g.player(A).life - before, 8);
 }
 
-// 25: run-now T hooks; the first Oracle instance is countered.
+// Run-now T hooks; the first Oracle instance is countered.
 #[test]
 fn oracle_own_elesh_second_window_wins() {
     let mut g = tbl();
@@ -165,7 +165,7 @@ fn ertai_vocalist_destroys_two_creatures() {
     assert!(!g.perm(a).on_bf && !g.perm(b).on_bf);
 }
 
-// 26: mixed hooks copy only their trigger portion.
+// Mixed hooks copy only their trigger portion.
 fn gift(copier: &str, expected: usize) {
     let mut g = tbl();
     perm(&mut g, A, copier);
@@ -216,7 +216,7 @@ fn wan_shi_tong_own_elesh_x_four() {
     assert_eq!(g.player(A).hand.len(), before - 1 + 4);
 }
 
-// 27: land hooks are repeated by land_etb, never again in their bodies.
+// Land hooks are repeated by land_etb, never again in their bodies.
 #[test]
 fn bog_own_elesh_exiles_two_graveyards() {
     let mut g = tbl();
@@ -277,7 +277,7 @@ fn hideaway_keeps_both_cards_and_can_play_either() {
     }
 }
 
-// 28: self-return and self-sacrifice cannot remove the entering land twice.
+// Self-return and self-sacrifice cannot remove the entering land twice.
 #[test]
 fn bouncelands_and_chasm_repeat_safely() {
     for (name, copier, others, remaining, hand_count) in [
@@ -300,7 +300,7 @@ fn bouncelands_and_chasm_repeat_safely() {
     }
 }
 
-// 29: compiled lands use the max of each copier's landfall/etb contribution.
+// Compiled lands use the max of each copier's landfall/etb contribution.
 #[test]
 fn temple_greenwarden_scries_twice() {
     let mut g = tbl();
@@ -325,7 +325,7 @@ fn falls_panharmonicon_control_gains_one() {
     falls(PAN, 1);
 }
 
-// 30: fresh targets and searches for every instance.
+// Fresh targets and searches for every instance.
 #[test]
 fn sanctuary_own_elesh_returns_two_instants() {
     let mut g = tbl();
@@ -358,7 +358,7 @@ fn ikoria_own_elesh_searches_twice() {
     assert_eq!(g.player(A).perms.len() - before, 7);
 }
 
-// 31: controls must already be green at the base.
+// Controls: source and event copies preserve the individual listener guards.
 #[test]
 fn nissa_greenwarden_control_gets_two_loyalty() {
     let mut g = tbl();
@@ -400,8 +400,8 @@ fn setup_is_never_copied_control() {
     assert!(g.perm(m).tapped);
 }
 
-// T2 39-40: Scute itself only listens to its controller's land. A probe accepting either player's land isolates
-// dispatch counts; changing real Scute's Oracle condition would make the requested opponent-Scute example illegal.
+// Scute only listens to its controller's land. A probe accepting either player's land isolates dispatcher counts;
+// the real-Scute control checks its controller condition.
 fn landfall_counts(copier: Option<PlayerId>, expected: [i32; 2]) {
     let mut g = tbl();
     if let Some(p) = copier {
@@ -445,7 +445,7 @@ fn real_opponent_scute_does_not_hear_another_players_land_control() {
     assert_eq!(g.player(B).perms.len(), 1);
 }
 
-// 41: Aurelia is a real opponent listener; check both directions and both controllers having copiers.
+// Aurelia is a real opponent listener; check both directions and both controllers having copiers.
 #[test]
 fn attack_copies_belong_to_each_listener_controller() {
     for owner in [A, B] {
@@ -492,6 +492,18 @@ fn haliya_queue_adapter_event_and_source_copies_are_counted_once() {
     let before = g.player(A).life;
     token(&mut g, A, 1);
     assert_eq!(g.player(A).life - before, 3);
+}
+
+#[test]
+fn bog_without_copiers_prefers_an_empty_graveyard_with_a_recursion_engine_control() {
+    let mut g = tbl();
+    perm(&mut g, B, "Meren of Clan Nel Toth");
+    let bloodghast = take(&mut g, C, "Bloodghast");
+    g.player_mut(C).gy.push(bloodghast);
+    assert!(sim_core::impls::common::gy_worth(&g, A, B) > sim_core::impls::common::gy_worth(&g, A, C));
+    play_land(&mut g, "Bojuka Bog");
+    assert!(g.player(B).gy.is_empty());
+    assert_eq!(g.player(C).gy, vec![bloodghast]);
 }
 
 #[test]
