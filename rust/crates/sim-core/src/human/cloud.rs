@@ -13,8 +13,14 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 use crate::sym::intern;
 
-const PERMS: [&str; 5] =
-    ["Balan, Wandering Knight", "Cid, Freeflier Pilot", "Giver of Runes", "Stoneforge Mystic", "Zack Fair"];
+const PERMS: [&str; 6] = [
+    "Balan, Wandering Knight",
+    "Cid, Freeflier Pilot",
+    "Giver of Runes",
+    "Mother of Runes",
+    "Stoneforge Mystic",
+    "Zack Fair",
+];
 
 /// A permanent whose abilities are all listed here (the AI's hook options for it are left out, so nothing shows twice).
 pub fn owns_perm(g: &Game, m: PermId) -> bool {
@@ -55,6 +61,12 @@ pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
             "{T}: another target creature you control gains protection from colorless or from a color of your choice until end of turn",
             giver,
         )],
+        "Mother of Runes" => {
+            vec![ability(
+                "{T}: target creature you control gains protection from the color of your choice until end of turn",
+                mother,
+            )]
+        }
         "Stoneforge Mystic" => {
             vec![ability("{1}{W}, {T}: you may put an Equipment card from your hand onto the battlefield", stoneforge)]
         }
@@ -153,19 +165,34 @@ fn cid(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 /// Giver of Runes: {T}: another target creature you control gains protection from colorless or from the color of
 /// your choice until end of turn
 fn giver(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    protect(g, p, m, "Giver of Runes", true)
+}
+
+/// Mother of Runes: {T}: target creature you control (herself included) gains protection from the color of your choice
+/// until end of turn
+fn mother(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    protect(g, p, m, "Mother of Runes", false)
+}
+
+/// the two Runes' ability: `giver` says Giver's wording (another creature; colorless too), else Mother's (any creature
+/// you control, her own included; the five colors)
+fn protect(g: &mut Game, p: PlayerId, m: PermId, name: &str, giver: bool) -> Res<Why> {
     if let Some(why) = tap_ok(g, m) {
         return Ok(Some(why));
     }
-    let tg: Vec<PermId> =
-        g.player(p).perms.iter().copied().filter(|&x| x != m && live(g, x) && g.is_creature(x)).collect();
+    let other = if giver { "other " } else { "" };
+    let cands = move |g: &Game| -> Vec<PermId> {
+        g.player(p).perms.iter().copied().filter(|&x| (x != m || !giver) && live(g, x) && g.is_creature(x)).collect()
+    };
+    let tg = cands(g);
     if tg.is_empty() {
-        return Ok(Some("You control no other creature to target.".into()));
+        return Ok(Some(format!("You control no {other}creature to target.")));
     }
     let Some(t) = cards::pick_perm(
         g,
         p,
         "target",
-        "Giver of Runes: which other creature gains protection?",
+        &format!("{name}: which {other}creature gains protection?"),
         &tg,
         Some("cancel"),
     )?
@@ -180,27 +207,27 @@ fn giver(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         ("red", "pro_R"),
         ("green", "pro_G"),
     ];
+    let opts = &opts[usize::from(!giver)..]; // Mother has no "colorless"
     let labels: Vec<String> = opts.iter().map(|o| format!("protection from {}", o.0)).collect();
     let Some(k) =
-        choices::choose(g, p, "choose", "Giver of Runes: protection from what?", &labels, Some("cancel"), None)?
+        choices::choose(g, p, "choose", &format!("{name}: protection from what?"), &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
     g.perm_mut(m).tapped = true;
-    crate::glog!(g, "  {} activates Giver of Runes", g.player(p).name);
+    crate::glog!(g, "  {} activates {name}", g.player(p).name);
     let what = format!("{} gains protection from {}", g.perm(t).name, opts[k].0);
     stack::ability_run_w(g, p, Some(m), None, &what, None, Some(t), 0.0, |g, is_copy| {
         let (mut t, mut k) = (t, k);
         if is_copy {
             // the copy chooses its own target and its own colour
-            let now: Vec<PermId> =
-                g.player(p).perms.iter().copied().filter(|&x| x != m && live(g, x) && g.is_creature(x)).collect();
+            let now = cands(g);
             if !now.is_empty()
                 && let Some(x) = cards::pick_perm(
                     g,
                     p,
                     "target",
-                    "The copy of Giver of Runes' ability: which other creature gains protection?",
+                    &format!("The copy of {name}'s ability: which {other}creature gains protection?"),
                     &now,
                     Some("keep the target"),
                 )?
@@ -211,7 +238,7 @@ fn giver(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
                 g,
                 p,
                 "choose",
-                "The copy of Giver of Runes' ability: protection from what?",
+                &format!("The copy of {name}'s ability: protection from what?"),
                 &labels,
                 Some("keep the choice"),
                 None,
