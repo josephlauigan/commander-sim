@@ -1352,17 +1352,17 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
 /// the tag-driven enter effects: as it enters (etb_static), then its triggered ones on the stack (etb_once)
 pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let cd = g.perm(m).cd.unwrap();
-    if g.db.get(cd).has_dsl() || hooks::enter_blanked(g, p, Some(m)) {
+    if g.db.get(cd).has_dsl() {
         return Ok(()); // the ability language handles its abilities
     }
-    let mut reps = 1;
-    etb_static(g, p, m)?;
-    if !etb_triggers(g, cd) {
+    etb_static(g, p, m)?; // as it enters, not triggered: an opponent's Elesh Norn leaves it alone
+    if hooks::enter_blanked(g, p, Some(m)) || !etb_triggers(g, cd) {
         return Ok(());
     }
     let (name, imp) = etb_text(g, cd);
+    let mut reps = 1;
     if !g.hooks.is_empty() {
-        reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon
+        reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon, Elesh Norn
     }
     for k in 0..reps {
         if g.over {
