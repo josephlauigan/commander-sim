@@ -38,6 +38,24 @@ use crate::tag::Tag;
 
 const EMPEROR: &str = "The Wandering Emperor";
 
+// ------------------------------------------------------------------ targets of an enters trigger (part 7b)
+/// every permanent, lands included, that a trigger of o's from `src` may target and `keep` allows: on the battlefield,
+/// not phased out, shroud, hexproof and protection from the source's colours (and hexproof from a colour) respected
+pub fn targets_from(g: &Game, o: PlayerId, src: PermId, keep: impl Fn(&Game, PermId) -> bool) -> Vec<PermId> {
+    let cols = colors_of(g, src);
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().chain(q.lands.iter()).copied())
+        .filter(|&m| {
+            super::vondam_elspeth::may_target(g, o, m)
+                && !protected_from(g, m, cols)
+                && !super::tymna_cards::hexproof_from(g, m, cols)
+                && keep(g, m)
+        })
+        .collect()
+}
+
 /// may p's The Wandering Emperor (`src`) target creature t (white: protection from white stops it)
 pub fn emp_legal(g: &Game, p: PlayerId, src: PermId, t: PermId) -> bool {
     g.is_creature(t) && super::vondam_elspeth::may_target(g, p, t) && !protected_from(g, t, colors_of(g, src))

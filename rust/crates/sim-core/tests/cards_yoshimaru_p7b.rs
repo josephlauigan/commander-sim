@@ -66,7 +66,10 @@ fn flickerwisp_asks_a_person_for_any_other_permanent_lands_included_and_it_is_ma
     assert_eq!(q.len(), 1, "one question: {:?}", h.asked());
     let c = &q[0].choices;
     assert!(c.iter().any(|x| x.contains("Island")), "a land is a legal target: {c:?}");
-    assert!(c.iter().any(|x| x.contains("Sol Ring")) && c.iter().any(|x| x.contains("token") || x.contains("Token")), "{c:?}");
+    assert!(
+        c.iter().any(|x| x.contains("Sol Ring")) && c.iter().any(|x| x.contains("token") || x.contains("Token")),
+        "{c:?}"
+    );
     assert!(!c.iter().any(|x| x.starts_with("Flickerwisp")), "'another': not itself: {c:?}");
     assert!(!c.iter().any(|x| x.contains("no target") || x.contains("none")), "the target is mandatory: {c:?}");
     assert!(!on_bf(&g, P1, "Island") && in_exile(&g, P1, "Island"), "the land is exiled");
@@ -80,7 +83,7 @@ fn flickerwisp_exiles_the_token_a_person_picks_for_good() {
     let mut g = tbl();
     let t = token(&mut g, P1, 3);
     lands(&mut g, P1, "Island", 1, false);
-    let h = person(&mut g, &["token"]);
+    let h = person(&mut g, &["oken"]);
     perm(&mut g, P0, "Flickerwisp");
     assert_eq!(asks(&h, "Flickerwisp").len(), 1, "the person picks: {:?}", h.asked());
     assert!(!g.perm(t).on_bf, "the token is exiled");
