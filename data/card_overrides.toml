@@ -156,7 +156,7 @@ note = ""
 tags = "pow=5 tgh=7 reach bomb=5"
 dsl = []
 status = "Full"
-note = "lands from the graveyard; landfall triggers twice"
+note = "lands from the graveyard; a land entering adds one instance to your permanents' landfall and land-enters triggers, including the entering land's own triggers"
 
 ["Andúril, Flame of the West"]
 paths_ok = "compiled: +3/+1 and equip {2}; card code: the two Spirit tokens when the equipped creature attacks (mine.rs)"
@@ -7111,7 +7111,7 @@ note = "permanents you control gain indestructible until end of turn; foretell {
 ["Cloud, Midgar Mercenary"]
 dsl = []
 status = "Full"
-note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him is queued twice (stack::queue_triggers)"
+note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him triggers an additional time (stack::extra_for), including immediate and inline triggers; a departed source or a source hearing a simultaneous wipe uses its pre-leave count"
 
 ["Hero's Blade"]
 paths_ok = "compiled: +3/+2 and equip {4}; card code: the attach when a legendary creature enters (cloud.rs)"
