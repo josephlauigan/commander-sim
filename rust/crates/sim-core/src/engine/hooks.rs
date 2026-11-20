@@ -117,24 +117,27 @@ pub fn enter_copies(g: &Game, controller: PlayerId, entering: Option<PermId>) ->
 /// Snapshot each listener controller's event copies before any pass runs. Inline payloads contribute their
 /// controller too; a copier with no listener never creates a later pass or engages the resolution hold.
 pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option<PlayerId>) -> Vec<i32> {
+    if hooked(g, Event::TriggerCopies).is_empty() {
+        return vec![0; g.players.len()];
+    }
     let listeners = hooked(g, e);
+    let compiled_listener = |s| {
+        let x = g.perm(s);
+        let has_trigger = |c| {
+            g.db.get(c)
+                .abilities
+                .iter()
+                .any(|a| matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == kind))
+        };
+        x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(has_trigger)
+    };
     g.players
         .iter()
         .map(|q| {
             let listens = Some(q.id) == inline
                 || listeners.iter().any(|(s, _)| g.perm(*s).owner == q.id)
                 || (g.dsl_on
-                    && q.perms.iter().copied().chain(crate::dsl::land_sources(g, q.id)).any(|s| {
-                        let x = g.perm(s);
-                        x.on_bf
-                            && !x.phased
-                            && !x.neutered
-                            && x.cd.is_some_and(|c| {
-                                g.db.get(c).abilities.iter().any(|a| {
-                        matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == kind)
-                    })
-                            })
-                    }));
+                    && q.perms.iter().copied().chain(crate::dsl::land_sources(g, q.id)).any(compiled_listener));
             if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, None) } else { 0 }
         })
         .collect()
