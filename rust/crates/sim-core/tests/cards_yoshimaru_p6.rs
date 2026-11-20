@@ -3,7 +3,10 @@
 
 mod play_common;
 use play_common::*;
-use sim_core::engine::zones;
+use sim_core::engine::{cast, zones};
+use sim_core::hooks::{Action, Opt};
+use sim_core::state::{Ctx, DataKey};
+use sim_core::sym::intern;
 
 fn tbl() -> Game {
     let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
@@ -175,4 +178,142 @@ fn kirin_is_a_flash_flyer_with_no_unconditional_draw() {
     let d = g.db.get(card(&g, "Sunpearl Kirin"));
     assert!(d.has_kw("flash") && d.has_kw("flying"));
     assert!(!d.tags.has(sim_core::tag::Tag::Draw), "its draw is the token clause, in card code");
+}
+
+// ------------------------------------------------------------------ Haliya, Guided by Light
+// "Whenever Haliya or another creature or artifact you control enters, you gain 1 life. At the beginning of your end
+// step, draw a card if you've gained 3 or more life this turn. Warp {W}"
+const HALIYA: &str = "Haliya, Guided by Light";
+
+fn run_plan(g: &mut Game, o: Opt, p: PlayerId) -> bool {
+    match o.act.expect("an action") {
+        Action::Plan { f, arg } => f(g, p, arg).unwrap(),
+        other => panic!("unexpected action {other:?}"),
+    }
+}
+
+fn hook_opts(g: &mut Game, c: sim_core::ids::CardId) -> Vec<Opt> {
+    match g.registry.get(c).and_then(|i| i.hand_options) {
+        Some(f) => f(g, c, P0, Some(false)).unwrap(),
+        None => vec![],
+    }
+}
+
+fn end_step(g: &mut Game, m: PermId) {
+    let c = g.perm(m).cd.unwrap();
+    let f = g.registry.get(c).and_then(|i| i.end_step).expect("end step");
+    f(g, m, P0).unwrap();
+}
+
+#[test]
+fn haliya_gains_1_life_for_each_treasure_food_or_clue_token_you_create() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 2, "two Treasure tokens are two artifacts entering");
+    zones::make_artifact_tokens(&mut g, P0, "Food", 1).unwrap();
+    zones::make_artifact_tokens(&mut g, P0, "Clue", 1).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 4, "a Food and a Clue too");
+    zones::add_treasure(&mut g, P1, 3).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 4, "an opponent's tokens are not yours");
+}
+
+#[test]
+fn haliya_sees_a_clue_made_by_investigate_wherever_it_is_made() {
+    // a compiled enters trigger (Thraben Inspector: a creature and a Clue enter)
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    perm(&mut g, P0, "Thraben Inspector");
+    assert_eq!(g.player(P0).life, l0 + 2, "the creature and its Clue");
+    // a spell with the investigate tag (Deduce: draw a card, investigate)
+    let l1 = g.player(P0).life;
+    let c = take(&mut g, P0, "Deduce");
+    cast::resolve(&mut g, P0, c, &Ctx::default(), intern("hand")).unwrap();
+    assert_eq!(g.player(P0).life, l1 + 1, "the Clue");
+    // landfall card code (Tireless Tracker)
+    perm(&mut g, P0, "Tireless Tracker");
+    let l2 = g.player(P0).life;
+    zones::landfall(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).life, l2 + 1, "the Clue");
+}
+
+#[test]
+fn haliya_gains_for_an_artifact_or_creature_entering_and_for_itself() {
+    let mut g = tbl();
+    let l0 = g.player(P0).life;
+    perm(&mut g, P0, HALIYA);
+    assert_eq!(g.player(P0).life, l0 + 1, "Haliya itself");
+    perm(&mut g, P0, "Sol Ring");
+    perm(&mut g, P0, "Mother of Runes");
+    perm(&mut g, P0, "Exquisite Blood");
+    assert_eq!(g.player(P0).life, l0 + 3, "an artifact and a creature; not an enchantment");
+}
+
+#[test]
+fn haliya_draws_at_your_end_step_with_3_life_gained_and_not_with_2() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    let h = perm(&mut g, P0, HALIYA);
+    perm(&mut g, P0, "Sol Ring");
+    end_step(&mut g, h);
+    assert!(g.player(P0).hand.is_empty(), "2 life gained: no card");
+    perm(&mut g, P0, "Mother of Runes");
+    end_step(&mut g, h);
+    assert_eq!(g.player(P0).hand.len(), 1, "3 life gained: a card");
+}
+
+#[test]
+fn haliya_warp_is_cast_for_w_exiled_at_the_end_step_and_still_draws() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    stock_library(&mut g, P0, 5);
+    let l0 = g.player(P0).life;
+    let c = hand(&mut g, P0, &[HALIYA, "Sol Ring"])[0];
+    let mut opts = hook_opts(&mut g, c);
+    assert!(!opts.is_empty(), "warp is offered: {{2}}{{W}} is out of reach and a Sol Ring follows");
+    assert!(run_plan(&mut g, opts.pop().unwrap(), P0));
+    let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("Haliya is out");
+    assert!(g.perm(m).data.truthy(DataKey::Warp));
+    assert_eq!(g.player(P0).life, l0 + 1, "she gained 1 as she entered");
+    perm(&mut g, P0, "Sol Ring");
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, l0 + 3);
+    end_step(&mut g, m);
+    assert!(!g.perm(m).on_bf, "exiled at the beginning of the end step");
+    assert!(g.player(P0).exile.contains(&c), "in exile");
+    assert_eq!(g.player(P0).hand.len(), 1, "her end-step trigger was already on the stack: the card is drawn");
+    assert!(sim_core::impls::generic_paths::warped_in_exile(&g, P0).is_empty(), "not on the turn it was exiled");
+    g.round += 1;
+    assert_eq!(sim_core::impls::generic_paths::warped_in_exile(&g, P0), vec![c], "castable on a later turn");
+}
+
+#[test]
+fn haliya_warp_is_not_offered_for_nothing() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let c = hand(&mut g, P0, &[HALIYA])[0];
+    assert!(g.registry.get(c).is_some_and(|i| i.hand_options.is_some()), "Haliya has a warp hook");
+    assert!(hook_opts(&mut g, c).is_empty(), "nothing else would enter: no warp");
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 3, false);
+    let c = hand(&mut g, P0, &[HALIYA])[0];
+    assert!(hook_opts(&mut g, c).is_empty(), "the full cost is payable and nothing else follows: cast her normally");
+}
+
+#[test]
+fn a_person_can_warp_haliya_for_w() {
+    let mut g = tbl();
+    g.step = sim_core::state::Step::Main1;
+    pool(&mut g, P0, &[('W', 1)]);
+    let c = hand(&mut g, P0, &[HALIYA])[0];
+    person(&mut g, |_| None);
+    let ways = sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap();
+    let (label, o) = ways.into_iter().find(|(l, _)| l.contains("warp")).expect("a person is always offered the warp");
+    assert!(label.contains("{W}"), "{label}");
+    assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
+    let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("Haliya is out");
+    assert!(g.perm(m).data.truthy(DataKey::Warp));
+    assert_eq!(pool_total(&g, P0), 0, "paid {{W}}");
 }
