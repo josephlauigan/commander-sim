@@ -1637,7 +1637,7 @@ fn fire_inner(g: &mut Game, event: &str, kw: &Fired, keep: &dyn Fn(&Game, Player
                 if Some(src) == kw.dying && !g.perm(src).on_bf && source.as_deref() != Some("self") {
                     continue;
                 }
-                let reps = trigger_copies(g, q, src, event, kw);
+                let reps = trigger_copies(g, q, event, kw);
                 let ctxs = trigger_matches(g, q, src, a, kw);
                 let mut entries = vec![];
                 for ctx in ctxs {
@@ -1672,22 +1672,13 @@ pub fn run_trigger(g: &mut Game, p: PlayerId, src: PermId, card: CardId, idx: u1
     execute(g, p, effects, Some(src), &mut ctx, None, 0)
 }
 
-/// Veyran: your instant/sorcery casts make your permanents' triggers fire an extra time. Harmonic Prodigy: triggers
-/// of your Shamans and other Wizards fire an extra time. Teysa and Panharmonicon through card code.
-fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -> i32 {
+/// Event copies: Veyran for casts, Teysa for deaths and the enters copiers. Source extras come from the queue.
+fn trigger_copies(g: &Game, q: PlayerId, event: &str, kw: &Fired) -> i32 {
     let mut n = 1;
     if event == "cast"
         && kw.caster == Some(q)
         && kw.spell.is_some_and(|c| g.db.get(c).instant || g.db.get(c).sorcery)
         && has(g, q, Tag::Veyran)
-    {
-        n += 1;
-    }
-    let t = g.perm(src).cd.map(|c| &g.db.get(c).tags);
-    // Harmonic Prodigy, like the other effects, applies to the original trigger, not to a repeat of the whole event
-    if !kw.repeat
-        && t.is_some_and(|t| (t.has(Tag::Shaman) || t.has(Tag::Wizard)) && !t.has(Tag::Prodigy))
-        && has(g, q, Tag::Prodigy)
     {
         n += 1;
     }

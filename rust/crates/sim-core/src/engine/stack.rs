@@ -56,6 +56,7 @@ fn extra_live(g: &Game, src: PermId) -> usize {
     usize::from(crate::impls::cloud::doubles(g, src))
         + crate::impls::t45_heliod_zur::delney_extra(g, src)
         + crate::impls::t45_urdragon::throne_extra(g, src)
+        + crate::impls::t45_heliod_zur::prodigy_extra(g, src)
 }
 
 /// Everything a leave must remember, before battlefield membership or attachments change.
