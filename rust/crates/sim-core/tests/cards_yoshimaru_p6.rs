@@ -111,7 +111,7 @@ fn kirin_draws_only_when_the_returned_permanent_was_a_token() {
 }
 
 #[test]
-fn kirin_with_no_other_nonland_permanent_asks_nothing_and_draws_nothing() {
+fn kirin_with_no_other_nonland_permanent_asks_no_target_question_and_draws_nothing() {
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 2, false);
     stock_library(&mut g, P0, 5);
@@ -119,6 +119,60 @@ fn kirin_with_no_other_nonland_permanent_asks_nothing_and_draws_nothing() {
     perm(&mut g, P0, "Sunpearl Kirin");
     assert!(asked.lock().unwrap().is_empty(), "no target to choose");
     assert_eq!(g.player(P0).library.len(), 5, "no draw: nothing was a token");
+}
+
+/// the stack's trigger items named `who`, over every priority question the table is asked
+fn trigger_seen(seen: &std::sync::Mutex<Vec<Value>>, who: &str) -> bool {
+    seen.lock()
+        .unwrap()
+        .iter()
+        .any(|d| d["stack"].as_array().unwrap().iter().any(|it| it["name"] == who && it["kind"] == "trigger"))
+}
+
+// "Up to one target": zero targets is a legal choice, so the trigger is put on the stack even with nothing to return
+// (CR 603.3d), and the table may respond.
+#[test]
+fn kirins_trigger_is_put_on_the_stack_when_a_person_has_nothing_to_return() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let seen = observe_stack(&mut g);
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert!(trigger_seen(&seen, "Sunpearl Kirin"), "observed {:?}", seen.lock().unwrap());
+}
+
+#[test]
+fn kirins_trigger_is_put_on_the_stack_when_the_ai_returns_nothing() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Selfless Spirit");
+    perm(&mut g, P0, "Sol Ring");
+    // P0 stays the AI; a person at P1 sees the stack
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let out = seen.clone();
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            out.lock().unwrap().push(r.data.clone());
+        }
+        Answer::Action(json!({"do": "pass"}))
+    }));
+    h.set_autopass("all");
+    g.humans.add(P1, h);
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert!(on_bf(&g, P0, "Selfless Spirit") && on_bf(&g, P0, "Sol Ring"), "nothing is worth returning");
+    assert!(trigger_seen(&seen, "Sunpearl Kirin"), "observed {:?}", seen.lock().unwrap());
+}
+
+// guard: passes before and after the fix
+#[test]
+fn kirin_with_no_candidate_at_an_ai_table_changes_no_stack_count_rng_or_life() {
+    let mut g = tbl();
+    let rng = format!("{:?}", g.rng);
+    let pushes = g.stack_pushes;
+    let lives: Vec<i32> = g.players.iter().map(|q| q.life).collect();
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert!(has_perm(&g, P0, "Sunpearl Kirin"));
+    assert_eq!(g.stack_pushes, pushes, "no table could answer it: nothing is pushed");
+    assert_eq!(format!("{:?}", g.rng), rng, "and no random number is drawn");
+    assert_eq!(g.players.iter().map(|q| q.life).collect::<Vec<_>>(), lives);
 }
 
 #[test]
