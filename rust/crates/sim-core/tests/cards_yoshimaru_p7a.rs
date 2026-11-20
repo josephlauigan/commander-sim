@@ -361,3 +361,147 @@ fn pithing_needle_naming_eiganjo_stops_the_channel() {
     assert!(g.perm(atk).on_bf && !in_gy(&g, P0, EIG));
     assert!(told_last(&h).contains("Pithing Needle"), "{:?}", h.told());
 }
+
+// ------------------------------------------------------------------ Takenuma, Abandoned Mire
+const TAKE: &str = "Takenuma, Abandoned Mire";
+
+fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+/// p's library: the last name is the top card
+fn set_library(g: &mut Game, p: PlayerId, names: &[&str]) {
+    let cs: Vec<_> = names.iter().map(|n| card(g, n)).collect();
+    g.player_mut(p).library = cs;
+}
+
+fn to_gy(g: &mut Game, p: PlayerId, names: &[&str]) {
+    for n in names {
+        let c = take(g, p, n);
+        g.player_mut(p).gy.push(c);
+    }
+}
+
+fn cast0() -> Value {
+    json!({"do": "cast", "card": 0})
+}
+
+#[test]
+fn takenuma_channel_mills_three_then_returns_the_creature_or_walker_the_person_picks() {
+    let mut g = tbl();
+    to_gy(&mut g, P0, &["Elvish Visionary"]);
+    set_library(&mut g, P0, &["Island", "Karn Liberated", "Island", "Mulldrifter"]); // the top three are milled
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![ans_word("Takenuma", "Karn Liberated")]);
+    let q = h.asked().into_iter().find(|r| r.prompt.contains("Takenuma")).expect("asks which to return");
+    for want in ["Elvish Visionary", "Mulldrifter", "Karn Liberated"] {
+        assert!(q.choices.iter().any(|c| c.contains(want)), "{want} is a candidate: {:?}", q.choices);
+    }
+    assert!(!q.choices.iter().any(|c| c.contains("Island")), "{:?}", q.choices);
+    assert!(in_hand(&g, P0, "Karn Liberated"), "a planeswalker card just milled counts");
+    assert!(in_gy(&g, P0, TAKE) && in_gy(&g, P0, "Mulldrifter") && in_gy(&g, P0, "Elvish Visionary"));
+    assert_eq!(g.player(P0).library.len(), 1);
+}
+
+#[test]
+fn takenuma_returns_the_only_candidate_without_asking() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(!asked(&h, "Takenuma"), "nothing to choose");
+    assert!(in_hand(&g, P0, "Mulldrifter"), "mandatory: the milled creature comes back");
+}
+
+#[test]
+fn takenuma_with_nothing_to_return_still_mills_three() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, TAKE));
+    assert_eq!(g.player(P0).library.len(), 1);
+    assert_eq!(g.player(P0).hand.len(), 0);
+}
+
+#[test]
+fn takenuma_costs_one_less_for_each_legendary_creature_you_control() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 2)]); // {3}{B} less one
+    play(&mut g, cast0(), vec![]);
+    assert!(in_gy(&g, P0, TAKE) && in_hand(&g, P0, "Mulldrifter"));
+}
+
+#[test]
+fn takenuma_without_the_mana_is_refused() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 2)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(in_hand(&g, P0, TAKE) && g.player(P0).library.len() == 4);
+    assert!(told_last(&h).contains("channel Takenuma"), "{:?}", h.told());
+}
+
+#[test]
+fn pithing_needle_naming_takenuma_stops_the_channel() {
+    let mut g = tbl();
+    needle(&mut g, TAKE);
+    set_library(&mut g, P0, &["Island", "Island", "Mulldrifter", "Island"]);
+    hand(&mut g, P0, &[TAKE]);
+    pool(&mut g, P0, &[('B', 1), ('C', 3)]);
+    let h = play(&mut g, cast0(), vec![]);
+    assert!(in_hand(&g, P0, TAKE));
+    assert!(told_last(&h).contains("Pithing Needle"), "{:?}", h.told());
+}
+
+/// the AI's hand option for Takenuma (the plays its brain may choose from)
+fn takenuma_options(g: &mut Game) -> Vec<sim_core::hooks::Opt> {
+    let c = card(g, TAKE);
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Takenuma has a hand option");
+    f(g, c, P0, Some(false)).unwrap()
+}
+
+#[test]
+fn the_ai_channels_takenuma_for_the_best_creature_card() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    to_gy(&mut g, P0, &["Mulldrifter"]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    let opts = takenuma_options(&mut g);
+    assert_eq!(opts.len(), 1, "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(in_gy(&g, P0, TAKE) && in_hand(&g, P0, "Mulldrifter"));
+    assert_eq!(g.player(P0).library.len(), 1, "milled three");
+}
+
+#[test]
+fn the_ai_pays_one_less_for_each_legendary_creature() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Tymna the Weaver");
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    to_gy(&mut g, P0, &["Mulldrifter"]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    let before = sim_core::engine::mana::total_mana(&g, P0, false);
+    let opts = takenuma_options(&mut g);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    let spent = before - sim_core::engine::mana::total_mana(&g, P0, false);
+    assert_eq!(spent, 3, "{{3}}{{B}} less one");
+}
+
+#[test]
+fn the_ai_does_not_channel_takenuma_with_nothing_worth_returning() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Swamp", 6, false);
+    hand(&mut g, P0, &[TAKE]);
+    set_library(&mut g, P0, &["Island", "Island", "Island", "Island"]);
+    assert!(takenuma_options(&mut g).is_empty());
+}
