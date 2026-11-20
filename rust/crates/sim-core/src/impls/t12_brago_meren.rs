@@ -14,7 +14,9 @@
 //!   blinks of one effect, Brago's included, draw one card). Its {1}{U} bounce is compiled.
 //! - Flickerwisp: enters: exile another target permanent; it returns under its owner's control at the beginning of the
 //!   next end step (a token is gone for good). The AI takes an opposing token, else its own best enters-the-battlefield
-//!   permanent (or Reality Acid, whose host is then sacrificed), else an opposing permanent for the turn.
+//!   permanent (or Reality Acid, whose host is then sacrificed), else an opposing permanent for the turn; lands are
+//!   permanents too (an opponent's untapped land, most on its own turn, or its own tapped land, which comes back
+//!   untapped). A person picks any other permanent, lands and tokens included (the target is mandatory).
 //! - Ghostly Flicker: exile two of your artifacts and/or creatures and return them (the two best enters-the-battlefield
 //!   ones), cast for value or in response to removal on a creature (pool::PROTECTORS). Left out: lands.
 //! - Reality Acid: an Aura on the best opposing permanent; vanishing 3 (a time counter off each of your upkeeps, then
@@ -56,7 +58,7 @@ use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::{apply_removal, apply_wipe};
 use crate::engine::stack::{ability_window, ability_window_card, flush_triggers, queue_triggers, trigger_window};
 use crate::engine::tutors::shuffle_library;
-use crate::engine::values::{epow, pval, untargetable};
+use crate::engine::values::{colors_of, epow, protected_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, agent_for, agent_take, bounce, die, draw, enter, enter_token_copy, exile_perm, landfall, max_by, min_by,
 };
@@ -66,7 +68,7 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::impls::t2::{blink, blink_value};
-use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
+use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Step, Val};
 use crate::sym::Sym;
 
 const AGENT: &str = "Agent of Treachery";
@@ -365,9 +367,15 @@ fn mage_leaves(g: &mut Game, src: Src, m: PermId) -> Res {
 /// what exiling m until the end step is worth to p (a token is gone for good)
 fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
     let x = g.perm(m);
+    let is_land = g.player(x.owner).lands.contains(&m);
     if x.owner == p {
         if x.token || x.orig != p {
             return -5.0; // a token is gone; a stolen permanent returns to its owner
+        }
+        if is_land {
+            // a tapped land comes back untapped (not when it is away through the whole next turn: exiled in an end
+            // step); an untapped one is mana lost
+            return if x.tapped && g.step != Step::End { 0.8 } else { -3.0 };
         }
         if is_named(g, m, ACID) {
             return x.attached.filter(|&h| live(g, h)).map_or(0.0, |h| pval(g, h) + 1.0);
@@ -377,35 +385,65 @@ fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
     if untargetable(g, m) {
         return f64::NEG_INFINITY;
     }
+    if is_land {
+        // an untapped land is mana the opponent can't use this turn (most on its own turn); a tapped one returns untapped
+        return if x.tapped {
+            -0.5
+        } else if g.active == Some(x.owner) {
+            1.0
+        } else {
+            0.4
+        };
+    }
     if x.token { worth(g, m) } else { 0.3 * worth(g, m) }
 }
 
-/// "another target permanent": the best for p, or the least bad (the target isn't optional)
+/// "another target permanent": the best for p, or the least bad (the target isn't optional). Lands are permanents too.
 fn wisp_pick(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
     let cs: Vec<PermId> = g
         .players
         .iter()
         .filter(|q| q.alive)
-        .flat_map(|q| q.perms.iter().copied())
-        .filter(|&m| m != src && live(g, m) && wisp_worth(g, p, src, m) > f64::NEG_INFINITY)
+        .flat_map(|q| q.perms.iter().chain(q.lands.iter()).copied())
+        .filter(|&m| {
+            m != src
+                && live(g, m)
+                && !protected_from(g, m, colors_of(g, src))
+                && !super::tymna_cards::hexproof_from(g, m, colors_of(g, src))
+                && wisp_worth(g, p, src, m) > f64::NEG_INFINITY
+        })
         .collect();
     max_by(&cs, |m| wisp_worth(g, p, src, m))
 }
 
+/// the permanents a person may aim Flickerwisp's trigger at: any other permanent, lands and tokens included
+fn wisp_targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
+    super::yoshimaru_p7::targets_from(g, o, src, |_, m| m != src)
+}
+
 /// When this creature enters, exile another target permanent. Return that card to the battlefield under its owner's
-/// control at the beginning of the next end step.
+/// control at the beginning of the next end step. The target is mandatory: a person picks it (after the trigger's
+/// window, so a response can still change the board), the AI takes the best for it.
 fn wisp_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src || !live(g, src) {
         return Ok(());
     }
     let o = owner(g, src);
-    if wisp_pick(g, o, src).is_none() {
+    let human = crate::human::is_human(g, o);
+    let any = if human { !wisp_targets(g, o, src).is_empty() } else { wisp_pick(g, o, src).is_some() };
+    if !any {
         return Ok(());
     }
     if !trigger_window(g, o, Some(src), "exile another target permanent until the end step", Some(4.0))? {
         return Ok(());
     }
-    let Some(t) = wisp_pick(g, o, src) else { return Ok(()) };
+    let t = if human {
+        let cands = wisp_targets(g, o, src);
+        crate::human::gaps_t2::pick_target(g, o, &cands, "Flickerwisp: exile which other permanent?", None)?
+    } else {
+        wisp_pick(g, o, src)
+    };
+    let Some(t) = t else { return Ok(()) };
     exile_until_end(g, o, t)
 }
 
@@ -413,7 +451,13 @@ fn wisp_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn exile_until_end(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let x = g.perm(m);
     let (q, card, token) = (x.orig, x.phys.or(x.cd), x.token);
-    if x.owner == p {
+    if g.player(x.owner).lands.contains(&m) {
+        // a land is listed apart from the permanents; an opponent's may have ward
+        if x.owner != p && !crate::engine::ward::pay_ward(g, p, m)? {
+            return Ok(());
+        }
+        super::yoshimaru_p7::exile_land(g, m)?;
+    } else if x.owner == p {
         exile_perm(g, m)?;
     } else {
         apply_removal(g, Some(p), m, "exile", None)?;

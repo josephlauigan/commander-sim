@@ -431,7 +431,7 @@ fn exiled_this_turn(g: &Game) -> bool {
 /// exile m until the beginning of the next end step, when its card returns under its owner's control (a token is gone)
 fn exile_until_end_step(g: &mut Game, m: PermId) -> Res {
     let (cd, orig, tok) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).token);
-    leave(g, m)?;
+    super::yoshimaru_p7::leave_battlefield(g, m)?; // (a land creature is among the lands)
     if !tok && let Some(cd) = cd {
         g.player_mut(orig).exile.push(cd);
         g.eot_returns.push((orig, cd));
@@ -448,12 +448,31 @@ pub fn ennis_target(g: &Game, p: PlayerId, ennis: PermId) -> Option<PermId> {
     (reenter_value(g, p, m) >= 1.5).then_some(m)
 }
 
-/// Ennis enters: exile up to one other target creature you control, back at the next end step
+/// Ennis enters: exile up to one other target creature you control, back at the next end step. A person picks it (a
+/// token is exiled for good, and is no card for Ennis's counter) or none.
 fn ennis_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        let mine = |g: &Game| {
+            super::yoshimaru_p7::targets_from(g, o, src, |g, x| x != src && g.perm(x).owner == o && g.is_creature(x))
+        };
+        if mine(g).is_empty() || !trigger_window(g, o, Some(src), "exile a creature until the end step", Some(3.0))? {
+            return Ok(());
+        }
+        let cands = mine(g);
+        let prompt = "Ennis: exile up to one other creature you control until the end step?";
+        let Some(t) = crate::human::gaps_t2::pick_target(g, o, &cands, prompt, Some("none"))? else {
+            return Ok(());
+        };
+        if !live(g, t) {
+            return Ok(());
+        }
+        crate::glog!(g, "    Ennis exiles {} until the beginning of the next end step", g.perm(t).name);
+        return exile_until_end_step(g, t);
+    }
     let Some(t) = ennis_target(g, o, src) else { return Ok(()) };
     if !trigger_window(g, o, Some(src), "exile a creature until the end step", Some(3.0))? || !live(g, t) {
         return Ok(());

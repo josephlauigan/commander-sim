@@ -620,7 +620,7 @@ pub struct CardImpl {
     /// each_combat: fires at the start of every combat phase, before attackers are declared, also when nobody attacks
     pub each_combat: Option<EachCombatFn>,
     pub cards_to_gy: Option<CardsToGyFn>,
-    /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
+    /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Garland)
     pub monarch: Option<PlayerFn>,
     /// exiled_from_bf(g, src, m): m was exiled from the battlefield and returned (a blink; Soulherder)
     pub exiled_from_bf: Option<LeavesFn>,

@@ -710,14 +710,15 @@ pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dm
     Ok(())
 }
 
-/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland,
-/// Palace Jailer) run at once
+/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland) run at
+/// once; what Palace Jailers exiled returns (`t2::jail_release`)
 pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
     if g.monarch == Some(p) || !g.player(p).alive {
         return Ok(());
     }
     g.monarch = Some(p);
     crate::glog!(g, "    {} becomes the monarch", g.player(p).name);
+    crate::impls::t2::jail_release(g, p)?; // Palace Jailer: what an opponent of its controller's crown frees
     crate::impls::garland::crown_moved(g, p);
     if g.garland {
         garland_check(g);
@@ -867,7 +868,7 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.zur_due.is_empty() {
         crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
     }
-    crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
+    crate::impls::yoshimaru_p7::end_step_returns(g)?; // Eerie Interlude, Flickerwisp, Ennis (a land card returns as a land)
     crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
     crate::impls::t12_lightpaws::flicker_returns(g)?; // --- Tiers 1/2 (lightpaws): Flickerform
     if !g.jar_due.is_empty() {

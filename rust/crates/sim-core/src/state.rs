@@ -1498,6 +1498,9 @@ pub struct Game {
     pub resto_target: Option<PermId>,
     /// Eerie Interlude: (player, card) exiled until the beginning of the next end step (Python's `g.eot_returns`)
     pub eot_returns: Vec<(PlayerId, CardId)>,
+    /// Palace Jailer: (the Jailer's controller, the link `common::link_exiled` made) for each creature exiled until an
+    /// opponent becomes the monarch. It belongs to the game, not to the Jailer: the exile outlasts it.
+    pub jailed: Vec<(PlayerId, Val)>,
     /// the Captain America precon's bookkeeping (impls/t0_captain.rs)
     pub t0c: crate::impls::t0_captain::T0c,
     /// --- Tiers 1/2 (lightpaws): Flickerform's exiles waiting for the next end step (impls/t12_lightpaws.rs)
@@ -1660,6 +1663,7 @@ impl Game {
             zur_due: vec![],
             resto_target: None,
             eot_returns: vec![],
+            jailed: vec![],
             t0c: Default::default(),
             t12lp: Default::default(),
             audit: None, // --- ai-audit

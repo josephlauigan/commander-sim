@@ -1352,14 +1352,25 @@ fn emperor_exile(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     Ok(())
 }
 
-/// used at sorcery speed (its flash is rules2's hand_defend)
+/// +1: the AI's own best creature (one that can attack first) gets the counter and first strike; with none, nothing
+/// (the ability still adds loyalty). The effect is shared with a person's (`yoshimaru_p7::emp_plus`).
+fn emperor_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    let cands: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| super::yoshimaru_p7::emp_legal(g, p, src, m)).collect();
+    let Some(t) = crate::engine::zones::max_by(&cands, |m| pval(g, m) + if g.perm(m).sick { 0.0 } else { 1.0 }) else {
+        return Ok(());
+    };
+    super::yoshimaru_p7::emp_plus(g, p, t)
+}
+
+/// used at sorcery speed (its flash is rules2's hand_defend); the -1 Samurai and the +1 are shared with a person's
 static EMPEROR: [WalkerAb; 3] = [
-    WalkerAb { delta: 1, label: "+1/+1 counter, first strike", val: |_, _, _| Some(1.5), eff: nothing },
+    WalkerAb { delta: 1, label: "+1/+1 counter, first strike", val: |_, _, _| Some(1.5), eff: emperor_plus },
     WalkerAb {
         delta: -1,
-        label: "2/2 Samurai",
+        label: "2/2 Samurai with vigilance",
         val: |_, _, _| Some(2.8),
-        eff: |g, p, _| tokens(g, p, 1, 2, 2, "W", &["samurai"]).map(|_| ()),
+        eff: |g, p, _| super::yoshimaru_p7::emp_samurai(g, p).map(|_| ()),
     },
     WalkerAb { delta: -2, label: "exile a tapped creature", val: emperor_exile_val, eff: emperor_exile },
 ];

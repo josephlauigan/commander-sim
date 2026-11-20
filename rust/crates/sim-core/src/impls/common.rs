@@ -3324,13 +3324,26 @@ pub fn tutor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// Solitude (Approximate): exiles the best opposing creature on entry, and its controller gains life equal to its power
-/// (rules2.py's evoke is its hand option)
+/// Solitude: exiles another creature on entry, and its controller gains life equal to its power (rules2.py's evoke is
+/// its hand option). A person picks "up to one other target creature" (any controller, their own included); the AI takes
+/// the best opposing creature worth 2 or more.
 fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        let others = |g: &Game| super::yoshimaru_p7::targets_from(g, o, src, |g, x| x != src && g.is_creature(x));
+        if others(g).is_empty() || !trigger_window(g, o, Some(src), "exile a creature", Some(6.0))? {
+            return Ok(());
+        }
+        let cands = others(g);
+        let prompt = "Solitude: exile up to one other creature?";
+        if let Some(t) = crate::human::gaps_t2::pick_target(g, o, &cands, prompt, Some("none"))? {
+            solitude_exile(g, src, o, t)?;
+        }
+        return Ok(());
+    }
     let t = best_opp_creature(g, o, |_| true);
     if t.is_none_or(|t| pval(g, t) < 2.0) {
         return Ok(());
@@ -3339,12 +3352,21 @@ fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     if let Some(t) = best_opp_creature(g, o, |_| true).filter(|&t| pval(g, t) >= 2.0) {
-        let (who, power) = (g.perm(t).owner, epow(g, t));
-        let cd = g.perm(src).cd;
-        apply_removal(g, Some(o), t, "exile", cd)?;
-        if !g.perm(t).on_bf {
-            gain(g, who, power)?; // Oracle: "That creature's controller gains life equal to its power."
-        }
+        solitude_exile(g, src, o, t)?;
+    }
+    Ok(())
+}
+
+/// Solitude (`src`, o's) exiles t; if it is gone, its controller gains life equal to its power (as it was)
+fn solitude_exile(g: &mut Game, src: PermId, o: PlayerId, t: PermId) -> Res {
+    if !g.perm(t).on_bf {
+        return Ok(());
+    }
+    let (who, power) = (g.perm(t).owner, epow(g, t));
+    let cd = g.perm(src).cd;
+    super::yoshimaru_p7::exile_target(g, o, t, cd)?;
+    if !g.perm(t).on_bf {
+        gain(g, who, power)?; // Oracle: "That creature's controller gains life equal to its power."
     }
     Ok(())
 }

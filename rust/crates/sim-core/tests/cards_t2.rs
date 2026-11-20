@@ -101,14 +101,14 @@ fn blinks_nest_three_deep_at_most() {
 fn palace_jailer_exiles_until_an_opponent_becomes_the_monarch() {
     let mut g = table(&[BR, KA]);
     let t = perm(&mut g, P1, "Baneslayer Angel");
-    let j = perm(&mut g, P0, "Palace Jailer");
+    perm(&mut g, P0, "Palace Jailer");
     assert_eq!(g.monarch, Some(P0));
     assert!(!g.perm(t).on_bf);
     assert_eq!(names(&g, &g.player(P1).exile.clone()), ["Baneslayer Angel"]);
     cardcode::become_monarch(&mut g, P1).unwrap();
     assert_eq!(g.monarch, Some(P1));
     assert!(named(&g, P1, "Baneslayer Angel").is_some(), "it returns");
-    assert_eq!(g.perm(j).data.get(DataKey::Oring), Some(&Val::List(vec![])));
+    assert!(g.jailed.is_empty(), "the link is spent");
 }
 
 // ------------------------------------------------------------------ any target

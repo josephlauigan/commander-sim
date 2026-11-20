@@ -134,14 +134,20 @@ fn best_target_any_dealt(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>)
     })
 }
 
+/// how deep a chain of blinks nests before it stops: three for the AI (a chain is a combo, not a loop, here); a person
+/// chooses every link, so theirs may run on (and the end is logged)
+const PERSON_BLINK_DEPTH: u32 = 10;
+
 /// t2.blink: exile m and return it under its owner's control (ETBs again, untapped, summoning sick); the permanent
-/// it came back as, None if it didn't (a token, or a blink chain three deep: those are combos, not loops here)
+/// it came back as, None if it didn't (a token, or a blink chain at its depth limit: those are combos, not loops here)
 pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     let x = g.perm(m);
     if x.token || x.cd.is_none() || !x.on_bf {
         return Ok(None);
     }
-    if g.blink_depth >= 3 {
+    let cap = if crate::human::is_human(g, p) { PERSON_BLINK_DEPTH } else { 3 };
+    if g.blink_depth >= cap {
+        crate::glog!(g, "    {} is not blinked: the blink chain stops at {cap} links", g.perm(m).name);
         return Ok(None);
     }
     g.blink_depth += 1;
@@ -150,12 +156,21 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     r.map(Some)
 }
 
-/// t2._blink
+/// t2._blink: the card goes out of the battlefield and comes back as a new object. A land is listed apart from the
+/// permanents (`remove_land` takes it out); what comes back is decided by the card: a land card enters as a land
+/// (`land_enters`), any other as a permanent, so a double-faced land card (Witch-Blessed Meadow) returns front face up.
 fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
     let (cd, orig, cmd) = (g.perm(m).cd.unwrap(), g.perm(m).orig, g.perm(m).is_cmd);
-    leave(g, m)?;
-    let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
+    super::yoshimaru_p7::leave_battlefield(g, m)?;
+    crate::impls::bulk_white::note_exile(g, m); // Ennis: a card was put into exile (a token is skipped)
+    let n = if g.db.get(cd).land {
+        super::yoshimaru_p7::land_enters(g, orig, cd)?
+    } else {
+        enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?
+    };
     g.perm_mut(n).is_cmd = cmd;
+    // (a land has no entry number, so no leaves-the-battlefield listener hears a blinked land: they are all about
+    // creatures)
     exiled_from_bf(g, m, Some(n))?;
     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
     Ok(n)
@@ -212,19 +227,19 @@ fn human_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, rocks: boo
     flicker_choice(g, src, p, cands)
 }
 
-/// the person picks what to flicker from `cands` (or nothing) and it is blinked
-fn flicker_choice(g: &mut Game, src: PermId, p: PlayerId, mut cands: Vec<PermId>) -> Res {
+/// the person picks what to flicker from `cands` (or nothing) and it is blinked (a token is exiled for good)
+pub(crate) fn flicker_choice(g: &mut Game, src: PermId, p: PlayerId, mut cands: Vec<PermId>) -> Res {
     cands.retain(|&m| on(g, p, m));
     if cands.is_empty() {
         return Ok(());
     }
-    let labels: Vec<String> = cands.iter().map(|&m| g.perm(m).name.to_string()).collect();
+    let labels: Vec<String> =
+        cands.iter().map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m))).collect();
     let prompt = format!("{}: exile one of your permanents, then return it?", cname(g, src));
     let Some(k) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("no"), None)? else {
         return Ok(());
     };
-    blink(g, p, cands[k])?;
-    Ok(())
+    crate::human::cards::blink(g, p, cands[k])
 }
 
 /// t2.end_step_flicker: Soulherder, Conjurer's Closet, Teleportation Circle: at the beginning of your end step, you
@@ -283,29 +298,83 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
 }
 
 // ======================================================== monarch, Palace Jailer
-/// monarch (end-step draw, taken by combat damage); exiles a creature until an opponent becomes the monarch
+/// Palace Jailer: "When this creature enters, you become the monarch." and, as a second trigger of its own (a Stifle
+/// on one leaves the other), "When this creature enters, exile target creature an opponent controls until an opponent
+/// becomes the monarch."
 fn jailer(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = owner(g, src);
-    if !trigger_window(g, o, Some(src), "become the monarch; exile a creature", Some(5.0))? {
+    if trigger_window(g, o, Some(src), "become the monarch", Some(5.0))? {
+        crate::cardcode::become_monarch(g, o)?;
+    }
+    jailer_exile(g, src, o)
+}
+
+/// the Jailer's second trigger: the target is mandatory for a person (any creature an opponent controls); the AI takes
+/// its most valuable one when it is worth at least 1. The creature is linked to the game, not to the Jailer: it
+/// returns when an opponent of its controller becomes the monarch (`jail_release`), whatever happened to the Jailer.
+pub fn jailer_exile(g: &mut Game, src: PermId, o: PlayerId) -> Res {
+    let human = crate::human::is_human(g, o);
+    let targets =
+        |g: &Game| super::yoshimaru_p7::targets_from(g, o, src, |g, x| g.perm(x).owner != o && g.is_creature(x));
+    let wanted = |g: &Game| max_by(&targets(g), |m| pval(g, m)).filter(|&t| pval(g, t) >= 1.0);
+    if if human { targets(g).is_empty() } else { wanted(g).is_none() } {
         return Ok(());
     }
-    crate::cardcode::become_monarch(g, o)?;
-    if on(g, o, src) {
-        oring_exile(g, src, o, |g, x| g.is_creature(x), false, false)?;
+    if !trigger_window(g, o, Some(src), "exile a creature until an opponent becomes the monarch", Some(5.0))? {
+        return Ok(());
+    }
+    let t = if human {
+        let cands = targets(g);
+        crate::human::gaps_t2::pick_target(
+            g,
+            o,
+            &cands,
+            "Palace Jailer: exile which creature an opponent controls?",
+            None,
+        )?
+    } else {
+        wanted(g)
+    };
+    let Some(t) = t else { return Ok(()) };
+    let src_cd = g.perm(src).cd;
+    super::yoshimaru_p7::exile_target(g, o, t, src_cd)?;
+    let x = g.perm(t);
+    if !x.on_bf && !x.token {
+        let (cd, orig) = (x.phys.or(x.cd).unwrap(), x.orig);
+        if !g.player(orig).is_commander(cd) && g.player(orig).exile.contains(&cd) {
+            let e = super::common::link_exiled(g, orig, cd, src);
+            // the game keeps the link, not the Jailer: the object is not "until the Jailer leaves"
+            if let Some((_, q, i)) = super::common::linked(g, &e) {
+                g.player_mut(q).exile.obj_mut(i).until = None;
+            }
+            g.jailed.push((o, e));
+        }
     }
     Ok(())
 }
 
-/// an opponent became the monarch: what the Jailer exiled returns
-fn jailer_lose(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) {
-        oring_return(g, src)?;
+/// p became the monarch: what the Jailers exiled returns when p is an opponent of the Jailer's controller. The link
+/// outlives the Jailer, and the controller's leaving the game (its opponents are still its opponents: CR 800.4i).
+pub fn jail_release(g: &mut Game, p: PlayerId) -> Res {
+    if g.jailed.is_empty() {
+        return Ok(());
     }
-    if !g.perm(src).data.is_empty() {
-        g.perm_mut(src).data.set(DataKey::Oring, Val::List(vec![]));
+    let (release, keep): (Vec<_>, Vec<_>) = std::mem::take(&mut g.jailed).into_iter().partition(|&(c, _)| c != p);
+    g.jailed = keep;
+    for (_, e) in release {
+        let Some((cd, o, i)) = super::common::linked(g, &e) else { continue };
+        if g.player(o).alive {
+            g.player_mut(o).exile.remove(i);
+            if g.db.get(cd).land {
+                super::yoshimaru_p7::land_enters(g, o, cd)?;
+            } else {
+                enter(g, o, cd, Enter::default())?;
+            }
+            crate::glog!(g, "    {} returns to the battlefield", g.db.get(cd).name);
+        }
     }
     Ok(())
 }
@@ -1609,7 +1678,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // monarch, Palace Jailer
     let c = r.card(db, "Palace Jailer")?;
     c.etb = Some(jailer);
-    c.monarch = Some(jailer_lose);
     // Brago and blink
     r.card(db, "Brago, King Eternal")?.combat_damage = Some(brago);
     let c = r.card(db, "Soulherder")?;
