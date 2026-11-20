@@ -715,3 +715,18 @@ fn opponent_elesh_keeps_socialite_token_replacement() {
     let t = zones::make_tokens(&mut g, P0, spec).unwrap()[0];
     assert_eq!(g.perm(t).plus, 1, "each other Vampire enters with a counter is a replacement");
 }
+
+#[test]
+fn tome_of_legends_commander_page_is_blanked_by_an_opponents_elesh() {
+    use sim_core::engine::hooks::fire_trigger;
+    use sim_core::hooks::{Call, Event};
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tome of Legends");
+    let cmd = perm(&mut g, P0, "Mother of Runes");
+    g.perm_mut(cmd).is_cmd = true;
+    fire_trigger(&mut g, Event::Etb, Call::Etb { p: P0, m: cmd }).unwrap();
+    assert_eq!(g.perm(t).data.int(DataKey::Counters), 2, "control: your commander entering adds a page");
+    elesh_opp(&mut g);
+    fire_trigger(&mut g, Event::Etb, Call::Etb { p: P0, m: cmd }).unwrap();
+    assert_eq!(g.perm(t).data.int(DataKey::Counters), 2, "an opponent's Elesh blanks that trigger");
+}
