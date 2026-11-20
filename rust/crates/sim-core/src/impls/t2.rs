@@ -1626,6 +1626,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Terror of the Peaks")?;
     c.etb = Some(terror);
     c.tokens_enter = Some(terror_tokens);
+    *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
     r.card(db, "Scourge of Valkas")?.etb = Some(valkas);
     r.card(db, "Dragon Tempest")?.etb = Some(tempest);
     r.card(db, "Drakuseth, Maw of Flames")?.attack = Some(drakuseth);

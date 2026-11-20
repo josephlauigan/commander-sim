@@ -165,7 +165,9 @@ fn landed(g: &mut Game, src: crate::hooks::Src, _p: PlayerId, m: crate::ids::Per
 pub fn register(r: &mut crate::hooks::Registry, db: &crate::cards::CardDb) -> Result<(), String> {
     for name in ["Tymna the Weaver", "Thrasios, Triton Hero", "Kraum, Ludevic's Opus"] {
         if db.id(name).is_some() {
-            r.card(db, name)?.etb = Some(landed);
+            let c = r.card(db, name)?;
+            c.etb = Some(landed);
+            *c = c.enter_setup(crate::hooks::Event::Etb); // bookkeeping of the turn it came down
         }
     }
     Ok(())

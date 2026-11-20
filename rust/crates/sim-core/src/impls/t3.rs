@@ -1896,6 +1896,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     walker(r, db, "Grist, the Hunger Tide", &GRIST)?;
     let c = r.card(db, "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki")?;
     c.etb = Some(fable);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
     c.upkeep = Some(fable_lore);
     c.attack = Some(fable_goblin);
     // Marwyn

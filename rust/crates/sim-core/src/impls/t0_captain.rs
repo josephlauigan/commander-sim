@@ -1041,9 +1041,12 @@ fn sac_defend(
 // ------------------------------------------------------------------ registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, CAP_TL)?.etb = Some(cap_team);
-    r.card(db, LEGEND)?.etb = Some(legend_etb);
+    let c = r.card(db, LEGEND)?;
+    c.etb = Some(legend_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration
     let c = r.card(db, MARVEL)?;
     c.etb = Some(marvel_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration
     let c = r.card(db, QUINJET)?;
     c.etb = Some(quinjet_etb);
     c.attack = Some(quinjet_attack);

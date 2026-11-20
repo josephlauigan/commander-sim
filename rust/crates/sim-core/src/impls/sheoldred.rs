@@ -1226,7 +1226,10 @@ fn tome_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
         add_pages(g, src, 1);
     } else if g.perm(m).is_cmd && g.perm(m).owner == owner(g, src) && on_bf(g, src) {
-        add_pages(g, src, 1);
+        // "Whenever your commander enters or attacks, put a page counter" is a triggered ability
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(m)) {
+            add_pages(g, src, 1);
+        }
     }
     Ok(())
 }
@@ -1530,6 +1533,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Necrosquito")?;
     c.as_enters = Some(necro_as_enters);
     c.etb = Some(selfpt_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule, enters with counters)
     c.self_pt = Some(necro_pt);
     c.dies = Some(necro_dies);
     c.sacrifice = Some(necro_token);
@@ -1540,16 +1544,19 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.hand_options = Some(apex_hand);
     let c = r.card(db, "Gravblade Heavy")?;
     c.etb = Some(selfpt_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule, enters with counters)
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(gravblade_pt);
     c.sba = Some(gravblade_sba);
     c.grant_kw = Some(gravblade_kw);
     let c = r.card(db, "Ulna Alley Shopkeep")?;
     c.etb = Some(selfpt_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule, enters with counters)
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(ulna_pt);
     let c = r.card(db, "Restless Bloodseeker // Bloodsoaked Reveler")?;
     c.etb = Some(selfpt_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule, enters with counters)
     c.as_enters = Some(selfpt_as);
     c.self_pt = Some(bloodseeker_pt);
     c.end_step = Some(seeker_end);
@@ -1574,6 +1581,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::partials::at_once(c, Event::Crew, true);
     let c = r.card(db, "Tome of Legends")?;
     c.etb = Some(tome_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // mixed: it enters with a page counter (setup), a commander entering adds one (trigger)
     c.attack = Some(tome_attack);
     c.options = Some(tome_options);
     c.prio = Some(tome_prio);

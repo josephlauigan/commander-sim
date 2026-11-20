@@ -909,6 +909,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, ARDENT)?;
     c.etb = Some(ardent_etb);
     c.token_created = Some(ardent_tokens);
+    *c = c.enter_trigger(crate::hooks::Event::TokenCreated); // "Whenever another creature or artifact you control enters"
     c.hand_options = Some(ardent_options);
     c.end_step = Some(ardent_end);
     r.card(db, "Wild-Magic Sorcerer")?.cast = Some(sorcerer_cast);

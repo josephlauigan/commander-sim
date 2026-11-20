@@ -920,6 +920,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, FREESTRIDER)?;
     c.hand_options = Some(plot_options);
     c.etb = Some(freestrider_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // enters with counters: a replacement
     let c = r.card(db, TUMBLEWEED)?;
     c.hand_options = Some(plot_options);
     c.resolve = Some(tumbleweed_resolve);
@@ -937,6 +938,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.hand_options = Some(hypothesis_options);
     let c = r.card(db, "Studious First-Year")?;
     c.etb = Some(firstyear_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // enters prepared
     c.options = Some(firstyear_options);
     let c = r.card(db, "Topiary Lecturer")?;
     c.cast = Some(increment);

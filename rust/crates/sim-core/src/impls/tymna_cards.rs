@@ -650,6 +650,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.self_pt = Some(elder_pt);
         c.as_enters = Some(elder_enters);
         c.etb = Some(elder_etb);
+        *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule)
         c.extra_mana = Some(elder_mana);
     }
     if let Some(c) = card_if(r, db, SURVEYOR)? {
@@ -726,6 +727,7 @@ pub fn register_more(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.self_pt = Some(dakkon_pt);
         c.as_enters = Some(elder_enters);
         c.etb = Some(elder_etb);
+        *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule)
     }
     if let Some(c) = card_if(r, db, EMBRACE)? {
         c.resolve = Some(embrace_resolve);
@@ -767,6 +769,7 @@ pub fn register_rocks(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     for name in ["Moss Diamond", COMPASS] {
         if let Some(c) = card_if(r, db, name)? {
             c.etb = Some(enters_tapped);
+            *c = c.enter_setup(crate::hooks::Event::Etb); // enters tapped
         }
     }
     if let Some(c) = card_if(r, db, ELENDA)? {

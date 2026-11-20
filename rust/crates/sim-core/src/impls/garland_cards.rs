@@ -387,6 +387,7 @@ fn lazav_sacrifice(g: &mut Game, src: Src, p: PlayerId, what: crate::hooks::Sacr
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, CONDUCTOR)?;
     c.etb = Some(conductor_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // enters prepared
     c.options = Some(conductor_options);
     let c = r.card(db, FREIGHTER)?;
     c.etb = Some(freighter_etb);
@@ -458,6 +459,7 @@ pub fn register_more(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_pt = Some(xande_pt);
     c.as_enters = Some(xande_enters);
     c.etb = Some(xande_etb);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // a state registration (its size rule)
     let c = r.card(db, "Potioner's Trove")?;
     c.cast = Some(trove_cast);
     c.options = Some(trove_options);

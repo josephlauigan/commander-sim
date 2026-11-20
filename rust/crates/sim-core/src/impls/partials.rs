@@ -3323,6 +3323,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Heartless Act")?.resolve = Some(heartless);
     let c = r.card(db, "Hero of Iroas")?;
     c.etb = Some(hero_heroic);
+    *c = c.enter_setup(crate::hooks::Event::Etb); // heroic is caused by a cast, not by an entering
     at_once(c, Event::Etb, false);
     r.card(db, "Jagged-Scar Archers")?.options = Some(archers_options);
     let c = r.card(db, "Jaxis, the Troublemaker")?;

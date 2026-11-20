@@ -28,7 +28,7 @@ use crate::engine::stack::trigger_window;
 use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{bounce, draw, exile_perm, max_by};
 use crate::flow::Res;
-use crate::hooks::{Action, Opt, Registry, Src};
+use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
@@ -700,9 +700,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, ELROND)?;
     c.etb = Some(elrond_etb);
     c.tokens_enter = Some(elrond_tokens);
+    *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
     let c = r.card(db, CLOUDFIN)?;
     c.etb = Some(cloudfin_etb);
     c.tokens_enter = Some(cloudfin_tokens);
+    *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
     r.card(db, DEFILER)?.cast = Some(defiler_cast);
     let c = r.card(db, VIRTUOSO)?;
     c.etb = Some(virtuoso_etb);

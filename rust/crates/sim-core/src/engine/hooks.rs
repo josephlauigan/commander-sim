@@ -174,9 +174,12 @@ pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Re
 /// Elesh Norn, Mother of Machines: "Permanents entering the battlefield don't cause abilities of permanents your
 /// opponents control to trigger." True when an opponent of `controller` has one on the battlefield (not phased out,
 /// abilities on): a triggered ability of one of `controller`'s permanents is not caused by `entering` (None: a land
-/// or tokens, whichever the caller has no single permanent for). Only triggers are blanked: what happens as a permanent
-/// enters (a name chosen, counters, an Aura attaching, devour) and the abilities of cards in other zones (a
-/// graveyard landfall) still happen.
+/// or tokens, whichever the caller has no single permanent for). Only enters-caused triggered abilities are blanked:
+/// what happens as a permanent enters (a name chosen, enters tapped or with counters or prepared, an Aura attaching,
+/// devour, a Saga's lore counter), static and state registrations, and the abilities of cards in other zones (a
+/// graveyard landfall) still happen. A hook is a trigger or setup by `enter_hook_is_trigger`; a hook that mixes the
+/// two asks `enters_trigger_times`. (Hushbringer is checked apart, in `zones::enter` and at the head of
+/// `fire_trigger_where`.)
 pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) -> bool {
     g.opps(controller).any(|q| {
         g.player(q).perms.iter().any(|&m| {
@@ -243,6 +246,10 @@ pub fn fire_trigger_where(
             && !now
         {
             reps += total_trigger_copies(g, owner, "etb", Some(*m));
+        }
+        if e == Event::TokenCreated && trig {
+            // an artifact token (Treasure, Food, Clue) entering: Panharmonicon's additional trigger, Elesh Norn's
+            reps += total_trigger_copies(g, owner, "etb", None);
         }
         if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
             && trig

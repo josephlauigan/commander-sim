@@ -46,7 +46,7 @@ impl Exec {
 /// lock), `fill=stitcher|wayfinder`
 pub const ENTER_EXTRA_TAGS: [Tag; 3] = [Tag::Draw, Tag::Rem, Tag::Fill];
 /// `etb_static` (and `rem` with `etb` that is a lock Aura)
-pub const ENTER_STATIC_TAGS: [Tag; 6] = [Tag::Flute, Tag::Prepare, Tag::Mycoloth, Tag::Endraze, Tag::Spider, Tag::Rem];
+pub const ENTER_STATIC_TAGS: [Tag; 5] = [Tag::Flute, Tag::Prepare, Tag::Mycoloth, Tag::Spider, Tag::Rem];
 /// `resolve_inner`, an instant or sorcery
 pub const SPELL_RESOLVE_TAGS: [Tag; 38] = [
     Tag::Draw,

@@ -1612,7 +1612,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Xorn")?;
     c.token_created = Some(xorn);
     *c = c.at_once(Event::TokenCreated);
-    r.card(db, "Reckless Fireweaver")?.token_created = Some(fireweaver);
+    let c = r.card(db, "Reckless Fireweaver")?;
+    c.token_created = Some(fireweaver);
+    *c = c.enter_trigger(Event::TokenCreated); // "Whenever an artifact you control enters"
     r.card(db, "Dark Confidant")?.upkeep = Some(bob);
     r.card(db, "Tavern Scoundrel")?.options = Some(scoundrel);
     crate::impls::common::aura(r, db, "Sticky Fingers", &STICKY)?;

@@ -1050,6 +1050,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     for name in [HELVAULT, TITANS, ELDEST, MENDING, BRETAGARD, OLD_GODS, LOVE_SONG] {
         let c = r.card(db, name)?;
         c.etb = Some(saga_enter);
+        *c = c.enter_setup(crate::hooks::Event::Etb); // a Saga: its lore counter is put as it enters (CR 714.3a)
         c.main1 = Some(saga_main1);
         c.saga = Some((saga_wants, saga_lore));
     }

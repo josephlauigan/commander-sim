@@ -1381,7 +1381,7 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 }
 
 /// enters-the-battlefield tags that are triggered abilities (the rest: as it enters, or static)
-pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
+pub const ETB_TRIGGER_TAGS: [Tag; 19] = [
     Tag::Chromemox,
     Tag::Recruit,
     Tag::Titan,
@@ -1400,6 +1400,7 @@ pub const ETB_TRIGGER_TAGS: [Tag; 18] = [
     Tag::Uprising,
     Tag::Tok,
     Tag::Tokbig,
+    Tag::Endraze,
 ];
 pub const ETB_SCRYFALL_TAGS: [Tag; 4] = [Tag::Tut, Tag::Treas, Tag::Drainetb, Tag::Edictetb];
 /// removal kinds that are Auras locking the target down
@@ -1478,11 +1479,6 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
         repl::put_plus(g, m, 2 * toks.len() as i32);
     }
-    if t.has(Tag::Endraze) {
-        let pl = g.player_mut(p);
-        pl.pumpadd += 2;
-        pl.trample = true;
-    }
     if t.has(Tag::Spider) {
         // Old Fat Spider: hexproof on your best creature (like Boots)
         let cr: Vec<PermId> =
@@ -1503,6 +1499,12 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if t.has(Tag::Chromemox) {
         crate::engine::tutors::chrome_imprint(g, p, m)?;
+    }
+    if t.has(Tag::Endraze) {
+        // End-Raze Forerunners: when it enters, other creatures you control get +2/+2 and gain vigilance and trample
+        let pl = g.player_mut(p);
+        pl.pumpadd += 2;
+        pl.trample = true;
     }
     if t.has(Tag::Recruit) {
         crate::engine::tutors::tutor(g, p, "cre2", "Imperial Recruiter")?; // Imperial Recruiter: creature with power 2 or less

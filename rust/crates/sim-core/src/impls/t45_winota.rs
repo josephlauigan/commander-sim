@@ -773,7 +773,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         }
     }
     if has(REVOKER) {
-        r.card(db, REVOKER)?.etb = Some(revoker_etb);
+        let c = r.card(db, REVOKER)?;
+        c.etb = Some(revoker_etb);
+        *c = c.enter_setup(crate::hooks::Event::Etb); // as it enters, choose a name
     }
     if has(JAILER) {
         r.card(db, JAILER)?.can_cast = Some(jailer_lock);

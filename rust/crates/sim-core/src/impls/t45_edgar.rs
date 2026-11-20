@@ -807,10 +807,14 @@ fn socialite_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     if m == src {
-        for v in vampires(g, o).into_iter().filter(|&v| v != src) {
-            repl::put_plus(g, v, 1);
+        // "When this creature enters, if an opponent lost life this turn, put a +1/+1 counter on each other Vampire" is
+        // a triggered ability
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, o, Some(src)) {
+            for v in vampires(g, o).into_iter().filter(|&v| v != src) {
+                repl::put_plus(g, v, 1);
+            }
+            crate::glog!(g, "    Vampire Socialite: +1/+1 counters on the other Vampires");
         }
-        crate::glog!(g, "    Vampire Socialite: +1/+1 counters on the other Vampires");
     } else if vampire(g, m) && g.perm(m).on_bf {
         repl::put_plus(g, m, 1); // enters with an additional +1/+1 counter
     }
@@ -972,6 +976,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, FORERUNNER)?;
         c.etb = Some(forerunner_etb);
         c.tokens_enter = Some(forerunner_tokens);
+        *c = c.enter_trigger(Event::TokensEnter); // its enters trigger for tokens (a hook that runs now)
     }
     if has(KNIGHT) {
         r.card(db, KNIGHT)?.end_step = Some(knight_end);
@@ -998,6 +1003,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, SOCIALITE)?;
         c.etb = Some(socialite_etb);
         at_once(c, Event::Etb, true); // the other Vampires' counter is a replacement as they enter
+        *c = c.enter_setup(Event::Etb); // mixed: its own enters trigger loops `enters_trigger_times`
         c.tokens_enter = Some(socialite_tokens);
     }
     if has(ESTATE) {
