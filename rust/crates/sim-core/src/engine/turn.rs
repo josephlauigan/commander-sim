@@ -967,16 +967,23 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     if g.monarch == Some(p) {
         draw(g, p, 1, false)?; // the monarch draws
     }
+    for &(_, m) in &warp_exiles {
+        g.perm_mut(m).data.remove(crate::state::DataKey::WarpExile); // used up either way
+    }
+    // the delayed exiles go on the stack with the end-step triggers, as one batch the controller orders
+    g.trig_queue.extend(
+        warp_exiles
+            .iter()
+            .map(|&(q, m)| crate::hooks::Trigger::new(q, Some(m), crate::hooks::TrigAct::WarpExile { caster: q, m })),
+    );
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::EndStep, Call::Player { p })?;
     }
+    crate::engine::stack::flush_triggers(g)?; // (the exiles alone, when no end-step hook triggered)
     for m in g.player(p).perms.clone() {
         if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::EotSac) {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
         }
-    }
-    for (q, m) in warp_exiles {
-        crate::impls::generic_paths::warp_exile(g, q, m)?; // after the end-step triggers (Haliya's draw) have resolved
     }
     for (q, m) in sneak_sacs {
         g.perm_mut(m).data.set(crate::state::DataKey::SneakAttack, crate::state::Val::Bool(true));

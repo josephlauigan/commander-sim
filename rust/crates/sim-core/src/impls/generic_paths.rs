@@ -22,7 +22,7 @@ use crate::engine::zones::{discard_cards, draw, exile_perm};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game};
+use crate::state::{Ctx, Game};
 use crate::sym::intern;
 use crate::tag::Tag;
 
@@ -229,11 +229,12 @@ pub fn warped_in_exile(g: &Game, p: PlayerId) -> Vec<CardId> {
 
 /// A warped permanent's delayed exile (Warp: "Exile this creature at the beginning of the next end step, then you may cast
 /// it from exile on a later turn"), made by the cast as the spell resolved: it does not depend on the permanent's
-/// abilities, and `caster` controls it. `turn::end_step` runs it for each permanent marked `DataKey::WarpExile` (captured
-/// as the step begins), after the end-step triggers have been put on the stack and resolved. The card goes to its owner's
-/// exile (a commander to the command zone: no later cast), and its owner may cast it on a later turn.
+/// abilities, and `caster` controls it. `turn::end_step` puts one `TrigAct::WarpExile` on the stack for each permanent
+/// marked `DataKey::WarpExile` (captured as the step begins), together with the other beginning-of-end-step triggers
+/// (Haliya's draw), so its controller orders them; it is probed like a hook, so it changes nothing before its window
+/// (`end_step` removes the mark: used up either way). The card goes to its owner's exile (a commander to the command
+/// zone: no later cast), and its owner may cast it on a later turn.
 pub fn warp_exile(g: &mut Game, caster: PlayerId, m: PermId) -> Res {
-    g.perm_mut(m).data.remove(DataKey::WarpExile); // used up either way
     if !g.perm(m).on_bf || g.perm(m).phased {
         return Ok(());
     }

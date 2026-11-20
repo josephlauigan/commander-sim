@@ -75,6 +75,7 @@ fn call(g: &mut Game, t: &Trigger) -> Res {
     let prev = std::mem::replace(&mut g.last_cast_etb, t.cast_etb);
     let r = match &t.act {
         TrigAct::RivazExile { m } => crate::impls::t45_urdragon::rivaz_exile(g, *m),
+        TrigAct::WarpExile { caster, m } => crate::impls::generic_paths::warp_exile(g, *caster, *m),
         TrigAct::Hook { event, call } => {
             let src = t.src.expect("a hook trigger has a source");
             let prev = g.trig_ctl.replace((src, t.controller));

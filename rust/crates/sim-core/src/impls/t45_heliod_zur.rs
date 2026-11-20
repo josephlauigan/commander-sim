@@ -545,7 +545,8 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// battlefield when they resolve, and each keeps the controller it had when it triggered
 /// (`hooks::trigger_controller`). Warp {W}: cast from the hand for {W} (plus any cost increase, and Trinisphere's floor
 /// on the total) and exiled at the beginning of the next end step by a delayed trigger of the caster's that the cast
-/// made (`generic_paths::warp_exile`, run by `turn::end_step`): it is set on the permanent the spell became, not on a
+/// made (`generic_paths::warp_exile`, put on the stack by `turn::end_step` with the beginning-of-end-step triggers, so
+/// her controller orders it with her draw): it is set on the permanent the spell became, not on a
 /// newer object (a blink in response), and it does not depend on her abilities or on who controls her by then. Her card
 /// then waits in its owner's exile and its owner can cast it for its mana cost on a later turn
 /// (`generic_paths::warped_in_exile`: the AI's option and a person's cast from exile). Her end-step draw is a trigger of
@@ -609,7 +610,7 @@ fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) ->
 
 /// your end step: the trigger always triggers and the "if you've gained 3 or more life this turn" is checked as it
 /// resolves (not an intervening if), whether or not Haliya is still there. (A warped Haliya's exile is a delayed
-/// trigger of its own: `generic_paths::warp_exile`, run by `turn::end_step`.)
+/// trigger of its own, stacked with this one: `generic_paths::warp_exile`, from `turn::end_step`.)
 fn haliya_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p == trigger_controller(g, src)
         && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))?
