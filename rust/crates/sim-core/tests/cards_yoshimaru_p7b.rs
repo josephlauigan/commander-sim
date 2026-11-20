@@ -693,3 +693,27 @@ fn felidar_blinking_witch_blessed_meadow_returns_witch_enchanter_and_its_trigger
     assert!(!asks(&h, "Witch Enchanter").is_empty(), "its enters trigger asks: {:?}", h.asked());
     assert!(!g.perm(ring).on_bf, "and destroys the artifact the person picked");
 }
+
+// ------------------------------------------------------------------ Ennis's counter and a blink
+// "At the beginning of your end step, if one or more cards were put into exile this turn, put a +1/+1 counter on Ennis."
+#[test]
+fn ennis_gets_a_counter_when_a_card_was_blinked_this_turn() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, "Ennis, Debate Moderator");
+    perm(&mut g, P0, "Wall of Omens");
+    let _h = person(&mut g, &["Wall of Omens"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(g.perm(e).plus, 1, "a blinked card was put into exile");
+}
+
+#[test]
+fn ennis_gets_a_counter_when_a_land_was_blinked_this_turn() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, "Ennis, Debate Moderator");
+    lands(&mut g, P0, "Plains", 1, true);
+    let _h = person(&mut g, &["Plains"]);
+    perm(&mut g, P0, "Felidar Guardian");
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(g.perm(e).plus, 1, "a blinked land card was put into exile");
+}
