@@ -372,6 +372,7 @@ fn double_modes(
                 g.perm_mut(m).on_bf = true;
                 g.perm_mut(m).neutered = inert;
                 g.player_mut(p).perms.push(m);
+                g.hooks.push(m);
             }
             let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 if let Some(entrant) = observer {
