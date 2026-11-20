@@ -68,6 +68,9 @@ fn extra_live(g: &Game, src: PermId) -> usize {
 /// Everything a leave must remember, before battlefield membership or attachments change.
 /// A wipe records all sources at its first leave, including listeners that survive it (CR 603.10a).
 pub fn note_leaving(g: &mut Game, m: PermId) {
+    if extra_record(g, m).is_some_and(|(_, batch)| g.cur_batch != Some(batch)) {
+        g.perm_mut(m).data.remove(DataKey::LkiExtra);
+    }
     if !g.perms.iter().any(|x| {
         x.on_bf
             && !x.phased
@@ -77,7 +80,7 @@ pub fn note_leaving(g: &mut Game, m: PermId) {
                 "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne" | "Harmonic Prodigy"
             )
     }) {
-        return; // No source doubler: do not change permanent data in other decks.
+        return; // No live source doubler: do not record source extras.
     }
     let batch = g.cur_batch.unwrap_or(0);
     if g.cur_batch.is_some() && extra_record(g, m).is_some_and(|(_, b)| b == batch) {
