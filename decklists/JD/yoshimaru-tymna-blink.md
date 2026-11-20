@@ -18,16 +18,16 @@ Put creatures with enter effects on the battlefield, then use them again. Solitu
 
 Both have Partner and share the command zone. Each costs {2} more for every time it has been cast from there before.
 
-- **Yoshimaru is a one-mana body that grows.** He counts every legendary permanent we play: 26 in the 98 (4 lands, 15 creatures, 2 artifacts, 4 planeswalkers and 1 enchantment, listed under Decklist by type), and every blink of one of them is another enter. He has no evasion and no protection of his own, so he is a bonus, not the plan (see Yoshimaru's counters below).
+- **Yoshimaru is a one-mana body that grows.** He counts every legendary permanent we play: 25 in the 98 (4 lands, 15 creatures, 2 artifacts, 3 planeswalkers and 1 enchantment, listed under Decklist by type), and every blink of one of them is another enter. He has no evasion and no protection of his own, so he is a bonus, not the plan (see Yoshimaru's counters below).
 - **Tymna is the card engine, but only if she connects.** X is the number of opponents hit by combat damage from any of our creatures that turn, so a flier, a token or a creature that cannot be blocked draws her cards. With Delney she draws twice (see Doubling triggers). Her lifelink is a life gain on every hit, which feeds Vito, Heliod and Archangel of Thune.
 
 **The order rule.** Yoshimaru must be on the battlefield first. His trigger is for *another* legendary permanent that enters while he is there, so Tymna entering after him is his first counter. If Tymna is out first, Yoshimaru's own entry gets nothing, and neither does anything that came down before him. With four mana and neither commander out, cast Yoshimaru, then Tymna.
 
 **When to cast each.**
 
-- **Yoshimaru on turn 1** with a white land that enters untapped. Twenty lands in the list qualify: 10 Plains, Scrubland, Caves of Koilos, Command Tower, Eiganjo, Vault of Champions (untapped with two or more opponents), Plaza of Heroes (any colour for a legendary spell), and Godless Shrine (2 life), Witch Enchanter // Witch-Blessed Meadow (3 life), Marsh Flats and Arid Mesa (fetch an untapped Plains) at a small life cost. Minas Tirith (tapped without a legendary creature) and Isolated Chapel (tapped unless we control a Plains or a Swamp) enter tapped as a first land, and Urborg, Takenuma and the Swamps make no white. Chance of at least one of the 20 in the opening hand: 80.9% on the play (7 cards), 85.1% on the draw (8 cards).
+- **Yoshimaru on turn 1** with a white land that enters untapped. Twenty-one lands in the list qualify: 11 Plains, Scrubland, Caves of Koilos, Command Tower, Eiganjo, Vault of Champions (untapped with two or more opponents), Plaza of Heroes (any colour for a legendary spell), and Godless Shrine (2 life), Witch Enchanter // Witch-Blessed Meadow (3 life), Marsh Flats and Arid Mesa (fetch an untapped Plains) at a small life cost. Minas Tirith (tapped without a legendary creature) and Isolated Chapel (tapped unless we control a Plains or a Swamp) enter tapped as a first land, and Urborg, Takenuma and the Swamps make no white. Chance of at least one of the 21 in the opening hand: 82.6% on the play (7 cards), 86.6% on the draw (8 cards).
 - **Only Chrome Mox lets Yoshimaru come down before the land drop.** Chrome Mox ({0}): when it enters we may exile a nonland, nonartifact card from our hand, and it taps for one mana of a colour of that card, so with a white card imprinted it pays {W}: Mox, Yoshimaru, then the land. That order also lets a legendary land (Eiganjo, Takenuma, Urborg, Minas Tirith) come down after Yoshimaru as his first counter, and Minas Tirith then enters untapped. Sol Ring and Mana Vault make colourless mana and cannot pay {W}, and Mox Amber makes mana only of a colour among our legendary creatures and planeswalkers, so it needs a legend already on the battlefield. Without Chrome Mox the turn-1 order is land, then Yoshimaru, and his first counter comes on turn 2 from a legendary land, a legendary rock, or Tymna.
-- **Chrome Mox costs a card.** 60 of the 98 cards can be imprinted (every nonland, nonartifact card; Witch Enchanter counts, since in hand it is a creature card; 50 are white and 18 black, and none is colourless), so there is almost always a card to give, but the card is gone for good. Imprint a white or black card we will not cast soon (a six-drop, a second sweeper or a spare protection spell) and pick the card whose colour the hand is missing; with no such card in hand the Mox makes no mana. With an untapped white land on turn 1 it is two mana: Yoshimaru ({W}) and a one-drop ({W}) such as Mother of Runes or Giver of Runes. It is an artifact, so Enlightened Tutor can find it.
+- **Chrome Mox costs a card.** 58 of the 98 cards can be imprinted (every nonland, nonartifact card; Witch Enchanter counts, since in hand it is a creature card; 48 are white and 17 black, and none is colourless), so there is almost always a card to give, but the card is gone for good. Imprint a white or black card we will not cast soon (a six-drop, a second sweeper or a spare protection spell) and pick the card whose colour the hand is missing; with no such card in hand the Mox makes no mana. With an untapped white land on turn 1 it is two mana: Yoshimaru ({W}) and a one-drop ({W}) such as Mother of Runes or Giver of Runes. It is an artifact, so Enlightened Tutor can find it.
 - **Mox Amber right after Yoshimaru** is a free legendary permanent entering (a counter) and then taps for {W}, because Yoshimaru is a white legendary creature. That {W} can cast Mother of Runes, Giver of Runes, Enlightened Tutor or Ephemerate, or pay for Sol Ring on turn 1.
 - **Tymna on turn 3**, normally. With Mox Amber and a black source she can come down on turn 2: {W} from Mox Amber (Yoshimaru), {B} from a land, {1} from the other. Chrome Mox does the same job with a white or black card imprinted: with Yoshimaru out on turn 1, two lands and the Mox on turn 2 pay {1}{W}{B} when the lands and the imprint cover both colours. Plaza of Heroes can also supply one coloured mana for her, since she is a legendary spell.
 - **Tymna can't attack the turn she comes down, but she can still draw that turn.** Her trigger needs only that she is on the battlefield at the start of the postcombat main phase, and X counts the opponents dealt combat damage by any creature of ours. Cast her before combat and she draws for Yoshimaru's, Adeline's or a flier's hits. Cast Delney before her, so that the doubling is already there.
@@ -46,7 +46,7 @@ Both have Partner and share the command zone. Each costs {2} more for every time
 | Skyclave Apparition | 3 | Exile up to one target nonland, nontoken permanent we don't control with mana value 4 or less |
 | Palace Jailer | 4 | We become the monarch. Exile target creature an opponent controls until an opponent becomes the monarch |
 | Loran of the Third Path | 3 | Destroy up to one target artifact or enchantment. Later, {T}: we and target opponent each draw |
-| Witch Enchanter // Witch-Blessed Meadow | 4 | As a creature spell: destroy target artifact or enchantment an opponent controls. It is also one of the 30 lands |
+| Witch Enchanter // Witch-Blessed Meadow | 4 | As a creature spell: destroy target artifact or enchantment an opponent controls. It is also one of the 32 lands |
 | Ranger-Captain of Eos | 3 | We may search for a creature card with mana value 1 or less. Sacrifice it: opponents can't cast noncreature spells this turn |
 | Recruiter of the Guard | 3 | We may search for a creature card with toughness 2 or less |
 | Sun Titan | 6 | On entering or attacking, return a permanent card with mana value 3 or less from our graveyard to the battlefield |
@@ -91,12 +91,12 @@ Both have Partner and share the command zone. Each costs {2} more for every time
 
 Be honest about this part: he is a bonus. All numbers are estimates and the deck has not been simulated.
 
-- **Inputs.** The library is 98 cards (the commanders are in the command zone) with 26 legendary permanents. By turn 6 on the play we have seen 12 cards (7 + 5 draws; 13 on the draw). Tymna's draws and the tutors are ignored.
-- **Legends seen.** The chance of seeing at least 2, 3, 4 and 5 of the 26 in 12 cards is 88.4%, 67.0%, 39.7% and 17.7% (hypergeometric, exact), a mean of 3.18.
-- **Legends played.** Not every legend seen is cast by turn 6 (cost, colours, a land drop used on something else). Assuming 75% are played gives 2.39 counters on average, and the chance of at least 2, 3 and 4 played becomes 73.5%, 44.1% and 19.5%. Playing 50% gives 1.59 and 100% gives 3.18.
+- **Inputs.** The library is 98 cards (the commanders are in the command zone) with 25 legendary permanents. By turn 6 on the play we have seen 12 cards (7 + 5 draws; 13 on the draw). Tymna's draws and the tutors are ignored.
+- **Legends seen.** The chance of seeing at least 2, 3, 4 and 5 of the 25 in 12 cards is 86.8%, 63.8%, 36.4% and 15.4% (hypergeometric, exact), a mean of 3.06.
+- **Legends played.** Not every legend seen is cast by turn 6 (cost, colours, a land drop used on something else). Assuming 75% are played gives 2.30 counters on average, and the chance of at least 2, 3 and 4 played becomes 71.2%, 41.2% and 17.4%. Playing 50% gives 1.53 and 100% gives 3.06.
 - **Tymna** gives one counter only when Yoshimaru is already out. Assuming that is true in 90% of games: +0.9.
 - **Blinks.** The 10 blink pieces give a mean of 1.22 in 12 cards. Assuming half are cast with a legend on the battlefield by turn 6, and each makes 1.5 legendary re-entries on average (Ephemerate rebounds, Eerie Interlude takes several, Teleportation Circle repeats): +0.92.
-- **Total:** about 2.39 + 0.9 + 0.92 = 4.2 counters, a range of about 3.1 to 5.6 counters (low: half of the legends seen are played and blinks add 0.6; high: all are played and blinks add 1.5). Yoshimaru is a 1/1 base, so about a 5/5 by turn 6.
+- **Total:** about 2.30 + 0.9 + 0.92 = 4.1 counters, a range of about 3.0 to 5.5 counters (low: half of the legends seen are played and blinks add 0.6; high: all are played and blinks add 1.5). Yoshimaru is a 1/1 base, so about a 5/5 by turn 6.
 - **Doublers.** The chance of at least one of Delney, Gandalf and Elesh Norn in 12 cards is 32.7%; each adds one counter per legend entering after it lands (Delney only while Yoshimaru's power is 2 or less).
 - **Reading.** A big ground body with no evasion that the table will remove if it can. Commander damage (21) from a 5/5 needs five hits and is not a plan. The deck does not win by his size.
 
@@ -123,7 +123,6 @@ Yoshimaru is a 1/1, so 0 counters is power 1 and 1 counter is power 2. At 2 coun
 **Tymna with Delney.** Tymna is a 2/2, so her trigger fires twice at each postcombat main phase. Each copy asks for its own payment, so with X opponents hit we pay X life and draw X cards, twice: 2X cards for 2X life. It works only while Tymna's power is 2 or less when the trigger happens. What turns it off:
 
 - A counter on Tymna: Archangel of Thune, whose trigger puts a counter on every creature each time we gain life (Tymna's own lifelink hit gains life, so with Thune out she grows past power 2 before her postcombat trigger); Heliod, if we aim its counter at her; The Wandering Emperor's +1.
-- Elspeth's +3/+3 on her, which lasts until end of turn and so covers the postcombat main phase.
 - Removal on Delney, or Delney blinked out or phased out when the trigger would happen.
 
 Gandalf and Elesh Norn do not double Tymna or Lotho: their triggers are caused by a phase beginning (Tymna) and by a spell being cast (Lotho), not by anything entering. Sorin's lifelink changes nothing for her (she already has it and her power is unchanged).
@@ -172,7 +171,7 @@ Two cards, 8 mana ({2}{B} and {4}{B}), over one turn or two. Vito: *Whenever you
 
 1. Cast **Vito**. It works alone: every life gain is a drain.
 2. Cast **Exquisite Blood** when a start is ready, or when no opponent can answer it before our next turn.
-3. **Start the loop.** The cast of the second piece does not start it. We need one life gain, or one point of life lost by an opponent, after both are on the battlefield: Elas's gain for a creature entering, Haliya, Inspiring Overseer, Charming Prince's 3 life, Kaya's Wrath, The Wandering Emperor's -2, a Sheoldred draw, Tymna's lifelink hit, Kambal's trigger, an Orcish Bowmasters or Walking Ballista ping, Sorin's +2, the Meathook Massacre, or an opponent paying life for a fetch land or a shock land. A cheap start with Elas out is a one-drop creature such as Mother of Runes ({W}): Elas gains 1 life when it enters.
+3. **Start the loop.** The cast of the second piece does not start it. We need one life gain, or one point of life lost by an opponent, after both are on the battlefield: Elas's gain for a creature entering, Haliya, Inspiring Overseer, Charming Prince's 3 life, The Wandering Emperor's -2, a Sheoldred draw, Tymna's lifelink hit, Kambal's trigger, an Orcish Bowmasters or Walking Ballista ping, Sorin's +2, the Meathook Massacre, or an opponent paying life for a fetch land or a shock land. A cheap start with Elas out is a one-drop creature such as Mother of Runes ({W}): Elas gains 1 life when it enters.
 4. **The loop.** An opponent loses N, Blood gains us N, Vito makes an opponent lose N, Blood gains us N again. Both triggers are mandatory, and each Vito trigger targets one opponent; when that opponent dies, the next trigger targets another. The loop ends only when every opponent is dead.
 
 **What stops it:** a counterspell on the second piece; removal on Vito or on Blood (a trigger already on the stack still resolves, so one more cycle can happen before the loop stops); an effect that stops life changes (including our own Teferi's Protection); an opponent who can't lose life or can't be targeted.
@@ -221,7 +220,7 @@ Cost: 8 mana for the two cards, then the payoff already on the battlefield. The 
 
 #### The grind
 
-Expect most games to be won here. Keep the engine running: one enter effect per turn, a blink for the best one, Tymna connecting with Delney out, a drain on every creature that enters, and the monarchy from Palace Jailer. Solitude, Skyclave Apparition and Palace Jailer clear blockers; Welcoming Vampire, Inspiring Overseer, Restoration Angel, Flickerwisp and Archangel of Thune fly; Delney makes every creature with power 2 or less (Tymna, Elas, Vito, Adeline's Human tokens, Elspeth's Soldiers) unblockable by creatures with power 3 or more. Three opponents at 40 is a lot of life: the grind's job is to land Vito, Elas and Kambal, keep both commanders alive, and set up a line. Yoshimaru's size is a side effect.
+Expect most games to be won here. Keep the engine running: one enter effect per turn, a blink for the best one, Tymna connecting with Delney out, a drain on every creature that enters, and the monarchy from Palace Jailer. Solitude, Skyclave Apparition and Palace Jailer clear blockers; Welcoming Vampire, Inspiring Overseer, Restoration Angel, Flickerwisp and Archangel of Thune fly; Delney makes every creature with power 2 or less (Tymna, Elas, Vito, Adeline's Human tokens) unblockable by creatures with power 3 or more. Three opponents at 40 is a lot of life: the grind's job is to land Vito, Elas and Kambal, keep both commanders alive, and set up a line. Yoshimaru's size is a side effect.
 
 **Enter effects and blink work like this:**
 
@@ -283,7 +282,7 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 
 A commander in the command zone can be recast for its tax. Yoshimaru is cheap to recast but loses his counters.
 
-**Sweepers, and what each answer does not stop.** A destroy sweeper (Kaya's Wrath type) is stopped by Flawless Maneuver, Selfless Spirit, Plaza on a legend, Eerie Interlude and Teferi's Protection. A -X/-X sweeper (Toxic Deluge type) is stopped only by Eerie Interlude and Teferi's Protection (an instant blink does not help: the creature returns before the sweeper resolves, so it still gets -X/-X). Exile and bounce effects are stopped by the same two. After a wipe the deck rebuilds with its noncreature permanents: the four planeswalkers, Teleportation Circle, The One Ring, Heliod (not a creature unless our devotion to white is five or more), Exquisite Blood, The Meathook Massacre, Conjurer's Closet (it needs a creature to blink), plus Sun Titan from hand, Takenuma's channel (returns a creature or planeswalker from the graveyard) and Sorin's -X (the rest of its text is cut off in the data and is not relied on). The draw engines are creatures, so a wipe also costs the card flow.
+**Sweepers, and what each answer does not stop.** A destroy sweeper (a Wrath of God type) is stopped by Flawless Maneuver, Selfless Spirit, Plaza on a legend, Eerie Interlude and Teferi's Protection. A -X/-X sweeper (Toxic Deluge type) is stopped only by Eerie Interlude and Teferi's Protection (an instant blink does not help: the creature returns before the sweeper resolves, so it still gets -X/-X). Exile and bounce effects are stopped by the same two. After a wipe the deck rebuilds with its noncreature permanents: the three planeswalkers, Teleportation Circle, The One Ring, Heliod (not a creature unless our devotion to white is five or more), Exquisite Blood, The Meathook Massacre, Conjurer's Closet (it needs a creature to blink), plus Sun Titan from hand, Takenuma's channel (returns a creature or planeswalker from the graveyard) and Sorin's -X (the rest of its text is cut off in the data and is not relied on). The draw engines are creatures, so a wipe also costs the card flow.
 
 **Against combo.** The deck has no counterspell. Its stops are:
 
@@ -305,7 +304,7 @@ The first mulligan is free (see two 7-card hands). After that it is a London mul
 | 6 or 5 cards | 2 to 4 lands, a white source, and a play before turn 4 |
 | 4 cards | Keep |
 
-- **Count colours.** Most of the list is white (64 white pips against 21 black); 15 cards need {W}{W}. Tymna needs {W}{B}, and Kaya's Wrath, The Meathook Massacre and Sheoldred need two black.
+- **Count colours.** Most of the list is white (60 white pips against 19 black); 13 cards need {W}{W}. Tymna needs {W}{B}, and The Meathook Massacre and Sheoldred need two black.
 - **Payoffs are late cards.** Gandalf, Elesh Norn, Archangel of Thune, Sun Titan, The Eternal Wanderer and Conjurer's Closet cost 5 or 6; a hand of those and lands has no play before turn 5.
 - **Bottom first:** the six-drops, then reactive cards, then lands past the fourth.
 
@@ -316,7 +315,7 @@ The first mulligan is free (see two 7-card hands). After that it is a London mul
 | 3 | Plains; Swamp; Isolated Chapel; Sol Ring; Vampiric Tutor; Enlightened Tutor; Mother of Runes | Keep | Three lands in both colours (Isolated Chapel enters untapped once Plains or Swamp is out), a rock, a one-drop and two instant tutors for a combo piece. Mother of Runes protects Tymna |
 | 4 | Plains; Plains; Scrubland; Swamp; Marsh Flats; Ranger-Captain of Eos; Sunpearl Kirin | Keep (close) | Five lands, but both spells are real: Ranger-Captain on turn 3 ({W}{W} from the Plains) finds Mother of Runes or Walking Ballista, and Sunpearl Kirin comes down at an opponent's end step and returns Ranger-Captain to hand for another search, or saves it from removal |
 | 5 | Plains; Command Tower; Caves of Koilos; Orzhov Signet; Gandalf the White; Exquisite Blood; Ephemerate | Keep (close) | The commanders are the early plays: Yoshimaru turn 1, Orzhov Signet turn 2, Tymna turn 3. Gandalf and Blood are late, but a fourth land or a tutor makes them castable; Ephemerate needs a target |
-| 6 | Plains; Swamp; Swords to Plowshares; Path to Exile; Toxic Deluge; Kaya's Wrath; Vindicate | Ship | Two lands and only reactive cards: nothing here wins or makes cards |
+| 6 | Plains; Swamp; Swords to Plowshares; Path to Exile; Toxic Deluge; Anguished Unmaking; Vindicate | Ship | Two lands and only reactive cards: nothing here wins or makes cards |
 | 7 | Plains; Plains; Plains; Eiganjo, Seat of the Empire; Gandalf the White; Elesh Norn, Mother of Machines; Archangel of Thune | Ship | Three five-drops and no black for Tymna; no play before turn 5 except Yoshimaru |
 | 8 | Plains; Plains; Swamp; Scrubland; Command Tower; Takenuma, Abandoned Mire; Sun Titan | Ship | Six lands and one six-drop: a flood. The rule is five lands only with two spells that do something |
 | 9 | Plains; Swamp; Mox Amber; Sol Ring; Giver of Runes; Welcoming Vampire; Delney, Streetwise Lookout | Keep (close) | Two lands, but Mox Amber and Sol Ring make mana. Turn 1: Plains, Yoshimaru, Mox Amber (a counter), then its {W} casts Giver of Runes. Turn 2: Swamp and Tymna ({W} from Mox Amber, {B} Swamp, {1} Plains). Without a third land by turn 4 it stalls, so it is close |
@@ -369,41 +368,41 @@ The deck has not been simulated. These points are marked so that nobody relies o
 
 The list is exactly 100 cards.
 
-30 lands (13 nonbasic, one modal land, 10 Plains, 6 Swamp) and 6 rocks: Sol Ring, Mana Vault, Mox Amber, Arcane Signet, Orzhov Signet and Chrome Mox. **Chrome Mox** ({0}, a Game Changer): when it enters we may exile a nonland, nonartifact card from hand, and it taps for one mana of a colour of that card: it can make white or black but only as the imprinted card allows, and it costs a card, not life. **Plaza of Heroes** taps for {C}, for one mana of any colour that can be spent only on a legendary spell (it casts Yoshimaru on turn 1), and for one mana of any colour among legendary permanents we control (white once Yoshimaru is out, black once Tymna is out). **Urborg, Tomb of Yawgmoth** makes every land a Swamp, so every land taps for {B}; it is symmetrical, so opposing lands tap for {B} too. **Command Tower** makes either colour. **Witch Enchanter // Witch-Blessed Meadow** is a land that enters tapped unless we pay 3 life and taps for {W}, or a 2/2 creature for {3}{W} later. **Marsh Flats** finds a Plains or Swamp card (Plains, Swamp, Scrubland or Godless Shrine); **Arid Mesa** finds a Mountain or Plains card (Plains, Scrubland or Godless Shrine).
+32 lands (13 nonbasic, one modal land, 11 Plains, 7 Swamp) and 6 rocks: Sol Ring, Mana Vault, Mox Amber, Arcane Signet, Orzhov Signet and Chrome Mox. **Chrome Mox** ({0}, a Game Changer): when it enters we may exile a nonland, nonartifact card from hand, and it taps for one mana of a colour of that card: it can make white or black but only as the imprinted card allows, and it costs a card, not life. **Plaza of Heroes** taps for {C}, for one mana of any colour that can be spent only on a legendary spell (it casts Yoshimaru on turn 1), and for one mana of any colour among legendary permanents we control (white once Yoshimaru is out, black once Tymna is out). **Urborg, Tomb of Yawgmoth** makes every land a Swamp, so every land taps for {B}; it is symmetrical, so opposing lands tap for {B} too. **Command Tower** makes either colour. **Witch Enchanter // Witch-Blessed Meadow** is a land that enters tapped unless we pay 3 life and taps for {W}, or a 2/2 creature for {3}{W} later. **Marsh Flats** finds a Plains or Swamp card (Plains, Swamp, Scrubland or Godless Shrine); **Arid Mesa** finds a Mountain or Plains card (Plains, Scrubland or Godless Shrine).
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 22 | 10 Plains, Witch Enchanter, Eiganjo, Minas Tirith, Scrubland, Godless Shrine, Caves of Koilos, Isolated Chapel, Vault of Champions, Command Tower, Marsh Flats, Arid Mesa, and Plaza of Heroes |
-| Black lands | 17 (all 30 with Urborg out) | 6 Swamp, Takenuma, Urborg, Scrubland, Godless Shrine, Caves of Koilos, Isolated Chapel, Vault of Champions, Command Tower, Marsh Flats, Arid Mesa, and Plaza of Heroes. Arid Mesa and Marsh Flats count for both because they fetch Scrubland or Godless Shrine |
+| White lands | 23 | 11 Plains, Witch Enchanter, Eiganjo, Minas Tirith, Scrubland, Godless Shrine, Caves of Koilos, Isolated Chapel, Vault of Champions, Command Tower, Marsh Flats, Arid Mesa, and Plaza of Heroes |
+| Black lands | 18 (all 32 with Urborg out) | 7 Swamp, Takenuma, Urborg, Scrubland, Godless Shrine, Caves of Koilos, Isolated Chapel, Vault of Champions, Command Tower, Marsh Flats, Arid Mesa, and Plaza of Heroes. Arid Mesa and Marsh Flats count for both because they fetch Scrubland or Godless Shrine |
 | Both colours | 9 | Scrubland, Godless Shrine, Caves of Koilos, Isolated Chapel, Vault of Champions, Command Tower, Marsh Flats, Arid Mesa, Plaza of Heroes |
-| Colour sources with the rocks | 24 white, 19 black | Rocks: Arcane Signet and Orzhov Signet add 2 white and 2 black; Mox Amber and Chrome Mox are conditional and not counted |
+| Colour sources with the rocks | 25 white, 20 black | Rocks: Arcane Signet and Orzhov Signet add 2 white and 2 black; Mox Amber and Chrome Mox are conditional and not counted |
 | Legendary lands | 4 | Urborg, Takenuma, Eiganjo, Minas Tirith |
 | Sometimes enter tapped | 5 | Minas Tirith (tapped without a legendary creature), Isolated Chapel (tapped without a Plains or Swamp), Vault of Champions (tapped only with fewer than two opponents), Godless Shrine (2 life or tapped), Witch Enchanter (3 life or tapped) |
 | Fetch lands | 2 | Marsh Flats and Arid Mesa, 1 life each |
 
-**Pips.** The 68 nonland cards in the 98 have 64 white pips (49 cards with a white pip) and 21 black pips (18 cards with a black pip). 15 cards cost {W}{W}: Council's Judgment, Kaya's Wrath, Flickerwisp, The Eternal Wanderer, Gandalf the White, Solitude, Skyclave Apparition, Ranger-Captain of Eos, Sun Titan, Archangel of Thune, Adeline, The Wandering Emperor, Elspeth, Grand Abolisher and Palace Jailer. 3 cards cost {B}{B}: Kaya's Wrath ({W}{W}{B}{B}), The Meathook Massacre and Sheoldred. The deck is white with black for Tymna, Vito, Sheoldred, the tutors, Exquisite Blood and some removal.
+**Pips.** The 66 nonland cards in the 98 have 60 white pips (47 cards with a white pip) and 19 black pips (17 cards with a black pip). 13 cards cost {W}{W}: Council's Judgment, Flickerwisp, The Eternal Wanderer, Gandalf the White, Solitude, Skyclave Apparition, Ranger-Captain of Eos, Sun Titan, Archangel of Thune, Adeline, The Wandering Emperor, Grand Abolisher and Palace Jailer. 2 cards cost {B}{B}: The Meathook Massacre and Sheoldred. The deck is white with black for Tymna, Vito, Sheoldred, the tutors, Exquisite Blood and some removal.
 
 **Land count and early mana** (hypergeometric, exact, from the 98-card library):
 
-- Three or more lands by turn 3 on the play (9 cards): 56.0% (64.4% on the draw). Four or more by turn 4 (10 cards): 36.3% (44.9% on the draw). A 2-to-4-land opening hand: 66.6%.
-- 6 rocks and 14 cards at mana value 0 or 1 (four of them rocks) smooth this out, which is why the list runs 30 lands and not 31. Most of the curve is 3 and 4 (33 cards), so do not go below 30.
-- **Yoshimaru turn 1:** 80.9% on the play and 85.1% on the draw (an untapped white land among the 20, lands only; see The commanders for Chrome Mox).
-- **Tymna turn 3 (on the play, 9 cards):** the chance that two different lands among the 9 cards make white and black is 73.3%, and 78.7% on the draw (10 cards). This counts Plaza of Heroes for Tymna (she is a legendary spell). It is necessary but not sufficient: the third land is also needed (at least three lands in the 9 cards with a white and a black: 53.0%; 61.3% on the draw), and a Signet, Chrome Mox or Mox Amber can supply it.
-- **White double pips:** at least 2 white lands by turn 3 (9 cards): 64.6%; by turn 4 (10 cards): 70.8%; by turn 6 (12 cards): 80.7%. White rocks add to this. **Black double pips:** at least 2 black lands by turn 4: 54.9%; by turn 6: 65.9%. Urborg turns every land into a black source, and only 3 cards need {B}{B}.
+- Three or more lands by turn 3 on the play (9 cards): 61.4% (69.7% on the draw). Four or more by turn 4 (10 cards): 42.1% (51.2% on the draw). A 2-to-4-land opening hand: 69.8%.
+- 6 rocks and 14 cards at mana value 0 or 1 (four of them rocks) smooth this out, which is why the list stops at 32 lands and not more. 17 of the 66 nonland cards cost 4 or more and the payoffs cost 5 or 6, so do not go below 32; most of the curve is 3 and 4 (31 cards).
+- **Yoshimaru turn 1:** 82.6% on the play and 86.6% on the draw (an untapped white land among the 21, lands only; see The commanders for Chrome Mox).
+- **Tymna turn 3 (on the play, 9 cards):** the chance that two different lands among the 9 cards make white and black is 76.3%, and 81.5% on the draw (10 cards). This counts Plaza of Heroes for Tymna (she is a legendary spell). It is necessary but not sufficient: the third land is also needed (at least three lands in the 9 cards with a white and a black: 58.1%; 66.3% on the draw), and a Signet, Chrome Mox or Mox Amber can supply it.
+- **White double pips:** at least 2 white lands by turn 3 (9 cards): 67.4%; by turn 4 (10 cards): 73.5%; by turn 6 (12 cards): 82.9%. White rocks add to this. **Black double pips:** at least 2 black lands by turn 4: 58.4%; by turn 6: 69.4%. Urborg turns every land into a black source, and only 2 cards need {B}{B}.
 
-**Life costs.** Caves of Koilos 1 per coloured tap; Marsh Flats and Arid Mesa 1; Godless Shrine 2 (or tapped); Witch Enchanter's land side 3 (or tapped); Mana Vault 1 damage in the draw step while tapped; Vampiric Tutor and Imperial Seal 2; Anguished Unmaking 3; Toxic Deluge X; Tymna X per trigger (and per doubled trigger); Lotho 1 per trigger, on any player's second spell each turn (2 per spell under Delney); The One Ring 1 per burden counter each upkeep. Offsets: Tymna's lifelink, Elas, Haliya (also for each Treasure), Inspiring Overseer, Charming Prince, Kaya's Wrath, Solitude's lifelink and Sorin. Keep an eye on life at a 40-life table. Lotho's Treasures are one-shot mana of any colour: they fix white and black and can pay for a second spell, but they come from a trigger the whole table can set off, so they are not counted among the colour sources above.
+**Life costs.** Caves of Koilos 1 per coloured tap; Marsh Flats and Arid Mesa 1; Godless Shrine 2 (or tapped); Witch Enchanter's land side 3 (or tapped); Mana Vault 1 damage in the draw step while tapped; Vampiric Tutor and Imperial Seal 2; Anguished Unmaking 3; Toxic Deluge X; Tymna X per trigger (and per doubled trigger); Lotho 1 per trigger, on any player's second spell each turn (2 per spell under Delney); The One Ring 1 per burden counter each upkeep. Offsets: Tymna's lifelink, Elas, Haliya (also for each Treasure), Inspiring Overseer, Charming Prince, Solitude's lifelink and Sorin. Keep an eye on life at a 40-life table. Lotho's Treasures are one-shot mana of any colour: they fix white and black and can pay for a second spell, but they come from a trigger the whole table can set off, so they are not counted among the colour sources above.
 
-**Curve** (68 nonland cards in the 98; Walking Ballista counts 0, The Meathook Massacre 2, Deadly Rollick 4 and Flawless Maneuver 3 at their printed costs, Solitude 5; Witch Enchanter is counted as a land). Average mana value 2.78 (189 over 68). 27 of 68 cost 0 to 2.
+**Curve** (66 nonland cards in the 98; Walking Ballista counts 0, The Meathook Massacre 2, Deadly Rollick 4 and Flawless Maneuver 3 at their printed costs, Solitude 5; Witch Enchanter is counted as a land). Average mana value 2.74 (181 over 66). 27 of 66 cost 0 to 2.
 
 - **0 (3):** Chrome Mox, Mox Amber, Walking Ballista
 - **1 (11):** Sol Ring, Mana Vault, Vampiric Tutor, Enlightened Tutor, Imperial Seal, Swords to Plowshares, Path to Exile, Mother of Runes, Giver of Runes, Ephemerate, Silence
 - **2 (13):** Arcane Signet, Orzhov Signet, Demonic Tutor, The Meathook Massacre, Selfless Spirit, Charming Prince, Ennis, Lotho, Orcish Bowmasters, Elas il-Kor, Syr Vondam, Grand Abolisher, Sunpearl Kirin
 - **3 (22):** Vindicate, Anguished Unmaking, Council's Judgment, Toxic Deluge, Teferi's Protection, Flawless Maneuver, Flickerwisp, Eerie Interlude, Delney, Welcoming Vampire, Mentor of the Meek, Inspiring Overseer, Haliya, Skyclave Apparition, Ranger-Captain of Eos, Recruiter of the Guard, Vito, Kambal, Adeline, Heliod, Loran, Thalia, Heretic Cathar
-- **4 (11):** Deadly Rollick, Kaya's Wrath, Restoration Angel, Felidar Guardian, Teleportation Circle, The One Ring, Sheoldred, The Wandering Emperor, Elspeth, Sorin, Palace Jailer
+- **4 (9):** Deadly Rollick, Restoration Angel, Felidar Guardian, Teleportation Circle, The One Ring, Sheoldred, The Wandering Emperor, Sorin, Palace Jailer
 - **5 (6):** Gandalf the White, Elesh Norn, Solitude, Archangel of Thune, Exquisite Blood, Conjurer's Closet
 - **6 (2):** The Eternal Wanderer, Sun Titan
 
-**Card types.** 36 creatures (Heliod counted as an enchantment creature and Walking Ballista as an artifact creature), 4 planeswalkers, 3 enchantments, 8 artifacts, 11 instants, 6 sorceries and 30 lands (Witch Enchanter // Witch-Blessed Meadow counted as a land, though its front face is a creature spell).
+**Card types.** 36 creatures (Heliod counted as an enchantment creature and Walking Ballista as an artifact creature), 3 planeswalkers, 3 enchantments, 8 artifacts, 11 instants, 5 sorceries and 32 lands (Witch Enchanter // Witch-Blessed Meadow counted as a land, though its front face is a creature spell).
 
 **Finding cards.**
 - **Tutors:** Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal (4 any-card or type tutors), plus Ranger-Captain of Eos and Recruiter of the Guard.
@@ -413,7 +412,7 @@ The list is exactly 100 cards.
 - **Spot removal spells (6):** Swords to Plowshares, Path to Exile, Deadly Rollick, Vindicate, Anguished Unmaking, Council's Judgment.
 - **Removal on a body:** Solitude, Skyclave Apparition, Palace Jailer (creatures and permanents); Loran of the Third Path and Witch Enchanter (artifacts and enchantments).
 - **Other removal:** The Wandering Emperor (-2 exiles a tapped creature), The Eternal Wanderer (+1 and -4), Eiganjo's channel ({2}{W}, discard: 4 damage to an attacking or blocking creature, {1} less per legendary creature we control), Walking Ballista and Orcish Bowmasters pings.
-- **Sweepers (3):** Toxic Deluge, Kaya's Wrath, The Meathook Massacre (plus The Eternal Wanderer's -4).
+- **Sweepers (2):** Toxic Deluge, The Meathook Massacre (plus The Eternal Wanderer's -4).
 - **Protection (5):** Teferi's Protection, Flawless Maneuver, Mother of Runes, Giver of Runes, Selfless Spirit; plus the blink spells and Plaza of Heroes.
 - **Stops for the win turn:** Silence, Grand Abolisher, Ranger-Captain of Eos.
 - **No counterspells and no graveyard hate.**
@@ -439,7 +438,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (36).** Adeline, Resplendent Cathar; Archangel of Thune; Charming Prince; Delney, Streetwise Lookout; Elas il-Kor, Sadistic Pilgrim; Elesh Norn, Mother of Machines; Ennis, Debate Moderator; Felidar Guardian; Flickerwisp; Gandalf the White; Giver of Runes; Grand Abolisher; Haliya, Guided by Light; Heliod, Sun-Crowned; Inspiring Overseer; Kambal, Consul of Allocation; Loran of the Third Path; Lotho, Corrupt Shirriff; Mentor of the Meek; Mother of Runes; Orcish Bowmasters; Palace Jailer; Ranger-Captain of Eos; Recruiter of the Guard; Restoration Angel; Selfless Spirit; Sheoldred, the Apocalypse; Skyclave Apparition; Solitude; Sun Titan; Sunpearl Kirin; Syr Vondam, Sunstar Exemplar; Thalia, Heretic Cathar; Vito, Thorn of the Dusk Rose; Walking Ballista; Welcoming Vampire
 
-**Planeswalkers (4).** Elspeth, Knight-Errant; Sorin, Vengeful Bloodlord; The Eternal Wanderer; The Wandering Emperor
+**Planeswalkers (3).** Sorin, Vengeful Bloodlord; The Eternal Wanderer; The Wandering Emperor
 
 **Enchantments (3).** Exquisite Blood; Teleportation Circle; The Meathook Massacre
 
@@ -447,9 +446,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (11).** Anguished Unmaking; Deadly Rollick; Eerie Interlude; Enlightened Tutor; Ephemerate; Flawless Maneuver; Path to Exile; Silence; Swords to Plowshares; Teferi's Protection; Vampiric Tutor
 
-**Sorceries (6).** Council's Judgment; Demonic Tutor; Imperial Seal; Kaya's Wrath; Toxic Deluge; Vindicate
+**Sorceries (5).** Council's Judgment; Demonic Tutor; Imperial Seal; Toxic Deluge; Vindicate
 
-**Lands (30).** Arid Mesa; Caves of Koilos; Command Tower; Eiganjo, Seat of the Empire; Godless Shrine; Isolated Chapel; Marsh Flats; Minas Tirith; Plaza of Heroes; Scrubland; Takenuma, Abandoned Mire; Urborg, Tomb of Yawgmoth; Vault of Champions; Witch Enchanter // Witch-Blessed Meadow; 10 Plains; 6 Swamp
+**Lands (32).** Arid Mesa; Caves of Koilos; Command Tower; Eiganjo, Seat of the Empire; Godless Shrine; Isolated Chapel; Marsh Flats; Minas Tirith; Plaza of Heroes; Scrubland; Takenuma, Abandoned Mire; Urborg, Tomb of Yawgmoth; Vault of Champions; Witch Enchanter // Witch-Blessed Meadow; 11 Plains; 7 Swamp
 
 ## Import list (100)
 
@@ -472,7 +471,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Eiganjo, Seat of the Empire
 1 Elas il-Kor, Sadistic Pilgrim
 1 Elesh Norn, Mother of Machines
-1 Elspeth, Knight-Errant
 1 Enlightened Tutor
 1 Ennis, Debate Moderator
 1 Ephemerate
@@ -490,7 +488,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Inspiring Overseer
 1 Isolated Chapel
 1 Kambal, Consul of Allocation
-1 Kaya's Wrath
 1 Loran of the Third Path
 1 Lotho, Corrupt Shirriff
 1 Mana Vault
@@ -538,6 +535,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Welcoming Vampire
 1 Witch Enchanter // Witch-Blessed Meadow
 1 Yoshimaru, Ever Faithful
-10 Plains
-6 Swamp
+11 Plains
+7 Swamp
 ```

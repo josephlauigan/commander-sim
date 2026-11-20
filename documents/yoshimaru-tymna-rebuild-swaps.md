@@ -27,7 +27,7 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 
 | Pile | Stays in its own box | From Tymna/Thrasios box | From Y'shtola box | To find | Total |
 |---|---|---|---|---|---|
-| New Yoshimaru/Tymna | 22 + 1 basic Swamp | n/a | 4 | 58 + 15 basics | 100 |
+| New Yoshimaru/Tymna | 22 + 1 basic Swamp | n/a | 4 | 56 + 17 basics | 100 |
 | New Y'shtola | 88 | 10 | n/a | 2 | 100 |
 | Spare | n/a | 67 | 8 | n/a | 75 |
 
@@ -208,8 +208,8 @@ it is now the Yoshimaru/Tymna deck. The Y'shtola box now holds her 100 cards.
 
 ## 3. Cards to find
 
-New Yoshimaru/Tymna needs 58 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
-15 basic lands (10 Plains and 6 Swamp in the list, less the Swamp that is already in the box). New
+New Yoshimaru/Tymna needs 56 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
+17 basic lands (11 Plains and 7 Swamp in the list, less the Swamp that is already in the box). New
 Y'shtola needs 2 second copies. Tick each card you already have; the rest are yours to buy or borrow.
 
 ### Second copies for Y'shtola (2)
@@ -249,7 +249,7 @@ That deck keeps its copy, so the new deck needs another one.
 | The One Ring | The Ur-Dragon, Sheoldred, Thanos (Cali) | [ ] |
 | Vito, Thorn of the Dusk Rose | Sheoldred | [ ] |
 
-### Cards that no deck list holds (43)
+### Cards that no deck list holds (41)
 
 | Card | Have it? |
 |---|---|
@@ -261,7 +261,6 @@ That deck keeps its copy, so the new deck needs another one.
 | Eerie Interlude | [ ] |
 | Eiganjo, Seat of the Empire | [ ] |
 | Elas il-Kor, Sadistic Pilgrim | [ ] |
-| Elspeth, Knight-Errant | [ ] |
 | Ennis, Debate Moderator | [ ] |
 | Felidar Guardian | [ ] |
 | Flawless Maneuver | [ ] |
@@ -272,7 +271,6 @@ That deck keeps its copy, so the new deck needs another one.
 | Inspiring Overseer | [ ] |
 | Isolated Chapel | [ ] |
 | Kambal, Consul of Allocation | [ ] |
-| Kaya's Wrath | [ ] |
 | Mentor of the Meek | [ ] |
 | Minas Tirith | [ ] |
 | Mother of Runes | [ ] |
@@ -297,22 +295,22 @@ That deck keeps its copy, so the new deck needs another one.
 | Witch Enchanter | [ ] |
 | Yoshimaru, Ever Faithful (commander) | [ ] |
 
-### Basic lands (15)
+### Basic lands (17)
 
 | Basic | Needed | Have it? |
 |---|---|---|
-| Plains | 10 | [ ] |
-| Swamp | 5 (the box already has 1) | [ ] |
+| Plains | 11 | [ ] |
+| Swamp | 6 (the box already has 1) | [ ] |
 
 ## 4. Check the counts
 
 - **New Yoshimaru/Tymna:** 22 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
-  Y'shtola box + 58 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
+  Y'shtola box + 56 to find + 17 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
   Tymna the Weaver).
 - **New Y'shtola:** 88 in the box + 10 from the Tymna/Thrasios box + 2 second copies = 100.
 - **Spare:** 67 from the Tymna/Thrasios box + 8 from the Y'shtola box = 75 cards.
 - Check each pile against the import list at the end of its deck document. Every card appears once, except basic lands
-  (Yoshimaru/Tymna: 10 Plains and 6 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
+  (Yoshimaru/Tymna: 11 Plains and 7 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
 
 ## 5. Cards both new decks play
 
