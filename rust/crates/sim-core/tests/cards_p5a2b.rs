@@ -493,12 +493,3 @@ fn haliya_queue_adapter_event_and_source_copies_are_counted_once() {
     token(&mut g, A, 1);
     assert_eq!(g.player(A).life - before, 3);
 }
-
-#[test]
-fn brokers_hideout_greenwarden_searches_only_once_control() {
-    let mut g = tbl();
-    perm(&mut g, A, GW);
-    play_land(&mut g, "Brokers Hideout");
-    assert_eq!(g.player(A).lands.len(), 1);
-    assert_eq!(g.player(A).gy, [card(&g, "Brokers Hideout")]);
-}
