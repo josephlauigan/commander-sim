@@ -614,21 +614,31 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
 fn ikoria_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
     let battle = ctx.owner.is_none_or(|o| o == p);
+    let mut times = 1;
     if battle {
-        super::card_models3::battle_enter(g, p, c, 6)?;
+        let w = super::card_models3::battle_enter(g, p, c, 6)?;
+        // "When this Siege enters": a triggered ability (the defense counters and the protector are setup)
+        times = crate::engine::hooks::enters_trigger_times(g, p, Some(w));
     }
-    if let Some((c, lib)) = ikoria_pick(g, p, x) {
-        if lib {
-            remove_card(&mut g.player_mut(p).library, c);
-            shuffle_library(g, p);
-            g.player_mut(p).stat("tutored", 1);
-        } else {
-            remove_card(&mut g.player_mut(p).gy, c);
+    for _ in 0..times {
+        if let Some((c, lib)) = ikoria_pick(g, p, x) {
+            if lib {
+                remove_card(&mut g.player_mut(p).library, c);
+                shuffle_library(g, p);
+                g.player_mut(p).stat("tutored", 1);
+            } else {
+                remove_card(&mut g.player_mut(p).gy, c);
+            }
+            crate::glog!(
+                g,
+                "    {} puts {} onto the battlefield (Invasion of Ikoria, X = {x})",
+                pname(g, p),
+                cname(g, c)
+            );
+            enter(g, p, c, Enter::default())?;
+        } else if g.player(p).library.len() > 1 {
+            shuffle_library(g, p); // a failed search of the library still shuffles
         }
-        crate::glog!(g, "    {} puts {} onto the battlefield (Invasion of Ikoria, X = {x})", pname(g, p), cname(g, c));
-        enter(g, p, c, Enter::default())?;
-    } else if g.player(p).library.len() > 1 {
-        shuffle_library(g, p); // a failed search of the library still shuffles
     }
     Ok(intern(if battle { "handled" } else { "gy" }))
 }
