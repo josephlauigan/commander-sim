@@ -257,7 +257,10 @@ fn every_card_enters_as_its_oracle_text_says_under_an_opponents_elesh() {
         } else {
             "no"
         };
-        let valid = different == is_trig && outcomes.iter().all(|r| r == "ok:true");
+        // a TRIG card must differ under a live Elesh and not under the same body with its abilities off (a body that only
+        // changes an AI choice is not a blanked trigger)
+        let valid =
+            different == is_trig && (!is_trig || inert_opponent_diff) && outcomes.iter().all(|r| r == "ok:true");
         let reason = allow.get(name.as_str()).copied().unwrap_or("");
         if !valid {
             let pos = states[0].0.bytes().zip(states[1].0.bytes()).position(|(a, b)| a != b).unwrap_or(0);

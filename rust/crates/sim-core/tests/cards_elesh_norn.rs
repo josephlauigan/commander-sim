@@ -714,7 +714,7 @@ fn tome_of_legends_commander_page_is_blanked_by_an_opponents_elesh() {
     assert_eq!(g.perm(t).data.int(DataKey::Counters), 2, "an opponent's Elesh blanks that trigger");
 }
 
-// ================================================================== round 3 (ported from the adversarial review)
+// ================================================================== Tome, setup hooks, End-Raze, anthems, Ikoria and lands under Elesh
 /// a permanent put onto the battlefield with no enters event (a fixture for firing one by hand)
 fn raw(g: &mut Game, p: PlayerId, name: &str) -> PermId {
     let cd = card(g, name);
@@ -1053,7 +1053,7 @@ fn an_opponents_elesh_leaves_cavern_of_souls_naming_a_type() {
     assert!(g.perm(l).data.get(DataKey::Ctype).is_some(), "as it enters, choose a creature type");
 }
 
-// ================================================================== round 4 (the census's failures)
+// ================================================================== static Auras, Prison Sentence, Wan Shi Tong, Rest in Peace, Talon Gates
 fn static_aura_under_an_opponents_elesh(name: &str, becomes_land: bool) {
     let mut g = tbl();
     let e = perm(&mut g, P1, ELESH);
@@ -1193,4 +1193,54 @@ fn an_opponents_elesh_blanks_talon_gates_phasing_when_it_is_put_in_to_defend() {
     assert!(!g.player(P0).hand.contains(&c), "the paid ability still puts Gates onto the battlefield");
     assert!(!g.perm(attacker).phased, "its When-enters phasing is blanked");
     assert_eq!(atk, vec![attacker]);
+}
+
+#[test]
+fn kenriths_transformation_applies_its_elk_as_a_static_effect_and_only_its_draw_is_blanked() {
+    for elesh in [false, true] {
+        let mut g = tbl();
+        if elesh {
+            let e = perm(&mut g, P1, ELESH);
+            g.perm_mut(e).eot_kw.push("shroud"); // the Aura picks Serra Angel
+        }
+        let target = perm(&mut g, P1, "Serra Angel");
+        let c = hand(&mut g, P0, &["Kenrith's Transformation"])[0];
+        let before = g.player(P0).hand.len();
+        assert!(
+            sim_core::engine::cast::cast_card(
+                &mut g,
+                P0,
+                c,
+                "hand",
+                sim_core::state::Ctx { target: Some(target), ..Default::default() }
+            )
+            .unwrap()
+        );
+        assert!(g.perm(target).neutered, "elesh={elesh}: loses all abilities");
+        assert_eq!((g.perm(target).pow, g.perm(target).tgh), (3, 3), "elesh={elesh}: a 3/3 Elk");
+        assert!(g.perm(target).data.truthy(DataKey::Elk), "elesh={elesh}");
+        assert_eq!(
+            g.player(P0).hand.len(),
+            if elesh { before - 1 } else { before },
+            "elesh={elesh}: the draw is the trigger"
+        );
+    }
+}
+
+#[test]
+fn a_spared_card_that_comes_back_is_exiled_when_it_dies_after_rest_in_peace() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let victim = card(&g, "Grave Titan");
+    g.player_mut(P1).gy.push(victim);
+    let c = hand(&mut g, P0, &["Rest in Peace"])[0];
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", sim_core::state::Ctx::default()).unwrap());
+    assert!(g.player(P1).gy.contains(&victim), "blanked: it is spared");
+    // reanimated, a state check, then it dies: it is no longer spared
+    g.player_mut(P1).gy.retain(|&x| x != victim);
+    let m = zones::enter(&mut g, P1, victim, zones::Enter::default()).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    zones::die(&mut g, m, "destroy").unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.player(P1).gy.contains(&victim) && g.player(P1).exile.contains(&victim));
 }
