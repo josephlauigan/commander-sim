@@ -236,3 +236,16 @@ fn wispdrinker_delney_small_token_drains_twice() {
     assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
     assert_eq!(g.player(P0).life, life + 6);
 }
+
+// P6's TokensEnter adapter queues the real ETB triggers. Dispatcher-level source extras would count them twice.
+#[test]
+fn haliya_token_adapter_gets_source_extras_only_from_its_queued_triggers() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let h = perm(&mut g, P0, "Haliya, Guided by Light");
+    g.perm_mut(h).plus = -1; // a -1/-1 counter: Haliya is now power two, so Delney applies
+    assert_eq!(sim_core::engine::values::epow(&g, h), 2);
+    let life = g.player(P0).life;
+    token(&mut g, P0, 1);
+    assert_eq!(g.player(P0).life, life + 2, "one original plus Delney, counted only once");
+}

@@ -545,75 +545,103 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, 
         let Some(c) = g.perm(m).cd else { continue };
         let t = g.db.get(c).tags.clone();
         let name = g.db.get(c).name.to_string();
-        if ATTACK_TRIGGER_TAGS.iter().any(|&k| t.has(k))
-            && !trigger_window(g, p, Some(m), "attacks", Some(attack_imp(&t)))?
-        {
-            continue;
-        }
-        if t.has(Tag::Witchking) {
-            edict(g, d, true)?;
-        }
-        if t.has(Tag::Archon) && g.player(d).alive {
-            archon_attack(g, p, d)?;
-        }
-        if t.has(Tag::Titan) {
-            make_tokens(g, p, Tokens::new(2, 2))?;
-        }
-        if let Some(n) = t.int(Tag::Tokatk) {
-            let att = name.starts_with("Adeline");
-            let n = if att { g.opps(p).count() as u32 } else { n.max(0) as u32 };
-            let made = make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?;
-            if att && crate::human::is_human(g, p) {
-                crate::human::gaps_t2::route_adeline(g, p, &made)?; // practice mode: one token per opponent, player or walker
-            } else if att {
-                // "for each opponent, a token tapped and attacking that player or a planeswalker they control": the AI
-                // sends one token at each opponent's player (all of them went at the main defender before)
-                let opps: Vec<PlayerId> = g.opps(p).collect();
-                for (j, &t) in made.iter().enumerate() {
-                    if !opps.is_empty() {
-                        g.atk_targets.push((t, opps[j % opps.len()]));
+        let mut skip_animist = false;
+        // Isshin's later passes are additional instances too: source extras apply only to the original.
+        for k in 0..1 + if repeat { 0 } else { crate::engine::stack::extra_for(g, m) } {
+            if ATTACK_TRIGGER_TAGS.iter().any(|&k| t.has(k))
+                && !trigger_window(g, p, Some(m), "attacks", Some(attack_imp(&t)))?
+            {
+                skip_animist |= k == 0;
+                continue;
+            }
+            if t.has(Tag::Witchking) {
+                edict(g, d, true)?;
+            }
+            if t.has(Tag::Archon) && g.player(d).alive {
+                archon_attack(g, p, d)?;
+            }
+            if t.has(Tag::Titan) {
+                make_tokens(g, p, Tokens::new(2, 2))?;
+            }
+            if let Some(n) = t.int(Tag::Tokatk) {
+                let att = name.starts_with("Adeline");
+                let n = if att { g.opps(p).count() as u32 } else { n.max(0) as u32 };
+                let made =
+                    make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?;
+                if att && crate::human::is_human(g, p) {
+                    crate::human::gaps_t2::route_adeline(g, p, &made)?; // practice mode: one token per opponent, player or walker
+                } else if att {
+                    // "for each opponent, a token tapped and attacking that player or a planeswalker they control": the AI
+                    // sends one token at each opponent's player (all of them went at the main defender before)
+                    let opps: Vec<PlayerId> = g.opps(p).collect();
+                    for (j, &t) in made.iter().enumerate() {
+                        if !opps.is_empty() {
+                            g.atk_targets.push((t, opps[j % opps.len()]));
+                        }
                     }
                 }
+                new.extend(made);
             }
-            new.extend(made);
+            if t.has(Tag::Suntitan) {
+                sun_titan(g, p, m)?;
+            }
+            if t.has(Tag::Necromancer) {
+                new.extend(cardcode::necromancer_attack(g, p, m)?); // an attacking token copy of a graveyard creature
+            }
+            if t.has(Tag::Kylox) {
+                // sacrifice tokens, cast the instants and sorceries among the top X for free
+                let toks: Vec<PermId> = g
+                    .player(p)
+                    .perms
+                    .iter()
+                    .copied()
+                    .filter(|&x| g.perm(x).token && g.is_creature(x) && !atk.contains(&x))
+                    .collect();
+                let x: i32 = toks.iter().map(|&x| epow(g, x)).ssum();
+                for &tk in &toks {
+                    die(g, tk, "sac")?;
+                }
+                let n = (x.max(0) as usize).min(g.player(p).library.len());
+                let top: Vec<_> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+                for c in top {
+                    let d2 = g.db.get(c);
+                    if d2.instant || d2.sorcery {
+                        let draws = d2.tags.int(Tag::Draw);
+                        let (name, instant) = (d2.name.to_string(), d2.instant);
+                        // a named copy goes on the stack, where it can be countered (a counter skips the draw)
+                        crate::impls::mine::cast_copy_with(
+                            g,
+                            p,
+                            None,
+                            Some(&name),
+                            instant,
+                            4.0,
+                            &mut |g| match draws {
+                                Some(k) => draw(g, p, k.max(0) as u32, false),
+                                None => Ok(()),
+                            },
+                        )?;
+                    }
+                    g.player_mut(p).exile.push(c);
+                }
+            }
         }
-        if t.has(Tag::Suntitan) {
-            sun_titan(g, p, m)?;
-        }
-        if t.has(Tag::Necromancer) {
-            new.extend(cardcode::necromancer_attack(g, p, m)?); // an attacking token copy of a graveyard creature
-        }
-        if t.has(Tag::Kylox) {
-            // sacrifice tokens, cast the instants and sorceries among the top X for free
-            let toks: Vec<PermId> = g
+        if !skip_animist {
+            let animists: Vec<_> = g
                 .player(p)
                 .perms
                 .iter()
                 .copied()
-                .filter(|&x| g.perm(x).token && g.is_creature(x) && !atk.contains(&x))
+                .filter(|&e| {
+                    let x = g.perm(e);
+                    x.on_bf && !x.phased && !x.neutered && x.attached == Some(m) && card_tag(g, e, Tag::Animist)
+                })
                 .collect();
-            let x: i32 = toks.iter().map(|&x| epow(g, x)).ssum();
-            for &tk in &toks {
-                die(g, tk, "sac")?;
-            }
-            let n = (x.max(0) as usize).min(g.player(p).library.len());
-            let top: Vec<_> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
-            for c in top {
-                let d2 = g.db.get(c);
-                if d2.instant || d2.sorcery {
-                    let draws = d2.tags.int(Tag::Draw);
-                    let (name, instant) = (d2.name.to_string(), d2.instant);
-                    // a named copy goes on the stack, where it can be countered (a counter skips the draw)
-                    crate::impls::mine::cast_copy_with(g, p, None, Some(&name), instant, 4.0, &mut |g| match draws {
-                        Some(k) => draw(g, p, k.max(0) as u32, false),
-                        None => Ok(()),
-                    })?;
+            for e in animists {
+                for _ in 0..1 + if repeat { 0 } else { crate::engine::stack::extra_for(g, e) } {
+                    land_ramp(g, p, 1, true)?; // Sword of the Animist: the Equipment's trigger
                 }
-                g.player_mut(p).exile.push(c);
             }
-        }
-        if equipped(g, m, Tag::Animist) {
-            land_ramp(g, p, 1, true)?; // Sword of the Animist
         }
     }
     let rab = find(g, p, Tag::Rabble);
@@ -1213,16 +1241,28 @@ pub fn resolve_blocks(
                         }
                     }
                     cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3
-                    if equipped(g, a, Tag::Sword) {
-                        let n = g.player(d).hand.len() as u64;
-                        if crate::human::is_human(g, d) {
-                            crate::engine::cast::discard_worst(g, d, 1)?; // practice mode: the person chooses the card
-                        } else if n > 0 {
-                            let i = g.rng.below(n) as usize;
-                            discard_index(g, d, i)?;
-                        }
-                        for l in g.player(p).lands.clone() {
-                            g.perm_mut(l).tapped = false;
+                    let swords: Vec<_> = g
+                        .player(p)
+                        .perms
+                        .iter()
+                        .copied()
+                        .filter(|&e| {
+                            let x = g.perm(e);
+                            x.on_bf && !x.phased && !x.neutered && x.attached == Some(a) && card_tag(g, e, Tag::Sword)
+                        })
+                        .collect();
+                    for e in swords {
+                        for _ in 0..1 + crate::engine::stack::extra_for(g, e) {
+                            let n = g.player(d).hand.len() as u64;
+                            if crate::human::is_human(g, d) {
+                                crate::engine::cast::discard_worst(g, d, 1)?; // practice mode: the person chooses the card
+                            } else if n > 0 {
+                                let i = g.rng.below(n) as usize;
+                                discard_index(g, d, i)?;
+                            }
+                            for l in g.player(p).lands.clone() {
+                                g.perm_mut(l).tapped = false;
+                            }
                         }
                     }
                 }

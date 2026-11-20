@@ -135,14 +135,23 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             if extra && has(g, q, Tag::Bowmasters) {
                 let human = crate::human::is_human(g, q);
                 for bm in find(g, q, Tag::Bowmasters) {
-                    amass(g, q, 1)?;
-                    if human {
-                        // practice mode: each Bowmasters, your target
-                        crate::human::choices::deal_damage_from(g, q, 1, "Orcish Bowmasters", "triggers", Some(bm))?;
-                    } else {
-                        let ll = crate::engine::life::has_lifelink(g, bm);
-                        let dealt = crate::engine::life::lose_life_dealt(g, p, 1, Some(q), "triggers", None)?;
-                        crate::engine::life::lifelink(g, bm, ll, dealt)?;
+                    for _ in 0..1 + crate::engine::stack::extra_for(g, bm) {
+                        amass(g, q, 1)?;
+                        if human {
+                            // practice mode: each Bowmasters, your target
+                            crate::human::choices::deal_damage_from(
+                                g,
+                                q,
+                                1,
+                                "Orcish Bowmasters",
+                                "triggers",
+                                Some(bm),
+                            )?;
+                        } else {
+                            let ll = crate::engine::life::has_lifelink(g, bm);
+                            let dealt = crate::engine::life::lose_life_dealt(g, p, 1, Some(q), "triggers", None)?;
+                            crate::engine::life::lifelink(g, bm, ll, dealt)?;
+                        }
                     }
                 }
             }
@@ -348,12 +357,16 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
             }
         }
         if has(g, p, Tag::Wisp) && pw <= 2 {
-            // Wispdrinker Vampire
-            let opps: Vec<_> = g.opps(p).collect();
-            for &q in &opps {
-                lose_life(g, q, k, Some(p), "drain", None)?;
+            // Wispdrinker Vampire: each listener's own source extras, with no event copies in this round.
+            for w in find(g, p, Tag::Wisp) {
+                for _ in 0..1 + crate::engine::stack::extra_for(g, w) {
+                    let opps: Vec<_> = g.opps(p).collect();
+                    for &q in &opps {
+                        lose_life(g, q, k, Some(p), "drain", None)?;
+                    }
+                    gain(g, p, k * opps.len() as i32)?;
+                }
             }
-            gain(g, p, k * opps.len() as i32)?;
         }
     }
     if k > 0 && !blank && has(g, p, Tag::Uprising) {
@@ -490,11 +503,15 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             }
         }
         if has(g, p, Tag::Wisp) && epow(g, m) <= 2 && !card_tag(g, m, Tag::Wisp) {
-            let opps: Vec<_> = g.opps(p).collect();
-            for &q in &opps {
-                lose_life(g, q, 1, Some(p), "drain", None)?;
+            for w in find(g, p, Tag::Wisp) {
+                for _ in 0..1 + crate::engine::stack::extra_for(g, w) {
+                    let opps: Vec<_> = g.opps(p).collect();
+                    for &q in &opps {
+                        lose_life(g, q, 1, Some(p), "drain", None)?;
+                    }
+                    gain(g, p, opps.len() as i32)?;
+                }
             }
-            gain(g, p, opps.len() as i32)?;
         }
         if has(g, p, Tag::Uprising) && epow(g, m) >= 4 {
             draw(g, p, 1, false)?;
