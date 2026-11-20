@@ -377,6 +377,7 @@ fn double_modes(
             let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 if let Some(entrant) = observer {
                     raw(&mut g, P0, name);
+                    g.dsl_on |= g.db.get(cd).has_dsl();
                     match entrant {
                         "creature" => {
                             let c = card(&g, "Serra Angel");
