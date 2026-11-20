@@ -409,3 +409,309 @@ fn hushbringer_and_elesh_on_a_creature_entering_give_no_triggers() {
     perm(&mut g, P1, "Hushbringer");
     assert_eq!(warden_gain(&mut g, P0), 0, "a creature entering sets off nothing, twice or not");
 }
+
+// ================================================================== only an enters-caused trigger is blanked or added to
+// what an opponent's Elesh leaves alone: the replacement and as-enters parts of a card, and a Saga's lore counter
+fn elesh_opp(g: &mut Game) {
+    perm(g, P1, ELESH);
+}
+
+#[test]
+fn an_opponents_elesh_does_not_make_moss_diamond_enter_untapped() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let m = perm(&mut g, P0, "Moss Diamond");
+    assert!(g.perm(m).tapped, "enters tapped is not a trigger");
+}
+
+#[test]
+fn an_opponents_elesh_does_not_remove_the_mind_stones_indestructible() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let m = perm(&mut g, P0, "The Mind Stone");
+    assert!(g.perm(m).data.truthy(DataKey::Indestr));
+}
+
+#[test]
+fn an_opponents_elesh_does_not_stop_phyrexian_revoker_naming_a_card() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    perm(&mut g, P1, "Tezzeret, Cruel Captain");
+    let r = perm(&mut g, P0, "Phyrexian Revoker");
+    assert!(g.perm(r).data.get(DataKey::Imprint).is_some(), "as it enters, choose a name");
+}
+
+#[test]
+fn an_opponents_elesh_does_not_stop_freestrider_commandos_counters() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let m = perm(&mut g, P0, "Freestrider Commando");
+    assert_eq!(g.perm(m).plus, 2, "enters with counters is a replacement");
+}
+
+#[test]
+fn an_opponents_elesh_does_not_stop_a_creature_entering_prepared() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let a = perm(&mut g, P0, "Skycoach Conductor // All Aboard");
+    let b = perm(&mut g, P0, "Studious First-Year");
+    assert!(g.perm(a).data.truthy(DataKey::Prepared));
+    assert!(g.perm(b).data.truthy(DataKey::Prepared));
+}
+
+#[test]
+fn an_opponents_elesh_does_not_take_tome_of_legends_page_counter() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let t = perm(&mut g, P0, "Tome of Legends");
+    assert_eq!(g.perm(t).data.int(DataKey::Counters), 1, "it enters with a page counter");
+}
+
+#[test]
+fn your_own_elesh_does_not_copy_what_happens_as_a_permanent_enters() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    let f = perm(&mut g, P0, "Freestrider Commando");
+    assert_eq!(g.perm(f).plus, 2, "one replacement, not an additional trigger");
+    let t = perm(&mut g, P0, "Tome of Legends");
+    assert_eq!(g.perm(t).data.int(DataKey::Counters), 1);
+}
+
+fn chapters(g: &Game) -> i64 {
+    g.player(P0).stats.get(&sim_core::sym::intern("t0a_chapters")).copied().unwrap_or(0)
+}
+
+#[test]
+fn a_sagas_lore_counter_is_a_game_rule_not_an_enters_trigger_so_elesh_neither_blanks_nor_doubles_it() {
+    // CR 714.3a: the lore counter is put as it enters; chapter I triggers because it was put (714.2b)
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    perm(&mut g, P0, "The Binding of the Titans");
+    assert_eq!(chapters(&g), 1, "an opponent's Elesh does not blank chapter I");
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, "The Binding of the Titans");
+    assert_eq!(chapters(&g), 1, "your own Elesh does not run it twice");
+}
+
+#[test]
+fn end_raze_forerunners_pump_is_an_enters_trigger_that_your_elesh_adds_to() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, "End-Raze Forerunners");
+    assert_eq!(g.player(P0).pumpadd, 4, "+2/+2 for each of two triggers");
+}
+
+#[test]
+fn panharmonicon_adds_a_trigger_to_a_treasure_entering() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, "Reckless Fireweaver");
+    let before = g.player(P1).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(before - g.player(P1).life, 2, "an artifact token entering: 1 + Panharmonicon");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_weftstalker_ardent_on_a_treasure() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Weftstalker Ardent");
+    let before = g.player(P1).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(before - g.player(P1).life, 1, "control");
+    elesh_opp(&mut g);
+    let before = g.player(P1).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(before - g.player(P1).life, 0);
+}
+
+// ------------------------------------------------------------------ ported from the adversarial review
+#[test]
+fn opponent_elesh_blanks_mithril_coat_attachment() {
+    let mut g = tbl();
+    let legend = perm(&mut g, P0, "Yoshimaru, Ever Faithful");
+    elesh_opp(&mut g);
+    let coat = perm(&mut g, P0, "Mithril Coat");
+    assert_eq!(g.perm(coat).attached, None, "Mithril Coat's When-enters trigger is blanked; target was {legend:?}");
+}
+
+#[test]
+fn blanked_mithril_coat_must_not_prompt_for_target() {
+    use sim_core::control::Answer;
+    use sim_core::human::script::ScriptHuman;
+    use std::sync::Arc;
+    let mut g = tbl();
+    perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Tymna the Weaver");
+    elesh_opp(&mut g);
+    let h = Arc::new(ScriptHuman::from_fn(|r| {
+        if r.kind == "target" { Answer::Pick(0) } else { Answer::Action(serde_json::json!({"do": "pass"})) }
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h.clone());
+    perm(&mut g, P0, "Mithril Coat");
+    assert_eq!(h.asked().iter().filter(|r| r.prompt.contains("Mithril Coat")).count(), 0);
+}
+
+#[test]
+fn opponent_elesh_does_not_remove_genesis_hydra_as_enters_counters() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    g.last_x = 4;
+    let c = take(&mut g, P0, "Genesis Hydra");
+    let hydra = zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, ..Default::default() }).unwrap();
+    assert_eq!(g.perm(hydra).plus, 4, "enters with X counters is a replacement, not an enters trigger");
+}
+
+#[test]
+fn opponent_elesh_blanks_artifact_token_enter_trigger() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Reckless Fireweaver");
+    elesh_opp(&mut g);
+    let before = g.player(P1).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(before - g.player(P1).life, 0, "artifact enters trigger must be blanked");
+}
+
+#[test]
+fn own_elesh_doubles_artifact_token_enter_trigger() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, "Reckless Fireweaver");
+    let before = g.player(P1).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(before - g.player(P1).life, 2, "an artifact entering triggers an additional time");
+}
+
+fn aura_draw_blank(name: &str) {
+    let mut g = tbl();
+    let host = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    let before = g.player(P0).hand.len();
+    g.attach_to = Some(host);
+    let aura = perm(&mut g, P0, name);
+    assert_eq!(g.perm(aura).attached, Some(host), "attachment is unaffected");
+    assert_eq!(g.player(P0).hand.len(), before, "{name}'s enters trigger must be blanked");
+}
+
+#[test]
+fn opponent_elesh_blanks_angelic_gift_draw() {
+    aura_draw_blank("Angelic Gift");
+}
+#[test]
+fn opponent_elesh_blanks_feather_of_flight_draw() {
+    aura_draw_blank("Feather of Flight");
+}
+#[test]
+fn opponent_elesh_blanks_sages_reverie_draw() {
+    aura_draw_blank("Sage's Reverie");
+}
+#[test]
+fn opponent_elesh_blanks_unquestioned_authority_draw() {
+    aura_draw_blank("Unquestioned Authority");
+}
+#[test]
+fn opponent_elesh_blanks_rousing_read_draw() {
+    aura_draw_blank("Rousing Read");
+}
+
+#[test]
+fn opponent_elesh_blanks_cartouche_token() {
+    let mut g = tbl();
+    let host = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    g.attach_to = Some(host);
+    let aura = perm(&mut g, P0, "Cartouche of Solidarity");
+    assert_eq!(g.perm(aura).attached, Some(host));
+    assert_eq!(tokens(&g, P0), 0);
+}
+
+fn aura_exile_blank(name: &str) {
+    let mut g = tbl();
+    let host = perm(&mut g, P0, "Mother of Runes");
+    let elesh = perm(&mut g, P1, ELESH);
+    g.attach_to = Some(host);
+    let aura = perm(&mut g, P0, name);
+    assert_eq!(g.perm(aura).attached, Some(host));
+    assert!(g.perm(elesh).on_bf, "{name}'s triggered exile must be blanked");
+}
+
+#[test]
+fn opponent_elesh_blanks_chains_of_custody_exile() {
+    aura_exile_blank("Chains of Custody");
+}
+#[test]
+fn opponent_elesh_blanks_sheltered_by_ghosts_exile() {
+    aura_exile_blank("Sheltered by Ghosts");
+}
+
+#[test]
+fn opponent_elesh_blanks_mantle_of_ancients_return() {
+    let mut g = tbl();
+    let host = perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    let equipment = take(&mut g, P0, "Mask of Memory");
+    g.player_mut(P0).gy.push(equipment);
+    g.attach_to = Some(host);
+    perm(&mut g, P0, "Mantle of the Ancients");
+    assert!(g.player(P0).gy.contains(&equipment), "Mantle's return trigger must be blanked");
+}
+
+#[test]
+fn opponent_elesh_blanks_abduction_untap_but_not_control() {
+    let mut g = tbl();
+    let elesh = perm(&mut g, P1, ELESH);
+    let boots = perm(&mut g, P1, "Swiftfoot Boots");
+    g.perm_mut(boots).attached = Some(elesh);
+    let target = perm(&mut g, P1, "Grave Titan");
+    g.perm_mut(target).tapped = true;
+    let aura = perm(&mut g, P0, "Abduction");
+    assert_eq!(g.perm(aura).attached, Some(target));
+    assert_eq!(g.perm(target).owner, P0);
+    assert!(g.perm(target).tapped, "Abduction's When-enters untap trigger is blanked");
+}
+
+#[test]
+fn opponent_elesh_blanks_meathook_massacre() {
+    let mut g = tbl();
+    let elesh = perm(&mut g, P1, ELESH);
+    let target = perm(&mut g, P1, "Mother of Runes");
+    lands(&mut g, P0, "Swamp", 8, false);
+    let c = take(&mut g, P0, "The Meathook Massacre");
+    zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, ..Default::default() }).unwrap();
+    assert!(g.perm(target).on_bf, "Meathook's enters -X/-X is blanked");
+    assert!(g.perm(elesh).on_bf);
+}
+
+#[test]
+fn opponent_elesh_blanks_end_raze_pump() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Mother of Runes");
+    elesh_opp(&mut g);
+    perm(&mut g, P0, "End-Raze Forerunners");
+    assert_eq!(g.player(P0).pumpadd, 0, "Forerunners' When-enters pump trigger must be blanked");
+}
+
+#[test]
+fn opponent_elesh_blanks_socialites_own_enters_trigger_but_keeps_the_replacement() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    let old = perm(&mut g, P0, "Viscera Seer");
+    let st = g.turn_stamp();
+    g.player_mut(P1).lost_turn = Some((st, 1));
+    let socialite = perm(&mut g, P0, "Vampire Socialite");
+    assert_eq!(g.perm(old).plus, 0, "Socialite's own When-enters trigger is blanked");
+    assert!(g.perm(socialite).on_bf);
+}
+
+#[test]
+fn opponent_elesh_keeps_socialite_token_replacement() {
+    let mut g = tbl();
+    elesh_opp(&mut g);
+    perm(&mut g, P0, "Vampire Socialite");
+    let st = g.turn_stamp();
+    g.player_mut(P1).lost_turn = Some((st, 1));
+    let spec = zones::Tokens { types: vec!["vampire"], ..zones::Tokens::new(1, 1) };
+    let t = zones::make_tokens(&mut g, P0, spec).unwrap()[0];
+    assert_eq!(g.perm(t).plus, 1, "each other Vampire enters with a counter is a replacement");
+}
