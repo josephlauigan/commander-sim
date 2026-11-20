@@ -14,7 +14,7 @@
 //! The own-Elesh columns (does the trigger happen twice) are measured and printed, never asserted: they are P5a-2's input.
 //! `CENSUS_CARD=<name>` runs one card; `ENTERS_CENSUS_REPORT=<file>` writes the full table.
 
-use sim_core::engine::{cast, turn};
+use sim_core::engine::{cast, turn, zones};
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::{Ctx, DataKey, Game};
 use sim_core::testkit::*;
@@ -129,7 +129,7 @@ fn census_fixture() -> (Game, [PermId; 2]) {
     g.hooks.clear();
     (g, sentinels)
 }
-fn snapshot(g: &Game, sentinels: [PermId; 2], template: &Game) -> String {
+fn snapshot<const N: usize>(g: &Game, sentinels: [PermId; N], template: &Game) -> String {
     let mut s = g.clone();
     // Normalize only the controlled input slots/membership. All other dynamic Debug state and RNG are compared.
     for m in sentinels {
@@ -147,7 +147,7 @@ fn snapshot(g: &Game, sentinels: [PermId; 2], template: &Game) -> String {
     s.registry = EMPTY_REG.get_or_init(|| Arc::new(sim_core::hooks::Registry::default())).clone();
     format!("{s:?}")
 }
-fn effects(g: &Game, sentinels: [PermId; 2]) -> Vec<i64> {
+fn effects<const N: usize>(g: &Game, sentinels: [PermId; N]) -> Vec<i64> {
     let mut out = vec![];
     for p in &g.players {
         out.extend([
@@ -323,4 +323,264 @@ fn the_oracle_classifier_reads_the_controls() {
     ] {
         assert!(!oracle_trig(t), "{t}");
     }
+}
+
+// P5a-2b: own-source entry and observer entry paths share the nine controlled modes.
+#[derive(Debug)]
+struct DoubleOutcome {
+    state: (String, sim_core::rng::Rng),
+    metrics: Vec<i64>,
+    outcome: String,
+}
+fn double_fixture() -> (Game, [PermId; 4]) {
+    let (mut g, es) = census_fixture();
+    let ds = ["Starfield Vocalist", "Panharmonicon"].map(|n| {
+        let m = raw(&mut g, P0, n);
+        g.perm_mut(m).eot_kw = vec!["shroud", "indestructible"];
+        g.perm_mut(m).on_bf = false;
+        g.player_mut(P0).perms.retain(|&x| x != m);
+        g.hooks.retain(|&x| x != m);
+        m
+    });
+    (g, [es[0], es[1], ds[0], ds[1]])
+}
+fn double_modes(
+    template: &Game,
+    sentinels: [PermId; 4],
+    name: &str,
+    observer: Option<&str>,
+    battle: bool,
+) -> Vec<DoubleOutcome> {
+    let cd = card(template, name);
+    (0..9)
+        .map(|mode| {
+            let mut g = template.clone();
+            if mode > 0 {
+                let (i, inert) = match mode {
+                    1 => (1, false),
+                    2 => (0, false),
+                    3 => (1, true),
+                    4 => (0, true),
+                    5 => (2, false),
+                    6 => (2, true),
+                    7 => (3, false),
+                    8 => (3, true),
+                    _ => unreachable!(),
+                };
+                let m = sentinels[i];
+                let p = g.perm(m).owner;
+                g.perm_mut(m).on_bf = true;
+                g.perm_mut(m).neutered = inert;
+                g.player_mut(p).perms.push(m);
+            }
+            let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                if let Some(entrant) = observer {
+                    raw(&mut g, P0, name);
+                    match entrant {
+                        "creature" => {
+                            let c = card(&g, "Serra Angel");
+                            g.player_mut(P0).hand.push(c);
+                            cast::cast_card(&mut g, P0, c, "hand", Ctx::default())
+                        }
+                        "small-token" => zones::make_tokens(&mut g, P0, zones::Tokens::new(1, 1)).map(|_| true),
+                        "big-token" => zones::make_tokens(&mut g, P0, zones::Tokens::new(1, 4)).map(|_| true),
+                        "land" => {
+                            let c = card(&g, "Forest");
+                            turn::play_land_card(&mut g, P0, c, "census").map(|_| true)
+                        }
+                        "treasure" => zones::add_treasure(&mut g, P0, 1).map(|_| true),
+                        _ => unreachable!(),
+                    }
+                } else {
+                    g.last_x = 2;
+                    let d = g.db.get(cd);
+                    let ctx = Ctx {
+                        x: 2,
+                        target: Some(if d.has_subtype("aura") { PermId(0) } else { template.player(P1).perms[1] }),
+                        ..Ctx::default()
+                    };
+                    if name == "Wan Shi Tong, Librarian" {
+                        g.player_mut(P0).hand.push(cd);
+                        sim_core::impls::t6_legends2::wan_go(&mut g, P0, cd.0 as i64)
+                    } else if d.land {
+                        turn::play_land_card(&mut g, P0, cd, "census").map(|_| true)
+                    } else if battle {
+                        cast::resolve(&mut g, P0, cd, &ctx, "hand").map(|_| true)
+                    } else {
+                        g.player_mut(P0).hand.push(cd);
+                        cast::cast_card(&mut g, P0, cd, "hand", ctx)
+                    }
+                }
+            }));
+            let outcome = match result {
+                Ok(Ok(ok)) => format!("ok:{ok}"),
+                Ok(Err(e)) => format!("stop:{e:?}"),
+                Err(_) => "PANIC".to_string(),
+            };
+            DoubleOutcome {
+                state: (snapshot(&g, sentinels, template), g.rng.clone()),
+                metrics: effects(&g, sentinels),
+                outcome,
+            }
+        })
+        .collect()
+}
+fn observer_trig(text: &str) -> bool {
+    let text = text.to_lowercase();
+    text.split(['.', '\n']).any(|clause| {
+        ["when ", "whenever "].into_iter().any(|lead| {
+            clause.match_indices(lead).any(|(i, _)| {
+                let condition = clause[i + lead.len()..].split(',').next().unwrap_or("");
+                condition.split_whitespace().any(|w| matches!(w, "enter" | "enters"))
+                    && [
+                        "another ",
+                        "a creature",
+                        "an artifact",
+                        "a land",
+                        "an enchantment",
+                        "one or more",
+                        "a permanent",
+                        "a nontoken",
+                        "an angel",
+                        "a dragon",
+                        "an equipment",
+                        "a commander",
+                    ]
+                    .iter()
+                    .any(|s| condition.contains(s))
+            })
+        })
+    }) || text.contains("landfall")
+}
+fn pan_type(v: &serde_json::Value) -> bool {
+    std::iter::once(v).chain(v["card_faces"].as_array().into_iter().flatten()).any(|f| {
+        let t = f["type_line"].as_str().unwrap_or("");
+        t.contains("Artifact") || t.contains("Creature")
+    })
+}
+
+#[test]
+fn every_enters_trigger_has_exactly_one_additional_instance_per_doubler() {
+    let decks = sim_core::export::load_decks(&data_dir().join("decks.json")).unwrap();
+    let names: BTreeSet<String> = decks.mine.iter().chain(&decks.pool).flat_map(|d| d.cards.iter().cloned()).collect();
+    let oracle: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(data_dir().join("scryfall_cache.json")).unwrap()).unwrap();
+    let old_allow: BTreeMap<_, _> = include_str!("enters_census_allow.txt")
+        .lines()
+        .filter(|l| !l.trim().is_empty() && !l.starts_with('#'))
+        .map(|l| l.split_once('|').unwrap())
+        .map(|(n, r)| (n.trim(), r.trim()))
+        .collect();
+    let mut allow = BTreeMap::new();
+    for l in
+        include_str!("enters_census_double_allow.txt").lines().filter(|l| !l.trim().is_empty() && !l.starts_with('#'))
+    {
+        let (n, r) = l.split_once('|').expect("card | [category] reason");
+        let (n, r) = (n.trim(), r.trim());
+        let (cat, reason) = r.split_once(']').expect("[category] reason");
+        assert!(
+            ["[idempotent", "[exhausted", "[intervening-if", "[once-per-turn", "[nonlinear", "[fixture", "[deferred"]
+                .contains(&cat)
+                && !reason.trim().is_empty(),
+            "invalid allowlist row: {l}"
+        );
+        assert!(names.contains(n), "unknown allowlist card: {n}");
+        assert!(allow.insert(n, r).is_none(), "duplicate allowlist row: {n}");
+    }
+    let (template, sentinels) = double_fixture();
+    let mut unresolved = vec![];
+    let mut report = vec![];
+    let mut needed = BTreeSet::new();
+    for name in &names {
+        if std::env::var("CENSUS_CARD").ok().is_some_and(|n| n != *name) {
+            continue;
+        }
+        let v = &oracle[&name.to_lowercase()];
+        assert!(!v.is_null(), "Oracle cache missing {name}");
+        let text = oracle_text(v);
+        let trig = oracle_trig(&text);
+        let reason = allow.get(name.as_str()).copied().unwrap_or("");
+        let mut cases = vec![None];
+        if observer_trig(&text) {
+            cases.extend(["creature", "small-token", "big-token", "land", "treasure"].map(Some));
+        }
+        let mut any_exercised = false;
+        for case in cases {
+            let runs = double_modes(
+                &template,
+                sentinels,
+                name,
+                case,
+                v["type_line"].as_str().unwrap_or("").contains("Battle"),
+            );
+            let exercised = runs[0].state != runs[1].state && runs[1].state != runs[3].state;
+            any_exercised |= exercised;
+            let mut failures = vec![];
+            let mut overs = vec![];
+            if runs.iter().any(|r| r.outcome != "ok:true") {
+                failures.push(format!("outcomes={:?}", runs.iter().map(|r| &r.outcome).collect::<Vec<_>>()));
+            }
+            for (d, live, inert) in [("Elesh", 2, 4), ("Vocalist", 5, 6), ("Panharmonicon", 7, 8)] {
+                let applicable = d != "Panharmonicon" || case.map_or_else(|| pan_type(v), |c| c != "land");
+                let changed = runs[live].state != runs[inert].state;
+                if !applicable || !trig {
+                    if changed {
+                        failures.push(format!("{d} copies SETUP/ineligible entry"));
+                    }
+                } else if exercised {
+                    if !changed {
+                        failures.push(format!("{d} no additional effect"));
+                    }
+                    for k in 0..runs[0].metrics.len() {
+                        let one = runs[0].metrics[k] - runs[1].metrics[k];
+                        if one == 0 {
+                            continue;
+                        }
+                        let extra = runs[live].metrics[k] - runs[0].metrics[k];
+                        if extra != one {
+                            failures.push(format!("{d} metric {k}: one={one}, extra={extra}"));
+                        }
+                        if extra.abs() > one.abs() {
+                            overs.push(format!("OVER {d} metric {k}: one={one}, extra={extra}"));
+                        }
+                    }
+                }
+            }
+            if !failures.is_empty() {
+                needed.insert(name.as_str());
+                if reason.is_empty() {
+                    unresolved.push(format!("{name} | {} | {}", case.unwrap_or("own-entry"), failures.join("; ")));
+                }
+            }
+            if !overs.is_empty() && !reason.starts_with("[nonlinear]") {
+                unresolved.push(format!("{name} | {} | {}", case.unwrap_or("own-entry"), overs.join("; ")));
+            }
+            report.push(format!(
+                "{name}|{}|exercised={exercised}|{}|{reason}",
+                case.unwrap_or("own-entry"),
+                failures.join("; ")
+            ));
+        }
+        if trig && !any_exercised {
+            needed.insert(name.as_str());
+            let old = old_allow
+                .get(name.as_str())
+                .copied()
+                .unwrap_or("no exercised enters clause in the standard entrant set");
+            if reason.is_empty() {
+                unresolved.push(format!("{name} | unexercised | {old}"));
+            }
+        }
+    }
+    if std::env::var("CENSUS_CARD").is_err() {
+        for (&name, &reason) in &allow {
+            if !needed.contains(name) && !reason.starts_with("[fixture]") {
+                unresolved.push(format!("STALE {name} | {reason}"));
+            }
+        }
+    }
+    if let Ok(path) = std::env::var("ENTERS_CENSUS_DOUBLE_REPORT") {
+        std::fs::write(path, format!("{}\n\nUNRESOLVED\n{}\n", report.join("\n"), unresolved.join("\n"))).unwrap();
+    }
+    assert!(unresolved.is_empty(), "{} unexplained doubling rows:\n{}", unresolved.len(), unresolved.join("\n"));
 }
