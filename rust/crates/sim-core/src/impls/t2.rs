@@ -167,6 +167,7 @@ fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
     } else {
         leave(g, m)?;
     }
+    crate::impls::bulk_white::note_exile(g, m); // Ennis: a card was put into exile (a token is skipped)
     let n = if g.db.get(cd).land {
         super::yoshimaru_p7::land_enters(g, orig, cd)?
     } else {
