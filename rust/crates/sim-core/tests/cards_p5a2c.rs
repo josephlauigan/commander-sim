@@ -193,3 +193,25 @@ fn doubled_aura_exile_links_return_both_cards() {
         }
     }
 }
+
+#[test]
+fn welcoming_and_tocasia_hear_creature_tokens_once_per_turn() {
+    for listener in ["Welcoming Vampire", "Tocasia's Welcome"] {
+        for copier in [false, true] {
+            let mut g = tbl();
+            if copier {
+                perm(&mut g, A, "Panharmonicon");
+            }
+            let s = perm(&mut g, A, listener);
+            let before = g.player(A).hand.len();
+            g.resolving += 1;
+            token(&mut g, A, 1);
+            assert_eq!(g.trig_queue.iter().filter(|t| t.src == Some(s)).count(), if copier { 2 } else { 1 });
+            g.resolving -= 1;
+            stack::flush_triggers(&mut g).unwrap();
+            assert_eq!(g.player(A).hand.len() - before, 1, "{listener}");
+            token(&mut g, A, 1);
+            assert_eq!(g.player(A).hand.len() - before, 1, "{listener}: a later batch in the same turn");
+        }
+    }
+}
