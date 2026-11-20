@@ -743,3 +743,47 @@ fn eiganjo_four_damage_does_not_kill_a_six_toughness_creature() {
     assert!(in_gy(&g, P0, EIG));
     assert!(g.perm(atk).on_bf, "6/6 with four damage must survive");
 }
+
+#[test]
+fn rule_of_law_stops_a_second_spell_even_when_evoked() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Rule of Law");
+    let prior = card(&g, "Llanowar Elves");
+    sim_core::engine::cast::on_cast(&mut g, P0, prior).unwrap();
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_hand(&g, P0, SOL), "Rule of Law forbids a second spell even for evoke");
+    assert!(!exiled(&g, P0, "Swords to Plowshares"));
+}
+
+#[test]
+fn sphere_of_resistance_tax_is_still_required_for_evoke() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sphere of Resistance");
+    hand(&mut g, P0, &[SOL, "Swords to Plowshares"]);
+    play(&mut g, cast0(), vec![ans_word("Solitude: which?", "evoke")]);
+    assert!(in_hand(&g, P0, SOL), "cannot pay the additional {{1}} with no mana");
+    assert!(!exiled(&g, P0, "Swords to Plowshares"));
+}
+
+#[test]
+fn the_ais_evoke_is_not_offered_under_rule_of_law() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P1, "Rule of Law");
+    let prior = card(&g, "Llanowar Elves");
+    sim_core::engine::cast::on_cast(&mut g, P0, prior).unwrap();
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty());
+}
+
+#[test]
+fn the_ai_does_not_evoke_when_it_cannot_pay_the_sphere_tax() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    perm(&mut g, P1, "Sphere of Resistance");
+    let c = hand(&mut g, P0, &[SOL, "Swords to Plowshares"])[0];
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("Solitude has a hand option");
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "no mana for the {{1}}");
+}
