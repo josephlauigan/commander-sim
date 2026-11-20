@@ -309,3 +309,129 @@ fn ennis_doubled_asks_a_person_once_per_instance() {
     end_step(&mut g);
     assert!(on_bf(&g, P0, "Helitrooper") && on_bf(&g, P0, "Armory Automaton"));
 }
+
+// ------------------------------------------------------------------ Palace Jailer and the monarch
+// "When this creature enters, you become the monarch. When this creature enters, exile target creature an opponent
+// controls until an opponent becomes the monarch."
+fn exiled_creatures(g: &Game, p: PlayerId) -> usize {
+    g.player(p).exile.iter().count()
+}
+
+/// a 0/1 token: worth nothing to the AI's value floor
+fn weak_token(g: &mut Game, p: PlayerId) -> PermId {
+    let spec =
+        sim_core::engine::zones::Tokens { tgh: Some(1), sick: false, ..sim_core::engine::zones::Tokens::new(1, 0) };
+    sim_core::engine::zones::make_tokens(g, p, spec).unwrap()[0]
+}
+
+#[test]
+fn palace_jailer_asks_a_person_for_a_creature_an_opponent_controls_and_it_is_mandatory() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    weak_token(&mut g, P1);
+    perm(&mut g, P0, "Wall of Omens");
+    let h = person(&mut g, &["oken"]);
+    perm(&mut g, P0, "Palace Jailer");
+    let q = asks(&h, "Palace Jailer");
+    assert_eq!(q.len(), 1, "one question: {:?}", h.asked());
+    let c = &q[0].choices;
+    assert!(c.iter().any(|x| x.contains("Baneslayer")) && c.iter().any(|x| x.contains("oken")), "{c:?}");
+    assert!(!c.iter().any(|x| x.contains("Wall of Omens")), "only an opponent's creature: {c:?}");
+    assert!(!c.iter().any(|x| x.contains("no target") || x.contains("none")), "the target is mandatory: {c:?}");
+    assert_eq!(g.monarch, Some(P0), "you become the monarch");
+    assert!(on_bf(&g, P1, "Baneslayer Angel"), "the one the person did not pick stays");
+    assert!(!g.player(P1).perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).token), "the token was picked");
+}
+
+#[test]
+fn palace_jailer_exiles_a_creature_a_person_must_pick_even_when_the_ai_would_not_bother() {
+    let mut g = tbl();
+    let t = weak_token(&mut g, P1);
+    assert!(sim_core::engine::values::pval(&g, t) < 1.0, "the AI's value floor would skip it");
+    let _h = person(&mut g, &["oken"]);
+    perm(&mut g, P0, "Palace Jailer");
+    assert!(!g.perm(t).on_bf, "a legal target must be taken");
+}
+
+#[test]
+fn palace_jailer_is_two_triggers_that_use_the_stack_one_after_the_other() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    hand(&mut g, P1, &["Counterspell"]); // something to respond with, so that the opponent is given priority
+    pool(&mut g, P1, &[('U', 2)]);
+    let seen = Arc::new(Mutex::new(vec![]));
+    let s2 = seen.clone();
+    let opp = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            s2.lock().unwrap().push(r.data["stack"].to_string());
+        }
+        Answer::Action(json!({"do": "pass"}))
+    }));
+    g.humans.add(P1, opp);
+    perm(&mut g, P0, "Palace Jailer");
+    let seen = seen.lock().unwrap();
+    let monarch = seen.iter().position(|s| s.contains("monarch"));
+    let exile = seen.iter().position(|s| s.contains("exile"));
+    assert!(monarch.is_some() && exile.is_some(), "each trigger gets a window of its own: {seen:?}");
+    assert!(monarch < exile, "{seen:?}");
+}
+
+#[test]
+fn palace_jailer_creature_returns_when_an_opponent_takes_the_monarchy_even_after_the_jailer_died() {
+    let mut g = tbl();
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    let j = perm(&mut g, P0, "Palace Jailer");
+    assert!(!g.perm(t).on_bf && in_exile(&g, P1, "Baneslayer Angel"));
+    sim_core::engine::zones::die(&mut g, j, "sba").unwrap();
+    assert!(in_exile(&g, P1, "Baneslayer Angel"), "the Jailer leaving does not return it");
+    let a = token(&mut g, P1, 2);
+    sim_core::engine::combat::resolve_combat(&mut g, P1, &[a], P0, &[a]).unwrap(); // hits the monarch
+    assert_eq!(g.monarch, Some(P1));
+    assert!(on_bf(&g, P1, "Baneslayer Angel") && !in_exile(&g, P1, "Baneslayer Angel"), "it returns");
+}
+
+#[test]
+fn palace_jailer_creature_returns_when_the_monarch_is_eliminated_and_an_opponent_takes_over() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P0, "Palace Jailer");
+    assert_eq!(g.monarch, Some(P0));
+    g.active = Some(P1);
+    // the Jailer's controller is the monarch and leaves the game: the player whose turn it is becomes the monarch,
+    // and its opponents' becoming the monarch ends the exile (CR 800.4i: its opponents are still its opponents)
+    sim_core::engine::life::lose_life(&mut g, P0, 40, Some(P2), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.player(P0).alive);
+    assert_eq!(g.monarch, Some(P1), "the active player becomes the monarch");
+    assert!(on_bf(&g, P1, "Baneslayer Angel"), "and the creature returns under its owner");
+}
+
+#[test]
+fn the_monarch_leaving_the_game_passes_the_crown_to_the_active_player_or_the_next_in_turn_order() {
+    let mut g = tbl();
+    g.monarch = Some(P2);
+    g.active = Some(P0);
+    sim_core::engine::life::lose_life(&mut g, P2, 40, Some(P0), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert_eq!(g.monarch, Some(P0), "the player whose turn it is");
+
+    let mut g = tbl();
+    g.monarch = Some(P1);
+    g.active = Some(P1);
+    sim_core::engine::life::lose_life(&mut g, P1, 40, Some(P0), "burn", None).unwrap();
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert_eq!(g.monarch, Some(P2), "the active player left: the next in turn order");
+}
+
+#[test]
+fn palace_jailer_doubled_asks_a_person_once_per_instance_and_exiles_two_creatures() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Baneslayer Angel");
+    perm(&mut g, P1, "Wall of Omens");
+    perm(&mut g, P0, "Panharmonicon");
+    let h = person(&mut g, &["Baneslayer", "Wall"]);
+    perm(&mut g, P0, "Palace Jailer");
+    assert_eq!(asks(&h, "Palace Jailer").len(), 2, "{:?}", h.asked());
+    assert_eq!(exiled_creatures(&g, P1), 2, "both are exiled");
+    assert_eq!(g.monarch, Some(P0));
+}
