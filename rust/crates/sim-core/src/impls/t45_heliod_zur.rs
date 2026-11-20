@@ -534,13 +534,17 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// Clue token (counters on the player in the engine) is an artifact entering too, one trigger each, and arrives through
 /// `zones::make_artifact_tokens_tapped`, which every creation path calls (Lotho's Treasures, a compiled investigate, a
 /// spell or Tireless Tracker's Clue, Academy Manufactor's three kinds), except Xorn's extra Treasure (Xorn's own
-/// model adds it directly). Her triggers do not depend on her still being on the battlefield when they resolve. Warp {W}: cast from the hand for {W} (plus any
-/// cost increase) and exiled at the beginning of the next end step; its card then waits in its owner's exile and can be
-/// cast for its mana cost on a later turn (`generic_paths::warped_in_exile`: the AI's option and a person's cast from
-/// exile). Her end-step draw is a trigger of its own: it is put on the stack at the beginning of her controller's end
-/// step even as the warp exiles her, so the card is still drawn if she has gained the life by the time it resolves. The AI warps her in the first main phase when the
-/// {W} leaves enough mana for two more creature or artifact cards (three enters: her own and two, the draw) or, when
-/// the full cost is out of reach this turn, for one more; a person is always offered the warp.
+/// model adds it directly, which fires nothing). Both of her enters hooks are enters-caused triggers (the token hook is
+/// marked `enter_trigger`): an opponent's Elesh Norn, Mother of Machines blanks them and Panharmonicon, Starfield
+/// Vocalist and your own Elesh Norn add a trigger, per token, from the dispatcher; Delney does not (she has power 3).
+/// Her triggers do not depend on her still being on the battlefield when they resolve. Warp {W}: cast from the hand for
+/// {W} (plus any cost increase) and exiled at the beginning of the next end step; its card then waits in its owner's
+/// exile and can be cast for its mana cost on a later turn (`generic_paths::warped_in_exile`: the AI's option and a
+/// person's cast from exile). Her end-step draw is a trigger of its own: it is put on the stack at the beginning of her
+/// controller's end step even as the warp exiles her, so the card is still drawn if she has gained the life by the time
+/// it resolves. The AI warps her in the first main phase when the {W} leaves enough mana for two more creature or
+/// artifact cards (three enters: her own and two, the draw) or, when the full cost is out of reach this turn, for one
+/// more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if p != owner(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
         return Ok(());
@@ -926,6 +930,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, HALIYA)?;
         c.etb = Some(haliya_etb);
         c.token_created = Some(haliya_tokens);
+        *c = c.enter_trigger(Event::TokenCreated); // "Whenever ... another creature or artifact you control enters"
         c.end_step = Some(haliya_end);
         c.hand_options = Some(haliya_hand);
     }

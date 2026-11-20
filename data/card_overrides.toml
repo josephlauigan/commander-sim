@@ -3564,7 +3564,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade)"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food or Clue token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token; an enchantment entering (The Meathook Massacre) is not copied"
 
 ["Paradise Druid"]
 status = "Full"
@@ -4743,7 +4743,7 @@ note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X 
 tags = "pow=2 tgh=1 fly flash"
 dsl = []
 status = "Full"
-note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food or Clue token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). The trigger does not depend on Kirin still being there; the permanent must be a legal target (shroud, Lightning Greaves, Whispersilk Cloak and protection from white stop its own controller). A person chooses the permanent, or none, as the trigger resolves, after the table's window (the engine's convention for a hand-written trigger's target); the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food or Clue"
+note = "flash, flying; enters: return up to one other nonland permanent you control to its owner's hand (a Treasure, Food or Clue token too), and draw a card if it was a token (impls/yoshimaru_p6.rs). The trigger does not depend on Kirin still being there; the permanent must be a legal target (shroud, Lightning Greaves, Whispersilk Cloak and protection from white stop its own controller). A person chooses the permanent, or none, as the trigger resolves, after the table's window (the engine's convention for a hand-written trigger's target); the AI returns the permanent whose enter effect is worth replaying most, or a token worth less than a card, and never a Treasure, Food or Clue. The trigger is an enters-caused ability like any queued enters hook: an opponent's Elesh Norn, Mother of Machines blanks it, and Panharmonicon (Kirin is a creature), Starfield Vocalist and your own Elesh Norn add one more, each with its own target"
 
 ["Survival of the Fittest"]
 types = "E"

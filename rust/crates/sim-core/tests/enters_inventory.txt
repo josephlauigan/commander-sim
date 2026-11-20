@@ -190,6 +190,7 @@ Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun | Etb | T
 Gryff's Boon | Etb | S
 Guardian Project | Etb | T
 Haliya, Guided by Light | Etb | T
+Haliya, Guided by Light | TokenCreated | T
 Hammer of Nazahn | Etb | T
 Hancock, Ghoulish Mayor | Etb | S
 Harald, King of Skemfar | Etb | T
@@ -397,6 +398,7 @@ Strength of the Harvest // Haven of the Harvest | Etb | S
 Strixhaven Skycoach | Etb | T
 Studious First-Year | Etb | S |  | enters prepared
 Summon: Bahamut | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Sunpearl Kirin | Etb | T
 Sylvan Messenger | Etb | T
 Tainted Observer | Etb | T
 Talon Gates of Madara | LandEtb | M | an_opponents_elesh_blanks_talon_gates_phasing | City of Traitors' check is setup; the phasing is a trigger
@@ -410,7 +412,7 @@ Thassa's Oracle | Etb | T |  | a trigger that runs at once (marked enter_trigger
 The Binding of the Titans | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Cruelty of Gix | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Eldest Reborn | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
-The Meathook Massacre | Etb | T |  | a trigger that runs at once (marked enter_trigger)
+The Meathook Massacre | Etb | T
 The Mending of Dominaria | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Mightstone and Weakstone | Etb | T
 The Mind Stone | Etb | S |  | indestructible, a static
