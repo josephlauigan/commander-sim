@@ -6,7 +6,7 @@
 use crate::cards::CardDb;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{colors_of, pval, untargetable_by_its_controller};
-use crate::engine::zones::{bounce, draw, leave};
+use crate::engine::zones::{bounce, draw};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::human::{Target, choices, legal};
@@ -128,11 +128,7 @@ fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         Back::Perm(t) => {
             let token = g.perm(t).token;
             crate::glog!(g, "    Sunpearl Kirin returns {} to its owner's hand", g.perm(t).name);
-            if token {
-                leave(g, t)?
-            } else {
-                bounce(g, t)?
-            }
+            bounce(g, t)?; // a token is returned to the hand too (Stormfront Riders sees it) and then ceases to exist
             if g.perm(t).on_bf {
                 return Ok(()); // it did not go: not returned, so no card
             }
