@@ -717,3 +717,65 @@ fn ennis_gets_a_counter_when_a_land_was_blinked_this_turn() {
     sim_core::engine::turn::end_step(&mut g, P0).unwrap();
     assert_eq!(g.perm(e).plus, 1, "a blinked land card was put into exile");
 }
+
+// ------------------------------------------------------------------ a land that is also a creature
+// Dryad Arbor is a land creature: a legal target of "target creature", and a land card when it is exiled.
+fn n_lands(g: &Game, p: PlayerId, name: &str) -> usize {
+    g.player(p).lands.iter().filter(|&&l| g.perm(l).on_bf && g.perm(l).name == name).count()
+}
+
+fn n_perms(g: &Game, p: PlayerId, name: &str) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).name == name).count()
+}
+
+#[test]
+fn ennis_exiles_a_land_creature_a_person_picks_and_returns_it_once() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Dryad Arbor", 1, false);
+    let arb = g.player(P0).lands[0];
+    assert!(g.is_creature(arb), "Dryad Arbor is a land creature");
+    let _h = person(&mut g, &["Dryad Arbor"]);
+    perm(&mut g, P0, "Ennis, Debate Moderator");
+    assert!(!g.perm(arb).on_bf, "exiled");
+    assert!(
+        !g.player(P0).lands.contains(&arb) && !g.player(P0).perms.contains(&arb),
+        "the exiled object is in no battlefield list (lands: {:?})",
+        g.player(P0).lands
+    );
+    end_step(&mut g);
+    assert_eq!(n_lands(&g, P0, "Dryad Arbor") + n_perms(&g, P0, "Dryad Arbor"), 1, "back exactly once");
+    assert_eq!(n_lands(&g, P0, "Dryad Arbor"), 1, "as a land");
+}
+
+#[test]
+fn solitude_exiles_a_land_creature_a_person_picks() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Dryad Arbor", 1, false);
+    let arb = g.player(P1).lands[0];
+    let _h = person(&mut g, &["Dryad Arbor"]);
+    perm(&mut g, P0, "Solitude");
+    assert!(!g.perm(arb).on_bf);
+    assert!(
+        !g.player(P1).lands.contains(&arb) && !g.player(P1).perms.contains(&arb),
+        "the exiled object is in no battlefield list"
+    );
+    assert!(in_exile(&g, P1, "Dryad Arbor"));
+}
+
+#[test]
+fn palace_jailer_exiles_a_land_creature_a_person_picks_and_it_returns_as_a_land() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Dryad Arbor", 1, false);
+    let arb = g.player(P1).lands[0];
+    let _h = person(&mut g, &["Dryad Arbor"]);
+    perm(&mut g, P0, "Palace Jailer");
+    assert!(!g.perm(arb).on_bf);
+    assert!(
+        !g.player(P1).lands.contains(&arb) && !g.player(P1).perms.contains(&arb),
+        "the exiled object is in no battlefield list"
+    );
+    assert!(in_exile(&g, P1, "Dryad Arbor"));
+    sim_core::cardcode::become_monarch(&mut g, P1).unwrap();
+    assert_eq!(n_lands(&g, P1, "Dryad Arbor"), 1, "back exactly once, as a land");
+    assert_eq!(n_perms(&g, P1, "Dryad Arbor"), 0);
+}
