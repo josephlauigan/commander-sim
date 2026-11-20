@@ -31,6 +31,14 @@ fn live(g: &Game, m: PermId) -> bool {
     g.perm(m).on_bf && !g.perm(m).phased
 }
 
+/// may p's source m (white) target creature x: shroud, hexproof (an opponent's) and protection from white respected
+fn legal_target(g: &Game, p: PlayerId, m: PermId, x: PermId) -> bool {
+    live(g, x)
+        && g.is_creature(x)
+        && crate::impls::vondam_elspeth::may_target(g, p, x)
+        && !crate::engine::values::protected_from(g, x, crate::engine::values::colors_of(g, m))
+}
+
 fn need(g: &Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {
     mana::cost_problem(g, p, gn, pips).map(|why| format!("Can't activate {what}. {why}"))
 }
@@ -182,7 +190,7 @@ fn protect(g: &mut Game, p: PlayerId, m: PermId, name: &str, giver: bool) -> Res
     }
     let other = if giver { "other " } else { "" };
     let cands = move |g: &Game| -> Vec<PermId> {
-        g.player(p).perms.iter().copied().filter(|&x| (x != m || !giver) && live(g, x) && g.is_creature(x)).collect()
+        g.player(p).perms.iter().copied().filter(|&x| (x != m || !giver) && legal_target(g, p, m, x)).collect()
     };
     let tg = cands(g);
     if tg.is_empty() {
@@ -246,7 +254,8 @@ fn protect(g: &mut Game, p: PlayerId, m: PermId, name: &str, giver: bool) -> Res
                 k = j;
             }
         }
-        if live(g, t) {
+        // the target must still be a legal one (and yours) as it resolves; if not the ability does nothing
+        if g.player(p).perms.contains(&t) && legal_target(g, p, m, t) {
             crate::impls::partials::eot_kw(g, t, intern(opts[k].1));
             crate::glog!(g, "    {} gains protection from {} until end of turn", g.perm(t).name, opts[k].0);
         }
