@@ -75,7 +75,13 @@ fn call(g: &mut Game, t: &Trigger) -> Res {
     let prev = std::mem::replace(&mut g.last_cast_etb, t.cast_etb);
     let r = match &t.act {
         TrigAct::RivazExile { m } => crate::impls::t45_urdragon::rivaz_exile(g, *m),
-        TrigAct::Hook { event, call } => run_hook(g, t.src.expect("a hook trigger has a source"), *event, call),
+        TrigAct::Hook { event, call } => {
+            let src = t.src.expect("a hook trigger has a source");
+            let prev = g.trig_ctl.replace((src, t.controller));
+            let r = run_hook(g, src, *event, call);
+            g.trig_ctl = prev;
+            r
+        }
         TrigAct::EtbOnce { p, m } => crate::engine::zones::etb_once(g, *p, *m),
         TrigAct::Dsl { p, src, card, idx, ctx } => crate::dsl::run_trigger(g, *p, *src, *card, *idx, ctx),
     };

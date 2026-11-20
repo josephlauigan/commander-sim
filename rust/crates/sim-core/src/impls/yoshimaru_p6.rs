@@ -81,8 +81,8 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 /// lose), or a token worth less than the card it draws (`pval` under 1: a 1/1 or 2/2 token); it never returns a
 /// Treasure, Food or Clue.
 fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m != src || g.perm(src).owner != p {
-        return Ok(()); // the trigger does not depend on Kirin still being there
+    if m != src {
+        return Ok(()); // (p is who controlled Kirin as she entered: the trigger's controller, whoever has her now)
     }
     let human = crate::human::is_human(g, p);
     let mut ai_pick = None;

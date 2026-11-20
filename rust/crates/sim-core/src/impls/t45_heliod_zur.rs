@@ -43,6 +43,7 @@
 
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable};
+use crate::engine::hooks::trigger_controller;
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::removal::apply_removal;
@@ -546,7 +547,7 @@ const HALIYA: &str = "Haliya, Guided by Light";
 /// artifact cards (three enters: her own and two, the draw) or, when the full cost is out of reach this turn, for one
 /// more; a person is always offered the warp.
 fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if p != owner(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
+    if p != trigger_controller(g, src) || !(m == src || g.is_creature(m) || is_artifact(g, m)) {
         return Ok(());
     }
     if !trigger_window(g, p, Some(src), "gain 1 life", Some(1.0))? {
@@ -557,7 +558,7 @@ fn haliya_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 
 /// a Treasure, Food or Clue token you create is an artifact entering: one life each
 fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) -> Res {
-    if p != owner(g, src) {
+    if p != trigger_controller(g, src) {
         return Ok(());
     }
     for k in 0..n {
@@ -576,7 +577,7 @@ fn haliya_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) ->
 /// resolves (not an intervening if), whether or not Haliya is still there; a warped Haliya is exiled at the beginning
 /// of the next end step (whose ever it is)
 fn haliya_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    let o = owner(g, src);
+    let o = trigger_controller(g, src);
     if p == o && trigger_window(g, p, Some(src), "draw a card if you've gained 3 or more life this turn", Some(2.0))? {
         let st = g.turn_stamp();
         let gained = g.player(p).gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);

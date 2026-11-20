@@ -1389,6 +1389,8 @@ pub struct Game {
     pub trig_probe: bool,
     /// the stack item of the trigger being resolved (by id)
     pub trig_current: Option<u32>,
+    /// the source and controller of the hook trigger being probed or resolved (`hooks::trigger_controller`)
+    pub trig_ctl: Option<(PermId, PlayerId)>,
     /// ids of trigger items that have a copy which resolved (Peter Parker's Camera): the hook runs its effect again
     /// for each, before the original (`stack::take_copies`)
     pub trig_copies: Vec<u32>,
@@ -1605,6 +1607,7 @@ impl Game {
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
+            trig_ctl: None,
             trig_copies: vec![],
             last_counter: None,
             bounced_spell: false,

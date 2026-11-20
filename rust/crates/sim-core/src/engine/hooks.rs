@@ -270,7 +270,10 @@ pub fn fire_trigger_where(
         for k in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
             if now {
-                run_hook(g, src, e, &call)?;
+                let prev = g.trig_ctl.take(); // it runs now: its source's current controller is its controller
+                let r = run_hook(g, src, e, &call);
+                g.trig_ctl = prev;
+                r?;
                 if g.over {
                     return Ok(());
                 }
@@ -281,6 +284,15 @@ pub fn fire_trigger_where(
         }
     }
     crate::engine::stack::queue_triggers(g, entries)
+}
+
+/// the controller of src's triggered ability being probed or resolved: whoever controlled src as it triggered (CR 603.3a),
+/// even if control of src has changed since; src's current controller for a hook that runs at once
+pub fn trigger_controller(g: &Game, src: PermId) -> PlayerId {
+    match g.trig_ctl {
+        Some((s, q)) if s == src => q,
+        _ => g.perm(src).owner,
+    }
 }
 
 /// Run src's hook for event e with these arguments (a trigger resolving, or a hook marked at once).
