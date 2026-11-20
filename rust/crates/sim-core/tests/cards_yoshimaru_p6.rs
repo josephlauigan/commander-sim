@@ -1131,3 +1131,49 @@ fn kirins_targets_are_checked_against_the_actual_colours_of_the_source() {
         assert_eq!(seen, offered, "a green copy of Kirin and a permanent with {protection}");
     }
 }
+
+// ------------------------------------------------------------------ round 5: Meathook's enter trigger with X = 0
+/// every priority question the table is asked: its stack, as the questions show it (every player passes)
+fn observe_stack(g: &mut Game) -> std::sync::Arc<std::sync::Mutex<Vec<Value>>> {
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let out = seen.clone();
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            out.lock().unwrap().push(r.data.clone());
+        }
+        Answer::Action(json!({"do": "pass"}))
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h.clone());
+    g.humans.add(P1, h);
+    seen
+}
+
+#[test]
+fn meathooks_enter_trigger_with_x_zero_is_still_put_on_the_stack() {
+    let mut g = tbl();
+    let seen = observe_stack(&mut g);
+    perm(&mut g, P0, MEATHOOK);
+    let seen = seen.lock().unwrap();
+    assert!(
+        seen.iter().any(|d| d["stack"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|it| it["name"] == MEATHOOK && it["kind"] == "trigger")),
+        "the mandatory enter ability triggers even with X = 0, and the table may respond; observed {seen:?}"
+    );
+}
+
+#[test]
+fn meathook_with_x_zero_at_an_ai_table_changes_no_stack_count_rng_or_life() {
+    let mut g = tbl();
+    let rng = format!("{:?}", g.rng);
+    let pushes = g.stack_pushes;
+    let lives: Vec<i32> = g.players.iter().map(|q| q.life).collect();
+    perm(&mut g, P0, MEATHOOK);
+    assert!(has_perm(&g, P0, MEATHOOK));
+    assert_eq!(g.stack_pushes, pushes, "no table could answer it: nothing is pushed");
+    assert_eq!(format!("{:?}", g.rng), rng, "and no random number is drawn");
+    assert_eq!(g.players.iter().map(|q| q.life).collect::<Vec<_>>(), lives);
+}
