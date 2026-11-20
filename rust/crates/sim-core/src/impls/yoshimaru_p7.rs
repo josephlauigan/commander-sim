@@ -46,7 +46,8 @@ pub fn targets_from(g: &Game, o: PlayerId, src: PermId, keep: impl Fn(&Game, Per
     g.players
         .iter()
         .filter(|q| q.alive)
-        .flat_map(|q| q.perms.iter().chain(q.lands.iter()).copied())
+        // (a land that is also a creature token is listed in both: once)
+        .flat_map(|q| q.perms.iter().chain(q.lands.iter().filter(|l| !q.perms.contains(l))).copied())
         .filter(|&m| {
             super::vondam_elspeth::may_target(g, o, m)
                 && !protected_from(g, m, cols)
@@ -93,11 +94,39 @@ pub fn emp_samurai(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
 // that is exiled and returns (Flickerwisp, Felidar Guardian) goes out by `remove_land` and comes in by `land_enters`
 // (`t2::blink_inner` does it for a blink).
 
+/// is m listed among its controller's lands (a land creature, Dryad Arbor, is: it is not among the permanents)
+pub fn in_lands(g: &Game, m: PermId) -> bool {
+    g.player(g.perm(m).owner).lands.contains(&m)
+}
+
+/// m leaves the battlefield without a zone: a land by `remove_land`, anything else by `zones::leave`
+pub fn leave_battlefield(g: &mut Game, m: PermId) -> Res {
+    if in_lands(g, m) {
+        let ctrl = g.perm(m).owner;
+        crate::engine::turn::remove_land(g, ctrl, m, None);
+        Ok(())
+    } else {
+        crate::engine::zones::leave(g, m)
+    }
+}
+
 /// land m leaves the battlefield for its owner's exile
 pub fn exile_land(g: &mut Game, m: PermId) -> Res {
     let ctrl = g.perm(m).owner;
     crate::engine::turn::remove_land(g, ctrl, m, Some(crate::engine::zones::Zone::Exile));
     crate::engine::zones::exiled_from_bf(g, m, None)
+}
+
+/// o's spell or ability (from a card `source`) exiles m, a creature or other permanent that may be a land too: a land
+/// goes through `exile_land` (ward paid for an opponent's), anything else through the removal
+pub fn exile_target(g: &mut Game, o: PlayerId, m: PermId, source: Option<CardId>) -> Res {
+    if in_lands(g, m) {
+        if g.perm(m).owner != o && !crate::engine::ward::pay_ward(g, o, m)? {
+            return Ok(());
+        }
+        return exile_land(g, m);
+    }
+    crate::engine::removal::apply_removal(g, Some(o), m, "exile", source)
 }
 
 /// land card cd enters the battlefield under p's control without being played (no land drop): untapped or tapped as
@@ -129,21 +158,24 @@ pub fn land_enters(g: &mut Game, p: PlayerId, cd: CardId) -> Res<PermId> {
     Ok(l)
 }
 
-/// the beginning of the end step: land cards waiting in `g.eot_returns` (exiled until then) come back under their
-/// owners' control; the rest of the list is `galadriel::eot_returns`'s (it runs next)
-pub fn land_returns(g: &mut Game) -> Res {
-    if !g.eot_returns.iter().any(|&(_, c)| g.db.get(c).land) {
+/// the beginning of the end step: the cards waiting in `g.eot_returns` (exiled until then) come back under their
+/// owners' control, a land card as a land and the rest through `galadriel::eot_returns`. What is put on the list as
+/// they arrive (a land's landfall may exile something until the next end step) waits for the next end step.
+pub fn end_step_returns(g: &mut Game) -> Res {
+    if g.eot_returns.is_empty() {
         return Ok(());
     }
     let (lands, rest): (Vec<_>, Vec<_>) =
         std::mem::take(&mut g.eot_returns).into_iter().partition(|&(_, c)| g.db.get(c).land);
-    g.eot_returns = rest;
     for (p, cd) in lands {
         if g.player(p).alive && g.player_mut(p).exile.take(cd) {
             land_enters(g, p, cd)?;
             crate::glog!(g, "    {} returns to the battlefield", g.db.get(cd).name);
         }
     }
+    let later = std::mem::replace(&mut g.eot_returns, rest);
+    crate::impls::galadriel::eot_returns(g)?;
+    g.eot_returns.extend(later);
     Ok(())
 }
 

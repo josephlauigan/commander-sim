@@ -431,7 +431,7 @@ fn exiled_this_turn(g: &Game) -> bool {
 /// exile m until the beginning of the next end step, when its card returns under its owner's control (a token is gone)
 fn exile_until_end_step(g: &mut Game, m: PermId) -> Res {
     let (cd, orig, tok) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).token);
-    leave(g, m)?;
+    super::yoshimaru_p7::leave_battlefield(g, m)?; // (a land creature is among the lands)
     if !tok && let Some(cd) = cd {
         g.player_mut(orig).exile.push(cd);
         g.eot_returns.push((orig, cd));

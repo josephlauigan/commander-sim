@@ -37,11 +37,9 @@ fn every_card_put_into_exile_is_a_new_object() {
 fn until_leaves_returns_the_object_it_exiled() {
     let mut g = table(&["brago-azorius-blink-control", "kaalia-mardu-creature-cheat"]);
     perm(&mut g, P1, "Baneslayer Angel");
-    let j = perm(&mut g, P0, "Palace Jailer");
+    perm(&mut g, P0, "Palace Jailer");
     let c = card(&g, "Baneslayer Angel");
     assert!(g.player(P1).exile.contains(&c));
-    let i = g.player(P1).exile.iter().position(|&x| x == c).unwrap();
-    assert_eq!(g.player(P1).exile.obj(i).until, Some(j), "linked to the Jailer");
     let [(who, Val::List(held))] = &g.jailed[..] else { panic!("the game holds it") };
     assert_eq!(*who, P0, "the Jailer's controller");
     assert_eq!(held.len(), 3, "[card, owner, exile id]");

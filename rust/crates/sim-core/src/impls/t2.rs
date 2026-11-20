@@ -161,12 +161,7 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<PermId>> {
 /// (`land_enters`), any other as a permanent, so a double-faced land card (Witch-Blessed Meadow) returns front face up.
 fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
     let (cd, orig, cmd) = (g.perm(m).cd.unwrap(), g.perm(m).orig, g.perm(m).is_cmd);
-    let ctrl = g.perm(m).owner;
-    if g.player(ctrl).lands.contains(&m) {
-        crate::engine::turn::remove_land(g, ctrl, m, None);
-    } else {
-        leave(g, m)?;
-    }
+    super::yoshimaru_p7::leave_battlefield(g, m)?;
     crate::impls::bulk_white::note_exile(g, m); // Ennis: a card was put into exile (a token is skipped)
     let n = if g.db.get(cd).land {
         super::yoshimaru_p7::land_enters(g, orig, cd)?
@@ -345,12 +340,16 @@ pub fn jailer_exile(g: &mut Game, src: PermId, o: PlayerId) -> Res {
     };
     let Some(t) = t else { return Ok(()) };
     let src_cd = g.perm(src).cd;
-    apply_removal(g, Some(o), t, "exile", src_cd)?;
+    super::yoshimaru_p7::exile_target(g, o, t, src_cd)?;
     let x = g.perm(t);
     if !x.on_bf && !x.token {
         let (cd, orig) = (x.phys.or(x.cd).unwrap(), x.orig);
         if !g.player(orig).is_commander(cd) && g.player(orig).exile.contains(&cd) {
             let e = super::common::link_exiled(g, orig, cd, src);
+            // the game keeps the link, not the Jailer: the object is not "until the Jailer leaves"
+            if let Some((_, q, i)) = super::common::linked(g, &e) {
+                g.player_mut(q).exile.obj_mut(i).until = None;
+            }
             g.jailed.push((o, e));
         }
     }
@@ -369,7 +368,11 @@ pub fn jail_release(g: &mut Game, p: PlayerId) -> Res {
         let Some((cd, o, i)) = super::common::linked(g, &e) else { continue };
         if g.player(o).alive {
             g.player_mut(o).exile.remove(i);
-            enter(g, o, cd, Enter::default())?;
+            if g.db.get(cd).land {
+                super::yoshimaru_p7::land_enters(g, o, cd)?;
+            } else {
+                enter(g, o, cd, Enter::default())?;
+            }
             crate::glog!(g, "    {} returns to the battlefield", g.db.get(cd).name);
         }
     }

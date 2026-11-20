@@ -868,8 +868,7 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     if !g.zur_due.is_empty() {
         crate::impls::zur::zur_end_step(g, p)?; // The Eternal Wanderer
     }
-    crate::impls::yoshimaru_p7::land_returns(g)?; // Flickerwisp's land
-    crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
+    crate::impls::yoshimaru_p7::end_step_returns(g)?; // Eerie Interlude, Flickerwisp, Ennis (a land card returns as a land)
     crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
     crate::impls::t12_lightpaws::flicker_returns(g)?; // --- Tiers 1/2 (lightpaws): Flickerform
     if !g.jar_due.is_empty() {

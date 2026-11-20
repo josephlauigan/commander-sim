@@ -3364,7 +3364,7 @@ fn solitude_exile(g: &mut Game, src: PermId, o: PlayerId, t: PermId) -> Res {
     }
     let (who, power) = (g.perm(t).owner, epow(g, t));
     let cd = g.perm(src).cd;
-    apply_removal(g, Some(o), t, "exile", cd)?;
+    super::yoshimaru_p7::exile_target(g, o, t, cd)?;
     if !g.perm(t).on_bf {
         gain(g, who, power)?; // Oracle: "That creature's controller gains life equal to its power."
     }
