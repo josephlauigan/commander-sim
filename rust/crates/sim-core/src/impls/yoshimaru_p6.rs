@@ -76,8 +76,8 @@ fn still_there(g: &Game, p: PlayerId, src: PermId, b: Back) -> bool {
 /// Whispersilk Cloak, protection from a colour Kirin has now; hexproof does not stop its controller). The target is
 /// chosen as the trigger resolves, after the table's window (the engine
 /// probes a trigger up to its first window, so a question before it would be asked twice; the same order every card with
-/// a chosen target uses): it does nothing if there is nothing to return. A person chooses among every candidate, or none
-/// ("up to one"). The AI returns the permanent whose enter effect is worth replaying most (`mine::flicker_worth`, at
+/// a chosen target uses): it does nothing if there is nothing to return (the trigger is still put on the stack). A
+/// person chooses among every candidate, or none ("up to one"). The AI returns the permanent whose enter effect is worth replaying most (`mine::flicker_worth`, at
 /// least 2, the Displacer Kitten threshold; never a commander, a stolen permanent or one carrying counters it would
 /// lose), or a token worth less than the card it draws (`pval` under 1: a 1/1 or 2/2 token); it never returns a
 /// Treasure, Food, Clue or Blood.
@@ -89,12 +89,12 @@ fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let mut ai_pick = None;
     if human {
         if candidates(g, p, src).is_empty() {
-            return Ok(());
+            return empty_trigger(g, p, src);
         }
     } else {
         ai_pick = ai_choice(g, p, src);
         if ai_pick.is_none() {
-            return Ok(());
+            return empty_trigger(g, p, src);
         }
     }
     if !trigger_window(
@@ -149,6 +149,19 @@ fn kirin_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if token {
         draw(g, p, 1, false)?;
     }
+    Ok(())
+}
+
+/// "Up to one target": with nothing to return the trigger is still put on the stack (CR 603.3d) and the table may
+/// respond; importance 0 so no AI answers it (an AI-only table sees no stack push and no random draw)
+fn empty_trigger(g: &mut Game, p: PlayerId, src: Src) -> Res {
+    trigger_window(
+        g,
+        p,
+        Some(src),
+        "return up to one other nonland permanent you control to its owner's hand",
+        Some(0.0),
+    )?;
     Ok(())
 }
 
