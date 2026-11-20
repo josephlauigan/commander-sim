@@ -186,7 +186,7 @@ pub fn champion_hit(g: &mut Game, p: PlayerId, n: i32) -> Res {
     if n < 5 || g.over || !g.player(p).alive {
         return Ok(());
     }
-    let k = named(g, p, CHAMPION).len() as u32;
+    let k = named(g, p, CHAMPION).into_iter().map(|c| 1 + crate::engine::stack::extra_for(g, c) as u32).sum();
     if k > 0 {
         crate::glog!(g, "    Dragonborn Champion: {} draws {}", g.player(p).name, k);
         draw(g, p, k, false)?;
@@ -307,7 +307,7 @@ fn wrathfuls_for(g: &Game, m: PermId) -> usize {
     if !is_dragon(g, m) {
         return 0;
     }
-    named(g, owner(g, m), WRATHFUL).len()
+    named(g, owner(g, m), WRATHFUL).into_iter().map(|w| 1 + crate::engine::stack::extra_for(g, w)).sum()
 }
 
 /// p's Dragon deals n damage to any target that isn't a Dragon: an opponent it kills (the one with the most life
@@ -367,7 +367,7 @@ pub fn wrathful_damaged(g: &mut Game, m: PermId, n: i32) -> Res {
 pub fn wrathful_wipe(g: &Game, n: i32) -> Vec<(PlayerId, i32)> {
     let mut out = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
-        let k = named(g, q.id, WRATHFUL).len();
+        let k: usize = named(g, q.id, WRATHFUL).into_iter().map(|w| 1 + crate::engine::stack::extra_for(g, w)).sum();
         if k == 0 {
             continue;
         }

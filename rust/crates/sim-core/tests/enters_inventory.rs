@@ -10,18 +10,21 @@
 //!   M  mixed: setup that runs its trigger part `enters_trigger_times` times (the 4th column names its test)
 //!   N  not caused by the entering: a creation trigger, a replacement of the creating, a Saga's chapter I (it
 //!      triggers on the lore counter), heroic. A queued hook that is not T is N.
+//! The note `enter_queues` marks a T hook that runs once and queues the real triggers; they get their own copies.
 //! `ENTERS_INVENTORY_PRINT=<file>` writes the registry's rows with the dispatcher's class there, to start a new row.
 
 use sim_core::engine::hooks::enter_hook_is_trigger;
-use sim_core::hooks::Event;
+use sim_core::hooks::{Call, CardImpl, Event};
+use sim_core::ids::{PermId, PlayerId};
+use sim_core::state::Game;
 use sim_core::testkit::*;
 use std::collections::{BTreeMap, BTreeSet};
 
 const EVENTS: [Event; 6] =
     [Event::Etb, Event::LandEnters, Event::LandEtb, Event::Landfall, Event::TokensEnter, Event::TokenCreated];
 
-/// (card, event) -> (dispatcher says trigger, both bits set, runs now)
-fn registry_rows() -> BTreeMap<(String, String), (bool, bool, bool)> {
+/// (card, event) -> (dispatcher says trigger, both bits set, runs now, queues, explicit trigger bit)
+fn registry_rows() -> BTreeMap<(String, String), (bool, bool, bool, bool, bool)> {
     let g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
     let mut out = BTreeMap::new();
     for d in g.db.iter() {
@@ -35,14 +38,17 @@ fn registry_rows() -> BTreeMap<(String, String), (bool, bool, bool)> {
             if i.handles(e) {
                 let now = i.runs_at_once(e) || !e.is_trigger();
                 let both = i.is_enter_trigger(e) && i.is_enter_setup(e);
-                out.insert((d.name.to_string(), format!("{e:?}")), (enter_hook_is_trigger(i, e), both, now));
+                out.insert(
+                    (d.name.to_string(), format!("{e:?}")),
+                    (enter_hook_is_trigger(i, e), both, now, i.is_enter_queues(e), i.is_enter_trigger(e)),
+                );
             }
         }
     }
     out
 }
 
-fn table_rows() -> BTreeMap<(String, String), (String, String)> {
+fn table_rows() -> BTreeMap<(String, String), (String, String, bool)> {
     let text = include_str!("enters_inventory.txt");
     let mut out = BTreeMap::new();
     for (n, line) in text.lines().enumerate() {
@@ -53,7 +59,11 @@ fn table_rows() -> BTreeMap<(String, String), (String, String)> {
         let f: Vec<&str> = line.split('|').map(str::trim).collect();
         assert!(f.len() >= 3, "line {}: card | event | class [| test]", n + 1);
         let key = (f[0].to_string(), f[1].to_string());
-        let val = (f[2].to_string(), f.get(3).unwrap_or(&"").to_string());
+        let val = (
+            f[2].to_string(),
+            f.get(3).unwrap_or(&"").to_string(),
+            f.get(4).is_some_and(|n| n.contains("enter_queues")),
+        );
         assert!(out.insert(key, val).is_none(), "line {}: a second row for {} {}", n + 1, f[0], f[1]);
     }
     out
@@ -63,8 +73,13 @@ fn table_rows() -> BTreeMap<(String, String), (String, String)> {
 fn print_registry_rows() {
     let Ok(path) = std::env::var("ENTERS_INVENTORY_PRINT") else { return };
     let mut out = String::new();
-    for ((card, e), (trig, _, now)) in registry_rows() {
-        out += &format!("ROW|{card}|{e}|{}|{}\n", if trig { "T" } else { "S" }, if now { "now" } else { "queued" });
+    for ((card, e), (trig, _, now, queues, _)) in registry_rows() {
+        out += &format!(
+            "ROW|{card}|{e}|{}|{}|{}\n",
+            if trig { "T" } else { "S" },
+            if now { "now" } else { "queued" },
+            if queues { "enter_queues" } else { "" }
+        );
     }
     std::fs::write(path, out).unwrap();
 }
@@ -74,11 +89,25 @@ fn every_enters_hook_is_classified_and_the_dispatcher_agrees() {
     let reg = registry_rows();
     let tab = table_rows();
     let mut bad = vec![];
-    for (k, (trig, both, now)) in &reg {
-        let Some((class, _)) = tab.get(k) else {
+    for (k, (trig, both, now, queues, explicit)) in &reg {
+        let Some((class, _, annotated)) = tab.get(k) else {
             bad.push(format!("no row for {} {}", k.0, k.1));
             continue;
         };
+        if queues != annotated {
+            bad.push(format!("{} {}: enter_queues marker and inventory note disagree", k.0, k.1));
+        }
+        if *queues {
+            assert!(class == "T" && *trig && *now && *explicit && !both, "{k:?}: enter_queues implies a run-now T");
+            assert_queue_adapter_runs_once_and_is_blanked(
+                &k.0,
+                EVENTS.into_iter().find(|e| format!("{e:?}") == k.1).unwrap(),
+            );
+        }
+        // I3: a mixed hook owns its helper loop; the dispatcher must never multiply that hook too.
+        if class == "M" {
+            assert!(*now && !trig && !queues, "{k:?}: enters_trigger_times belongs outside dispatcher T hooks");
+        }
         if !matches!(class.as_str(), "T" | "S" | "M" | "N") {
             bad.push(format!("{} {}: class {class:?} is not T, S, M or N", k.0, k.1));
         } else if *both {
@@ -124,10 +153,79 @@ fn every_mixed_hook_names_a_behaviour_test_that_exists() {
         }
     }
     let mut bad = vec![];
-    for (k, (class, test)) in table_rows() {
+    for (k, (class, test, _)) in table_rows() {
         if class == "M" && !test.split_whitespace().all(|t| names.contains(t)) | test.is_empty() {
             bad.push(format!("{} {}: mixed row needs existing test name(s), has {test:?}", k.0, k.1));
         }
     }
     assert!(bad.is_empty(), "{}", bad.join("\n"));
+}
+
+// Replace only the adapter's payload with a counter, preserving its real registry markers. Both source and event
+// doublers are live; an opponent's Elesh Norn must suppress even this run-now adapter, for either controller.
+fn assert_queue_adapter_runs_once_and_is_blanked(card_name: &str, e: Event) {
+    fn count(g: &mut Game, src: PermId, _p: PlayerId) -> sim_core::flow::Res {
+        let owner = g.perm(src).owner;
+        g.player_mut(owner).life += 1;
+        Ok(())
+    }
+    for owner in [PlayerId(0), PlayerId(1)] {
+        let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
+        perm(&mut g, owner, "Delney, Streetwise Lookout");
+        perm(&mut g, owner, "Starfield Vocalist");
+        let src = perm(&mut g, owner, card_name);
+        // An enchantment adapter can be animated too: exercise its source extras with the same Delney fixture.
+        g.perm_mut(src).exc.add_types = sim_core::cards::Types::CREATURE;
+        let power = sim_core::engine::values::epow(&g, src);
+        g.perm_mut(src).plus += 2 - power;
+        assert!(sim_core::engine::stack::extra_for(&g, src) > 0, "{card_name}: source doubler fixture");
+        assert!(sim_core::engine::hooks::enter_copies(&g, owner, Some(src)) > 0, "event doubler fixture");
+        let c = card(&g, card_name);
+        let mut probe: CardImpl = *g.registry.get(c).unwrap();
+        let call = match e {
+            Event::Etb | Event::LandEnters => {
+                if e == Event::Etb {
+                    probe.etb = Some(|g, s, p, _| count(g, s, p));
+                } else {
+                    probe.land_enters = Some(|g, s, p, _| count(g, s, p));
+                }
+                Call::Etb { p: owner, m: src }
+            }
+            Event::Landfall => {
+                probe.landfall = Some(count);
+                Call::Player { p: owner }
+            }
+            Event::TokensEnter => {
+                probe.tokens_enter = Some(|g, s, p, _| count(g, s, p));
+                Call::Tokens { p: owner, toks: vec![src] }
+            }
+            Event::TokenCreated => {
+                probe.token_created = Some(|g, s, p, _, _| count(g, s, p));
+                Call::ArtifactTokens { p: owner, kinds: vec!["treasure"], n: 2 }
+            }
+            _ => panic!("{card_name}: unsupported enter_queues event {e:?}"),
+        };
+        let mut registry = sim_core::hooks::Registry::new(&g.db);
+        for d in g.db.iter() {
+            let id = card(&g, &d.name);
+            if let Some(imp) = g.registry.get(id) {
+                registry.on(&g.db, &d.name, if id == c { probe } else { *imp }).unwrap();
+            }
+        }
+        g.registry = std::sync::Arc::new(registry);
+        for blanked in [false, true] {
+            if blanked {
+                perm(&mut g, PlayerId(1 - owner.0), "Elesh Norn, Mother of Machines");
+            }
+            for repeat in [false, true] {
+                let life = g.player(owner).life;
+                sim_core::engine::hooks::fire_trigger_where(&mut g, e, call.clone(), &|_, s| s == src, repeat).unwrap();
+                assert_eq!(
+                    g.player(owner).life - life,
+                    i32::from(!blanked),
+                    "{card_name} {e:?}, {owner:?}, blanked={blanked}, repeat={repeat}"
+                );
+            }
+        }
+    }
 }

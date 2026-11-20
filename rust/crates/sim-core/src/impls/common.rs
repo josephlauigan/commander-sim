@@ -278,7 +278,7 @@ fn aura_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         f(g, owner(g, src), src, host)?;
     }
     if let Some(f) = spec.when_enters {
-        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(src)) {
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, owner(g, src), Some(src), Some(src)) {
             f(g, owner(g, src), src, host)?;
         }
     }
@@ -2475,7 +2475,7 @@ fn worst_gy(g: &Game, p: PlayerId) -> Option<PlayerId> {
 }
 
 /// Bojuka Bog (Full): enters tapped; exiles the most dangerous graveyard
-fn bog(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
+fn bog(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if crate::human::is_human(g, p) {
         // "exile target player's graveyard": the person picks whose (or none)
         let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive && !q.gy.is_empty()).map(|q| q.id).collect();
@@ -2494,7 +2494,15 @@ fn bog(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
         }
         return Ok(());
     }
-    if let Some(q) = worst_gy(g, p)
+    // One instance picks over every opponent. When the entering happens more than once, each instance picks again
+    // among the graveyards that still have cards, so an emptied graveyard's recursion engine cannot win the next pick.
+    let pick = if crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) > 1 {
+        let candidates: Vec<_> = opps(g, p).into_iter().filter(|&q| !g.player(q).gy.is_empty()).collect();
+        max_by(&candidates, |q| gy_worth(g, p, q))
+    } else {
+        worst_gy(g, p)
+    };
+    if let Some(q) = pick
         && gy_worth(g, p, q) > 0.0
     {
         exile_gy(g, q, Some("Bojuka Bog"));

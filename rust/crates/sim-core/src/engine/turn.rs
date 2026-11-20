@@ -390,7 +390,7 @@ fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     // Glacial Chasm's and a bounceland's "When this land enters": triggered abilities (an opponent's Elesh Norn stops them)
-    let times = crate::engine::hooks::enters_trigger_times(g, p, Some(l));
+    let times = crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l));
     if t.has(Tag::Chasm) {
         g.player_mut(p).chasm_age = 0; // cumulative upkeep bookkeeping, not part of the trigger
         for _ in 0..times {
@@ -398,7 +398,8 @@ fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
             let others: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&x| g.perm(x).card() != c).collect();
             let x =
                 min_by(&others, |x| (!g.perm(x).tapped) as i32 as f64 * 10.0 + land_colors_now(g, p, x).count() as f64)
-                    .unwrap_or(l);
+                    .or_else(|| g.player(p).lands.contains(&l).then_some(l));
+            let Some(x) = x else { break };
             let cd = g.perm(x).card();
             remove_land(g, p, x, Some(Zone::Gy));
             crate::glog!(g, "    sacrifices {}", g.db.get(cd).name);
@@ -415,7 +416,9 @@ fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
                 .filter(|&x| g.perm(x).card() != c && !g.db.get(g.perm(x).card()).tag(Tag::Bounceland))
                 .collect();
             // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
-            let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
+            let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64)
+                .or_else(|| g.player(p).lands.contains(&l).then_some(l));
+            let Some(x) = x else { break };
             remove_land(g, p, x, Some(Zone::Hand));
         }
     }

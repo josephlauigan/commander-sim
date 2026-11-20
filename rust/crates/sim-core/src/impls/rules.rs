@@ -784,8 +784,10 @@ pub fn goldspan_targeted(g: &mut Game, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(m).owner;
-    if trigger_window(g, o, Some(m), "create a Treasure", None)? {
-        add_treasure(g, o, 1)?;
+    for _ in 0..1 + crate::engine::stack::extra_for(g, m) {
+        if trigger_window(g, o, Some(m), "create a Treasure", None)? {
+            add_treasure(g, o, 1)?;
+        }
     }
     Ok(())
 }

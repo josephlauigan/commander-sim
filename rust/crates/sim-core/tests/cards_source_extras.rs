@@ -1,0 +1,318 @@
+//! Source doublers: each original gets its extras once (CR 603.2d).
+use sim_core::engine::hooks::fire_trigger;
+use sim_core::engine::{combat, life, turn, zones};
+use sim_core::hooks::{Call, Event};
+use sim_core::ids::{PermId, PlayerId};
+use sim_core::impls::{combos, rules, t45_miirym};
+use sim_core::state::{DataKey, Game, Step, Val};
+use sim_core::testkit::*;
+
+const P0: PlayerId = PlayerId(0);
+const P1: PlayerId = PlayerId(1);
+const DELNEY: &str = "Delney, Streetwise Lookout";
+const CLOUD: &str = "Cloud, Midgar Mercenary";
+
+fn tbl() -> Game {
+    table(&["heliod-mono-white-stax", "seph", "sauron", "cloud"])
+}
+fn dragons() -> Game {
+    table(&["miirym-temur-dragons", "seph", "sauron", "cloud"])
+}
+fn throne(g: &mut Game) {
+    let t = perm(g, P0, "Roaming Throne");
+    assert_eq!(g.perm(t).data.get(DataKey::Ctype), Some(&Val::Str("dragon")));
+}
+fn attach(g: &mut Game, m: PermId, name: &str) {
+    let e = perm(g, P0, name);
+    g.perm_mut(e).attached = Some(m);
+}
+fn opp_life(g: &Game) -> Vec<i32> {
+    g.opps(P0).map(|q| g.player(q).life).collect()
+}
+fn main2(g: &mut Game) {
+    g.step = Step::Main2;
+    fire_trigger(g, Event::Main2, Call::Player { p: P0 }).unwrap();
+}
+fn tymna_position() -> Game {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    combat::resolve_combat(&mut g, P0, &[t], P1, &[]).unwrap();
+    combat::resolve_combat(&mut g, P0, &[t], PlayerId(2), &[]).unwrap();
+    g
+}
+
+// Two original instances each pay two and draw two.
+#[test]
+fn tymna_delney_pays_and_draws_twice() {
+    let mut g = tymna_position();
+    let (life, cards) = (g.player(P0).life, g.player(P0).hand.len());
+    main2(&mut g);
+    assert_eq!((g.player(P0).life, g.player(P0).hand.len()), (life - 4, cards + 4));
+}
+
+// Control: resuming the copy at Main2 cannot reopen the beginning-of-phase trigger.
+#[test]
+fn tymna_main2_search_copy_does_not_draw_again() {
+    let mut g = tymna_position();
+    main2(&mut g);
+    let mut copy = g.clone();
+    let (life, lib) = (copy.player(P0).life, copy.player(P0).library.len());
+    // No mana: the main phase cannot spend any of Tymna's newly drawn cards.
+    turn::continue_turn(&mut copy, P0, Step::Main2).unwrap();
+    assert_eq!((copy.player(P0).life, copy.player(P0).library.len()), (life, lib));
+}
+
+fn adeline_tokens() -> usize {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let a = perm(&mut g, P0, "Adeline, Resplendent Cathar");
+    combat::attack_triggers(&mut g, P0, &[a], P1).unwrap().len()
+}
+#[test]
+fn adeline_delney_makes_six_attacking_tokens() {
+    assert_eq!(adeline_tokens(), 6);
+}
+#[test]
+fn animist_on_adeline_is_not_delneys_trigger() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let a = perm(&mut g, P0, "Adeline, Resplendent Cathar");
+    attach(&mut g, a, "Sword of the Animist");
+    combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
+    assert_eq!(g.player(P0).lands.len(), 1);
+}
+#[test]
+fn animist_on_cloud_searches_twice() {
+    let mut g = tbl();
+    let cl = perm(&mut g, P0, CLOUD);
+    attach(&mut g, cl, "Sword of the Animist");
+    combat::attack_triggers(&mut g, P0, &[cl], P1).unwrap();
+    assert_eq!(g.player(P0).lands.len(), 2);
+}
+#[test]
+fn bowmasters_delney_extra_draw_amasses_and_pings_twice() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, "Orcish Bowmasters");
+    let army = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).army).unwrap();
+    let (life, plus) = (g.player(P1).life, g.perm(army).plus);
+    zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!((g.player(P1).life, g.perm(army).plus), (life - 2, plus + 2));
+}
+#[test]
+fn terror_throne_token_deals_ten() {
+    let mut g = dragons();
+    throne(&mut g);
+    perm(&mut g, P0, "Terror of the Peaks");
+    let before: i32 = opp_life(&g).iter().sum();
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(1, 5)).unwrap();
+    assert_eq!(before - opp_life(&g).iter().sum::<i32>(), 10);
+}
+#[test]
+fn terror_throne_nontoken_control_deals_six() {
+    let mut g = dragons();
+    throne(&mut g);
+    perm(&mut g, P0, "Terror of the Peaks");
+    let before_enter: i32 = opp_life(&g).iter().sum();
+    perm(&mut g, P0, "Thrakkus the Butcher");
+    assert_eq!(before_enter - opp_life(&g).iter().sum::<i32>(), 6);
+}
+#[test]
+fn champion_throne_draws_two_per_champion() {
+    for champions in [1, 2] {
+        let mut g = dragons();
+        throne(&mut g);
+        for _ in 0..champions {
+            perm(&mut g, P0, "Dragonborn Champion");
+        }
+        let cards = g.player(P0).hand.len();
+        life::lose_life(&mut g, P1, 5, Some(P0), "triggers", None).unwrap();
+        assert_eq!(g.player(P0).hand.len() - cards, 2 * champions);
+    }
+}
+#[test]
+fn wrathful_throne_damage_deals_six() {
+    let mut g = dragons();
+    throne(&mut g);
+    perm(&mut g, P0, "Wrathful Red Dragon");
+    let other = perm(&mut g, P0, "Goldspan Dragon");
+    let before: i32 = opp_life(&g).iter().sum();
+    sim_core::impls::t0_giada::damaged(&mut g, other, 3).unwrap();
+    assert_eq!(before - opp_life(&g).iter().sum::<i32>(), 6);
+}
+#[test]
+fn wrathful_throne_wipe_and_planner_count_six_chunks() {
+    let mut g = dragons();
+    throne(&mut g);
+    perm(&mut g, P0, "Wrathful Red Dragon");
+    perm(&mut g, P0, "Goldspan Dragon");
+    hand(&mut g, P0, &["Blasphemous Act"]);
+    for q in [P1, PlayerId(2), PlayerId(3)] {
+        g.player_mut(q).life = 26;
+    }
+    assert_eq!(t45_miirym::wrathful_wipe(&g, 13), vec![(P0, 13); 6]);
+    let cmb = combos::all().iter().find(|c| c.name == "Wrathful Red Dragon + Blasphemous Act").unwrap();
+    assert!((cmb.ready)(&g, P0).0);
+}
+#[test]
+fn goldspan_targeted_throne_makes_two_treasures() {
+    let mut g = dragons();
+    throne(&mut g);
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    rules::goldspan_targeted(&mut g, gold).unwrap();
+    assert_eq!(g.player(P0).treasures, 2);
+}
+#[test]
+fn goldspan_targeted_without_throne_control_makes_one() {
+    let mut g = dragons();
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    rules::goldspan_targeted(&mut g, gold).unwrap();
+    assert_eq!(g.player(P0).treasures, 1);
+}
+fn sword_discards(cloud: bool, swords: usize) -> usize {
+    let mut g = tbl();
+    let a = if cloud { perm(&mut g, P0, CLOUD) } else { token(&mut g, P0, 2) };
+    for _ in 0..swords {
+        attach(&mut g, a, "Sword of Feast and Famine");
+    }
+    hand(&mut g, P1, &["Plains", "Plains", "Plains", "Plains"]);
+    combat::resolve_combat(&mut g, P0, &[a], P1, &[]).unwrap();
+    4 - g.player(P1).hand.len()
+}
+#[test]
+fn sword_on_cloud_discards_twice() {
+    assert_eq!(sword_discards(true, 1), 2);
+}
+#[test]
+fn sword_on_other_creature_control_discards_once() {
+    assert_eq!(sword_discards(false, 1), 1);
+}
+#[test]
+fn two_swords_each_discard_once() {
+    assert_eq!(sword_discards(false, 2), 2);
+}
+#[test]
+fn oracle_delney_second_window_wins_after_first_is_countered() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    g.skip_etb = true;
+    let oracle = perm(&mut g, P0, "Thassa's Oracle");
+    g.skip_etb = false;
+    hand(&mut g, P1, &["Tishana's Tidebinder"]);
+    lands(&mut g, P1, "Island", 3, false);
+    g.player_mut(P0).library.clear();
+    fire_trigger(&mut g, Event::Etb, Call::Etb { p: P0, m: oracle }).unwrap();
+    assert!(!g.player(P1).hand.contains(&card(&g, "Tishana's Tidebinder")));
+    assert!(g.over && g.winner == Some(P0));
+}
+#[test]
+fn fireweaver_delney_one_treasure_pings_twice() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, "Reckless Fireweaver");
+    let before = opp_life(&g);
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
+}
+#[test]
+fn wispdrinker_delney_small_nontoken_drains_twice() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, "Wispdrinker Vampire");
+    let (life, before) = (g.player(P0).life, opp_life(&g));
+    perm(&mut g, P0, "Llanowar Elves");
+    assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
+    assert_eq!(g.player(P0).life, life + 2);
+}
+#[test]
+fn wispdrinker_delney_small_token_drains_twice() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    perm(&mut g, P0, "Wispdrinker Vampire");
+    let (life, before) = (g.player(P0).life, opp_life(&g));
+    token(&mut g, P0, 1);
+    assert_eq!(opp_life(&g), before.into_iter().map(|l| l - 2).collect::<Vec<_>>());
+    assert_eq!(g.player(P0).life, life + 2);
+}
+
+// The TokensEnter adapter queues the real ETB triggers. Dispatcher-level source extras would count them twice.
+#[test]
+fn haliya_token_adapter_gets_source_extras_only_from_its_queued_triggers() {
+    let mut g = tbl();
+    perm(&mut g, P0, DELNEY);
+    let h = perm(&mut g, P0, "Haliya, Guided by Light");
+    g.perm_mut(h).plus = -1; // a -1/-1 counter: Haliya has power two, so Delney applies
+    assert_eq!(sim_core::engine::values::epow(&g, h), 2);
+    let life = g.player(P0).life;
+    token(&mut g, P0, 1);
+    assert_eq!(g.player(P0).life, life + 2, "one original plus Delney, counted only once");
+}
+
+#[test]
+fn haliya_throne_two_soldier_tokens_queue_two_triggers_each() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, "Haliya, Guided by Light");
+    let throne = perm(&mut g, P0, "Roaming Throne");
+    g.perm_mut(throne).data.set(DataKey::Ctype, Val::Str("soldier"));
+    let life = g.player(P0).life;
+    // Hold resolution so the per-token trigger count is checked as well as its life payload.
+    g.resolving += 1;
+    let toks =
+        zones::make_tokens(&mut g, P0, zones::Tokens { types: vec!["soldier"], ..zones::Tokens::new(2, 1) }).unwrap();
+    for t in toks {
+        assert_eq!(
+            g.trig_queue
+                .iter()
+                .filter(|tr| {
+                    tr.src == Some(h)
+                        && matches!(&tr.act, sim_core::hooks::TrigAct::Hook {
+                        event: Event::Etb, call: Call::Etb { m, .. }
+                    } if *m == t)
+                })
+                .count(),
+            2,
+            "one original plus Throne per Soldier token"
+        );
+    }
+    g.resolving -= 1;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).life - life, 4, "four life, never eight");
+}
+
+// Probe the dispatch count directly: source extras belong only to the original event pass.
+#[test]
+fn run_now_enters_triggers_get_source_extras_only_on_the_original_pass() {
+    fn payload(g: &mut Game, src: PermId, _p: PlayerId) -> sim_core::flow::Res {
+        let owner = g.perm(src).owner;
+        g.player_mut(owner).life += 1;
+        Ok(())
+    }
+    for e in [Event::Etb, Event::LandEnters, Event::Landfall, Event::TokensEnter, Event::TokenCreated] {
+        let mut g = tbl();
+        perm(&mut g, P0, DELNEY);
+        let h = perm(&mut g, P0, "Haliya, Guided by Light");
+        g.perm_mut(h).plus = -1;
+        let mut registry = sim_core::hooks::Registry::new(&g.db);
+        let imp = registry.card(&g.db, "Haliya, Guided by Light").unwrap();
+        imp.etb = Some(|g, s, p, _| payload(g, s, p));
+        imp.land_enters = Some(|g, s, p, _| payload(g, s, p));
+        imp.landfall = Some(payload);
+        imp.tokens_enter = Some(|g, s, p, _| payload(g, s, p));
+        imp.token_created = Some(|g, s, p, _, _| payload(g, s, p));
+        *imp = imp.at_once(e).enter_trigger(e);
+        g.registry = std::sync::Arc::new(registry);
+        let call = match e {
+            Event::Etb | Event::LandEnters => Call::Etb { p: P0, m: h },
+            Event::Landfall => Call::Player { p: P0 },
+            Event::TokensEnter => Call::Tokens { p: P0, toks: vec![h] },
+            Event::TokenCreated => Call::ArtifactTokens { p: P0, kinds: vec!["treasure"], n: 1 },
+            _ => unreachable!(),
+        };
+        for repeat in [false, true] {
+            let life = g.player(P0).life;
+            sim_core::engine::hooks::fire_trigger_pass(&mut g, e, call.clone(), repeat).unwrap();
+            assert_eq!(g.player(P0).life - life, if repeat { 1 } else { 2 }, "{e:?}, repeat={repeat}");
+        }
+    }
+}

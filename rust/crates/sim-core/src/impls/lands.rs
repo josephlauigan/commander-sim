@@ -890,7 +890,7 @@ fn sanctuary(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     }
     // "When this land enters, if you control three or more other Islands, you may put target instant or sorcery card
     // from your graveyard on top of your library": a triggered ability
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) {
         if islands < 3 {
             break;
         }
@@ -969,21 +969,43 @@ fn mosswort(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     .unwrap();
     remove_first(&mut top, c);
     g.player_mut(p).library.splice(0..0, top);
-    g.perm_mut(l).data.set(DataKey::Hidden, Val::Card(c));
+    hide_card(g, l, c);
     crate::glog!(g, "    Mosswort Bridge hides a card");
     Ok(())
 }
 
-fn hidden(g: &Game, l: PermId) -> Option<CardId> {
+/// Cards linked to all instances of this land's hideaway ability, retaining the existing singleton representation.
+pub(super) fn hidden(g: &Game, l: PermId) -> Vec<CardId> {
     match g.perm(l).data.get(DataKey::Hidden) {
-        Some(Val::Card(c)) => Some(*c),
-        _ => None,
+        Some(Val::Card(c)) => vec![*c],
+        Some(Val::List(xs)) => xs.iter().filter_map(|v| if let Val::Card(c) = v { Some(*c) } else { None }).collect(),
+        _ => vec![],
     }
+}
+
+pub(super) fn hide_card(g: &mut Game, l: PermId, c: CardId) {
+    let mut cards = hidden(g, l);
+    cards.push(c);
+    set_hidden(g, l, cards);
+}
+
+pub(super) fn take_hidden(g: &mut Game, l: PermId, c: CardId) {
+    let mut cards = hidden(g, l);
+    remove_first(&mut cards, c);
+    set_hidden(g, l, cards);
+}
+
+fn set_hidden(g: &mut Game, l: PermId, cards: Vec<CardId>) {
+    let v = match cards.as_slice() {
+        [] => Val::None,
+        [c] => Val::Card(*c),
+        _ => Val::List(cards.into_iter().map(Val::Card).collect()),
+    };
+    g.perm_mut(l).data.set(DataKey::Hidden, v);
 }
 
 /// {G},{T}: casts the hidden card free with 10 power on board
 fn mosswort_play(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    let Some(c) = hidden(g, l) else { return Ok(vec![]) };
     if post.is_none() || g.perm(l).tapped || !can_pay_without(g, p, l, 0, "G") {
         return Ok(vec![]);
     }
@@ -991,18 +1013,26 @@ fn mosswort_play(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Re
     if power < 10 {
         return Ok(vec![]);
     }
-    let label = format!("Mosswort Bridge ({})", name_of(g, c));
-    Ok(vec![opt(1.0 + g.db.get(c).cmc as f64 / 3.0, label, mosswort_go, l.0 as i64)])
+    Ok(hidden(g, l)
+        .into_iter()
+        .map(|c| {
+            let label = format!("Mosswort Bridge ({})", name_of(g, c));
+            opt(1.0 + g.db.get(c).cmc as f64 / 3.0, label, mosswort_go, pack(l.0, c.0 as u32))
+        })
+        .collect())
 }
 
 fn mosswort_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = PermId(arg as u32);
-    let Some(c) = hidden(g, l) else { return Ok(false) };
+    let (l, c) = unpack(arg);
+    let (l, c) = (PermId(l), CardId(c as u16));
+    if !hidden(g, l).contains(&c) {
+        return Ok(false);
+    }
     if !has_land(g, p, l) || g.perm(l).tapped || !pay_without(g, p, l, 0, "G")? {
         return Ok(false);
     }
     g.perm_mut(l).tapped = true;
-    g.perm_mut(l).data.set(DataKey::Hidden, Val::None);
+    take_hidden(g, l, c);
     let what = format!("play {}", name_of(g, c));
     if !ability_window_card(g, p, g.perm(l).card(), &what, None, None)? {
         return Ok(true);

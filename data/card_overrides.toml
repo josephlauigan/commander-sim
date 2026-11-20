@@ -101,7 +101,7 @@ types = "C"
 tags = "pow=3 tgh=5 leg noatk wizard alania"
 dsl = []
 status = "Full"
-note = "your first instant and first sorcery each turn: for each trigger (Veyran and Harmonic Prodigy add one each) you may have the least threatening opponent draw a card to copy the spell (not a counterspell); copies pick new targets and keep X. The Otter clause is not modeled (no Otters in your decks)"
+note = "your first instant and first sorcery each turn: for each trigger (Veyran and Harmonic Prodigy add one each) you may have the least threatening opponent draw a card to copy the spell (not a counterspell); copies pick new targets and keep X. Left out: the Otter clause (no Otters in the tracked decks); two Veyrans count as one additional trigger"
 
 ["Alela, Artful Provocateur"]
 paths_ok = "compiled: the +1/+0 for your other fliers; card code: the Faerie token when you cast an artifact or enchantment spell (alela.rs)"
@@ -156,7 +156,7 @@ note = ""
 tags = "pow=5 tgh=7 reach bomb=5"
 dsl = []
 status = "Full"
-note = "lands from the graveyard; landfall triggers twice"
+note = "lands from the graveyard; a land entering adds one instance to your permanents' landfall and land-enters triggers, including the entering land's own triggers"
 
 ["Andúril, Flame of the West"]
 paths_ok = "compiled: +3/+1 and equip {2}; card code: the two Spirit tokens when the equipped creature attacks (mine.rs)"
@@ -597,6 +597,9 @@ note = "the best creature in an opponent's library onto the battlefield under yo
 tags = "leg pow=3 tgh=4 vig"
 status = "Full"
 note = "vigilance; a 1/1 Cat attacking with it, and one blocking with it"
+
+["Brokers Hideout"]
+note = "mana tags only. Left out: the enters sacrifice and basic-land search"
 
 ["Brush Off"]
 status = "Full"
@@ -2207,7 +2210,7 @@ note = "menace; top five: an Elf/Warrior/Tyvar to hand"
 
 ["Harmonic Prodigy"]
 status = "Full"
-note = "prowess; Shaman and Wizard triggers trigger an additional time"
+note = "prowess; Shaman and other Wizard triggers trigger an additional time"
 
 ["Haughty Djinn"]
 tags = "pow=0 tgh=4 fly"
@@ -3219,7 +3222,7 @@ note = "enters tapped; the best creature card from the graveyard on top of the l
 
 ["Mosswort Bridge"]
 status = "Full"
-note = "hideaway 4 (keeps the best spell); {G},{T}: casts it free with 10 power on board"
+note = "hideaway 4 (keeps the best spell); {G},{T}: plays one linked card free with 10 power on board. Left out: playing every linked card in one activation after doubled hideaway"
 
 ["Mother of Runes"]
 status = "Full"
@@ -7111,7 +7114,7 @@ note = "permanents you control gain indestructible until end of turn; foretell {
 ["Cloud, Midgar Mercenary"]
 dsl = []
 status = "Full"
-note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him is queued twice (stack::queue_triggers)"
+note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him triggers an additional time (stack::extra_for), including immediate and inline triggers; a departed source or a source hearing a simultaneous wipe uses its pre-leave count"
 
 ["Hero's Blade"]
 paths_ok = "compiled: +3/+2 and equip {4}; card code: the attach when a legendary creature enters (cloud.rs)"
@@ -7259,7 +7262,7 @@ note = "firebreathing is the DSL ability; when it enters or attacks, 3 damage di
 
 ["Massacre Wurm"]
 status = "Full"
-note = "when it enters, each creature your opponents control with toughness 2 or less dies (-2/-2; the caster's side is untouched, tested in cards_sauron_sweepers.rs); whenever an opposing creature dies, that player loses 2 life (wurmdrain)"
+note = "when it enters, creatures your opponents control get -2/-2 until end of turn; creatures with toughness 0 or less die even with indestructible (tested in cards_sauron_sweepers.rs); whenever an opposing creature dies, that player loses 2 life (wurmdrain)"
 
 ["Lazotep Reaver"]
 status = "Full"
@@ -8211,7 +8214,7 @@ note = "a +1/+1 counter whenever any creature token leaves the battlefield; {2}{
 
 ["Windbrisk Heights"]
 status = "Full"
-note = "enters tapped, hideaway 4 (the best nonland card of the top four, the rest to the bottom at random); {W},{T}: play the hidden card free after attacking with three or more creatures. Only when played as a land drop"
+note = "enters tapped, hideaway 4 (the best nonland card of the top four, the rest to the bottom at random); {W},{T}: play one linked card free after attacking with three or more creatures. Only when played as a land drop. Left out: playing every linked card in one activation after doubled hideaway"
 
 ["Within Range"]
 status = "Full"

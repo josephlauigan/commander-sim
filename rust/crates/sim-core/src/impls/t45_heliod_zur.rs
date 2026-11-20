@@ -881,6 +881,20 @@ pub fn delney_extra(g: &Game, src: PermId) -> usize {
     delney_count(g, x.owner)
 }
 
+/// One additional instance per Prodigy for a Shaman or another Wizard's triggered ability.
+pub fn prodigy_extra(g: &Game, src: PermId) -> usize {
+    if !live(g, src) {
+        return 0;
+    }
+    named(g, owner(g, src), "Harmonic Prodigy")
+        .into_iter()
+        .filter(|&p| {
+            crate::engine::values::has_type(g, src, "shaman")
+                || (p != src && crate::engine::values::has_type(g, src, "wizard"))
+        })
+        .count()
+}
+
 // ================================================================== combos
 /// Heliod gives Triskelion lifelink ({1}{W}); each counter it removes pings for 1, the life gained puts a counter
 /// back (Heliod): unlimited damage
@@ -966,7 +980,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.token_created = Some(haliya_tokens);
         *c = c.enter_trigger(Event::TokenCreated); // "Whenever ... another creature or artifact you control enters"
         c.tokens_enter = Some(haliya_token_entries);
-        *c = c.enter_trigger(Event::TokensEnter); // the same trigger for a creature token (a hook that runs now)
+        *c = c.enter_queues(Event::TokensEnter); // queues the real triggers once per token; blanked as a trigger
         c.end_step = Some(haliya_end);
         c.hand_options = Some(haliya_hand);
     }

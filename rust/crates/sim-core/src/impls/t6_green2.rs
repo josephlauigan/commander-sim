@@ -618,7 +618,7 @@ fn ikoria_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     if battle {
         let w = super::card_models3::battle_enter(g, p, c, 6)?;
         // "When this Siege enters": a triggered ability (the defense counters and the protector are setup)
-        times = crate::engine::hooks::enters_trigger_times(g, p, Some(w));
+        times = crate::engine::hooks::enters_trigger_times(g, p, Some(w), Some(w));
     }
     for _ in 0..times {
         if let Some((c, lib)) = ikoria_pick(g, p, x) {

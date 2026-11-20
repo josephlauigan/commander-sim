@@ -404,7 +404,7 @@ fn orchard_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
 fn hamlet_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     traitors_check(g, p, l)?; // caused by a land being played, not by this one entering
     // "When this land enters, choose a land card name": a triggered ability
-    if crate::engine::hooks::enters_trigger_times(g, p, Some(l)) == 0 {
+    if crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) == 0 {
         return Ok(());
     }
     let mut seen: Vec<(CardId, u32)> = vec![];
@@ -890,7 +890,7 @@ fn gates_phase(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<PermId>> {
 /// played from hand (the land drop): the City of Traitors check and the enter trigger
 fn gates_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     traitors_check(g, p, l)?; // caused by a land being played, not by this one entering
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) {
         gates_phase(g, p, l)?;
     }
     Ok(())
@@ -907,7 +907,7 @@ fn gates_put(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<PermId>> {
     let l = g.add_land(p, c, false);
     crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(p).name);
     let mut t = None;
-    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l)) {
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, p, Some(l), Some(l)) {
         t = gates_phase(g, p, l)?;
     }
     crate::engine::zones::landfall(g, p)?;
@@ -947,7 +947,9 @@ fn gates_defend(
     }
     let mine: Vec<PermId> =
         atk.iter().copied().filter(|&a| g.perm(a).owner == p && g.perm(a).on_bf && !untargetable(g, a)).collect();
-    let Some(big) = max_by(&mine, |a| pval(g, a)).filter(|&a| pval(g, a) >= 5.0) else { return Ok(()) };
+    if !mine.iter().any(|&a| pval(g, a) >= 5.0) {
+        return Ok(());
+    }
     if !pay(g, d, 4, "", false)? {
         return Ok(());
     }
@@ -956,17 +958,18 @@ fn gates_defend(
     let l = g.add_land(d, c, false);
     crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(d).name);
     // "When this land enters, up to one target creature phases out": a triggered ability
-    if crate::engine::hooks::enters_trigger_times(g, d, Some(l)) > 0
-        && ability_window_card(g, d, c, "target creature phases out", None, Some(big))?
-        && g.perm(big).on_bf
-    {
-        g.perm_mut(big).phased = true;
-        if !g.control_links.is_empty() {
-            crate::engine::control::end_links(g);
+    for _ in 0..crate::engine::hooks::enters_trigger_times(g, d, Some(l), Some(l)) {
+        let remaining: Vec<_> = mine.iter().copied().filter(|&a| !g.perm(a).phased && g.perm(a).on_bf).collect();
+        let Some(big) = max_by(&remaining, |a| pval(g, a)).filter(|&a| pval(g, a) >= 5.0) else { break };
+        if ability_window_card(g, d, c, "target creature phases out", None, Some(big))? && g.perm(big).on_bf {
+            g.perm_mut(big).phased = true;
+            if !g.control_links.is_empty() {
+                crate::engine::control::end_links(g);
+            }
+            g.bf_ver += 1;
+            atk.retain(|&a| a != big);
+            crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(big).name);
         }
-        g.bf_ver += 1;
-        atk.retain(|&a| a != big);
-        crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(big).name);
     }
     crate::engine::zones::landfall(g, d)
 }

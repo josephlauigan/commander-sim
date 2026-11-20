@@ -684,27 +684,40 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if x == 0 {
         return Ok(());
     }
-    if !trigger_window(g, p, Some(src), &format!("pay {x} life, draw {x}"), None)? || !once_per_turn(g, p, "tymna") {
-        return Ok(());
+    let mut started = false;
+    let mut drawn = 0;
+    for _ in 0..1 + crate::engine::stack::extra_for(g, src) {
+        if !trigger_window(g, p, Some(src), &format!("pay {x} life, draw {x}"), None)? {
+            continue;
+        }
+        if !started {
+            if !once_per_turn(g, p, "tymna") {
+                return Ok(());
+            }
+            started = true;
+        }
+        if g.player(p).life < x || g.player(p).life_locked {
+            continue;
+        }
+        let pay_it = if human_of(g, p).is_some() {
+            choices::yes_no(g, p, &format!("Tymna the Weaver: pay {x} life to draw {x}?"))?
+        } else {
+            g.player(p).life - x >= crate::ai::necro_floor(g, p) && g.player(p).library.len() > x as usize
+        };
+        if !pay_it {
+            continue;
+        }
+        lose_life(g, p, x, Some(p), "other", None)?;
+        crate::t6stats::flow_life(g, p, "Tymna the Weaver", x as i64); // --- ai-flow
+        draw(g, p, x as u32, false)?;
+        drawn += x as i64;
+        crate::glog!(g, "    {} pays {x} life to Tymna the Weaver and draws {x}", pname(g, p));
     }
-    if g.player(p).life < x || g.player(p).life_locked {
-        return Ok(());
+    if drawn > 0 {
+        stat(g, p, "jr_tymna_draws", drawn);
+        let turns = g.player(p).turns;
+        g.player_mut(p).milestone.entry("tymna").or_insert(turns);
     }
-    let pay_it = if human_of(g, p).is_some() {
-        choices::yes_no(g, p, &format!("Tymna the Weaver: pay {x} life to draw {x}?"))?
-    } else {
-        g.player(p).life - x >= crate::ai::necro_floor(g, p) && g.player(p).library.len() > x as usize
-    };
-    if !pay_it {
-        return Ok(());
-    }
-    lose_life(g, p, x, Some(p), "other", None)?;
-    crate::t6stats::flow_life(g, p, "Tymna the Weaver", x as i64); // --- ai-flow
-    draw(g, p, x as u32, false)?;
-    stat(g, p, "jr_tymna_draws", x as i64);
-    let turns = g.player(p).turns;
-    g.player_mut(p).milestone.entry("tymna").or_insert(turns); // the partner decks' plan milestone (report::plan_turn)
-    crate::glog!(g, "    {} pays {x} life to Tymna the Weaver and draws {x}", pname(g, p));
     Ok(())
 }
 

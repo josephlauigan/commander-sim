@@ -809,7 +809,7 @@ fn socialite_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src {
         // "When this creature enters, if an opponent lost life this turn, put a +1/+1 counter on each other Vampire" is
         // a triggered ability
-        for _ in 0..crate::engine::hooks::enters_trigger_times(g, o, Some(src)) {
+        for _ in 0..crate::engine::hooks::enters_trigger_times(g, o, Some(src), Some(src)) {
             for v in vampires(g, o).into_iter().filter(|&v| v != src) {
                 repl::put_plus(g, v, 1);
             }

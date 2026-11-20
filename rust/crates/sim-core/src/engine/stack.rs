@@ -18,7 +18,7 @@ use crate::flow::{Probe, Res, Stop};
 use crate::hooks::{TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::satsum::SatSum;
-use crate::state::{Ctx, Game, StackItem, StackKind};
+use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -33,22 +33,80 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     }
     // Effects that make a trigger happen an additional time add up (CR 603.2d: a trigger happens 1 + n times, and such an
     // effect does not apply to what another one made). So each trigger that is not itself a repeat (a Panharmonicon-style
-    // copy made where the event was fired) gets one extra per Cloud, Delney and Roaming Throne that applies to it.
+    // copy made where the event was fired) gets its cast-event copies plus the source extras that apply to it.
     let mut extra = vec![];
     for t in entries.iter().filter(|t| !t.repeat) {
-        let k = t.src.map_or(0, |s| {
-            // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
-            usize::from(crate::impls::cloud::doubles(g, s))
-                // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers again
-                + crate::impls::t45_heliod_zur::delney_extra(g, s)
-                // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
-                + crate::impls::t45_urdragon::throne_extra(g, s)
-        });
+        let event = match &t.act {
+            TrigAct::Hook { event: crate::hooks::Event::Cast, .. } => {
+                crate::engine::hooks::total_trigger_copies(g, t.controller, "cast", t.src).max(0) as usize
+            }
+            _ => 0,
+        };
+        let k = event + t.src.map_or(0, |s| extra_for(g, s));
         extra.extend(std::iter::repeat_n(Trigger { repeat: true, ..t.clone() }, k));
     }
     entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
+}
+
+/// Additional instances of src's triggered ability (CR 603.2d): apply only to originals, never repeats.
+pub fn extra_for(g: &Game, src: PermId) -> usize {
+    if let Some(n) = lki_extra(g, src) {
+        return n;
+    }
+    extra_live(g, src)
+}
+
+fn extra_live(g: &Game, src: PermId) -> usize {
+    usize::from(crate::impls::cloud::doubles(g, src))
+        + crate::impls::t45_heliod_zur::delney_extra(g, src)
+        + crate::impls::t45_urdragon::throne_extra(g, src)
+        + crate::impls::t45_heliod_zur::prodigy_extra(g, src)
+}
+
+/// Everything a leave must remember, before battlefield membership or attachments change.
+/// A wipe records all sources at its first leave, including listeners that survive it (CR 603.10a).
+pub fn note_leaving(g: &mut Game, m: PermId) {
+    if extra_record(g, m).is_some_and(|(_, batch)| g.cur_batch != Some(batch)) {
+        g.perm_mut(m).data.remove(DataKey::LkiExtra);
+    }
+    if !g.perms.iter().any(|x| {
+        x.on_bf
+            && !x.phased
+            && !x.neutered
+            && matches!(
+                x.name,
+                "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne" | "Harmonic Prodigy"
+            )
+    }) {
+        return; // No live source doubler: do not record source extras.
+    }
+    let batch = g.cur_batch.unwrap_or(0);
+    if g.cur_batch.is_some() && extra_record(g, m).is_some_and(|(_, b)| b == batch) {
+        return;
+    }
+    let sources = if g.cur_batch.is_some() {
+        g.perms.iter().enumerate().filter(|(_, x)| x.on_bf).map(|(i, _)| PermId(i as u32)).collect()
+    } else {
+        vec![m]
+    };
+    for src in sources {
+        let n = extra_live(g, src);
+        g.perm_mut(src).data.set(DataKey::LkiExtra, Val::List(vec![Val::Int(n as i64), Val::Int(batch as i64)]));
+    }
+}
+
+fn extra_record(g: &Game, src: PermId) -> Option<(usize, u32)> {
+    match g.perm(src).data.get(DataKey::LkiExtra) {
+        Some(Val::List(v)) if v.len() == 2 => Some((v[0].int() as usize, v[1].int() as u32)),
+        _ => None,
+    }
+}
+
+fn lki_extra(g: &Game, src: PermId) -> Option<usize> {
+    let (n, b) = extra_record(g, src)?;
+    (!g.perm(src).on_bf || g.cur_batch == Some(b)).then_some(n)
 }
 
 pub fn flush_triggers(g: &mut Game) -> Res {

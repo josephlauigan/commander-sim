@@ -96,6 +96,53 @@ pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Opt
     hooked(g, Event::TriggerCopies).iter().map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x)).sum()
 }
 
+/// Event doublers' additional instances caused by entering. None denotes an artifact token only.
+/// For a land, each copier contributes the larger of its landfall and etb counts, counted once.
+pub fn enter_copies(g: &Game, controller: PlayerId, entering: Option<PermId>) -> u32 {
+    let land = entering.is_some_and(|m| g.player(g.perm(m).owner).lands.contains(&m));
+    let n = if land {
+        hooked(g, Event::TriggerCopies)
+            .iter()
+            .map(|(s, i)| {
+                let f = i.trigger_copies.unwrap();
+                f(g, *s, controller, "landfall", entering).max(f(g, *s, controller, "etb", entering))
+            })
+            .sum::<i32>()
+    } else {
+        total_trigger_copies(g, controller, "etb", entering)
+    };
+    n.max(0) as u32
+}
+
+/// Snapshot each listener controller's event copies before any pass runs. Inline payloads contribute their
+/// controller too; a copier with no listener never creates a later pass or engages the resolution hold.
+pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option<PlayerId>) -> Vec<i32> {
+    if hooked(g, Event::TriggerCopies).is_empty() {
+        return vec![0; g.players.len()];
+    }
+    let listeners = hooked(g, e);
+    let compiled_listener = |s| {
+        let x = g.perm(s);
+        let has_trigger = |c| {
+            g.db.get(c)
+                .abilities
+                .iter()
+                .any(|a| matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == kind))
+        };
+        x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(has_trigger)
+    };
+    g.players
+        .iter()
+        .map(|q| {
+            let listens = Some(q.id) == inline
+                || listeners.iter().any(|(s, _)| g.perm(*s).owner == q.id)
+                || (g.dsl_on
+                    && q.perms.iter().copied().chain(crate::dsl::land_sources(g, q.id)).any(compiled_listener));
+            if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, None) } else { 0 }
+        })
+        .collect()
+}
+
 /// a player-count static summed (no_graveyard)
 pub fn total_player(g: &Game, e: Event, p: PlayerId) -> i32 {
     hooked(g, e)
@@ -193,25 +240,30 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
 /// event doublers copy it)? A hook of `Etb`, `LandEnters` or `Landfall` that goes on the stack is, unless it is marked
 /// `enter_setup` (a triggered ability that the entering did not cause: a Saga's chapter I); a hook that runs now
 /// (marked at once, or an event outside `TRIGGER_EVENTS`: every `TokensEnter`, `TokenCreated` and `LandEtb` hook) is
-/// not, unless it is marked `enter_trigger`. So setup, which is no triggered ability, never waits in the queue.
+/// not, unless it is marked `enter_trigger` (also implied by `enter_queues`). A queue adapter stays a trigger
+/// for blanking, but runs once: its queued triggers receive the copies. Setup never waits in the queue.
 pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
     let now = imp.runs_at_once(e) || !e.is_trigger();
     imp.is_enter_trigger(e)
         || (matches!(e, Event::Etb | Event::LandEnters | Event::Landfall) && !now && !imp.is_enter_setup(e))
 }
 
-/// How many times a triggered ability of `controller`'s permanent, caused by `entering` (None: a land, or tokens),
-/// happens: for a hook that mixes an enters-caused trigger with what happens as the permanent enters
-/// (`enter_setup`), which loops only its trigger part this many times. 0 under an opponent's live Elesh Norn, else 1.
-pub fn enters_trigger_times(g: &Game, controller: PlayerId, entering: Option<PermId>) -> u32 {
-    if enter_blanked(g, controller, entering) { 0 } else { 1 }
+/// Instances of src's enters trigger: zero under an opponent's Elesh, otherwise original + event + source extras.
+/// Only mixed hooks, land paths and inline proxies call this; never dispatcher-multiplied T hooks or repeat passes.
+/// None denotes an artifact token only.
+pub fn enters_trigger_times(g: &Game, controller: PlayerId, src: Option<PermId>, entering: Option<PermId>) -> u32 {
+    if enter_blanked(g, controller, entering) {
+        0
+    } else {
+        1 + enter_copies(g, controller, entering) + src.map_or(0, |s| crate::engine::stack::extra_for(g, s) as u32)
+    }
 }
 
 /// A `TokensEnter` hook whose ability is one enters trigger per token (Haliya): queue src's `Etb` hook once for each token
 /// still on the battlefield, as `fire_trigger_where` does for one permanent entering (Panharmonicon-style additional
 /// times as repeats; Cloud, Delney and Roaming Throne through `queue_triggers`). The caller's hook is marked
-/// `enter_trigger`, so the dispatcher has already blanked it under an opponent's Elesh Norn. (Hushbringer: a creature
-/// token entering triggers nothing.)
+/// `enter_queues`, so the dispatcher blanks it under an opponent's Elesh Norn and runs it only once.
+/// (Hushbringer: a creature token entering triggers nothing.)
 pub fn queue_etb_per_token(g: &mut Game, src: PermId, p: PlayerId, toks: &[PermId]) -> Res {
     let owner = g.perm(src).owner;
     let mut entries = vec![];
@@ -266,9 +318,8 @@ pub fn fire_trigger_where(
         }
         if let (Event::Etb, Call::Etb { m, .. }) = (e, &call)
             && trig
-            && !now
         {
-            reps += total_trigger_copies(g, owner, "etb", Some(*m));
+            reps += enter_copies(g, owner, Some(*m)) as i32;
         }
         if e == Event::TokenCreated && trig {
             // an artifact token (Treasure, Food, Clue) entering: Panharmonicon's additional trigger, Elesh Norn's
@@ -276,18 +327,21 @@ pub fn fire_trigger_where(
         }
         if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
             && trig
-            && !now
         {
-            // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature.
-            // One source adds one trigger per entering permanent, whichever of the two kinds it answers to (Starfield
-            // Vocalist answers to both): the larger of its two counts, summed over the sources
-            reps += hooked(g, Event::TriggerCopies)
-                .iter()
-                .map(|(s, i)| {
-                    let f = i.trigger_copies.unwrap();
-                    f(g, *s, owner, "landfall", Some(*m)).max(f(g, *s, owner, "etb", Some(*m)))
-                })
-                .sum::<i32>();
+            reps += enter_copies(g, owner, Some(*m)) as i32;
+        }
+        if let (Event::TokensEnter, Call::Tokens { toks, .. }) = (e, &call)
+            && trig
+            && let Some(&m) = toks.first()
+        {
+            reps += enter_copies(g, owner, Some(m)) as i32;
+        }
+        // Queue adapters run once: the real triggers get event copies and source extras when queued.
+        // Landfall's later event-copy passes already repeat the hook, so only the original gains source extras.
+        if imp.is_enter_queues(e) {
+            reps = 1;
+        } else if enters && trig && now && !repeat {
+            reps += crate::engine::stack::extra_for(g, src) as i32;
         }
         // one entry per artifact token of a batch made (a hook that runs now sees the batch as it is)
         let parts: Vec<Call> = match &call {

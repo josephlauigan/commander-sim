@@ -155,6 +155,8 @@ pub enum DataKey {
     /// last known information of a permanent that has left the battlefield: Syr Vondam's power as he left and the wipe
     /// he left in, `[Int power, Int batch]` (`impls/vondam_elspeth.rs`; only that card sets it)
     LastKnown,
+    /// source trigger extras just before leaving, `[Int extras, Int batch]` (`engine::stack::note_leaving`)
+    LkiExtra,
     /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
     WeirdToken,
     Lure,
