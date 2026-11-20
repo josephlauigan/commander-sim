@@ -569,3 +569,162 @@ fn a_warped_haliya_is_not_recast_from_exile_under_drannith_magistrate() {
     perm(&mut g, P1, "Drannith Magistrate");
     assert!(opts(&mut g).is_empty(), "opponents can't cast spells from anywhere but their hand");
 }
+
+// ------------------------------------------------------------------ round 3: the enters dispatcher
+// Elesh Norn, Mother of Machines: "If a permanent entering causes a triggered ability of a permanent you control to
+// trigger, that ability triggers an additional time. Permanents entering don't cause abilities of permanents your
+// opponents control to trigger." Panharmonicon: the same for an artifact or creature entering. Starfield Vocalist: the
+// same as Elesh Norn's first sentence. Delney: a triggered ability of a creature you control with power 2 or less.
+const ELESH: &str = "Elesh Norn, Mother of Machines";
+const PANHARM: &str = "Panharmonicon";
+const VOCALIST: &str = "Starfield Vocalist";
+
+#[test]
+fn panharmonicon_doubles_haliyas_life_for_an_artifact_token_entering() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 2, "a Treasure is an artifact entering: 1 + Panharmonicon");
+    let l1 = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, l1 + 2, "and a creature entering: 1 + Panharmonicon");
+}
+
+#[test]
+fn a_vocalist_doubles_haliyas_life_for_an_artifact_token_entering() {
+    let mut g = tbl();
+    perm(&mut g, P0, VOCALIST);
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::make_artifact_tokens(&mut g, P0, "Food", 1).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 2, "1 + Starfield Vocalist");
+}
+
+#[test]
+fn your_own_elesh_doubles_haliyas_life_for_each_artifact_token_entering() {
+    let mut g = tbl();
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 4, "each of two Treasures: 1 + Elesh Norn");
+    let l1 = g.player(P0).life;
+    zones::make_artifact_tokens(&mut g, P0, "Clue", 1).unwrap();
+    assert_eq!(g.player(P0).life, l1 + 2, "a Clue too");
+}
+
+#[test]
+fn panharmonicon_and_your_own_elesh_make_three_for_a_treasure() {
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, ELESH);
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 3, "1 + Elesh Norn + Panharmonicon");
+}
+
+#[test]
+fn an_opponents_elesh_blanks_haliyas_life_but_the_tokens_still_enter() {
+    let mut g = tbl();
+    perm(&mut g, P0, HALIYA);
+    perm(&mut g, P1, ELESH);
+    let l0 = g.player(P0).life;
+    let t0 = g.player(P0).treasures;
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    zones::make_artifact_tokens(&mut g, P0, "Food", 1).unwrap();
+    assert_eq!(g.player(P0).treasures, t0 + 2, "the Treasures still enter");
+    assert_eq!(g.player(P0).foods, 1, "and the Food");
+    assert_eq!(g.player(P0).life, l0, "no entering causes Haliya's trigger");
+    perm(&mut g, P0, "Sol Ring");
+    assert_eq!(g.player(P0).life, l0, "nor does a permanent");
+}
+
+#[test]
+fn delney_does_not_copy_haliyas_triggers_because_she_has_power_3() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Delney, Streetwise Lookout");
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, l0 + 1, "the ability is Haliya's, a 3/3");
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 2, "a Treasure token is not a creature either");
+}
+
+#[test]
+fn panharmonicon_doubles_haliyas_life_for_each_treasure_of_a_batch() {
+    // two Treasures entering together: each is its own trigger, each with its additional time
+    let mut g = tbl();
+    perm(&mut g, P0, PANHARM);
+    perm(&mut g, P0, HALIYA);
+    let l0 = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 2).unwrap();
+    assert_eq!(g.player(P0).life, l0 + 4, "two Treasures, each 1 + Panharmonicon");
+}
+
+#[test]
+fn kirins_enter_trigger_doubles_under_the_event_doublers_and_blanks_under_an_opponents_elesh() {
+    // two 1/1 tokens: each trigger returns one of them and draws a card
+    let run = |own: Option<&str>, opp_elesh: bool| {
+        let mut g = tbl();
+        stock_library(&mut g, P0, 5);
+        if let Some(n) = own {
+            perm(&mut g, P0, n);
+        }
+        if opp_elesh {
+            perm(&mut g, P1, ELESH);
+        }
+        let a = token(&mut g, P0, 1);
+        let b = token(&mut g, P0, 1);
+        perm(&mut g, P0, "Sunpearl Kirin");
+        (g.player(P0).hand.len(), g.perm(a).on_bf as u32 + g.perm(b).on_bf as u32)
+    };
+    assert_eq!(run(None, false), (1, 1), "one trigger: one token returned, one card");
+    assert_eq!(run(Some(PANHARM), false), (2, 0), "Kirin is a creature: 1 + Panharmonicon");
+    assert_eq!(run(Some(VOCALIST), false), (2, 0), "1 + Starfield Vocalist");
+    assert_eq!(run(Some(ELESH), false), (2, 0), "1 + Elesh Norn");
+    assert_eq!(run(None, true), (0, 2), "an opponent's Elesh Norn: Kirin's trigger does not happen");
+}
+
+/// cast The Meathook Massacre with X = x through the person's cast, with `setup` on the table first
+fn meathook_with(x: u32, setup: impl Fn(&mut Game)) -> (Game, PermId, PermId) {
+    let mut g = tbl();
+    setup(&mut g);
+    let small = perm(&mut g, P1, "Ornithopter"); // 0/2
+    let t2 = token(&mut g, P1, 2);
+    hand(&mut g, P0, &[MEATHOOK]);
+    pool(&mut g, P0, &[('B', 2), ('C', 4)]);
+    let asked = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), x_answer(x, asked)]);
+    assert!(has_perm(&g, P0, MEATHOOK), "it was cast");
+    (g, small, t2)
+}
+
+#[test]
+fn meathooks_enter_trigger_doubles_under_elesh_and_a_vocalist_and_blanks_under_an_opponents_elesh() {
+    let (g, small, t2) = meathook_with(1, |_| {});
+    assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "X = 1 once: -1/-1 kills neither");
+    let (g, small, t2) = meathook_with(1, |g| {
+        perm(g, P0, ELESH);
+    });
+    assert!(!g.perm(small).on_bf && !g.perm(t2).on_bf, "1 + Elesh Norn: -1/-1 twice kills both");
+    let (g, small, t2) = meathook_with(1, |g| {
+        perm(g, P0, VOCALIST);
+    });
+    assert!(!g.perm(small).on_bf && !g.perm(t2).on_bf, "1 + Starfield Vocalist");
+    let (g, small, t2) = meathook_with(2, |g| {
+        perm(g, P1, ELESH);
+    });
+    assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "an opponent's Elesh Norn: nothing shrinks");
+}
+
+#[test]
+fn panharmonicon_does_not_double_meathook_because_it_is_an_enchantment() {
+    let (g, small, t2) = meathook_with(1, |g| {
+        perm(g, P0, PANHARM);
+    });
+    assert!(g.perm(small).on_bf && g.perm(t2).on_bf, "neither an artifact nor a creature entering: one trigger");
+}
