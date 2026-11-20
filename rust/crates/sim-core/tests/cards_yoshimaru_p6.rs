@@ -133,6 +133,29 @@ fn kirin_can_return_a_treasure_token_for_a_card() {
     assert_eq!(g.player(P0).hand.len(), 1, "it was a token: a card is drawn");
 }
 
+/// the Soldier tokens a player controls
+fn soldiers(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.iter().any(|t| &**t == "soldier")).count()
+}
+
+// Stormfront Riders: "Whenever this creature or another creature is returned to your hand from the battlefield, create a
+// 1/1 white Soldier creature token." A creature token is returned to the hand before it ceases to exist.
+#[test]
+fn kirin_returning_a_creature_token_makes_a_soldier_with_stormfront_riders_and_draws_a_card() {
+    let mut g = tbl();
+    stock_library(&mut g, P0, 5);
+    g.skip_etb = true;
+    perm(&mut g, P0, "Stormfront Riders");
+    g.skip_etb = false;
+    let t = token(&mut g, P0, 2);
+    let (_h, _asked) = person(&mut g, move |r| r.choices.iter().position(|c| !c.contains("Riders")));
+    perm(&mut g, P0, "Sunpearl Kirin");
+    assert!(!g.perm(t).on_bf, "the token is returned: it ceases to exist");
+    assert!(on_bf(&g, P0, "Stormfront Riders"), "Riders stays");
+    assert_eq!(soldiers(&g, P0), 1, "a creature token returned to the hand: one Soldier");
+    assert_eq!(g.player(P0).hand.len(), 1, "and its controller draws a card");
+}
+
 #[test]
 fn kirin_ai_returns_the_permanent_with_the_best_enter_effect() {
     let mut g = tbl();
