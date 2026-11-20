@@ -710,8 +710,8 @@ pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dm
     Ok(())
 }
 
-/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland,
-/// Palace Jailer) run at once
+/// CI.become_monarch: p becomes the monarch; Garland's steals from the old monarch end; 'monarch' hooks (Garland) run at
+/// once; what Palace Jailers exiled returns (`t2::jail_release`)
 pub fn become_monarch(g: &mut Game, p: PlayerId) -> Res {
     if g.monarch == Some(p) || !g.player(p).alive {
         return Ok(());

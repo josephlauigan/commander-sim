@@ -3325,8 +3325,8 @@ pub fn tutor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// Solitude: exiles another creature on entry, and its controller gains life equal to its power (rules2.py's evoke is
-/// its hand option). A person picks "up to one other target creature" (any controller, their own included); the AI
-/// (Approximate) takes the best opposing creature worth 2 or more.
+/// its hand option). A person picks "up to one other target creature" (any controller, their own included); the AI takes
+/// the best opposing creature worth 2 or more.
 fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
