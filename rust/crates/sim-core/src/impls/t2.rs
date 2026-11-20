@@ -751,7 +751,7 @@ fn thundermaw(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     for q in g.opps(o).collect::<Vec<_>>() {
         for x in g.player(q).perms.clone() {
-            if g.is_creature(x) && (g.perm(x).fly || crate::dsl::has_kw(g, x, "flying")) {
+            if !g.perm(x).phased && g.is_creature(x) && (g.perm(x).fly || crate::dsl::has_kw(g, x, "flying")) {
                 g.perm_mut(x).tapped = true;
                 let n = crate::engine::life::creature_damage(g, o, Some(src), x, 1);
                 if n > 0 {
