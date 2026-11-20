@@ -1003,7 +1003,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, SOCIALITE)?;
         c.etb = Some(socialite_etb);
         at_once(c, Event::Etb, true); // the other Vampires' counter is a replacement as they enter
-        *c = c.enter_setup(Event::Etb); // mixed: its own enters trigger loops `enters_trigger_times`
+        // mixed: the others' counter is setup (runs now); its own enters trigger loops `enters_trigger_times`
         c.tokens_enter = Some(socialite_tokens);
     }
     if has(ESTATE) {

@@ -671,10 +671,13 @@ pub struct CardImpl {
     /// of `Etb`, `LandEnters` or `Landfall` that goes on the stack; a hook that runs at once (or a `TokensEnter` or
     /// `TokenCreated` hook) needs this bit. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger`.
     pub enter_trigger: u128,
-    /// the events whose hook is not an enters-caused trigger, or is mixed and guards its own trigger part with
-    /// `engine::hooks::enters_trigger_times`: an enters-with counter, "enters tapped", a name chosen as it enters, a
-    /// static or state registration, a Saga's lore counter, an Aura attaching. It is never blanked or copied by the
-    /// dispatcher. A bit per `Event`; never set together with `enter_trigger`.
+    /// the events whose QUEUED hook is a triggered ability that the entering did not cause (a Saga's chapter I, which
+    /// triggers on the lore counter, CR 714.2b; Hero of Iroas' heroic, which a cast causes): the dispatcher neither
+    /// blanks nor copies it for the enters, while Cloud, Delney and Roaming Throne still copy it. Setup (enters tapped,
+    /// enters with counters, a name chosen as it enters, a static or state registration, an Aura attaching) is not a
+    /// triggered ability and never waits in the queue: its hook runs at once (`at_once`), and a hook that mixes it with
+    /// a trigger part runs at once too and loops `engine::hooks::enters_trigger_times` for that part. A bit per
+    /// `Event`; never set together with `enter_trigger`.
     pub enter_setup: u128,
 }
 

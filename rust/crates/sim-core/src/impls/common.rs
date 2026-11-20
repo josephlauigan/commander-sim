@@ -173,7 +173,7 @@ pub fn aura(r: &mut Registry, db: &CardDb, name: &str, spec: &'static AuraSpec) 
     c.aura = Some(spec);
     c.etb = Some(aura_etb);
     *c = c.at_once(Event::Etb); // no trigger_window of its own: it attaches as it enters
-    *c = c.enter_setup(Event::Etb); // attaching is not a trigger; `when_enters` is, and `aura_etb` guards it itself
+    // attaching is setup (runs now); `when_enters` is a trigger, and `aura_etb` loops `enters_trigger_times` for it
     Ok(())
 }
 
@@ -3713,12 +3713,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Mind Stone")?.options = Some(mind_stone);
     let c = r.card(db, "The Soul Stone")?;
     c.etb = Some(soul_stone_etb);
-    *c = c.enter_setup(crate::hooks::Event::Etb); // indestructible, a static
+    *c = c.at_once(crate::hooks::Event::Etb); // indestructible, a static
     c.options = Some(soul_stone);
     c.upkeep = Some(soul_stone_upkeep);
     let c = r.card(db, "The Mind Stone")?;
     c.etb = Some(soul_stone_etb);
-    *c = c.enter_setup(crate::hooks::Event::Etb); // indestructible, a static
+    *c = c.at_once(crate::hooks::Event::Etb); // indestructible, a static
     c.options = Some(the_mind_stone);
     c.end_step = Some(the_mind_stone_end);
     super::partials::at_once(c, Event::EndStep, true); // end_step_flicker opens its own trigger window

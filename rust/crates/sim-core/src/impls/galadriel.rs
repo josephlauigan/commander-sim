@@ -1777,7 +1777,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Abduction")?;
     c.etb = Some(abduction); // no trigger_window of its own: at once
     at_once(c, Event::Etb, true);
-    *c = c.enter_setup(Event::Etb); // mixed: it takes control as it enters, `abduction_untap` is the trigger
+    // mixed: it takes control as it enters (setup, runs now); `abduction_untap` is the trigger part
     c.dies = Some(abduction_dies);
     c.leaves = Some(abduction_leaves);
     at_once(c, Event::Leaves, true);

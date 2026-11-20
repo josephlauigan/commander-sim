@@ -6,9 +6,10 @@
 //!
 //! `tests/enters_inventory.txt`, one row per line: `card | event | class | behaviour test`.
 //!   T  the whole hook is an enters-caused triggered ability: blanked and copied
-//!   S  not a trigger: as-enters setup, a replacement, a static or state registration, a Saga's lore counter
+//!   S  not a trigger: as-enters setup, a replacement, a static or state registration (runs now, never queued)
 //!   M  mixed: setup that runs its trigger part `enters_trigger_times` times (the 4th column names its test)
-//!   N  not enter-caused at all (a creation trigger, bookkeeping, a replacement of the creating)
+//!   N  not caused by the entering: a creation trigger, a replacement of the creating, a Saga's chapter I (it
+//!      triggers on the lore counter), heroic. A queued hook that is not T is N.
 //! `ENTERS_INVENTORY_PRINT=<file>` writes the registry's rows with the dispatcher's class there, to start a new row.
 
 use sim_core::engine::hooks::enter_hook_is_trigger;

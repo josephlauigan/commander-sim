@@ -167,7 +167,7 @@ pub fn register(r: &mut crate::hooks::Registry, db: &crate::cards::CardDb) -> Re
         if db.id(name).is_some() {
             let c = r.card(db, name)?;
             c.etb = Some(landed);
-            *c = c.enter_setup(crate::hooks::Event::Etb); // bookkeeping of the turn it came down
+            *c = c.at_once(crate::hooks::Event::Etb); // bookkeeping of the turn it came down
         }
     }
     Ok(())

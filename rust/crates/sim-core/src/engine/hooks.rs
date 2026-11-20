@@ -191,8 +191,9 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
 
 /// Is the hook of `imp` for event `e` an enters-caused triggered ability (so an opponent's Elesh Norn blanks it and the
 /// event doublers copy it)? A hook of `Etb`, `LandEnters` or `Landfall` that goes on the stack is, unless it is marked
-/// `enter_setup`; a hook that runs now (marked at once, or an event outside `TRIGGER_EVENTS`: every `TokensEnter` and
-/// `TokenCreated` hook) is not, unless it is marked `enter_trigger`.
+/// `enter_setup` (a triggered ability that the entering did not cause: a Saga's chapter I); a hook that runs now
+/// (marked at once, or an event outside `TRIGGER_EVENTS`: every `TokensEnter`, `TokenCreated` and `LandEtb` hook) is
+/// not, unless it is marked `enter_trigger`. So setup, which is no triggered ability, never waits in the queue.
 pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
     let now = imp.runs_at_once(e) || !e.is_trigger();
     imp.is_enter_trigger(e)

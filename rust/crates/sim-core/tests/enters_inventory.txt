@@ -9,7 +9,7 @@ Admonition Angel | Landfall | T
 Aesi, Tyrant of Gyre Strait | Landfall | T
 Agent of Treachery | Etb | T
 Airlift Chaplain | Etb | T
-Ajani Fells the Godsire | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Ajani Fells the Godsire | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Ajani's Chosen | Etb | T
 All That Glitters | Etb | S
 All-Fates Stalker | Etb | T
@@ -37,11 +37,11 @@ Avengers Quinjet | Etb | T |  | a trigger that runs at once (marked enter_trigge
 Banishing Light | Etb | T
 Batterskull | Etb | T
 Battle Mastery | Etb | S
-Battle at the Helvault | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
-Battle for Bretagard | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Battle at the Helvault | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+Battle for Bretagard | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Beetleback Chief | Etb | T
 Benevolent Blessing | Etb | S
-Binding the Old Gods | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Binding the Old Gods | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Bishop of Wings | Etb | T
 Bishop of Wings | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Blackblade Reforged | Etb | S
@@ -52,7 +52,7 @@ Bone Devourer | Etb | S
 Bonny Pall, Clearcutter | Etb | T
 Boon of the Spirit Realm | Etb | T
 Boughside Wanderers | Etb | T
-Braids's Frightful Return | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Braids's Frightful Return | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Breath of Fury | Etb | S
 Bronze Guardian | Etb | S |  | a state registration (size rule)
 Burglar Rat | Etb | T
@@ -138,7 +138,7 @@ Esika's Chariot | Etb | T
 Ethereal Armor | Etb | S
 Evolution Sage | Landfall | T
 Ezuri, Stalker of Spheres | Etb | T
-Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Face of Divinity | Etb | S
 Faeburrow Elder | Etb | S |  | a state registration (size rule)
 Feather of Flight | Etb | M | opponent_elesh_blanks_feather_of_flight_draw | attaching is setup; its "When this Aura enters" payload runs `enters_trigger_times` times
@@ -233,7 +233,7 @@ Light-Paws, Emperor's Voice | Etb | T
 Linvala, the Preserver | Etb | T
 Loki's Scepter | Etb | T
 Loran of the Third Path | Etb | T
-Love Song of Night and Day | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Love Song of Night and Day | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Loyal Warhound | Etb | T
 Lumra, Bellow of the Woods | Etb | T
 Mabel, Bitter Recluse | Etb | T
@@ -306,7 +306,7 @@ Purphoros, God of the Forge | Etb | T
 Purphoros, God of the Forge | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Rabble Rousing | Etb | T
 Radiant Solar | Etb | T
-Ral and the Implicit Maze | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Ral and the Implicit Maze | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Rancor | Etb | S
 Reality Acid | Etb | S
 Reckless Fireweaver | Etb | T
@@ -382,7 +382,7 @@ Stormfront Riders | Etb | T
 Strength of the Harvest // Haven of the Harvest | Etb | S
 Strixhaven Skycoach | Etb | T
 Studious First-Year | Etb | S |  | enters prepared
-Summon: Bahamut | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+Summon: Bahamut | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Sylvan Messenger | Etb | T
 Tainted Observer | Etb | T
 Tannuk, Memorial Ensign | Landfall | T
@@ -392,11 +392,11 @@ Terror of the Peaks | Etb | T
 Terror of the Peaks | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Tezzeret, Cruel Captain | Etb | T
 Thassa's Oracle | Etb | T |  | a trigger that runs at once (marked enter_trigger)
-The Binding of the Titans | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
-The Cruelty of Gix | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
-The Eldest Reborn | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+The Binding of the Titans | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Cruelty of Gix | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Eldest Reborn | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Meathook Massacre | Etb | T |  | a trigger that runs at once (marked enter_trigger)
-The Mending of Dominaria | Etb | S |  | a Saga's lore counter is put as it enters by a game rule (CR 714.3a); chapter I triggers on the counter (CR 714.2b)
+The Mending of Dominaria | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Mightstone and Weakstone | Etb | T
 The Mind Stone | Etb | S |  | indestructible, a static
 The One Ring | Etb | T
