@@ -100,9 +100,28 @@ pub fn exile_land(g: &mut Game, m: PermId) -> Res {
 }
 
 /// land card cd enters the battlefield under p's control without being played (no land drop): untapped or tapped as
-/// the card says, its enters ability and landfall as for any land that arrives
+/// the card says (a shock land: p may pay its life, a person is asked, the AI decides as when it plays one), its enters
+/// ability and landfall as for any land that arrives
 pub fn land_enters(g: &mut Game, p: PlayerId, cd: CardId) -> Res<PermId> {
-    let tapped = crate::engine::turn::land_enters_tapped(g, p, cd);
+    let tapped = match crate::engine::turn::shock_cost(g, p, cd) {
+        Some(n) => {
+            let pay = if crate::human::is_human(g, p) {
+                g.player(p).life >= n
+                    && crate::human::choices::yes_no(
+                        g,
+                        p,
+                        &format!("{}: pay {n} life so it enters untapped?", g.db.get(cd).name),
+                    )?
+            } else {
+                crate::engine::turn::pays_for_land(g, p, cd, n)
+            };
+            if pay {
+                crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+            }
+            !pay
+        }
+        None => crate::engine::turn::land_enters_tapped(g, p, cd),
+    };
     let l = g.add_land(p, cd, tapped);
     crate::cardcode::land_etb(g, p, l)?;
     crate::engine::turn::land_arrives(g, p, l, cd)?;
