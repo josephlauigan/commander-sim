@@ -1405,6 +1405,14 @@ pub const ETB_TRIGGER_TAGS: [Tag; 19] = [
 pub const ETB_SCRYFALL_TAGS: [Tag; 4] = [Tag::Tut, Tag::Treas, Tag::Drainetb, Tag::Edictetb];
 /// removal kinds that are Auras locking the target down
 pub const LOCK_KINDS: [&str; 5] = ["arrest", "pacify", "encrust", "kasmina", "coerce"];
+/// removal kinds that are Auras changing what the enchanted permanent is (Kenrith's Transformation, Darksteel Mutation,
+/// Song of the Dryads, Imprisoned in the Moon, Reprobation): static effects of the Aura, not enters triggers
+pub const STATIC_AURA_KINDS: [&str; 5] = ["elk", "mutate", "forest", "moon", "coward"];
+
+/// is a `rem` kind with `etb` a static effect of an Aura (attached as it resolves), not a triggered ability?
+pub fn rem_is_static(kind: &str) -> bool {
+    LOCK_KINDS.contains(&kind) || STATIC_AURA_KINDS.contains(&kind)
+}
 
 pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     let d = g.db.get(cd);
@@ -1417,7 +1425,7 @@ pub fn etb_triggers(g: &Game, cd: CardId) -> bool {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && !LOCK_KINDS.contains(&r)
+        && !rem_is_static(r)
     {
         return true;
     }
@@ -1466,7 +1474,7 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && LOCK_KINDS.contains(&r)
+        && rem_is_static(r)
     {
         crate::engine::removal::etb_removal(g, p, m)?; // an Aura: attached as it resolves
     }
@@ -1597,7 +1605,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if let Some(r) = t.str(Tag::Rem)
         && t.has(Tag::Etb)
-        && !LOCK_KINDS.contains(&r)
+        && !rem_is_static(r)
     {
         crate::engine::removal::etb_removal(g, p, m)?;
     }

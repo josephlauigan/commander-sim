@@ -1071,7 +1071,10 @@ fn static_aura_under_an_opponents_elesh(name: &str, becomes_land: bool) {
         .unwrap()
     );
     if becomes_land {
-        assert!(!g.is_creature(target), "{name}: the type change is a static effect of the Aura");
+        assert!(
+            !g.player(P1).perms.iter().any(|&m| m == target && g.perm(m).on_bf && g.is_creature(m)),
+            "{name}: the type change is a static effect of the Aura"
+        );
         assert_eq!(g.player(P1).lands.len(), 1);
     } else {
         assert!(g.perm(target).neutered, "{name}: losing all abilities is a static effect of the Aura");

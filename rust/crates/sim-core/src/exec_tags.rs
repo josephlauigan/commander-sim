@@ -6,7 +6,7 @@
 //! on a permanent it is an enters trigger). This module only describes: the engine does not read it.
 
 use crate::cards::CardDef;
-use crate::engine::zones::{ETB_SCRYFALL_TAGS, ETB_TRIGGER_TAGS, LOCK_KINDS};
+use crate::engine::zones::{ETB_SCRYFALL_TAGS, ETB_TRIGGER_TAGS, rem_is_static};
 use crate::tag::Tag;
 
 /// The engine code that runs a tag's effect.
@@ -161,7 +161,7 @@ pub fn live(d: &CardDef, resolve_hook: bool) -> Vec<(Tag, Exec)> {
     let mut v = vec![];
     if !spell && !d.land && !d.has_dsl() {
         let rem_etb = t.has(Tag::Rem) && t.has(Tag::Etb);
-        let lock = t.str(Tag::Rem).is_some_and(|r| LOCK_KINDS.contains(&r));
+        let lock = t.str(Tag::Rem).is_some_and(rem_is_static);
         for &k in ETB_TRIGGER_TAGS.iter() {
             if t.has(k) {
                 v.push((k, Exec::EnterTrigger));
