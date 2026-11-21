@@ -248,6 +248,15 @@ pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
         || (matches!(e, Event::Etb | Event::LandEnters | Event::Landfall) && !now && !imp.is_enter_setup(e))
 }
 
+/// Is the hook of `imp` for leave event `e` (`Leaves`, `Dies`, `SelfDies`, `SelfExiled`, `ExiledFromBf`,
+/// `CreatureToGy`, `LandGy`, `Sacrifice`) a leave-caused triggered ability (so Teysa Karlov, Drivnod and Gandalf the
+/// White copy it)? A queued hook is, and so is a hook that runs now and says so (`enter_trigger`): the others are an
+/// effect ending or bookkeeping that runs as the permanent leaves. A `Sacrifice` hook is not, unless marked: a
+/// sacrifice is not a leaving, and "whenever you sacrifice a permanent" is not caused by one.
+pub fn leave_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
+    e != Event::Sacrifice && !imp.runs_at_once(e) && e.is_trigger()
+}
+
 /// Instances of src's enters trigger: zero under an opponent's Elesh, otherwise original + event + source extras.
 /// Only mixed hooks, land paths and inline proxies call this; never dispatcher-multiplied T hooks or repeat passes.
 /// None denotes an artifact token only.

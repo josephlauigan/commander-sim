@@ -1,0 +1,143 @@
+# card | event | class | behaviour test (M) | note
+# T leave-caused trigger (Teysa Karlov, Drivnod and Gandalf the White copy it); S not a trigger, runs as the permanent leaves;
+# M mixed; N not caused by the leave. See tests/leaves_inventory.rs.
+
+Abduction | Dies | T
+Abduction | Leaves | S | | control returns as the Aura leaves: a static effect ending (the creature's death is the queued Dies row)
+Admonition Angel | Leaves | T | | 'When this creature leaves the battlefield, return all cards exiled with it': a trigger
+Al Bhed Salvagers | Dies | T
+Al Bhed Salvagers | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Al Bhed Salvagers | SelfDies | T
+All-Fates Stalker | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Angel of Serenity | Leaves | T | | 'When this creature leaves the battlefield, return the exiled cards': a trigger
+Angelic Sleuth | Leaves | T
+Apex Witchstalker | SelfDies | T
+Archangel Avacyn // Avacyn, the Purifier | Dies | T
+Archfiend of the Dross | Dies | T
+Avacyn, Angel of Horror | Dies | T
+Avacyn, Angel of Horror | SelfDies | T
+Banishing Light | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Battle at the Helvault | Leaves | N | | 'until this Saga leaves the battlefield': a duration ending that the engine queues, not a triggered ability
+Bishop of Wings | Dies | T
+Black Market | Dies | T
+Blade of the Bloodchief | Dies | T
+Blight Mound | Dies | T
+Boggart Shenanigans | Dies | T
+Bone Devourer | SelfDies | T
+Callous Inspector | SelfDies | T
+Captain Lannery Storm | Sacrifice | N | | 'Whenever you sacrifice a Treasure': a sacrifice is not a leaving (CR 701.21; Teysa Karlov ruling 2019-01-25)
+Carrier Thrall | SelfDies | T
+Carth the Lion | Dies | T
+Cast Out | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Chains of Custody | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Champions of the Perfect | Leaves | T
+Chromatic Star | SelfDies | T
+Crime Novelist | Sacrifice | N | | 'Whenever you sacrifice an artifact': a sacrifice is not a leaving
+Cruel Celebrant | Dies | T
+Cryogen Relic | Leaves | T
+Dark Prophecy | Dies | T
+Detention Sphere | Leaves | T | | 'When this enchantment leaves the battlefield, return the exiled cards': a trigger
+Disciple of the Vault | Dies | T
+Disciple of the Vault | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Dour Port-Mage | Leaves | T
+Dread Slaver | Dies | T
+Edgar, Charmed Groom // Edgar Markov's Coffin | SelfDies | T
+Elderfang Ritualist | SelfDies | T
+Elenda, the Dusk Rose | SelfDies | T
+Enduring Vitality | SelfDies | T
+Erebos, Bleak-Hearted | Dies | T
+Eyeblight Cullers | SelfDies | T
+Fiend Hunter | Leaves | T
+Goblin Sharpshooter | Dies | T
+Grasp of Fate | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Grave Betrayal | Dies | T
+Grim Haruspex | Dies | T
+Hangarback Walker | SelfDies | T
+Hawkeye, Avenging Archer | Dies | T
+Hostage Taker | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Intellect Devourer | Leaves | N | | 'until this creature leaves the battlefield': a duration ending that the engine queues, not a triggered ability
+Jackdaw Savior | Dies | T | | a creature with flying dies: a trigger that runs at once (no window)
+Jackdaw Savior | SelfDies | T | | it dies: a trigger that runs at once (no window)
+Jaxis, the Troublemaker | SelfDies | T
+Journey to Nowhere | Leaves | T | | 'When this enchantment leaves the battlefield, return the exiled card': a trigger
+Juri, Master of the Revue | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Juri, Master of the Revue | SelfDies | T
+Karmic Justice | Dies | N | | triggered by a spell or ability destroying the permanent, not by its leaving
+Karmic Justice | SelfDies | N | | triggered by a spell or ability destroying the permanent, not by its leaving
+Korvold, Fae-Cursed King | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Kura, the Boundless Sky | SelfDies | T
+Lagrella, the Magpie | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Lazav, Wearer of Faces | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Liesa, Forgotten Archangel | Dies | T
+Liesa, Forgotten Archangel | SelfDies | S | | bookkeeping: notes the wipe so creatures dying after her still return (her trigger is the Dies row)
+Lightning, Security Sergeant | Leaves | N | | 'for as long as you control Lightning': a duration ending that the engine queues, not a triggered ability
+Liliana, Dreadhorde General | Dies | T
+Luminous Broodmoth | Dies | T
+Magnetic Snuffler | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Mahadi, Emporium Master | Dies | S | | bookkeeping: counts the creatures that died; the Treasures come at the next end step
+Marionette Apprentice | Dies | T
+Marionette Apprentice | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Marionette Master | Dies | T
+Marionette Master | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Mayhem Devil | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Mazirek, Kraul Death Priest | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Merchant of Truth | Dies | T
+Merchant of Truth | SelfDies | T
+Meren of Clan Nel Toth | Dies | T
+Miara, Thorn of the Glade | Dies | T
+Miara, Thorn of the Glade | SelfDies | T
+Midnight Reaper | Dies | T
+Mindslicer | SelfDies | T
+Mirkwood Bats | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Mogg War Marshal | SelfDies | T
+Morbid Opportunist | Dies | T
+Nadier's Nightblade | Dies | T
+Nadier's Nightblade | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Narci, Fable Singer | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Necroskitter | CreatureToGy | T
+Necrosquito | Dies | T
+Necrosquito | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Nim Deathmantle | CreatureToGy | T
+Nine-Lives Familiar | SelfDies | T | | 'When this creature dies, if it had a revival counter': a trigger
+Oblivion Ring | Leaves | T | | 'When this enchantment leaves the battlefield, return the exiled card': a trigger
+Omnath, Locus of Rage | Dies | T
+Pashalik Mons | Dies | T
+Pawn of Ulamog | Dies | T
+Prayer of Binding | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Prowess of the Fair | Dies | T
+Reality Acid | Leaves | T
+Requiem Angel | Dies | T
+Revel in Riches | Dies | T
+Roil Elemental | Leaves | S | | 'for as long as you control this creature': a duration ending
+Scrapheap | Dies | T | | an artifact or enchantment put into your graveyard from the battlefield: a trigger that runs at once
+Scrapheap | SelfDies | T | | itself put into your graveyard from the battlefield: a trigger that runs at once
+Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel | Dies | T
+Sheltered by Ghosts | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Sifter of Skulls | Dies | T
+Skemfar Avenger | Dies | T
+Skyclave Apparition | Leaves | T
+Soulherder | ExiledFromBf | T
+Spine of Ish Sah | SelfDies | T
+Starfield Mystic | Dies | T
+Starfield of Nyx | Dies | S | | state registration of the type-changing rule, run again when an enchantment goes
+Starfield of Nyx | Leaves | S | | state registration of the type-changing rule, run again when it goes
+Static Prison | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Sticky Fingers | Dies | T
+Susurian Voidborn | Dies | T
+Susurian Voidborn | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
+Syr Konrad, the Grim | Dies | T
+Syr Vondam, Sunstar Exemplar | Dies | T
+Syr Vondam, Sunstar Exemplar | ExiledFromBf | T
+Syr Vondam, Sunstar Exemplar | SelfDies | T
+Syr Vondam, Sunstar Exemplar | SelfExiled | T
+Teysa, Orzhov Scion | Dies | T
+The Gitrog Monster | LandGy | T
+Tireless Tracker | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Tishana's Tidebinder | Leaves | S | | 'for as long as this creature remains on the battlefield': a duration ending
+Titania, Protector of Argoth | LandGy | T
+Tithe Taker | SelfDies | T
+Touch the Spirit Realm | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
+Trail of Crumbs | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
+Triplicate Titan | SelfDies | T
+Vindictive Vampire | Dies | T
+Voice of Resurgence | SelfDies | T
