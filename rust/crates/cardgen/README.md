@@ -275,6 +275,7 @@ cardgen roles --rules [--data-dir DIR]
 cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
 cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
 cardgen roles --stats [--data-dir DIR]
+cardgen roles --lint [--data-dir DIR]
 cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
 cardgen find --role ramp --role sac-outlet --json
 ```
@@ -282,15 +283,18 @@ cardgen find --role ramp --role sac-outlet --json
 `roles --rules` reads the catalog without network access and atomically writes `roles.json` beside `oracle.json`.
 Stickers and Attractions remain searchable in Oracle but are omitted from the role table and audit samples.
 `--stats` reports their skipped count; routing denominators include only deck cards.
-The JSON object is sorted by Oracle id and byte-deterministic. Each assignment has up to four ordered `roles`,
-`primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`.
+The JSON envelope has `meta: {taxonomy, rules_fnv, oracle_fnv, count}` and `cards` sorted by Oracle id.
+The hashes are FNV-1a-64: taxonomy text, compiled rule source, and the canonical bulk card array (the checksum in
+`sync.lock`). An available sync lock must agree. Input order and JSON whitespace do not affect the Oracle hash.
+The table is byte-deterministic. Each assignment has up to four ordered `roles`,
+`primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`, plus a `route` list of explicit reasons.
 Evidence uses zero-based indices into `Card::lines()`; `face: null` means the card's top-level Oracle text.
 `line` is the global line index without face separator lines. `--show` prints the original supporting lines.
 
 The 26 definitions, sources and future LLM evidence guards live in `data/knowledge/roles.toml` (version 1).
 Roles describe main or repeatable functions, with the conventions in `roles_gold.toml` taking precedence over
 keyword matching. Reminder text is stripped, self names become `~`, land backs of MDFCs add no roles, prepare cards
-use their spell face, and expensive planeswalker ultimates add no roles. Basic land types confer their intrinsic
+use their spell face plus their creature face's own abilities, and expensive planeswalker ultimates add no roles. Basic land types confer their intrinsic
 mana abilities even when printed only as a parenthesized synopsis. Printed self evasion/protection gives no role;
 printed lifelink is lifegain, listed last. Rules also recognize semantic keyword actions such as recruit, connive,
 transmute, mobilize and afterlife without treating their reminder text as independent abilities. Repeated modal
@@ -298,7 +302,8 @@ abilities pass their trigger context to their own bullet lines. At the four-role
 role yields to an independent function.
 Ward granted to other permanents is protection; a lifelink-only team grant is lifegain, not anthem. Creature,
 Treasure and Clue tokens count; other artifact tokens are judged by their abilities. Repeatable Clue makers also
-give draw. Team +1/+1 counter placement is counters and anthem; player counters are excluded, but proliferate
+give draw. Repeatable or multi-Treasure makers also give ramp; a single Treasure rider gives tokens alone.
+A creature token copy gives copy and tokens, copy first. Team +1/+1 counter placement is counters and anthem; player counters are excluded, but proliferate
 counts. Amass gives tokens, plus counters when repeatable. Returning noncreature permanents from your graveyard
 to the battlefield is recursion; unrestricted permanent returns also give reanimate, which requires creatures.
 
@@ -307,7 +312,17 @@ finishers, stax, drain, copy, evasion and protection route to a future LLM stage
 routes there. `--stats` and validation report the Commander-legal routing share. Certain assignments are limited to
 audited direct templates: nonland single-color tap mana, direct spell counters, explicit nonland searches to hand,
 draw two/three/four, and printed standalone lifelink. A certain role does not exempt the card's other effects from
-routing. This command never calls an LLM; a pattern rejected as incidental still recognizes the line.
+routing. This command never calls an LLM. Rejected rule hits route unless a named `INCIDENTAL` convention in
+`roles.rs` explains the rejection (cantrips/loot, costs, self keywords, zone alternatives, compensation, bookkeeping
+or small riders). Two accepted roles on the same Oracle line also route, except subsets of ramp/fixing/sac-outlet
+and the Clue tokens/draw pair. `ROLE_POLICY` defines role sources and risky-role routing in one place.
+`route` records UnknownLine, RejectedHit, SameLine, RiskyRole, Overflow or RegexError. Statistics report overlapping
+legal counts and an exclusive partition in that order. Regex input is bounded to 2048 bytes per line, with a raised
+backtracking limit; a remaining regex error or oversized line routes instead of aborting classification.
+Costs and initial trigger conditions are separated from effects; sentences are judged independently while linked
+zone/pronoun abilities retain their necessary context. `--lint` lists every rule alternative matching fewer than
+three catalog cards and fails unless its exact alternative is documented in the frozen `EXCEPTIONS` list. The
+reason column explains the semantic exception; it is not permission to add new narrow phrase patches.
 
 `--audit` freshly classifies a seeded sample without replacement of Commander-legal catalog cards outside the
 project's `roles_gold.toml`, then prints complete Oracle lines, predicted roles, evidence and routing. It neither
@@ -322,15 +337,18 @@ the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides int
 An override's evidence has source `override`, its note in `rule`, and no face or line, since it need not have a
 regex justification. No initial overrides are installed.
 
-`find` automatically attaches `roles.json` when present beside the catalog. Repeatable `--role R` filters combine
+`find` attaches `roles.json` for a role filter or to enrich JSON when the table is valid. A plain search remains
+available with missing, damaged or stale role data: it emits one stderr note and omits role fields. Repeatable `--role R` filters combine
 with AND. An unknown id is a usage error listing all 26 ids; a missing roles file names `cardgen roles --rules`.
 JSON rows gain `roles` and `primary` only when the side table is attached. The Oracle catalog and `Card` remain
 immutable; programs use `Index::attach_roles`, `Index::roles` and `Query.roles`. Missing ids, invalid evidence or
-role sets, and deck-card count mismatches are errors rather than silently incomplete searches; regenerate after sync.
+role sets, taxonomy/rule/Oracle hashes and deck-card count mismatches are errors for required role searches;
+regenerate with `cardgen roles --rules` after sync or rule/taxonomy changes.
 
 Validation reclassifies without overrides and reports per-role and micro recall against the engine's manual/pool
 cards in owned decks, per-role precision and recall against independent gold labels (all and certain separately),
-forbidden-role violations, exact missed/unexpected pairs, and routing by legality and layout. Every engine tag is
+forbidden-role violations, primary accuracy, overall all-role and src=rules micro scores, exact missed/unexpected
+pairs, and routing by legality, layout and cause. Every engine tag is
 listed with its fixed translation or reason for leaving it unmapped. Tags describe simulator approximations and
 are not exhaustive; only recall is measured against them. `--gold` permits an independently supplied gold set.
 JSON validation uses integer `tp`, `fp`, `missed` counts; precision is `tp/(tp+fp)`, recall is `tp/(tp+missed)`;
@@ -345,3 +363,15 @@ reported, not hidden by a threshold.
 CI uses real Oracle text frozen in `tests/fixtures/roles_oracle.json`, with positive and decoy examples for every
 rule. Full-catalog tests are opt-in: `cargo test --release -p cardgen --test roles_real -- --ignored` (requires the
 local catalog). Run Cargo and test binaries under the repository memory cap.
+
+The recall-only engine-tag mapping is value-aware:
+
+| Tag/value | Roles | Reason |
+| --- | --- | --- |
+| `fill=dispute` | unmapped | Additional-cost sacrifice, excluded by convention 2. |
+| other `fill` values | self-mill | A graveyard-filling engine effect. |
+| `xtutor` | unmapped | X-spell engine flag, not evidence of a library search. |
+| `prot=blink` | blink | Explicit exile/return engine mode. |
+| other `prot` values | protection | Protective engine effect. |
+
+The complete translation and unmapped reasons appear in every validation report.

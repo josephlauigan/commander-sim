@@ -1200,11 +1200,15 @@ fn a_page_cut_says_so_even_in_json() {
     assert!(o.notes_on_stderr);
     assert!(!o.stdout().contains("showing"), "stdout stays a bare JSON array");
     assert!(serde_json::from_str::<Value>(&o.stdout()).unwrap().is_array());
-    assert_eq!(o.stderr(), "(showing 2-3 of 9; --offset 3 or --limit all)\n");
+    assert_eq!(
+        o.stderr(),
+        format!("(showing 2-3 of 9; --offset 3 or --limit all)\n{}\n", o.role_note.as_ref().unwrap())
+    );
     // a table gets it as a trailing line on stdout
     let t = e.notes(&["--type", "artifact", "--limit", "2"]);
     assert!(!t.notes_on_stderr && t.stdout().ends_with("(showing 1-2 of 9; --offset 2 or --limit all)\n"));
-    assert_eq!(t.stderr(), "");
+    assert_eq!(t.stderr(), format!("{}\n", t.role_note.as_ref().unwrap()));
+    assert!(t.stderr().contains("cardgen roles --rules"));
     // no note when everything is shown, with --limit all, or for --count
     assert!(e.notes(&["--type", "artifact", "--json"]).notes.is_empty());
     assert!(e.notes(&["--type", "artifact", "--limit", "all", "--json"]).notes.is_empty());
@@ -1267,7 +1271,7 @@ fn the_meld_hint_is_a_note() {
     assert_eq!(o.notes, ["(1 meld result(s) are hidden; add --meld)"]);
     let j = e.notes(&["--text", "first strike, lifelink", "--json"]);
     assert_eq!(j.out, "[]\n");
-    assert_eq!(j.stderr(), "(1 meld result(s) are hidden; add --meld)\n");
+    assert_eq!(j.stderr(), format!("(1 meld result(s) are hidden; add --meld)\n{}\n", j.role_note.as_ref().unwrap()));
 }
 
 #[test]

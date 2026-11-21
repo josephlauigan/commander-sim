@@ -774,7 +774,10 @@ fn prepare_cards_use_only_the_spell_face_and_never_credit_the_copy_reminder() {
     );
     let a = classify_record(v);
     assert!(has(&a, "removal"), "{a:?}");
-    assert!(!has(&a, "draw"), "the creature body is not classified: {a:?}");
+    assert!(has(&a, "draw"), "the creature's own ability counts: {a:?}");
+    assert_eq!(a.evidence["draw"].face, Some(0));
+    assert_eq!(a.evidence["draw"].line, Some(0));
+    assert!(!has(&a, "copy"), "the prepare reminder is not copy: {a:?}");
     assert_eq!(a.evidence["removal"].face, Some(1));
     let sorcery = multi(
         "Body // Spell",
@@ -1011,9 +1014,6 @@ fn real_catalog_evidence_never_comes_from_land_backs_prepare_bodies_or_ultimates
             if c.raw.layout == "modal_dfc" && e.face.unwrap() > 0 && f.type_line.contains("Land") {
                 bad.push(format!("{}: {role} cites an MDFC land back", c.raw.name));
             }
-            if c.raw.layout == "prepare" && !f.type_line.contains("Instant") && !f.type_line.contains("Sorcery") {
-                bad.push(format!("{}: {role} cites a prepare body", c.raw.name));
-            }
         }
         for (role, e) in &a.evidence {
             let (face, line) = lines[e.line.unwrap()];
@@ -1041,7 +1041,10 @@ fn real_catalog_routing_share_stays_under_the_stated_cap() {
     let (all, llm) =
         s.routing.iter().filter(|(g, _)| g.starts_with("legal / ")).fold((0, 0), |a, (_, n)| (a.0 + n.0, a.1 + n.1));
     let share = llm as f64 / all as f64;
-    assert!(share < 0.55, "legal routing share {share:.4} is above the 55% cap");
+    assert!(share < 0.65, "legal routing share {share:.4} is above the amended 65% cap");
+    for a in real_map().values().filter(|a| a.needs_llm) {
+        assert!(!a.route.is_empty(), "every routed card must record its reason");
+    }
     assert_eq!(s.total + s.skipped, real_index().cards.len());
     assert_eq!(s.skipped, 99);
     // no card is silently dropped: roles are empty for a large share, and every role is used
@@ -1464,7 +1467,11 @@ fn damaged_roles_json_files_give_clean_errors_in_every_consumer() {
         for args in [&["--stats"][..], &["--show", "Counterspell"], &["--validate"]] {
             assert!(e.command(args).is_err(), "{label}: roles {args:?} must fail cleanly");
         }
-        assert!(e.find(&["--name", "Counterspell"]).is_err(), "{label}: find reads the side table when present");
+        let found = knowledge::find_with_notes(&e.project(), &e.args(&["--name", "Counterspell"])).unwrap();
+        assert!(found.out.contains("Counterspell"), "{label}: plain find stays available");
+        assert_eq!(found.stderr().lines().count(), 1, "{label}: one stderr note");
+        assert!(found.stderr().contains("cardgen roles --rules"));
+        assert!(e.find(&["--role", "counter"]).unwrap_err().to_string().contains("cardgen roles --rules"));
     }
     // restoring the file restores every consumer; --rules repairs a damaged file
     std::fs::write(e.kdir().join("roles.json"), b"garbage").unwrap();

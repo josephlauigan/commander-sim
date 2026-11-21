@@ -344,8 +344,8 @@ fn recall_translation_excludes_self_punishment_and_preserves_effect_tags() {
     assert!(roles.is_empty());
     assert!(reason.contains("own controller"));
     assert_eq!(roles::tag_roles("bartist", &Value::Bool(true)).0, ["drain"]);
-    assert_eq!(roles::tag_roles("fill", &Value::String("dispute".into())).0, ["self-mill"]);
-    assert_eq!(roles::tag_roles("xtutor", &Value::Bool(true)).0, ["tutor"]);
+    assert!(roles::tag_roles("fill", &Value::String("dispute".into())).0.is_empty());
+    assert!(roles::tag_roles("xtutor", &Value::Bool(true)).0.is_empty());
     assert_eq!(roles::tag_roles("prot", &Value::String("blink".into())).0, ["blink"]);
 }
 
@@ -584,7 +584,7 @@ fn convention_clauses_c1_through_c4_use_real_oracle_text() {
         ("Veronica, Dissident Scribe", "tokens", false),
         ("Veronica, Dissident Scribe", "draw", true),
         ("Smothering Tithe", "tokens", true),
-        ("Smothering Tithe", "ramp", false),
+        ("Smothering Tithe", "ramp", true),
         ("Inspiring Roar", "counters", true),
         ("Inspiring Roar", "anthem", true),
         ("Shalai, Voice of Plenty", "anthem", true),
@@ -735,4 +735,102 @@ fn non_deck_cards_remain_searchable_but_are_excluded_from_role_catalog_and_audit
     stale.insert(card(&i, "Spinny Ride").raw.oracle_id.clone(), Assignment::default());
     assert!(i.attach_roles(&stale).is_err(), "equal count must not mask a missing deck card");
     assert_eq!(i.roles(i.lookup("Counterspell")[0]).unwrap().roles, ["counter"]);
+}
+
+fn rulings_index() -> Index {
+    let e = Env::new();
+    let path = e.0.join("data/knowledge/oracle.json");
+    let mut doc: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    let extra: Value = serde_json::from_str(include_str!("fixtures/roles_rulings.json")).unwrap();
+    doc["cards"].as_array_mut().unwrap().extend(extra["cards"].as_array().unwrap().iter().cloned());
+    doc["meta"]["count"] = json!(doc["cards"].as_array().unwrap().len());
+    std::fs::write(&path, doc.to_string()).unwrap();
+    Index::load(&path).unwrap()
+}
+
+#[test]
+fn approved_rulings_and_shared_effect_vocabulary_use_real_text() {
+    let i = rulings_index();
+    for (name, yes, no) in [
+        ("Twinflame", vec!["copy", "tokens"], vec![]),
+        ("Smothering Tithe", vec!["tokens", "ramp"], vec![]),
+        ("Revel in Riches", vec!["tokens", "ramp"], vec![]),
+        ("Undercity Dire Rat", vec!["tokens"], vec!["ramp"]),
+        ("Leech Collector // Bloodletting", vec!["lifegain", "drain"], vec!["copy"]),
+        ("Syphon Mind", vec!["draw", "discard"], vec![]),
+        ("Blightning", vec!["discard"], vec![]),
+        ("Rise of the Eldrazi", vec!["draw"], vec![]),
+        ("Elder Owyn Lyons", vec!["protection", "recursion"], vec![]),
+        ("Skeletal Swarming", vec!["anthem"], vec![]),
+        ("Grave Exchange", vec!["recursion", "removal"], vec![]),
+        ("Aura Shards", vec!["removal"], vec![]),
+        ("Hatchet Bully", vec!["removal"], vec!["counters"]),
+        ("Laboratory Maniac", vec!["finisher"], vec!["draw"]),
+        ("Together Forever", vec!["counters"], vec![]),
+        ("Imi Statue", vec!["stax"], vec![]),
+        ("Keldon Flamesage", vec!["draw"], vec!["selection"]),
+        ("Noxious Revival", vec!["recursion"], vec![]),
+        ("Sedgemoor Witch", vec!["tokens"], vec!["lifegain"]),
+        ("Chainer, Dementia Master", vec!["reanimate"], vec!["wipe"]),
+        ("Cruel Grimnarch", vec!["discard"], vec!["stax"]),
+    ] {
+        let a = classify(&i, name);
+        for role in yes {
+            assert!(a.roles.iter().any(|r| r == role), "{name}: missing {role}: {a:?}");
+        }
+        for role in no {
+            assert!(!a.roles.iter().any(|r| r == role), "{name}: unexpected {role}: {a:?}");
+        }
+    }
+    let copy = classify(&i, "Twinflame");
+    assert_eq!(copy.primary, "copy");
+    let prepare = classify(&i, "Leech Collector // Bloodletting");
+    assert_eq!(prepare.evidence["lifegain"].face, Some(0));
+    assert_eq!(prepare.evidence["lifegain"].line, Some(0));
+    assert!(roles::tag_roles("fill", &json!("dispute")).0.is_empty());
+    assert!(roles::tag_roles("fill", &json!("dispute")).1.contains("additional-cost"));
+    assert!(roles::tag_roles("xtutor", &json!(true)).0.is_empty());
+    assert_eq!(roles::tag_roles("fill", &json!("entomb")).0, ["self-mill"]);
+}
+
+#[test]
+fn rejected_hits_and_same_line_roles_record_routing_without_changing_mana_exemptions() {
+    use roles::RouteReason::*;
+    let i = rulings_index();
+    for name in ["Victimize", "Dawn's Reflection"] {
+        let a = classify(&i, name);
+        assert!(a.needs_llm && a.route.contains(&RejectedHit), "{name}: {a:?}");
+    }
+    let a = classify(&i, "Twinflame");
+    assert!(a.route.contains(&SameLine), "{a:?}");
+    let mana = classify(&i, "Phyrexian Altar");
+    assert!(!mana.route.contains(&SameLine), "{mana:?}");
+    let clue = classify(&i, "Tireless Tracker");
+    assert!(!clue.route.contains(&SameLine), "{clue:?}");
+    let s = roles::stats(&i, &roles::generate(&i, "").unwrap());
+    assert!(s.legal_route_causes["RejectedHit"] > 0);
+    assert!(s.legal_route_causes["SameLine"] > 0);
+}
+
+#[test]
+fn metadata_rejects_stale_taxonomy_rules_oracle_count_and_optional_find_omits_roles() {
+    let e = Env::new();
+    e.command(&["--rules"]).unwrap();
+    let path = e.0.join("data/knowledge/roles.json");
+    let good = std::fs::read_to_string(&path).unwrap();
+    for field in ["taxonomy", "rules_fnv", "oracle_fnv", "count"] {
+        let mut doc: Value = serde_json::from_str(&good).unwrap();
+        doc["meta"][field] = if field == "count" { json!(0) } else { json!("stale") };
+        std::fs::write(&path, doc.to_string()).unwrap();
+        let map = roles::load(&path).unwrap();
+        assert!(index().attach_roles(&map).unwrap_err().contains("cardgen roles --rules"));
+        assert!(e.find(&["--role", "draw"]).is_err());
+        let out = knowledge::find_with_notes(&e.project(), &e.args(&["--name", "Counterspell", "--json"])).unwrap();
+        let rows: Value = serde_json::from_str(&out.stdout()).unwrap();
+        assert!(rows[0].get("roles").is_none() && rows[0].get("primary").is_none());
+        assert_eq!(out.stderr().lines().count(), 1);
+        assert!(out.stderr().contains("cardgen roles --rules"));
+    }
+    let (out, passed) = e.command(&["--lint"]).unwrap();
+    assert!(!passed && out.contains("UNDOCUMENTED")); // a small fixture cannot satisfy catalog coverage
 }

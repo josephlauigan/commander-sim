@@ -396,6 +396,9 @@ pub fn ident_string(bits: u8) -> String {
 pub struct Index {
     pub cards: Vec<Card>,
     pub bulk_updated_at: String,
+    pub oracle_fnv: String,
+    pub sync_fnv: Option<String>,
+    pub taxonomy_fnv: String,
     /// lower-case full name -> every card with it (15 names are shared by two or more cards)
     names: HashMap<String, Vec<u32>>,
     /// lower-case face name (when different from the full name) -> every card with such a face
@@ -454,6 +457,12 @@ impl Index {
         let mut idx = Index {
             cards: oracle.cards.into_iter().map(Card::new).collect(),
             bulk_updated_at: oracle.meta.bulk_updated_at,
+            oracle_fnv: crate::roles::oracle_fingerprint(path)?,
+            sync_fnv: crate::bulk::read_lock(&path.with_file_name("sync.lock")).map(|lock| lock.fnv1a64),
+            taxonomy_fnv: crate::roles::fingerprint(
+                &std::fs::read(path.with_file_name("roles.toml"))
+                    .unwrap_or_else(|_| include_bytes!("../../../../data/knowledge/roles.toml").to_vec()),
+            ),
             names: HashMap::new(),
             faces: HashMap::new(),
             ids: HashMap::new(),
@@ -477,6 +486,7 @@ impl Index {
     /// Attach a complete deck-card side table, aligned with card indices. Card and oracle.json stay immutable.
     /// Reject stale/malformed data rather than silently returning incomplete role searches.
     pub fn attach_roles(&mut self, map: &crate::roles::RoleMap) -> Result<(), String> {
+        map.check_meta(self)?;
         if map.len() != self.cards.iter().filter(|c| crate::roles::is_deck_card(c)).count() {
             return Err("roles.json: catalog count differs; run `cardgen roles --rules`".into());
         }
@@ -1199,6 +1209,8 @@ pub struct FindOutput {
     pub notes: Vec<String>,
     /// JSON and `--count` output is for a program: its notes go to stderr; a table gets them as trailing lines
     pub notes_on_stderr: bool,
+    /// Derived-role availability is always a stderr diagnostic, independent of display mode.
+    pub role_note: Option<String>,
 }
 
 impl FindOutput {
@@ -1216,7 +1228,13 @@ impl FindOutput {
 
     /// the text for stderr: the notes when they are for stderr
     pub fn stderr(&self) -> String {
-        if self.notes_on_stderr { self.notes.iter().map(|n| format!("{n}\n")).collect() } else { String::new() }
+        let mut out: String =
+            if self.notes_on_stderr { self.notes.iter().map(|n| format!("{n}\n")).collect() } else { String::new() };
+        if let Some(note) = &self.role_note {
+            out.push_str(note);
+            out.push('\n');
+        }
+        out
     }
 }
 
@@ -1295,12 +1313,26 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
     let dir = knowledge_dir(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
     let mut index = Index::load(&dir.join("oracle.json")).map_err(FindError::Failed)?;
     let role_file = dir.join("roles.json");
-    if role_file.exists() {
-        let roles = crate::roles::load(&role_file).map_err(FindError::Failed)?;
-        index.attach_roles(&roles).map_err(FindError::Failed)?;
+    let mut notes = vec![];
+    let mut role_note = None;
+    // Role filters require the table. JSON may enrich its rows when the table is current.
+    // Plain text/count searches never depend on the derived role data.
+    if !q.roles.is_empty() || q.json || !role_file.exists() {
+        let attached = crate::roles::load(&role_file).and_then(|roles| index.attach_roles(&roles));
+        if let Err(error) = attached {
+            if !q.roles.is_empty() {
+                return Err(if role_file.exists() {
+                    FindError::Failed(error)
+                } else {
+                    FindError::Usage(format!("--role needs a current table: {error}"))
+                });
+            }
+            role_note = Some(format!("(roles unavailable: {})", error.lines().next().unwrap_or("invalid table")));
+        }
+    } else if let Err(error) = crate::roles::load(&role_file).and_then(|roles| roles.check_meta(&index)) {
+        role_note = Some(format!("(roles unavailable: {})", error.lines().next().unwrap_or("invalid table")));
     }
     let (hits, unresolved) = index.search(&q, deck.as_ref())?;
-    let mut notes: Vec<String> = vec![];
     if let (Some(d), false) = (&deck, unresolved.is_empty()) {
         let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
         let more = if unresolved.len() > 10 { ", ..." } else { "" };
@@ -1343,7 +1375,7 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         if hits.is_empty() {
             named_but_filtered(&mut notes);
         }
-        return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr });
+        return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr, role_note });
     }
     let total = hits.len();
     let shown: Vec<&Card> = hits.iter().skip(q.offset).take(q.limit).map(|i| &index.cards[*i as usize]).collect();
@@ -1370,5 +1402,5 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
     } else {
         table(&shown)
     };
-    Ok(FindOutput { out, notes, notes_on_stderr })
+    Ok(FindOutput { out, notes, notes_on_stderr, role_note })
 }

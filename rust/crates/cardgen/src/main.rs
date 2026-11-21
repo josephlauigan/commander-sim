@@ -20,7 +20,7 @@ const USAGE: &str = "usage:
   cardgen roles --rules [--data-dir DIR]        classify the catalog and write roles.json (offline)
   cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
   cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
-  cardgen roles --show NAME | --stats [--data-dir DIR]
+  cardgen roles --show NAME | --stats | --lint [--data-dir DIR]
   cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
                [--type WORD]... [--text REGEX]... [--role R]... [--gc] [--deck KEY] [--meld]
                [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]

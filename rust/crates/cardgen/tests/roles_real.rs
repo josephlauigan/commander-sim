@@ -19,19 +19,23 @@ fn catalog_is_deterministic_and_evidence_is_valid() {
     assert_eq!(roles::bytes(&a).unwrap(), roles::bytes(&b).unwrap());
     index.attach_roles(&a).unwrap();
     let taxonomy = Taxonomy::parse(&std::fs::read_to_string(p.data("knowledge/roles.toml")).unwrap()).unwrap();
+    let mut invalid = vec![];
     for c in index.cards.iter().filter(|c| roles::is_deck_card(c)) {
         let lines = c.lines();
         for (r, e) in &a[&c.raw.oracle_id].evidence {
             if e.source == "rule" {
                 let guard = &taxonomy.role.iter().find(|t| &t.id == r).unwrap().guard;
-                assert!(
-                    fancy_regex::Regex::new(guard).unwrap().is_match(lines[e.line.unwrap()].1).unwrap(),
-                    "{} {r}",
-                    c.raw.name
-                );
+                if !fancy_regex::Regex::new(guard)
+                    .unwrap()
+                    .is_match(&roles::normalize(c, lines[e.line.unwrap()].1))
+                    .unwrap()
+                {
+                    invalid.push(format!("{} {r}", c.raw.name));
+                }
             }
         }
     }
+    assert!(invalid.is_empty(), "invalid evidence guards: {invalid:#?}");
     let stats = roles::stats(&index, &a);
     println!("{}", stats.text());
 }
