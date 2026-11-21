@@ -2,8 +2,9 @@
 //! gitignored `data/knowledge/oracle.json`, plus `oracle.prev.json` (the previous sync) and the tracked `sync.lock`.
 //! See `documents/card-knowledge.md`.
 //!
-//! The bulk file is about 160 MB (25 MB as the gzip JSON Lines file Scryfall serves), so it is streamed to a file (the cache's `Client` has a 30 s total timeout and
-//! ureq's `into_string` stops at 10 MB) and parsed one card at a time: only the slim records stay in memory.
+//! The bulk file is about 160 MB (25 MB as the gzip JSON Lines file Scryfall serves), so it is streamed to a file (the
+//! cache's `Client` has a 30 s total timeout and ureq's `into_string` stops at 10 MB) and parsed one card at a time:
+//! only the slim records stay in memory.
 //! Any failure leaves the existing `oracle.json` byte-identical. Tests never touch the network: `--from-file` is the
 //! offline path, and [`Remote`] is the seam the tests replace.
 
@@ -27,7 +28,7 @@ pub const MIN_COUNT: usize = 25_000;
 pub const DROP_LAYOUTS: [&str; 7] =
     ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"];
 /// layouts Scryfall documents; anything else is kept, with a warning
-const KNOWN_LAYOUTS: [&str; 25] = [
+const KNOWN_LAYOUTS: [&str; 26] = [
     "normal",
     "split",
     "flip",
@@ -46,6 +47,8 @@ const KNOWN_LAYOUTS: [&str; 25] = [
     "host",
     "reversible_card",
     "prepare",
+    // memorabilia cards (type "Card", not_legal): kept deliberately for now
+    "front_card",
     "token",
     "double_faced_token",
     "emblem",
@@ -135,7 +138,6 @@ pub struct Slimmed {
     pub layouts: BTreeMap<String, LayoutCount>,
     pub read: usize,
     pub dropped_layout: usize,
-    pub dropped_digital: usize,
     pub dropped_duplicate: usize,
     seen: HashSet<String>,
 }
@@ -145,15 +147,13 @@ impl Slimmed {
         self.read += 1;
         let layout = card.s("layout").unwrap_or("(missing)").to_string();
         let drop_layout = DROP_LAYOUTS.contains(&layout.as_str());
-        let digital = matches!(card.get("digital"), Some(J::Bool(true)));
-        let dup = !drop_layout && !digital && oracle_id(&card).is_some_and(|id| self.seen.contains(id));
+        // `digital` is NOT a drop reason: the one printing the Oracle Cards file keeps for an old staple is often a
+        // digital Masters set. Commander legality decides playability.
+        let dup = !drop_layout && oracle_id(&card).is_some_and(|id| self.seen.contains(id));
         let count = self.layouts.entry(layout).or_default();
         if drop_layout {
             count.dropped += 1;
             self.dropped_layout += 1;
-        } else if digital {
-            count.dropped += 1;
-            self.dropped_digital += 1;
         } else if dup {
             count.dropped += 1;
             self.dropped_duplicate += 1;
@@ -480,12 +480,11 @@ fn sync_file(
         text.push_str(&format!("{l:<22}{:>8}{:>9}\n", c.kept, c.dropped));
     }
     text.push_str(&format!(
-        "read {}, kept {}, dropped {} (layout {}, digital {}, duplicate oracle_id {})\n",
+        "read {}, kept {}, dropped {} (layout {}, duplicate oracle_id {})\n",
         s.read,
         s.kept(),
         s.dropped(),
         s.dropped_layout,
-        s.dropped_digital,
         s.dropped_duplicate
     ));
     let meta = Meta { bulk_updated_at: updated_at, download_uri: uri, synced: opts.synced.clone(), count: s.kept() };

@@ -1665,6 +1665,70 @@
  },
  {
   "object": "card",
+  "id": "00000000-0000-4000-8000-000000000084",
+  "oracle_id": "00000000-0000-4000-8000-000000000085",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "front_card",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Surprise!",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Card",
+  "oracle_text": "",
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "amh",
+  "set_name": "Test Set",
+  "set_type": "memorabilia",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
   "id": "00000000-0000-4000-8000-000000000002",
   "oracle_id": "00000000-0000-4000-8000-000000000003",
   "multiverse_ids": [
@@ -3327,6 +3391,74 @@
   "object": "card",
   "id": "00000000-0000-4000-8000-000000000082",
   "oracle_id": "00000000-0000-4000-8000-000000000083",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "normal",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Mind Twist",
+  "mana_cost": "{X}{B}",
+  "cmc": 1.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Target player discards X cards at random.",
+  "colors": [
+   "B"
+  ],
+  "color_identity": [
+   "B"
+  ],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": true,
+  "set": "vma",
+  "set_name": "Test Set",
+  "set_type": "expansion",
+  "rarity": "rare",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": 2200
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000086",
+  "oracle_id": "00000000-0000-4000-8000-000000000087",
   "multiverse_ids": [
    1,
    2

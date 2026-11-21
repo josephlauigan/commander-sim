@@ -130,17 +130,20 @@ unpacked; the `jsonl_download_uri` and `updated_at` come from `api.scryfall.com/
 - `sync.lock` (tracked): `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of `oracle.json`'s
   `cards` array (from its `[` to its `]`).
 
-Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar` and `vanguard`; digital-only
-cards; a repeated `oracle_id` (the first wins). Everything else is kept with its commander legality, banned and
-not-legal cards and un-cards included. Nothing else branches on a layout name, and an unknown layout is a warning (the
+Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar` and `vanguard`, and a repeated
+`oracle_id` (the first wins). Everything else is kept with its commander legality, banned and not-legal cards and
+un-cards included. Digital-only printings are kept: the one printing the file holds for an old staple is often a digital
+Masters set, so legality, not the `digital` flag, decides playability. `front_card` (memorabilia cards, all `not_legal`)
+is kept for now. Nothing else branches on a layout name, and an unknown layout is a warning (the
 cards are kept). The summary prints kept and dropped per layout.
 
 If the bulk file's `updated_at` equals the one in the current `oracle.json`, it prints `up to date` and downloads
 nothing. Otherwise it streams the file to a temp file (a dedicated ureq agent: 60 s read timeout, no total cap),
-decompresses and parses it one card at a time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes), refuses fewer than 25,000 cards (`--min-count N` lowers this for fixtures), moves the old
+decompresses and parses it one card at a time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes),
+refuses fewer than 25,000 cards (`--min-count N` lowers this for fixtures), moves the old
 `oracle.json` to `oracle.prev.json` and renames the new file into place. Any failure leaves `oracle.json` byte-identical.
 `--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check; `bulk_updated_at` is recorded as
-`from-file`). `tests/bulk_sync.rs` runs on a 44-card fixture (`tests/fixtures/bulk_fixture.json`) and never uses the
+`from-file`). `tests/bulk_sync.rs` runs on a 46-card fixture (`tests/fixtures/bulk_fixture.json`) and never uses the
 network.
 
 ## Equivalence
