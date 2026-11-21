@@ -275,6 +275,7 @@ cardgen roles --rules [--data-dir DIR]
 cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
 cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
 cardgen roles --stats [--data-dir DIR]
+cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
 cardgen find --role ramp --role sac-outlet --json
 ```
 
@@ -289,8 +290,25 @@ Roles describe main or repeatable functions, with the conventions in `roles_gold
 keyword matching. Reminder text is stripped, self names become `~`, land backs of MDFCs add no roles, prepare cards
 use their spell face, and expensive planeswalker ultimates add no roles. Basic land types confer their intrinsic
 mana abilities even when printed only as a parenthesized synopsis. Printed self evasion/protection gives no role;
-printed lifelink is lifegain, listed last. Unrecognized lines and cards with only uncertain-domain roles route to a
-future LLM stage; this command never calls an LLM. A pattern rejected as incidental still recognizes the line.
+printed lifelink is lifegain, listed last. Rules also recognize semantic keyword actions such as recruit, connive,
+transmute, mobilize and afterlife without treating their reminder text as independent abilities. Repeated modal
+abilities pass their trigger context to their own bullet lines. At the four-role ceiling, a copy's redundant token
+role yields to an independent function.
+
+Unrecognized lines, overflowing role sets and potentially incidental selection, recursion, graveyard hate,
+finishers, stax, drain, copy, evasion and protection route to a future LLM stage. Removal with several clauses also
+routes there. `--stats` and validation report the Commander-legal routing share. Certain assignments are limited to
+audited direct templates: nonland single-color tap mana, direct spell counters, explicit nonland searches to hand,
+draw two/three/four, and printed standalone lifelink. A certain role does not exempt the card's other effects from
+routing. This command never calls an LLM; a pattern rejected as incidental still recognizes the line.
+
+`--audit` freshly classifies a seeded sample without replacement of Commander-legal catalog cards outside the
+project's `roles_gold.toml`, then prints complete Oracle lines, predicted roles, evidence and routing. It neither
+reads saved assignments nor applies overrides, and writes no files. Defaults are seed 0 and 80 cards. Oracle ids
+are ranked with a fixed FNV-1a hash mixed with the seed through SplitMix64, so catalog input order is irrelevant.
+`--rule ID` samples that rule's assignments; `--certain` restricts to certain assignments (both filters apply to the
+same evidence). If fewer than N qualify, every qualifying card is shown. The footer reports actual cards and
+role assignments, including the rules-final subset, for a manual precision/recall audit.
 
 Hand overrides in `data/knowledge/roles_overrides.toml` replace the entire role set, including certain rules;
 the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides intentionally do not improve validation.
@@ -311,8 +329,11 @@ are not exhaustive; only recall is measured against them. `--gold` permits an in
 JSON validation uses integer `tp`, `fp`, `missed` counts; precision is `tp/(tp+fp)`, recall is `tp/(tp+missed)`;
 a zero denominator is 1. Text output includes those ratios. Nonzero exit means an acceptance threshold failed:
 hand recall 0.95 (0.85 for roles with at least ten pairs), gold micro precision 0.90 and recall 0.85 for the 19 rules
-roles, certain precision 0.95 across every role, and zero certain forbidden-role violations. Other roles are reported
-without precision/recall gates. Routing counts are reported, not hidden by a threshold.
+roles, certain precision 0.95 across every role, and zero certain forbidden-role violations. The rules-final subset
+(`needs_llm == false`, reclassified without overrides) additionally requires precision 0.93 and recall 0.85 across
+**all** roles, including those normally supplemented by the LLM. Its card count and integer micro counts are in
+both reports. Other roles outside that subset are reported without precision/recall gates. Routing counts are
+reported, not hidden by a threshold.
 
 CI uses real Oracle text frozen in `tests/fixtures/roles_oracle.json`, with positive and decoy examples for every
 rule. Full-catalog tests are opt-in: `cargo test --release -p cardgen --test roles_real -- --ignored` (requires the

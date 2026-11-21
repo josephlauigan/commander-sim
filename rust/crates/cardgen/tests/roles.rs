@@ -290,7 +290,6 @@ fn functional_context_does_not_confuse_untap_landfall_or_incidental_costs() {
     for (name, role) in [
         ("Acrobatic Leap", "removal"),
         ("Arachnoid Adaptation", "removal"),
-        ("Abduction", "removal"),
         ("Caustic Crawler", "wipe"),
         ("Silverblade Paladin", "anthem"),
         ("Court of Ambition", "stax"),
@@ -303,6 +302,7 @@ fn functional_context_does_not_confuse_untap_landfall_or_incidental_costs() {
         assert!(!classify(&i, name).roles.iter().any(|r| r == role), "{name} -> {role}");
     }
     for (name, role) in [
+        ("Abduction", "removal"),
         ("Narcolepsy", "removal"),
         ("Loyal Warhound", "ramp"),
         ("Chaos Warp", "removal"),
@@ -347,4 +347,213 @@ fn recall_translation_excludes_self_punishment_and_preserves_effect_tags() {
     assert_eq!(roles::tag_roles("fill", &Value::String("dispute".into())).0, ["self-mill"]);
     assert_eq!(roles::tag_roles("xtutor", &Value::Bool(true)).0, ["tutor"]);
     assert_eq!(roles::tag_roles("prot", &Value::String("blink".into())).0, ["blink"]);
+}
+
+#[test]
+fn audited_catalog_patterns_and_real_decoys() {
+    let i = index();
+    let classifier = Classifier::new().unwrap();
+    let cases: &[(&str, &[&str])] = &[
+        ("Springjack Pasture", &["fixing", "ramp", "sac-outlet", "tokens"]),
+        ("Zurgo Stormrender", &["drain", "draw", "tokens"]),
+        ("Ghirapur Orrery", &["draw", "ramp"]),
+        ("Alabaster Wall", &["protection"]),
+        ("Pyretic Charge", &["anthem", "draw"]),
+        ("Staff of Titania", &["ramp", "tokens"]),
+        ("Curse of Vengeance", &["draw", "lifegain"]),
+        ("Marchesa's Emissary", &["counters"]),
+        ("Heralds of Tzeentch", &["draw"]),
+        ("Scavenger Regent // Exude Toxin", &["wipe"]),
+        ("Windfall", &["draw"]),
+        ("Baleful Beholder", &["anthem", "evasion", "removal"]),
+        ("Isolation at Orthanc", &["removal"]),
+        ("He Who Hungers", &["discard", "recursion", "sac-outlet"]),
+        ("Riding the Dilu Horse", &["evasion"]),
+        ("Baylen, the Haymaker", &["counters", "draw", "fixing", "ramp"]),
+        ("Gigapede", &["recursion"]),
+        ("Fatal Mutation", &["removal"]),
+        ("Lord Windgrace", &["draw", "ramp"]),
+        ("Serra Aviary", &["anthem"]),
+        ("Gandalf, Spark Starter", &["removal"]),
+        ("Saheeli, the Gifted", &["ramp", "tokens"]),
+        ("Struggle for Sanity", &[]),
+        ("Mirror of Life Trapping", &["blink"]),
+        ("Decree of Pain", &["draw", "wipe"]),
+        ("Orzhov Racketeers", &["discard", "tokens"]),
+        ("Fearless Swashbuckler", &["draw"]),
+        ("Aether Barrier", &["stax"]),
+        ("Land Equilibrium", &["stax"]),
+        ("Insatiable Frugivore", &["anthem", "evasion"]),
+        ("Double Negative", &["counter"]),
+        ("Marrow-Gnawer", &["anthem", "evasion", "sac-outlet", "tokens"]),
+        ("Hunting Drake", &["removal"]),
+        ("Argothian Elder", &["ramp"]),
+        ("Collective Inferno", &["finisher"]),
+        ("Naga Vitalist", &["fixing", "ramp"]),
+        ("Vedalken Infuser", &["counters"]),
+        ("Deathgazer", &["removal"]),
+        ("Summoned Dromedary", &["recursion"]),
+        ("Become the Pilot", &["evasion", "removal"]),
+        ("Tributary Instructor", &["counters", "draw"]),
+        ("Flux", &["selection"]),
+        ("Magus of the Scroll", &["removal"]),
+        ("Debt to the Kami", &["removal"]),
+        ("Sword of Hearth and Home", &["blink", "fixing", "protection", "ramp"]),
+        ("Void Beckoner", &["counters"]),
+        ("Hugs, Grisly Guardian", &["draw", "ramp"]),
+        ("Unassuming Sage", &[]),
+        ("Ruin Processor", &["lifegain"]),
+        ("Trolls of Tel-Jilad", &["protection"]),
+        ("Óin the Brave", &["selection"]),
+        ("Kinjalli's Sunwing", &["stax"]),
+        ("Blot Out", &["removal"]),
+        ("Niv-Mizzet, Guildpact", &["draw", "lifegain", "removal"]),
+        ("Flame Wave", &["wipe"]),
+        ("Peace and Quiet", &["removal"]),
+        ("Venerated Rotpriest", &["counters"]),
+        ("Dread Defiler", &["drain"]),
+        ("Skeletal Scrying", &["draw"]),
+        ("Astarion, the Decadent", &["drain", "lifegain"]),
+        ("Overgrown Arch", &["lifegain", "selection"]),
+        ("Shellshock", &["wipe"]),
+        ("Missy", &["drain", "draw", "reanimate"]),
+        ("Sealed Fate", &[]),
+        ("Vow of Lightning", &["stax"]),
+        ("Minds Aglow", &["draw"]),
+        ("Depth Defiler", &["draw", "removal"]),
+    ];
+    for (name, expected) in cases {
+        let a = classifier.classify(card(&i, name)).unwrap();
+        let mut got: Vec<_> = a.roles.iter().map(String::as_str).collect();
+        got.sort();
+        assert_eq!(&got, expected, "{name}: {a:?}");
+    }
+}
+
+#[test]
+fn exact_certainty_templates_and_incidental_near_matches() {
+    let i = index();
+    for (name, role, certain) in [
+        ("Fyndhorn Elves", "ramp", true),
+        ("Delighted Halfling", "ramp", false),
+        ("Counterspell", "counter", true),
+        ("Demonic Tutor", "tutor", true),
+        ("Diabolic Intent", "tutor", true),
+        ("Vampiric Tutor", "tutor", false),
+        ("Tidings", "draw", true),
+        ("Precognitive Perception", "draw", true),
+        ("Cosmos Elixir", "draw", false),
+        ("Rhox War Monk", "lifegain", true),
+        ("Bre of Clan Stoutarm", "lifegain", false),
+    ] {
+        assert_eq!(classify(&i, name).evidence[role].certain, certain, "{name} {role}");
+    }
+    for name in [
+        "Unfulfilled Desires",
+        "Immersturm Predator",
+        "My Precious // Allure of Power",
+        "Springjack Pasture",
+        "Rashida Scalebane",
+    ] {
+        assert!(classify(&i, name).needs_llm, "ambiguous/risky roles must be routed: {name}");
+    }
+}
+
+#[test]
+fn certainty_audit_secondary_effects_have_real_positive_and_negative_text() {
+    let i = index();
+    for (name, role, present) in [
+        ("Tablet of Discovery", "draw", true),
+        ("Harsh Deceiver", "draw", false),
+        ("Extraction Integrant", "wipe", false),
+        ("Teferi's Response", "removal", true),
+        ("Beseech the Mirror", "removal", false),
+        ("Coastal Discovery", "counters", true),
+        ("Bloodcrazed Paladin", "counters", false),
+        ("Pearl-Ear, Imperial Advisor", "ramp", true),
+        ("Moltensteel Dragon", "ramp", false),
+        ("Minamo's Meddling", "discard", true),
+        ("Wild Guess", "discard", false),
+        ("Render Silent", "stax", true),
+        ("Decree of Pain", "stax", false),
+        ("Muddle the Mixture", "tutor", true),
+        ("Mental Journey", "tutor", false),
+        ("Illicit Shipment", "copy", true),
+        ("Emeritus of Conflict // Lightning Bolt", "copy", false),
+        ("Night Nurse, Healer of Heroes", "recursion", true),
+        ("Fact or Fiction", "recursion", false),
+        ("Statute of Denial", "selection", false),
+        ("Ponder", "selection", true),
+    ] {
+        assert_eq!(classify(&i, name).roles.iter().any(|r| r == role), present, "{name} {role}");
+    }
+}
+
+#[test]
+fn audit_is_seeded_gold_excluding_legal_without_replacement_and_independent_of_side_tables() {
+    let e = Env::new();
+    let i = index();
+    let excluded = card(&i, "Counterspell");
+    let gold = format!(
+        "[[card]]\nname='Counterspell'\noracle_id='{}'\nroles=['counter']\nprimary='counter'\n",
+        excluded.raw.oracle_id
+    );
+    std::fs::write(e.0.join("data/knowledge/roles_gold.toml"), &gold).unwrap();
+    // No roles.json exists: audit must classify fresh and avoid writing any artifacts.
+    let (a, ok) = e.command(&["--audit", "--seed", "0", "--n", "80"]).unwrap();
+    assert!(ok);
+    assert_eq!(a, e.command(&["--audit", "--seed", "0", "--n", "80"]).unwrap().0);
+    assert_ne!(a, e.command(&["--audit", "--seed", "1", "--n", "80"]).unwrap().0);
+    let sampled: Vec<_> = a.lines().filter(|l| l.starts_with('[')).collect();
+    assert_eq!(sampled.len(), 80);
+    let mut ids = std::collections::BTreeSet::new();
+    for row in sampled {
+        let id = row.split(" | ").nth(1).unwrap();
+        assert!(ids.insert(id));
+        assert_ne!(id, excluded.raw.oracle_id);
+        assert_eq!(i.cards[i.by_oracle_id(id).unwrap() as usize].legal, knowledge::Legal::Legal);
+    }
+    let certain = e.command(&["--audit", "--rule", "mana", "--certain", "--n", "999"]).unwrap().0;
+    assert!(certain.contains("ramp: mana certain=true"));
+    assert!(certain.contains("Oracle face="));
+    assert!(!e.0.join("data/knowledge/roles.json").exists());
+    for args in [
+        vec!["--audit", "--n", "0"],
+        vec!["--audit", "--n", "-1"],
+        vec!["--rules", "--seed", "0"],
+        vec!["--audit", "--seed", "0", "--seed", "1"],
+        vec!["--audit", "--rule", "missing"],
+        vec!["--audit", "--json"],
+        vec!["--stats", "--certain"],
+    ] {
+        assert!(e.command(&args).is_err(), "{args:?}");
+    }
+}
+
+#[test]
+fn rules_final_gate_includes_llm_domain_roles_and_cannot_be_improved_by_overrides() {
+    let e = Env::new();
+    e.command(&["--rules"]).unwrap();
+    let i = index();
+    let gold = format!(
+        "[[card]]\nname='Counterspell'\noracle_id='{}'\nroles=['counter','finisher']\nprimary='counter'\n",
+        card(&i, "Counterspell").raw.oracle_id
+    );
+    std::fs::write(e.0.join("data/knowledge/roles_gold.toml"), gold).unwrap();
+    // Other old gates all pass: the missing LLM-domain role must now fail rules-final recall.
+    let (out, passed) = e.command(&["--validate", "--json"]).unwrap();
+    let v: Value = serde_json::from_str(&out).unwrap();
+    assert!(!passed);
+    assert_eq!(v["rules_final_cards"], 1);
+    assert_eq!(v["rules_final_micro"], json!({"tp":1,"fp":0,"missed":1}));
+    assert_eq!(v["failures"], json!(["rules-final recall < 0.85"]));
+    std::fs::write(
+        e.0.join("data/knowledge/roles_overrides.toml"),
+        "[[card]]\nname='Counterspell'\nroles=['counter','finisher']\nnote='cannot fix rule score'\n",
+    )
+    .unwrap();
+    e.command(&["--rules"]).unwrap();
+    let (out, passed) = e.command(&["--validate", "--json"]).unwrap();
+    assert!(!passed);
+    assert_eq!(serde_json::from_str::<Value>(&out).unwrap()["rules_final_micro"], v["rules_final_micro"]);
 }
