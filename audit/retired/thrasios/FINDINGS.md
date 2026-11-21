@@ -4,8 +4,8 @@ The deck's living list of strengths and weaknesses and what was tested.
 
 **Retired 2026-11-14; key out of the simulator 2026-11-21.** The list is in `decklists/pool/retired/tymna-thrasios-doomsday.md` and this file is history only.
 
-**List:** `decklists/JD/tymna-thrasios-doomsday.md`, the Doomsday rebuild of 2026-11-05 (cEDH; the Thanos turbo core under
-Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (`data/my_decks.toml`). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
+**List:** `decklists/pool/retired/tymna-thrasios-doomsday.md`, the Doomsday rebuild of 2026-11-05 (cEDH; the Thanos turbo core under
+Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (the retired key's `data/my_decks.toml` entry, removed 2026-11-21). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
 its first sim is the baseline below. The findings of the previous list (t5, Basalt
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
