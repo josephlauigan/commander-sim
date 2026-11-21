@@ -1,0 +1,1142 @@
+{
+"meta": {
+"schema": 1,
+"bulk_updated_at": "2026-11-21T00:00:00.000+00:00",
+"download_uri": "https://example.invalid/x",
+"synced": "2026-11-21T00:00:00Z",
+"count": 41
+},
+"cards": [
+{
+"name": "Sol Ring",
+"mana_cost": "{1}",
+"cmc": 1.0,
+"type_line": "Artifact",
+"oracle_text": "{T}: Add {C}{C}.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000001",
+"edhrec_rank": 1,
+"usd": "1.14",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"produced_mana": [
+"C"
+]
+},
+{
+"name": "Command Tower",
+"cmc": 0.0,
+"type_line": "Land",
+"oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000002",
+"edhrec_rank": 2,
+"usd": "0.30",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Lightning Bolt",
+"mana_cost": "{R}",
+"cmc": 1.0,
+"type_line": "Instant",
+"oracle_text": "Lightning Bolt deals 3 damage to any target.",
+"colors": [
+"R"
+],
+"color_identity": [
+"R"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000003",
+"edhrec_rank": 10,
+"usd": "0.50",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Emeritus of Conflict // Lightning Bolt",
+"mana_cost": "{1}{R} // {R}",
+"cmc": 2.0,
+"type_line": "Creature — Human Wizard // Instant",
+"colors": [
+"R"
+],
+"color_identity": [
+"R"
+],
+"keywords": [],
+"layout": "prepare",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"card_faces": [
+{
+"name": "Emeritus of Conflict",
+"mana_cost": "{1}{R}",
+"type_line": "Creature — Human Wizard",
+"oracle_text": "First strike",
+"power": "2",
+"toughness": "2"
+},
+{
+"name": "Lightning Bolt",
+"mana_cost": "{R}",
+"type_line": "Instant",
+"oracle_text": "Lightning Bolt deals 3 damage to any target."
+}
+],
+"oracle_id": "00000000-0000-0000-0000-000000000004",
+"edhrec_rank": 6363,
+"usd": "3.18",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "2",
+"toughness": "2"
+},
+{
+"name": "Brazen Borrower // Petty Theft",
+"mana_cost": "{1}{U}{U} // {1}{U}",
+"cmc": 3.0,
+"type_line": "Creature — Faerie Rogue // Instant — Adventure",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [
+"Flash",
+"Flying"
+],
+"layout": "adventure",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"card_faces": [
+{
+"name": "Brazen Borrower",
+"mana_cost": "{1}{U}{U}",
+"type_line": "Creature — Faerie Rogue",
+"oracle_text": "Flash\nFlying\nBrazen Borrower can block only creatures with flying.",
+"power": "3",
+"toughness": "1"
+},
+{
+"name": "Petty Theft",
+"mana_cost": "{1}{U}",
+"type_line": "Instant — Adventure",
+"oracle_text": "Return target nonland permanent an opponent controls to its owner's hand."
+}
+],
+"oracle_id": "00000000-0000-0000-0000-000000000005",
+"edhrec_rank": 70,
+"usd": "2.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "3",
+"toughness": "1"
+},
+{
+"name": "Counterspell",
+"mana_cost": "{U}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Counter target spell.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000006",
+"edhrec_rank": 20,
+"usd": "1.50",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Mana Leak",
+"mana_cost": "{1}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Counter target spell unless its controller pays {3}.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000007",
+"edhrec_rank": 500,
+"usd": "0.40",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Negate",
+"mana_cost": "{1}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Counter target noncreature spell.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000008",
+"edhrec_rank": 300,
+"usd": "0.25",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Memory Lapse",
+"mana_cost": "{1}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Counter target spell. If that spell is countered this way, put it on top of its owner's library instead of into its owner's graveyard.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000009",
+"usd": "0.60",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Force of Will",
+"mana_cost": "{3}{U}{U}",
+"cmc": 5.0,
+"type_line": "Instant",
+"oracle_text": "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target spell.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000010",
+"edhrec_rank": 30,
+"usd": "80.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Absorb",
+"mana_cost": "{W}{U}{U}",
+"cmc": 3.0,
+"type_line": "Instant",
+"oracle_text": "Counter target spell. You gain 3 life.",
+"colors": [
+"W",
+"U"
+],
+"color_identity": [
+"W",
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000011",
+"edhrec_rank": 900,
+"usd": "0.35",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Azorius Charm",
+"mana_cost": "{W}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Choose one —\n• Creatures you control gain lifelink until end of turn.\n• Draw a card, then put a card from your hand on top of your library.\n• Put target attacking or blocking creature on top of its owner's library.",
+"colors": [
+"W",
+"U"
+],
+"color_identity": [
+"W",
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000012",
+"edhrec_rank": 150,
+"usd": "0.45",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Esper Charm",
+"mana_cost": "{W}{U}{B}",
+"cmc": 3.0,
+"type_line": "Instant",
+"oracle_text": "Choose one —\n• Destroy target enchantment.\n• Draw two cards.\n• Target player discards two cards.",
+"colors": [
+"W",
+"U",
+"B"
+],
+"color_identity": [
+"W",
+"U",
+"B"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000013",
+"edhrec_rank": 800,
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Swords to Plowshares",
+"mana_cost": "{W}",
+"cmc": 1.0,
+"type_line": "Instant",
+"oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000014",
+"edhrec_rank": 8,
+"usd": "2.50",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Wrath of God",
+"mana_cost": "{2}{W}{W}",
+"cmc": 4.0,
+"type_line": "Sorcery",
+"oracle_text": "Destroy all creatures. They can't be regenerated.",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000015",
+"edhrec_rank": 100,
+"usd": "3.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Pick Your Poison",
+"mana_cost": "{1}{G}",
+"cmc": 2.0,
+"type_line": "Sorcery",
+"oracle_text": "Each opponent sacrifices an artifact, enchantment, or creature with flying of their choice.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000016",
+"edhrec_rank": 5000,
+"usd": "0.20",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Pick Your Poison",
+"mana_cost": "{G}",
+"cmc": 1.0,
+"type_line": "Instant",
+"oracle_text": "An un-card version of the same name.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "not_legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000017",
+"edhrec_rank": 7000,
+"usd": "0.10",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Primeval Titan",
+"mana_cost": "{4}{G}{G}",
+"cmc": 6.0,
+"type_line": "Creature — Giant",
+"oracle_text": "Trample\nWhenever Primeval Titan enters or attacks, you may search your library for up to two land cards.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [
+"Trample"
+],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "banned"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000018",
+"edhrec_rank": 200,
+"usd": "1.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "6",
+"toughness": "6"
+},
+{
+"name": "Rhystic Study",
+"mana_cost": "{2}{U}",
+"cmc": 3.0,
+"type_line": "Enchantment",
+"oracle_text": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": true,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000019",
+"edhrec_rank": 5,
+"usd": "40.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Cyclonic Rift",
+"mana_cost": "{1}{U}",
+"cmc": 2.0,
+"type_line": "Instant",
+"oracle_text": "Return target nonland permanent you don't control to its owner's hand.\nOverload {6}{U}",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": true,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000020",
+"edhrec_rank": 12,
+"usd": "30.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Brisela, Voice of Nightmares",
+"cmc": 0.0,
+"type_line": "Legendary Creature — Eldrazi Angel",
+"oracle_text": "Flying, first strike, lifelink",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "meld",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000021",
+"edhrec_rank": 3000,
+"usd": "3.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "9",
+"toughness": "10",
+"all_parts_meld": true,
+"meld_parts": [
+"Bruna, the Fading Light",
+"Gisela, the Broken Blade"
+]
+},
+{
+"name": "Birds of Paradise",
+"mana_cost": "{G}",
+"cmc": 1.0,
+"type_line": "Creature — Bird",
+"oracle_text": "Flying\n{T}: Add one mana of any color.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000022",
+"edhrec_rank": 40,
+"usd": "1.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "0",
+"toughness": "1",
+"produced_mana": [
+"W",
+"U",
+"B",
+"R",
+"G"
+]
+},
+{
+"name": "Llanowar Elves",
+"mana_cost": "{G}",
+"cmc": 1.0,
+"type_line": "Creature — Elf Druid",
+"oracle_text": "{T}: Add {G}.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000023",
+"edhrec_rank": 25,
+"usd": "1.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "1",
+"toughness": "1",
+"produced_mana": [
+"G"
+]
+},
+{
+"name": "Noble Hierarch",
+"mana_cost": "{G}",
+"cmc": 1.0,
+"type_line": "Creature — Human Druid",
+"oracle_text": "Exalted\n{T}: Add {G}, {W}, or {U}.",
+"colors": [
+"G",
+"W",
+"U"
+],
+"color_identity": [
+"G",
+"W",
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000024",
+"edhrec_rank": 90,
+"usd": "12.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "0",
+"toughness": "1",
+"produced_mana": [
+"G",
+"W",
+"U"
+]
+},
+{
+"name": "Isamaru, Hound of Konda",
+"mana_cost": "{W}",
+"cmc": 1.0,
+"type_line": "Legendary Creature — Dog",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000025",
+"edhrec_rank": 4000,
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "2",
+"toughness": "2"
+},
+{
+"name": "Island",
+"cmc": 0.0,
+"type_line": "Basic Land — Island",
+"oracle_text": "({T}: Add {U}.)",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000026",
+"usd": "0.05",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"produced_mana": [
+"U"
+]
+},
+{
+"name": "Plains",
+"cmc": 0.0,
+"type_line": "Basic Land — Plains",
+"oracle_text": "({T}: Add {W}.)",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000027",
+"usd": "0.05",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"produced_mana": [
+"W"
+]
+},
+{
+"name": "Jace, the Mind Sculptor",
+"mana_cost": "{2}{U}{U}",
+"cmc": 4.0,
+"type_line": "Legendary Planeswalker — Jace",
+"oracle_text": "+2: Look at the top card of target player's library.\n−1: Return target creature to its owner's hand.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000028",
+"edhrec_rank": 60,
+"usd": "35.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"loyalty": "3"
+},
+{
+"name": "Invasion of Zendikar",
+"mana_cost": "{3}{G}",
+"cmc": 4.0,
+"type_line": "Battle — Siege",
+"oracle_text": "When this Siege enters, search your library for a basic land card.",
+"colors": [
+"G"
+],
+"color_identity": [
+"G"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000029",
+"edhrec_rank": 2500,
+"usd": "0.50",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"defense": "5"
+},
+{
+"name": "Fire // Ice",
+"mana_cost": "{1}{R} // {1}{U}",
+"cmc": 4.0,
+"type_line": "Instant // Instant",
+"colors": [
+"R",
+"U"
+],
+"color_identity": [
+"R",
+"U"
+],
+"keywords": [],
+"layout": "split",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"card_faces": [
+{
+"name": "Fire",
+"mana_cost": "{1}{R}",
+"type_line": "Instant",
+"oracle_text": "Fire deals 2 damage divided as you choose among one or two targets."
+},
+{
+"name": "Ice",
+"mana_cost": "{1}{U}",
+"type_line": "Instant",
+"oracle_text": "Tap target permanent.\nDraw a card."
+}
+],
+"oracle_id": "00000000-0000-0000-0000-000000000030",
+"edhrec_rank": 300,
+"usd": "1.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Agadeem's Awakening // Agadeem, the Undercrypt",
+"mana_cost": "{X}{B}{B}{B} // ",
+"cmc": 3.0,
+"type_line": "Sorcery // Land",
+"colors": [
+"B"
+],
+"color_identity": [
+"B"
+],
+"keywords": [],
+"layout": "modal_dfc",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"card_faces": [
+{
+"name": "Agadeem's Awakening",
+"mana_cost": "{X}{B}{B}{B}",
+"type_line": "Sorcery",
+"oracle_text": "Return from your graveyard to the battlefield any number of target creature cards that each have a different mana value X or less."
+},
+{
+"name": "Agadeem, the Undercrypt",
+"type_line": "Land",
+"oracle_text": "As Agadeem, the Undercrypt enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {B}."
+}
+],
+"oracle_id": "00000000-0000-0000-0000-000000000031",
+"edhrec_rank": 350,
+"usd": "1.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Alpha Card",
+"mana_cost": "{2}",
+"cmc": 2.0,
+"type_line": "Artifact",
+"oracle_text": "Tie breaker one.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000032",
+"edhrec_rank": 77,
+"usd": "3.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Beta Card",
+"mana_cost": "{2}",
+"cmc": 2.0,
+"type_line": "Artifact",
+"oracle_text": "Tie breaker two.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000033",
+"edhrec_rank": 77,
+"usd": "3.00",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Zed Unranked",
+"mana_cost": "{3}",
+"cmc": 3.0,
+"type_line": "Artifact",
+"oracle_text": "No rank, no price.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000034",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Able Unranked",
+"mana_cost": "{3}",
+"cmc": 3.0,
+"type_line": "Artifact",
+"oracle_text": "No rank, no price either.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000035",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Little Girl",
+"mana_cost": "{hw}",
+"cmc": 0.5,
+"type_line": "Creature — Human Child",
+"colors": [
+"W"
+],
+"color_identity": [
+"W"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "not_legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000036",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false,
+"power": "0.5",
+"toughness": "0.5"
+},
+{
+"name": "Opt",
+"mana_cost": "{U}",
+"cmc": 1.0,
+"type_line": "Instant",
+"oracle_text": "Scry 1, then draw a card.",
+"colors": [
+"U"
+],
+"color_identity": [
+"U"
+],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000037",
+"edhrec_rank": 250,
+"usd": "0.15",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Option Paralysis",
+"mana_cost": "{1}",
+"cmc": 1.0,
+"type_line": "Artifact",
+"oracle_text": "Not Opt, just a name that contains it.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000038",
+"edhrec_rank": 6000,
+"usd": "0.10",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Cheap Rock",
+"mana_cost": "{1}",
+"cmc": 1.0,
+"type_line": "Artifact",
+"oracle_text": "{T}: Add {C}.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000039",
+"edhrec_rank": 600,
+"usd": "0.10",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Bargain Rock",
+"mana_cost": "{1}",
+"cmc": 1.0,
+"type_line": "Artifact",
+"oracle_text": "{T}: Add {C}.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000040",
+"edhrec_rank": 601,
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+},
+{
+"name": "Elixir of Vitality",
+"mana_cost": "{3}",
+"cmc": 3.0,
+"type_line": "Artifact",
+"oracle_text": "{T}, Sacrifice: gain 4 life.",
+"colors": [],
+"color_identity": [],
+"keywords": [],
+"layout": "normal",
+"game_changer": false,
+"legalities": {
+"commander": "legal"
+},
+"oracle_id": "00000000-0000-0000-0000-000000000041",
+"edhrec_rank": 3500,
+"usd": "0.02",
+"released_at": "2020-01-01",
+"set": "tst",
+"rarity": "common",
+"reserved": false
+}
+]
+}

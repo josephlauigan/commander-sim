@@ -160,6 +160,60 @@ byte-identical (unless the rollback itself fails, which the error says). `--from
 `CARDGEN_KNOWLEDGE_DIR` is given, and `--data-dir` points a scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
 uses the network.
 
+## Find (search the whole catalog)
+
+```
+cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
+             [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
+             [--sort edhrec|name|cmc|usd] [--limit N] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+```
+
+Searches every Oracle card in `data/knowledge/oracle.json` (written by `bulk-sync`); read-only, offline. The catalog is
+loaded into memory (a typed serde read, no persisted index, about 0.1 s) and every query is a linear scan. All filters are
+optional and combine with AND.
+
+| Flag | Meaning |
+|---|---|
+| `--name N` | the card's name, exact and case-insensitive; a face name works too (`Petty Theft` finds Brazen Borrower). An exact full name beats a face name: `Lightning Bolt` is the instant, not the `prepare` card `Emeritus of Conflict // Lightning Bolt` that has it as a face. Several cards with one name (15 names are shared): the Commander-legal one first |
+| `--name-contains S` | substring of the full name or of any face name |
+| `--ident WU` | colour identity limit: the card's identity must be a **subset** of the letters (a colourless card fits any limit; `WU` admits W, U, WU and colourless). `C` or an empty value means colourless only |
+| `--legal` | Commander legality: `legal` (default), `banned`, `not_legal`, `restricted`, or `any` |
+| `--cmc '<=2'` | mana value; operators `<`, `<=`, `=`, `>=`, `>`, a plain number means `=` (quote `<` and `>` in the shell) |
+| `--type WORD` | a word of the type line of any face (`instant`, `Elf`, `legendary`; a word, not a substring); repeatable, all must match |
+| `--text REGEX` | fancy-regex over the Oracle text of every face, case-insensitive unless the pattern says `(?-i)`; repeatable, all must match; a bad pattern exits non-zero |
+| `--gc` | Game Changers only |
+| `--deck KEY` | a deck of `data/decks.json` (yours, then the pool; an unknown key lists the valid ones). Uses its `ident` as the identity limit (unless `--ident` is given) and leaves out every card of the deck (its list and its commanders, matched by name and by face name) |
+| `--meld` | include meld results (Brisela, Hanweir, ...), which are left out by default because the pair that makes them is not one card |
+| `--sort` | `edhrec` (default: ascending, unranked last), `name`, `cmc`, `usd` (ascending, no price last); ties by name |
+| `--limit N`, `--offset N` | page through the result (default limit 30) |
+| `--count` | print only the number of matches (ignores `--limit`, `--offset` and `--json`) |
+| `--json` | an array of `{name, mana_cost, cmc, type_line, identity, legal, gc, edhrec_rank, usd, oracle_text, faces?, set, released_at, rarity}`; `identity` is a string such as `"WU"` (`""` = colourless), `mana_cost` and `oracle_text` are `""` when the card has none (a multi-face card's text is in `faces`), `edhrec_rank` and `usd` are `null` when absent |
+| `--full` | the complete record: adds `keywords`, `produced_mana`, `power`, `toughness`, `loyalty`, `oracle_id`, `reserved`, `meld_parts` (and per-face power, toughness, loyalty); without `--json` it is readable text, one block per card |
+| `--data-dir DIR` | the knowledge directory |
+
+The default output is a table: name, cost, type line, EDHREC rank, price, legality.
+
+The knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else `<repo>/data/knowledge`; when the default has
+no `oracle.json` (a worktree has the directory, because `sync.lock` is tracked, but not the generated file) it falls
+back to the main checkout's (`<git-common-dir>/../data/knowledge`). A missing catalog is an error that names
+`cardgen bulk-sync`. A `--data-dir` or `CARDGEN_KNOWLEDGE_DIR` without an `oracle.json` is an error too, with no fallback.
+An unknown flag (`--role`, `--digest` and `--map` do not exist yet), a flag without its value or a non-numeric number prints
+the usage text and exits non-zero.
+
+Examples:
+
+```
+cardgen find --ident WU --cmc '<=2' --type instant --text 'counter target' --limit 10
+cardgen find --deck cloud --text 'search your library' --json --limit 20     # candidates for the Cloud deck
+cardgen find --deck cloud --count                                            # how many cards a digest would cover
+cardgen find --name "Sol Ring" --full                                        # layer 3: everything about one card
+cardgen find --legal any --name "Primeval Titan"                             # banned, and why it is not in a default search
+cardgen find --gc --count
+```
+
+`--deck KEY --count` is the size of a deck's candidate pool: the Commander-legal cards in its colours that it does not
+already play. It is the number to size a digest against.
+
 ## Equivalence
 
 `cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
@@ -176,5 +230,6 @@ src/sources.rs     the build order above              src/cardinfo.rs  Phyrexian
 src/export.rs      cards.json / decks.json            src/scryfall.rs  the cache and the client
 src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/audit.rs
 src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.json)
+src/knowledge.rs   the in-memory card index and `find` (queries oracle.json)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```

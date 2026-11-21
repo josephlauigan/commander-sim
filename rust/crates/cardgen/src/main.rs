@@ -17,6 +17,17 @@ const USAGE: &str = "usage:
                                                 \"up to date\" when the bulk file has not changed. --from-file
                                                 parses a local bulk file (no network); the directory can also be
                                                 set with CARDGEN_KNOWLEDGE_DIR
+  cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
+               [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
+               [--sort edhrec|name|cmc|usd] [--limit N] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+                                                search the whole Commander catalog (data/knowledge/oracle.json, see
+                                                bulk-sync); filters combine with AND. --name is exact (also a face
+                                                name); --ident is a limit (WU = any card inside W and U, C or empty =
+                                                colourless only); --legal defaults to legal; --type and --text repeat
+                                                (all must match; --text is a case-insensitive regex over the Oracle
+                                                text of every face); --deck KEY limits to that deck's colours and
+                                                leaves out its cards; a meld result needs --meld; --sort defaults to
+                                                edhrec, --limit to 30; --count prints only the number of matches
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -67,6 +78,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "validate" => validate(&project, &args),
         "deck" => deck(&project, &mut args),
         "bulk-sync" => bulk_sync(&project, &mut args),
+        "find" => find(&project, &args),
         _ => Err(USAGE.into()),
     }
 }
@@ -190,6 +202,20 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
         std::process::exit(1);
     }
     Ok(())
+}
+
+fn find(project: &Project, args: &[String]) -> Result<(), String> {
+    use cardgen::knowledge::FindError;
+    use std::io::Write;
+    match cardgen::knowledge::find(project, args) {
+        // a closed pipe (`| head`) is not an error
+        Ok(out) => {
+            let _ = std::io::stdout().write_all(out.as_bytes());
+            Ok(())
+        }
+        Err(FindError::Usage(m)) => Err(format!("{m}\n{USAGE}")),
+        Err(FindError::Failed(m)) => Err(m),
+    }
 }
 
 fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {

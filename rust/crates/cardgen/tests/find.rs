@@ -1,0 +1,837 @@
+//! `cardgen find` on a hand-built 41-card catalog (`tests/fixtures/find_oracle.json`: a shared name, a `prepare` card
+//! whose face is another card's name, an adventure, a split card, an MDFC with a land back, a meld result, a banned
+//! card, Game Changers, ties and unranked cards) and `tests/fixtures/find_decks.json`. Nothing uses the network.
+
+use cardgen::data::Project;
+use cardgen::knowledge::{self, FindError, Index, Legal};
+use serde_json::Value;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+fn fixture(name: &str) -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures").join(name)
+}
+
+/// a temporary project root with `data/knowledge/oracle.json` and `data/decks.json`, removed on drop
+struct Env(PathBuf);
+
+impl Env {
+    fn new() -> Env {
+        static N: AtomicUsize = AtomicUsize::new(0);
+        let p =
+            std::env::temp_dir().join(format!("find-test-{}-{}", std::process::id(), N.fetch_add(1, Ordering::SeqCst)));
+        std::fs::create_dir_all(p.join("data/knowledge")).unwrap();
+        std::fs::copy(fixture("find_oracle.json"), p.join("data/knowledge/oracle.json")).unwrap();
+        std::fs::copy(fixture("find_decks.json"), p.join("data/decks.json")).unwrap();
+        Env(p)
+    }
+
+    fn dir(&self) -> PathBuf {
+        self.0.join("data/knowledge")
+    }
+
+    /// `find` with the catalog named by --data-dir (so a CARDGEN_KNOWLEDGE_DIR in the environment cannot interfere)
+    fn find(&self, args: &[&str]) -> Result<String, FindError> {
+        let mut a: Vec<String> = args.iter().map(|s| s.to_string()).collect();
+        a.push("--data-dir".into());
+        a.push(self.dir().display().to_string());
+        knowledge::find(&Project::new(&self.0), &a)
+    }
+
+    fn ok(&self, args: &[&str]) -> String {
+        self.find(args).unwrap_or_else(|e| panic!("find {args:?} failed: {e}"))
+    }
+
+    fn json(&self, args: &[&str]) -> Vec<Value> {
+        let mut a = args.to_vec();
+        a.push("--json");
+        match serde_json::from_str::<Value>(&self.ok(&a)).expect("--json is valid JSON") {
+            Value::Array(v) => v,
+            v => panic!("--json is not an array: {v}"),
+        }
+    }
+
+    fn names(&self, args: &[&str]) -> Vec<String> {
+        self.json(args).iter().map(|c| c["name"].as_str().unwrap().to_string()).collect()
+    }
+
+    fn count(&self, args: &[&str]) -> usize {
+        let mut a = args.to_vec();
+        a.push("--count");
+        self.ok(&a).trim().parse().unwrap()
+    }
+}
+
+impl Drop for Env {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
+fn usage_err(e: Result<String, FindError>) -> String {
+    match e {
+        Err(FindError::Usage(m)) => m,
+        other => panic!("expected a usage error, got {other:?}"),
+    }
+}
+
+fn failed_err(e: Result<String, FindError>) -> String {
+    match e {
+        Err(FindError::Failed(m)) => m,
+        other => panic!("expected a failure, got {other:?}"),
+    }
+}
+
+// ------------------------------------------------------------------------------------------------ filters
+
+#[test]
+fn name_is_exact_and_case_insensitive() {
+    let e = Env::new();
+    assert_eq!(e.names(&["--name", "Sol Ring"]), ["Sol Ring"]);
+    assert_eq!(e.names(&["--name", "sOL rING"]), ["Sol Ring"]);
+    assert_eq!(e.names(&["--name", "Sol Rin"]), Vec::<String>::new());
+    assert_eq!(e.names(&["--name", "Opt"]), ["Opt"], "Option Paralysis is not Opt");
+}
+
+#[test]
+fn name_contains_searches_full_and_face_names() {
+    let e = Env::new();
+    assert_eq!(e.names(&["--name-contains", "CHARM"]), ["Azorius Charm", "Esper Charm"]);
+    assert_eq!(e.names(&["--name-contains", "petty th"]), ["Brazen Borrower // Petty Theft"]);
+    assert_eq!(e.names(&["--name-contains", "opt"]), ["Opt", "Option Paralysis"]);
+}
+
+#[test]
+fn ident_is_a_subset_limit() {
+    let e = Env::new();
+    let wu = e.json(&["--ident", "WU", "--limit", "500"]);
+    let idents: Vec<&str> = wu.iter().map(|c| c["identity"].as_str().unwrap()).collect();
+    assert!(idents.iter().all(|i| ["", "W", "U", "WU"].contains(i)), "{idents:?}");
+    for want in ["Sol Ring", "Island", "Plains", "Counterspell", "Absorb", "Azorius Charm", "Fire // Ice"] {
+        let ok = want != "Fire // Ice"; // Fire // Ice is red and blue
+        assert_eq!(wu.iter().any(|c| c["name"] == want), ok, "{want}");
+    }
+    // colourless only: C, c and empty all mean it
+    for v in ["C", "c", ""] {
+        let n = e.json(&["--ident", v, "--limit", "500"]);
+        assert!(n.iter().all(|c| c["identity"] == ""), "--ident {v:?}");
+        assert!(n.iter().any(|c| c["name"] == "Sol Ring") && n.iter().any(|c| c["name"] == "Command Tower"));
+        assert!(!n.iter().any(|c| c["name"] == "Island"));
+    }
+    // mono
+    let w = e.names(&["--ident", "W", "--type", "creature"]);
+    assert_eq!(w, ["Isamaru, Hound of Konda"]);
+    // multi: an extra colour admits more, a missing one removes the card
+    assert!(e.names(&["--ident", "WUB", "--name", "Esper Charm"]).len() == 1);
+    assert!(e.names(&["--ident", "WU", "--name", "Esper Charm"]).is_empty());
+    assert!(e.names(&["--ident", "U", "--name", "Fire // Ice"]).is_empty());
+    assert_eq!(e.names(&["--ident", "ru", "--name", "Fire // Ice"]), ["Fire // Ice"], "letters in any order and case");
+    // WUBRG admits every identity
+    assert_eq!(e.count(&["--ident", "WUBRG"]), e.count(&[]));
+}
+
+#[test]
+fn legality_defaults_to_legal_and_any_shows_all() {
+    let e = Env::new();
+    assert!(e.names(&["--name", "Primeval Titan"]).is_empty());
+    let any = e.json(&["--legal", "any", "--name", "Primeval Titan"]);
+    assert_eq!(any.len(), 1);
+    assert_eq!(any[0]["legal"], "banned");
+    assert_eq!(e.names(&["--legal", "banned"]), ["Primeval Titan"]);
+    assert_eq!(e.names(&["--legal", "not_legal"]), ["Pick Your Poison", "Little Girl"]);
+    // 41 cards: the meld result is left out of every search unless --meld is given
+    assert_eq!(e.count(&["--legal", "any"]), 40);
+    assert_eq!(e.count(&["--legal", "any", "--meld"]), 41);
+    assert_eq!(e.count(&[]), 37);
+}
+
+#[test]
+fn cmc_operators() {
+    let e = Env::new();
+    let n = |op: &str| e.names(&["--cmc", op, "--type", "artifact", "--sort", "name"]);
+    assert_eq!(n("<=1"), ["Bargain Rock", "Cheap Rock", "Option Paralysis", "Sol Ring"]);
+    assert_eq!(n("<1"), Vec::<String>::new());
+    assert_eq!(n("=2"), ["Alpha Card", "Beta Card"]);
+    assert_eq!(n("2"), ["Alpha Card", "Beta Card"], "a plain number means =");
+    assert_eq!(n(">=3"), ["Able Unranked", "Elixir of Vitality", "Zed Unranked"]);
+    assert_eq!(n(">2"), ["Able Unranked", "Elixir of Vitality", "Zed Unranked"]);
+    assert_eq!(
+        n("< 2"),
+        ["Bargain Rock", "Cheap Rock", "Option Paralysis", "Sol Ring"],
+        "spaces after the operator are fine"
+    );
+    assert_eq!(e.names(&["--legal", "any", "--cmc", "0.5"]), ["Little Girl"], "half mana");
+    assert_eq!(e.names(&["--cmc", "=0", "--type", "land", "--sort", "name"]), ["Command Tower", "Island", "Plains"]);
+}
+
+#[test]
+fn type_is_a_word_of_the_type_line_of_any_face() {
+    let e = Env::new();
+    assert!(
+        e.names(&["--type", "land", "--sort", "name"])
+            .contains(&"Agadeem's Awakening // Agadeem, the Undercrypt".into())
+    );
+    assert_eq!(e.names(&["--type", "ELF"]), ["Llanowar Elves"]);
+    assert_eq!(e.names(&["--type", "dru"]), Vec::<String>::new(), "a word, not a substring");
+    assert_eq!(e.names(&["--type", "druid"]), ["Llanowar Elves", "Noble Hierarch"]);
+    assert_eq!(e.names(&["--type", "adventure"]), ["Brazen Borrower // Petty Theft"]);
+    // repeatable = AND
+    assert_eq!(
+        e.names(&["--type", "creature", "--type", "instant"]),
+        ["Brazen Borrower // Petty Theft", "Emeritus of Conflict // Lightning Bolt"]
+    );
+    assert_eq!(e.names(&["--type", "legendary", "--type", "planeswalker"]), ["Jace, the Mind Sculptor"]);
+    assert_eq!(e.names(&["--type", "battle"]), ["Invasion of Zendikar"]);
+    assert_eq!(e.names(&["--type", "basic", "--type", "land", "--sort", "name"]), ["Island", "Plains"]);
+}
+
+#[test]
+fn text_is_a_case_insensitive_regex_over_every_face() {
+    let e = Env::new();
+    assert_eq!(
+        e.names(&["--text", "COUNTER TARGET SPELL", "--cmc", "<=2"]),
+        ["Counterspell", "Mana Leak", "Memory Lapse"]
+    );
+    // fancy-regex features: look-ahead
+    assert_eq!(e.names(&["--text", "counter target (?!spell)", "--cmc", "<=2"]), ["Negate"]);
+    // (?-i) turns case-insensitivity off
+    assert!(e.names(&["--text", "(?-i)COUNTER"]).is_empty());
+    assert!(!e.names(&["--text", "(?-i)Counter"]).is_empty());
+    // a face's text is searched (Ice's text; the card has no top-level text)
+    assert_eq!(e.names(&["--text", "tap target permanent"]), ["Fire // Ice"]);
+    assert_eq!(
+        e.names(&["--text", "damage divided", "--text", "lifelink"]),
+        Vec::<String>::new(),
+        "AND: no card has both"
+    );
+    assert_eq!(e.names(&["--text", "damage divided", "--text", "tap target"]), ["Fire // Ice"], "AND across two faces");
+    // the name and the type line are not searched
+    assert!(e.names(&["--text", "Sorcery"]).is_empty());
+    assert!(e.names(&["--text", "^Wrath of God$"]).is_empty());
+    // anchors apply to the whole text
+    assert_eq!(e.names(&["--text", "^Flash"]), ["Brazen Borrower // Petty Theft"]);
+}
+
+#[test]
+fn gc_flag() {
+    let e = Env::new();
+    assert_eq!(e.names(&["--gc"]), ["Rhystic Study", "Cyclonic Rift"]);
+    let j = e.json(&["--gc"]);
+    assert!(j.iter().all(|c| c["gc"] == true));
+    assert!(e.json(&["--name", "Sol Ring"])[0]["gc"] == false);
+}
+
+// ------------------------------------------------------------------------------------------------ sorting
+
+#[test]
+fn sort_edhrec_ranks_ascending_unranked_last_ties_by_name() {
+    let e = Env::new();
+    assert_eq!(
+        e.names(&["--type", "artifact"]),
+        [
+            "Sol Ring",
+            "Alpha Card",
+            "Beta Card",
+            "Cheap Rock",
+            "Bargain Rock",
+            "Elixir of Vitality",
+            "Option Paralysis",
+            "Able Unranked",
+            "Zed Unranked"
+        ]
+    );
+    // a rank of 77 twice: Alpha before Beta however the file is ordered
+    let ranks: Vec<Value> = e.json(&["--type", "artifact"]).iter().map(|c| c["edhrec_rank"].clone()).collect();
+    assert_eq!(ranks[1], 77);
+    assert_eq!(ranks[7], Value::Null);
+}
+
+#[test]
+fn sort_name_cmc_usd() {
+    let e = Env::new();
+    assert_eq!(
+        e.names(&["--type", "artifact", "--sort", "name"]),
+        [
+            "Able Unranked",
+            "Alpha Card",
+            "Bargain Rock",
+            "Beta Card",
+            "Cheap Rock",
+            "Elixir of Vitality",
+            "Option Paralysis",
+            "Sol Ring",
+            "Zed Unranked"
+        ]
+    );
+    // cmc ascending, ties by name
+    assert_eq!(
+        e.names(&["--type", "artifact", "--sort", "cmc"]),
+        [
+            "Bargain Rock",
+            "Cheap Rock",
+            "Option Paralysis",
+            "Sol Ring",
+            "Alpha Card",
+            "Beta Card",
+            "Able Unranked",
+            "Elixir of Vitality",
+            "Zed Unranked"
+        ]
+    );
+    // price ascending, no price last (then by name), equal prices by name
+    assert_eq!(
+        e.names(&["--type", "artifact", "--sort", "usd"]),
+        [
+            "Elixir of Vitality",
+            "Cheap Rock",
+            "Option Paralysis",
+            "Sol Ring",
+            "Alpha Card",
+            "Beta Card",
+            "Able Unranked",
+            "Bargain Rock",
+            "Zed Unranked"
+        ]
+    );
+}
+
+#[test]
+fn offset_and_limit_page_through_the_sorted_list() {
+    let e = Env::new();
+    let all = e.names(&["--type", "artifact", "--limit", "100"]);
+    assert_eq!(all.len(), 9);
+    assert_eq!(e.names(&["--type", "artifact", "--limit", "2"]), &all[..2]);
+    assert_eq!(e.names(&["--type", "artifact", "--limit", "2", "--offset", "1"]), &all[1..3]);
+    assert_eq!(e.names(&["--type", "artifact", "--offset", "7"]), &all[7..]);
+    assert!(e.names(&["--type", "artifact", "--offset", "50"]).is_empty());
+    assert!(e.names(&["--type", "artifact", "--limit", "0"]).is_empty());
+    // the default limit is 30
+    assert_eq!(e.names(&[]).len(), 30);
+    // a table says there is more
+    let t = e.ok(&["--type", "artifact", "--limit", "2", "--offset", "1"]);
+    assert!(t.contains("showing 2-3 of 9") && t.contains("--offset 3"), "{t}");
+    assert!(!e.ok(&["--type", "artifact", "--limit", "100"]).contains("showing"));
+    assert!(e.ok(&["--type", "artifact", "--offset", "50"]).contains("no matches"));
+}
+
+// ------------------------------------------------------------------------------------------------ names
+
+#[test]
+fn a_shared_name_prefers_the_legal_card() {
+    let e = Env::new();
+    // the index keeps both cards under one name
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let both = idx.lookup("pick your poison");
+    assert_eq!(both.len(), 2);
+    assert_eq!(e.names(&["--name", "Pick Your Poison"]).len(), 1);
+    assert_eq!(e.json(&["--name", "Pick Your Poison"])[0]["legal"], "legal");
+    let any = e.json(&["--legal", "any", "--name", "Pick Your Poison"]);
+    assert_eq!(any.len(), 2);
+    assert_eq!(any[0]["legal"], "legal", "the legal card first, whatever the sort");
+    assert_eq!(any[1]["legal"], "not_legal");
+    let by_name = e.json(&["--legal", "any", "--name", "Pick Your Poison", "--sort", "cmc"]);
+    assert_eq!(by_name[0]["legal"], "legal");
+    assert_ne!(any[0]["oracle_text"], any[1]["oracle_text"]);
+}
+
+#[test]
+fn an_exact_name_beats_a_face_name() {
+    let e = Env::new();
+    // "Lightning Bolt" is also a face of the prepare card; only the instant comes back
+    let bolt = e.json(&["--name", "Lightning Bolt", "--legal", "any"]);
+    assert_eq!(bolt.len(), 1);
+    assert_eq!(bolt[0]["name"], "Lightning Bolt");
+    assert_eq!(bolt[0]["type_line"], "Instant");
+    // the other card is still found by its own name and by its other face
+    assert_eq!(
+        e.names(&["--name", "Emeritus of Conflict // Lightning Bolt"]),
+        ["Emeritus of Conflict // Lightning Bolt"]
+    );
+    assert_eq!(e.names(&["--name", "Emeritus of Conflict"]), ["Emeritus of Conflict // Lightning Bolt"]);
+    // and a text or type filter still sees both
+    assert_eq!(
+        e.names(&["--text", "deals 3 damage to any target"]),
+        ["Lightning Bolt", "Emeritus of Conflict // Lightning Bolt"]
+    );
+}
+
+#[test]
+fn face_names_resolve() {
+    let e = Env::new();
+    assert_eq!(e.names(&["--name", "Petty Theft"]), ["Brazen Borrower // Petty Theft"]);
+    assert_eq!(e.names(&["--name", "brazen borrower"]), ["Brazen Borrower // Petty Theft"]);
+    assert_eq!(e.names(&["--name", "Fire"]), ["Fire // Ice"]);
+    assert_eq!(e.names(&["--name", "ice"]), ["Fire // Ice"]);
+    assert_eq!(e.names(&["--name", "Agadeem, the Undercrypt"]), ["Agadeem's Awakening // Agadeem, the Undercrypt"]);
+    assert_eq!(e.names(&["--name", "Fire // Ice"]), ["Fire // Ice"]);
+}
+
+// ------------------------------------------------------------------------------------------------ meld
+
+#[test]
+fn a_meld_result_needs_meld() {
+    let e = Env::new();
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    assert_eq!(idx.lookup("Brisela, Voice of Nightmares").len(), 1, "it is indexed");
+    assert!(e.names(&["--name", "Brisela, Voice of Nightmares"]).is_empty());
+    let t = e.ok(&["--name", "Brisela, Voice of Nightmares"]);
+    assert!(t.contains("no matches") && t.contains("--meld"), "a hint that a meld result is hidden: {t}");
+    assert_eq!(e.names(&["--name", "Brisela, Voice of Nightmares", "--meld"]), ["Brisela, Voice of Nightmares"]);
+    assert!(!e.names(&["--text", "lifelink", "--limit", "500"]).contains(&"Brisela, Voice of Nightmares".to_string()));
+    assert!(e.names(&["--text", "lifelink", "--meld"]).contains(&"Brisela, Voice of Nightmares".to_string()));
+    assert_eq!(e.count(&["--meld"]), e.count(&[]) + 1);
+    let full = e.json(&["--name", "Brisela, Voice of Nightmares", "--meld", "--full"]);
+    assert_eq!(full[0]["meld_parts"], serde_json::json!(["Bruna, the Fading Light", "Gisela, the Broken Blade"]));
+}
+
+// ------------------------------------------------------------------------------------------------ --deck
+
+#[test]
+fn deck_limits_identity_and_leaves_out_the_decks_cards() {
+    let e = Env::new();
+    let all = e.json(&["--deck", "azorius", "--limit", "5000"]);
+    assert!(!all.is_empty());
+    let names: Vec<&str> = all.iter().map(|c| c["name"].as_str().unwrap()).collect();
+    for c in &all {
+        assert!(["", "W", "U", "WU"].contains(&c["identity"].as_str().unwrap()), "{c}");
+    }
+    // by name, by face name (Petty Theft is Brazen Borrower), by a split card's full name, the commander, basics
+    for gone in [
+        "Sol Ring",
+        "Brazen Borrower // Petty Theft",
+        "Fire // Ice",
+        "Counterspell",
+        "Island",
+        "Isamaru, Hound of Konda",
+    ] {
+        assert!(!names.contains(&gone), "{gone} is in the deck");
+    }
+    assert!(names.contains(&"Plains") && names.contains(&"Absorb") && names.contains(&"Command Tower"));
+    // the same count as --count, with the default legality
+    assert_eq!(e.count(&["--deck", "azorius"]), all.len());
+    // --ident overrides the deck's identity but the exclusion stays
+    let w = e.json(&["--deck", "azorius", "--ident", "W", "--limit", "5000"]);
+    assert!(w.iter().all(|c| ["", "W"].contains(&c["identity"].as_str().unwrap())));
+    assert!(w.iter().all(|c| c["name"] != "Sol Ring"));
+    assert!(w.len() < all.len());
+    // keys match in any case; the pool is searched after your decks; the commanders and `commander2` are the deck's
+    let p = e.names(&["--deck", "POOLDECK", "--limit", "5000"]);
+    for gone in ["Birds of Paradise", "Llanowar Elves", "Noble Hierarch"] {
+        assert!(!p.contains(&gone.to_string()), "{gone}");
+    }
+    assert!(p.contains(&"Primeval Titan".to_string()) == false, "banned stays out by default");
+    assert!(p.contains(&"Pick Your Poison".to_string()));
+    // a deck's identity "C" means colourless only
+    let c = e.json(&["--deck", "colorless", "--limit", "5000"]);
+    assert!(!c.is_empty() && c.iter().all(|c| c["identity"] == ""));
+    assert!(c.iter().all(|c| c["name"] != "Sol Ring"));
+    // a card in the deck does not hide a card that merely has its name as a face
+    let red = e.names(&["--deck", "red", "--limit", "5000"]);
+    assert!(!red.contains(&"Lightning Bolt".to_string()));
+    assert!(red.contains(&"Emeritus of Conflict // Lightning Bolt".to_string()));
+}
+
+#[test]
+fn an_unknown_deck_lists_the_valid_keys() {
+    let e = Env::new();
+    let m = failed_err(e.find(&["--deck", "nope"]));
+    for k in ["azorius", "mono-white", "colorless", "red", "pooldeck", "'nope'"] {
+        assert!(m.contains(k), "{m}");
+    }
+}
+
+// ------------------------------------------------------------------------------------------------ output
+
+#[test]
+fn count_prints_only_the_number_of_matches() {
+    let e = Env::new();
+    assert_eq!(e.ok(&["--type", "artifact", "--count"]), "9\n");
+    assert_eq!(
+        e.ok(&["--type", "artifact", "--count", "--limit", "2", "--offset", "5", "--json"]),
+        "9\n",
+        "paging is ignored"
+    );
+    assert_eq!(e.ok(&["--name", "nothing", "--count"]), "0\n");
+}
+
+#[test]
+fn json_has_the_documented_shape() {
+    let e = Env::new();
+    let sol = &e.json(&["--name", "Sol Ring"])[0];
+    let keys: Vec<&str> = sol.as_object().unwrap().keys().map(String::as_str).collect();
+    // serde_json sorts keys unless preserve_order is on in the workspace; compare as sets
+    let mut want = vec![
+        "name",
+        "mana_cost",
+        "cmc",
+        "type_line",
+        "identity",
+        "legal",
+        "gc",
+        "edhrec_rank",
+        "usd",
+        "oracle_text",
+        "set",
+        "released_at",
+        "rarity",
+    ];
+    let mut got = keys.clone();
+    want.sort();
+    got.sort();
+    assert_eq!(got, want);
+    assert_eq!(sol["mana_cost"], "{1}");
+    assert_eq!(sol["cmc"], 1.0);
+    assert_eq!(sol["identity"], "");
+    assert_eq!(sol["legal"], "legal");
+    assert_eq!(sol["edhrec_rank"], 1);
+    assert_eq!(sol["usd"], 1.14);
+    assert_eq!(sol["oracle_text"], "{T}: Add {C}{C}.");
+    // multi-face cards carry their faces; absent text is an empty string
+    let bb = &e.json(&["--name", "Petty Theft"])[0];
+    let faces = bb["faces"].as_array().unwrap();
+    assert_eq!(faces.len(), 2);
+    assert_eq!(faces[1]["name"], "Petty Theft");
+    let fk: Vec<&str> = faces[1].as_object().unwrap().keys().map(String::as_str).collect();
+    let mut fk = fk;
+    fk.sort();
+    assert_eq!(fk, ["mana_cost", "name", "oracle_text", "type_line"]);
+    assert_eq!(bb["oracle_text"], "");
+    assert_eq!(bb["identity"], "U");
+    // absent fields do not break a card: Command Tower has no cost, Zed Unranked no rank or price
+    assert_eq!(e.json(&["--name", "Command Tower"])[0]["mana_cost"], "");
+    let z = &e.json(&["--name", "Zed Unranked"])[0];
+    assert!(z["edhrec_rank"].is_null() && z["usd"].is_null());
+    // the identity of a multicolour card is in WUBRG order
+    assert_eq!(e.json(&["--name", "Noble Hierarch"])[0]["identity"], "WUG");
+    // nothing found: an empty array
+    assert_eq!(e.ok(&["--name", "zzz", "--json"]), "[]\n");
+}
+
+#[test]
+fn full_adds_the_rest_of_the_record() {
+    let e = Env::new();
+    let sol = &e.json(&["--name", "Sol Ring", "--full"])[0];
+    assert_eq!(sol["produced_mana"], serde_json::json!(["C"]));
+    assert_eq!(sol["oracle_id"], "00000000-0000-0000-0000-000000000001");
+    assert_eq!(sol["reserved"], false);
+    assert_eq!(sol["keywords"], serde_json::json!([]));
+    assert!(sol.get("power").is_none());
+    let jace = &e.json(&["--name", "Jace, the Mind Sculptor", "--full"])[0];
+    assert_eq!(jace["loyalty"], "3");
+    let llanowar = &e.json(&["--name", "Llanowar Elves", "--full"])[0];
+    assert_eq!((&llanowar["power"], &llanowar["toughness"]), (&Value::from("1"), &Value::from("1")));
+    // the default JSON stays slim
+    assert!(e.json(&["--name", "Sol Ring"])[0].get("oracle_id").is_none());
+    // readable text: every face and the facts
+    let t = e.ok(&["--name", "Petty Theft", "--full"]);
+    for want in [
+        "Brazen Borrower // Petty Theft",
+        "-- Petty Theft",
+        "-- Brazen Borrower",
+        "Return target nonland permanent",
+        "keywords: Flash, Flying",
+        "legal legal",
+        "oracle_id",
+    ] {
+        assert!(t.contains(want), "missing {want:?} in\n{t}");
+    }
+}
+
+#[test]
+fn the_table_has_a_header_and_one_row_per_card() {
+    let e = Env::new();
+    let t = e.ok(&["--name", "Sol Ring"]);
+    let lines: Vec<&str> = t.lines().collect();
+    assert_eq!(lines.len(), 2, "{t}");
+    for h in ["name", "cost", "type", "edhrec", "usd", "legal"] {
+        assert!(lines[0].contains(h), "{t}");
+    }
+    let cells: Vec<&str> = lines[1].split_whitespace().collect();
+    assert_eq!(cells, ["Sol", "Ring", "{1}", "Artifact", "1", "1.14", "legal"]);
+    // no rank, no price, no cost: dashes
+    let z = e.ok(&["--name", "Island", "--legal", "any"]);
+    assert!(z.lines().nth(1).unwrap().contains(" -  "), "{z}");
+    assert_eq!(e.ok(&["--name", "nothing"]), "no matches\n");
+}
+
+// ------------------------------------------------------------------------------------------------ bad input
+
+#[test]
+fn a_malformed_regex_fails_with_the_pattern_in_the_message() {
+    let e = Env::new();
+    let m = failed_err(e.find(&["--text", "("]));
+    assert!(m.contains("bad --text regex '('"), "{m}");
+    let m = failed_err(e.find(&["--text", "fine", "--text", "[a-"]));
+    assert!(m.contains("[a-"), "{m}");
+}
+
+#[test]
+fn bad_flags_and_numbers_are_usage_errors() {
+    let e = Env::new();
+    let cases: &[&[&str]] = &[
+        &["--role", "ramp"],
+        &["--digest"],
+        &["--map"],
+        &["--bogus"],
+        &["Sol Ring"],
+        &["--name"],
+        &["--limit"],
+        &["--limit", "ten"],
+        &["--limit", "-1"],
+        &["--offset", "1.5"],
+        &["--cmc", "two"],
+        &["--cmc", "<="],
+        &["--cmc", "=="],
+        &["--cmc", "nan"],
+        &["--cmc", "inf"],
+        &["--legal", "maybe"],
+        &["--sort", "price"],
+        &["--ident", "WX"],
+        &["--name", "a", "--name", "b"],
+        &["--deck", "azorius", "--deck", "red"],
+    ];
+    for args in cases {
+        let m = usage_err(e.find(args));
+        assert!(!m.is_empty(), "{args:?}");
+    }
+    assert!(usage_err(e.find(&["--role", "ramp"])).contains("--role"));
+    assert!(usage_err(e.find(&["--limit", "ten"])).contains("--limit needs a number"));
+    // a bad number does not hide behind a catalog problem: it is reported before the catalog is read
+    let r = knowledge::find(&Project::new("/nonexistent"), &["--limit".to_string(), "x".to_string()]);
+    assert!(matches!(r, Err(FindError::Usage(_))));
+}
+
+// ------------------------------------------------------------------------------------------------ the index
+
+#[test]
+fn a_bad_catalog_is_an_error() {
+    let e = Env::new();
+    let path = e.dir().join("oracle.json");
+    let good = std::fs::read_to_string(&path).unwrap();
+    let write = |s: &str| std::fs::write(&path, s).unwrap();
+    // schema
+    write(&good.replacen("\"schema\": 1", "\"schema\": 2", 1));
+    let m = failed_err(e.find(&[]));
+    assert!(m.contains("schema") && m.contains("bulk-sync"), "{m}");
+    write(&good.replacen("\"schema\": 1,", "", 1));
+    assert!(failed_err(e.find(&[])).contains("oracle.json"));
+    // truncated, not JSON, wrong count
+    write(&good[..good.len() / 2]);
+    assert!(failed_err(e.find(&[])).contains("cannot read"));
+    write("not json");
+    assert!(failed_err(e.find(&[])).contains("bulk-sync"));
+    write(&good.replacen("\"count\": 41", "\"count\": 40", 1));
+    assert!(failed_err(e.find(&[])).contains("meta.count"));
+    // unknown fields are ignored
+    write(
+        &good
+            .replacen("\"cards\"", "\"extra\": [1], \"cards\"", 1)
+            .replace("\"rarity\"", "\"future_field\": {\"a\": null}, \"rarity\""),
+    );
+    assert_eq!(e.count(&["--name", "Sol Ring"]), 1);
+    // an empty catalog is a catalog
+    write("{\"meta\": {\"schema\": 1, \"count\": 0}, \"cards\": []}");
+    assert_eq!(e.ok(&["--count"]), "0\n");
+}
+
+#[test]
+fn the_index_derives_identity_types_and_legality() {
+    let e = Env::new();
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let get = |n: &str| &idx.cards[idx.lookup(n)[0] as usize];
+    assert_eq!(get("Noble Hierarch").identity(), "WUG");
+    assert_eq!(get("Sol Ring").ident, 0);
+    assert_eq!(get("Fire // Ice").ident, 0b01010, "U (2) and R (8)");
+    assert_eq!(get("Fire // Ice").identity(), "UR");
+    assert_ne!(get("Jace, the Mind Sculptor").types & knowledge::T_PLANESWALKER, 0);
+    assert_ne!(get("Jace, the Mind Sculptor").types & knowledge::T_LEGENDARY, 0);
+    assert_ne!(get("Brazen Borrower").types & (knowledge::T_CREATURE | knowledge::T_INSTANT), 0);
+    assert_ne!(get("Agadeem's Awakening").types & knowledge::T_LAND, 0, "the back face is a land");
+    assert_ne!(get("Invasion of Zendikar").types & knowledge::T_BATTLE, 0);
+    assert_eq!(get("Primeval Titan").legal, Legal::Banned);
+    assert_eq!(get("Sol Ring").usd, Some(1.14));
+    assert_eq!(get("Zed Unranked").usd, None);
+    assert!(
+        get("Fire // Ice").text.contains("Fire deals 2 damage")
+            && get("Fire // Ice").text.contains("Tap target permanent")
+    );
+}
+
+// ------------------------------------------------------------------------------------------------ the binary
+
+fn bin() -> Command {
+    let mut c = Command::new(env!("CARGO_BIN_EXE_cardgen"));
+    c.env_remove("CARDGEN_KNOWLEDGE_DIR");
+    c
+}
+
+fn listing(dir: &Path) -> Vec<(String, u64)> {
+    let mut v = vec![];
+    fn walk(d: &Path, v: &mut Vec<(String, u64)>) {
+        for e in std::fs::read_dir(d).unwrap() {
+            let e = e.unwrap();
+            let m = e.metadata().unwrap();
+            if m.is_dir() {
+                walk(&e.path(), v);
+            } else {
+                v.push((e.path().display().to_string(), m.len()));
+            }
+        }
+    }
+    walk(dir, &mut v);
+    v.sort();
+    v
+}
+
+#[test]
+fn the_binary_exits_non_zero_with_usage_and_writes_nothing() {
+    let e = Env::new();
+    let before = listing(&e.0);
+    for args in [vec!["--role", "ramp"], vec!["--limit", "x"], vec!["--name"], vec!["--map"]] {
+        let out = bin().arg("--root").arg(&e.0).arg("find").args(&args).output().unwrap();
+        assert!(!out.status.success(), "{args:?}");
+        let err = String::from_utf8_lossy(&out.stderr);
+        assert!(err.contains("usage:") && err.contains("cardgen find"), "{args:?}: {err}");
+        assert!(out.stdout.is_empty());
+    }
+    let out = bin().arg("--root").arg(&e.0).args(["find", "--text", "("]).output().unwrap();
+    assert!(!out.status.success());
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(err.contains("bad --text regex") && !err.contains("usage:"), "{err}");
+    let out = bin().arg("--root").arg(&e.0).args(["find", "--deck", "nope"]).output().unwrap();
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("azorius"));
+    assert_eq!(listing(&e.0), before, "find is read-only");
+}
+
+#[test]
+fn the_binary_finds_a_card() {
+    let e = Env::new();
+    let out = bin().arg("--root").arg(&e.0).args(["find", "--name", "Sol Ring", "--json"]).output().unwrap();
+    assert!(out.status.success());
+    let v: Value = serde_json::from_slice(&out.stdout).unwrap();
+    assert_eq!(v.as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn the_knowledge_dir_comes_from_the_flag_then_the_environment_then_the_project() {
+    let e = Env::new();
+    // a missing catalog names bulk-sync
+    let empty = e.0.join("empty");
+    std::fs::create_dir_all(&empty).unwrap();
+    let out = bin().arg("--root").arg(&e.0).args(["find", "--data-dir"]).arg(&empty).output().unwrap();
+    assert!(!out.status.success());
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(err.contains("bulk-sync") && err.contains("empty"), "{err}");
+    // the environment variable
+    let alt = e.0.join("alt");
+    std::fs::create_dir_all(&alt).unwrap();
+    std::fs::write(
+        alt.join("oracle.json"),
+        concat!(
+            r#"{"meta": {"schema": 1, "count": 1}, "cards": [{"name": "Only Card", "cmc": 0.0, "type_line": "Land","#,
+            r#" "color_identity": [], "legalities": {"commander": "legal"}}]}"#
+        ),
+    )
+    .unwrap();
+    let out =
+        bin().env("CARDGEN_KNOWLEDGE_DIR", &alt).arg("--root").arg(&e.0).args(["find", "--json"]).output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    let v: Value = serde_json::from_slice(&out.stdout).unwrap();
+    assert_eq!(v[0]["name"], "Only Card");
+    // --data-dir beats the environment variable
+    let out = bin()
+        .env("CARDGEN_KNOWLEDGE_DIR", &alt)
+        .arg("--root")
+        .arg(&e.0)
+        .args(["find", "--count", "--data-dir"])
+        .arg(e.dir())
+        .output()
+        .unwrap();
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "37");
+    // the project's own data/knowledge by default
+    let out = bin().arg("--root").arg(&e.0).args(["find", "--count"]).output().unwrap();
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "37");
+    // a set but wrong environment variable is an error, not a silent fallback
+    let out =
+        bin().env("CARDGEN_KNOWLEDGE_DIR", &empty).arg("--root").arg(&e.0).args(["find", "--count"]).output().unwrap();
+    assert!(!out.status.success());
+}
+
+fn git(dir: &Path, args: &[&str]) {
+    let out = Command::new("git")
+        .arg("-C")
+        .arg(dir)
+        .args(["-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false"])
+        .args(args)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
+        .output()
+        .unwrap();
+    assert!(out.status.success(), "git {args:?}: {}", String::from_utf8_lossy(&out.stderr));
+}
+
+/// a worktree has `data/knowledge/` (the tracked sync.lock) but no oracle.json: it falls back to the main checkout's
+#[test]
+fn a_worktree_falls_back_to_the_main_checkouts_catalog() {
+    let e = Env::new();
+    let main = e.0.join("main");
+    std::fs::create_dir_all(main.join("data/knowledge")).unwrap();
+    std::fs::write(main.join("data/knowledge/sync.lock"), "schema=1\n").unwrap();
+    std::fs::copy(fixture("find_decks.json"), main.join("data/decks.json")).unwrap();
+    git(&main, &["init", "-q"]);
+    git(&main, &["add", "-A"]);
+    git(&main, &["commit", "-q", "-m", "x"]);
+    // the main checkout has no catalog yet: a clear error
+    let out = bin().arg("--root").arg(&main).args(["find", "--count"]).output().unwrap();
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("bulk-sync"));
+    std::fs::copy(fixture("find_oracle.json"), main.join("data/knowledge/oracle.json")).unwrap();
+    let wt = e.0.join("wt");
+    git(&main, &["worktree", "add", "-q", wt.to_str().unwrap()]);
+    assert!(wt.join("data/knowledge/sync.lock").is_file() && !wt.join("data/knowledge/oracle.json").exists());
+    for root in [&wt, &main] {
+        let out = bin().arg("--root").arg(root).args(["find", "--name", "Sol Ring", "--json"]).output().unwrap();
+        assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+        assert_eq!(serde_json::from_slice::<Value>(&out.stdout).unwrap().as_array().unwrap().len(), 1);
+    }
+    // a worktree with its own catalog uses it
+    let mut own: String = std::fs::read_to_string(fixture("find_oracle.json")).unwrap();
+    own = own.replace("\"Sol Ring\"", "\"Sol Ring Two\"");
+    std::fs::write(wt.join("data/knowledge/oracle.json"), own).unwrap();
+    let out = bin().arg("--root").arg(&wt).args(["find", "--name", "Sol Ring Two", "--count"]).output().unwrap();
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "1");
+    let _ = Command::new("git").arg("-C").arg(&main).args(["worktree", "remove", "--force"]).arg(&wt).output();
+}
+
+/// the catalog `bulk-sync` writes (here from its 51-card fixture, no network) loads and is searchable
+#[test]
+fn a_bulk_sync_catalog_loads() {
+    use cardgen::bulk::{self, Entry, Options, Remote};
+    struct None_;
+    impl Remote for None_ {
+        fn latest(&mut self) -> Result<Entry, String> {
+            Err("no network in tests".into())
+        }
+        fn download(&mut self, _: &str, _: &Path) -> Result<(), String> {
+            Err("no network in tests".into())
+        }
+    }
+    let e = Env::new();
+    let dir = e.0.join("synced");
+    let opts = Options {
+        dir: dir.clone(),
+        from_file: Some(fixture("bulk_fixture.json")),
+        min_count: 1,
+        synced: "2026-11-21T00:00:00Z".into(),
+    };
+    let out = bulk::run(&opts, &mut None_).unwrap();
+    assert!(!out.up_to_date);
+    let idx = Index::load(&dir.join("oracle.json")).unwrap();
+    assert!(idx.cards.len() > 20);
+    assert!(idx.cards.iter().all(|c| !c.raw.oracle_id.is_empty()));
+    let a: Vec<String> = ["--data-dir", dir.to_str().unwrap(), "--legal", "any", "--count"].map(String::from).to_vec();
+    let n: usize = knowledge::find(&Project::new(&e.0), &a).unwrap().trim().parse().unwrap();
+    assert!(n >= idx.cards.iter().filter(|c| !c.is_meld()).count());
+}
