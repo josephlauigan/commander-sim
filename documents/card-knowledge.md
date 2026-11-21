@@ -54,7 +54,9 @@ predicted model status without a second parser.
 **Slim record.** The cache's 15 fields stay byte-compatible; the bulk record adds `oracle_id`, `edhrec_rank`, `usd`,
 `released_at`, `set`, `rarity`, `reserved` and the meld/face extras. `set` and `released_at` describe Scryfall's chosen
 printing, not the first printing; new-card detection uses an `oracle_id` diff. Tokens, emblems, art cards, schemes,
-planes and vanguards are dropped, and so is a repeated `oracle_id`. Digital printings are **not** dropped: Scryfall
+planes, vanguards and the memorabilia `front_card` layout are dropped, and so is any card whose type line (or a
+face's) starts with `Token`, `Card` or `Dungeon` (Role tokens that have a card layout, helper cards such as
+Experience, Dungeons), and a repeated `oracle_id`. Digital printings are **not** dropped: Scryfall
 picks one representative printing per card, and for many paper staples (Mind Twist, Lotus Petal, Badlands) it is a
 Masters or Remastered set flagged `digital`, so dropping them would lose over a thousand Commander-legal cards. Banned
 and not-legal cards are kept so "why can't I play X" answers correctly, but `find` and `digest` default to legal
@@ -106,6 +108,32 @@ Each phase has command-level checks (below). They are what the adversarial revie
 | 5 | `CLAUDE.md` and `AGENTS.md` carry the same workflow section; this document is linked from `cards.md` |
 | 6 | The three failure scenarios (server already running, GPU busy, no network) leave the working tree and previous outputs untouched; a run with nothing new exits 0 |
 
+## Catalog facts that shape the later phases
+
+Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 records; 35,113 kept: 32,643 legal,
+83 banned, 2,387 not legal).
+
+- **Names are not unique.** 15 names are shared by two or more kept cards (Un-card variants, plus pairs such as Pick
+  Your Poison, Red Herring and Fast // Furious). The `find` index maps a name to a list of cards, prefers a
+  Commander-legal one, and shows all under `--legal any`.
+- **An exact full name beats a face name.** 27 face names equal another card's full name, mostly the `prepare` layout
+  (Emeritus of Conflict // Lightning Bolt) and split cards. `find --name "Lightning Bolt"` returns Lightning Bolt first,
+  and roles and digests never credit a `prepare` card as the spell it names.
+- **Fields are absent, never null.** `mana_cost` is absent on 493 records and `oracle_text` on 896 (the text is on
+  the faces); `power`, `toughness`, `loyalty`, `edhrec_rank`, `usd`, `produced_mana`, `card_faces` and the meld fields
+  are absent when they do not apply. Face `colors` is on only 986 of 1,797 faces, so identity comes from the
+  top-level `color_identity`.
+- **Meld.** Seven meld results exist, all Commander-legal. They carry `all_parts_meld` and `meld_parts`, and `find`
+  excludes them by default. Meld is matched by id or name because `all_parts` ids are printing ids.
+- **Digital printings are real cards.** Scryfall's one representative printing per card is a digital Masters set for
+  many paper staples, so the `digital` flag says nothing about playability; Commander legality does.
+- **Worktrees.** `data/knowledge/` exists in every checkout because `sync.lock` is tracked, so a worktree falls back
+  to the main checkout's store when `oracle.json` is missing, not when the directory is.
+- **Open for phase 6.** Every new bulk file rewrites the tracked `sync.lock`, which conflicts with a weekly job that
+  must not edit tracked files. The recommendation is to untrack `sync.lock` and keep the bulk `updated_at` in
+  `oracle.json` and the weekly report; JD decides when phase 6 is planned. Two concurrent `bulk-sync` runs can still
+  pair one run's oracle with the other's lock; it heals on the next run, and phase 6 adds a lock around the job.
+
 ## Limits
 
 - Role tags will miss or mislabel some cards. The recall and precision numbers are reported, not assumed.
@@ -120,7 +148,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 |---|---|---|
 | 0 Design consult (Opus) | none | done |
 | Approach doc | `knowledge-base` | written |
-| 1 `bulk-sync` | `knowledge-bulk-sync` | built; fixing a review finding |
+| 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
 | 2 `find` | `knowledge-find` | not started |
 | 3 Roles (rules + local LLM) | `knowledge-roles` | not started |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
