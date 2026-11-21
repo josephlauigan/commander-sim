@@ -175,7 +175,7 @@ optional and combine with AND.
 | Flag | Meaning |
 |---|---|
 | `--name N` | the card's name, exact; case, accents and apostrophe style do not matter (see below); a face name works too (`Petty Theft` finds Brazen Borrower). An exact full name beats a face name: `Lightning Bolt` is the instant, not the `prepare` card `Emeritus of Conflict // Lightning Bolt` that has it as a face. Several cards with one name (15 names are shared): the Commander-legal one first |
-| `--name-contains S` | substring of the full name or of any face name (same folding, but the value is not trimmed: `" of "` keeps its spaces) |
+| `--name-contains S` | substring of the full name or of any face name (same folding, but the value is not trimmed: `" of "` keeps its spaces; an empty value is a usage error) |
 | `--ident WU` | colour identity limit: the card's identity must be a **subset** of the letters (a colourless card fits any limit; `WU` admits W, U, WU and colourless). `C` or an empty value means colourless only |
 | `--legal` | Commander legality: `legal` (default), `banned`, `not_legal`, `restricted`, or `any` |
 | `--cmc '<=2'` | mana value; operators `<`, `<=`, `=`, `>=`, `>`, a plain number means `=` (quote `<` and `>` in the shell) |
@@ -240,8 +240,9 @@ cardgen find --legal any --name "Primeval Titan"                             # b
 cardgen find --gc --count
 ```
 
-For code, `knowledge.rs` exports the same engine: `Index::open`, `by_oracle_id`, `lookup`, `sort`, `deck_members`,
-`subtype_vocab`, `Query::default()` and `Card::{cost, lines, subtypes, self_names}` (`lines` numbers the Oracle lines without
+For code, `knowledge.rs` exports the same engine: `Index::open`, `by_oracle_id`, `lookup`, `search` (everything `find` does before it prints: the deck's
+identity ceiling, the deck's own cards left out, the filters, the sort), `sort`, `deck_members`, `subtype_vocab`
+(`Time Lord` is one subtype), `Query::default()` (no limit; `find` parses to 30) and `Card::{cost, lines, subtypes, self_names}` (`lines` numbers the Oracle lines without
 the `//` joiner, so evidence indices and digest gists cite the same line).
 
 `--deck KEY --count` is the size of a deck's candidate pool: the Commander-legal cards in its colours that it does not

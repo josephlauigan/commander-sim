@@ -269,3 +269,27 @@ fn json_rows_are_complete_and_ident_cannot_widen_a_deck() {
     assert!(matches!(knowledge::find(&project(), &a), Err(knowledge::FindError::Usage(_))));
     assert!(json(&["--deck", "cloud", "--ident", "W", "--limit", "5"]).len() == 5);
 }
+
+/// the one multi-word subtype is one subtype: no fake `Lord` or `Time`
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn subtype_vocab_has_time_lord_whole() {
+    let idx = Index::open(&project(), None).unwrap();
+    let vocab: std::collections::HashMap<String, usize> = idx.subtype_vocab().into_iter().collect();
+    assert!(vocab["Time Lord"] >= 29, "{}", vocab["Time Lord"]);
+    assert!(!vocab.contains_key("Lord") && !vocab.contains_key("Time"), "Lord/Time are fake subtypes");
+    assert!(vocab["Elf"] > 100);
+}
+
+/// `search` is the deck query: the ceiling, the exclusion and the same list as the CLI
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn search_matches_the_cli_for_a_deck() {
+    let idx = Index::open(&project(), None).unwrap();
+    let deck = knowledge::load_deck(&project(), "cloud").unwrap();
+    let (hits, unresolved) = idx.search(&Query::default(), Some(&deck)).unwrap();
+    assert!(unresolved.is_empty());
+    assert_eq!(hits.len(), names(&["--deck", "cloud", "--limit", "all"]).len());
+    let q = Query { ident: Some(0b00010), ..Query::default() };
+    assert!(matches!(idx.search(&q, Some(&deck)), Err(knowledge::FindError::Usage(_))));
+}

@@ -412,7 +412,7 @@ fn deck_limits_identity_and_leaves_out_the_decks_cards() {
     assert!(names.contains(&"Plains") && names.contains(&"Absorb") && names.contains(&"Command Tower"));
     // the same count as --count, with the default legality
     assert_eq!(e.count(&["--deck", "azorius"]), all.len());
-    // --ident overrides the deck's identity but the exclusion stays
+    // --ident narrows the deck's identity but the exclusion stays
     let w = e.json(&["--deck", "azorius", "--ident", "W", "--limit", "5000"]);
     assert!(w.iter().all(|c| ["", "W"].contains(&c["identity"].as_str().unwrap())));
     assert!(w.iter().all(|c| c["name"] != "Sol Ring"));
@@ -1083,7 +1083,8 @@ fn the_cost_of_a_card_without_its_own_is_its_face_costs() {
     mdfc.as_object_mut().unwrap().remove("mana_cost");
     mdfc["type_line"] = serde_json::json!("Creature — Human // Sorcery");
     mdfc["card_faces"] = serde_json::json!([
-        {"name": "Front", "mana_cost": "{2}{W}", "type_line": "Creature — Human", "oracle_text": "Front line one.\nFront line two."},
+        {"name": "Front", "mana_cost": "{2}{W}", "type_line": "Creature — Human",
+         "oracle_text": "Front line one.\nFront line two."},
         {"name": "Back", "mana_cost": "{1}{R}", "type_line": "Sorcery", "oracle_text": "Back line."}]);
     let mut land_back = rec("Spell // Land", "l");
     land_back.as_object_mut().unwrap().remove("mana_cost");
@@ -1161,7 +1162,7 @@ fn the_index_api_for_later_phases() {
     assert_eq!(sorted, by_find);
     // Query::default: legal only, EDHREC, no limit
     let q = Query::default();
-    assert_eq!((q.sort, q.limit, q.offset), (knowledge::Sort::Edhrec, Some(usize::MAX), 0));
+    assert_eq!((q.sort, q.limit, q.offset), (knowledge::Sort::Edhrec, usize::MAX, 0));
     let hits = idx.matches(&q, None, &[], &[]).unwrap();
     assert_eq!(hits.len(), 37);
     // ident helpers
@@ -1216,7 +1217,10 @@ fn a_named_card_the_filters_removed_says_why() {
     // banned
     let t = e.notes(&["--name", "Primeval Titan", "--json"]);
     assert_eq!(t.out, "[]\n");
-    assert_eq!(t.notes, ["(1 card(s) named Primeval Titan exist outside these filters: banned; try --legal any)"]);
+    assert_eq!(
+        t.notes,
+        ["(1 card(s) named Primeval Titan exist outside these filters: legality banned; try --legal any)"]
+    );
     assert!(e.ok(&["--name", "Primeval Titan"]).ends_with("try --legal any)\n"));
     // a deck's own card, and the identity
     let t = e.notes(&["--name", "Sol Ring", "--deck", "azorius", "--json"]);
@@ -1338,4 +1342,133 @@ fn git_environment_does_not_redirect_the_worktree_fallback() {
         .unwrap();
     assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "1", "{}", String::from_utf8_lossy(&out.stderr));
     let _ = Command::new("git").arg("-C").arg(&main).args(["worktree", "remove", "--force"]).arg(&wt).output();
+}
+
+// ------------------------------------------------------------------------------------------------ round 4
+
+fn typed(name: &str, id: &str, type_line: &str) -> Value {
+    let mut c = rec(name, id);
+    c["type_line"] = serde_json::json!(type_line);
+    c
+}
+
+#[test]
+fn a_two_word_subtype_is_one_subtype() {
+    let cards = vec![
+        typed("The Doctor", "a", "Legendary Creature — Time Lord Doctor"),
+        typed("Another Lord", "b", "Creature — Time Lord"),
+        typed("A Lord", "c", "Creature — Lord Time"),
+        typed("Elf Time Lord", "d", "Creature — Elf Time Lord Wizard // Instant — Time Lord"),
+        typed("Plain", "e", "Artifact"),
+    ];
+    let e = Env::with_cards(cards, serde_json::json!({"mine": [], "pool": []}));
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let get = |n: &str| &idx.cards[idx.lookup(n)[0] as usize];
+    assert_eq!(get("The Doctor").subtypes(), ["Time Lord", "Doctor"]);
+    assert_eq!(get("Another Lord").subtypes(), ["Time Lord"]);
+    assert_eq!(get("A Lord").subtypes(), ["Lord", "Time"], "the words alone are not the subtype");
+    assert_eq!(get("Elf Time Lord").subtypes(), ["Elf", "Time Lord", "Wizard"], "each once across faces");
+    let vocab: std::collections::HashMap<String, usize> = idx.subtype_vocab().into_iter().collect();
+    assert_eq!(vocab["Time Lord"], 3);
+    assert_eq!(vocab["Lord"], 1, "only the card that has the word alone");
+    assert_eq!(vocab["Time"], 1);
+    assert!(knowledge::MULTI_WORD_SUBTYPES.contains(&"Time Lord"));
+}
+
+#[test]
+fn search_applies_the_deck_ceiling_the_exclusion_and_the_order() {
+    let e = Env::new();
+    let project = Project::new(&e.0);
+    let idx = Index::open(&project, Some(&e.dir())).unwrap();
+    let azorius = knowledge::load_deck(&project, "azorius").unwrap();
+    let mono = knowledge::load_deck(&project, "mono-white").unwrap();
+    // the ceiling, the exclusion, the unresolved names, EDHREC order
+    let (hits, unresolved) = idx.search(&Query::default(), Some(&azorius)).unwrap();
+    assert_eq!(unresolved, ["Not In Catalog"]);
+    let names: Vec<&str> = hits.iter().map(|i| idx.cards[*i as usize].raw.name.as_str()).collect();
+    assert_eq!(
+        names.iter().map(|n| n.to_string()).collect::<Vec<_>>(),
+        e.names(&["--deck", "azorius", "--limit", "all"])
+    );
+    assert!(!names.contains(&"Sol Ring") && !names.contains(&"Counterspell"));
+    assert!(hits.iter().all(|i| idx.cards[*i as usize].ident & !0b00011 == 0));
+    let mut resorted = hits.clone();
+    idx.sort(&mut resorted, knowledge::Sort::Edhrec);
+    assert_eq!(resorted, hits);
+    // --ident narrows
+    let q = Query { ident: Some(0b00001), ..Query::default() };
+    let (w, _) = idx.search(&q, Some(&azorius)).unwrap();
+    assert!(!w.is_empty() && w.len() < hits.len());
+    assert!(w.iter().all(|i| idx.cards[*i as usize].ident & !0b00001 == 0));
+    // ... and never widens: a usage error, whatever else the query says
+    let q = Query { ident: Some(0b00010), ..Query::default() };
+    let m = usage_err(idx.search(&q, Some(&mono)).map(|_| String::new()));
+    assert_eq!(m, "--ident U is outside deck mono-white's identity W");
+    let q = Query { ident: Some(0b11111), ..Query::default() };
+    assert!(matches!(idx.search(&q, Some(&azorius)), Err(FindError::Usage(_))));
+    // without a deck the identity is the query's own, and limit/offset are not applied
+    let q = Query { ident: Some(0b00010), limit: 1, offset: 3, ..Query::default() };
+    let (u, none) = idx.search(&q, None).unwrap();
+    assert!(none.is_empty() && u.len() > 5);
+    // a bad regex is a failure, text filters apply
+    let q = Query { texts: vec!["(".into()], ..Query::default() };
+    assert!(matches!(idx.search(&q, None), Err(FindError::Failed(_))));
+    let q = Query { texts: vec!["counter target".into()], ..Query::default() };
+    assert!(idx.search(&q, None).unwrap().0.len() >= 5);
+    // a deck whose identity cannot be read
+    let mut bad = azorius.clone();
+    bad.ident = "X".into();
+    assert!(matches!(idx.search(&Query::default(), Some(&bad)), Err(FindError::Failed(_))));
+    // find_with_notes uses it: same list
+    assert_eq!(
+        e.names(&["--deck", "mono-white", "--limit", "all"]).len(),
+        idx.search(&Query::default(), Some(&mono)).unwrap().0.len()
+    );
+}
+
+#[test]
+fn a_deck_listing_a_face_name_excludes_the_card_when_it_is_in_identity() {
+    let mut split = typed("Lumen // Umbra", "s", "Instant // Instant");
+    split["color_identity"] = serde_json::json!(["W", "U"]);
+    split["card_faces"] = serde_json::json!([
+        {"name": "Lumen", "type_line": "Instant", "oracle_text": "Gain 2 life."},
+        {"name": "Umbra", "type_line": "Instant", "oracle_text": "Draw a card."}]);
+    let decks = serde_json::json!({"mine": [
+        {"key": "wu", "ident": "WU", "commander": "Plain", "cards": ["Umbra"]},
+        {"key": "wu2", "ident": "WU", "commander": "Plain", "cards": []}], "pool": []});
+    let e = Env::with_cards(vec![split, rec("Plain", "p"), rec("Other", "o")], decks);
+    assert_eq!(e.names(&["--deck", "wu", "--limit", "all"]), ["Other"]);
+    assert_eq!(e.names(&["--deck", "wu2", "--limit", "all", "--sort", "name"]), ["Lumen // Umbra", "Other"]);
+}
+
+#[test]
+fn a_named_card_note_lists_every_reason() {
+    let e = Env::new();
+    // banned and outside the deck's identity: both in one note
+    let t = e.notes(&["--deck", "mono-white", "--name", "Primeval Titan", "--count"]);
+    assert_eq!(
+        t.notes,
+        [concat!(
+            "(1 card(s) named Primeval Titan exist outside these filters: ",
+            "legality banned / outside the identity W; try --legal any)"
+        )]
+    );
+    // a deck's own card that is also outside the identity
+    let t = e.notes(&["--deck", "azorius", "--name", "Lightning Bolt", "--count"]);
+    assert_eq!(t.notes.len(), 2, "the unresolved deck name is the other note: {:?}", t.notes);
+    assert!(t.notes[1].contains("outside the identity WU") && !t.notes[1].contains("legality"), "{:?}", t.notes);
+    // the legality is worded, not a bare "legal"
+    let t = e.notes(&["--legal", "banned", "--name", "Sol Ring", "--count"]);
+    assert_eq!(t.notes, ["(1 card(s) named Sol Ring exist outside these filters: legality legal; try --legal any)"]);
+    // a card that is only in the deck
+    let t = e.notes(&["--deck", "mono-white", "--name", "Swords to Plowshares", "--count"]);
+    assert_eq!(t.notes, ["(1 card(s) named Swords to Plowshares exist outside these filters: in deck mono-white)"]);
+}
+
+#[test]
+fn an_empty_name_contains_is_a_usage_error() {
+    let e = Env::new();
+    assert!(usage_err(e.find(&["--name-contains", ""])).contains("--name-contains needs some text"));
+    // a space is a value
+    assert!(!e.names(&["--name-contains", " "]).is_empty());
 }

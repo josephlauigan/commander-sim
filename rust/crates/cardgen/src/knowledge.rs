@@ -161,6 +161,9 @@ const TYPE_WORDS: [(&str, u16); 9] = [
     ("legendary", T_LEGENDARY),
 ];
 
+/// The subtypes that are two words (the catalog has one: `Time Lord`, on 29 legal cards).
+pub const MULTI_WORD_SUBTYPES: [&str; 1] = ["Time Lord"];
+
 const COLORS: [char; 5] = ['W', 'U', 'B', 'R', 'G'];
 
 fn is_combining(c: char) -> bool {
@@ -325,16 +328,27 @@ impl Card {
             .collect()
     }
 
-    /// The subtypes: the words after the `—` of the type line of each face, in order, each once.
+    /// The subtypes: the words after the `—` of the type line of each face, in order, each once. A subtype of two
+    /// words (`Time Lord`, see [`MULTI_WORD_SUBTYPES`]) is one subtype.
     pub fn subtypes(&self) -> Vec<&str> {
         let mut out: Vec<&str> = vec![];
         for line in self.raw.type_line.split(" // ") {
-            if let Some((_, subs)) = line.split_once('—') {
-                for w in subs.split_whitespace() {
-                    if !out.contains(&w) {
-                        out.push(w);
-                    }
+            let Some((_, subs)) = line.split_once('—') else { continue };
+            let words: Vec<&str> = subs.split_whitespace().collect();
+            let mut i = 0;
+            while i < words.len() {
+                let multi = MULTI_WORD_SUBTYPES.iter().find(|m| {
+                    let parts: Vec<&str> = m.split(' ').collect();
+                    words[i..].starts_with(&parts)
+                });
+                let (sub, n) = match multi {
+                    Some(m) => (*m, m.split(' ').count()),
+                    None => (words[i], 1),
+                };
+                if !out.contains(&sub) {
+                    out.push(sub);
                 }
+                i += n;
             }
         }
         out
@@ -592,7 +606,7 @@ pub struct Query {
     pub gc: bool,
     pub deck: Option<String>,
     pub sort: Sort,
-    pub limit: Option<usize>,
+    pub limit: usize,
     pub offset: usize,
     pub count: bool,
     pub json: bool,
@@ -645,7 +659,7 @@ impl Default for Query {
             gc: false,
             deck: None,
             sort: Sort::Edhrec,
-            limit: Some(usize::MAX),
+            limit: usize::MAX,
             offset: 0,
             count: false,
             json: false,
@@ -658,7 +672,7 @@ impl Default for Query {
 
 impl Query {
     pub fn parse(args: &[String]) -> Result<Query, FindError> {
-        let mut q = Query { limit: Some(DEFAULT_LIMIT), ..Query::default() };
+        let mut q = Query { limit: DEFAULT_LIMIT, ..Query::default() };
         let mut seen: Vec<&str> = vec![];
         let mut i = 0;
         while i < args.len() {
@@ -684,7 +698,12 @@ impl Query {
                     seen.push(a);
                     match a {
                         "--name" => q.name = Some(v.clone()),
-                        "--name-contains" => q.name_contains = Some(fold_raw(v)),
+                        "--name-contains" => {
+                            if v.is_empty() {
+                                return usage("--name-contains needs some text, got ''");
+                            }
+                            q.name_contains = Some(fold_raw(v))
+                        }
                         "--ident" => q.ident = Some(parse_ident(v).or_else(usage)?),
                         "--legal" => {
                             q.legal = match v.as_str() {
@@ -721,10 +740,10 @@ impl Query {
                                 _ => return usage(format!("--sort takes edhrec, name, cmc or usd, got '{v}'")),
                             }
                         }
-                        "--limit" if v == "all" => q.limit = Some(usize::MAX),
+                        "--limit" if v == "all" => q.limit = usize::MAX,
                         "--limit" => match v.parse() {
                             Ok(0) => return usage("--limit 0 shows nothing; use --count for the number of matches"),
-                            Ok(n) => q.limit = Some(n),
+                            Ok(n) => q.limit = n,
                             Err(_) => return usage(format!("--limit needs a number or 'all', got '{v}'")),
                         },
                         "--offset" => match v.parse() {
@@ -1127,23 +1146,25 @@ pub fn find(project: &Project, args: &[String]) -> Result<String, FindError> {
     find_with_notes(project, args).map(|o| o.stdout())
 }
 
-/// why a card that `--name` found is not in the result
-fn why_filtered(c: &Card, i: u32, q: &Query, ident: Option<u8>, exclude: &[bool]) -> &'static str {
+/// every reason a card that `--name` found is not in the result
+fn why_filtered(c: &Card, i: u32, q: &Query, ident: Option<u8>, exclude: &[bool], deck: Option<&Deck>) -> Vec<String> {
+    let mut why = vec![];
     if !Index::legal_ok(c, q) {
-        return c.legal.as_str();
+        why.push(format!("legality {}", c.legal.as_str()));
     }
     if exclude.get(i as usize).copied().unwrap_or(false) {
-        return "in the deck";
+        why.push(format!("in deck {}", deck.map_or("", |d| &d.key)));
     }
-    if ident.is_some_and(|l| c.ident & !l != 0) {
-        return "outside the identity";
+    if let Some(l) = ident.filter(|l| c.ident & !l != 0) {
+        why.push(format!("outside the identity {}", if l == 0 { "C".to_string() } else { ident_string(l) }));
     }
-    "other filters"
+    if why.is_empty() {
+        why.push("other filters".into());
+    }
+    why
 }
 
-/// `cardgen find` with its notes kept apart from the output.
-pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput, FindError> {
-    let q = Query::parse(args)?;
+fn compile_texts(q: &Query) -> Result<Vec<Regex>, FindError> {
     let mut regexes = vec![];
     for t in &q.texts {
         // case-insensitive unless the pattern turns it off with (?-i)
@@ -1151,24 +1172,49 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         Regex::new(t).map_err(bad)?; // check the pattern as typed, so an error position is the user's
         regexes.push(Regex::new(&format!("(?i){t}")).map_err(bad)?);
     }
+    Ok(regexes)
+}
+
+/// The identity limit a query runs under. A deck's identity is a ceiling: `--ident` may narrow it, never widen it (a
+/// usage error), and an unreadable deck identity is an error.
+pub fn effective_ident(q: &Query, deck: Option<&Deck>) -> Result<Option<u8>, FindError> {
+    let Some(d) = deck else { return Ok(q.ident) };
+    let limit = deck_ident(d).map_err(FindError::Failed)?;
+    if let Some(given) = q.ident.filter(|g| g & !limit != 0) {
+        let name = |b: u8| if b == 0 { "C".to_string() } else { ident_string(b) };
+        return usage(format!("--ident {} is outside deck {}'s identity {}", name(given), d.key, name(limit)));
+    }
+    Ok(Some(q.ident.unwrap_or(limit)))
+}
+
+impl Index {
+    /// Everything `find` does before it prints, so a program (the digest) cannot re-implement the deck's identity
+    /// ceiling: compiles the `--text` patterns, applies the identity limit ([`effective_ident`]), leaves out the deck's
+    /// own cards ([`Index::deck_members`]), filters ([`Index::matches`]) and sorts. `deck` is the deck for the query
+    /// (the caller loads it; `q.deck` is not read). Returns the card indices in order and the deck names that match no
+    /// card. `q.limit` and `q.offset` are not applied.
+    pub fn search(&self, q: &Query, deck: Option<&Deck>) -> Result<(Vec<u32>, Vec<String>), FindError> {
+        let regexes = compile_texts(q)?;
+        let ident = effective_ident(q, deck)?;
+        let (exclude, unresolved) = match deck {
+            Some(d) => self.deck_members(d),
+            None => (vec![false; self.cards.len()], vec![]),
+        };
+        let mut hits = self.matches(q, ident, &exclude, &regexes)?;
+        let name_query = q.name.is_some();
+        hits.sort_by(|a, b| self.order(*a, *b, q.sort, name_query));
+        Ok((hits, unresolved))
+    }
+}
+
+/// `cardgen find` with its notes kept apart from the output.
+pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput, FindError> {
+    let q = Query::parse(args)?;
+    compile_texts(&q)?; // a bad pattern is reported before the catalog is read
     let deck = q.deck.as_deref().map(|k| load_deck(project, k)).transpose()?;
-    // a deck's identity is a ceiling: --ident may narrow it, never widen it
-    let ident = match &deck {
-        Some(d) => {
-            let limit = deck_ident(d).map_err(FindError::Failed)?;
-            if let Some(given) = q.ident.filter(|g| g & !limit != 0) {
-                let name = |b: u8| if b == 0 { "C".to_string() } else { ident_string(b) };
-                return usage(format!("--ident {} is outside deck {}'s identity {}", name(given), d.key, name(limit)));
-            }
-            Some(q.ident.unwrap_or(limit))
-        }
-        None => q.ident,
-    };
+    let ident = effective_ident(&q, deck.as_ref())?;
     let index = Index::open(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
-    let (exclude, unresolved) = match &deck {
-        Some(d) => index.deck_members(d),
-        None => (vec![false; index.cards.len()], vec![]),
-    };
+    let (hits, unresolved) = index.search(&q, deck.as_ref())?;
     let mut notes: Vec<String> = vec![];
     if let (Some(d), false) = (&deck, unresolved.is_empty()) {
         let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
@@ -1180,30 +1226,28 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
             shown.join(", ")
         ));
     }
-    let mut hits = index.matches(&q, ident, &exclude, &regexes)?;
     let notes_on_stderr = q.json || q.count;
-    let named_but_filtered = |notes: &mut Vec<String>, empty: bool| {
-        let (Some(n), true) = (&q.name, empty) else { return };
+    let exclude = || match &deck {
+        Some(d) => index.deck_members(d).0,
+        None => vec![false; index.cards.len()],
+    };
+    // a name that matched cards the filters removed: say why, for every such card
+    let named_but_filtered = |notes: &mut Vec<String>| {
+        let Some(n) = &q.name else { return };
         let found = index.lookup(n);
         if found.is_empty() {
             return;
         }
-        let mut why: Vec<&str> = vec![];
+        let exclude = exclude();
+        let mut why: Vec<String> = vec![];
         for &i in found {
-            let w = why_filtered(&index.cards[i as usize], i, &q, ident, &exclude);
-            if !why.contains(&w) {
-                why.push(w);
+            for w in why_filtered(&index.cards[i as usize], i, &q, ident, &exclude, deck.as_ref()) {
+                if !why.contains(&w) {
+                    why.push(w);
+                }
             }
         }
-        let hint = if why.iter().any(|w| ["legal", "banned", "not_legal", "restricted", "unknown"].contains(w)) {
-            "; try --legal any"
-        } else {
-            ""
-        };
-        let in_deck = |w: &str| {
-            if w == "in the deck" { format!("in deck {}", deck.as_ref().map_or("", |d| &d.key)) } else { w.to_string() }
-        };
-        let why: Vec<String> = why.iter().map(|w| in_deck(w)).collect();
+        let hint = if why.iter().any(|w| w.starts_with("legality ")) { "; try --legal any" } else { "" };
         notes.push(format!(
             "({} card(s) named {n} exist outside these filters: {}{hint})",
             found.len(),
@@ -1211,22 +1255,22 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         ));
     };
     if q.count {
-        named_but_filtered(&mut notes, hits.is_empty());
+        if hits.is_empty() {
+            named_but_filtered(&mut notes);
+        }
         return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr });
     }
-    let name_query = q.name.is_some();
-    hits.sort_by(|a, b| index.order(*a, *b, q.sort, name_query));
     let total = hits.len();
-    let limit = q.limit.unwrap_or(DEFAULT_LIMIT);
-    let shown: Vec<&Card> = hits.iter().skip(q.offset).take(limit).map(|i| &index.cards[*i as usize]).collect();
+    let shown: Vec<&Card> = hits.iter().skip(q.offset).take(q.limit).map(|i| &index.cards[*i as usize]).collect();
     let end = q.offset.saturating_add(shown.len());
     if !shown.is_empty() && end < total {
         notes.push(format!("(showing {}-{end} of {total}; --offset {end} or --limit all)", q.offset + 1));
     }
-    if shown.is_empty() {
-        named_but_filtered(&mut notes, total == 0);
-        if total == 0 && !q.meld && q.name.is_none() {
-            let hidden = index.matches(&Query { meld: true, ..q.clone() }, ident, &exclude, &regexes)?;
+    if shown.is_empty() && total == 0 {
+        named_but_filtered(&mut notes);
+        if !q.meld && q.name.is_none() {
+            let regexes = compile_texts(&q)?;
+            let hidden = index.matches(&Query { meld: true, ..q.clone() }, ident, &exclude(), &regexes)?;
             if !hidden.is_empty() {
                 notes.push(format!("({} meld result(s) are hidden; add --meld)", hidden.len()));
             }
