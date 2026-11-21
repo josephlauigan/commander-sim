@@ -910,14 +910,13 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         }
     }
     // the engine's own "when this dies" triggers happen once more for each Teysa Karlov, Drivnod or Gandalf the White
-    let times = 1 + repl::trigger_copies(g, p, "dies", Some(m)).max(0);
     if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
-        for _ in 0..times {
+        for _ in 0..dies_times(g, p, m) {
             crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
         }
     }
     if creature && g.perm(m).data.truthy(DataKey::DemonGift) {
-        for _ in 0..times {
+        for _ in 0..dies_times(g, p, m) {
             crate::impls::t45_edgar::demon_dies(g, m)?; // --- Tiers 4/5 (edgar): Clavileño's gift
         }
     }
@@ -925,7 +924,7 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }
     if card_tag_str(g, m, Tag::Fill) == Some("stitcher") {
-        for _ in 0..times {
+        for _ in 0..dies_times(g, p, m) {
             mill(g, p, 3)?;
         }
     }
@@ -945,6 +944,12 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         }
     }
     Ok(())
+}
+
+/// how many times a "when a creature dies" trigger of p's happens for m dying: once, and once more for each Teysa Karlov,
+/// Drivnod or Gandalf the White of p's
+fn dies_times(g: &Game, p: PlayerId, m: PermId) -> i32 {
+    1 + repl::trigger_copies(g, p, "dies", Some(m)).max(0)
 }
 
 fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
@@ -990,25 +995,24 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     if creature {
         for q in g.opps(p).collect::<Vec<_>>() {
             // each of their triggers happens once more per Teysa Karlov, Drivnod or Gandalf the White of theirs
-            let times = 1 + repl::trigger_copies(g, q, "dies", Some(m)).max(0);
             if has(g, q, Tag::Wurmdrain) {
                 let src = find(g, q, Tag::Wurmdrain)[0];
                 let name = format!("{} loses 2 life", g.player(p).name);
-                for _ in 0..times {
+                for _ in 0..dies_times(g, q, m) {
                     if trigger_window(g, q, Some(src), &name, None)? {
                         lose_life(g, p, 2, Some(q), "drain", None)?; // Massacre Wurm
                     }
                 }
             }
             for h in find(g, q, Tag::Heir) {
-                for _ in 0..times {
+                for _ in 0..dies_times(g, q, m) {
                     repl::put_plus(g, h, 1); // Sephiroth, Planet's Heir
                 }
             }
         }
     }
     if card_tag(g, m, Tag::Wurmcoil) {
-        for _ in 0..1 + repl::trigger_copies(g, p, "dies", Some(m)).max(0) {
+        for _ in 0..dies_times(g, p, m) {
             if !trigger_window(g, p, Some(m), "two 3/3 Wurms", Some(5.0))? {
                 continue;
             }

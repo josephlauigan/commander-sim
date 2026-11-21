@@ -148,7 +148,9 @@ fn note_copier_leaving(g: &mut Game, m: PermId) {
         !x.phased && !x.neutered && matches!(x.name, "Gandalf the White" | "Teysa Karlov" | "Drivnod, Carnage Dominus")
     };
     let batch = g.cur_batch.unwrap_or(0);
-    let gandalf_live = g.perms.iter().any(|x| x.on_bf && x.name == "Gandalf the White" && copier(x));
+    // (a copier is card code, so it is in `g.hooks` while it is on the battlefield)
+    let gandalf_live =
+        g.hooks.iter().any(|&h| g.perm(h).on_bf && g.perm(h).name == "Gandalf the White" && copier(g.perm(h)));
     let left_with = g.cur_batch.is_some()
         && g.left_copiers
             .iter()
