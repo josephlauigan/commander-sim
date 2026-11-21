@@ -1352,8 +1352,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.entered.push((st, m));
     crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     let creature = g.db.get(cd).creature;
-    // (Hushbringer silences what the creature entering triggers, not how it enters: `enter_silenced`)
-    let quiet = g.skip_etb || (creature && cardcode::tidebinder_response(g, p, m)?);
+    // (Hushbringer silences what the creature entering triggers, not how it enters: `enter_silenced`; there is no enters
+    // trigger for Tishana's Tidebinder to counter then)
+    let quiet = g.skip_etb || (creature && !repl::hushed(g) && cardcode::tidebinder_response(g, p, m)?);
     if quiet {
         // an enchantment's own enters hook still runs (it sets itself up)
         let d = g.db.get(cd);
