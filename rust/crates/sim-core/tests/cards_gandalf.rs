@@ -8,7 +8,7 @@ use play_common::*;
 use sim_core::ai::brain;
 use sim_core::engine::{cast, zones};
 use sim_core::human::{human, legal};
-use sim_core::state::{Ctx, Step};
+use sim_core::state::{Ctx, DataKey, Step, Val};
 
 const GANDALF: &str = "Gandalf the White";
 
@@ -315,4 +315,344 @@ fn teysa_and_drivnod_read_none_as_not_a_creature() {
     assert_eq!(total_trigger_copies(&g, P0, "dies", Some(tok)), 2, "a creature token dying");
     assert_eq!(total_trigger_copies(&g, P0, "dies", Some(ring)), 0, "an artifact that is not a creature");
     assert_eq!(total_trigger_copies(&g, P0, "dies", None), 0, "an artifact token put into a graveyard (a Treasure)");
+}
+
+// ------------------------------------------------------------------ leaving: one additional time
+const TEYSA: &str = "Teysa Karlov";
+const VONDAM: &str = "Syr Vondam, Sunstar Exemplar";
+const DELNEY: &str = "Delney, Streetwise Lookout";
+
+/// the triggers of `src` waiting in the queue (nothing resolves while a resolution is held)
+fn waiting(g: &Game, src: PermId) -> usize {
+    g.trig_queue.iter().filter(|t| t.src == Some(src)).count()
+}
+
+fn tokens_of(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).token).count()
+}
+
+/// Syr Vondam with Gandalf, then a creature of yours: (counters on Vondam, life you gained) after `leave` takes it away
+fn vondam_sees(leave: fn(&mut Game, PermId), name: &str) -> (i32, i32) {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let v = perm(&mut g, P0, VONDAM);
+    let x = perm(&mut g, P0, name);
+    let life = g.player(P0).life;
+    leave(&mut g, x);
+    (counters(&g, v), g.player(P0).life - life)
+}
+
+#[test]
+fn a_legendary_creature_dying_triggers_vondam_twice() {
+    let die = |g: &mut Game, m| zones::die(g, m, "destroy").unwrap();
+    assert_eq!(vondam_sees(die, "Tymna the Weaver"), (2, 2), "a legendary creature dies: 1 + Gandalf");
+    assert_eq!(vondam_sees(die, "Mother of Runes"), (1, 1), "a plain creature dies");
+}
+
+#[test]
+fn a_legendary_creature_exiled_triggers_vondam_twice() {
+    let exile = |g: &mut Game, m| zones::exile_perm(g, m).unwrap();
+    assert_eq!(vondam_sees(exile, "Tymna the Weaver"), (2, 2), "put into exile: 1 + Gandalf");
+    assert_eq!(vondam_sees(exile, "Mother of Runes"), (1, 1), "a plain creature exiled");
+}
+
+/// Skyclave Apparition that has exiled Phyrexian Arena (mana value 3): the Illusions its owner's opponent gets
+fn skyclave_after(g: &mut Game, legendary: bool) -> PermId {
+    let arena = perm(g, P1, "Phyrexian Arena");
+    let sky = perm(g, P0, "Skyclave Apparition");
+    assert!(!g.perm(arena).on_bf, "exiled by the Apparition");
+    if legendary {
+        g.perm_mut(sky).data.set(DataKey::Legendary, Val::Bool(true));
+    }
+    sky
+}
+
+#[test]
+fn a_legendary_permanent_that_leaves_without_dying_triggers_its_own_leaves_ability_twice() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let sky = skyclave_after(&mut g, true);
+    let before = tokens_of(&g, P1);
+    zones::bounce(&mut g, sky).unwrap();
+    assert_eq!(tokens_of(&g, P1) - before, 2, "a legendary Apparition returned to hand: 1 + Gandalf");
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let sky = skyclave_after(&mut g, false);
+    let before = tokens_of(&g, P1);
+    zones::bounce(&mut g, sky).unwrap();
+    assert_eq!(tokens_of(&g, P1) - before, 1, "a plain Apparition");
+}
+
+#[test]
+fn a_creature_that_dies_triggers_its_own_leaves_ability_twice_with_teysa() {
+    let mut g = mine();
+    perm(&mut g, P0, TEYSA);
+    let sky = skyclave_after(&mut g, false);
+    let before = tokens_of(&g, P1);
+    zones::die(&mut g, sky, "destroy").unwrap();
+    assert_eq!(tokens_of(&g, P1) - before, 2, "a leaves trigger of a dying creature is a dies trigger: 1 + Teysa");
+}
+
+#[test]
+fn dour_port_mage_draws_twice_for_a_legendary_creature_that_leaves_without_dying() {
+    for (name, want) in [("Tymna the Weaver", 2), ("Mother of Runes", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, GANDALF);
+        let pm = perm(&mut g, P0, "Dour Port-Mage");
+        let x = perm(&mut g, P0, name);
+        g.resolving = 1;
+        zones::bounce(&mut g, x).unwrap();
+        assert_eq!(waiting(&g, pm), want, "{name} returned to hand");
+        g.trig_queue.clear();
+        g.resolving = 0;
+    }
+}
+
+#[test]
+fn chromatic_star_put_into_a_graveyard_draws_twice_with_gandalf() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let star = perm(&mut g, P0, "Chromatic Star");
+    let hand = g.player(P0).hand.len();
+    zones::die(&mut g, star, "destroy").unwrap();
+    assert_eq!(g.player(P0).hand.len() - hand, 2, "an artifact put into a graveyard from the battlefield: 1 + Gandalf");
+}
+
+#[test]
+fn nim_deathmantle_triggers_twice_for_a_creature_dying_with_teysa() {
+    let mut g = mine();
+    perm(&mut g, P0, TEYSA);
+    let nim = perm(&mut g, P0, "Nim Deathmantle");
+    let x = perm(&mut g, P0, "Mother of Runes");
+    g.resolving = 1;
+    zones::die(&mut g, x, "destroy").unwrap();
+    assert_eq!(waiting(&g, nim), 2, "a nontoken creature put into your graveyard: 1 + Teysa");
+    g.trig_queue.clear();
+    g.resolving = 0;
+}
+
+#[test]
+fn titania_makes_two_elementals_for_a_legendary_land_put_into_a_graveyard_with_gandalf() {
+    for (land, want) in [("Gaea's Cradle", 2), ("Plains", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, GANDALF);
+        perm(&mut g, P0, "Titania, Protector of Argoth");
+        let l = lands(&mut g, P0, land, 1, false)[0];
+        let before = tokens_of(&g, P0);
+        sim_core::impls::fixes::destroy_land(&mut g, P0, l).unwrap();
+        assert_eq!(tokens_of(&g, P0) - before, want, "{land} destroyed");
+    }
+}
+
+#[test]
+fn wurmcoil_engine_makes_four_wurms_when_it_dies_with_gandalf_or_teysa() {
+    for copier in [GANDALF, TEYSA] {
+        let mut g = mine();
+        perm(&mut g, P0, copier);
+        let w = perm(&mut g, P0, "Wurmcoil Engine");
+        let before = tokens_of(&g, P0);
+        zones::die(&mut g, w, "destroy").unwrap();
+        assert_eq!(tokens_of(&g, P0) - before, 4, "an artifact creature dies: 1 + {copier}");
+    }
+}
+
+#[test]
+fn an_opponents_massacre_wurm_drains_twice_for_a_legendary_creature_with_its_controllers_gandalf() {
+    for (name, want) in [("Tymna the Weaver", 4), ("Mother of Runes", 2)] {
+        let mut g = mine();
+        perm(&mut g, P1, "Massacre Wurm");
+        perm(&mut g, P1, GANDALF);
+        let x = perm(&mut g, P0, name);
+        let life = g.player(P0).life;
+        zones::die(&mut g, x, "destroy").unwrap();
+        assert_eq!(life - g.player(P0).life, want, "{name} dies");
+    }
+}
+
+#[test]
+fn a_sacrifice_trigger_is_not_doubled_but_one_for_an_artifact_put_into_a_graveyard_is() {
+    // Korvold: "Whenever you sacrifice a permanent" is not caused by the permanent leaving
+    let mut g = mine();
+    let k = perm(&mut g, P0, "Korvold, Fae-Cursed King");
+    perm(&mut g, P0, GANDALF);
+    let x = perm(&mut g, P0, "Tymna the Weaver");
+    zones::die(&mut g, x, "sac").unwrap();
+    assert_eq!(counters(&g, k), 1, "one Korvold trigger for a sacrificed legendary creature");
+    // Disciple of the Vault: "Whenever an artifact is put into a graveyard from the battlefield"; a Treasure is one
+    let drains = |copier: &str| {
+        let mut g = mine();
+        perm(&mut g, P0, "Disciple of the Vault");
+        perm(&mut g, P0, copier);
+        let opp = g.player(P1).life + g.player(P2).life;
+        sim_core::engine::hooks::fire_trigger(
+            &mut g,
+            sim_core::hooks::Event::Sacrifice,
+            sim_core::hooks::Call::Sacrifice { p: P0, what: sim_core::hooks::Sacrificed::Token("Treasure") },
+        )
+        .unwrap();
+        opp - (g.player(P1).life + g.player(P2).life)
+    };
+    assert_eq!(drains(GANDALF), 2, "a Treasure sacrificed: 1 + Gandalf");
+    assert_eq!(drains(TEYSA), 1, "Teysa answers to a creature dying, not to a Treasure");
+}
+
+// ------------------------------------------------------------------ Delney leaving with the cause
+#[test]
+fn a_source_that_stays_hears_delney_die_as_delney_made_it_trigger_twice() {
+    let mut g = mine();
+    perm(&mut g, P0, "Elas il-Kor, Sadistic Pilgrim");
+    let d = perm(&mut g, P0, DELNEY);
+    let life = g.player(P1).life;
+    zones::die(&mut g, d, "destroy").unwrap();
+    assert_eq!(
+        life - g.player(P1).life,
+        2,
+        "Elas (power 2) triggers for Delney dying, and Delney's ability looks back"
+    );
+}
+
+#[test]
+fn a_source_that_stays_hears_a_creature_die_once_without_delney() {
+    let mut g = mine();
+    perm(&mut g, P0, "Elas il-Kor, Sadistic Pilgrim");
+    let x = perm(&mut g, P0, "Mother of Runes");
+    let life = g.player(P1).life;
+    zones::die(&mut g, x, "destroy").unwrap();
+    assert_eq!(life - g.player(P1).life, 1, "the control");
+}
+
+// ------------------------------------------------------------------ a copier that leaves with the cause
+fn indestructible(g: &mut Game, m: PermId) {
+    g.perm_mut(m).eot_kw.push("indestructible");
+}
+
+fn wipe(g: &mut Game) {
+    sim_core::engine::removal::apply_wipe(g, P0, "destroy", None, &Ctx::default()).unwrap();
+}
+
+#[test]
+fn gandalf_dying_alone_doubles_the_triggers_he_causes() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    indestructible(&mut g, v);
+    let gan = perm(&mut g, P0, GANDALF);
+    let life = g.player(P0).life;
+    zones::die(&mut g, gan, "destroy").unwrap();
+    assert!(!g.perm(gan).on_bf);
+    assert_eq!(counters(&g, v), 2, "Gandalf is a legendary creature dying, and his ability looks back");
+    assert_eq!(g.player(P0).life - life, 2);
+}
+
+#[test]
+fn gandalf_and_a_legendary_creature_in_one_wipe_each_cause_two_triggers_in_either_order() {
+    for gandalf_first in [true, false] {
+        let mut g = mine();
+        let v = perm(&mut g, P0, VONDAM);
+        indestructible(&mut g, v);
+        let names = if gandalf_first { [GANDALF, "Tymna the Weaver"] } else { ["Tymna the Weaver", GANDALF] };
+        for n in names {
+            perm(&mut g, P0, n);
+        }
+        let life = g.player(P0).life;
+        wipe(&mut g);
+        assert_eq!(counters(&g, v), 4, "Gandalf first: {gandalf_first}: two creatures, two triggers each");
+        assert_eq!(g.player(P0).life - life, 4, "Gandalf first: {gandalf_first}");
+    }
+}
+
+#[test]
+fn teysa_and_a_creature_in_one_wipe_each_cause_two_triggers_in_either_order() {
+    for teysa_first in [true, false] {
+        let mut g = mine();
+        let v = perm(&mut g, P0, VONDAM);
+        indestructible(&mut g, v);
+        let names = if teysa_first { [TEYSA, "Mother of Runes"] } else { ["Mother of Runes", TEYSA] };
+        for n in names {
+            perm(&mut g, P0, n);
+        }
+        wipe(&mut g);
+        assert_eq!(counters(&g, v), 4, "Teysa first: {teysa_first}");
+    }
+}
+
+#[test]
+fn a_departed_vondam_hears_a_legendary_creature_die_twice_with_gandalf() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    perm(&mut g, P0, "Tymna the Weaver");
+    let gan = perm(&mut g, P0, GANDALF);
+    indestructible(&mut g, gan);
+    let life = g.player(P0).life;
+    wipe(&mut g);
+    assert!(!g.perm(v).on_bf && g.perm(gan).on_bf);
+    assert_eq!(g.player(P0).life - life, 2, "Vondam left with Tymna: 1 + Gandalf");
+}
+
+#[test]
+fn a_permanent_that_phases_out_or_a_copier_without_abilities_causes_no_additional_trigger() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let v = perm(&mut g, P0, VONDAM);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).phased = true;
+    assert_eq!(counters(&g, v), 0, "phasing out is not leaving the battlefield");
+    g.perm_mut(t).phased = false;
+    let gan = *g.player(P0).perms.iter().find(|&&m| g.perm(m).name == GANDALF).unwrap();
+    g.perm_mut(gan).neutered = true;
+    zones::die(&mut g, t, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 1, "a Gandalf with abilities off adds nothing");
+}
+
+#[test]
+fn an_opponents_gandalf_adds_nothing_to_your_leave_triggers() {
+    let mut g = mine();
+    perm(&mut g, P1, GANDALF);
+    let v = perm(&mut g, P0, VONDAM);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    zones::die(&mut g, t, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 1);
+}
+
+// ------------------------------------------------------------------ the other leave paths
+#[test]
+fn angelic_sleuth_investigates_twice_for_a_legendary_permanent_with_counters_that_leaves() {
+    for (name, want) in [(Y, 2), ("Mother of Runes", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, GANDALF);
+        perm(&mut g, P0, "Angelic Sleuth");
+        let x = perm(&mut g, P0, name);
+        g.perm_mut(x).plus = 1;
+        let clues = g.player(P0).clues;
+        zones::bounce(&mut g, x).unwrap();
+        assert_eq!(g.player(P0).clues - clues, want, "{name} with a +1/+1 counter returned to hand");
+    }
+}
+
+#[test]
+fn vondam_exiled_with_power_four_destroys_two_permanents_with_gandalf() {
+    for gandalf in [true, false] {
+        let mut g = mine();
+        if gandalf {
+            perm(&mut g, P0, GANDALF);
+        }
+        let v = perm(&mut g, P0, VONDAM);
+        g.perm_mut(v).plus = 3;
+        for _ in 0..2 {
+            perm(&mut g, P1, "Serra Angel");
+        }
+        zones::exile_perm(&mut g, v).unwrap();
+        let angels = g.player(P1).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).name == "Serra Angel").count();
+        assert_eq!(angels, if gandalf { 0 } else { 1 }, "Gandalf: {gandalf}: one destroy per instance");
+    }
+}
+
+#[test]
+fn a_compiled_dies_trigger_happens_twice_for_a_legendary_creature_with_gandalf() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Elas il-Kor, Sadistic Pilgrim");
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    let life = g.player(P1).life;
+    zones::die(&mut g, t, "destroy").unwrap();
+    assert_eq!(life - g.player(P1).life, 2, "another creature you control dies: 1 + Gandalf");
 }
