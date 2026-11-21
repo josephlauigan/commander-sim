@@ -96,7 +96,7 @@
 # 12. Manifest puts a card face down; it is not a token, so no tokens role (Ugin's Mastery).
 # 13. A card's alternate-mode ability counts when it is a real function of the card even though it is not repeatable:
 #     channel (Otawara), landcycling (Ash Barrens), flashback, and the spell face of an MDFC (Agadeem's Awakening). A
-#     planeswalker ultimate (a minus ability costing more than the starting loyalty) gives no role.
+#     planeswalker ultimate (a minus ability costing at least the starting loyalty) gives no role.
 # 14. Creature, Treasure and Clue tokens count as tokens (Deadly Dispute's Treasure, Undercity Dire Rat).
 # 15. Scry or surveil 2+ and dig effects that find a card without netting cards (Bond of Flourishing) are selection;
 #     scry 1 (Viscera Seer, Skywhaler's Shot) is not.
@@ -140,7 +140,7 @@ oracle_id = "fd949f82-fc10-4e37-8aa9-6c7569fe3c55"
 roles = ["protection", "anthem", "evasion"]
 primary = "protection"
 source = "deck"
-not_roles = []
+not_roles = ["lifegain"]
 note = "Modes: 'indestructible, and protection from each color' (protection), 'Creatures you control gain flying, vigilance, and double strike' (anthem/evasion); both modes grant keywords to the whole team."
 
 [[card]]
@@ -1622,11 +1622,11 @@ note = "'target instant or sorcery card in your graveyard gains flashback until 
 [[card]]
 name = "Spark Double"
 oracle_id = "8dcb35e5-ae44-455f-86e3-4a77d496ff34"
-roles = ["copy", "counters"]
+roles = ["copy"]
 primary = "copy"
 source = "topup"
-not_roles = []
-note = "'You may have this creature enter as a copy of a creature or planeswalker you control' is a clone; the 'additional +1/+1 counter' is a one-time enters-with counter, labelled counters per the Opus review although convention 4 would exclude it (borderline)."
+not_roles = ["counters"]
+note = "'You may have this creature enter as a copy of a creature or planeswalker you control' is a clone; the 'additional +1/+1 counter' is a one-time enters-with counter, which convention 4 excludes (coordinator ruling, 2026-11-21: dropped from the Opus review's labels)."
 
 [[card]]
 name = "Spinnerette, Arachnobat"
