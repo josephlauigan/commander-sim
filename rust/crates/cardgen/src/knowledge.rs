@@ -474,14 +474,21 @@ impl Index {
         Ok(idx)
     }
 
-    /// Attach a complete side table, aligned with card indices. Card and oracle.json stay immutable.
+    /// Attach a complete deck-card side table, aligned with card indices. Card and oracle.json stay immutable.
     /// Reject stale/malformed data rather than silently returning incomplete role searches.
     pub fn attach_roles(&mut self, map: &crate::roles::RoleMap) -> Result<(), String> {
-        if map.len() != self.cards.len() {
+        if map.len() != self.cards.iter().filter(|c| crate::roles::is_deck_card(c)).count() {
             return Err("roles.json: catalog count differs; run `cardgen roles --rules`".into());
         }
         let mut rows = Vec::with_capacity(self.cards.len());
         for c in &self.cards {
+            if !crate::roles::is_deck_card(c) {
+                if map.contains_key(&c.raw.oracle_id) {
+                    return Err("roles.json: non-deck card has roles; run `cardgen roles --rules`".into());
+                }
+                rows.push(crate::roles::Assignment::default());
+                continue;
+            }
             let bad =
                 || format!("roles.json: invalid or missing roles for {}; run `cardgen roles --rules`", c.raw.name);
             let a = map.get(&c.raw.oracle_id).ok_or_else(bad)?;

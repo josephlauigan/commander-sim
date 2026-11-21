@@ -280,6 +280,8 @@ cardgen find --role ramp --role sac-outlet --json
 ```
 
 `roles --rules` reads the catalog without network access and atomically writes `roles.json` beside `oracle.json`.
+Stickers and Attractions remain searchable in Oracle but are omitted from the role table and audit samples.
+`--stats` reports their skipped count; routing denominators include only deck cards.
 The JSON object is sorted by Oracle id and byte-deterministic. Each assignment has up to four ordered `roles`,
 `primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`.
 Evidence uses zero-based indices into `Card::lines()`; `face: null` means the card's top-level Oracle text.
@@ -294,6 +296,11 @@ printed lifelink is lifegain, listed last. Rules also recognize semantic keyword
 transmute, mobilize and afterlife without treating their reminder text as independent abilities. Repeated modal
 abilities pass their trigger context to their own bullet lines. At the four-role ceiling, a copy's redundant token
 role yields to an independent function.
+Ward granted to other permanents is protection; a lifelink-only team grant is lifegain, not anthem. Creature,
+Treasure and Clue tokens count; other artifact tokens are judged by their abilities. Repeatable Clue makers also
+give draw. Team +1/+1 counter placement is counters and anthem; player counters are excluded, but proliferate
+counts. Amass gives tokens, plus counters when repeatable. Returning noncreature permanents from your graveyard
+to the battlefield is recursion; unrestricted permanent returns also give reanimate, which requires creatures.
 
 Unrecognized lines, overflowing role sets and potentially incidental selection, recursion, graveyard hate,
 finishers, stax, drain, copy, evasion and protection route to a future LLM stage. Removal with several clauses also
@@ -319,7 +326,7 @@ regex justification. No initial overrides are installed.
 with AND. An unknown id is a usage error listing all 26 ids; a missing roles file names `cardgen roles --rules`.
 JSON rows gain `roles` and `primary` only when the side table is attached. The Oracle catalog and `Card` remain
 immutable; programs use `Index::attach_roles`, `Index::roles` and `Query.roles`. Missing ids, invalid evidence or
-role sets, and catalog-count mismatches are errors rather than silently incomplete searches; regenerate after sync.
+role sets, and deck-card count mismatches are errors rather than silently incomplete searches; regenerate after sync.
 
 Validation reclassifies without overrides and reports per-role and micro recall against the engine's manual/pool
 cards in owned decks, per-role precision and recall against independent gold labels (all and certain separately),

@@ -120,7 +120,7 @@ pub const RULES: &[Rule] = &[
         role: "ramp",
         pattern: concat!(
             r"\badd\b.*(?:mana|\{)|costs? (?:\{[^}]+\}|[0-9]+).*less|pay .*life rather than pay|",
-            r"additional lands? on|untap (?:two|three|all) (?:target )?lands|",
+            r"additional lands? on|untap (?:(?:two|three|all) (?:target )?lands|target land)|",
             r"return[^.]*land cards? from your graveyard to the battlefield|",
             r"create[^.]*\b(?:forest|plains|island|swamp|mountain)\b[^.]*land creature token|",
             r"(?:spell|spells)[^.]*(?:has|have) affinity",
@@ -136,7 +136,7 @@ pub const RULES: &[Rule] = &[
     },
     Rule {
         role: "fixing",
-        pattern: r"\badd\b|search your library|basic landcycling|mana of any",
+        pattern: r"\badd\b|search your library|basic landcycling|mana of any|enchanted land is",
         negative: r"",
         id: "fixing",
     },
@@ -155,7 +155,8 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"(?:destroy|exile|return|sacrifice) (?:all|each)|\b(?:all|each)\b[^.]*gets? -[1-9x][0-9]*/-[1-9x]|",
             r"\bcreatures\b[^.]*get -[1-9x][0-9]*/-[1-9x]|deals? [^.]*damage [^.]*\b(?:each|all) [^.]*creature|",
-            r"overload|sacrifices all creatures",
+            r"overload|sacrifices all (?:other )?creatures|destroy the rest|",
+            r"each creature[^.]*loses all abilities[^.]*1/1",
         ),
         negative: r"",
         id: "mass-removal",
@@ -163,14 +164,18 @@ pub const RULES: &[Rule] = &[
     Rule {
         role: "removal",
         pattern: concat!(
-            r"(?:destroy|exile|return) (?:up to [a-z]+ |two |three |four )?target|",
+            r"(?:destroy|exile|return) (?:another |up to [a-z]+ |two |three |four )?target|",
+            r"return (?:~|this creature) and another target|",
             r"(?:destroy|exile) (?:it|that (?:creature|permanent))|put target[^.]*owner.s library|",
-            r"(?:each|target) opponents? (?:sacrifices|exiles) (?:a|an)|you control enchanted creature|",
+            r"(?:each|target) opponents? (?:sacrifices|exiles) (?:a|an)|you control enchanted (?:creature|permanent)|",
             r"put (?:a|one) -1/-1 counter on (?:up to one )?target|",
             r"target.*(?:gets? -[0-9x]+/-[1-9x][0-9]*|sacrifices? (?:a|an|one)|fights)|",
-            r"deals? [^.]*damage (?:to (?:any target|target (?:creature|artifact|planeswalker))|divided)|",
-            r"gain control of|owner of target .*shuffles|enchanted .*?(?:can't attack|",
-            r"doesn't untap)|at the beginning.*?\btap (?:it|enchanted creature)",
+            r"deals? [^.]*damage (?:to (?:any target|target (?!player)[^.]*?(?:creature|artifact|planeswalker)|",
+            r"each of up to [a-z]+ target creatures)|divided)|",
+            r"gain control of|exchange control of target|owner of target .*shuffles|",
+            r"enchanted .*?(?:can't attack|doesn't untap|loses all|sacrifice this creature)|",
+            r"target permanent.*doesn't untap|chosen creatures fight|\bannihilator [1-9]|",
+            r"at the beginning.*?\btap (?:it|enchanted creature)|it gets -[0-9x]+/-[1-9x]",
         ),
         negative: r"until end of turn.*gain control|gain control.*until end of turn",
         id: "single-removal",
@@ -188,9 +193,10 @@ pub const RULES: &[Rule] = &[
     Rule {
         role: "protection",
         pattern: concat!(
-            r"(?:gain|gains|have|has).*?(?:hexproof|shroud|indestructible|protection from)|",
+            r"(?:gain|gains|have|has).*?(?:hexproof|shroud|indestructible|protection from|ward)|",
+            r"put an indestructible counter on each|",
             r"phases? out|prevent (?:all|the next [0-9x]+) (?:combat )?damage|you have protection|",
-            r"regenerate (?:target|another)",
+            r"regenerate (?:target|another|each)|umbra armor",
         ),
         negative: r"",
         id: "protect",
@@ -200,7 +206,8 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"\bdraws?\b|(?:play|cast|plot) .*?(?:top of your library|exiled)|(?:put|",
             r"return).*?(?:into|to) your hand|graveyard.*?(?:into your hand|has escape)|\bcascade\b|",
-            r"may (?:play|cast) (?:it|that card|those cards)",
+            r"may (?:play|cast) (?:it|that card|those cards|one of those cards)|",
+            r"\binvestigate\b|create[^.]*\b(?:clue|junk) tokens?",
         ),
         negative: r"",
         id: "card-advantage",
@@ -210,7 +217,7 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"\b(?:scry|surveil) (?:[2-9]|[1-9][0-9]+|x)\b|draw .*?discard|discard .*?draw|",
             r"look at the top|from among them into your hand|reveal the top|",
-            r"discards any number of cards, then draws|\b(?:connives?|recruit|learn)\b",
+            r"discards any number of cards, then draws|\b(?:connives?|recruit|learn)\b|create[^.]*blood token",
         ),
         negative: r"",
         id: "filter",
@@ -218,7 +225,8 @@ pub const RULES: &[Rule] = &[
     Rule {
         role: "discard",
         pattern: concat!(
-            r"(?:opponents?|target player|that player|controller|each player|players|they) discards?\b|",
+            r"(?:opponents?|target player|defending player|that player|controller|each player|players|they) ",
+            r"discards?\b|",
             r"controller reveals their hand, then discards",
         ),
         negative: r"",
@@ -243,7 +251,10 @@ pub const RULES: &[Rule] = &[
             r"your graveyard[^.]*?(?:\bcast\b|\bplay\b|gains flashback|has escape|into your hand)|\bsoulshift\b|",
             r"in your graveyard.*?otherwise, put it into your hand|",
             r"(?:this card|~) is in your graveyard.*?return (?:this card|~) to your hand|",
-            r"choose target [^.]*card in your graveyard.*?return it to your hand",
+            r"choose target [^.]*card in your graveyard.*?return it to your hand|",
+            r"(?:return|put)[^.]*graveyard[^.]*battlefield|graveyard[^.]*shuffle [^.]*into your library|",
+            r"graveyard[^.]*put it into your library|permanent card in your graveyard[^.]*battlefield|",
+            r"return all [^.]*cards in graveyards[^.]*hands",
         ),
         negative: r"",
         id: "graveyard-reuse",
@@ -254,14 +265,16 @@ pub const RULES: &[Rule] = &[
             r"(?:return|put).*?(?:graveyard|creature card).*?battlefield|",
             r"return from your graveyard to the battlefield|",
             r"graveyard.*?creature.*?put.*?battlefield|",
-            r"creature[^.]*dies, return it to the battlefield|puts all cards they exiled this way onto the battlefield",
+            r"creature[^.]*dies, return it to the battlefield|",
+            r"puts all cards they exiled this way onto the battlefield|",
+            r"opponent sacrifices a nontoken permanent[^.]*put that card onto the battlefield",
         ),
         negative: r"",
         id: "graveyard-battlefield",
     },
     Rule {
         role: "self-mill",
-        pattern: r"\bmill\b|(?:put|putting).*?(?:into|in) your graveyard|^discard a card:",
+        pattern: r"\bmills?\b|(?:put|putting).*?(?:into|in) your graveyard|^discard a card:",
         negative: r"",
         id: "fill-graveyard",
     },
@@ -269,6 +282,7 @@ pub const RULES: &[Rule] = &[
         role: "copy",
         pattern: concat!(
             r"\bcopy (?:target|that|it|the|up to)|(?:as|becomes?|that's|that is|are) (?:a )?cop(?:y|ies) of|",
+            r"\bcopies (?:it|that spell)\b|",
             r"^\b(?:casualty|conspire|replicate|storm)\b"
         ),
         negative: r"cast a copy of its spell",
@@ -276,7 +290,7 @@ pub const RULES: &[Rule] = &[
     },
     Rule {
         role: "tokens",
-        pattern: r"\bcreate\b.*?tokens?|\b(?:investigate|amass|populate|incubate|mobilize|afterlife|recruit)\b",
+        pattern: r"\bcreates?\b.*?tokens?|\b(?:investigate|amass|populate|incubate|mobilize|afterlife|recruit)\b",
         negative: r"",
         id: "create-token",
     },
@@ -285,41 +299,42 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"(?:creatures|creature tokens|[a-z]+s) you control.*?(?:get|have|gain)|",
             r"\bother .*?(?:get|have)|creatures? .*?you control.*?(?:gets?|have|gain)|",
-            r"(?:all [a-z]+s|creatures with [a-z]+) (?:get|have)",
+            r"(?:all [a-z]+s|creatures with [a-z]+) (?:get|have)|each other [^.]*you control.*gets|",
+            r"put [^.]*\+1/\+1 counters? on each creature (?:you control|target player controls)",
         ),
         negative: r"",
         id: "team-pump",
     },
     Rule {
         role: "sac-outlet",
-        pattern: r"sacrifice (?:a|an|another|any number|x|[a-z]+ or another) .*?:",
+        pattern: r"sacrifice (?:a|an|another|two|three|any number|x|[a-z]+ or another) .*?:",
         negative: r"sacrifice (?:a|an|x) (?:treasures?|clues?|foods?|blood|maps?|powerstones?)\b",
         id: "sacrifice-cost",
     },
     Rule {
         role: "drain",
         pattern: concat!(
-            r"(?:opponents?|that player|each player|target player|they)[^.]*?loses? (?!the game)[^.]*?life|",
-            r"deals? [^.]*?damage to (?:each opponent|that opponent|that player|target player|each player|you)",
+            r"(?:opponents?|that player|defending player|each player|target player|they)[^.]*?loses? ",
+            r"(?!the game)[^.]*?life|deals? [^.]*?damage to (?:each opponent|that opponent|that player|",
+            r"target player|each player|you|the chosen player)|deals damage equal [^.]*to the chosen player",
         ),
         negative: r"",
         id: "life-loss",
     },
     Rule {
         role: "lifegain",
-        pattern: r"\b(?:gain|gains|gained) .*?life|\blifelink\b",
+        pattern: r"\b(?:gain|gains|gained) .*?life|\blifelink\b|create[^.]*food token|double[^.]*life total",
         negative: r"can't gain|can't.*?lose life",
         id: "gain-life",
     },
     Rule {
         role: "counters",
         pattern: concat!(
-            r"\b(?:put|double|move)\b.*?counters?|\bproliferate\b|^backup [1-9]|^bolster [1-9]|",
+            r"\b(?:put|double|move|distribute)\b.*?counters?|\bproliferate\b|^backup [1-9]|^bolster [1-9]|",
             r"^support [1-9]|^adapt [1-9]|^awaken [1-9]|\b(?:connives?|dethrone|mentor|evolve|training)\b|",
-            r"(?:target opponent|target player) gets a poison counter|",
-            r"(?:creatures? you control|target creature)[^.]*counter",
+            r"\bamass\b|create[^.]*map token",
         ),
-        negative: r"(?:ki|suspect|void|finality|time|lore|age|stun|oil|quest|loyalty|level|spite|valor) counters?",
+        negative: r"",
         id: "counters",
     },
     Rule {
@@ -331,7 +346,7 @@ pub const RULES: &[Rule] = &[
     Rule {
         role: "evasion",
         pattern: concat!(
-            r"(?:gains?|has|have).*?(?:flying|menace|fear|shadow|horsemanship|double strike)|(?:creature|",
+            r"(?:gains?|has|have).*?(?:flying|menace|fear|shadow|horsemanship|double strike|intimidate)|(?:creature|",
             r"creatures).*?can't be blocked|all [a-z]+s have (?:fear|flying|menace|shadow)",
         ),
         negative: r"",
@@ -343,7 +358,11 @@ pub const RULES: &[Rule] = &[
             r"(?:opponents?|players|creatures|spells)[^.]*?(?:can't|cost)[^.]*?(?:cast|draw|attack|pay|",
             r"life)|opponents[^.]*?cost .*more|unless (?:that player|they) pay|",
             r"creatures your opponents control enter tapped|enchanted creature[^.]*can't attack you|",
-            r"if an opponent[^.]*would put a land[^.]*then sacrifices a land|controller can't cast spells",
+            r"if an opponent[^.]*would put a land[^.]*then sacrifices a land|controller can't cast spells|",
+            r"players can't search libraries|(?:nonbasic lands|lands|creatures) ",
+            r"(?:enter tapped|don't untap|are mountains)|",
+            r"shuffle their library, that player puts a card from their hand|",
+            r"each noncreature artifact loses all abilities",
         ),
         negative: r"",
         id: "restriction",
@@ -395,6 +414,30 @@ fn hit(r: &Regex, s: &str) -> Result<bool, String> {
 }
 fn has(s: &str, pieces: &[&str]) -> bool {
     pieces.iter().any(|p| s.contains(p))
+}
+
+/// Supplemental sheets/Attractions stay in Oracle, but are not deck-card role assignments.
+pub fn is_deck_card(c: &Card) -> bool {
+    !c.raw.type_line.split_whitespace().any(|t| matches!(t, "Stickers" | "Attraction"))
+}
+
+fn creates(s: &str, kind: &str) -> bool {
+    s.split("create").skip(1).any(|object| object.split("token").next().unwrap_or("").contains(kind))
+}
+
+/// Inspect the returned object and destination together, not a different return in the same sentence.
+fn battlefield_object(s: &str) -> Option<&str> {
+    let end = s.find("to the battlefield").or_else(|| s.find("onto the battlefield"))?;
+    let before = &s[..end];
+    if !before.contains("graveyard") {
+        return None;
+    }
+    let start = before.rfind("return ").or_else(|| before.rfind("put ")).unwrap_or(0);
+    // A target chosen earlier supplies the object of a later "return/put it".
+    // Some returns name their object after the destination ("Return from ... to the battlefield ... creatures").
+    let returned = s[start..].split(". ").next().unwrap_or("");
+    let object = if before[start..].contains("card") { &before[start..] } else { returned };
+    Some(if has(object, &["card", "land"]) { object } else { before })
 }
 
 /// Nested parentheses are stripped, including ward and prepare reminder text. Names are replaced longest first,
@@ -614,6 +657,16 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             "other creatures",
             "you have protection",
             "another target",
+            "legendary permanent you control",
+            "vehicles you control",
+            "those creatures",
+            "each other ",
+            "target permanent",
+            "target artifact",
+            "target enchantment",
+            "target land",
+            "target planeswalker",
+            "permanent you control",
         ],
     );
     match r.role {
@@ -654,6 +707,10 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             if intrinsic {
                 return true;
             }
+            if s.contains("enchanted land is") {
+                return ["plains", "island", "swamp", "mountain", "forest"].iter().filter(|t| s.contains(**t)).count()
+                    >= 2;
+            }
             if s.contains("search your library") {
                 let searched = s.split("search your library").nth(1).unwrap().split("card").next().unwrap_or("");
                 let types = ["plains", "island", "swamp", "mountain", "forest"]
@@ -688,7 +745,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             !has(q, &["land card", "land cards", "plains", "island", "swamp", "mountain", "forest"])
                 || q.contains("nonland")
         }
-        "counter" => true,
+        "counter" => !has(s, &["whenever this creature becomes the target", "whenever ~ becomes the target"]),
         "wipe" => {
             if s.contains("overload") {
                 return c.text.to_lowercase().contains("damage")
@@ -709,7 +766,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             {
                 return false;
             }
-            (!s.contains("damage") || !has(s, &["1 damage", "combat damage"]))
+            (!s.contains("damage") || !s.contains("combat damage"))
+                && !(s.contains("1 damage") && !spell && !repeat)
+                && !s.contains("each of up to")
                 && !(s.contains("exile") && s.contains("return") && s.contains("you control"))
         }
         "removal" => {
@@ -742,15 +801,24 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                             "gain control",
                             "enchanted",
                             "-1/-1 counter",
+                            "fight each other",
+                            "annihilator",
+                            "it gets -",
                         ],
                     )
                 })
                 .unwrap_or(s);
-            if s.trim_start().starts_with("search your library") || s.contains("you control enchanted creature") {
-                return s.contains("you control enchanted creature");
+            if s.trim_start().starts_with("search your library") || s.contains("you control enchanted") {
+                return s.contains("you control enchanted");
+            }
+            if has(s, &["from their hand", "from your hand"]) && s.contains("exile") {
+                return false;
             }
             if s.contains("exile") && has(s, &["graveyard", "exile this", "exile ~"]) && !s.contains("exile target") {
                 return false;
+            }
+            if s.contains("annihilator") {
+                return true;
             }
             if has(s, &["graveyard", "your hand", "target spell", "target spells", "target card"]) {
                 return false;
@@ -758,7 +826,19 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             if s.contains("you control")
                 && !has(
                     s,
-                    &["don't control", "doesn't control", "fights", "damage to", "each opponent", "-1/-1 counter"],
+                    &[
+                        "don't control",
+                        "doesn't control",
+                        "opponent controls",
+                        "fights",
+                        "fight each other",
+                        "damage to",
+                        "each opponent",
+                        "-1/-1 counter",
+                        "gain control of",
+                        "another target",
+                        "opponents control",
+                    ],
                 )
             {
                 return false;
@@ -775,10 +855,25 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
         "protection" => {
             (grant
                 || s.contains("phase")
-                || has(s, &["prevent all", "prevent the next", "regenerate target", "regenerate another"]))
+                || has(
+                    s,
+                    &[
+                        "prevent all",
+                        "prevent the next",
+                        "regenerate target",
+                        "regenerate another",
+                        "regenerate each",
+                        "indestructible counter on each",
+                        "umbra armor",
+                    ],
+                ))
                 && !(s.contains("attacking") && s.contains("unless"))
+                && !s.contains("loses all other abilities")
         }
         "draw" => {
+            if !s.contains("draw") && (s.contains("investigate") || creates(s, "clue") || creates(s, "junk")) {
+                return repeat && !self_sac && !spell;
+            }
             if s.contains("cascade") || s.contains("mill a card") && s.contains("may play that card") {
                 return true;
             }
@@ -844,6 +939,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             if s.contains("repeat this process") && s.contains("into your hand") {
                 return true;
             }
+            if has(s, &["look at the top", "reveal the top"]) && s.contains("from among them") {
+                return false;
+            }
             has(
                 s,
                 &[
@@ -856,15 +954,20 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                     "play the exiled",
                     "cast cards exiled",
                     "play cards exiled",
+                    "exile the top card of each player's library",
                 ],
             ) && has(s, &["may play", "may cast", "may plot"])
                 || !spell
                     && !s.contains("search your library")
                     && !s.contains("graveyard")
+                    && !has(s, &["look at the top", "reveal the top"])
                     && s.contains("into your hand")
                 || s.contains("pile into your hand")
         }
         "selection" => {
+            if creates(s, "blood") {
+                return repeat && !self_sac && !spell;
+            }
             if has(s, &["connive", "recruit", "learn"]) {
                 return true;
             }
@@ -914,33 +1017,55 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             !s.contains("your graveyard") && !s.contains("onto the battlefield") && !s.contains("then puts all cards")
         }
         "recursion" => {
+            if !has(s, &["hand", "library"]) {
+                if let Some(object) = battlefield_object(s) {
+                    return s.contains("your graveyard")
+                        && has(
+                            object,
+                            &["artifact", "enchantment", "planeswalker", "land card", "permanent card", "noncreature"],
+                        );
+                }
+            }
             !has(s, &["cast this card", "cast ~", "additional cost"])
                 && (s.contains("soulshift")
                     || s.contains("shuffle your graveyard")
                     || s.contains("from your graveyard")
                     || s.contains("in your graveyard")
+                    || s.contains("into your graveyard") && s.contains("into your library")
                     || s.contains("is in your graveyard")
                     || s.contains("card in your graveyard")
                     || s.contains("from their graveyard")
-                    || s.contains("your graveyard has"))
+                    || s.contains("your graveyard has")
+                    || s.contains("cards in graveyards"))
         }
         "reanimate" => {
-            !has(s, &["return this", "return ~", "from anywhere"])
-                && (s.contains("creature") || s.contains("permanent") || s.contains("if it's a creature"))
+            if has(s, &["return this", "return ~", "from anywhere"]) {
+                return false;
+            }
+            if let Some(object) = battlefield_object(s) {
+                return !object.contains("noncreature")
+                    && (object.contains("creature") || object.contains("permanent card"));
+            }
+            s.contains("creature") && s.contains("dies, return it to the battlefield")
+                || s.contains("opponent sacrifices a nontoken permanent") && s.contains("put that card onto")
         }
         "self-mill" => {
             if s.starts_with("discard a card:") {
                 return true;
             }
             if s.contains("mill") {
-                return !has(s, &["target player mills", "opponent mills", "opponents mill", "each player mills"]);
+                return !has(s, &["target player mills", "opponent mills", "opponents mill"]);
             }
             !has(s, &["opponent separates", "an opponent separates", "from anywhere", "dies", "sacrifice"])
-                && (s.contains("search your library") || s.contains("your library") || s.contains("from among"))
+                && (s.contains("search your library")
+                    || s.find("your library").zip(s.find("your graveyard")).is_some_and(|(l, g)| l < g)
+                    || s.contains("from among"))
         }
         "copy" => !s.contains("a copy of ~") && !s.contains("copy of this"),
         "tokens" => {
-            if has(s, &["its controller creates", "that player creates", "opponent creates"]) {
+            if has(s, &["its controller creates", "that player creates", "opponent creates", "they create"])
+                && !has(s, &["you create", "each player creates", "another target player creates"])
+            {
                 return false;
             }
             if has(s, &["investigate", "amass", "populate", "incubate", "mobilize", "afterlife", "recruit"]) {
@@ -948,21 +1073,44 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             }
             // Inspect the created object, not an unrelated creature in the trigger, target or later sentence.
             let object = s.split("create").nth(1).unwrap_or("").split("token").next().unwrap_or("");
-            has(object, &["creature", "treasure", "clue"]) || s.contains("create a token that's a copy")
+            has(object, &["creature", "treasure", "clue"])
+                || s.contains("token that's a copy")
+                    && (has(object, &["attacking", "a "])
+                        || has(s.split("copy").nth(1).unwrap_or(""), &["creature", "permanent"]))
         }
         "anthem" => {
+            if s.contains("+1/+1 counter on each creature") {
+                return has(s, &["each creature you control", "each creature target player controls"]);
+            }
             let subject = s
                 .split([',', '.', ':'])
-                .find(|p| has(p, &["creatures", "creature you control", "all ", "s you control", "creatures with"]))
+                .find(|p| {
+                    has(
+                        p,
+                        &[
+                            "creatures",
+                            "creature you control",
+                            "all ",
+                            "s you control",
+                            "creatures with",
+                            "each other ",
+                        ],
+                    )
+                })
                 .unwrap_or("");
             // Only the team itself may receive the buff; a cost or condition mentioning your team is insufficient.
-            let buff = [" get ", " gets ", " have ", " gain "].iter().filter_map(|v| subject.find(v)).min();
+            let buff = [" get ", " gets "]
+                .iter()
+                .filter_map(|v| subject.find(v))
+                .min()
+                .or_else(|| [" have ", " gain "].iter().filter_map(|v| subject.rfind(v)).max());
             let Some(buff) = buff else {
                 return false;
             };
             let team = &subject[..buff];
             let payoff = &subject[buff..];
-            (has(team, &["creatures", "creature you control", "s you control"]) || team.trim().starts_with("all "))
+            (has(team, &["creatures", "creature you control", "s you control", "each other "])
+                || team.trim().starts_with("all "))
                 && !has(
                     team,
                     &[
@@ -988,6 +1136,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                         "first strike",
                         "deathtouch",
                         "fear",
+                        "haste",
                     ],
                 )
         }
@@ -1006,6 +1155,12 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
             ) && (repeat || s.contains("each opponent"))
         }
         "lifegain" => {
+            if creates(s, "food") {
+                return repeat && !self_sac && !spell;
+            }
+            if s.contains("double") && s.contains("life total") {
+                return true;
+            }
             if s.contains("lifelink") {
                 return !spell
                     && (!s.contains("until end of turn") || activation)
@@ -1015,6 +1170,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                 s,
                 &[
                     "you gain",
+                    "you may gain",
                     "its controller gains",
                     "you've gained",
                     "you gained",
@@ -1043,6 +1199,44 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                     || s.starts_with("you gain"))
         }
         "counters" => {
+            if s.contains("proliferate") {
+                return true;
+            }
+            if s.contains("amass") || creates(s, "map") {
+                return repeat && !self_sac && !spell;
+            }
+            let effect = s.rfind("put ").map_or(s, |p| &s[p..]);
+            if has(
+                effect,
+                &[
+                    "ki counter",
+                    "suspect counter",
+                    "void counter",
+                    "finality counter",
+                    "time counter",
+                    "lore counter",
+                    "age counter",
+                    "stun counter",
+                    "oil counter",
+                    "quest counter",
+                    "loyalty counter",
+                    "level counter",
+                    "spite counter",
+                    "valor counter",
+                    "verse counter",
+                    "conqueror counter",
+                    "poison counter",
+                    "energy counter",
+                    "experience counter",
+                    "rad counter",
+                ],
+            ) {
+                return false;
+            }
+            if !repeat && has(effect, &["on this creature", "on ~"]) && !has(effect, &["target", "on each", "instead"])
+            {
+                return false;
+            }
             if s.contains("charge counter")
                 && !has(s, &["counter on target artifact", "counter on another", "counter on each artifact"])
             {
@@ -1068,7 +1262,8 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool) -> bool {
                         "training",
                         "target creature",
                         "target artifact",
-                        "poison counter",
+                        "on each",
+                        "on another",
                     ],
                 ) || repeat)
         }
@@ -1102,7 +1297,7 @@ struct Overrides {
 pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
     let classifier = Classifier::new()?;
     let mut result = RoleMap::new();
-    for c in &index.cards {
+    for c in index.cards.iter().filter(|c| is_deck_card(c)) {
         result.insert(c.raw.oracle_id.clone(), classifier.classify(c)?);
     }
     let overrides: Overrides = toml::from_str(overrides).map_err(|e| format!("roles_overrides.toml: {e}"))?;
@@ -1122,6 +1317,9 @@ pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
             return Err(format!("override '{}' resolves to {} cards; use an unambiguous full name", o.name, ids.len()));
         }
         let id = &index.cards[ids[0] as usize].raw.oracle_id;
+        if !result.contains_key(id) {
+            return Err(format!("override '{}' is not a deck card", o.name));
+        }
         if !seen.insert(id) {
             return Err(format!("duplicate override for {}", o.name));
         }
@@ -1265,7 +1463,7 @@ pub fn audit(
     let mut cards: Vec<_> = index
         .cards
         .iter()
-        .filter(|c| c.legal == Legal::Legal && !excluded.contains(c.raw.oracle_id.as_str()))
+        .filter(|c| is_deck_card(c) && c.legal == Legal::Legal && !excluded.contains(c.raw.oracle_id.as_str()))
         .collect();
     cards.sort_by_key(|c| (key(&c.raw.oracle_id), &c.raw.oracle_id));
     let classifier = Classifier::new()?;
@@ -1351,6 +1549,10 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
     let mut out = String::new();
     for &i in ids {
         let c = &index.cards[i as usize];
+        if !is_deck_card(c) {
+            let _ = writeln!(out, "{}: excluded from roles (not a deck card)", c.raw.name);
+            continue;
+        }
         let a = &map[&c.raw.oracle_id];
         let _ = writeln!(
             out,
@@ -1379,6 +1581,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
 #[derive(Default, Serialize)]
 pub struct Stats {
     pub total: usize,
+    pub skipped: usize,
     pub needs_llm: usize,
     pub no_role: usize,
     pub per_role: BTreeMap<String, usize>,
@@ -1387,6 +1590,10 @@ pub struct Stats {
 pub fn stats(index: &Index, map: &RoleMap) -> Stats {
     let mut s = Stats { per_role: IDS.iter().map(|r| (r.to_string(), 0)).collect(), ..Stats::default() };
     for c in &index.cards {
+        if !is_deck_card(c) {
+            s.skipped += 1;
+            continue;
+        }
         let a = &map[&c.raw.oracle_id];
         s.total += 1;
         s.needs_llm += usize::from(a.needs_llm);
@@ -1403,6 +1610,7 @@ pub fn stats(index: &Index, map: &RoleMap) -> Stats {
 impl Stats {
     pub fn text(&self) -> String {
         let mut s = format!("ROUTING: {} cards, {} needs_llm, {} no role\n", self.total, self.needs_llm, self.no_role);
+        let _ = writeln!(s, "SKIPPED: {} Stickers/Attractions (not deck cards)", self.skipped);
         let legal: Vec<_> = self.routing.iter().filter(|(g, _)| g.starts_with("legal / ")).map(|(_, n)| n).collect();
         let legal_total: usize = legal.iter().map(|n| n.0).sum();
         let legal_llm: usize = legal.iter().map(|n| n.1).sum();
@@ -1649,6 +1857,9 @@ pub fn validate(
         let i = index
             .by_oracle_id(&g.oracle_id)
             .ok_or_else(|| format!("gold card absent: {} ({})", g.name, g.oracle_id))?;
+        if !is_deck_card(&index.cards[i as usize]) {
+            return Err(format!("gold card is not a deck card: {}", g.name));
+        }
         let a = &rules[&index.cards[i as usize].raw.oracle_id];
         v.rules_final_cards += usize::from(!a.needs_llm);
         for &role in &IDS {

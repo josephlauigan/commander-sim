@@ -372,7 +372,7 @@ fn audited_catalog_patterns_and_real_decoys() {
         ("Baylen, the Haymaker", &["counters", "draw", "fixing", "ramp"]),
         ("Gigapede", &["recursion"]),
         ("Fatal Mutation", &["removal"]),
-        ("Lord Windgrace", &["draw", "ramp"]),
+        ("Lord Windgrace", &["draw", "ramp", "recursion"]),
         ("Serra Aviary", &["anthem"]),
         ("Gandalf, Spark Starter", &["removal"]),
         ("Saheeli, the Gifted", &["ramp", "tokens"]),
@@ -380,7 +380,7 @@ fn audited_catalog_patterns_and_real_decoys() {
         ("Mirror of Life Trapping", &["blink"]),
         ("Decree of Pain", &["draw", "wipe"]),
         ("Orzhov Racketeers", &["discard", "tokens"]),
-        ("Fearless Swashbuckler", &["draw"]),
+        ("Fearless Swashbuckler", &["anthem", "draw"]),
         ("Aether Barrier", &["stax"]),
         ("Land Equilibrium", &["stax"]),
         ("Insatiable Frugivore", &["anthem", "evasion"]),
@@ -410,7 +410,7 @@ fn audited_catalog_patterns_and_real_decoys() {
         ("Niv-Mizzet, Guildpact", &["draw", "lifegain", "removal"]),
         ("Flame Wave", &["wipe"]),
         ("Peace and Quiet", &["removal"]),
-        ("Venerated Rotpriest", &["counters"]),
+        ("Venerated Rotpriest", &[]),
         ("Dread Defiler", &["drain"]),
         ("Skeletal Scrying", &["draw"]),
         ("Astarion, the Decadent", &["drain", "lifegain"]),
@@ -556,4 +556,183 @@ fn rules_final_gate_includes_llm_domain_roles_and_cannot_be_improved_by_override
     let (out, passed) = e.command(&["--validate", "--json"]).unwrap();
     assert!(!passed);
     assert_eq!(serde_json::from_str::<Value>(&out).unwrap()["rules_final_micro"], v["rules_final_micro"]);
+}
+
+#[test]
+fn convention_clauses_c1_through_c4_use_real_oracle_text() {
+    let i = index();
+    for (name, role, present) in [
+        ("Gold-Forged Thopteryx", "protection", true),
+        ("Coppercoat Vanguard", "protection", true),
+        ("Coppercoat Vanguard", "anthem", true),
+        ("Combat Research", "protection", true),
+        ("Tomakul Honor Guard", "protection", false),
+        ("Whip of Erebos", "lifegain", true),
+        ("Whip of Erebos", "anthem", false),
+        ("Tireless Tracker", "draw", true),
+        ("Tireless Tracker", "tokens", true),
+        ("Trail of Evidence", "draw", true),
+        ("Thraben Inspector", "tokens", true),
+        ("Thraben Inspector", "draw", false),
+        ("Hard Evidence", "draw", false),
+        ("Hard Evidence", "tokens", true),
+        ("Gilded Goose", "tokens", false),
+        ("Gilded Goose", "lifegain", true),
+        ("Voldaren Epicure", "tokens", false),
+        ("Restless Anchorage", "tokens", false),
+        ("Restless Anchorage", "counters", true),
+        ("Veronica, Dissident Scribe", "tokens", false),
+        ("Veronica, Dissident Scribe", "draw", true),
+        ("Smothering Tithe", "tokens", true),
+        ("Smothering Tithe", "ramp", false),
+        ("Inspiring Roar", "counters", true),
+        ("Inspiring Roar", "anthem", true),
+        ("Shalai, Voice of Plenty", "anthem", true),
+        ("Travel Preparations", "anthem", false),
+        ("Venerated Rotpriest", "counters", false),
+        ("Aether Hub", "counters", false),
+        ("Meren of Clan Nel Toth", "counters", false),
+        ("Radstorm", "counters", true),
+        ("Nuclear Fallout", "counters", false),
+        ("Mikaeus, the Unhallowed", "anthem", true),
+        ("Pollenbright Druid", "counters", true),
+        ("Dreadhorde Invasion", "tokens", true),
+        ("Dreadhorde Invasion", "counters", true),
+        ("Lazotep Reaver", "tokens", true),
+        ("Lazotep Reaver", "counters", false),
+        ("Refurbish", "recursion", true),
+        ("Refurbish", "reanimate", false),
+        ("Resurgent Belief", "recursion", true),
+        ("Resurgent Belief", "reanimate", false),
+        ("Dance of the Manse", "recursion", true),
+        ("Dance of the Manse", "reanimate", false),
+        ("Repair and Recharge", "recursion", true),
+        ("Repair and Recharge", "reanimate", false),
+        ("Repair and Recharge", "tokens", false),
+        ("Moment of Reckoning", "recursion", true),
+        ("Moment of Reckoning", "reanimate", true),
+        ("Zombify", "recursion", false),
+        ("Zombify", "reanimate", true),
+        ("Turntimber Symbiosis // Turntimber, Serpentine Wood", "reanimate", false),
+    ] {
+        assert_eq!(classify(&i, name).roles.iter().any(|r| r == role), present, "{name} {role}");
+    }
+}
+
+#[test]
+fn round_three_precision_audit_regressions() {
+    let i = index();
+    let cases: &[(&str, &[&str])] = &[
+        ("Moldgraf Millipede", &["self-mill"]),
+        ("Armed Response", &["removal"]),
+        ("Mount Doom", &["drain", "fixing", "wipe"]),
+        ("Guan Yu, Sainted Warrior", &["recursion"]),
+        ("Summon: Knights of Round", &["anthem", "counters", "protection", "tokens"]),
+        ("Aeronaut Admiral", &["anthem", "evasion"]),
+        ("It That Betrays", &["reanimate", "removal"]),
+        ("Frost Titan", &["removal"]),
+        ("Kyren Negotiations", &["drain"]),
+        ("Clamavus", &["anthem"]),
+        ("Vraska, the Cutting Glare", &["removal"]),
+        ("Enigma Sphinx", &["draw", "recursion"]),
+        ("Pull Through the Weft", &["ramp", "recursion"]),
+        ("Confessor", &["lifegain"]),
+        ("Polymorphist's Jest", &["wipe"]),
+        ("Lady Sun", &["removal"]),
+        ("Darksteel Mutation", &["removal"]),
+        ("Instill Furor", &["removal"]),
+        ("Seismic Shudder", &["wipe"]),
+        ("Lush Growth", &["fixing"]),
+        ("Dack Fayden, Helping Hand", &[]),
+        ("Turntimber Symbiosis // Turntimber, Serpentine Wood", &["selection"]),
+        ("Twisted Fates", &["anthem", "counters", "removal"]),
+        ("Titania's Song", &["stax"]),
+        ("Sigurd, Jarl of Ravensthorpe", &["counters", "lifegain"]),
+        ("Moment of Reckoning", &["reanimate", "recursion", "removal"]),
+        ("Soulquake", &["recursion", "wipe"]),
+        ("Willow Satyr", &["removal"]),
+        ("Syr Konrad, the Grim", &["drain", "self-mill"]),
+        ("Tenured Oilcaster", &["self-mill"]),
+        ("Tawnos, Solemn Survivor", &["copy", "sac-outlet", "self-mill", "tokens"]),
+        ("Highland Berserker", &["anthem"]),
+        ("Broodlord", &["counters"]),
+        ("Blossom Dryad", &["ramp"]),
+        ("Icefeather Aven", &["removal"]),
+        ("Duel for Dominance", &["counters", "removal"]),
+        ("Loki, the Deceiver", &["copy", "draw", "tokens"]),
+        ("Legerdemain", &["removal"]),
+        ("Shadow of Doubt", &["stax"]),
+        ("Widespread Panic", &["stax"]),
+        ("Midsummer Revel", &["tokens"]),
+        ("Withering Wisps", &["wipe"]),
+        ("Nashi, Moon Sage's Scion", &["draw"]),
+        ("Lifegift", &["lifegain"]),
+        ("The Lord of Pain", &["drain", "stax"]),
+        ("Grisly Transformation", &["draw", "evasion"]),
+        ("Golgari Charm", &["protection", "removal", "wipe"]),
+        ("Bitter Reunion", &["anthem", "draw"]),
+        ("Dog Umbra", &["protection", "removal"]),
+        ("Meletis Charlatan", &["copy"]),
+        ("Chrome Steed", &[]),
+        ("Gods' Eye, Gate to the Reikai", &["tokens"]),
+        ("Abyssal Nightstalker", &["discard"]),
+        ("Acclaimed Contender", &["selection"]),
+        ("Keldon Strike Team", &["anthem", "tokens"]),
+        ("Grismold, the Dreadsower", &["counters", "tokens"]),
+        ("Cybernetica Datasmith", &["draw", "tokens"]),
+        ("Adéwalé, Breaker of Chains", &["recursion", "selection"]),
+        ("Inspiring Paladin", &["anthem"]),
+        ("Parallax Nexus", &[]),
+        ("Tymaret, the Murder King", &["drain", "recursion", "sac-outlet"]),
+        ("Celestial Mantle", &["lifegain"]),
+        ("Fire Shrine Keeper", &["removal"]),
+        ("Destined Confrontation", &["wipe"]),
+        ("Dream Leash", &["removal"]),
+        ("Zhao, the Moon Slayer", &["stax"]),
+        ("Rising Waters", &["stax"]),
+        ("Library", &["draw", "fixing", "tokens"]),
+        ("Phyrexian Boon", &["removal"]),
+        ("Ragged Recluse // Odious Witch", &["drain", "lifegain"]),
+        ("The Flesh Is Weak", &["anthem", "counters", "wipe"]),
+    ];
+    let classifier = Classifier::new().unwrap();
+    for (name, expected) in cases {
+        let a = classifier.classify(card(&i, name)).unwrap();
+        let mut got: Vec<_> = a.roles.iter().map(String::as_str).collect();
+        got.sort();
+        assert_eq!(&got, expected, "{name}: {a:?}");
+    }
+}
+
+#[test]
+fn non_deck_cards_remain_searchable_but_are_excluded_from_role_catalog_and_audits() {
+    let e = Env::new();
+    let mut i = index();
+    let map = roles::generate(&i, "").unwrap();
+    for name in ["Spinny Ride", "Unhinged Beast Hunt"] {
+        let c = card(&i, name);
+        assert!(!roles::is_deck_card(c));
+        assert!(!map.contains_key(&c.raw.oracle_id));
+    }
+    let stats = roles::stats(&i, &map);
+    assert_eq!(stats.skipped, 2);
+    assert_eq!(stats.total, i.cards.len() - 2);
+    i.attach_roles(&map).unwrap();
+    for name in ["Spinny Ride", "Unhinged Beast Hunt"] {
+        assert!(i.roles(i.lookup(name)[0]).unwrap().roles.is_empty());
+    }
+    e.command(&["--rules"]).unwrap();
+    assert!(e.command(&["--stats"]).unwrap().0.contains("SKIPPED: 2"));
+    assert!(e.command(&["--show", "Spinny Ride"]).unwrap().0.contains("excluded from roles"));
+    assert!(e.find(&["--name", "Spinny Ride"]).is_ok());
+    let audit = roles::audit(&i, "card=[]", 611, 9999, None, false).unwrap();
+    assert!(!audit.contains("Spinny Ride"));
+    assert!(!audit.contains("Unhinged Beast Hunt"));
+    assert!(roles::generate(&i, "[[card]]\nname='Spinny Ride'\nroles=[]\nnote='invalid'\n").is_err());
+    let mut stale = map.clone();
+    let removed = card(&i, "Counterspell").raw.oracle_id.clone();
+    stale.remove(&removed);
+    stale.insert(card(&i, "Spinny Ride").raw.oracle_id.clone(), Assignment::default());
+    assert!(i.attach_roles(&stale).is_err(), "equal count must not mask a missing deck card");
+    assert_eq!(i.roles(i.lookup("Counterspell")[0]).unwrap().roles, ["counter"]);
 }
