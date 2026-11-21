@@ -401,6 +401,7 @@ pub struct Index {
     /// lower-case face name (when different from the full name) -> every card with such a face
     faces: HashMap<String, Vec<u32>>,
     ids: HashMap<String, u32>,
+    roles: Option<Vec<crate::roles::Assignment>>,
 }
 
 impl Index {
@@ -456,6 +457,7 @@ impl Index {
             names: HashMap::new(),
             faces: HashMap::new(),
             ids: HashMap::new(),
+            roles: None,
         };
         for (i, c) in idx.cards.iter().enumerate() {
             idx.ids.insert(c.raw.oracle_id.clone(), i as u32);
@@ -470,6 +472,48 @@ impl Index {
             }
         }
         Ok(idx)
+    }
+
+    /// Attach a complete side table, aligned with card indices. Card and oracle.json stay immutable.
+    /// Reject stale/malformed data rather than silently returning incomplete role searches.
+    pub fn attach_roles(&mut self, map: &crate::roles::RoleMap) -> Result<(), String> {
+        if map.len() != self.cards.len() {
+            return Err("roles.json: catalog count differs; run `cardgen roles --rules`".into());
+        }
+        let mut rows = Vec::with_capacity(self.cards.len());
+        for c in &self.cards {
+            let bad =
+                || format!("roles.json: invalid or missing roles for {}; run `cardgen roles --rules`", c.raw.name);
+            let a = map.get(&c.raw.oracle_id).ok_or_else(bad)?;
+            if a.roles.len() > 4
+                || a.roles.first().map_or("", String::as_str) != a.primary
+                || a.roles.iter().collect::<std::collections::BTreeSet<_>>().len() != a.roles.len()
+                || a.evidence.len() != a.roles.len()
+            {
+                return Err(bad());
+            }
+            let lines = c.lines();
+            for role in &a.roles {
+                crate::roles::check_role(role)?;
+                let e = a.evidence.get(role).ok_or_else(bad)?;
+                if e.source == "rule" {
+                    let (face, _) = e.line.and_then(|i| lines.get(i)).ok_or_else(bad)?;
+                    if *face != e.face || !crate::roles::RULES.iter().any(|r| r.id == e.rule && r.role == role) {
+                        return Err(bad());
+                    }
+                } else if e.source != "override" || e.certain || e.line.is_some() || e.face.is_some() {
+                    return Err(bad());
+                }
+            }
+            rows.push(a.clone());
+        }
+        self.roles = Some(rows);
+        Ok(())
+    }
+
+    /// Attached roles for a card index; None means no roles file was attached.
+    pub fn roles(&self, i: u32) -> Option<&crate::roles::Assignment> {
+        self.roles.as_ref()?.get(i as usize)
     }
 
     /// the index of the card with this `oracle_id`
@@ -603,6 +647,7 @@ pub struct Query {
     pub cmc: Option<(Cmp, f32)>,
     pub types: Vec<String>,
     pub texts: Vec<String>,
+    pub roles: Vec<String>,
     pub gc: bool,
     pub deck: Option<String>,
     pub sort: Sort,
@@ -656,6 +701,7 @@ impl Default for Query {
             cmc: None,
             types: vec![],
             texts: vec![],
+            roles: vec![],
             gc: false,
             deck: None,
             sort: Sort::Edhrec,
@@ -685,13 +731,13 @@ impl Query {
                 "--full" => q.full = true,
                 "--meld" => q.meld = true,
                 "--name" | "--name-contains" | "--ident" | "--legal" | "--cmc" | "--type" | "--text" | "--deck"
-                | "--sort" | "--limit" | "--offset" | "--data-dir" => {
+                | "--sort" | "--limit" | "--offset" | "--data-dir" | "--role" => {
                     let Some(v) = args.get(i) else { return usage(format!("{a} needs a value")) };
                     if v.starts_with("--") {
                         return usage(format!("{a} needs a value (got '{v}')"));
                     }
                     i += 1;
-                    let repeatable = a == "--type" || a == "--text";
+                    let repeatable = a == "--type" || a == "--text" || a == "--role";
                     if !repeatable && seen.contains(&a) {
                         return usage(format!("{a} given twice"));
                     }
@@ -730,6 +776,10 @@ impl Query {
                             q.types.push(v.trim().to_lowercase())
                         }
                         "--text" => q.texts.push(v.clone()),
+                        "--role" => {
+                            crate::roles::check_role(v).map_err(FindError::Usage)?;
+                            q.roles.push(v.clone());
+                        }
                         "--deck" => q.deck = Some(v.clone()),
                         "--sort" => {
                             q.sort = match v.as_str() {
@@ -837,6 +887,12 @@ impl Index {
         exclude: &[bool],
         regexes: &[Regex],
     ) -> Result<Vec<u32>, FindError> {
+        for role in &q.roles {
+            crate::roles::check_role(role).map_err(FindError::Usage)?;
+        }
+        if !q.roles.is_empty() && self.roles.is_none() {
+            return usage("--role requires roles.json; run `cardgen roles --rules` first");
+        }
         let pool: Vec<u32> = match &q.name {
             Some(n) => self.lookup(n).to_vec(),
             None => (0..self.cards.len() as u32).collect(),
@@ -852,6 +908,7 @@ impl Index {
                 || exclude.get(i as usize).copied().unwrap_or(false)
                 || q.name_contains.as_deref().is_some_and(|s| !c.keys.contains(s))
                 || !q.types.iter().all(|t| t.split_whitespace().all(|w| c.has_type_word(w)))
+                || !q.roles.iter().all(|r| self.roles(i).is_some_and(|a| a.roles.contains(r)))
             {
                 continue;
             }
@@ -960,6 +1017,10 @@ struct OutCard<'a> {
     produced_mana: Option<&'a [String]>,
     #[serde(skip_serializing_if = "Option::is_none")]
     meld_parts: Option<&'a [String]>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    roles: Option<&'a [String]>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    primary: Option<&'a str>,
 }
 
 fn out_card(c: &Card) -> OutCard<'_> {
@@ -1001,13 +1062,24 @@ fn out_card(c: &Card) -> OutCard<'_> {
         loyalty: r.loyalty.as_deref(),
         produced_mana: r.produced_mana.as_deref(),
         meld_parts: r.meld_parts.as_deref(),
+        roles: None,
+        primary: None,
     }
 }
 
 /// a bare array, one object per line
-fn json_array(cards: &[&Card]) -> String {
-    let rows: Vec<String> =
-        cards.iter().map(|c| serde_json::to_string(&out_card(c)).expect("a card serialises")).collect();
+fn json_array(cards: &[&Card], index: &Index) -> String {
+    let rows: Vec<String> = cards
+        .iter()
+        .map(|c| {
+            let mut row = out_card(c);
+            if let Some(a) = index.by_oracle_id(&c.raw.oracle_id).and_then(|i| index.roles(i)) {
+                row.roles = Some(&a.roles);
+                row.primary = Some(&a.primary);
+            }
+            serde_json::to_string(&row).expect("a card serialises")
+        })
+        .collect();
     if rows.is_empty() { "[]\n".into() } else { format!("[\n{}\n]\n", rows.join(",\n")) }
 }
 
@@ -1213,7 +1285,13 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
     compile_texts(&q)?; // a bad pattern is reported before the catalog is read
     let deck = q.deck.as_deref().map(|k| load_deck(project, k)).transpose()?;
     let ident = effective_ident(&q, deck.as_ref())?;
-    let index = Index::open(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
+    let dir = knowledge_dir(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
+    let mut index = Index::load(&dir.join("oracle.json")).map_err(FindError::Failed)?;
+    let role_file = dir.join("roles.json");
+    if role_file.exists() {
+        let roles = crate::roles::load(&role_file).map_err(FindError::Failed)?;
+        index.attach_roles(&roles).map_err(FindError::Failed)?;
+    }
     let (hits, unresolved) = index.search(&q, deck.as_ref())?;
     let mut notes: Vec<String> = vec![];
     if let (Some(d), false) = (&deck, unresolved.is_empty()) {
@@ -1277,7 +1355,7 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         }
     }
     let out = if q.json {
-        json_array(&shown)
+        json_array(&shown, &index)
     } else if shown.is_empty() {
         (if total == 0 { "no matches\n" } else { "no matches in this page\n" }).to_string()
     } else if q.full {

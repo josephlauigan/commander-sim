@@ -17,6 +17,7 @@ pub mod knowledge;
 pub mod paths;
 pub mod py;
 pub mod re;
+pub mod roles;
 pub mod scryfall;
 pub mod sources;
 pub mod update_deck;

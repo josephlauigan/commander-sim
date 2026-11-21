@@ -17,8 +17,11 @@ const USAGE: &str = "usage:
                                                 \"up to date\" when the bulk file has not changed. --from-file
                                                 parses a local bulk file (no network); the directory can also be
                                                 set with CARDGEN_KNOWLEDGE_DIR
+  cardgen roles --rules [--data-dir DIR]        classify the catalog and write roles.json (offline)
+  cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
+  cardgen roles --show NAME | --stats [--data-dir DIR]
   cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
-               [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
+               [--type WORD]... [--text REGEX]... [--role R]... [--gc] [--deck KEY] [--meld]
                [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
                                                 search the whole Commander catalog (data/knowledge/oracle.json, see
                                                 bulk-sync); filters combine with AND. --name is exact (also a face
@@ -82,6 +85,11 @@ fn run(args: &[String]) -> Result<(), String> {
         "deck" => deck(&project, &mut args),
         "bulk-sync" => bulk_sync(&project, &mut args),
         "find" => find(&project, &args),
+        "roles" => {
+            let (out, passed) = cardgen::roles::command(&project, &args)?;
+            print!("{out}");
+            if passed { Ok(()) } else { Err("role validation thresholds missed".into()) }
+        }
         _ => Err(USAGE.into()),
     }
 }

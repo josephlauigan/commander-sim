@@ -226,7 +226,7 @@ The knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else `<re
 no `oracle.json` (a worktree has the directory, because `sync.lock` is tracked, but not the generated file) it falls
 back to the main checkout's (`<git-common-dir>/../data/knowledge`). A missing catalog is an error that names
 `cardgen bulk-sync`. A `--data-dir` or `CARDGEN_KNOWLEDGE_DIR` without an `oracle.json` is an error too, with no fallback.
-An unknown flag (`--role`, `--digest` and `--map` do not exist yet), a flag without its value or a non-numeric number prints
+An unknown flag (`--digest` and `--map` do not exist yet), a flag without its value or a non-numeric number prints
 the usage text and exits non-zero.
 
 Examples:
@@ -267,3 +267,53 @@ src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.jso
 src/knowledge.rs   the in-memory card index and `find` (queries oracle.json)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```
+
+## Roles (offline rule classifier)
+
+```
+cardgen roles --rules [--data-dir DIR]
+cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
+cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
+cardgen roles --stats [--data-dir DIR]
+cardgen find --role ramp --role sac-outlet --json
+```
+
+`roles --rules` reads the catalog without network access and atomically writes `roles.json` beside `oracle.json`.
+The JSON object is sorted by Oracle id and byte-deterministic. Each assignment has up to four ordered `roles`,
+`primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`.
+Evidence uses zero-based indices into `Card::lines()`; `face: null` means the card's top-level Oracle text.
+`line` is the global line index without face separator lines. `--show` prints the original supporting lines.
+
+The 26 definitions, sources and future LLM evidence guards live in `data/knowledge/roles.toml` (version 1).
+Roles describe main or repeatable functions, with the conventions in `roles_gold.toml` taking precedence over
+keyword matching. Reminder text is stripped, self names become `~`, land backs of MDFCs add no roles, prepare cards
+use their spell face, and expensive planeswalker ultimates add no roles. Basic land types confer their intrinsic
+mana abilities even when printed only as a parenthesized synopsis. Printed self evasion/protection gives no role;
+printed lifelink is lifegain, listed last. Unrecognized lines and cards with only uncertain-domain roles route to a
+future LLM stage; this command never calls an LLM. A pattern rejected as incidental still recognizes the line.
+
+Hand overrides in `data/knowledge/roles_overrides.toml` replace the entire role set, including certain rules;
+the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides intentionally do not improve validation.
+An override's evidence has source `override`, its note in `rule`, and no face or line, since it need not have a
+regex justification. No initial overrides are installed.
+
+`find` automatically attaches `roles.json` when present beside the catalog. Repeatable `--role R` filters combine
+with AND. An unknown id is a usage error listing all 26 ids; a missing roles file names `cardgen roles --rules`.
+JSON rows gain `roles` and `primary` only when the side table is attached. The Oracle catalog and `Card` remain
+immutable; programs use `Index::attach_roles`, `Index::roles` and `Query.roles`. Missing ids, invalid evidence or
+role sets, and catalog-count mismatches are errors rather than silently incomplete searches; regenerate after sync.
+
+Validation reclassifies without overrides and reports per-role and micro recall against the engine's manual/pool
+cards in owned decks, per-role precision and recall against independent gold labels (all and certain separately),
+forbidden-role violations, exact missed/unexpected pairs, and routing by legality and layout. Every engine tag is
+listed with its fixed translation or reason for leaving it unmapped. Tags describe simulator approximations and
+are not exhaustive; only recall is measured against them. `--gold` permits an independently supplied gold set.
+JSON validation uses integer `tp`, `fp`, `missed` counts; precision is `tp/(tp+fp)`, recall is `tp/(tp+missed)`;
+a zero denominator is 1. Text output includes those ratios. Nonzero exit means an acceptance threshold failed:
+hand recall 0.95 (0.85 for roles with at least ten pairs), gold micro precision 0.90 and recall 0.85 for the 19 rules
+roles, certain precision 0.95 across every role, and zero certain forbidden-role violations. Other roles are reported
+without precision/recall gates. Routing counts are reported, not hidden by a threshold.
+
+CI uses real Oracle text frozen in `tests/fixtures/roles_oracle.json`, with positive and decoy examples for every
+rule. Full-catalog tests are opt-in: `cargo test --release -p cardgen --test roles_real -- --ignored` (requires the
+local catalog). Run Cargo and test binaries under the repository memory cap.

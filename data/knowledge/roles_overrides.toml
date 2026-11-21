@@ -1,0 +1,7 @@
+# Highest precedence: a complete ordered role set replaces every rule result, including certain roles.
+# Names must resolve unambiguously in the catalog. At most four unique taxonomy ids; [] explicitly clears roles.
+# Primary is the first role, or empty for []. A nonempty note is required. Overrides do not improve validation.
+# [[card]]
+# name = "Example full card name"
+# roles = ["draw", "selection"]
+# note = "Reviewed Oracle interpretation, date and reason."
