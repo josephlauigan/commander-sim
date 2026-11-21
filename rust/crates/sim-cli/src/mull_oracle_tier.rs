@@ -664,7 +664,7 @@ mod tests {
     #[test]
     fn only_the_decks_own_tiers_are_played() {
         let sim = sim();
-        // cloud is t1-t3, sheoldred t3-t4, thrasios t6
+        // cloud is t1-t3, sheoldred t3-t4
         let p = check_args(&sim, &args("--mulligan-oracle cloud,sheoldred --vs-tier")).unwrap();
         assert_eq!(p[0].1, ["t1", "t2", "t3"]);
         assert_eq!(p[1].1, ["t3", "t4"]);
@@ -697,7 +697,7 @@ mod tests {
     fn the_arms_are_paired() {
         let sim = sim();
         let e = &sim.engine;
-        for key in ["cloud", "thrasios"] {
+        for key in ["cloud", "yoshimaru"] {
             let tier = &deck_tiers(&sim, key)[0];
             let ctx = TierCtx::new(&sim, key, tier, "loose", 2, false).unwrap();
             for seed in 500000..500006u64 {
@@ -820,12 +820,13 @@ mod tests {
     #[test]
     fn hand_features_count_what_the_hand_holds() {
         let sim = sim();
-        let ctx = TierCtx::new(&sim, "thrasios", "t6", "loose", 2, false).unwrap();
+        let ctx = TierCtx::new(&sim, "yoshimaru", "t4", "loose", 2, false).unwrap();
         for seed in 500000..500020u64 {
             for th in ctx.tries(seed) {
                 let f = hand_features(&sim.engine.db, &sim.engine.registry, &ctx.settings, &ctx.seat, &th.hand);
                 assert_eq!(f.lands, th.lands);
-                assert_eq!(Some(f.eff), th.eff);
+                // the oracle's effective mana is a Tier 6 figure; none of JD's decks is Tier 6 now
+                assert!(th.eff.is_none_or(|e| e == f.eff));
                 assert!(f.fast_mana <= 7 - f.lands && f.tutors <= 7 - f.lands && f.payoffs <= 7 - f.lands);
             }
         }

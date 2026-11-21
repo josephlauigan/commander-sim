@@ -796,10 +796,6 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    (
-        "Dack Fayden, Helping Hand",
-        "the donated All-Fates Stalker enters under P1, so its enter trigger is P1's and P1 chooses the person's creature to exile; the rules say so",
-    ),
     ("Deathrite Shaman", "P1's ability targets a card in the person's graveyard: P1's choice"),
     (
         "Etali, Primal Storm",
@@ -820,8 +816,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("Reality Acid", "P1 enchanted Chandra; the aura leaving makes its controller sacrifice that permanent: no choice"),
     ("Riptide Gearhulk", "P1's target (a planeswalker third from the top)"),
     ("Silent-Blade Oni", "P1 looks at the person's hand and casts a spell of P1's choice from it"),
-    ("Static Prison", "P1's target (exile until it leaves)"),
-    ("Teferi, Time Raveler", "-3: P1 targets the person's enchantment"),
     ("Vraska, Betrayal's Sting", "-2: P1 targets the person's creature"),
 ];
 

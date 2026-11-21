@@ -13,7 +13,9 @@ use std::fs;
 /// the deck's cards (commanders included): decks.json, or for a retired deck its import list
 fn deck_cards(key: &str, retired: bool) -> BTreeSet<String> {
     if retired {
-        let p = data_dir().join(format!("../decklists/pool/retired/{key}.md"));
+        // the retired guide of the `thrasios` key has its own file name
+        let file = if key == "thrasios" { "tymna-thrasios-doomsday" } else { key };
+        let p = data_dir().join(format!("../decklists/pool/retired/{file}.md"));
         let text = fs::read_to_string(&p).unwrap_or_else(|e| panic!("{}: {e}", p.display()));
         let list = text.split("## Import list").nth(1).unwrap_or_else(|| panic!("{key}: no import list"));
         return list

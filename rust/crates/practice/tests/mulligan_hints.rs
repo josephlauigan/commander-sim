@@ -1,5 +1,5 @@
 //! The mulligan hint names the rule that decided (the plan file's keep-table row), the cards it counted, the colours,
-//! the speed and, for Tymna/Thrasios, the oracle's numbers; and it never changes the verdict (`keeps_hand`).
+//! the speed; and it never changes the verdict (`keeps_hand`).
 
 #[path = "session_common/mod.rs"]
 mod common;
@@ -65,44 +65,38 @@ fn verdict_unchanged(g: &mut Game, p: PlayerId, h: &Value) {
 }
 
 #[test]
-fn thrasios_no_lands_with_fast_mana_and_a_tutor_is_kept_by_row_2() {
+fn kraum_one_lander_with_fast_mana_and_a_tutor_is_kept_by_row_2() {
     let (mut g, p) = game_with(
-        "thrasios",
+        "kraum-tymna-blue-breach-midrange",
         &[
+            "Underground Sea",
             "Lotus Petal",
             "Sol Ring",
             "Chrome Mox",
             "Vampiric Tutor",
             "Demonic Consultation",
             "Thassa's Oracle",
-            "Brainstorm",
         ],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     assert_eq!(h["choice"], "keep", "{h}");
     let rule = &lines(&h)[0];
-    assert!(rule.contains("row 2 of"), "{rule}");
-    assert!(rule.contains("Lands: none"), "{rule}");
-    assert!(
-        rule.contains("Fast mana") && rule.contains("3 or more") && rule.contains("Chrome Mox, Lotus Petal, Sol Ring"),
-        "{rule}"
-    );
-    assert!(rule.contains("Tutors: at least 1") && rule.contains("Vampiric Tutor"), "{rule}");
+    assert!(rule.contains("row 2 of") && rule.contains("Lands: exactly 1"), "{rule}");
+    assert!(rule.contains("Mana as the keep rule counts it") && rule.contains("Action cards"), "{rule}");
     assert!(!has(&h, "keep a hand with 2 to 5 lands"), "the generic rule must not be described: {h}");
     // mana, key cards, colours and the line
     assert!(has(&h, "Mana on turn 2:"), "{h}");
-    assert!(has(&h, "Key cards:") && has(&h, "win-line pieces"), "{h}");
+    assert!(has(&h, "Key cards:"), "{h}");
     assert!(has(&h, "Black:"), "{h}");
-    assert!(has(&h, "the hand holds all of \"Thassa's Oracle + Demonic Consultation / Tainted Pact\""), "{h}");
 }
 
 /// turn-2 mana is what you can have then (two land drops at most), not the keep rule's count of every land in hand
 #[test]
 fn three_lands_and_sol_ring_make_four_mana_on_turn_2_not_five() {
     let (mut g, p) = game_with(
-        "thrasios",
-        &["Tundra", "Watery Grave", "Underground Sea", "Sol Ring", "Vampiric Tutor", "Thassa's Oracle", "Brainstorm"],
+        "kraum-tymna-blue-breach-midrange",
+        &["Tundra", "Scrubland", "Underground Sea", "Sol Ring", "Vampiric Tutor", "Thassa's Oracle", "Rhystic Study"],
     );
     let h = hint(&mut g, p);
     let d = lines(&h);
@@ -119,28 +113,37 @@ fn three_lands_and_sol_ring_make_four_mana_on_turn_2_not_five() {
 }
 
 #[test]
-fn thrasios_six_lands_are_sent_back_by_row_1() {
+fn kraum_six_lands_fit_no_row_and_are_sent_back() {
     let (mut g, p) = game_with(
-        "thrasios",
-        &["Watery Grave", "Underground Sea", "Bayou", "Scrubland", "Overgrown Tomb", "Tundra", "Vampiric Tutor"],
+        "kraum-tymna-blue-breach-midrange",
+        &["Badlands", "Underground Sea", "Plateau", "Scrubland", "Volcanic Island", "Tundra", "Vampiric Tutor"],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     assert_eq!(h["choice"], "mulligan", "{h}");
     let rule = &lines(&h)[0];
-    assert!(rule.contains("row 1 of") && rule.contains("Lands: 6 or more"), "{rule}");
+    assert!(rule.contains("none of the 8 rows") && rule.contains("4 keep a hand, 4 send one back"), "{rule}");
+    assert!(rule.contains("sent back"), "{rule}");
 }
 
 #[test]
-fn thrasios_colours_say_what_doomsday_and_ad_nauseam_need() {
+fn kraum_colours_say_what_ad_nauseam_needs() {
     let (mut g, p) = game_with(
-        "thrasios",
-        &["Tundra", "Hallowed Fountain", "Watery Grave", "Doomsday", "Ad Nauseam", "Thassa's Oracle", "Brainstorm"],
+        "kraum-tymna-blue-breach-midrange",
+        &[
+            "Tundra",
+            "Underground Sea",
+            "Volcanic Island",
+            "Ad Nauseam",
+            "Necropotence",
+            "Thassa's Oracle",
+            "Rhystic Study",
+        ],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     let black = lines(&h).into_iter().find(|l| l.starts_with("Black:")).unwrap_or_else(|| panic!("{h}"));
-    assert!(black.contains("Doomsday {B}{B}{B}") && black.contains("Ad Nauseam {B}{B}"), "{black}");
+    assert!(black.contains("Necropotence {B}{B}{B}") && black.contains("Ad Nauseam {B}{B}"), "{black}");
     assert!(black.contains("1 black source") && black.contains("short"), "{black}");
 }
 
@@ -268,7 +271,7 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["thrasios", "thanos", "cloud", "yshtola", "sheoldred"] {
+    for deck in ["thanos", "cloud", "yshtola", "sheoldred", "yoshimaru"] {
         let others = ["sheoldred", "cloud", "thanos", "yshtola"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
@@ -289,50 +292,16 @@ fn the_verdict_is_keeps_hand_over_many_hands() {
                 let c = pl.library.pop().unwrap();
                 pl.hand.push(c);
             }
-            // the plan file's reason and the table's verdict agree (all but the oracle, which is Thrasios's and slow)
+            // the plan file's reason and the table's verdict agree
             let why = sim_core::ai::plan_data::keeps_hand_why(&g, p);
             if let Some(w) = &why {
                 assert_eq!(Some(w.keep), sim_core::ai::plan_data::keeps_hand(&g, p), "{deck} seed {seed}");
-            }
-            if deck == "thrasios" {
-                continue; // the hint runs the oracle: covered by its own test
             }
             let h = hint(&mut g, p);
             verdict_unchanged(&mut g, p, &h);
             assert!(lines(&h).len() >= 4, "{h}");
         }
     }
-}
-
-#[test]
-fn the_thrasios_hint_carries_the_oracles_numbers_and_they_do_not_move() {
-    let hand = [
-        "Tundra",
-        "Watery Grave",
-        "Underground Sea",
-        "Sol Ring",
-        "Vampiric Tutor",
-        "Thassa's Oracle",
-        "Demonic Consultation",
-    ];
-    let (mut g, p) = game_with("thrasios", &hand);
-    let a = hint(&mut g, p);
-    let o = lines(&a)
-        .into_iter()
-        .find(|l| l.starts_with("Oracle, 40 goldfish games each way"))
-        .unwrap_or_else(|| panic!("{a}"));
-    assert!(o.contains("kept, this hand kills on turn") && o.contains("mulliganed, on turn"), "{o}");
-    assert!(o.contains("The oracle says"), "{o}");
-    assert!(has(&a, "goldfish games have no opponents"), "{a}");
-    // asked again (cached) and asked fresh (uncached, a new game with the same hand): the same numbers
-    let b = hint(&mut g, p);
-    assert_eq!(a, b);
-    let u1 = advisor::mulligan::oracle_uncached(&g, p, 0).unwrap();
-    let (g2, p2) = game_with("thrasios", &hand);
-    let u2 = advisor::mulligan::oracle_uncached(&g2, p2, 0).unwrap();
-    assert_eq!(u1, u2, "the same hand gives the same numbers");
-    assert_eq!(u1[0], o);
-    verdict_unchanged(&mut g, p, &a);
 }
 
 #[test]
@@ -365,8 +334,8 @@ fn the_bottom_choice_says_why() {
     let line = d.iter().find(|l| l.contains("on the bottom")).unwrap_or_else(|| panic!("{h}"));
     assert!(line.contains("Why: it is the spell worth least") || line.contains("most expensive"), "{line}");
     let (mut g, p) = game_with(
-        "thrasios",
-        &["Tundra", "Watery Grave", "Underground Sea", "Bayou", "Sol Ring", "Vampiric Tutor", "Thassa's Oracle"],
+        "kraum-tymna-blue-breach-midrange",
+        &["Tundra", "Scrubland", "Underground Sea", "Plateau", "Sol Ring", "Vampiric Tutor", "Thassa's Oracle"],
     );
     let r = req("Your opening hand (6 to keep). If you keep, you put 1 card(s) on the bottom.");
     let h = advisor::hint(&mut g, p, &r);
@@ -381,10 +350,10 @@ fn the_bottom_choice_says_why() {
 fn print_example_hints() {
     let cases: [(&str, &[&str]); 3] = [
         (
-            "thrasios",
+            "kraum-tymna-blue-breach-midrange",
             &[
                 "Tundra",
-                "Watery Grave",
+                "Scrubland",
                 "Underground Sea",
                 "Sol Ring",
                 "Vampiric Tutor",
@@ -451,24 +420,6 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
     let rule = &lines(&h)[0];
     assert!(rule.contains("reasons to mulligan fits this hand, so keep it"), "{rule}");
     assert!(!rule.contains("default"), "{rule}");
-    // Tymna/Thrasios's rows both keep and mulligan: the hint counts them
-    let (mut g, p) = game_with(
-        "thrasios",
-        &[
-            "Tundra",
-            "Underground Sea",
-            "Watery Grave",
-            "Sol Ring",
-            "Demonic Consultation",
-            "Vampiric Tutor",
-            "Thassa's Oracle",
-        ],
-    );
-    let h = hint(&mut g, p);
-    verdict_unchanged(&mut g, p, &h);
-    assert_eq!(h["choice"], "keep", "{h}");
-    let rule = &lines(&h)[0];
-    assert!(rule.contains("keep a hand,") && rule.contains("send one back") && rule.contains("so keep it"), "{rule}");
 }
 
 /// Mox Jasper makes mana only while you control a Dragon: with a Dragon the hand cannot cast (Scion of Draco, 9) it
