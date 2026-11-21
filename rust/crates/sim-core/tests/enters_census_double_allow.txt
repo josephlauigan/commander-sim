@@ -71,7 +71,7 @@ Loyal Warhound | [intervening-if] The fixture starts one land behind; the first 
 Marwyn, the Nurturer | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
 Massacre Wurm | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
 Mavren Fein, Dusk Apostle | [deferred] Tok=1 entry proxy invents an ETB for an attack ability. Correcting the underlying card model is outside the source/event-copy scope.
-Mentor of the Meek | [fixture] No standard observer entrant (creature, small or big token, land, Treasure) makes the observer's optional {1} draw happen: the pass shows no state difference, so its guard is not exercised.
+Mentor of the Meek | [fixture] The small-token entrant exercises it, but the AI pays {1} only while its hand holds six or fewer (mentor_meek) and the fixture's hand is six: the first instance draws and the doubled one finds seven cards and declines. cards_mentor_tokens.rs shows the doubled token drawing twice from a smaller hand.
 Meteor Golem | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Miirym, Sentinel Wyrm | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
 Mithril Coat | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.

@@ -70,3 +70,30 @@ fn an_opponents_token_does_not_draw() {
     settle_stack(&mut g).unwrap();
     assert_eq!(hand_size(&g), 0);
 }
+
+// ------------------------------------------------------------------ a doubled trigger (Panharmonicon)
+/// Panharmonicon makes the trigger happen twice for a token; each instance pays its own {1}
+#[test]
+fn a_doubler_makes_the_token_draw_twice() {
+    let mut g = board(2);
+    perm(&mut g, P0, "Panharmonicon");
+    token(&mut g, P0, 1);
+    settle_stack(&mut g).unwrap();
+    assert_eq!(hand_size(&g), 2);
+}
+
+/// The AI pays only while its hand holds six or fewer (`mentor_meek`): with six cards in hand the first instance
+/// draws and the second finds seven, so it declines. This is why the doubling census fixture (hand of 6) sees one draw.
+#[test]
+fn the_ai_stops_paying_at_a_full_hand() {
+    let mut g = board(2);
+    hand(
+        &mut g,
+        P0,
+        &["Plains", "Forest", "Serra Angel", "Mask of Memory", "Brainstorm", "Captain America, Team Leader"],
+    );
+    perm(&mut g, P0, "Panharmonicon");
+    token(&mut g, P0, 1);
+    settle_stack(&mut g).unwrap();
+    assert_eq!(hand_size(&g), 7, "the second instance declines at seven cards");
+}
