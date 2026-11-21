@@ -119,9 +119,10 @@ pub fn ring_level(g: &Game, p: PlayerId) -> u32 {
     g.player(p).ring_level
 }
 
-/// mine.is_legendary: a legendary card, or (the Ring) your Ring-bearer
+/// mine.is_legendary: a legendary card (face up: a face-down permanent has no supertype, CR 708.2), or (the Ring) your
+/// Ring-bearer
 pub fn is_legendary(g: &Game, m: PermId) -> bool {
-    if card_tag(g, m, Tag::Leg) && !g.perm(m).exc.not_legendary {
+    if card_tag(g, m, Tag::Leg) && !g.perm(m).exc.not_legendary && !g.perm(m).data.truthy(DataKey::Facedown) {
         return true;
     }
     let o = g.perm(m).owner;

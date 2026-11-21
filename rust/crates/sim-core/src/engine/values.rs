@@ -96,7 +96,9 @@ pub fn card_tag(g: &Game, m: PermId, t: Tag) -> bool {
 /// m is an artifact: an artifact card (also as a copy gives it the type, or a Spacecraft with enough charge), or a token
 /// made as an artifact (a Construct, a Thopter, Wurmcoil Engine's Wurms, Liquimetal Torque's land)
 pub fn is_artifact_perm(g: &Game, m: PermId) -> bool {
-    chars::card_types(g, m).has(crate::cards::Types::ARTIFACT) || crate::impls::t5::is_artifact(g, m)
+    // a face-down permanent is a 2/2 creature and nothing else (CR 708.2), whatever its card is
+    !g.perm(m).data.truthy(DataKey::Facedown)
+        && (chars::card_types(g, m).has(crate::cards::Types::ARTIFACT) || crate::impls::t5::is_artifact(g, m))
 }
 
 pub fn card_name(g: &Game, m: PermId) -> Option<&str> {
