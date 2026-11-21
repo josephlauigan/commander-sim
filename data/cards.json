@@ -125187,7 +125187,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "manual",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

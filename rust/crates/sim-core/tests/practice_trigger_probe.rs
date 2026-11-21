@@ -929,10 +929,6 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "thrasios: Necropotence (Discard (state only))",
-        "no choice: the discarded card is exiled; the line only matched \"discard a\"",
-    ),
-    (
         "yshtola: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),

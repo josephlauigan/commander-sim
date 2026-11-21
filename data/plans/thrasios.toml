@@ -1,3 +1,4 @@
+# Retired 2026-11-21: the key is out of the simulator; the deck is a test seat of its card code (`testkit::retired_decks`).
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
 # policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (key `thrasios`, tier t6 since 2026-11-05: the
 # Doomsday rebuild, decklists/pool/retired/tymna-thrasios-doomsday.md; the Doomsday line was added 2026-11-05, see the Doomsday section below). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
@@ -12,6 +13,7 @@
 # Lagrella's board reads; the attack spread, `commander_first`, `thrasios_sink`, the combat tricks and Ballista's
 # counter targets.
 deck = "thrasios"
+retired = true
 default = "plan"
 
 # Tier 6 (JD, 2026-11-05: `thrasios` is a Tier 6 key, so the plan slots read this file). The style, the Oracle line, the tutor

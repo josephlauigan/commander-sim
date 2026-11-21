@@ -2,8 +2,8 @@
 
 **Retired 2026-11-14 (JD).** Replaced by the Yoshimaru and Tymna blink deck, `decklists/JD/yoshimaru-tymna-blink.md` (Bracket 4). The
 Doomsday and Thassa's Oracle package moved to the Y'shtola deck, `decklists/JD/yshtola-esper-drain.md`. This guide moved here from
-`decklists/JD/` on 2026-11-14 (JD). The simulator still plays this list under the key `thrasios` (`data/my_decks.toml`, t6) until the
-rewire step points the key at the new deck or the engine work removes it. Findings: `audit/thrasios/FINDINGS.md`.
+`decklists/JD/` on 2026-11-14 (JD). The `thrasios` key left the simulator and practice catalog on 2026-11-21; the list is kept here only as the
+testkit seat of its card code (`testkit::retired_decks`). Findings: `audit/retired/thrasios/FINDINGS.md`.
 
 Thassa's Oracle wins the game three ways here: with **Demonic Consultation** or **Tainted Pact** (two cards, three or
 four mana), out of a five-card **Doomsday** pile, or after Thrasios digs through the library on unlimited mana. Fast
@@ -18,7 +18,7 @@ hand leans on fast mana.
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2 lifelink) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 5 (cEDH): 22 Game Changers, Thassa's Oracle combos, free counters, Silence effects |
 | **Game Changers (22)** | Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gifts Ungiven, Grim Monolith, Imperial Seal, Intuition, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md`, history in `decklists/CHANGELOG.md`. Doomsday has card code, a pile builder and the play of the pile (`impls/doomsday.rs`) |
+| **Simulator** | Retired key `thrasios` (it played tier T6, cEDH, from `data/plans/thrasios.toml`; out of the simulator 2026-11-21); findings in `audit/retired/thrasios/FINDINGS.md`, history in `decklists/CHANGELOG.md`. Doomsday has card code, a pile builder and the play of the pile (`impls/doomsday.rs`) |
 | **Buys** | Doomsday, Brainstorm, Ponder, Preordain (none are in the binder or bulk lists) |
 
 ## Strategy

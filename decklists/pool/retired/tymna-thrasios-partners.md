@@ -2,7 +2,7 @@
 
 **Retired 2026-11-05 (JD).** Replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6). Tymna,
 Thrasios and 12 other cards move to the new list, and the rest go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`. The
-`thrasios` key now plays the new list (tier t6); this one is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings for this list: `audit/thrasios/FINDINGS-old-list.md`.
+`thrasios` key now plays the new list (tier t6); this one is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings for this list: `audit/retired/thrasios/FINDINGS-old-list.md`.
 
 > Built from the Tymna/Kraum deck (2026-10-19).
 

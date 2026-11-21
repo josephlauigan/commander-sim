@@ -168,6 +168,10 @@ fn thanos_t5() {
     play("thanos", "t5", 1);
 }
 #[test]
-fn thrasios_t6() {
-    play("thrasios", "t6", 1);
+fn yoshimaru_t4() {
+    play("yoshimaru", "t4", 1);
+}
+#[test]
+fn yoshimaru_t6() {
+    play("yoshimaru", "t6", 1);
 }

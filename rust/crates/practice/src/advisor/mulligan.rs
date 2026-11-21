@@ -1,21 +1,18 @@
 //! The mulligan hint: the AI's own keep rule (`engine::turn::keeps_hand`) applied to your opening hand, with the rule
 //! that decided it named in plain words, what the hand does in the deck's terms (mana, tutors, win lines, protection,
-//! colours, speed), for Tymna/Thrasios the mulligan oracle's numbers for this exact hand, and, once you keep after
-//! mulligans, the card the AI would put on the bottom and why.
+//! colours, speed) and, once you keep after mulligans, the card the AI would put on the bottom and why.
 //!
 //! The verdict (`choice`) is `keeps_hand`'s and nothing here changes it: this module only explains it.
 
 use serde_json::{Value, json};
 use sim_core::ai::plan_data::{self, KeepBy, KeepTerm, KeepWhy, Loaded};
 use sim_core::cards::Colors;
-use sim_core::engine::turn::{Seat, bottom_pick, keeps_hand};
+use sim_core::engine::turn::{bottom_pick, keeps_hand};
 use sim_core::human::choices::card_label;
 use sim_core::ids::{CardId, PlayerId};
 use sim_core::impls::t6_keep;
 use sim_core::state::Game;
 use sim_core::tag::Tag;
-use std::collections::HashMap;
-use std::sync::{Mutex, OnceLock};
 
 const COLOURS: [(char, &str); 5] = [('W', "white"), ('U', "blue"), ('B', "black"), ('R', "red"), ('G', "green")];
 
@@ -835,88 +832,6 @@ fn speed_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
     d
 }
 
-// ------------------------------------------------------------------ the oracle (Tymna/Thrasios only)
-/// playouts per arm
-const ORACLE_PLAYOUTS: u64 = 40;
-
-fn oracle_cache() -> &'static Mutex<HashMap<String, Vec<String>>> {
-    static C: OnceLock<Mutex<HashMap<String, Vec<String>>>> = OnceLock::new();
-    C.get_or_init(|| Mutex::new(HashMap::new()))
-}
-
-/// the mulligan oracle's numbers for the hand on the table (`sim_core::mull_oracle`, the machinery of
-/// `--mulligan-oracle`): the KEEP and the MULLIGAN arm played as goldfish games, 40 paired playouts each, on the adaptive
-/// AI, with a seed taken from the deck and the hand, so the same hand always gives the same numbers. Not cached.
-pub fn oracle_uncached(g: &Game, p: PlayerId, tries: i64) -> Option<Vec<String>> {
-    let pl = g.player(p);
-    let db = &g.db;
-    let mut seats = vec![Seat {
-        key: pl.key,
-        name: pl.name,
-        commander: pl.cmd,
-        commander2: pl.cmd2,
-        ident: pl.ident,
-        cards: pl.deck_names.clone(),
-    }];
-    seats.extend(sim_core::goldfish::inert_seats(db).ok()?);
-    let mut st = (*g.settings).clone();
-    st.ai = sim_core::settings::AiMode::Adaptive;
-    let st = std::sync::Arc::new(st);
-    let mut hand_names: Vec<String> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
-    hand_names.sort();
-    let seed = sim_core::rng::Rng::named(&format!("hint:{}:{tries}:{}", pl.key, hand_names.join("|"))).next_u64();
-    let threads = std::thread::available_parallelism().map_or(2, |n| n.get()).min(8);
-    let (keep, mull) = sim_core::mull_oracle::paired_scores(
-        db,
-        &g.registry,
-        &st,
-        &seats,
-        &pl.hand,
-        tries,
-        seed,
-        0..ORACLE_PLAYOUTS,
-        threads,
-    )?;
-    let (km, mm, _diff, _se, v) = sim_core::mull_oracle::judge(&keep, &mull);
-    let says = match v {
-        sim_core::mull_oracle::Verdict::Keep => "The oracle says KEEP: kept, it is faster by more than the noise.",
-        sim_core::mull_oracle::Verdict::Mull => {
-            "The oracle says MULLIGAN: a fresh hand is faster by more than the noise."
-        }
-        sim_core::mull_oracle::Verdict::Unclear => "The oracle says too close to call.",
-    };
-    Some(vec![
-        format!(
-            "Oracle, {ORACLE_PLAYOUTS} goldfish games each way: kept, this hand kills on turn {km:.1} on average; mulliganed, on turn {mm:.1} (a game with no kill by turn {} counts as {}). {says}",
-            sim_core::mull_oracle::ROUNDS,
-            sim_core::mull_oracle::NO_KILL
-        ),
-        "Limit: goldfish games have no opponents, so counters, removal and stax count for nothing in those numbers."
-            .into(),
-    ])
-}
-
-/// `oracle_uncached`, remembered for the hand (the hint is asked again whenever you look)
-fn oracle_lines(g: &Game, p: PlayerId, tries: i64) -> Vec<String> {
-    let pl = g.player(p);
-    if pl.key != "thrasios" || tries > 1 || pl.hand.len() != 7 {
-        return vec![];
-    }
-    let mut hand_names: Vec<String> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
-    hand_names.sort();
-    let key = format!("{tries}:{}", hand_names.join("|"));
-    if let Some(v) = oracle_cache().lock().ok().and_then(|c| c.get(&key).cloned()) {
-        return v;
-    }
-    let v = oracle_uncached(g, p, tries).unwrap_or_default();
-    if !v.is_empty()
-        && let Ok(mut c) = oracle_cache().lock()
-    {
-        c.insert(key, v.clone());
-    }
-    v
-}
-
 // ------------------------------------------------------------------ the hint
 pub fn hint(g: &mut Game, p: PlayerId, prompt: &str, tries: i64) -> Value {
     let keep_n = cards_to_keep(prompt);
@@ -941,7 +856,6 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str, tries: i64) -> Value {
     d.extend(hand_lines(g, p, l));
     d.extend(colour_lines(g, p, l));
     d.extend(speed_lines(g, p, l));
-    d.extend(oracle_lines(g, p, tries));
     if bottom > 0 {
         let pick = bottom_pick(g, p);
         d.push(match pick {

@@ -624,13 +624,15 @@ fn every_opponent_effect_asks_the_person() {
     let cache = json("scryfall_cache.json");
     let decks = json("decks.json");
     let db = db();
-    let tiers: BTreeSet<String> = decks["mine"]
+    let mut tiers: BTreeSet<String> = decks["mine"]
         .as_array()
         .unwrap()
         .iter()
         .flat_map(|d| d["tiers"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_string()))
         .collect();
-    // card -> the pool decks (of the tiers JD's decks face) that play it
+    // practice offers every tier t0-t6 as opponents, whatever tiers JD's decks are simulated against
+    tiers.insert("t6".to_string());
+    // card -> the pool decks (of the tiers JD's decks face, and t6) that play it
     let mut where_: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut ndecks = 0;
     for d in decks["pool"].as_array().unwrap() {
