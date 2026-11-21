@@ -281,8 +281,8 @@ pub struct Meta {
 const CARDS_TAIL: &str = ", \"cards\": [";
 
 /// `oracle.json`: line 1 is `{"meta": {...}, "cards": [`, then one card per line, sorted by lower-case name
-/// (ties by oracle_id, name, record text); the same input gives the same bytes apart from `meta.synced`. Returns the file text and the
-/// FNV-1a-64 of its `cards` array text (`[` .. `]`).
+/// (ties by oracle_id, name, record text); the same input gives the same bytes apart from `meta.synced`. Returns the
+/// file text and the FNV-1a-64 of its `cards` array text (`[` .. `]`).
 pub fn render(meta: &Meta, mut cards: Vec<(String, J)>) -> (String, u64) {
     // ties: oracle_id, the name as written, then the record text, so the order never depends on the input order
     cards.sort_by(|a, b| {
