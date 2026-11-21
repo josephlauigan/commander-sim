@@ -917,6 +917,7 @@ fn creature_tokens_entering_under_hushbringer_give_cathars_crusade_nothing() {
     perm(&mut g, P0, "Cathars' Crusade");
     let runes = perm(&mut g, P0, "Mother of Runes");
     perm(&mut g, P1, HUSH);
+    let before = counters(&g, runes);
     zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
-    assert_eq!(counters(&g, runes), 0, "creature tokens entering cause no ability to trigger");
+    assert_eq!(counters(&g, runes), before, "creature tokens entering cause no ability to trigger");
 }
