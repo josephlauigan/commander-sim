@@ -319,6 +319,69 @@ fn fnv1a64_known_values() {
     assert_eq!(bulk::fnv1a64(b"foobar"), 0x8594_4171_f739_67e8);
 }
 
+// ------------------------------------------------------------------ input formats
+
+fn jsonl_of_fixture() -> String {
+    fixture_cards().iter().map(|c| json::dumps(c, None, false) + "\n").collect()
+}
+
+fn gzip(bytes: &[u8]) -> Vec<u8> {
+    use std::io::Write;
+    let mut e = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+    e.write_all(bytes).unwrap();
+    e.finish().unwrap()
+}
+
+/// JSON Lines and gzip, alone or together, give the same oracle.json as the JSON array
+#[test]
+fn json_lines_and_gzip_read_back_the_same_as_the_array() {
+    let src = Tmp::new();
+    let array = std::fs::read(fixture()).unwrap();
+    let lines = jsonl_of_fixture();
+    std::fs::write(src.join("lines.jsonl"), &lines).unwrap();
+    std::fs::write(src.join("lines.jsonl.gz"), gzip(lines.as_bytes())).unwrap();
+    std::fs::write(src.join("array.json.gz"), gzip(&array)).unwrap();
+    // the name does not matter, the bytes do
+    std::fs::write(src.join("renamed.json"), gzip(lines.as_bytes())).unwrap();
+    // JSON Lines with blank lines and CRLF
+    std::fs::write(src.join("crlf.jsonl"), lines.replace('\n', "\r\n\r\n")).unwrap();
+    let want = Tmp::new();
+    sync_fixture(&want.0, SYNCED);
+    let want = read(&want, "oracle.json");
+    for name in ["lines.jsonl", "lines.jsonl.gz", "array.json.gz", "renamed.json", "crlf.jsonl"] {
+        let t = Tmp::new();
+        let o = opts(&t.0, Some(src.join(name)), 1, SYNCED);
+        let out = bulk::run(&o, &mut Panics).unwrap_or_else(|e| panic!("{name}: {e}"));
+        assert!(out.text.contains("read 44, kept 34, dropped 10"), "{name}: {}", out.text);
+        // only the recorded source differs
+        let got = read(&t, "oracle.json").replace(&src.join(name).display().to_string(), "SRC");
+        let want = want.replace(&fixture().display().to_string(), "SRC");
+        assert_eq!(got, want, "{name}");
+    }
+}
+
+#[test]
+fn corrupt_gzip_and_json_lines_fail_and_leave_oracle_json_alone() {
+    let t = Tmp::new();
+    sync_fixture(&t.0, SYNCED);
+    let old = std::fs::read(t.join("oracle.json")).unwrap();
+    let bad = Tmp::new();
+    let lines = jsonl_of_fixture();
+    let gz = gzip(lines.as_bytes());
+    for (name, body) in [
+        ("cut.gz", gz[..gz.len() / 2].to_vec()),
+        ("bitrot.gz", [&gz[..2], b"not gzip at all"].concat()),
+        ("cut.jsonl", lines.as_bytes()[..lines.len() / 2].to_vec()),
+        ("nonname.jsonl", b"{\"object\": \"error\"}\n".to_vec()),
+        ("number.jsonl", b"42\n".to_vec()),
+    ] {
+        std::fs::write(bad.join(name), body).unwrap();
+        let err = bulk::run(&opts(&t.0, Some(bad.join(name)), 1, SYNCED), &mut Panics).unwrap_err();
+        assert!(err.contains(name), "{name}: {err}");
+        assert_untouched(&t, &old);
+    }
+}
+
 // ------------------------------------------------------------------ the remote path
 
 #[test]

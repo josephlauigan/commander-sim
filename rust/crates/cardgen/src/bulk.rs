@@ -2,7 +2,7 @@
 //! gitignored `data/knowledge/oracle.json`, plus `oracle.prev.json` (the previous sync) and the tracked `sync.lock`.
 //! See `documents/card-knowledge.md`.
 //!
-//! The bulk file is about 160 MB, so it is streamed to a file (the cache's `Client` has a 30 s total timeout and
+//! The bulk file is about 160 MB (25 MB as the gzip JSON Lines file Scryfall serves), so it is streamed to a file (the cache's `Client` has a 30 s total timeout and
 //! ureq's `into_string` stops at 10 MB) and parsed one card at a time: only the slim records stay in memory.
 //! Any failure leaves the existing `oracle.json` byte-identical. Tests never touch the network: `--from-file` is the
 //! offline path, and [`Remote`] is the seam the tests replace.
@@ -13,7 +13,7 @@ use crate::scryfall::slim;
 use serde::de::{DeserializeSeed, SeqAccess, Visitor};
 use std::collections::{BTreeMap, HashSet};
 use std::fmt;
-use std::io::BufReader;
+use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
@@ -199,21 +199,70 @@ impl<'de> Visitor<'de> for CardsSeed<'_> {
     fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<(), A::Error> {
         // one card at a time: the full record is dropped as soon as its slim record is made
         while let Some(card) = seq.next_element::<J>()? {
+            check_card(&card).map_err(serde::de::Error::custom)?;
             self.0.add(card);
         }
         Ok(())
     }
 }
 
-/// Stream-parse a bulk file (a JSON array of cards) into slim records.
+/// a bulk record must at least be an object with a name; anything else (an error object, a stray value) is not a card
+fn check_card(card: &J) -> Result<(), &'static str> {
+    if card.s("name").is_some() { Ok(()) } else { Err("a record without a name") }
+}
+
+/// the first byte that is not whitespace (left unread), None at the end of the input
+fn first_byte<R: BufRead>(r: &mut R) -> std::io::Result<Option<u8>> {
+    loop {
+        let buf = r.fill_buf()?;
+        if buf.is_empty() {
+            return Ok(None);
+        }
+        match buf.iter().position(|b| !b.is_ascii_whitespace()) {
+            Some(i) => {
+                let b = buf[i];
+                r.consume(i);
+                return Ok(Some(b));
+            }
+            None => {
+                let n = buf.len();
+                r.consume(n);
+            }
+        }
+    }
+}
+
+/// Stream-parse a bulk file into slim records: a JSON array of cards, or JSON Lines (what Scryfall serves now), plain
+/// or gzip-compressed (told by the gzip magic bytes, not the file name).
 pub fn read_bulk(path: &Path) -> Result<Slimmed, String> {
+    let bad = |e: &dyn fmt::Display| format!("{}: not a Scryfall bulk file: {e}", path.display());
     let f = std::fs::File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let mut de = serde_json::Deserializer::from_reader(BufReader::with_capacity(1 << 20, f));
+    let mut raw = BufReader::with_capacity(1 << 20, f);
+    let gz = raw.fill_buf().map_err(|e| bad(&e))?.starts_with(&[0x1f, 0x8b]);
+    if gz {
+        parse_cards(BufReader::with_capacity(1 << 20, flate2::read::GzDecoder::new(raw)), &bad)
+    } else {
+        parse_cards(raw, &bad)
+    }
+}
+
+fn parse_cards<R: BufRead>(mut r: R, bad: &dyn Fn(&dyn fmt::Display) -> String) -> Result<Slimmed, String> {
     let mut out = Slimmed::default();
-    CardsSeed(&mut out)
-        .deserialize(&mut de)
-        .map_err(|e| format!("{}: not a Scryfall bulk file: {e}", path.display()))?;
-    de.end().map_err(|e| format!("{}: not a Scryfall bulk file: {e}", path.display()))?;
+    match first_byte(&mut r).map_err(|e| bad(&e))? {
+        None => return Err(bad(&"it is empty")),
+        Some(b'[') => {
+            let mut de = serde_json::Deserializer::from_reader(r);
+            CardsSeed(&mut out).deserialize(&mut de).map_err(|e| bad(&e))?;
+            de.end().map_err(|e| bad(&e))?;
+        }
+        Some(_) => {
+            for card in serde_json::Deserializer::from_reader(r).into_iter::<J>() {
+                let card = card.map_err(|e| bad(&e))?;
+                check_card(&card).map_err(|e| bad(&e))?;
+                out.add(card);
+            }
+        }
+    }
     Ok(out)
 }
 
@@ -322,19 +371,15 @@ impl Remote for Http {
             .and_then(|d| d.as_arr())
             .and_then(|d| d.iter().find(|e| e.s("type") == Some("oracle_cards")))
             .ok_or("Scryfall's bulk-data list has no oracle_cards entry")?;
-        match (e.s("updated_at"), e.s("download_uri")) {
+        // Scryfall serves a gzip file of JSON Lines (`jsonl_download_uri`); `download_uri` was a JSON array
+        match (e.s("updated_at"), e.s("jsonl_download_uri").or_else(|| e.s("download_uri"))) {
             (Some(u), Some(d)) => Ok(Entry { updated_at: u.to_string(), download_uri: d.to_string() }),
-            (Some(_), None) if e.s("jsonl_download_uri").is_some() => {
-                Err("Scryfall's oracle_cards entry now has only jsonl_download_uri (a gzip file of JSON Lines), no \
-                 download_uri; bulk-sync does not read that format yet"
-                    .into())
-            }
-            _ => Err("the oracle_cards entry has no updated_at or download_uri".into()),
+            _ => Err("the oracle_cards entry has no updated_at or jsonl_download_uri".into()),
         }
     }
 
-    /// streamed to `dest`: no total timeout (the file is about 160 MB), 60 s without a byte is a failure; ureq
-    /// decodes gzip
+    /// streamed to `dest` as served (a gzip file of about 25 MB; `read_bulk` decompresses it): no total timeout, 60 s
+    /// without a byte is a failure
     fn download(&mut self, uri: &str, dest: &Path) -> Result<(), String> {
         let agent = ureq::AgentBuilder::new()
             .timeout_connect(Duration::from_secs(30))
