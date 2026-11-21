@@ -620,19 +620,19 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (14).** Consecrated Sphinx, Esper Sentinel, Grand Abolisher, Grand Arbiter Augustin IV, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Valley Floodcaller, Voice of Victory, Zur the Enchanter
+**Creatures (13).** Consecrated Sphinx, Esper Sentinel, Grand Abolisher, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Valley Floodcaller, Voice of Victory, Zur the Enchanter
 
-**Planeswalkers (1).** Teferi, Time Raveler
+**Planeswalkers (2).** Teferi, Time Raveler, The Theorist, Jace Beleren
 
 **Enchantments (10).** Arrest, Exquisite Blood, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety
 
-**Artifacts (6).** Arcane Signet, Chrome Mox, Coalition Relic, Mox Diamond, Palantír of Orthanc, Sol Ring
+**Artifacts (7).** Arcane Signet, Chrome Mox, Coalition Relic, Expedition Map, Mox Diamond, Palantír of Orthanc, Sol Ring
 
 **Instants (18).** Absorb, Anguished Unmaking, Borne Upon a Wind, Brainstorm, Counterspell, Dark Ritual, Demonic Consultation, Disdainful Stroke, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mindbreak Trap, Mystical Tutor, Path to Exile, Silence, Vampiric Tutor, Your Fate Ends Here
 
 **Sorceries (13).** Austere Command, Cast Away Doubt, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Doomsday, Exsanguinate, Farewell, Preordain, Profane Tutor, Read the Bones, Ringsight, Toxic Deluge
 
-**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Mistrise Village, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Urza's Cave, Watery Grave, 6 Plains, 5 Island, 8 Swamp
+**Lands (36).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Mistrise Village, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 6 Plains, 5 Island, 8 Swamp
 
 ## Import list (100)
 
@@ -661,6 +661,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Disdainful Stroke
 1 Doomsday
 1 Esper Sentinel
+1 Expedition Map
 1 Exquisite Blood
 1 Exsanguinate
 1 Farewell
@@ -671,7 +672,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Go for the Throat
 1 Godless Shrine
 1 Grand Abolisher
-1 Grand Arbiter Augustin IV
 1 Hallowed Fountain
 1 Loran of the Third Path
 1 Marauding Blight-Priest
@@ -705,12 +705,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sphere of Safety
 1 Teferi, Time Raveler
 1 Thassa's Oracle
+1 The Theorist, Jace Beleren
 1 Toxic Deluge
 1 Tundra
 1 Underground River
 1 Underground Sea
 1 Urborg, Tomb of Yawgmoth
-1 Urza's Cave
 1 Valley Floodcaller
 1 Vampiric Tutor
 1 Voice of Victory
