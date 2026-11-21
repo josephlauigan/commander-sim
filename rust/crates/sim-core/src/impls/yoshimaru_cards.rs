@@ -1,6 +1,9 @@
 //! Cards of the Yoshimaru / Tymna blink deck, modelled before that deck is registered: Yoshimaru, Ever Faithful, Minas
-//! Tirith, The Seriema (its enters search is card code) and Witch Enchanter // Witch-Blessed Meadow. (Kambal, Consul of Allocation is compiled from its Oracle text and needs no code.) Each card's text is
-//! in the doc comment above its code.
+//! Tirith, The Seriema (its enters search is card code), Witch Enchanter // Witch-Blessed Meadow and Gandalf the White
+//! (the flash grant, and the additional time for what a legendary permanent or an artifact entering or leaving causes:
+//! `gandalf_copies`, asked by the enters paths, the leave paths and landfall, with the look-back of a copier that leaves
+//! with the cause in `engine::stack::note_leaving`). (Kambal, Consul of Allocation is compiled from its Oracle text and
+//! needs no code.) Each card's text is in the doc comment above its code.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::dsl::model::Filter;
@@ -453,7 +456,8 @@ pub fn gandalf_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// battlefield; "leaves": left any other way; "landfall": a land entered). It need not be yours: the ability is. None
 /// is an artifact token that is a counter on the player (Treasure, Food, Clue): ("etb", None) entering and
 /// ("dies", None) put into a graveyard from the battlefield (sacrificed). A cast, an attack and the like are not
-/// entering or leaving. The caller checks that Gandalf is live (`hooked`).
+/// entering or leaving. The caller checks that Gandalf is live (`hooked`), or that he left with the cause
+/// (`hooks::left_copies`); a permanent that has left is read as it last existed (`DataKey::LkiLegArt`).
 fn gandalf_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
     if p != g.perm(src).owner || !matches!(kind, "etb" | "landfall" | "dies" | "leaves") {
         return 0;

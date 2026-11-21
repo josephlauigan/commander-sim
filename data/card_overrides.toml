@@ -1380,6 +1380,10 @@ dsl = []
 status = "Full"
 note = "attack tax {2} (not for black creatures); cumulative upkeep paid while it matters"
 
+["Elesh Norn, Mother of Machines"]
+status = "Full"
+note = "vigilance; permanents entering under your control cause your triggered abilities to trigger an additional time (card code, the ability language, the engine's enters tags, landfall, the land-enters event and artifact-token events; engine/hooks.rs enter_copies, with Starfield Vocalist's copy function), and permanents entering do not cause abilities of permanents your opponents control to trigger (engine/hooks.rs enter_blanked): what happens as a permanent enters (a name chosen, counters, enters tapped, an Aura attaching, a Saga's lore counter) and the abilities of cards in other zones still happen. A creature entering or dying under Hushbringer causes nothing for anyone"
+
 ["Elspeth, Sun's Champion"]
 tags = "leg"
 dsl = []
@@ -1867,6 +1871,10 @@ note = "tutor any card to hand, then discard a card at random"
 ["Gandalf, Friend of the Shire"]
 status = "Full"
 note = "flash; you may cast sorcery spells as though they had flash; whenever the Ring tempts you and you chose a creature other than Gandalf as your Ring-bearer, draw a card (blue_cards.rs gandalf_draw, called by mine::ring_tempt)"
+
+["Gandalf the White"]
+status = "Full"
+note = "flash; you may cast legendary spells and artifact spells as though they had flash (a live Gandalf you control, not phased out, abilities on: a person casts a hand card or a commander from the command zone at instant speed, and a commander castable that way opens a response; the AI casts them in its end-of-turn window; a land is never cast; impls/yoshimaru_cards.rs gandalf_flash). If a legendary permanent or an artifact entering or leaving the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time, one more for each Gandalf (gandalf_copies; the permanent need not be yours, the ability is, and only its controller's Gandalf counts). Entering: card-code and compiled enters triggers, the land-enters event and landfall for a legendary or artifact land, artifact tokens (Treasure, Food, Clue) and legendary or artifact creature tokens, the engine's enters tags and Cathars' Crusade, his own entry included. Leaving: dies, exiled, returned to hand or library and graveyard events of card code and compiled abilities, a permanent's own leaves ability, Nim Deathmantle, lands put into a graveyard (Titania), and the engine's own triggers (Wurmcoil Engine, Massacre Wurm, Stormfront Riders, Zurgo Stormrender, Twilight Drover, Angelic Sleuth, Dour Port-Mage, Syr Vondam). A sacrifice is not a leaving: 'whenever you sacrifice' triggers once, while 'whenever an artifact is put into a graveyard from the battlefield' triggers an additional time for a sacrificed Treasure. He looks back: he and a legendary or artifact permanent leaving together (alone, or in the same wipe, in either order) each cause the additional time, as does a second Gandalf that leaves with it, and whether it was legendary or an artifact is read as it last existed (a Ring-bearer too). Not doubled: casts, attacks, phasing, replacement and as-enters effects, effects that end ('until this leaves the battlefield'), abilities of cards in a graveyard, and what returns a card from the graveyard (it returns once). Engine limits shared with every similar card: a land that leaves the battlefield fires no leaves, dies or exiled event (only a land card put into a graveyard is seen), and simultaneous entering or leaving outside a wipe follows the engine's sequential model"
 
 ["Garland, Royal Kidnapper"]
 tags = "leg human knight pow=3 tgh=4 garland"
@@ -3567,7 +3575,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied; one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest)"
+note = "a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional time (card code, the ability language, the engine's enters tags, Cathars' Crusade); a land that is a creature or an artifact is one too, and so is its landfall; a creature entering under Hushbringer sets off nothing; a Treasure, Food, Clue or Blood token you create is an artifact entering too, so the hooks marked as enters triggers on the artifact-token event (Haliya, Reckless Fireweaver, Weftstalker Ardent) get the additional time per token (one stack item per token; Haliya's creature-token trigger is one per token too); an enchantment entering (The Meathook Massacre) is not copied; one creation of more than 250 artifact tokens is 250 per-token triggers, the last standing for the rest (a copy of it copies the rest)"
 
 ["Paradise Druid"]
 status = "Full"
@@ -5028,7 +5036,7 @@ note = ""
 ["Teysa Karlov"]
 tags = "leg human pow=2 tgh=4"
 status = "Full"
-note = "death-caused triggers of your permanents fire twice; tokens have vigilance and lifelink"
+note = "death-caused triggers of your permanents fire twice: a creature dying (dies, graveyard and self-dies events of card code and compiled abilities, a creature's own leaves ability when it dies, Nim Deathmantle, Syr Vondam, and the engine's own triggers: Wurmcoil Engine, Massacre Wurm, Zurgo Stormrender, Twilight Drover), including Teysa herself and the creatures that die with her in the same wipe, in either order; 'whenever you sacrifice' is not caused by a death and triggers once; a creature that leaves without dying does not count; tokens have vigilance and lifelink"
 
 ["Tezzeret the Seeker"]
 tags = "leg"
