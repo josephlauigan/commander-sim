@@ -263,7 +263,7 @@ bottom for each mulligan after the free one.
 
 | Hand | Keep when |
 |---|---|
-| 7 cards | 3-5 lands, or 2 lands plus a rock or a cheap creature (Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Giver of Runes, Zack Fair, Knight of the White Orchid, Loyal Warhound, Puresteel Paladin, Kor Outfitter, Auriok Steelshaper, Grand Abolisher, Ardenn); and {W}{W} by turn 3 from Plains, Path of Ancestry or Plaza of Heroes |
+| 7 cards | 3-5 lands, or 2 lands plus a rock or a cheap creature (Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Giver of Runes, Zack Fair, Knight of the White Orchid, Loyal Warhound, Puresteel Paladin, Kor Outfitter, Auriok Steelshaper, Grand Abolisher, Ardenn); and {W}{W} by turn 3 from Plains, Path of Ancestry or Plaza of Heroes |
 | 6 or 5 cards | 2-4 lands that make {W}{W}, and any play (a rock, a cheap creature, a tutor, removal) |
 | 4 cards | Keep |
 
@@ -281,7 +281,7 @@ bottom for each mulligan after the free one.
 | 1 | Plains, Plains, Plains, Sol Ring, Sword of Fire and Ice, Swiftfoot Boots, Swords to Plowshares | Keep | Turn 1 Sol Ring, turn 2 Cloud and Boots, turn 3 cast and equip the Sword and attack |
 | 2 | Plains, Plains, Evolving Wilds, Mind Stone, Giver of Runes, Steelshaper's Gift, Buster Sword | Keep | Three lands, a rock, protection (Giver) and a tutor; Cloud on turn 2 with Giver ready for turn 3 |
 | 3 | Plains, Terminal Moraine, Rogue's Passage, Sword of Fire and Ice, Fireshrieker, Colossus Hammer, Elspeth, Sun's Champion | Ship | One {W} source and no way to make {W}{W} before turn 4; every spell costs three or more |
-| 4 | Plains, Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel | Ship | One land and six rocks, no spell to spend the mana on; the rocks need land drops |
+| 4 | Plains, Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Wayfarer's Bauble | Ship | One land, five rocks and a Bauble, no spell to spend the mana on; the rocks need land drops |
 | 5 | Plains, Plains, Mind Stone, Stoneforge Mystic, Giver of Runes, Sword of Hearth and Home, Austere Command | Keep (close) | Two lands plus Mind Stone; plays at one and two mana; Austere Command is the one dead card early |
 | 6 | Plains, Plains, Plains, Plains, Evolving Wilds, Colossus Hammer, Sword of Fire and Ice | Keep (close) | Five lands is the top of the range, but Cloud on turn 2 finds a third Equipment and the hand has a Sword and the Hammer; it wants Ardenn or Puresteel Paladin for the Hammer |
 | 7 | Plains, Plains, Colossus Hammer, Buster Sword, Fireshrieker, Austere Command, Elspeth, Sun's Champion | Ship | Two lands, no rock, no cheap play: after Cloud, nothing costs less than three |
@@ -613,8 +613,8 @@ Barrens, Terminal Moraine and Rogue's Passage make only {C}; Plaza of Heroes mak
 Cloud, Kor Outfitter, Puresteel Paladin, Knight of the White Orchid and Grand Abolisher need {W}{W}; Archangel of Tithes
 needs {W}{W}{W}.
 
-- **Rocks (6):** Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel.
-- **Other ramp:** Solemn Simulacrum; Knight of the White
+- **Rocks (5):** Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic.
+- **Other ramp:** Wayfarer's Bauble ({1}; {2}, {T}, sacrifice: a basic Plains onto the battlefield tapped); Solemn Simulacrum; Knight of the White
   Orchid and Loyal Warhound, which fetch a Plains when an opponent controls more lands than you; Smothering Tithe makes
   Treasures when opponents draw and don't pay {2}.
 - **Card draw:** Mask of Memory, Court of Ardenvale, Puresteel Paladin, Sram, Buster Sword, Sword of Fire and Ice and
@@ -642,7 +642,7 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
-**Artifacts (19).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Mithril Coat, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
+**Artifacts (19).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Mithril Coat, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Wayfarer's Bauble
 
 **Sorceries (6).** Austere Command, Fumigate, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
 
@@ -724,7 +724,7 @@ on its own. Tell the table before the game that:
 1 Swords to Plowshares
 1 Terminal Moraine
 1 Thalia, the Survivor
-1 Thought Vessel
+1 Wayfarer's Bauble
 1 Windborn Muse
 1 Winds of Abandon
 1 Wrath of God
