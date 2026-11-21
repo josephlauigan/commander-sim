@@ -541,8 +541,8 @@ fn defect_up_to_date_leaves_mismatched_lock() {
     lock_matches(&t);
 }
 
-// Report only: synchronization is explicitly deferred to a later phase. Channels make the
-// collision reproducible without a timing race or any assertion that enshrines the bug.
+// Channels make the interleaving reproducible without a timing race: run A is paused after its download, run B
+// completes in the same directory, then A resumes.
 #[test]
 fn concurrent_runs_report_only() {
     use std::sync::mpsc;
@@ -576,7 +576,11 @@ fn concurrent_runs_report_only() {
     let second = bulk::run(&options, &mut second_remote);
     resume_tx.send(()).unwrap();
     let first = first.join().unwrap();
-    eprintln!("Concurrent runs (report only): first={first:?}; second={second:?}");
+    // each run has its own temp files: neither fails on the other's, the last rename wins, and the lock matches it
+    first.unwrap();
+    second.unwrap();
+    lock_matches(&t);
+    no_temps(&t);
 }
 
 fn cli(root: &Path) -> Command {

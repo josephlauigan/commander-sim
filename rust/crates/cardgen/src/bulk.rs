@@ -116,6 +116,8 @@ fn is_meld_result(card: &J) -> bool {
     let (name, id) = (card.s("name"), card.s("id"));
     card.get("all_parts").and_then(|p| p.as_arr()).is_some_and(|parts| {
         parts.iter().any(|p| {
+            // by id, or by name: in the real file a result's own `all_parts` entry can carry another printing's id
+            // (Ragnarok, Divine Deliverance: card 01c5bafe..., entry a951cc35...), so a different id does not rule it out
             p.s("component") == Some("meld_result")
                 && (id.is_some() && p.s("id") == id || name.is_some() && p.s("name") == name)
         })
@@ -240,7 +242,7 @@ pub fn read_bulk(path: &Path) -> Result<Slimmed, String> {
     let mut raw = BufReader::with_capacity(1 << 20, f);
     let gz = raw.fill_buf().map_err(|e| bad(&e))?.starts_with(&[0x1f, 0x8b]);
     if gz {
-        parse_cards(BufReader::with_capacity(1 << 20, flate2::read::GzDecoder::new(raw)), &bad)
+        parse_cards(BufReader::with_capacity(1 << 20, flate2::read::MultiGzDecoder::new(raw)), &bad)
     } else {
         parse_cards(raw, &bad)
     }
@@ -279,10 +281,15 @@ pub struct Meta {
 const CARDS_TAIL: &str = ", \"cards\": [";
 
 /// `oracle.json`: line 1 is `{"meta": {...}, "cards": [`, then one card per line, sorted by lower-case name
-/// (ties by oracle_id); the same input gives the same bytes apart from `meta.synced`. Returns the file text and the
+/// (ties by oracle_id, name, record text); the same input gives the same bytes apart from `meta.synced`. Returns the file text and the
 /// FNV-1a-64 of its `cards` array text (`[` .. `]`).
 pub fn render(meta: &Meta, mut cards: Vec<(String, J)>) -> (String, u64) {
-    cards.sort_by(|a, b| (&a.0, a.1.s_or("oracle_id")).cmp(&(&b.0, b.1.s_or("oracle_id"))));
+    // ties: oracle_id, the name as written, then the record text, so the order never depends on the input order
+    cards.sort_by(|a, b| {
+        (&a.0, a.1.s_or("oracle_id"), a.1.s_or("name"))
+            .cmp(&(&b.0, b.1.s_or("oracle_id"), b.1.s_or("name")))
+            .then_with(|| json::dumps(&a.1, None, false).cmp(&json::dumps(&b.1, None, false)))
+    });
     let meta_obj = jo! {
         "schema" => SCHEMA,
         "bulk_updated_at" => meta.bulk_updated_at.as_str(),
@@ -327,6 +334,30 @@ pub fn hash_of_file(path: &Path) -> Result<u64, String> {
     let start = text.find(CARDS_TAIL).ok_or("not an oracle.json")? + CARDS_TAIL.len() - 1;
     let end = text.trim_end().strip_suffix('}').ok_or("not an oracle.json")?.len();
     Ok(fnv1a64(&text.as_bytes()[start..end]))
+}
+
+/// what `sync.lock` records
+#[derive(Debug, Clone, PartialEq)]
+pub struct Lock {
+    pub bulk_updated_at: String,
+    pub count: usize,
+    pub fnv1a64: String,
+}
+
+/// an existing `sync.lock`; None if missing or not three well-formed `key=value` lines
+pub fn read_lock(path: &Path) -> Option<Lock> {
+    let text = std::fs::read_to_string(path).ok()?;
+    let (mut updated, mut count, mut hash) = (None, None, None);
+    for line in text.lines() {
+        let (k, v) = line.split_once('=')?;
+        match k {
+            "bulk_updated_at" => updated = Some(v.to_string()),
+            "count" => count = v.parse().ok(),
+            "fnv1a64" => hash = Some(v.to_string()),
+            _ => return None,
+        }
+    }
+    Some(Lock { bulk_updated_at: updated?, count: count?, fnv1a64: hash? })
 }
 
 fn lock_text(meta: &Meta, hash: u64) -> String {
@@ -412,18 +443,37 @@ pub struct Outcome {
     pub up_to_date: bool,
 }
 
+/// `oracle.json` is current when its meta, `sync.lock` and the remote agree on `updated_at`, the lock's count is the
+/// meta's, and the lock's hash is the one recomputed from the file; anything else (missing, corrupt, stale) re-syncs
+fn current_count(dir: &Path, remote_updated_at: &str) -> Option<usize> {
+    let oracle = dir.join("oracle.json");
+    let meta = read_meta(&oracle)?;
+    let lock = read_lock(&dir.join("sync.lock"))?;
+    let hash = format!("{:016x}", hash_of_file(&oracle).ok()?);
+    let agree = lock.bulk_updated_at == meta.bulk_updated_at && lock.count == meta.count && lock.fnv1a64 == hash;
+    (agree && is_up_to_date(Some(&meta.bulk_updated_at), remote_updated_at)).then_some(meta.count)
+}
+
+/// a name for this invocation's temp files (process id and a counter, so two runs never share one)
+fn temp_token() -> String {
+    static N: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    format!("{}-{}", std::process::id(), N.fetch_add(1, std::sync::atomic::Ordering::SeqCst))
+}
+
 pub fn run(opts: &Options, remote: &mut dyn Remote) -> Result<Outcome, String> {
     std::fs::create_dir_all(&opts.dir).map_err(|e| format!("{}: {e}", opts.dir.display()))?;
+    let tok = temp_token();
     let oracle = opts.dir.join("oracle.json");
-    let download = opts.dir.join("oracle.download.tmp");
-    let fresh = opts.dir.join("oracle.new.tmp");
-    let (updated_at, uri, source) = match &opts.from_file {
-        Some(p) => ("from-file".to_string(), format!("file:{}", p.display()), p.clone()),
+    let download = opts.dir.join(format!("oracle.{tok}.download.tmp"));
+    let tmps = Temps {
+        fresh: opts.dir.join(format!("oracle.{tok}.new.tmp")),
+        lock: opts.dir.join(format!("sync.{tok}.lock.tmp")),
+    };
+    let (updated_at, uri, source, downloaded) = match &opts.from_file {
+        Some(p) => ("from-file".to_string(), format!("file:{}", p.display()), p.clone(), false),
         None => {
             let e = remote.latest()?;
-            let current = read_meta(&oracle);
-            if is_up_to_date(current.as_ref().map(|m| m.bulk_updated_at.as_str()), &e.updated_at) {
-                let n = current.map(|m| m.count).unwrap_or(0);
+            if let Some(n) = current_count(&opts.dir, &e.updated_at) {
                 return Ok(Outcome {
                     text: format!("up to date (bulk updated_at {}, {n} cards)\n", e.updated_at),
                     warnings: vec![],
@@ -433,13 +483,23 @@ pub fn run(opts: &Options, remote: &mut dyn Remote) -> Result<Outcome, String> {
             remote.download(&e.download_uri, &download).inspect_err(|_| {
                 let _ = std::fs::remove_file(&download);
             })?;
-            (e.updated_at, e.download_uri, download.clone())
+            (e.updated_at, e.download_uri, download.clone(), true)
         }
     };
-    let res = sync_file(opts, &source, updated_at, uri, &oracle, &fresh);
-    let _ = std::fs::remove_file(&download);
-    let _ = std::fs::remove_file(&fresh);
+    let res = sync_file(opts, &source, updated_at, uri, &oracle, &tmps);
+    // only files this invocation made: never the --from-file source
+    if downloaded {
+        let _ = std::fs::remove_file(&download);
+    }
+    let _ = std::fs::remove_file(&tmps.fresh);
+    let _ = std::fs::remove_file(&tmps.lock);
     res
+}
+
+/// the staging files of one sync
+struct Temps {
+    fresh: PathBuf,
+    lock: PathBuf,
 }
 
 fn sync_file(
@@ -448,8 +508,9 @@ fn sync_file(
     updated_at: String,
     uri: String,
     oracle: &Path,
-    fresh: &Path,
+    tmps: &Temps,
 ) -> Result<Outcome, String> {
+    let lock = opts.dir.join("sync.lock");
     let s = read_bulk(source)?;
     if s.kept() < opts.min_count {
         return Err(format!(
@@ -489,18 +550,30 @@ fn sync_file(
     ));
     let meta = Meta { bulk_updated_at: updated_at, download_uri: uri, synced: opts.synced.clone(), count: s.kept() };
     let (file_text, hash) = render(&meta, s.cards);
-    std::fs::write(fresh, file_text).map_err(|e| format!("{}: {e}", fresh.display()))?;
-    if oracle.exists() {
+    // a read-only lock is the user's; refuse before anything is touched (a rename would replace it anyway)
+    if std::fs::metadata(&lock).is_ok_and(|m| m.permissions().readonly()) {
+        return Err(format!("{}: is read-only; {} left untouched", lock.display(), oracle.display()));
+    }
+    // stage both files first, so a failure here changes nothing
+    std::fs::write(&tmps.fresh, file_text)
+        .map_err(|e| format!("staging oracle.new.tmp ({}): {e}", tmps.fresh.display()))?;
+    std::fs::write(&tmps.lock, lock_text(&meta, hash)).map_err(|e| format!("{}: {e}", tmps.lock.display()))?;
+    let had_old = oracle.exists();
+    let prev = opts.dir.join("oracle.prev.json");
+    if had_old {
         // keep the previous sync; oracle.json itself is never absent (a hard link, then an atomic rename over it)
-        let prev = opts.dir.join("oracle.prev.json");
         let _ = std::fs::remove_file(&prev);
         if std::fs::hard_link(oracle, &prev).is_err() {
             std::fs::copy(oracle, &prev).map_err(|e| format!("{}: {e}", prev.display()))?;
         }
     }
-    std::fs::rename(fresh, oracle).map_err(|e| format!("{}: {e}", oracle.display()))?;
-    let lock = opts.dir.join("sync.lock");
-    std::fs::write(&lock, lock_text(&meta, hash)).map_err(|e| format!("{}: {e}", lock.display()))?;
+    std::fs::rename(&tmps.fresh, oracle).map_err(|e| format!("{}: {e}", oracle.display()))?;
+    // the lock is renamed into place (a rename replaces a symlink, it never writes through it); if that fails the
+    // new oracle is rolled back, so oracle.json and sync.lock always describe the same sync
+    if let Err(e) = std::fs::rename(&tmps.lock, &lock) {
+        let _ = if had_old { std::fs::rename(&prev, oracle) } else { std::fs::remove_file(oracle) };
+        return Err(format!("{}: {e}; {} restored", lock.display(), oracle.display()));
+    }
     text.push_str(&format!("wrote {} ({} cards), {}\n", oracle.display(), meta.count, lock.display()));
     Ok(Outcome { text, warnings, up_to_date: false })
 }
