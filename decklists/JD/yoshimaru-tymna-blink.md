@@ -6,7 +6,7 @@ Put creatures with enter effects on the battlefield, then use them again. Solitu
 |---|---|
 | **Commanders** | Yoshimaru, Ever Faithful ({W}, 1/1; white) and Tymna the Weaver ({1}{W}{B}, 2/2 lifelink; white-black). Both have Partner; the colour identity is white-black |
 | **Bracket** | 4 (9 Game Changers: Mana Vault, Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal, Teferi's Protection, The One Ring, Orcish Bowmasters, Chrome Mox) |
-| **Simulator** | not registered yet: the key and its plan file come with the rewire and the Yoshimaru card model; nothing here has been simulated |
+| **Simulator** | Deck key `yoshimaru`, tiers t4-t5; findings in `audit/yoshimaru/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/yoshimaru.toml`. No sims yet |
 
 ## Strategy
 
