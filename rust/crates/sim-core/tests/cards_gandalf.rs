@@ -787,3 +787,63 @@ fn nine_lives_familiar_that_dies_twice_over_returns_once() {
     sim_core::impls::t45_urza_yawgmoth::revival_returns(&mut g).unwrap();
     assert_eq!(on_battlefield(&g, P0, "Nine-Lives Familiar"), 1, "the second instance finds the card gone");
 }
+
+// ------------------------------------------------------------------ landfall carries the land
+/// p plays this land card from the hand: the land event and landfall come with the real play
+fn play_land(g: &mut Game, p: PlayerId, name: &str) -> PermId {
+    let c = take(g, p, name);
+    sim_core::engine::turn::play_land_card(g, p, c, "plays").unwrap();
+    *g.player(p).lands.last().unwrap()
+}
+
+const PANHARMONICON: &str = "Panharmonicon";
+
+#[test]
+fn a_legendary_land_or_an_artifact_land_makes_landfall_trigger_twice_with_gandalf() {
+    for (land, want) in [("Gaea's Cradle", 2), ("Seat of the Synod", 2), ("Plains", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, GANDALF);
+        perm(&mut g, P0, "Scute Swarm"); // a landfall hook: a 1/1 Insect (fewer than six lands)
+        let before = tokens_of(&g, P0);
+        play_land(&mut g, P0, land);
+        assert_eq!(tokens_of(&g, P0) - before, want, "{land} enters");
+    }
+}
+
+#[test]
+fn a_compiled_landfall_ability_happens_twice_for_a_legendary_land_with_gandalf() {
+    for (land, want) in [("Gaea's Cradle", 2), ("Plains", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, GANDALF);
+        perm(&mut g, P0, "Icetill Explorer"); // compiled: landfall, mill a card
+        let gy = g.player(P0).gy.len();
+        play_land(&mut g, P0, land);
+        assert_eq!(g.player(P0).gy.len() - gy, want, "{land} enters");
+    }
+}
+
+#[test]
+fn panharmonicon_adds_one_to_landfall_for_a_creature_land_and_an_artifact_land() {
+    for (land, want) in [("Seat of the Synod", 2), ("Dryad Arbor", 2), ("Forest", 1)] {
+        let mut g = mine();
+        perm(&mut g, P0, PANHARMONICON);
+        perm(&mut g, P0, "Scute Swarm");
+        let before = tokens_of(&g, P0);
+        play_land(&mut g, P0, land);
+        assert_eq!(tokens_of(&g, P0) - before, want, "{land} enters: 1 + Panharmonicon for a creature or an artifact");
+    }
+}
+
+#[test]
+fn every_copier_adds_to_the_landfall_of_a_creature_land() {
+    let mut g = mine();
+    for n in [PANHARMONICON, "Starfield Vocalist", "Starfield Vocalist", "Ancient Greenwarden", DELNEY] {
+        perm(&mut g, P0, n);
+    }
+    let throne = perm(&mut g, P0, "Roaming Throne");
+    g.perm_mut(throne).data.set(DataKey::Ctype, Val::Str("insect"));
+    perm(&mut g, P0, "Scute Swarm");
+    let before = tokens_of(&g, P0);
+    play_land(&mut g, P0, "Dryad Arbor");
+    assert_eq!(tokens_of(&g, P0) - before, 7, "1 + Panharmonicon + two Vocalists + Greenwarden + Delney + Throne");
+}
