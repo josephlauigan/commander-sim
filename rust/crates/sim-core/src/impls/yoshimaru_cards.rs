@@ -2,13 +2,13 @@
 //! Tirith, The Seriema (its enters search is card code) and Witch Enchanter // Witch-Blessed Meadow. (Kambal, Consul of Allocation is compiled from its Oracle text and needs no code.) Each card's text is
 //! in the doc comment above its code.
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::dsl::model::Filter;
 use crate::engine::life::lose_life;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::epow;
+use crate::engine::values::{card_name, epow};
 use crate::engine::zones::{agent_for, agent_take, draw, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -429,6 +429,22 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     crate::engine::life::check_state(g)?; // paying the life to 0 is lost at once
     Ok(true)
+}
+
+// ================================================================== Gandalf the White
+const GANDALF: &str = "Gandalf the White";
+
+/// **Gandalf the White** ({3}{W}{W} 4/5, Flash): "You may cast legendary spells and artifact spells as though they had
+/// flash." A live Gandalf you control, not phased out and with abilities on, grants it for casting only (a land is
+/// never cast: `cast::grants_flash` answers false for lands first). The second ability, one additional time for a
+/// triggered ability caused by a legendary permanent or an artifact entering or leaving, is `gandalf_copies`.
+pub fn gandalf_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    (d.tag(Tag::Leg) || d.types.has(Types::ARTIFACT))
+        && g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.neutered && card_name(g, m) == Some(GANDALF)
+        })
 }
 
 // ================================================================== registration
