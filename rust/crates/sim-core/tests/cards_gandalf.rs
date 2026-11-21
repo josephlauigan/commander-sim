@@ -847,3 +847,76 @@ fn every_copier_adds_to_the_landfall_of_a_creature_land() {
     play_land(&mut g, P0, "Dryad Arbor");
     assert_eq!(tokens_of(&g, P0) - before, 7, "1 + Panharmonicon + two Vocalists + Greenwarden + Delney + Throne");
 }
+
+// ------------------------------------------------------------------ Hushbringer
+const HUSH: &str = "Hushbringer";
+
+#[test]
+fn hushbringer_blanks_the_landfall_of_a_creature_land_but_not_of_a_basic_land() {
+    let mut g = mine();
+    for n in [PANHARMONICON, "Starfield Vocalist", "Ancient Greenwarden", DELNEY, HUSH] {
+        perm(&mut g, P0, n);
+    }
+    perm(&mut g, P0, "Scute Swarm");
+    let before = tokens_of(&g, P0);
+    play_land(&mut g, P0, "Dryad Arbor");
+    assert_eq!(tokens_of(&g, P0) - before, 0, "a creature entering causes no ability to trigger, however many copiers");
+    let mut g = mine();
+    perm(&mut g, P1, HUSH);
+    perm(&mut g, P0, "Scute Swarm");
+    let before = tokens_of(&g, P0);
+    play_land(&mut g, P0, "Forest");
+    assert_eq!(tokens_of(&g, P0) - before, 1, "the control: a land that is not a creature");
+}
+
+#[test]
+fn a_creature_put_onto_the_battlefield_under_hushbringer_still_enters_as_its_card_says() {
+    let mut g = mine();
+    perm(&mut g, P1, HUSH);
+    let f = perm(&mut g, P0, "Freestrider Commando");
+    assert_eq!(counters(&g, f), 2, "it enters with two +1/+1 counters unless it was cast: not a trigger");
+    let r = perm(&mut g, P0, "Phyrexian Revoker");
+    assert!(g.perm(r).data.get(DataKey::Imprint).is_some(), "the name is chosen as it enters");
+}
+
+#[test]
+fn a_creature_entering_under_hushbringer_sets_off_nothing() {
+    let mut g = mine();
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P1, HUSH);
+    perm(&mut g, P0, "Tymna the Weaver");
+    assert_eq!(counters(&g, y), 0, "Yoshimaru gets nothing for a legendary creature entering");
+}
+
+#[test]
+fn a_creature_that_dies_under_hushbringer_causes_no_leaves_trigger() {
+    let mut g = mine();
+    let sky = skyclave_after(&mut g, false);
+    perm(&mut g, P0, "Angelic Sleuth");
+    g.perm_mut(sky).plus = 1;
+    perm(&mut g, P1, HUSH);
+    let (tokens, clues) = (tokens_of(&g, P1), g.player(P0).clues);
+    zones::die(&mut g, sky, "destroy").unwrap();
+    assert_eq!(tokens_of(&g, P1) - tokens, 0, "Skyclave Apparition's leaves ability is caused by it dying");
+    assert_eq!(g.player(P0).clues - clues, 0, "and so is Angelic Sleuth's, for a creature with a counter");
+}
+
+#[test]
+fn a_creature_that_leaves_without_dying_under_hushbringer_still_causes_its_leaves_trigger() {
+    let mut g = mine();
+    let sky = skyclave_after(&mut g, false);
+    perm(&mut g, P1, HUSH);
+    let before = tokens_of(&g, P1);
+    zones::bounce(&mut g, sky).unwrap();
+    assert_eq!(tokens_of(&g, P1) - before, 1, "returned to hand: not a death");
+}
+
+#[test]
+fn creature_tokens_entering_under_hushbringer_give_cathars_crusade_nothing() {
+    let mut g = mine();
+    perm(&mut g, P0, "Cathars' Crusade");
+    let runes = perm(&mut g, P0, "Mother of Runes");
+    perm(&mut g, P1, HUSH);
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert_eq!(counters(&g, runes), 0, "creature tokens entering cause no ability to trigger");
+}
