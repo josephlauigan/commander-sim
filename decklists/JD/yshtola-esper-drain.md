@@ -5,7 +5,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
-| **Bracket** | 4 (16 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Demonic Tutor, Mystical Tutor, Vampiric Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Orcish Bowmasters, Serra's Sanctum, Thassa's Oracle, Mox Diamond, Chrome Mox) |
+| **Bracket** | 4 (15 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Demonic Tutor, Mystical Tutor, Vampiric Tutor, Force of Will, Farewell, Orcish Bowmasters, Serra's Sanctum, Thassa's Oracle, Mox Diamond, Chrome Mox) |
 | **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 
@@ -21,7 +21,7 @@ She does three jobs in this deck:
 - **She draws cards.** Any player counts, you included, and she checks at *every* end step, yours and the opponents'.
 - **She is the thing the table attacks.** A 2/4 dies to most removal, so most of the guide below is about keeping her alive or winning without her.
 
-**Twenty-nine spells trigger her.** The trigger is on cast, so a countered spell still drains.
+**Thirty spells trigger her.** The trigger is on cast, so a countered spell still drains.
 
 | Type | Spells of mana value 3 or more |
 |---|---|
@@ -29,9 +29,9 @@ She does three jobs in this deck:
 | Enchantments (10) | Arrest, Exquisite Blood, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety |
 | Instants (6) | Absorb, Anguished Unmaking, Force of Will, Generous Gift, Mindbreak Trap, Your Fate Ends Here |
 | Sorceries (10) | Austere Command, Cast Away Doubt, Debt to the Deathless, Diabolic Tutor, Doomsday, Exsanguinate (X of 1 or more), Farewell, Read the Bones, Ringsight, Toxic Deluge |
-| Planeswalkers (1) | Teferi, Time Raveler |
+| Planeswalkers (2) | Teferi, Time Raveler, The Theorist, Jace Beleren |
 
-**Spells that don't trigger her:** every creature, and every spell of mana value 2 or less: Counterspell, Disdainful Stroke, Demonic Tutor, Demonic Consultation, Fatal Push, Go for the Throat, Path to Exile, Mystical Tutor, Vampiric Tutor, Silence, Borne Upon a Wind, Dark Ritual, Brainstorm, Preordain, the rocks and Moxen (Sol Ring, Arcane Signet, Mox Diamond, Chrome Mox), and Profane Tutor (mana value 0, even cast from suspend). Zur's search puts an enchantment onto the battlefield without casting it, so it doesn't trigger her either.
+**Spells that don't trigger her:** every creature, and every spell of mana value 2 or less: Counterspell, Disdainful Stroke, Demonic Tutor, Demonic Consultation, Fatal Push, Go for the Throat, Path to Exile, Mystical Tutor, Vampiric Tutor, Silence, Borne Upon a Wind, Dark Ritual, Brainstorm, Preordain, the rocks and Moxen (Sol Ring, Arcane Signet, Mox Diamond, Chrome Mox), Expedition Map, and Profane Tutor (mana value 0, even cast from suspend). Zur's search puts an enchantment onto the battlefield without casting it, so it doesn't trigger her either.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 
@@ -91,7 +91,7 @@ Debt drains twice as hard per mana (2X, for X + 4 mana) and is the better card f
 - **Debt at eleven mana:** X = 7, so each opponent loses 14 and you gain 42 (three opponents); Bond sends 42 to one of them. Two {W} must come from lands (Plains, a dual, Serra's Sanctum): Coffers makes only {B}.
 - **Exsanguinate at eleven mana:** X = 9.
 - **Two spells in one turn:** Debt for X = 4 (eight mana) plus a three-mana trigger spell. Each cast triggers her.
-- **Finding the missing half:** **Urza's Cave** ({3}, {T}, sacrifice: a land card onto the battlefield tapped) or an any-card tutor (Demonic Tutor, Diabolic Tutor, Vampiric Tutor) fetches Urborg or Coffers; Expedition Map is no longer in the deck, so the Cave is the only land tutor. When both are out, the Cave finds the land that fixes the hand's colour. Coffers alone counts only real Swamps: eight Swamps and the four Swamp-type duals (Underground Sea, Watery Grave, Scrubland, Godless Shrine).
+- **Finding the missing half:** **Expedition Map** ({1}; {2}, {T}, sacrifice: a land card into your hand) or an any-card tutor (Demonic Tutor, Diabolic Tutor, Vampiric Tutor) fetches Urborg or Coffers; the Map is the only land tutor. It puts the land in your hand, so it uses your land drop. When both are out, the Map finds the land that fixes the hand's colour. Coffers alone counts only real Swamps: eight Swamps and the four Swamp-type duals (Underground Sea, Watery Grave, Scrubland, Godless Shrine).
 - **Mystical Tutor** ({U}) puts Exsanguinate or Debt on top at the end of an opponent's turn so you draw it for the Coffers turn.
 
 The Coffers turn is a sorcery-speed turn into a table that holds counters: activate Mistrise Village first and keep a counter of your own behind the X spell.
@@ -150,14 +150,14 @@ After it resolves your library is exactly the five cards you chose, in the order
 |---|---|---|
 | Consecrated Sphinx | {4}{U}{U} | 2 |
 | Zur the Enchanter | {1}{W}{U}{B} | 1 |
-| Grand Arbiter Augustin IV | {2}{W}{U} | 1 |
 | Notion Thief | {2}{U}{B} | 1 |
 | Valley Floodcaller | {2}{U} | 1 |
 | Rhystic Study | {2}{U} | 1 |
 | Propaganda | {2}{U} | 1 |
 | Teferi, Time Raveler | {1}{W}{U} | 1 |
+| The Theorist, Jace Beleren | {2}{U}{U} | 2 |
 
-Loran, Arrest, Sphere of Safety, Skyclave Apparition, Esper Sentinel and Voice of Victory have no {U} in their cost. With Y'shtola, Sphinx and Rhystic Study out, Oracle is 6, and a five-card pile wins with no draws at all. Count devotion when the trigger resolves, not when you cast: a blue permanent killed in response lowers it. Augustin's discount reduces only generic mana, so it helps Borne Upon a Wind and Valley Floodcaller but not Oracle, Absorb, Silence or the one-mana cantrips.
+Loran, Arrest, Sphere of Safety, Skyclave Apparition, Esper Sentinel and Voice of Victory have no {U} in their cost. With Y'shtola, Sphinx and Rhystic Study out, Oracle is 6, and a five-card pile wins with no draws at all. Count devotion when the trigger resolves, not when you cast: a blue permanent killed in response lowers it.
 
 **Doomsday is a sorcery, and the timing matters.** Casting it at the end step of the player before you means your draw step takes the first card off the pile and you start your turn with all your mana. The deck has three ways to do that:
 
@@ -172,11 +172,12 @@ Without one of them, cast Doomsday in your own main phase and use a pile that st
 **The deck's own forced draws shorten a pile:**
 
 - **Her end-step draw is mandatory.** "At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card." Her draw needs her on the battlefield, and her cast trigger adds 2 life before Doomsday halves your life, so a Doomsday cast in your own main phase (Pile C) costs you 4 or more life at 5 life or more (7 after her trigger), and at your own end step she draws a card off the pile. A Pile C kill finishes in the main phase, so this only matters when the pile stalls (a cantrip or Oracle countered): her draw then takes a card off a 2 or 3 card library, and you have about one turn left, not the two the Doomsday deck gets. A Doomsday cast at an opponent's end step (Piles A and B) is not affected by its own life loss: her trigger is checked at the beginning of that end step, before you cast it. If her trigger is already on the stack (an opponent lost 4 life earlier that turn) and you cast Doomsday in response, it draws the top pile card, which only shortens Piles A and B.
+- **The Theorist, Jace Beleren** draws you a card at the beginning of each opponent's draw step, and the draw is not optional. A pile you finish this turn is unaffected, but a stalled pile loses its top card in every opponent's draw step while he is out (Sheoldred's gain of 2 life per draw applies to it too).
 - **Other mandatory draws:** Notion Thief (each extra card an opponent draws is drawn by you instead), Teferi's -3, Palantír of Orthanc at your end step (the opponent chooses between letting you draw and your milling), and Esper Sentinel (below). Rhystic Study and Consecrated Sphinx say "may", so they are safe if you decline. Each of these shortens a pile that is finishing this turn, which is harmless, and speeds up decking on a stalled one.
 - **Esper Sentinel** is yours and its draw is not optional: when an opponent casts their first noncreature spell in a turn, you draw unless they pay {1}. They may answer with a noncreature spell, decline to pay, and push you a card off the pile. That never hurts a pile you finish this turn, but do not hold a pile across an opponent's turn. An opponent's Esper Sentinel is a tax on your first noncreature spell each turn (Doomsday itself in your main phase): {X} or they draw.
 - **Necropotence skips your draw step,** so Piles A and B fail under it. Use Pile C.
 
-**Mana.** {B}{B}{B} is easy here: 17 black lands (every land with Urborg out) and Dark Ritual. {U}{U} for Oracle is the tight colour: there are 13 blue lands, Mistrise Village enters tapped, Cabal Coffers makes only {B}, and Expedition Map, the land tutor that could find a blue dual, is out of the deck. Without Gitaxian Probe the devotion-2 piles cost more blue. Piles A and B cost {U}, {U}, {W}, {U}{U} after Doomsday: five mana, four of it blue (four mana and three blue in the devotion-3 form). Pile C costs {B}{B}{B} for Doomsday, then {1}{U} (Borne), {U}, {U}, {W}, {U}{U}: ten mana, five of it blue (nine mana and four blue in its devotion-3 form); Dark Ritual brings either Pile C form down by two. Four untapped blue sources is a lot for this mana base, so prefer the devotion-3 forms whenever you can. They apply with Y'shtola out, and also when Teferi, Time Raveler or Valley Floodcaller (each has a blue symbol in its cost) is the flash enabler and is still on the battlefield when Oracle resolves. Only an end-step pile enabled by Borne Upon a Wind, or Pile C without her, needs the devotion-2 forms.
+**Mana.** {B}{B}{B} is easy here: 17 black lands (every land with Urborg out) and Dark Ritual. {U}{U} for Oracle is the tight colour: there are 13 blue lands, Mistrise Village enters tapped, Cabal Coffers makes only {B}, and Expedition Map is the only land tutor that can find a blue dual. Without Gitaxian Probe the devotion-2 piles cost more blue. Piles A and B cost {U}, {U}, {W}, {U}{U} after Doomsday: five mana, four of it blue (four mana and three blue in the devotion-3 form). Pile C costs {B}{B}{B} for Doomsday, then {1}{U} (Borne), {U}, {U}, {W}, {U}{U}: ten mana, five of it blue (nine mana and four blue in its devotion-3 form); Dark Ritual brings either Pile C form down by two. Four untapped blue sources is a lot for this mana base, so prefer the devotion-3 forms whenever you can. They apply with Y'shtola out, and also when Teferi, Time Raveler or Valley Floodcaller (each has a blue symbol in its cost) is the flash enabler and is still on the battlefield when Oracle resolves. Only an end-step pile enabled by Borne Upon a Wind, or Pile C without her, needs the devotion-2 forms.
 
 **The piles.** Cards are listed top to bottom. "Lock" means **Silence**, cast before Thassa's Oracle (Grand Abolisher or Voice of Victory, cast a turn earlier, can stand in for it on your own turn; in Pile C, where Doomsday itself is cast in your own main phase, one of them already on the battlefield also covers Doomsday). The pile cards in this deck are Brainstorm, Preordain and Silence, with Borne Upon a Wind as the starter in Pile C. Gitaxian Probe and Ponder are not in the deck, so every pile below is built from these cards only. Each pile was walked through card by card against the card texts, counting the library after every step; none has been played in the simulator.
 
@@ -233,7 +234,7 @@ Y'shtola is a 2/4 and the deck wins slowly, so the table's creature decks are th
 
 **Loran and Skyclave Apparition without blink.** The deck has no blink now (Displacer Kitten, Teleportation Circle, Conjurer's Closet and Restoration Angel are out), so an enter trigger fires once. **Loran of the Third Path** destroys one artifact or enchantment when it enters, and after that it is a {T} draw engine (you and a target opponent each draw), so cast it when there is a stax piece, a rock or a lock Aura worth removing. **Skyclave Apparition** exiles one nonland, nontoken permanent of mana value 4 or less when it enters; if it leaves, the owner gets an X/X Illusion token. Orcish Bowmasters likewise pings once when it enters.
 
-**Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more.
+**The Theorist, Jace Beleren** ({2}{U}{U}, loyalty 3) draws you a card at the beginning of each opponent's draw step: about three extra cards a round at a four-player table, and each draw is a draw for Sheoldred (you gain 2) and Notion Thief. +1 makes a 1/1 Illusion to defend him, -2 returns one artifact or creature from each opponent (a combo piece, Kinnan, a Walking Ballista), and -6 draws three. He is a noncreature spell of mana value 4, so casting him triggers Y'shtola, and his {U}{U} counts two for Oracle's devotion. Opponents will attack him, so keep a blocker or a Propaganda out.
 
 ### Mulligans
 
@@ -284,7 +285,7 @@ Y'shtola is the commander and starts in the command zone, so no tutor finds her.
 | Demonic Consultation | {B} | Hand | A card you name | Instant | The top six cards are exiled before it looks, so a named card in the top six is lost. Its job is the Oracle win (Line 5), not a search. Mana value 1: no trigger |
 | Brainstorm, Preordain | {U} each | Hand or top | A few cards deep | Instant (Brainstorm), sorcery (Preordain) | Dig, not a search. Mana value 1: no trigger. Brainstorm puts two cards back, and a later shuffle buries them. They draw Doomsday piles down to the Oracle win |
 | Palantír of Orthanc | {3} | Scry 2 at your end step | The top two cards | Your end step | At your end step the target opponent either lets you draw or you mill X cards and they lose life equal to the total mana value. The mill can take a card you just put on top. Mana value 3: triggers her when cast |
-| Urza's Cave | {3}, {T}, sacrifice | Battlefield, tapped | A land | Instant | Any land. The fetched land enters tapped, so it cannot tap this turn (Urborg's Swamp effect still applies at once) |
+| Expedition Map | {1}; {2}, {T}, sacrifice | Hand | A land | Instant | Any land card, revealed. It goes to your hand and needs your land drop; if you have not played a land this turn it can tap at once. Costs {3} in all |
 | Fetch lands (Flooded Strand, Polluted Delta, Marsh Flats) | {T}, 1 life, sacrifice | Battlefield | A basic or dual with the listed types | Instant | Strand finds Plains, Island, Tundra or Hallowed Fountain; Delta finds Island, Swamp, Underground Sea or Watery Grave; Flats finds Plains, Swamp, Scrubland or Godless Shrine. No Underground River, Adarkar Wastes, Caves of Koilos, Command Tower, Coffers or Urborg. Cracking one turns on Fatal Push's revolt |
 
 Generous Gift finds nothing: it is an instant that destroys a permanent (its controller gets a 3/3), and its value here is a mana value 3 trigger on an opponent's turn.
@@ -337,10 +338,10 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 
 | Situation | Tutor | Target | Why, and what to watch for |
 |---|---|---|---|
-| Five or more lands; Urborg out, Coffers missing (or the reverse) | Urza's Cave; Demonic Tutor | The missing half | With both out, seven lands is 11 mana. A tutor puts the land in your hand for the land drop, and it can tap at once; Cave's land enters tapped, so Coffers fetched by Cave waits a turn |
+| Five or more lands; Urborg out, Coffers missing (or the reverse) | Expedition Map; Demonic Tutor | The missing half | With both out, seven lands is 11 mana. A tutor or the Map puts the land in your hand for the land drop, and it can tap at once; the Map costs {3} in all, and the land needs a land drop you have not used |
 | Seven or eight lands, Urborg and Coffers out (11 to 13 mana), Bond out, Y'shtola out | Mystical Tutor at the end step before; Demonic Tutor if you can still pay for the spell | Debt to the Deathless: X = 7 at 11 mana (14 to each opponent), X = 9 at 13 mana (18 to each) | Two {W} must come from lands (Coffers makes only {B}). Without two white sources, cast Exsanguinate instead (X = 9 at 11 mana). Mistrise Village first, a counter behind it |
 | Ordinary mana only (no Coffers or Urborg), 7 to 10 mana | Mystical Tutor or Vampiric Tutor at the end step before | Debt (better from about seven mana) or Exsanguinate if you lack {W}{W} | Debt gets 2 per X at 4 extra mana; Exsanguinate gets 1 per X at 2 extra. Count what you actually kill |
-| Hand colours do not fit: {W}{W} for Debt, {B}{B}{B} for Necropotence | Urza's Cave, Demonic Tutor | The missing coloured land: a white source for Debt; for Necropotence any land once Urborg is out, otherwise a Swamp or black dual | With Urborg out every land taps for {B}, so Necropotence is easy; Debt still wants two white lands |
+| Hand colours do not fit: {W}{W} for Debt, {B}{B}{B} for Necropotence | Expedition Map, Demonic Tutor | The missing coloured land: a white source for Debt; for Necropotence any land once Urborg is out, otherwise a Swamp or black dual | With Urborg out every land taps for {B}, so Necropotence is easy; Debt still wants two white lands |
 | Eight or more lands and few spells | Diabolic Tutor, Ringsight | Exsanguinate or Debt; the Coffers lands if they are missing | The deck is built to turn a flood into one big spell |
 
 **Answering a stax piece: Loran and Skyclave Apparition (the deck has no blink)**
@@ -391,8 +392,8 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 | Winter Orb or Static Orb out: one land (or two permanents) untaps | One-mana tutors (Vampiric, Mystical); the rocks keep untapping | The removal that your untapped sources can pay: Generous Gift or Loran (both 3 mana) | Under Winter Orb Sol Ring, Arcane Signet and the Moxen still untap. Do not spend the turn's one land on a tutor for a five-drop |
 | Rule of Law or Eidolon of Rhetoric: one spell per player per turn | Vampiric or Mystical Tutor at an opponent's end step | Loran of the Third Path first, then the kill piece | Each player gets one spell each turn, theirs included, so an instant on their turn does not use your own turn's spell. Remove the lock with Loran before using the one spell on a piece that cannot resolve. Oracle plus Consultation (Line 5) is two spells and cannot be cast in one turn under either lock |
 | Drannith Magistrate out and Y'shtola is in the command zone | Demonic Tutor, Vampiric Tutor | Fatal Push (the Magistrate has mana value 2) | Do not suspend Profane Tutor: it would sit in exile uncastable |
-| Opposition Agent out | None. Do not search at all | Answer the Agent from hand: Path to Exile, Go for the Throat | Every search, fetch lands, Urza's Cave, Doomsday and Zur's attack included, gives the Agent's controller the card |
-| Narset, Parter of Veils out: you cannot draw more than one card each turn | Demonic Tutor, Diabolic Tutor, Ringsight (cards go to hand) | The piece you need | Your draw step is your one draw on your own turn, so Loran, Rhystic Study and the draw spells give nothing then; on an opponent's turn you still have one draw. Cards in hand beat cards on top. Every Doomsday pile breaks (Line 6) |
+| Opposition Agent out | None. Do not search at all | Answer the Agent from hand: Path to Exile, Go for the Throat | Every search, fetch lands, Expedition Map, Doomsday and Zur's attack included, gives the Agent's controller the card |
+| Narset, Parter of Veils out: you cannot draw more than one card each turn | Demonic Tutor, Diabolic Tutor, Ringsight (cards go to hand) | The piece you need | Your draw step is your one draw on your own turn, so Loran, Rhystic Study and the draw spells give nothing then; on an opponent's turn you still have one draw (The Theorist's draw uses it). Cards in hand beat cards on top. Every Doomsday pile breaks (Line 6) |
 | Grand Abolisher on the table | Sorcery-speed tutors on your turn; instant ones at another opponent's end step | The piece you need | Abolisher stops your spells and the activated abilities of your artifacts, creatures and enchantments on its controller's turn only. Do not plan an end-step tutor in that player's turn |
 
 **Graveyards**
@@ -477,7 +478,7 @@ Any noncreature spell of mana value 3 or more cast on an opponent's turn trigger
 | Disdainful Stroke | {1}{U} | A spell with mana value 4 or more (a wipe, a large threat, a big engine). It can't stop a cheap combo piece or a removal spell on Y'shtola |
 | Mindbreak Trap | {2}{U}{U}, or {0} if an opponent has cast three or more spells this turn | The combo turn: it exiles any number of target spells, so it takes the whole chain, a counter aimed at your spell, or a spell that can't be countered (Hullbreaker Horror, Dragons under Cavern of Souls). It stops spells only, not abilities (Kinnan's or Urza's activations, Walking Ballista). Mana value 4, so it triggers her even when cast for free |
 | Path to Exile | {W} | A creature that decides the game (Kinnan, Urza, Yawgmoth, Zur, a Dragon; Miirym has ward {2}); gives the opponent a basic land |
-| Fatal Push | {B} | Mana value 2 or less (Kinnan, a mana creature, Spellskite); mana value 4 or less with revolt (a fetch land or Treasure sacrificed, Urza's Cave) |
+| Fatal Push | {B} | Mana value 2 or less (Kinnan, a mana creature, Spellskite); mana value 4 or less with revolt (a fetch land, a Treasure or Expedition Map sacrificed) |
 | Go for the Throat | {1}{B} | A nonartifact creature, such as Yawgmoth or Zur. Not Spellskite or Walking Ballista |
 | Generous Gift | {2}{W} | Any permanent (Winter Orb, Basalt Monolith, a lock enchantment, a creature); the owner gets a 3/3. Mana value 3, so it triggers her |
 | Anguished Unmaking | {1}{W}{B} | Any nonland permanent, exiled (undying, indestructible, or a loop piece); costs you 3 life. Triggers her |
@@ -556,7 +557,7 @@ Before the Oracle swap the sims showed her losing about a third of t5 games to t
 3. Casting a spell of mana value 1 or 2 and expecting a trigger (Counterspell, Disdainful Stroke, Orcish Bowmasters, Go for the Throat, the tutors at 1 or 2). Spend the turn's mana on a three-plus spell when you can.
 4. Choosing the wrong Farewell modes: creatures with Y'shtola out, enchantments with Bond and Blood out, artifacts with the rocks out. Nothing in the deck protects your own permanents from it now.
 5. Casting X drains without counting: each opponent loses X (or 2X), plus 2 from her, plus 1 per gain from the Priest, and the gain goes to one opponent through Bond. Don't cast Debt at a low X when Cabal Coffers is a turn away.
-6. Tutoring, casting Doomsday or cracking Urza's Cave under Opposition Agent.
+6. Tutoring, casting Doomsday or cracking Expedition Map under Opposition Agent.
 7. Pinging a face with Orcish Bowmasters when a mana creature or combo piece (Bloom Tender, Birds of Paradise, a Walking Ballista at X = 1) is on the table.
 8. Casting Necropotence at a low life total with Yawgmoth's drain or a Dragon table in front of you.
 9. Casting Demonic Consultation before Thassa's Oracle is on the battlefield with its trigger on the stack, or as a plain tutor: it exiles the library (Line 5).
@@ -566,30 +567,29 @@ Before the Oracle swap the sims showed her losing about a third of t5 games to t
 
 The list is exactly 100 cards.
 
-37 lands (18 nonbasic, 6 Plains, 5 Island, 8 Swamp) plus three rocks (Sol Ring, Arcane Signet, Coalition Relic) and two Moxen (Mox Diamond, Chrome Mox). **Mox Diamond** ({0}, a Game Changer) is put onto the battlefield only if you discard a land card, and then taps for one mana of any colour: it fixes all three colours, and the discard is a spare land (a land past the fourth, or Mistrise Village, which enters tapped here); with no land in hand it goes to the graveyard. **Chrome Mox** ({0}, a Game Changer) exiles a nonland, nonartifact card from hand and then taps for one mana of any of that card's colours, so imprint a white, blue or black card you will not cast soon (Austere Command, Farewell, an X spell) and pick the card whose colour the hand is missing; a multicoloured card (Anguished Unmaking, Ringsight) gives a choice. It costs a card, and with no coloured card in hand it makes no mana. Both have mana value 0, so neither triggers Y'shtola, and both die to artifact removal and to Farewell's artifacts mode like the other rocks. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest also adds a mana (the list has ten enchantments, Sphere of Safety among them). **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana for Exsanguinate, Debt to the Deathless or two big spells in a turn. **Urza's Cave** taps for {C}, or for {B} with Urborg out; {3}, {T}, sacrifice it to fetch Urborg, Coffers or the colour the hand is missing. **Mistrise Village** taps for {U}, enters tapped here (the list has no Mountain or Forest), and its {U}, {T} ability makes the next spell uncounterable.
+36 lands (17 nonbasic, 6 Plains, 5 Island, 8 Swamp) plus three rocks (Sol Ring, Arcane Signet, Coalition Relic), two Moxen (Mox Diamond, Chrome Mox) and Expedition Map as the land tutor. **Mox Diamond** ({0}, a Game Changer) is put onto the battlefield only if you discard a land card, and then taps for one mana of any colour: it fixes all three colours, and the discard is a spare land (a land past the fourth, or Mistrise Village, which enters tapped here); with no land in hand it goes to the graveyard. **Chrome Mox** ({0}, a Game Changer) exiles a nonland, nonartifact card from hand and then taps for one mana of any of that card's colours, so imprint a white, blue or black card you will not cast soon (Austere Command, Farewell, an X spell) and pick the card whose colour the hand is missing; a multicoloured card (Anguished Unmaking, Ringsight) gives a choice. It costs a card, and with no coloured card in hand it makes no mana. Both have mana value 0, so neither triggers Y'shtola, and both die to artifact removal and to Farewell's artifacts mode like the other rocks. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest also adds a mana (the list has ten enchantments, Sphere of Safety among them). **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana for Exsanguinate, Debt to the Deathless or two big spells in a turn. **Urza's Cave** taps for {C}, or for {B} with Urborg out; {3}, {T}, sacrifice it to fetch Urborg, Coffers or the colour the hand is missing. **Mistrise Village** taps for {U}, enters tapped here (the list has no Mountain or Forest), and its {U}, {T} ability makes the next spell uncounterable.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | White lands | 14 | 6 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
 | Blue lands | 13 | 5 Island plus Mistrise Village, Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
-| Black lands | 17 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Cabal Coffers (with a Swamp out), Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
+| Black lands | 17 (all 36 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Cabal Coffers (with a Swamp out), Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
-| Colourless only | 1 | Urza's Cave ({B} with Urborg out) |
 | Always enter tapped | 1 | Mistrise Village |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
 
-Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest, and it is the tight colour for Thassa's Oracle's {U}{U}: Mistrise Village enters tapped, Cabal Coffers makes only {B}, and the land tutor Expedition Map is out of the deck. Most blue spells cost a single {U}; Oracle, Counterspell, Absorb ({W}{U}{U}), Mindbreak Trap ({2}{U}{U}, free when an opponent has cast three spells), Force of Will and Consecrated Sphinx ({4}{U}{U}) are the {U}{U} exceptions, and Force of Will can be cast for free. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
+Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest, and it is the tight colour for Thassa's Oracle's {U}{U}: Mistrise Village enters tapped, Cabal Coffers makes only {B}, and Expedition Map is the only land tutor that can find a blue dual. Most blue spells cost a single {U}; Oracle, Counterspell, Absorb ({W}{U}{U}), Mindbreak Trap ({2}{U}{U}, free when an opponent has cast three spells), The Theorist, Jace Beleren ({2}{U}{U}), Force of Will and Consecrated Sphinx ({4}{U}{U}) are the {U}{U} exceptions, and Force of Will can be cast for free. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
 **Curve.** Mox Diamond, Chrome Mox and Profane Tutor at 0 (Profane Tutor suspended for {1}{B}), one-drops 11, two-drops 11, three-drops 20, four-drops 10 (counting Y'shtola), five 5, six 3. Average mana value about 2.8, with the X spells counted at X = 0. The swap added cheap cards, so the curve is lower than before it (about 3.1); Y'shtola still pays you for mana value 3 and up.
 
-**Card types.** 14 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 10 enchantments, 6 artifacts, 18 instants, 13 sorceries, 1 planeswalker (Teferi, Time Raveler).
+**Card types.** 13 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 10 enchantments, 7 artifacts, 18 instants, 13 sorceries, 2 planeswalkers (Teferi, Time Raveler and The Theorist, Jace Beleren).
 
 **Finding cards.**
-- **Engines:** Necropotence, Consecrated Sphinx, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
+- **Engines:** Necropotence, Consecrated Sphinx, Esper Sentinel, Notion Thief, The Theorist, Jace Beleren, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Read the Bones, Cast Away Doubt, the cantrips (Brainstorm, Preordain, Borne Upon a Wind), Loran's tap; Rhystic Study as the engine.
 - **Tutors:** Demonic Tutor, Diabolic Tutor, Ringsight, Profane Tutor (suspend 2), Vampiric Tutor (any card, on top), Mystical Tutor (an instant or sorcery, on top), Zur's attacks, and Doomsday (a five-card pile for the Oracle win).
-- **Land tutors:** Urza's Cave (Urborg or Cabal Coffers, or the missing colour) and the any-card tutors; Expedition Map is out of the deck.
+- **Land tutors:** Expedition Map (Urborg or Cabal Coffers, or the missing colour) and the any-card tutors.
 
 **Interaction.**
 - **Counterspells (five):** Absorb, Counterspell, Disdainful Stroke, Force of Will, Mindbreak Trap.
@@ -603,14 +603,14 @@ Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains'
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with sixteen Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Orcish Bowmasters**, **Serra's Sanctum**, **Thassa's Oracle**, **Mox Diamond** and **Chrome Mox**. It has one two-card infinite combo (Exquisite Blood + Sanguine Bond), a second two-card win (Thassa's Oracle + Demonic Consultation) and a Doomsday pile that wins through Oracle, and no mass land destruction and no extra turns.
+**Bracket 4,** with fifteen Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Force of Will**, **Farewell**, **Orcish Bowmasters**, **Serra's Sanctum**, **Thassa's Oracle**, **Mox Diamond** and **Chrome Mox**. It has one two-card infinite combo (Exquisite Blood + Sanguine Bond), a second two-card win (Thassa's Oracle + Demonic Consultation) and a Doomsday pile that wins through Oracle, and no mass land destruction and no extra turns.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Orcish Bowmasters**, **Serra's Sanctum**, **Thassa's Oracle**, **Mox Diamond** and **Chrome Mox** (the sixteen Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Force of Will**, **Farewell**, **Orcish Bowmasters**, **Serra's Sanctum**, **Thassa's Oracle**, **Mox Diamond** and **Chrome Mox** (the fifteen Game Changers).
 - **Fast mana:** Sol Ring, Mox Diamond (discard a land) and Chrome Mox (exile a card from hand); the two Moxen are Game Changers.
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
-- **Six tutors** (Demonic, Diabolic, Ringsight, Profane, Mystical, Vampiric), Doomsday, Zur's enchantment search, and Urza's Cave for the Coffers lands.
+- **Six tutors** (Demonic, Diabolic, Ringsight, Profane, Mystical, Vampiric), Doomsday, Zur's enchantment search, and Expedition Map for the Coffers lands.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
 - **Two win routes besides the Bond + Blood combo and the drain:** **Thassa's Oracle + Demonic Consultation** (the game ends for three mana) and a **Doomsday** pile that wins through Oracle in one turn. (Exquisite Blood + Sanguine Bond, the two-card combo above, drains the whole table from any life change.) Silence, Grand Abolisher, Voice of Victory and Teferi, Time Raveler stop opponents casting spells on the turn it goes (Abolisher and Voice only during your turn; of the four only Abolisher also stops activated abilities, and only those of artifacts, creatures and enchantments).
 
