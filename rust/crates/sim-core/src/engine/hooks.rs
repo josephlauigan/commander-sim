@@ -135,17 +135,17 @@ pub fn leave_trigger_times(g: &Game, controller: PlayerId, m: PermId) -> u32 {
 }
 
 /// What a leave event is, for the trigger copiers: (the kind, the permanent that left). A land card put into a graveyard
-/// and a land sacrificed carry no permanent: it is `Game::leaving`. None: no permanent (the copiers add nothing), or the
-/// event is not a leaving.
-fn leave_cause(g: &Game, e: Event, call: &Call) -> Option<(crate::sym::Sym, Option<PermId>)> {
+/// and a land sacrificed carry no permanent: it is the `leaving` that `fire_trigger_for_land` set for this event. None: no
+/// permanent (the copiers add nothing), or the event is not a leaving.
+fn leave_cause(e: Event, call: &Call, leaving: Option<PermId>) -> Option<(crate::sym::Sym, Option<PermId>)> {
     match (e, call) {
         (Event::Dies, Call::Dies { m, .. }) | (Event::CreatureToGy, Call::Leaves { m }) => Some(("dies", Some(*m))),
         (Event::ExiledFromBf, Call::Leaves { m }) => Some(("leaves", Some(*m))),
-        (Event::LandGy, _) => g.leaving.map(|l| ("dies", Some(l))),
+        (Event::LandGy, _) => leaving.map(|l| ("dies", Some(l))),
         (Event::Sacrifice, Call::Sacrifice { what, .. }) => match what {
             Sacrificed::Perm(m) => Some(("dies", Some(*m))),
             Sacrificed::Token(_) => Some(("dies", None)),
-            Sacrificed::Card(_) => g.leaving.map(|l| ("dies", Some(l))),
+            Sacrificed::Card(_) => leaving.map(|l| ("dies", Some(l))),
         },
         _ => None,
     }
@@ -401,6 +401,8 @@ pub fn fire_trigger_entering(
     repeat: bool,
     entering: Option<PermId>,
 ) -> Res {
+    // the land this event is about belongs to this event alone: what is fired while its triggers are handled is not about it
+    let leaving = g.leaving.take();
     let enters =
         matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter | Event::TokenCreated);
     let entering = match &call {
@@ -426,7 +428,7 @@ pub fn fire_trigger_entering(
         // a leave-caused trigger (CR 603.6c, 603.10a): Teysa Karlov, Drivnod, Gandalf the White
         if matches!(e, Event::Dies | Event::ExiledFromBf | Event::CreatureToGy | Event::LandGy | Event::Sacrifice)
             && leave_hook_is_trigger(&imp, e)
-            && let Some((kind, x)) = leave_cause(g, e, &call)
+            && let Some((kind, x)) = leave_cause(e, &call, leaving)
         {
             reps += total_trigger_copies(g, owner, kind, x);
         }

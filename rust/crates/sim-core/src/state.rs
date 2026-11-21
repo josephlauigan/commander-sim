@@ -1286,8 +1286,8 @@ pub struct Game {
     /// the permanent being exiled now (Kaya's Ghostform)
     pub exiling: Option<PermId>,
     /// the permanent whose leaving fires the event now, when the call has no permanent (a land card put into a graveyard,
-    /// a land sacrificed): set around those fires like `dying` and `exiling`; Teysa Karlov, Drivnod and Gandalf the White
-    /// read it
+    /// a land sacrificed): set around those fires like `dying` and `exiling` and taken by the event fired for it, so what is fired
+    /// while its triggers are handled is not about it; Teysa Karlov, Drivnod and Gandalf the White read it
     pub leaving: Option<PermId>,
     /// trigger copiers (Gandalf the White, Teysa Karlov, Drivnod) that have left the battlefield: what they caused as they
     /// left, and what left with them in the same wipe, still triggers an additional time (CR 603.10a)
