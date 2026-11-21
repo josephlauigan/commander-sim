@@ -42,7 +42,7 @@
 # open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
 # line (nothing holds it back yet).
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
-# Temur Ascendancy is in it (JD, 2026-11-14).
+# Rhythm of the Wild (in the list since 2026-11-20, for Temur Ascendancy) is not in it: it does nothing on its own.
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
 # against `pieces`, and a catalogue combo has none).
 deck = "urdragon"
@@ -144,7 +144,7 @@ dorks = ["Birds of Paradise", "Llanowar Elves", "Elvish Mystic", "Delighted Half
 bigs = ["Klauth, Unrivaled Ancient", "Old Gnawbone", "Tiamat", "Morophon, the Boundless", "Smaug the Impenetrable",
     "Utvara Hellkite", "Summon: Bahamut"]
 plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Cursed Mirror", "Birds of Paradise", "Llanowar Elves", "Elvish Mystic",
-    "Delighted Halfling", "Relic of Sauron", "Nature's Lore", "Rivaz of the Claw", "Scion of Draco", "Temur Ascendancy", "Three Visits", "Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Rhystic Study",
+    "Delighted Halfling", "Relic of Sauron", "Nature's Lore", "Rivaz of the Claw", "Scion of Draco", "Three Visits", "Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Rhystic Study",
     "The One Ring", "Terror of the Peaks", "Goldspan Dragon", "Glorybringer", "Thundermaw Hellkite",
     "Korvold, Fae-Cursed King", "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
     "Ganax, Astral Hunter", "Kura, the Boundless Sky", "Dragonlord Ojutai", "Scion of the Ur-Dragon", "Dragon Tempest",

@@ -235,8 +235,8 @@ fn the_guides_other_close_keeps_and_the_ramp_the_rule_counts() {
         "Birds of Paradise",
         "Swords to Plowshares"
     ]));
-    // a cheap Dragon, a three-mana rock or Temur Ascendancy is something to do (all are in the `plays` set)
-    for play in ["Rivaz of the Claw", "Scion of Draco", "Cursed Mirror", "Temur Ascendancy"] {
+    // a cheap Dragon or a three-mana rock is something to do (both are in the `plays` set)
+    for play in ["Rivaz of the Claw", "Scion of Draco", "Cursed Mirror"] {
         assert!(
             keeps(&["Tundra", "Bayou", "Taiga", play, "Lightning Bolt", "Swords to Plowshares", "Path to Exile"]),
             "{play} counts as something to do"
