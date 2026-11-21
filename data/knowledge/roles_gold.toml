@@ -116,6 +116,20 @@
 #     copy of its spell" is never copy.
 
 
+# Clauses added after the review of the final acceptance set (2026-11-21), from the Opus ruling; they apply to every set:
+#  C1 (convention 1). Granting ward to other permanents is protection. A team-wide lifelink-only grant is lifegain, not
+#      anthem (anthem needs a stat pump or evasion/combat keyword grant).
+#  C2 (convention 14). Food, Blood, Map, Junk and other non-Treasure, non-Clue artifact tokens are not `tokens`: judge their
+#      ability on its own. A repeatable Clue maker is tokens AND draw; one Clue from a spell or an enter trigger is tokens only.
+#  C3 (convention 4 and anthem). A +1/+1 counter on each creature you control is counters and anthem. Counters on players
+#      (poison, energy, experience, rad) are not `counters`; proliferate is. Amass is tokens, and also counters when repeatable.
+#  C4 (recursion). `recursion` returns cards from your graveyard to hand or library, puts noncreature permanent cards from your
+#      graveyard onto the battlefield, or lets you cast or play them from there; a card that can return a creature or a
+#      noncreature card ("permanent card") is both recursion and reanimate. `reanimate` stays creature cards onto the battlefield.
+#  Also: convention 2's self-mill list is Entomb, Intuition, Gifts Ungiven, Scion. A repeatable Treasure engine (Smothering Tithe,
+#      Revel in Riches) is `tokens` only, not ramp (revisit after the acceptance run).
+#  Catalog scope: cards of type "Stickers" and Attractions are not deck cards and are excluded from role samples.
+#
 [[card]]
 name = "Absorbing Man and Titania"
 oracle_id = "a1afb796-1b0b-4f41-9c8f-5320c9af5989"
