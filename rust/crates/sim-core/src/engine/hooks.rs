@@ -172,6 +172,18 @@ pub fn enter_copies(g: &Game, controller: PlayerId, entering: Option<PermId>) ->
 /// Snapshot each listener controller's event copies before any pass runs. Inline payloads contribute their
 /// controller too; a copier with no listener never creates a later pass or engages the resolution hold.
 pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option<PlayerId>) -> Vec<i32> {
+    listener_copies_for(g, e, kind, None, inline)
+}
+
+/// `listener_copies`, for the permanent that caused the event (the land that entered: Gandalf the White and Panharmonicon
+/// ask what it is). None: no single permanent, as for an attack.
+pub fn listener_copies_for(
+    g: &Game,
+    e: Event,
+    kind: crate::sym::Sym,
+    x: Option<PermId>,
+    inline: Option<PlayerId>,
+) -> Vec<i32> {
     if hooked(g, Event::TriggerCopies).is_empty() {
         return vec![0; g.players.len()];
     }
@@ -193,7 +205,7 @@ pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option
                 || listeners.iter().any(|(s, _)| g.perm(*s).owner == q.id)
                 || (g.dsl_on
                     && q.perms.iter().copied().chain(crate::dsl::land_sources(g, q.id)).any(compiled_listener));
-            if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, None) } else { 0 }
+            if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, x) } else { 0 }
         })
         .collect()
 }

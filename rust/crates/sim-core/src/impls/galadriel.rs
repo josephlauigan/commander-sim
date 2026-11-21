@@ -465,13 +465,14 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 // ================================================================== Panharmonicon
 /// a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional
-/// time (card code, the ability language, the engine's enters tags, Cathars' Crusade)
+/// time (card code, the ability language, the engine's enters tags, Cathars' Crusade). A land that is a creature or an
+/// artifact is one: its landfall too ("landfall", with the land; with no land nothing entered that it can ask about)
 fn panharmonicon(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
     let s = g.perm(src);
-    if kind != "etb" || p != s.owner || s.phased {
+    if !matches!(kind, "etb" | "landfall") || p != s.owner || s.phased {
         return 0;
     }
-    let Some(m) = x else { return 1 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
+    let Some(m) = x else { return (kind == "etb") as i32 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
     (g.is_creature(m) || is_artifact_perm(g, m)) as i32
 }
 

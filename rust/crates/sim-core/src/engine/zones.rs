@@ -1901,13 +1901,16 @@ pub fn land_ramp(g: &mut Game, p: PlayerId, n: u32, tapped: bool) -> Res {
 
 /// the lands that just entered under p's control: the land-enters event for card code (`Event::LandEnters`), and their
 /// compiled enter triggers (a Temple's scry, a gain land's life, a surveil land's surveil), which go on the stack
-/// through the ability language (Phase 3: one path; the engine's own `land_etb_fx` is gone)
-pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
+/// through the ability language (Phase 3: one path; the engine's own `land_etb_fx` is gone). Returns the lands it just
+/// swept: the ones that entered.
+pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
+    let mut entered = vec![];
     for l in g.player(p).lands.clone() {
         if g.perm(l).data.truthy(DataKey::In) {
             continue;
         }
         g.perm_mut(l).data.set(DataKey::In, Val::Bool(true));
+        entered.push(l);
         // the land-enters event (Yoshimaru): once per land, whatever put it onto the battlefield; before the Blood
         // Moon check, which takes the land's own abilities but not what other permanents see
         if !g.hooks.is_empty() && !g.over {
@@ -1927,14 +1930,17 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
             crate::dsl::fire(g, "etb", crate::dsl::Fired { perm: Some(l), owner: Some(p), ..Default::default() })?;
         }
     }
-    Ok(())
+    Ok(entered)
 }
 
+/// A land entered under p's control: landfall. The land the sweep found is the cause of the event for the doublers that
+/// care what entered (Gandalf the White: a legendary or artifact land; Panharmonicon: a creature or artifact land). One
+/// call is one land; if the sweep found none (a state check swept it first), no doubler adds anything.
 pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
-    lands_entered(g, p)?;
+    let land = lands_entered(g, p)?.first().copied();
     let inline =
         (has(g, p, Tag::Landfall2) || g.player(p).lands.iter().any(|&l| card_tag(g, l, Tag::Fotd))).then_some(p);
-    let copies = hooks::listener_copies(g, Event::Landfall, "landfall", inline);
+    let copies = hooks::listener_copies_for(g, Event::Landfall, "landfall", land, inline);
     let passes = 1 + copies.iter().copied().max().unwrap_or(0);
     // one landfall event: no queued trigger of it resolves before every pass has triggered (CR 603.3), so what an
     // earlier pass makes (a Scute Swarm's copy) is not a listener of a later one. Held only when there is a later pass.
@@ -1944,7 +1950,7 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     }
     let mut r = Ok(());
     for k in 0..passes {
-        r = landfall_once(g, p, k, &copies); // each pass after the first is a repeat of the landfall triggers
+        r = landfall_once(g, p, k, &copies, land); // each pass after the first is a repeat of the landfall triggers
         if r.is_err() || g.over {
             break;
         }
@@ -1959,7 +1965,7 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32]) -> Res {
+fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32], land: Option<PermId>) -> Res {
     let repeat = pass > 0;
     let own_pass = copies[p.0 as usize] >= pass;
     // an opponent's Elesh Norn, Mother of Machines: the permanents' landfall effects below don't trigger (the
@@ -2009,7 +2015,7 @@ fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32]) -> Res {
         crate::dsl::fire_where(
             g,
             "landfall",
-            crate::dsl::Fired { player: Some(p), repeat, ..Default::default() },
+            crate::dsl::Fired { player: Some(p), perm: land, repeat, ..Default::default() },
             &|_, q| copies[q.0 as usize] >= pass,
         )?;
     }
