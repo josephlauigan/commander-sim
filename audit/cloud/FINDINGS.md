@@ -17,14 +17,15 @@ used, and the games where the swap changes the turn-2 Cloud.
 
 ## 2026-11-21: Thought Vessel => Wayfarer's Bauble (JD's choice, not simulated)
 Wayfarer's Bauble ({1} artifact; {2}, {T}, sacrifice: a basic land onto the battlefield tapped; model status Full) takes
-Thought Vessel's slot. Why: JD's pick, a cheaper piece of ramp that also counts as an artifact for Puresteel Paladin's
-metalcraft until it is sacrificed. It does not trigger Sram (Aura, Equipment or Vehicle spells only) or Armory Automaton.
+Thought Vessel's slot. Why: JD's pick, a cheaper piece of ramp. It counts as an artifact for Puresteel Paladin's
+metalcraft only until it is sacrificed (Thought Vessel counted for as long as it stayed, so that is no gain); it does not
+trigger Sram (Aura, Equipment or Vehicle spells only).
 What it costs: Thought Vessel is a mana rock that taps for {C} from the turn after it lands; Bauble pays {1} and then {2}
 and a turn for a tapped basic, so it competes with Cloud's turn-2 {W}{W}, and it leaves the board. Thought Vessel's no
 maximum hand size matters little: the hand sits at about 5-6 cards after turn 4 (weakness 1). An Opus consult advised
 against the swap: mana is not the lever here (the M, M-lite and AI ramp-fix rows below were neutral or negative: "cutting
 mana rocks or bodies costs more than the new cards give", weakness 4). If JD wanted it anyway, Opus named Thought Vessel as
-the cut (rock for rock) and not Galadriel's Dismissal or Judgment of Alexander, whose cast rates are an AI gap that would
+the cut (rock for rock; the 10/19 Mind Stone test, below, cut it for a different rock at -0.7 on average, noise) and not Galadriel's Dismissal or Judgment of Alexander, whose cast rates are an AI gap that would
 flatter the swap in a paired run. Not measured. The plan file's `keep2` list drops Thought Vessel (Bauble is not a
 two-land-hand keep), and no plan row names the Bauble. To check in the next analyze run: the Bauble's cast and stuck-in-hand
 numbers (the breakdown counts casts only, so cracks need a trace).
