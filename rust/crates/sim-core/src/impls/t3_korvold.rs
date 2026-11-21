@@ -124,7 +124,8 @@ pub fn sac_given_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     crate::glog!(g, "    {} sacrifices {}", pname(g, q), g.db.get(cd).name);
     super::lands::sac_land(g, q, l)?;
     if !g.hooks.is_empty() {
-        crate::engine::hooks::fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p: q, what: Sacrificed::Card(cd) })?;
+        let what = Call::Sacrifice { p: q, what: Sacrificed::Card(cd) };
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::Sacrifice, what)?;
     }
     crate::engine::zones::tergrid_steal(g, q, cd, q)
 }
@@ -1090,6 +1091,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(apprentice_etb);
     c.dies = Some(apprentice_dies);
     c.sacrifice = Some(apprentice_sac);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     r.card(db, "Mazirek, Kraul Death Priest")?.sacrifice = Some(mazirek_sac);
     let c = r.card(db, "Ruthless Technomancer")?;
     c.etb = Some(techno_etb);

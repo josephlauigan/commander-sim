@@ -49373,10 +49373,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may cast legendary spells and artifact spells as though they had flash.",
-    "If a legendary permanent or an artifact entering or leaving the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

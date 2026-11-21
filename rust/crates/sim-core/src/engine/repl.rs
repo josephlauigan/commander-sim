@@ -707,8 +707,10 @@ pub fn hushed(g: &Game) -> bool {
 }
 
 /// extra copies of p's triggered abilities of this kind ('etb', 'dies', 'landfall', 'attack'; x the permanent
-/// that set them off): Panharmonicon, Teysa, Isshin, Ancient Greenwarden, Drivnod. ("etb", None) is an artifact
-/// token entering (a Treasure, Food or Clue: `Event::TokenCreated`), the convention `enters_tapped` uses for m None.
+/// that set them off): Panharmonicon, Teysa, Isshin, Ancient Greenwarden, Drivnod, Gandalf the White. x None is an
+/// artifact token that is only a counter on a player (a Treasure, Food or Clue): ("etb", None) one entering
+/// (`Event::TokenCreated`, the convention `enters_tapped` uses for m None), ("dies", None) one sacrificed. Never pass
+/// None for a creature, a creature token or a land (`TriggerCopiesFn`).
 pub fn trigger_copies(g: &Game, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
     hooks::total_trigger_copies(g, p, kind, x)
 }

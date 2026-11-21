@@ -236,9 +236,10 @@ fn drivnod_doubles_death_triggers_and_gets_indestructible() {
     let mut g = teysa();
     let d = perm(&mut g, P0, "Drivnod, Carnage Dominus");
     perm(&mut g, P0, "Blood Artist");
-    assert_eq!(total_trigger_copies(&g, P0, "dies", None), 1);
-    assert_eq!(total_trigger_copies(&g, P1, "dies", None), 0);
     let t = token(&mut g, P0, 1);
+    assert_eq!(total_trigger_copies(&g, P0, "dies", Some(t)), 1);
+    assert_eq!(total_trigger_copies(&g, P1, "dies", Some(t)), 0);
+    assert_eq!(total_trigger_copies(&g, P0, "dies", None), 0, "None is an artifact token, not a creature");
     let life = g.player(P1).life + g.player(P2).life;
     zones::die(&mut g, t, "sac").unwrap();
     assert_eq!(life - g.player(P1).life - g.player(P2).life, 2, "Blood Artist triggers twice");

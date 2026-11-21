@@ -2275,6 +2275,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_dies = Some(jackdaw_self);
     at_once(c, Event::Dies, true);
     at_once(c, Event::SelfDies, true);
+    *c = c.enter_trigger(Event::Dies).enter_trigger(Event::SelfDies); // run at once, but they are triggers
     let c = r.card(db, "Plumecreed Mentor")?;
     c.etb = Some(plume);
     c.tokens_enter = Some(plume_tokens);
@@ -2325,6 +2326,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_dies = Some(scrap_self);
     at_once(c, Event::Dies, true);
     at_once(c, Event::SelfDies, true);
+    *c = c.enter_trigger(Event::Dies).enter_trigger(Event::SelfDies); // run at once, but they are triggers
     c.prio = Some(|_, _, _| 25);
     let c = r.card(db, "Mirage Mirror")?;
     c.options = Some(mirror_options);

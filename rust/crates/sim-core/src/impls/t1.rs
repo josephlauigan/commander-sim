@@ -1764,9 +1764,10 @@ fn zr_mana(g: &Game, src: Src, p: PlayerId, _l: PermId) -> i32 {
 }
 
 // ======================================================== Teysa Karlov (aristocrats)
-/// death-caused triggers of your permanents fire twice
+/// death-caused triggers of your permanents fire twice. ("dies", None) is an artifact token put into a graveyard from the
+/// battlefield (a sacrificed Treasure): not a creature dying
 fn teysa(g: &Game, src: Src, p: PlayerId, kind: Sym, m: Option<PermId>) -> i32 {
-    (kind == "dies" && g.perm(src).owner == p && m.is_none_or(|m| g.is_creature(m))) as i32
+    (kind == "dies" && g.perm(src).owner == p && m.is_some_and(|m| g.is_creature(m))) as i32
 }
 
 /// tokens have vigilance and lifelink

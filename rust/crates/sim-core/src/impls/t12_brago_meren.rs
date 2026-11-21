@@ -341,12 +341,23 @@ pub fn creature_left(g: &mut Game, m: PermId) -> Res {
         let waiting = g
             .trig_queue
             .iter()
-            .any(|t| t.src == Some(s) && matches!(t.act, TrigAct::Hook { event: Event::Leaves, .. }));
-        if waiting {
-            continue;
-        }
+            .filter(|t| t.src == Some(s) && matches!(t.act, TrigAct::Hook { event: Event::Leaves, .. }))
+            .count() as u32;
+        // one trigger for the creatures that leave together; one more time for each Teysa, Drivnod or Gandalf the White of
+        // the player that applies to m, and for each Delney, Cloud or Throne that applies to the Port-Mage (what is waiting
+        // already counts, whatever order the creatures were handled in)
+        let times = crate::engine::hooks::leave_trigger_times(g, p, m);
         let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
-        queue_triggers(g, vec![Trigger::new(p, Some(s), act)])?;
+        // `queue_triggers` adds the source extras to a first trigger itself; the ones after it are repeats
+        let (from, want) = if waiting == 0 {
+            (0, times)
+        } else {
+            (waiting, times + crate::engine::stack::extra_for_cause(g, s, Some(m)) as u32)
+        };
+        let entries = (from..want)
+            .map(|k| Trigger { repeat: waiting > 0 || k > 0, ..Trigger::new(p, Some(s), act.clone()) })
+            .collect();
+        queue_triggers(g, entries)?;
     }
     Ok(())
 }

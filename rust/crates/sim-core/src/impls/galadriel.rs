@@ -32,8 +32,8 @@ use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
-    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, maskwood as maskwood_on, once_per_turn, protected_from,
-    pval, subtypes, untargetable,
+    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, is_artifact_perm, maskwood as maskwood_on, once_per_turn,
+    protected_from, pval, subtypes, untargetable,
 };
 use crate::engine::zones::{
     Enter, Tokens, Zone, die, draw, enter, landfall, leave, make_tokens, max_by, searchable, to_zone_card,
@@ -465,15 +465,15 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 // ================================================================== Panharmonicon
 /// a triggered ability of your permanents that an artifact or creature entering sets off triggers an additional
-/// time (card code, the ability language, the engine's enters tags, Cathars' Crusade)
+/// time (card code, the ability language, the engine's enters tags, Cathars' Crusade). A land that is a creature or an
+/// artifact is one: its landfall too ("landfall", with the land; with no land nothing entered that it can ask about)
 fn panharmonicon(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
     let s = g.perm(src);
-    if kind != "etb" || p != s.owner || s.phased {
+    if !matches!(kind, "etb" | "landfall") || p != s.owner || s.phased {
         return 0;
     }
-    let Some(m) = x else { return 1 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
-    let art = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
-    (g.is_creature(m) || art) as i32
+    let Some(m) = x else { return (kind == "etb") as i32 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
+    (g.is_creature(m) || is_artifact_perm(g, m)) as i32
 }
 
 // ================================================================== the Rebel searchers

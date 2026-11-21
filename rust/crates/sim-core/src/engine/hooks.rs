@@ -6,9 +6,9 @@
 //! (engine/stack.rs), unless its card marks it as running at once.
 
 use crate::flow::Res;
-use crate::hooks::{Call, CardImpl, Event, TrigAct, Trigger};
+use crate::hooks::{Call, CardImpl, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{DataKey, Game, Val};
 use crate::tag::Tag;
 
 /// (source permanent, its card code) for every live permanent handling event e
@@ -90,10 +90,65 @@ pub fn land_colorless(g: &Game, p: PlayerId, l: crate::ids::PermId, n: u32) -> b
 
 /// trigger_copies summed for p's triggered abilities of this kind (Panharmonicon, Teysa, Ancient Greenwarden)
 pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Option<PermId>) -> i32 {
-    if g.hooks.is_empty() {
+    if g.hooks.is_empty() && g.left_copiers.is_empty() {
         return 0;
     }
-    hooked(g, Event::TriggerCopies).iter().map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x)).sum()
+    let live: i32 = hooked(g, Event::TriggerCopies)
+        .iter()
+        .map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x))
+        .sum();
+    live + x.map_or(0, |x| left_copies(g, p, kind, x))
+}
+
+/// A leaving looks back in time (CR 603.10a): a trigger copier that left at the same time as `x` (it is `x`, or it left
+/// earlier in the wipe `x` leaves in) still adds its additional times for what `x` leaving causes. Only for "dies" and
+/// "leaves" of a permanent that is gone; the copiers on the battlefield are counted by `hooked`.
+fn left_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: PermId) -> i32 {
+    if g.left_copiers.is_empty() || !matches!(kind, "dies" | "leaves") || g.perm(x).on_bf {
+        return 0;
+    }
+    let together = |v: PermId| {
+        v == x
+            || matches!(g.perm(v).data.get(DataKey::LkiCopier), Some(Val::Int(b)) if *b != 0 && g.cur_batch == Some(*b as u32))
+    };
+    g.left_copiers
+        .iter()
+        .filter(|&&v| !g.perm(v).on_bf && together(v))
+        .filter_map(|&v| {
+            let imp = g.registry.get(g.perm(v).cd?)?;
+            imp.trigger_copies.map(|f| f(g, v, p, kind, Some(x)))
+        })
+        .sum()
+}
+
+/// The event that m's leaving is for the trigger copiers: a death ("dies": Teysa Karlov, Drivnod, Gandalf the White) or
+/// any other leaving ("leaves": Gandalf only). `Game::dying` is set around `zones::leave` for a death.
+pub fn leave_kind(g: &Game, m: PermId) -> crate::sym::Sym {
+    if g.dying == Some(m) { "dies" } else { "leaves" }
+}
+
+/// How many times a triggered ability of `controller`'s permanent caused by m leaving the battlefield happens: once, and
+/// once more for each Teysa Karlov, Drivnod or Gandalf the White (CR 603.2d). Call it from `zones::leave` and its helpers;
+/// the first instance is the original, the rest are repeats.
+pub fn leave_trigger_times(g: &Game, controller: PlayerId, m: PermId) -> u32 {
+    1 + total_trigger_copies(g, controller, leave_kind(g, m), Some(m)).max(0) as u32
+}
+
+/// What a leave event is, for the trigger copiers: (the kind, the permanent that left). A land card put into a graveyard
+/// and a land sacrificed carry no permanent: it is the `leaving` that `fire_trigger_for_land` set for this event. None: no
+/// permanent (the copiers add nothing), or the event is not a leaving.
+fn leave_cause(e: Event, call: &Call, leaving: Option<PermId>) -> Option<(crate::sym::Sym, Option<PermId>)> {
+    match (e, call) {
+        (Event::Dies, Call::Dies { m, .. }) | (Event::CreatureToGy, Call::Leaves { m }) => Some(("dies", Some(*m))),
+        (Event::ExiledFromBf, Call::Leaves { m }) => Some(("leaves", Some(*m))),
+        (Event::LandGy, _) => leaving.map(|l| ("dies", Some(l))),
+        (Event::Sacrifice, Call::Sacrifice { what, .. }) => match what {
+            Sacrificed::Perm(m) => Some(("dies", Some(*m))),
+            Sacrificed::Token(_) => Some(("dies", None)),
+            Sacrificed::Card(_) => leaving.map(|l| ("dies", Some(l))),
+        },
+        _ => None,
+    }
 }
 
 /// Event doublers' additional instances caused by entering. None denotes an artifact token only.
@@ -117,6 +172,18 @@ pub fn enter_copies(g: &Game, controller: PlayerId, entering: Option<PermId>) ->
 /// Snapshot each listener controller's event copies before any pass runs. Inline payloads contribute their
 /// controller too; a copier with no listener never creates a later pass or engages the resolution hold.
 pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option<PlayerId>) -> Vec<i32> {
+    listener_copies_for(g, e, kind, None, inline)
+}
+
+/// `listener_copies`, for the permanent that caused the event (the land that entered: Gandalf the White and Panharmonicon
+/// ask what it is). None: no single permanent, as for an attack.
+pub fn listener_copies_for(
+    g: &Game,
+    e: Event,
+    kind: crate::sym::Sym,
+    x: Option<PermId>,
+    inline: Option<PlayerId>,
+) -> Vec<i32> {
     if hooked(g, Event::TriggerCopies).is_empty() {
         return vec![0; g.players.len()];
     }
@@ -138,7 +205,7 @@ pub fn listener_copies(g: &Game, e: Event, kind: crate::sym::Sym, inline: Option
                 || listeners.iter().any(|(s, _)| g.perm(*s).owner == q.id)
                 || (g.dsl_on
                     && q.perms.iter().copied().chain(crate::dsl::land_sources(g, q.id)).any(compiled_listener));
-            if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, None) } else { 0 }
+            if q.alive && listens { crate::engine::repl::trigger_copies(g, q.id, kind, x) } else { 0 }
         })
         .collect()
 }
@@ -212,6 +279,15 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
     fire_trigger_where(g, e, call, &|_, _| true, false)
 }
 
+/// `fire_trigger` for an event about a land card that left the battlefield from `l` (a land card put into a graveyard, a land
+/// sacrificed): the call carries no permanent, so `Game::leaving` names the one whose leaving it is, for the trigger copiers.
+pub fn fire_trigger_for_land(g: &mut Game, l: PermId, e: Event, call: Call) -> Res {
+    let prev = g.leaving.replace(l);
+    let r = fire_trigger(g, e, call);
+    g.leaving = prev;
+    r
+}
+
 /// `fire_trigger` for a pass of a loop that fires the whole event once more for each additional time (Ancient
 /// Greenwarden's landfall, Isshin's attacks): with `repeat` its triggers are repeats (`Trigger::repeat`), not firsts
 pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Res {
@@ -225,8 +301,7 @@ pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Re
 /// what happens as a permanent enters (a name chosen, enters tapped or with counters or prepared, an Aura attaching,
 /// devour, a Saga's lore counter), static and state registrations, and the abilities of cards in other zones (a
 /// graveyard landfall) still happen. A hook is a trigger or setup by `enter_hook_is_trigger`; a hook that mixes the
-/// two asks `enters_trigger_times`. (Hushbringer is checked apart, in `zones::enter` and at the head of
-/// `fire_trigger_where`.)
+/// two asks `enters_trigger_times`. (Hushbringer, for a creature entering, is `enter_silenced`.)
 pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) -> bool {
     g.opps(controller).any(|q| {
         g.player(q).perms.iter().any(|&m| {
@@ -234,6 +309,15 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
             x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Mother))
         })
     })
+}
+
+/// A triggered ability of `controller`'s permanent caused by `entering` does not trigger: an opponent's Elesh Norn, Mother of
+/// Machines (`enter_blanked`), or Hushbringer for a creature entering ("Creatures entering the battlefield or dying don't
+/// cause abilities to trigger": every player's, a land that is a creature too). `entering` None: a land or tokens, or an
+/// artifact token that is no creature (only Elesh blanks those).
+pub fn enter_silenced(g: &Game, controller: PlayerId, entering: Option<PermId>) -> bool {
+    enter_blanked(g, controller, entering)
+        || entering.is_some_and(|m| g.is_creature(m)) && crate::engine::repl::hushed(g)
 }
 
 /// Is the hook of `imp` for event `e` an enters-caused triggered ability (so an opponent's Elesh Norn blanks it and the
@@ -248,11 +332,25 @@ pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
         || (matches!(e, Event::Etb | Event::LandEnters | Event::Landfall) && !now && !imp.is_enter_setup(e))
 }
 
+/// Is the hook of `imp` for leave event `e` (`Leaves`, `Dies`, `SelfDies`, `SelfExiled`, `ExiledFromBf`,
+/// `CreatureToGy`, `LandGy`, `Sacrifice`) a leave-caused triggered ability (so Teysa Karlov, Drivnod and Gandalf the
+/// White copy it)? A hook that goes on the stack is, unless it is marked `enter_setup` (a duration that ends, "until
+/// this leaves the battlefield", that the engine queues); a hook that runs now (marked at once) is not, unless it is
+/// marked `enter_trigger` (a trigger with no window: it runs at once, but it is a triggered ability). A `Sacrifice` hook
+/// is not either way, unless marked `enter_trigger`: a sacrifice is not a leaving, so "whenever you sacrifice a
+/// permanent" is not caused by one, while "whenever an artifact is put into a graveyard from the battlefield" is caused
+/// by a Treasure being sacrificed. The bits are the ones the enters events use; for a leave event they say "leave-caused
+/// trigger" and "a queued hook the leave did not cause".
+pub fn leave_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
+    let now = imp.runs_at_once(e) || !e.is_trigger();
+    imp.is_enter_trigger(e) || (e != Event::Sacrifice && !now && !imp.is_enter_setup(e))
+}
+
 /// Instances of src's enters trigger: zero under an opponent's Elesh, otherwise original + event + source extras.
 /// Only mixed hooks, land paths and inline proxies call this; never dispatcher-multiplied T hooks or repeat passes.
 /// None denotes an artifact token only.
 pub fn enters_trigger_times(g: &Game, controller: PlayerId, src: Option<PermId>, entering: Option<PermId>) -> u32 {
-    if enter_blanked(g, controller, entering) {
+    if enter_silenced(g, controller, entering) {
         0
     } else {
         1 + enter_copies(g, controller, entering) + src.map_or(0, |s| crate::engine::stack::extra_for(g, s) as u32)
@@ -290,16 +388,29 @@ pub fn fire_trigger_where(
     keep: &dyn Fn(&Game, PermId) -> bool,
     repeat: bool,
 ) -> Res {
-    // Hushbringer: a creature entering (a land that is also a creature) sets off nothing
-    if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
-        && g.is_creature(*m)
-        && crate::engine::repl::hushed(g)
-    {
-        return Ok(());
-    }
+    fire_trigger_entering(g, e, call, keep, repeat, None)
+}
+
+/// `fire_trigger_where` for an event whose call does not name the permanent that entered (landfall: `entering` is the
+/// land), so Elesh Norn and Hushbringer can tell what caused it
+pub fn fire_trigger_entering(
+    g: &mut Game,
+    e: Event,
+    call: Call,
+    keep: &dyn Fn(&Game, PermId) -> bool,
+    repeat: bool,
+    entering: Option<PermId>,
+) -> Res {
+    // the land this event is about belongs to this event alone: what is fired while its triggers are handled is not about it
+    let leaving = g.leaving.take();
     let enters =
         matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter | Event::TokenCreated);
-    let entering = if let Call::Etb { m, .. } = &call { Some(*m) } else { None };
+    let entering = match &call {
+        Call::Etb { m, .. } => Some(*m),
+        Call::Tokens { toks, .. } => toks.first().copied(),
+        _ => entering,
+    };
+    let hushed = enters && entering.is_some_and(|m| g.is_creature(m)) && crate::engine::repl::hushed(g);
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
         if !keep(g, src) {
@@ -308,13 +419,18 @@ pub fn fire_trigger_where(
         let owner = g.perm(src).owner;
         let now = imp.runs_at_once(e) || !e.is_trigger();
         let trig = enter_hook_is_trigger(&imp, e);
-        // an opponent's Elesh Norn: no trigger of this permanent is caused by the entering
-        if enters && trig && enter_blanked(g, owner, entering) {
+        // an opponent's Elesh Norn, or Hushbringer for a creature: no trigger of this permanent is caused by the entering
+        // (a hook that is not a trigger, a permanent setting itself up as it enters, still runs)
+        if enters && trig && (hushed || enter_blanked(g, owner, entering)) {
             continue;
         }
         let mut reps = 1;
-        if let (Event::Dies, Call::Dies { m, .. }) = (e, &call) {
-            reps += total_trigger_copies(g, owner, "dies", Some(*m));
+        // a leave-caused trigger (CR 603.6c, 603.10a): Teysa Karlov, Drivnod, Gandalf the White
+        if matches!(e, Event::Dies | Event::ExiledFromBf | Event::CreatureToGy | Event::LandGy | Event::Sacrifice)
+            && leave_hook_is_trigger(&imp, e)
+            && let Some((kind, x)) = leave_cause(e, &call, leaving)
+        {
+            reps += total_trigger_copies(g, owner, kind, x);
         }
         if let (Event::Etb, Call::Etb { m, .. }) = (e, &call)
             && trig

@@ -1531,6 +1531,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.dies = Some(salvagers_dies);
     c.self_dies = Some(salvagers_self);
     c.sacrifice = Some(salvagers_token);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     let c = r.card(db, "Necrosquito")?;
     c.as_enters = Some(necro_as_enters);
     c.etb = Some(selfpt_etb);
@@ -1538,6 +1539,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_pt = Some(necro_pt);
     c.dies = Some(necro_dies);
     c.sacrifice = Some(necro_token);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     r.card(db, "Callous Inspector")?.self_dies = Some(inspector_dies);
     let c = r.card(db, "Apex Witchstalker")?;
     c.etb = Some(apex_etb);

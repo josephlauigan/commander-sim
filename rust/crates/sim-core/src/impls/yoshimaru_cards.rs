@@ -1,14 +1,17 @@
 //! Cards of the Yoshimaru / Tymna blink deck, modelled before that deck is registered: Yoshimaru, Ever Faithful, Minas
-//! Tirith, The Seriema (its enters search is card code) and Witch Enchanter // Witch-Blessed Meadow. (Kambal, Consul of Allocation is compiled from its Oracle text and needs no code.) Each card's text is
-//! in the doc comment above its code.
+//! Tirith, The Seriema (its enters search is card code), Witch Enchanter // Witch-Blessed Meadow and Gandalf the White
+//! (the flash grant, and the additional time for what a legendary permanent or an artifact entering or leaving causes:
+//! `gandalf_copies`, asked by the enters paths, the leave paths and landfall, with the look-back of a copier that leaves
+//! with the cause in `engine::stack::note_leaving`). (Kambal, Consul of Allocation is compiled from its Oracle text and
+//! needs no code.) Each card's text is in the doc comment above its code.
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::dsl::model::Filter;
 use crate::engine::life::lose_life;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::epow;
+use crate::engine::values::{card_name, epow, is_artifact_perm};
 use crate::engine::zones::{agent_for, agent_take, draw, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -431,11 +434,50 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Gandalf the White
+const GANDALF: &str = "Gandalf the White";
+
+/// **Gandalf the White** ({3}{W}{W} 4/5, Flash): "You may cast legendary spells and artifact spells as though they had
+/// flash." A live Gandalf you control, not phased out and with abilities on, grants it for casting only (a land is
+/// never cast: `cast::grants_flash` answers false for lands first). The second ability, one additional time for a
+/// triggered ability caused by a legendary permanent or an artifact entering or leaving, is `gandalf_copies`.
+pub fn gandalf_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    (d.tag(Tag::Leg) || d.types.has(Types::ARTIFACT))
+        && g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.neutered && card_name(g, m) == Some(GANDALF)
+        })
+}
+
+/// **Gandalf the White**, second ability: "If a legendary permanent or an artifact entering or leaving the battlefield
+/// causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time." x is
+/// the permanent that entered or left as it last existed ("etb": entered; "dies": put into a graveyard from the
+/// battlefield; "leaves": left any other way; "landfall": a land entered). It need not be yours: the ability is. None
+/// is an artifact token that is a counter on the player (Treasure, Food, Clue): ("etb", None) entering and
+/// ("dies", None) put into a graveyard from the battlefield (sacrificed). A cast, an attack and the like are not
+/// entering or leaving. The caller checks that Gandalf is live (`hooked`), or that he left with the cause
+/// (`hooks::left_copies`); a permanent that has left is read as it last existed (`DataKey::LkiLegArt`).
+fn gandalf_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
+    if p != g.perm(src).owner || !matches!(kind, "etb" | "landfall" | "dies" | "leaves") {
+        return 0;
+    }
+    match x {
+        None => matches!(kind, "etb" | "dies") as i32,
+        // as it last existed: what a permanent that has left kept of its being legendary or an artifact
+        Some(m) => match g.perm(m).data.get(DataKey::LkiLegArt) {
+            Some(Val::Bool(b)) if !g.perm(m).on_bf => *b as i32,
+            _ => (legendary(g, m) || is_artifact_perm(g, m)) as i32,
+        },
+    }
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Yoshimaru, Ever Faithful")?;
     c.etb = Some(yoshimaru_etb);
     c.land_enters = Some(yoshimaru_land);
+    r.card(db, GANDALF)?.trigger_copies = Some(gandalf_copies);
     r.card(db, "Minas Tirith")?.land_options = Some(minas_options);
     let w = r.card(db, WITCH)?;
     w.land_cols = Some(meadow_cols);

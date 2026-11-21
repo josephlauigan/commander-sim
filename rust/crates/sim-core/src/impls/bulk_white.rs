@@ -525,7 +525,8 @@ fn went_to_hand(g: &Game, m: PermId) -> bool {
 pub fn bounced(g: &mut Game, m: PermId, note: Option<(PlayerId, u32)>) -> Res {
     let Some((o, n)) = note else { return Ok(()) };
     if went_to_hand(g, m) {
-        soldiers(g, o, n)?;
+        // each Riders' trigger happens once, and once more for each Teysa Karlov, Drivnod or Gandalf the White
+        soldiers(g, o, n * crate::engine::hooks::leave_trigger_times(g, o, m))?;
     }
     Ok(())
 }
@@ -537,7 +538,8 @@ fn soldiers(g: &mut Game, p: PlayerId, n: u32) -> Res {
 }
 
 /// Riders enters: return two creatures you control to their owner's hand (itself if need be), then a Soldier for
-/// each creature that came back to the hand, for each Riders (they all return at once)
+/// each creature that came back to the hand (an additional time for each Teysa, Drivnod or Gandalf the White that
+/// applies to it), for each Riders (they all return at once)
 fn riders_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
@@ -565,7 +567,8 @@ fn riders_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         leave(g, x)?;
         crate::engine::zones::to_zone_card(g, x, crate::engine::zones::Zone::Hand);
         if went_to_hand(g, x) {
-            back += 1;
+            // as for a creature bounced one at a time (`bounced`): once, and once more for each Teysa, Drivnod or Gandalf
+            back += crate::engine::hooks::leave_trigger_times(g, o, x);
         }
     }
     soldiers(g, o, riders * back)

@@ -42,12 +42,34 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
             }
             _ => 0,
         };
-        let k = event + t.src.map_or(0, |s| extra_for(g, s));
+        let k = event + t.src.map_or(0, |s| extra_for_cause(g, s, cause_of(t)));
         extra.extend(std::iter::repeat_n(Trigger { repeat: true, ..t.clone() }, k));
     }
     entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
+}
+
+/// The permanent whose leaving a trigger is for: what a `Dies`, `Leaves`, `Sacrifice` or compiled "dies" trigger hears.
+fn cause_of(t: &Trigger) -> Option<PermId> {
+    use crate::hooks::{Call, Sacrificed};
+    match &t.act {
+        TrigAct::Hook { call: Call::Dies { m, .. } | Call::Leaves { m }, .. } => Some(*m),
+        TrigAct::Hook { call: Call::Sacrifice { what: Sacrificed::Perm(m), .. }, .. } => Some(*m),
+        TrigAct::Dsl { ctx, .. } => ctx.event_perm,
+        _ => None,
+    }
+}
+
+/// `extra_for`, for a trigger of src caused by `cause` leaving: when a doubler left alone, src (which stays) counts the
+/// doubler's extra for what its leaving caused (CR 603.10a), as recorded by `note_leaving`.
+pub fn extra_for_cause(g: &Game, src: PermId, cause: Option<PermId>) -> usize {
+    if let (Some(c), Some((n, _, Some(leaver)))) = (cause, extra_record(g, src))
+        && c == leaver
+    {
+        return n;
+    }
+    extra_for(g, src)
 }
 
 /// Additional instances of src's triggered ability (CR 603.2d): apply only to originals, never repeats.
@@ -68,7 +90,8 @@ fn extra_live(g: &Game, src: PermId) -> usize {
 /// Everything a leave must remember, before battlefield membership or attachments change.
 /// A wipe records all sources at its first leave, including listeners that survive it (CR 603.10a).
 pub fn note_leaving(g: &mut Game, m: PermId) {
-    if extra_record(g, m).is_some_and(|(_, batch)| g.cur_batch != Some(batch)) {
+    note_copier_leaving(g, m);
+    if extra_record(g, m).is_some_and(|(_, batch, _)| g.cur_batch != Some(batch)) {
         g.perm_mut(m).data.remove(DataKey::LkiExtra);
     }
     if !g.perms.iter().any(|x| {
@@ -83,7 +106,7 @@ pub fn note_leaving(g: &mut Game, m: PermId) {
         return; // No live source doubler: do not record source extras.
     }
     let batch = g.cur_batch.unwrap_or(0);
-    if g.cur_batch.is_some() && extra_record(g, m).is_some_and(|(_, b)| b == batch) {
+    if g.cur_batch.is_some() && extra_record(g, m).is_some_and(|(_, b, _)| b == batch) {
         return;
     }
     let sources = if g.cur_batch.is_some() {
@@ -95,18 +118,75 @@ pub fn note_leaving(g: &mut Game, m: PermId) {
         let n = extra_live(g, src);
         g.perm_mut(src).data.set(DataKey::LkiExtra, Val::List(vec![Val::Int(n as i64), Val::Int(batch as i64)]));
     }
+    // a doubler that leaves alone: the sources that stay hear its leaving with its doubling, whatever it was
+    if g.cur_batch.is_none() && is_source_doubler(g.perm(m)) {
+        let staying: Vec<PermId> = g.perms.iter().filter(|x| x.on_bf && x.id != m).map(|x| x.id).collect();
+        for src in staying {
+            let n = extra_live(g, src);
+            if n > 0 {
+                let rec = vec![Val::Int(n as i64), Val::Int(0), Val::Int(m.0 as i64)];
+                g.perm_mut(src).data.set(DataKey::LkiExtra, Val::List(rec));
+            }
+        }
+    }
 }
 
-fn extra_record(g: &Game, src: PermId) -> Option<(usize, u32)> {
+fn is_source_doubler(x: &crate::state::Perm) -> bool {
+    !x.phased
+        && !x.neutered
+        && matches!(
+            x.name,
+            "Cloud, Midgar Mercenary" | "Delney, Streetwise Lookout" | "Roaming Throne" | "Harmonic Prodigy"
+        )
+}
+
+/// Trigger copiers that leave: Gandalf the White, Teysa Karlov and Drivnod, as they leave, are written down (with the
+/// wipe they leave in) so what their leaving causes, and what leaves with them, still triggers an additional time
+/// (CR 603.10a). While a Gandalf is on the battlefield, or one left in this wipe, every permanent that leaves keeps
+/// whether it was legendary or an artifact (it is read after it is gone, with the Ring-bearer's legend). Nothing is
+/// written without one of them.
+fn note_copier_leaving(g: &mut Game, m: PermId) {
+    let copier = |x: &crate::state::Perm| {
+        !x.phased && !x.neutered && matches!(x.name, "Gandalf the White" | "Teysa Karlov" | "Drivnod, Carnage Dominus")
+    };
+    let batch = g.cur_batch.unwrap_or(0);
+    // (a copier is card code, so it is in `g.hooks` while it is on the battlefield)
+    let gandalf_live = g.hooks.iter().any(|&h| {
+        let x = g.perm(h);
+        x.on_bf && !x.phased && !x.neutered && x.name == "Gandalf the White"
+    });
+    let left_with = g.cur_batch.is_some()
+        && g.left_copiers
+            .iter()
+            .any(|&v| matches!(g.perm(v).data.get(DataKey::LkiCopier), Some(Val::Int(b)) if *b as u32 == batch));
+    if !gandalf_live && !left_with && !copier(g.perm(m)) {
+        return;
+    }
+    if gandalf_live || left_with {
+        let leg_art = crate::impls::legends::legendary(g, m) || crate::engine::values::is_artifact_perm(g, m);
+        g.perm_mut(m).data.set(DataKey::LkiLegArt, Val::Bool(leg_art));
+    }
+    if copier(g.perm(m)) && g.player(g.perm(m).owner).alive {
+        g.perm_mut(m).data.set(DataKey::LkiCopier, Val::Int(batch as i64));
+        g.left_copiers.push(m);
+    }
+}
+
+/// (extras, the wipe, the doubler that left alone) written by `note_leaving`
+fn extra_record(g: &Game, src: PermId) -> Option<(usize, u32, Option<PermId>)> {
     match g.perm(src).data.get(DataKey::LkiExtra) {
-        Some(Val::List(v)) if v.len() == 2 => Some((v[0].int() as usize, v[1].int() as u32)),
+        Some(Val::List(v)) if v.len() == 2 => Some((v[0].int() as usize, v[1].int() as u32, None)),
+        Some(Val::List(v)) if v.len() == 3 => {
+            Some((v[0].int() as usize, v[1].int() as u32, Some(PermId(v[2].int() as u32))))
+        }
         _ => None,
     }
 }
 
 fn lki_extra(g: &Game, src: PermId) -> Option<usize> {
-    let (n, b) = extra_record(g, src)?;
-    (!g.perm(src).on_bf || g.cur_batch == Some(b)).then_some(n)
+    let (n, b, leaver) = extra_record(g, src)?;
+    // a record for a doubler that left alone is for what that leaving caused only (`extra_for_cause`)
+    (leaver.is_none() && (!g.perm(src).on_bf || g.cur_batch == Some(b))).then_some(n)
 }
 
 pub fn flush_triggers(g: &mut Game) -> Res {

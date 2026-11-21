@@ -285,6 +285,13 @@ pub fn can_respond(g: &Game, q: PlayerId) -> bool {
     }) {
         return true;
     }
+    // a commander that a flash grant (Gandalf the White) lets you cast from the command zone now
+    if g.player(q).cmds_in_zone().any(|c| {
+        let d = g.db.get(c);
+        legal::instant_speed(g, q, c) && d.cmc + g.player(q).tax_of(c) <= have && !d.land
+    }) {
+        return true;
+    }
     g.player(q).perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name)))
 }
 

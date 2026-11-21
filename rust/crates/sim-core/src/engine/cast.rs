@@ -177,7 +177,8 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 let cd = g.perm(l).card();
                 crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
                 if !g.hooks.is_empty() {
-                    fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) })?;
+                    let what = Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) };
+                    crate::engine::hooks::fire_trigger_for_land(g, l, Event::Sacrifice, what)?;
                 }
             }
             Choice::Sac(Fodder::Treasure) => {
@@ -303,7 +304,8 @@ pub fn split_second_up(g: &Game) -> bool {
 }
 
 /// does something let p cast c as though it had flash: Quicksilver / Captain Mar-Vell, High Fae Trickster / Valley
-/// Floodcaller, Borne Upon a Wind / Emergence Zone's one-turn grant, Scout's Warning (creature cards only)
+/// Floodcaller, Borne Upon a Wind / Emergence Zone's one-turn grant, Scout's Warning (creature cards only), Gandalf the
+/// White (legendary and artifact spells)
 pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
     let d = g.db.get(c);
     if d.land {
@@ -315,6 +317,7 @@ pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
         || crate::impls::t3_marwyn::yeva_flash(g, p, c) // --- Tier 3 (marwyn): Yeva, Nature's Herald
         || (d.sorcery && crate::impls::doomsday::teferi_flash(g, p)) // Teferi, Time Raveler +1: sorceries
+        || crate::impls::yoshimaru_cards::gandalf_flash(g, p, c)
 }
 
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)

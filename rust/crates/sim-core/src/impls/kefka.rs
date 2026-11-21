@@ -1455,12 +1455,14 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, VOIDBORN)?;
     c.dies = Some(voidborn_dies);
     c.sacrifice = Some(voidborn_sacrifice);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     c.end_step = Some(voidborn_end);
     c.hand_options = Some(voidborn_hand);
     r.card(db, "Corroding Dragonstorm")?.etb = Some(dragonstorm_etb);
     let c = r.card(db, "Intellect Devourer")?;
     c.etb = Some(devourer_etb);
     c.leaves = Some(devourer_leaves);
+    *c = c.enter_setup(crate::hooks::Event::Leaves); // "until this creature leaves the battlefield": a duration
     r.card(db, "Gemstone Mine")?.on_tap_land = Some(mine_tap);
     Ok(())
 }
