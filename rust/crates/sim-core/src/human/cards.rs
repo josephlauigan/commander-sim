@@ -2690,6 +2690,62 @@ fn elspeth_minus3(_g: &mut Game, _p: PlayerId, _m: PermId) -> Res<Ready> {
     })
 }
 
+fn theorist_plus(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| {
+        let mut spec = crate::engine::zones::Tokens::new(1, 1);
+        spec.color = Some(crate::cards::Colors::from_letters("U"));
+        spec.types = vec!["illusion"];
+        crate::engine::zones::make_tokens(g, p, spec)?;
+        Ok(())
+    })
+}
+
+/// -2: the person picks up to one artifact or creature of each opponent (targets are chosen before the loyalty is paid)
+fn theorist_minus2(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    let mut targets = vec![];
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let cands: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| {
+                (g.is_creature(x) || crate::engine::values::is_artifact_perm(g, x))
+                    && !crate::engine::values::untargetable(g, x)
+            })
+            .collect();
+        if cands.is_empty() {
+            continue;
+        }
+        let prompt =
+            format!("The Theorist, Jace Beleren -2: return which of {}'s artifacts or creatures to hand?", pname(g, q));
+        if let Some(t) = pick_perm(g, p, "target", &prompt, &cands, Some("no target"))? {
+            targets.push(t);
+        }
+    }
+    go(move |g| {
+        for &t in &targets {
+            if g.perm(t).on_bf && !g.perm(t).phased {
+                crate::engine::removal::apply_removal(g, Some(p), t, "bounce", None)?;
+            }
+        }
+        Ok(())
+    })
+}
+
+fn theorist_minus6(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| {
+        crate::engine::zones::draw(g, p, 3, false)?;
+        let x = crate::engine::values::hand_count(g, p) as i32;
+        for m in g.player(p).perms.clone() {
+            if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
+                crate::engine::repl::put_counters(g, p, m, x);
+            }
+        }
+        Ok(())
+    })
+}
+
 fn elspeth_minus7(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
     go(move |g| {
         crate::impls::galadriel::elspeth_emblem(g, p);
@@ -2886,6 +2942,19 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             (1, "create three 1/1 white Soldiers", elspeth_plus),
             (-3, "destroy all creatures with power 4 or greater", elspeth_minus3),
             (-7, "emblem: your creatures get +2/+2 and have flying", elspeth_minus7),
+        ]),
+        "The Theorist, Jace Beleren" => walker(&[
+            (1, "create a 1/1 blue Illusion creature token", theorist_plus),
+            (
+                -2,
+                "for each opponent, return up to one target artifact or creature that player controls to its owner's hand",
+                theorist_minus2,
+            ),
+            (
+                -6,
+                "draw three cards, then put X +1/+1 counters on each creature you control (X = cards in hand)",
+                theorist_minus6,
+            ),
         ]),
         "Lion's Eye Diamond" => vec![ability(
             "discard your hand, sacrifice it: add three mana of any one colour (a mana ability, at instant speed)",

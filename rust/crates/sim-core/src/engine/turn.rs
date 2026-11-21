@@ -1331,6 +1331,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
             lose_life(g, p, 1, Some(p), "other", Some(true))?;
         }
     }
+    crate::impls::common::theorist_draws(g, p)?; // The Theorist, Jace Beleren: its controller draws on an opponent's draw step
     crate::impls::sheoldred::howling_mines(g, p)?; // Howling Mine: an additional card at the beginning of the draw step
     if has(g, p, Tag::Necro) {
         // Necropotence: skip your draw step

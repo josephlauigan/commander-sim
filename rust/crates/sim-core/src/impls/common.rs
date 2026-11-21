@@ -2836,6 +2836,98 @@ static ELSPETH: [WalkerAb; 3] = [
     WalkerAb { delta: -7, label: "emblem", val: always_9, eff: elspeth_emblem },
 ];
 
+// ---- The Theorist, Jace Beleren (Full: the draw-step trigger is `theorist_draws`, called by the draw step)
+const THEORIST: &str = "The Theorist, Jace Beleren";
+
+/// At the beginning of each opponent's draw step, the Theorist's controller draws a card (each Theorist triggers once).
+/// Called by the draw step (engine/turn.rs) for the active player p, before p's own draw (so it happens even when
+/// that draw is skipped); the draw is an ordinary one for the controller (Sheoldred, Notion Thief, Narset ...).
+pub fn theorist_draws(g: &mut Game, p: PlayerId) -> Res {
+    let ts: Vec<(PlayerId, PermId)> = g
+        .players
+        .iter()
+        .filter(|q| q.alive && q.id != p)
+        .flat_map(|q| q.perms.iter().map(move |&m| (q.id, m)))
+        .filter(|&(_, m)| g.perm(m).on_bf && !g.perm(m).phased && &*g.perm(m).name == THEORIST)
+        .collect();
+    for (q, m) in ts {
+        if g.over || !g.player(p).alive {
+            break;
+        }
+        if g.player(q).alive && g.perm(m).on_bf && g.player(q).perms.contains(&m) && !g.perm(m).phased {
+            crate::glog!(g, "    {}: {} draws a card", THEORIST, player_name(g, q));
+            draw(g, q, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
+fn theorist_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let spec = Tokens { color: Some(Colors::from_letters("U")), types: vec!["illusion"], ..Tokens::new(1, 1) };
+    make_tokens(g, p, spec)?;
+    Ok(())
+}
+
+/// -2: for each opponent, the artifact or creature that player controls worth the most (up to one, if it is worth a
+/// bounce at all)
+fn theorist_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.opps(p)
+        .filter_map(|q| {
+            let cs: Vec<PermId> = g
+                .player(q)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| (g.is_creature(m) || crate::engine::values::is_artifact_perm(g, m)) && !untargetable(g, m))
+                .collect();
+            max_by(&cs, |m| pval(g, m)).filter(|&m| pval(g, m) >= 2.0)
+        })
+        .collect()
+}
+
+fn theorist_bounce_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let big: Vec<f64> = theorist_targets(g, p).into_iter().map(|m| pval(g, m)).filter(|&v| v >= 4.0).collect();
+    (!big.is_empty()).then(|| big.iter().map(|v| v - 2.0).psum())
+}
+
+fn theorist_bounce(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    for t in theorist_targets(g, p) {
+        if g.perm(t).on_bf {
+            apply_removal(g, Some(p), t, "bounce", None)?;
+        }
+    }
+    Ok(())
+}
+
+/// -6: draw three, then X +1/+1 counters on each creature you control, X = the cards in your hand
+fn theorist_ult_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
+    (n >= 2).then(|| 4.0 + n.min(6) as f64)
+}
+
+fn theorist_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    draw(g, p, 3, false)?;
+    let x = crate::engine::values::hand_count(g, p) as i32;
+    crate::glog!(g, "    {}: {} puts {} +1/+1 counters on each creature", THEORIST, player_name(g, p), x);
+    for m in g.player(p).perms.clone() {
+        if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
+            repl::put_counters(g, p, m, x);
+        }
+    }
+    Ok(())
+}
+
+static THEORIST_AB: [WalkerAb; 3] = [
+    WalkerAb { delta: 1, label: "an Illusion", val: always_3, eff: theorist_plus },
+    WalkerAb {
+        delta: -2,
+        label: "bounce an artifact or creature each",
+        val: theorist_bounce_val,
+        eff: theorist_bounce,
+    },
+    WalkerAb { delta: -6, label: "draw three, counters", val: theorist_ult_val, eff: theorist_ult },
+];
+
 // ---- Teferi, Hero of Dominaria (Approximate: +1 draws and untaps two lands; -3 tucks a threat)
 pub fn teferi_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     draw(g, p, 1, false)?;
@@ -3670,6 +3762,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Spore Frog")?.blocks = Some(spore_frog);
     // planeswalkers
     walker(r, db, "Elspeth, Sun's Champion", &ELSPETH)?;
+    walker(r, db, THEORIST, &THEORIST_AB)?;
     walker(r, db, "Teferi, Hero of Dominaria", &TEFERI)?;
     walker(r, db, "Liliana, Death's Majesty", &LILIANA)?;
     walker(r, db, "Narset, Parter of Veils", &NARSET)?;
