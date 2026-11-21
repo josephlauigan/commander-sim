@@ -61,7 +61,7 @@ cardgen validate                                                                
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `yshtola`, `sheoldred`, `cloud`, `thrasios`, `thanos`, `urdragon` or `yoshimaru`.
+- `--deck`: `yshtola`, `sheoldred`, `cloud`, `thanos`, `urdragon` or `yoshimaru`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -102,7 +102,6 @@ the same opponents and draws.
 | sheoldred | t3-t4 |
 | yoshimaru | t4-t5 |
 | cloud | t1-t3 |
-| thrasios (cEDH) | t6 |
 
 ## The realism loop
 
@@ -118,7 +117,7 @@ status and plan, and links JD's plan document.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block): JD's in `decklists/JD/`
-(retired lists: `decklists/pool/retired/`; the `thrasios` key still reads its guide from there). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
+(retired lists: `decklists/pool/retired/`). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
 opponent tiers; to add a deck, add a table there. `SIM_DECKS` points at another folder of lists.
 
 To change a list, edit the file or give `cardgen deck` the whole new list, as copied from a deck site or typed one

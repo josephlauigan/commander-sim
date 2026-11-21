@@ -12,8 +12,8 @@ and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys r
 On 2026-11-13 a new Ur-Dragon deck (key `urdragon`) was added and the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
 Aragorn was retired as a deck (its key stays in the simulator until the engine work).
 On 2026-11-14 a new Yoshimaru and Tymna blink deck was written (not in the simulator) and the Tymna/Thrasios Doomsday list was retired;
-on 2026-11-14 its guide and the Aragorn guide moved to `decklists/pool/retired/`, and the `thrasios` key keeps playing the retired list until the rewire step
-(the `aragorn` key stays until the engine work). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them.
+on 2026-11-14 its guide and the Aragorn guide moved to `decklists/pool/retired/`, and the `thrasios` key kept playing the retired list until it left the simulator on 2026-11-21
+(the `aragorn` key left on 2026-11-15). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
@@ -492,7 +492,7 @@ Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
 
 Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
-**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/retired/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -833,7 +833,7 @@ Deck key `galadriel` (retired), `decklists/pool/retired/galadriel-bant-rebels.md
 
 Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
-**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/retired/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -863,9 +863,10 @@ Deck key `thrasios`, `decklists/pool/retired/tymna-thrasios-doomsday.md` (the li
 
 ### Changes
 
+- **2026-11-21.** Key retired: out of the simulator and practice; card code kept as a testkit seat. Findings moved to `audit/retired/thrasios/`.
 - **2026-11-14.** Guide moved (JD): `decklists/JD/tymna-thrasios-doomsday.md` is now `decklists/pool/retired/tymna-thrasios-doomsday.md` (its "Retired" banner updated). `data/my_decks.toml` and the simulator's deck table point at the new path; the `thrasios` key keeps playing this list until the rewire step or the engine work.
 - **2026-11-14.** Retired (JD): replaced by the Yoshimaru and Tymna blink deck, `decklists/JD/yoshimaru-tymna-blink.md` (Bracket 4, not simulated). The Doomsday and Thassa's Oracle package moved to the Y'shtola deck (`decklists/JD/yshtola-esper-drain.md`). The file stays in `decklists/JD/` and `data/my_decks.toml` is unchanged, so the `thrasios` key plays this list until the rewire step moves it to `decklists/pool/retired/` and updates the keys.
-- **2026-11-07.** Out: Savannah, Breeding Pool. In: Watery Grave, Swamp. JD adopted swap S2 (2026-11-07) for more black mana for Doomsday's {B}{B}{B}. Paired, look-ahead, loose, 5,000 games per list, t6, main 7d4d5b35: 34.7% -> 36.2% (+1.6, noise ±1.6, at the edge); the plan online by turn 4 60.4% -> 63.0% (`audit/thrasios/FINDINGS.md`). Printings from JD's list (Arcane Signet's updated too).
+- **2026-11-07.** Out: Savannah, Breeding Pool. In: Watery Grave, Swamp. JD adopted swap S2 (2026-11-07) for more black mana for Doomsday's {B}{B}{B}. Paired, look-ahead, loose, 5,000 games per list, t6, main 7d4d5b35: 34.7% -> 36.2% (+1.6, noise ±1.6, at the edge); the plan online by turn 4 60.4% -> 63.0% (`audit/retired/thrasios/FINDINGS.md`). Printings from JD's list (Arcane Signet's updated too).
 - **2026-11-05.** Retired (JD): replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6; 82 cards from Thanos, 14 from this list, 4 to buy). Tymna, Thrasios, the four shock lands, Swords to Plowshares, Gifts Ungiven, Avacyn's Pilgrim, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Smothering Tithe and Arcane Signet move to the new list; the rest go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `thrasios` key was pointed at the new file the same day (tier t5 to t6; printings, plan lines and Spellbook file replaced). Not simulated yet; Doomsday has no card code (a separate change).
 - **2026-11-03.** Out: Sphinx of New Prahv. In: Natural Order. JD approved: replace Sphinx of New Prahv with Natural Order to turn spare green creatures into Atraxa or Dromoka; retain Diabolic Tutor; not simulated.
 - **2026-11-02.** Out: Bite Down, Blossoming Defense, Conqueror's Flail, Disenchant, Fellwar Stone, Memory Trap, Nightwind Glider, Orzhov Signet, Paradox Surveyor, Talisman of Unity. In: Anguished Unmaking, Aura Shards, Bayou, Birds of Paradise, Demonic Tutor, Elesh Norn, Mother of Machines, Ephemerate, Flooded Strand, Gaea's Cradle, Godless Shrine, Grand Abolisher, Marsh Flats, Misty Rainforest, Overgrown Tomb, Polluted Delta, Savannah, Scrubland, Sol Ring, Sylvan Library, Temple Garden, Verdant Catacombs, Windswept Heath. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Sol Ring, Birds and Gaea's Cradle replace weaker rocks; six duals and shocks plus six fetch lands replace 5 Plains, 5 Swamp and 2 Forest (all 6 Islands stay: the new lands make no blue), since colour-hungry cards were stuck in hand; Demonic Tutor, Sylvan Library, Grand Abolisher, Anguished Unmaking, Aura Shards, Ephemerate and Elesh Norn, Mother of Machines take the slots of weaker cards in the same roles. Game Changers 3 -> 6.
