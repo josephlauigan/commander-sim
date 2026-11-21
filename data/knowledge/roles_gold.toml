@@ -113,7 +113,8 @@
 #     tutor, not a finisher; Exquisite Blood is lifegain, not drain or finisher).
 # 21. A card with the prepare layout gets the roles of its spell face, because the card makes itself prepared and the
 #     spell is its repeatable function (Emeritus of Conflict // Lightning Bolt is removal); the reminder "you may cast a
-#     copy of its spell" is never copy.
+#     copy of its spell" is never copy. AMENDED 2026-11-21 (JD-approved): a prepare card ALSO gets the roles of its creature
+#     face's own abilities (Leech Collector's 'whenever you gain life' trigger is a lifegain payoff).
 
 
 # Clauses added after the review of the final acceptance set (2026-11-21), from the Opus ruling; they apply to every set:
@@ -126,8 +127,11 @@
 #  C4 (recursion). `recursion` returns cards from your graveyard to hand or library, puts noncreature permanent cards from your
 #      graveyard onto the battlefield, or lets you cast or play them from there; a card that can return a creature or a
 #      noncreature card ("permanent card") is both recursion and reanimate. `reanimate` stays creature cards onto the battlefield.
-#  Also: convention 2's self-mill list is Entomb, Intuition, Gifts Ungiven, Scion. A repeatable Treasure engine (Smothering Tithe,
-#      Revel in Riches) is `tokens` only, not ramp (revisit after the acceptance run).
+#  Also: convention 2's self-mill list is Entomb, Intuition, Gifts Ungiven, Scion.
+#  C5 (copy). A token copy of a creature (Kiki-Jiki, Twinflame) is both `copy` and `tokens`, copy first. [JD-approved 2026-11-21]
+#  C6 (ramp / tokens). A repeatable or multi-Treasure maker (Smothering Tithe, Dockside Extortionist, Gadrak, Kingpin, Revel in
+#      Riches) is `tokens` AND `ramp`; a single Treasure rider on another effect (Deadly Dispute, Undercity Dire Rat) is `tokens`
+#      only. [JD-approved 2026-11-21, replacing the earlier tokens-only note]
 #  Catalog scope: cards of type "Stickers" and Attractions are not deck cards and are excluded from role samples.
 #
 [[card]]
@@ -961,11 +965,11 @@ note = "'+1: Create a 2/2 black Zombie creature token. Mill two cards.' and '-3:
 [[card]]
 name = "Lion's Eye Diamond"
 oracle_id = "ee6099b0-fb1f-42f1-b862-7708c6e36d05"
-roles = ["ramp"]
+roles = ["ramp", "fixing"]
 primary = "ramp"
 source = "deck"
 not_roles = ["self-mill", "sac-outlet"]
-note = "'Discard your hand, Sacrifice this artifact: Add three mana of any one color': a one-shot ritual; discarding your hand is a cost (convention 2)."
+note = "'Discard your hand, Sacrifice this artifact: Add three mana of any one color': a one-shot ritual (ramp) of any one colour (fixing, as Lotus Petal); discarding your hand is a cost (convention 2). [JD-approved 2026-11-21 per the Opus review: fixing added.]"
 
 [[card]]
 name = "Living Death"
@@ -1474,11 +1478,11 @@ note = "'you may exile target non-Angel creature you control, then return that c
 [[card]]
 name = "Revel in Riches"
 oracle_id = "cc3fcd26-c088-4335-9a35-0e11019e3d5b"
-roles = ["finisher", "tokens"]
+roles = ["finisher", "tokens", "ramp"]
 primary = "finisher"
 source = "topup"
 not_roles = []
-note = "'if you control ten or more Treasures, you win the game'; 'create a Treasure token' whenever an opposing creature dies."
+note = "'if you control ten or more Treasures, you win the game'; 'create a Treasure token' whenever an opposing creature dies (a repeatable Treasure maker is tokens and ramp, clause C6). [JD-approved 2026-11-21.]"
 
 [[card]]
 name = "Rings of Brighthearth"
