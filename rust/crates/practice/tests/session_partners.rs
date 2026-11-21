@@ -170,3 +170,12 @@ fn the_list_of_playable_decks_is_every_deck_of_decks_json() {
     cat.sort();
     assert_eq!(cat, mine);
 }
+
+#[test]
+fn the_yoshimaru_guide_line_names_both_commanders() {
+    // two commanders separated by a semicolon, a comma inside the first one's name
+    assert_eq!(
+        practice::catalog::display_name("x\n**Commanders (2).** Yoshimaru, Ever Faithful; Tymna the Weaver\n").unwrap(),
+        "Yoshimaru and Tymna the Weaver"
+    );
+}
