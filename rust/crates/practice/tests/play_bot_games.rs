@@ -171,3 +171,7 @@ fn thanos_t5() {
 fn yoshimaru_t4() {
     play("yoshimaru", "t4", 1);
 }
+#[test]
+fn yoshimaru_t6() {
+    play("yoshimaru", "t6", 1);
+}
