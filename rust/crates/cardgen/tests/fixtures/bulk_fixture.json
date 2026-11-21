@@ -1205,8 +1205,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000056",
-  "oracle_id": "00000000-0000-4000-8000-000000000057",
+  "id": "01c5bafe-0000-4000-8000-000000000000",
+  "oracle_id": "aaaaaaaa-0000-4000-8000-000000000010",
   "multiverse_ids": [
    1,
    2
@@ -1214,21 +1214,120 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "saga",
+  "layout": "meld",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "The Eldest Reborn",
-  "mana_cost": "{4}{B}",
-  "cmc": 5.0,
-  "type_line": "Enchantment — Saga",
-  "oracle_text": "I — Each opponent sacrifices a creature or planeswalker.\nII — Each opponent discards a card.\nIII — Put target creature or planeswalker card from a graveyard onto the battlefield under your control.",
+  "name": "Ragnarok, Divine Deliverance",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Legendary Creature — Avatar",
+  "oracle_text": "Vigilance, trample, indestructible, haste",
+  "power": "7",
+  "toughness": "6",
   "colors": [
+   "R",
+   "W",
    "B"
   ],
   "color_identity": [
+   "R",
+   "W",
    "B"
+  ],
+  "keywords": [
+   "Vigilance",
+   "Trample",
+   "Indestructible",
+   "Haste"
+  ],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "fin",
+  "set_name": "Test Set",
+  "set_type": "expansion",
+  "rarity": "mythic",
+  "prices": {
+   "usd": "1.00",
+   "usd_foil": "2.00",
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null,
+  "all_parts": [
+   {
+    "object": "related_card",
+    "id": "f73a5cbb-0000-4000-8000-000000000000",
+    "component": "meld_part",
+    "name": "Fang, Fearless l'Cie"
+   },
+   {
+    "object": "related_card",
+    "id": "91226c1a-0000-4000-8000-000000000000",
+    "component": "meld_part",
+    "name": "Vanille, Cheerful l'Cie"
+   },
+   {
+    "object": "related_card",
+    "id": "a951cc35-0000-4000-8000-000000000000",
+    "component": "meld_result",
+    "name": "Ragnarok, Divine Deliverance"
+   }
+  ]
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000059",
+  "oracle_id": "00000000-0000-4000-8000-000000000060",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "class",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Ranger Class",
+  "mana_cost": "{1}{G}",
+  "cmc": 2.0,
+  "type_line": "Enchantment — Class",
+  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen Ranger Class enters, create a 2/2 green Wolf creature token.\n{1}{G}: Level 2",
+  "colors": [
+   "G"
+  ],
+  "color_identity": [
+   "G"
   ],
   "keywords": [],
   "legalities": {
@@ -1269,84 +1368,12 @@
    "eur": "0.50",
    "tix": null
   },
-  "edhrec_rank": 600
+  "edhrec_rank": 5000
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000060",
-  "oracle_id": "00000000-0000-4000-8000-000000000061",
-  "multiverse_ids": [
-   1,
-   2
-  ],
-  "lang": "en",
-  "released_at": "2020-01-01",
-  "uri": "https://api.scryfall.com/cards/x",
-  "layout": "leveler",
-  "highres_image": true,
-  "image_uris": {
-   "small": "https://cards.scryfall.io/small/x.jpg"
-  },
-  "name": "Student of Warfare",
-  "mana_cost": "{W}",
-  "cmc": 1.0,
-  "type_line": "Creature — Human Knight",
-  "oracle_text": "Level up {W}\nLEVEL 2-6\n3/3\nFirst strike\nLEVEL 7+\n4/4\nDouble strike",
-  "power": "1",
-  "toughness": "1",
-  "colors": [
-   "W"
-  ],
-  "color_identity": [
-   "W"
-  ],
-  "keywords": [
-   "Level up"
-  ],
-  "legalities": {
-   "standard": "not_legal",
-   "future": "not_legal",
-   "historic": "not_legal",
-   "timeless": "not_legal",
-   "gladiator": "not_legal",
-   "pioneer": "not_legal",
-   "modern": "not_legal",
-   "legacy": "not_legal",
-   "pauper": "not_legal",
-   "vintage": "legal",
-   "penny": "not_legal",
-   "commander": "legal",
-   "oathbreaker": "not_legal",
-   "standardbrawl": "not_legal",
-   "brawl": "not_legal",
-   "alchemy": "not_legal",
-   "paupercommander": "not_legal",
-   "duel": "not_legal",
-   "oldschool": "not_legal",
-   "premodern": "not_legal",
-   "predh": "not_legal"
-  },
-  "games": [
-   "paper"
-  ],
-  "reserved": false,
-  "digital": false,
-  "set": "xyz",
-  "set_name": "Test Set",
-  "set_type": "expansion",
-  "rarity": "rare",
-  "prices": {
-   "usd": "1.00",
-   "usd_foil": "2.00",
-   "eur": "0.50",
-   "tix": null
-  },
-  "edhrec_rank": 3500
- },
- {
-  "object": "card",
-  "id": "00000000-0000-4000-8000-000000000064",
-  "oracle_id": "00000000-0000-4000-8000-000000000065",
+  "id": "00000000-0000-4000-8000-000000000063",
+  "oracle_id": "00000000-0000-4000-8000-000000000064",
   "multiverse_ids": [
    1,
    2
@@ -1359,13 +1386,19 @@
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Treasure",
+  "name": "Goblin",
   "mana_cost": "",
   "cmc": 0.0,
-  "type_line": "Token Artifact — Treasure",
-  "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
-  "colors": [],
-  "color_identity": [],
+  "type_line": "Token Creature — Goblin",
+  "oracle_text": "",
+  "power": "1",
+  "toughness": "1",
+  "colors": [
+   "R"
+  ],
+  "color_identity": [
+   "R"
+  ],
   "keywords": [],
   "legalities": {
    "standard": "not_legal",
@@ -1409,8 +1442,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000068",
-  "oracle_id": "00000000-0000-4000-8000-000000000069",
+  "id": "00000000-0000-4000-8000-000000000067",
+  "oracle_id": "00000000-0000-4000-8000-000000000068",
   "multiverse_ids": [
    1,
    2
@@ -1418,17 +1451,44 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "emblem",
+  "layout": "double_faced_token",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Elspeth, Sun's Champion Emblem",
-  "mana_cost": "",
+  "name": "Incubator // Phyrexian",
   "cmc": 0.0,
-  "type_line": "Emblem",
-  "oracle_text": "Creatures you control get +2/+2.",
-  "colors": [],
+  "type_line": "Token Artifact — Incubator // Token Creature — Phyrexian",
+  "card_faces": [
+   {
+    "object": "card_face",
+    "name": "Incubator",
+    "mana_cost": "",
+    "type_line": "Token Artifact — Incubator",
+    "oracle_text": "{2}: Transform this artifact.",
+    "colors": [],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone"
+   },
+   {
+    "object": "card_face",
+    "name": "Phyrexian",
+    "mana_cost": "",
+    "type_line": "Token Creature — Phyrexian",
+    "oracle_text": "",
+    "colors": [
+     "B"
+    ],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone",
+    "power": "0",
+    "toughness": "0"
+   }
+  ],
   "color_identity": [],
   "keywords": [],
   "legalities": {
@@ -1459,7 +1519,7 @@
   ],
   "reserved": false,
   "digital": false,
-  "set": "temn",
+  "set": "tmom",
   "set_name": "Test Set",
   "set_type": "token",
   "rarity": "common",
@@ -1473,8 +1533,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000072",
-  "oracle_id": "00000000-0000-4000-8000-000000000073",
+  "id": "00000000-0000-4000-8000-000000000071",
+  "oracle_id": "00000000-0000-4000-8000-000000000072",
   "multiverse_ids": [
    1,
    2
@@ -1482,16 +1542,103 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "scheme",
+  "layout": "art_series",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Ascendant Evincar Scheme",
+  "name": "Sol Ring // Sol Ring",
+  "cmc": 0.0,
+  "type_line": "Card // Card",
+  "card_faces": [
+   {
+    "object": "card_face",
+    "name": "Sol Ring",
+    "mana_cost": "",
+    "type_line": "Card",
+    "oracle_text": "",
+    "colors": [],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone"
+   },
+   {
+    "object": "card_face",
+    "name": "Sol Ring",
+    "mana_cost": "",
+    "type_line": "Card",
+    "oracle_text": "",
+    "colors": [],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone"
+   }
+  ],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "acmm",
+  "set_name": "Test Set",
+  "set_type": "memorabilia",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000075",
+  "oracle_id": "00000000-0000-4000-8000-000000000076",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "planar",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Akoum",
   "mana_cost": "",
   "cmc": 0.0,
-  "type_line": "Scheme",
-  "oracle_text": "When you set this scheme in motion, draw a card.",
+  "type_line": "Plane — Zendikar",
+  "oracle_text": "Landfall",
   "colors": [],
   "color_identity": [],
   "keywords": [],
@@ -1523,9 +1670,9 @@
   ],
   "reserved": false,
   "digital": false,
-  "set": "arc",
+  "set": "hop",
   "set_name": "Test Set",
-  "set_type": "archenemy",
+  "set_type": "planechase",
   "rarity": "common",
   "prices": {
    "usd": null,
@@ -1537,8 +1684,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000076",
-  "oracle_id": "00000000-0000-4000-8000-000000000077",
+  "id": "00000000-0000-4000-8000-000000000079",
+  "oracle_id": "00000000-0000-4000-8000-000000000080",
   "multiverse_ids": [
    1,
    2
@@ -1546,18 +1693,92 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "vanguard",
+  "layout": "normal",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Ajani Goldmane Avatar",
-  "mana_cost": "",
-  "cmc": 0.0,
-  "type_line": "Vanguard",
-  "oracle_text": "Hand +1, life +2",
-  "colors": [],
-  "color_identity": [],
+  "name": "A-Mother of Runes",
+  "mana_cost": "{W}",
+  "cmc": 1.0,
+  "type_line": "Creature — Human Cleric",
+  "oracle_text": "{T}: Target creature you control gains protection from the color of your choice until end of turn.",
+  "power": "1",
+  "toughness": "1",
+  "colors": [
+   "W"
+  ],
+  "color_identity": [
+   "W"
+  ],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": true,
+  "set": "ydmu",
+  "set_name": "Test Set",
+  "set_type": "expansion",
+  "rarity": "common",
+  "prices": {
+   "usd": "1.00",
+   "usd_foil": "2.00",
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000083",
+  "oracle_id": "00000000-0000-4000-8000-000000000084",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "normal",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Mind Twist",
+  "mana_cost": "{X}{B}",
+  "cmc": 1.0,
+  "type_line": "Sorcery",
+  "oracle_text": "Target player discards X cards at random.",
+  "colors": [
+   "B"
+  ],
+  "color_identity": [
+   "B"
+  ],
   "keywords": [],
   "legalities": {
    "standard": "not_legal",
@@ -1586,10 +1807,101 @@
    "paper"
   ],
   "reserved": false,
-  "digital": false,
-  "set": "pvan",
+  "digital": true,
+  "set": "vma",
   "set_name": "Test Set",
-  "set_type": "vanguard",
+  "set_type": "expansion",
+  "rarity": "rare",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": 2200
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000087",
+  "oracle_id": "00000000-0000-4000-8000-000000000088",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "flip",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Monster // Virtuous",
+  "cmc": 0.0,
+  "type_line": "Token Enchantment — Aura Role",
+  "card_faces": [
+   {
+    "object": "card_face",
+    "name": "Monster",
+    "mana_cost": "",
+    "type_line": "Token Enchantment — Aura Role",
+    "oracle_text": "Enchanted creature gets +1/+1 and has trample.",
+    "colors": [
+     "R"
+    ],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone"
+   },
+   {
+    "object": "card_face",
+    "name": "Virtuous",
+    "mana_cost": "",
+    "type_line": "Token Enchantment — Aura Role",
+    "oracle_text": "Enchanted creature gets +1/+1.",
+    "colors": [
+     "W"
+    ],
+    "image_uris": {
+     "small": "https://cards.scryfall.io/small/f.jpg"
+    },
+    "artist": "Someone"
+   }
+  ],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "twoe",
+  "set_name": "Test Set",
+  "set_type": "token",
   "rarity": "common",
   "prices": {
    "usd": null,
@@ -1601,8 +1913,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000080",
-  "oracle_id": "00000000-0000-4000-8000-000000000081",
+  "id": "00000000-0000-4000-8000-000000000091",
+  "oracle_id": "00000000-0000-4000-8000-000000000092",
   "multiverse_ids": [
    1,
    2
@@ -1610,18 +1922,88 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "foobar_layout",
+  "layout": "normal",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Mystery Layout Card",
-  "mana_cost": "{3}",
-  "cmc": 3.0,
-  "type_line": "Artifact",
-  "oracle_text": "Mystery.",
+  "name": "Lost Mine of Phandelver",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Dungeon",
+  "oracle_text": "Cave Entrance",
   "colors": [],
   "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "tafr",
+  "set_name": "Test Set",
+  "set_type": "token",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000095",
+  "oracle_id": "00000000-0000-4000-8000-000000000096",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "normal",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Lim-Dûl's Vault",
+  "mana_cost": "{G}{U}",
+  "cmc": 2.0,
+  "type_line": "Instant",
+  "oracle_text": "Look at the top five cards of your library.",
+  "colors": [
+   "G",
+   "U"
+  ],
+  "color_identity": [
+   "G",
+   "U"
+  ],
   "keywords": [],
   "legalities": {
    "standard": "not_legal",
@@ -1654,78 +2036,14 @@
   "set": "xyz",
   "set_name": "Test Set",
   "set_type": "expansion",
-  "rarity": "rare",
+  "rarity": "common",
   "prices": {
-   "usd": "0.25",
+   "usd": "0.30",
    "usd_foil": "2.00",
    "eur": "0.50",
    "tix": null
   },
-  "edhrec_rank": 777
- },
- {
-  "object": "card",
-  "id": "00000000-0000-4000-8000-000000000084",
-  "oracle_id": "00000000-0000-4000-8000-000000000085",
-  "multiverse_ids": [
-   1,
-   2
-  ],
-  "lang": "en",
-  "released_at": "2020-01-01",
-  "uri": "https://api.scryfall.com/cards/x",
-  "layout": "front_card",
-  "highres_image": true,
-  "image_uris": {
-   "small": "https://cards.scryfall.io/small/x.jpg"
-  },
-  "name": "Surprise!",
-  "mana_cost": "",
-  "cmc": 0.0,
-  "type_line": "Card",
-  "oracle_text": "",
-  "colors": [],
-  "color_identity": [],
-  "keywords": [],
-  "legalities": {
-   "standard": "not_legal",
-   "future": "not_legal",
-   "historic": "not_legal",
-   "timeless": "not_legal",
-   "gladiator": "not_legal",
-   "pioneer": "not_legal",
-   "modern": "not_legal",
-   "legacy": "not_legal",
-   "pauper": "not_legal",
-   "vintage": "legal",
-   "penny": "not_legal",
-   "commander": "not_legal",
-   "oathbreaker": "not_legal",
-   "standardbrawl": "not_legal",
-   "brawl": "not_legal",
-   "alchemy": "not_legal",
-   "paupercommander": "not_legal",
-   "duel": "not_legal",
-   "oldschool": "not_legal",
-   "premodern": "not_legal",
-   "predh": "not_legal"
-  },
-  "games": [
-   "paper"
-  ],
-  "reserved": false,
-  "digital": false,
-  "set": "amh",
-  "set_name": "Test Set",
-  "set_type": "memorabilia",
-  "rarity": "common",
-  "prices": {
-   "usd": null,
-   "usd_foil": null,
-   "eur": "0.50",
-   "tix": null
-  },
-  "edhrec_rank": null
+  "edhrec_rank": 1800
  },
  {
   "object": "card",
@@ -2939,8 +3257,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000058",
-  "oracle_id": "00000000-0000-4000-8000-000000000059",
+  "id": "00000000-0000-4000-8000-000000000057",
+  "oracle_id": "00000000-0000-4000-8000-000000000058",
   "multiverse_ids": [
    1,
    2
@@ -2948,21 +3266,21 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "class",
+  "layout": "saga",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Ranger Class",
-  "mana_cost": "{1}{G}",
-  "cmc": 2.0,
-  "type_line": "Enchantment — Class",
-  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen Ranger Class enters, create a 2/2 green Wolf creature token.\n{1}{G}: Level 2",
+  "name": "The Eldest Reborn",
+  "mana_cost": "{4}{B}",
+  "cmc": 5.0,
+  "type_line": "Enchantment — Saga",
+  "oracle_text": "I — Each opponent sacrifices a creature or planeswalker.\nII — Each opponent discards a card.\nIII — Put target creature or planeswalker card from a graveyard onto the battlefield under your control.",
   "colors": [
-   "G"
+   "B"
   ],
   "color_identity": [
-   "G"
+   "B"
   ],
   "keywords": [],
   "legalities": {
@@ -3003,12 +3321,84 @@
    "eur": "0.50",
    "tix": null
   },
-  "edhrec_rank": 5000
+  "edhrec_rank": 600
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000062",
-  "oracle_id": "00000000-0000-4000-8000-000000000063",
+  "id": "00000000-0000-4000-8000-000000000061",
+  "oracle_id": "00000000-0000-4000-8000-000000000062",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "leveler",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Student of Warfare",
+  "mana_cost": "{W}",
+  "cmc": 1.0,
+  "type_line": "Creature — Human Knight",
+  "oracle_text": "Level up {W}\nLEVEL 2-6\n3/3\nFirst strike\nLEVEL 7+\n4/4\nDouble strike",
+  "power": "1",
+  "toughness": "1",
+  "colors": [
+   "W"
+  ],
+  "color_identity": [
+   "W"
+  ],
+  "keywords": [
+   "Level up"
+  ],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "xyz",
+  "set_name": "Test Set",
+  "set_type": "expansion",
+  "rarity": "rare",
+  "prices": {
+   "usd": "1.00",
+   "usd_foil": "2.00",
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": 3500
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000065",
+  "oracle_id": "00000000-0000-4000-8000-000000000066",
   "multiverse_ids": [
    1,
    2
@@ -3021,19 +3411,13 @@
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Goblin",
+  "name": "Treasure",
   "mana_cost": "",
   "cmc": 0.0,
-  "type_line": "Token Creature — Goblin",
-  "oracle_text": "",
-  "power": "1",
-  "toughness": "1",
-  "colors": [
-   "R"
-  ],
-  "color_identity": [
-   "R"
-  ],
+  "type_line": "Token Artifact — Treasure",
+  "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+  "colors": [],
+  "color_identity": [],
   "keywords": [],
   "legalities": {
    "standard": "not_legal",
@@ -3077,8 +3461,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000066",
-  "oracle_id": "00000000-0000-4000-8000-000000000067",
+  "id": "00000000-0000-4000-8000-000000000069",
+  "oracle_id": "00000000-0000-4000-8000-000000000070",
   "multiverse_ids": [
    1,
    2
@@ -3086,194 +3470,16 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "double_faced_token",
+  "layout": "emblem",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Incubator // Phyrexian",
-  "cmc": 0.0,
-  "type_line": "Token Artifact — Incubator // Token Creature — Phyrexian",
-  "card_faces": [
-   {
-    "object": "card_face",
-    "name": "Incubator",
-    "mana_cost": "",
-    "type_line": "Token Artifact — Incubator",
-    "oracle_text": "{2}: Transform this artifact.",
-    "colors": [],
-    "image_uris": {
-     "small": "https://cards.scryfall.io/small/f.jpg"
-    },
-    "artist": "Someone"
-   },
-   {
-    "object": "card_face",
-    "name": "Phyrexian",
-    "mana_cost": "",
-    "type_line": "Token Creature — Phyrexian",
-    "oracle_text": "",
-    "colors": [
-     "B"
-    ],
-    "image_uris": {
-     "small": "https://cards.scryfall.io/small/f.jpg"
-    },
-    "artist": "Someone",
-    "power": "0",
-    "toughness": "0"
-   }
-  ],
-  "color_identity": [],
-  "keywords": [],
-  "legalities": {
-   "standard": "not_legal",
-   "future": "not_legal",
-   "historic": "not_legal",
-   "timeless": "not_legal",
-   "gladiator": "not_legal",
-   "pioneer": "not_legal",
-   "modern": "not_legal",
-   "legacy": "not_legal",
-   "pauper": "not_legal",
-   "vintage": "legal",
-   "penny": "not_legal",
-   "commander": "legal",
-   "oathbreaker": "not_legal",
-   "standardbrawl": "not_legal",
-   "brawl": "not_legal",
-   "alchemy": "not_legal",
-   "paupercommander": "not_legal",
-   "duel": "not_legal",
-   "oldschool": "not_legal",
-   "premodern": "not_legal",
-   "predh": "not_legal"
-  },
-  "games": [
-   "paper"
-  ],
-  "reserved": false,
-  "digital": false,
-  "set": "tmom",
-  "set_name": "Test Set",
-  "set_type": "token",
-  "rarity": "common",
-  "prices": {
-   "usd": null,
-   "usd_foil": null,
-   "eur": "0.50",
-   "tix": null
-  },
-  "edhrec_rank": null
- },
- {
-  "object": "card",
-  "id": "00000000-0000-4000-8000-000000000070",
-  "oracle_id": "00000000-0000-4000-8000-000000000071",
-  "multiverse_ids": [
-   1,
-   2
-  ],
-  "lang": "en",
-  "released_at": "2020-01-01",
-  "uri": "https://api.scryfall.com/cards/x",
-  "layout": "art_series",
-  "highres_image": true,
-  "image_uris": {
-   "small": "https://cards.scryfall.io/small/x.jpg"
-  },
-  "name": "Sol Ring // Sol Ring",
-  "cmc": 0.0,
-  "type_line": "Card // Card",
-  "card_faces": [
-   {
-    "object": "card_face",
-    "name": "Sol Ring",
-    "mana_cost": "",
-    "type_line": "Card",
-    "oracle_text": "",
-    "colors": [],
-    "image_uris": {
-     "small": "https://cards.scryfall.io/small/f.jpg"
-    },
-    "artist": "Someone"
-   },
-   {
-    "object": "card_face",
-    "name": "Sol Ring",
-    "mana_cost": "",
-    "type_line": "Card",
-    "oracle_text": "",
-    "colors": [],
-    "image_uris": {
-     "small": "https://cards.scryfall.io/small/f.jpg"
-    },
-    "artist": "Someone"
-   }
-  ],
-  "color_identity": [],
-  "keywords": [],
-  "legalities": {
-   "standard": "not_legal",
-   "future": "not_legal",
-   "historic": "not_legal",
-   "timeless": "not_legal",
-   "gladiator": "not_legal",
-   "pioneer": "not_legal",
-   "modern": "not_legal",
-   "legacy": "not_legal",
-   "pauper": "not_legal",
-   "vintage": "legal",
-   "penny": "not_legal",
-   "commander": "legal",
-   "oathbreaker": "not_legal",
-   "standardbrawl": "not_legal",
-   "brawl": "not_legal",
-   "alchemy": "not_legal",
-   "paupercommander": "not_legal",
-   "duel": "not_legal",
-   "oldschool": "not_legal",
-   "premodern": "not_legal",
-   "predh": "not_legal"
-  },
-  "games": [
-   "paper"
-  ],
-  "reserved": false,
-  "digital": false,
-  "set": "acmm",
-  "set_name": "Test Set",
-  "set_type": "memorabilia",
-  "rarity": "common",
-  "prices": {
-   "usd": null,
-   "usd_foil": null,
-   "eur": "0.50",
-   "tix": null
-  },
-  "edhrec_rank": null
- },
- {
-  "object": "card",
-  "id": "00000000-0000-4000-8000-000000000074",
-  "oracle_id": "00000000-0000-4000-8000-000000000075",
-  "multiverse_ids": [
-   1,
-   2
-  ],
-  "lang": "en",
-  "released_at": "2020-01-01",
-  "uri": "https://api.scryfall.com/cards/x",
-  "layout": "planar",
-  "highres_image": true,
-  "image_uris": {
-   "small": "https://cards.scryfall.io/small/x.jpg"
-  },
-  "name": "Akoum",
+  "name": "Elspeth, Sun's Champion Emblem",
   "mana_cost": "",
   "cmc": 0.0,
-  "type_line": "Plane — Zendikar",
-  "oracle_text": "Landfall",
+  "type_line": "Emblem",
+  "oracle_text": "Creatures you control get +2/+2.",
   "colors": [],
   "color_identity": [],
   "keywords": [],
@@ -3305,9 +3511,9 @@
   ],
   "reserved": false,
   "digital": false,
-  "set": "hop",
+  "set": "temn",
   "set_name": "Test Set",
-  "set_type": "planechase",
+  "set_type": "token",
   "rarity": "common",
   "prices": {
    "usd": null,
@@ -3319,8 +3525,8 @@
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000078",
-  "oracle_id": "00000000-0000-4000-8000-000000000079",
+  "id": "00000000-0000-4000-8000-000000000073",
+  "oracle_id": "00000000-0000-4000-8000-000000000074",
   "multiverse_ids": [
    1,
    2
@@ -3328,92 +3534,18 @@
   "lang": "en",
   "released_at": "2020-01-01",
   "uri": "https://api.scryfall.com/cards/x",
-  "layout": "normal",
+  "layout": "scheme",
   "highres_image": true,
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "A-Mother of Runes",
-  "mana_cost": "{W}",
-  "cmc": 1.0,
-  "type_line": "Creature — Human Cleric",
-  "oracle_text": "{T}: Target creature you control gains protection from the color of your choice until end of turn.",
-  "power": "1",
-  "toughness": "1",
-  "colors": [
-   "W"
-  ],
-  "color_identity": [
-   "W"
-  ],
-  "keywords": [],
-  "legalities": {
-   "standard": "not_legal",
-   "future": "not_legal",
-   "historic": "not_legal",
-   "timeless": "not_legal",
-   "gladiator": "not_legal",
-   "pioneer": "not_legal",
-   "modern": "not_legal",
-   "legacy": "not_legal",
-   "pauper": "not_legal",
-   "vintage": "legal",
-   "penny": "not_legal",
-   "commander": "not_legal",
-   "oathbreaker": "not_legal",
-   "standardbrawl": "not_legal",
-   "brawl": "not_legal",
-   "alchemy": "not_legal",
-   "paupercommander": "not_legal",
-   "duel": "not_legal",
-   "oldschool": "not_legal",
-   "premodern": "not_legal",
-   "predh": "not_legal"
-  },
-  "games": [
-   "paper"
-  ],
-  "reserved": false,
-  "digital": true,
-  "set": "ydmu",
-  "set_name": "Test Set",
-  "set_type": "expansion",
-  "rarity": "common",
-  "prices": {
-   "usd": "1.00",
-   "usd_foil": "2.00",
-   "eur": "0.50",
-   "tix": null
-  },
-  "edhrec_rank": null
- },
- {
-  "object": "card",
-  "id": "00000000-0000-4000-8000-000000000082",
-  "oracle_id": "00000000-0000-4000-8000-000000000083",
-  "multiverse_ids": [
-   1,
-   2
-  ],
-  "lang": "en",
-  "released_at": "2020-01-01",
-  "uri": "https://api.scryfall.com/cards/x",
-  "layout": "normal",
-  "highres_image": true,
-  "image_uris": {
-   "small": "https://cards.scryfall.io/small/x.jpg"
-  },
-  "name": "Mind Twist",
-  "mana_cost": "{X}{B}",
-  "cmc": 1.0,
-  "type_line": "Sorcery",
-  "oracle_text": "Target player discards X cards at random.",
-  "colors": [
-   "B"
-  ],
-  "color_identity": [
-   "B"
-  ],
+  "name": "Ascendant Evincar Scheme",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Scheme",
+  "oracle_text": "When you set this scheme in motion, draw a card.",
+  "colors": [],
+  "color_identity": [],
   "keywords": [],
   "legalities": {
    "standard": "not_legal",
@@ -3442,23 +3574,215 @@
    "paper"
   ],
   "reserved": false,
-  "digital": true,
-  "set": "vma",
+  "digital": false,
+  "set": "arc",
   "set_name": "Test Set",
-  "set_type": "expansion",
-  "rarity": "rare",
+  "set_type": "archenemy",
+  "rarity": "common",
   "prices": {
    "usd": null,
    "usd_foil": null,
    "eur": "0.50",
    "tix": null
   },
-  "edhrec_rank": 2200
+  "edhrec_rank": null
  },
  {
   "object": "card",
-  "id": "00000000-0000-4000-8000-000000000086",
-  "oracle_id": "00000000-0000-4000-8000-000000000087",
+  "id": "00000000-0000-4000-8000-000000000077",
+  "oracle_id": "00000000-0000-4000-8000-000000000078",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "vanguard",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Ajani Goldmane Avatar",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Vanguard",
+  "oracle_text": "Hand +1, life +2",
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "pvan",
+  "set_name": "Test Set",
+  "set_type": "vanguard",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000081",
+  "oracle_id": "00000000-0000-4000-8000-000000000082",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "foobar_layout",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Mystery Layout Card",
+  "mana_cost": "{3}",
+  "cmc": 3.0,
+  "type_line": "Artifact",
+  "oracle_text": "Mystery.",
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "xyz",
+  "set_name": "Test Set",
+  "set_type": "expansion",
+  "rarity": "rare",
+  "prices": {
+   "usd": "0.25",
+   "usd_foil": "2.00",
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": 777
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000085",
+  "oracle_id": "00000000-0000-4000-8000-000000000086",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "front_card",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Surprise!",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Card",
+  "oracle_text": "",
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "amh",
+  "set_name": "Test Set",
+  "set_type": "memorabilia",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000089",
+  "oracle_id": "00000000-0000-4000-8000-000000000090",
   "multiverse_ids": [
    1,
    2
@@ -3471,18 +3795,82 @@
   "image_uris": {
    "small": "https://cards.scryfall.io/small/x.jpg"
   },
-  "name": "Lim-Dûl's Vault",
-  "mana_cost": "{G}{U}",
+  "name": "Experience",
+  "mana_cost": "",
+  "cmc": 0.0,
+  "type_line": "Card",
+  "oracle_text": "",
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "legalities": {
+   "standard": "not_legal",
+   "future": "not_legal",
+   "historic": "not_legal",
+   "timeless": "not_legal",
+   "gladiator": "not_legal",
+   "pioneer": "not_legal",
+   "modern": "not_legal",
+   "legacy": "not_legal",
+   "pauper": "not_legal",
+   "vintage": "legal",
+   "penny": "not_legal",
+   "commander": "not_legal",
+   "oathbreaker": "not_legal",
+   "standardbrawl": "not_legal",
+   "brawl": "not_legal",
+   "alchemy": "not_legal",
+   "paupercommander": "not_legal",
+   "duel": "not_legal",
+   "oldschool": "not_legal",
+   "premodern": "not_legal",
+   "predh": "not_legal"
+  },
+  "games": [
+   "paper"
+  ],
+  "reserved": false,
+  "digital": false,
+  "set": "hel",
+  "set_name": "Test Set",
+  "set_type": "memorabilia",
+  "rarity": "common",
+  "prices": {
+   "usd": null,
+   "usd_foil": null,
+   "eur": "0.50",
+   "tix": null
+  },
+  "edhrec_rank": null
+ },
+ {
+  "object": "card",
+  "id": "00000000-0000-4000-8000-000000000093",
+  "oracle_id": "00000000-0000-4000-8000-000000000094",
+  "multiverse_ids": [
+   1,
+   2
+  ],
+  "lang": "en",
+  "released_at": "2020-01-01",
+  "uri": "https://api.scryfall.com/cards/x",
+  "layout": "normal",
+  "highres_image": true,
+  "image_uris": {
+   "small": "https://cards.scryfall.io/small/x.jpg"
+  },
+  "name": "Tokenizer",
+  "mana_cost": "{1}{G}",
   "cmc": 2.0,
-  "type_line": "Instant",
-  "oracle_text": "Look at the top five cards of your library.",
+  "type_line": "Creature — Token Wizard",
+  "oracle_text": "Makes things.",
+  "power": "1",
+  "toughness": "1",
   "colors": [
-   "G",
-   "U"
+   "G"
   ],
   "color_identity": [
-   "G",
-   "U"
+   "G"
   ],
   "keywords": [],
   "legalities": {
@@ -3518,11 +3906,11 @@
   "set_type": "expansion",
   "rarity": "common",
   "prices": {
-   "usd": "0.30",
+   "usd": "1.00",
    "usd_foil": "2.00",
    "eur": "0.50",
    "tix": null
   },
-  "edhrec_rank": 1800
+  "edhrec_rank": 9000
  }
 ]

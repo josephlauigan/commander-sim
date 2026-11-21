@@ -137,7 +137,7 @@ fn lock_matches(t: &Tmp) {
     let meta = bulk::read_meta(&t.join("oracle.json")).unwrap();
     assert_eq!(
         fs::read_to_string(t.join("sync.lock")).unwrap(),
-        format!("bulk_updated_at={}\ncount={}\nfnv1a64={hash:016x}\n", meta.bulk_updated_at, meta.count)
+        format!("schema=1\nbulk_updated_at={}\ncount={}\nfnv1a64={hash:016x}\n", meta.bulk_updated_at, meta.count)
     );
 }
 
@@ -277,12 +277,11 @@ fn meld_result_and_meld_part_are_distinguished() {
     assert!(bulk::slim_bulk(&meld("part-id", "Part")).get("all_parts_meld").is_none());
 }
 
+// Scryfall's part entries carry printing ids, and the bulk file keeps one arbitrary printing per Oracle card, so a
+// result whose own entry has another id is still the result (Ragnarok, Divine Deliverance is exactly this shape)
 #[test]
-fn defect_meld_result_name_collision_overrides_different_id() {
-    assert!(
-        bulk::slim_bulk(&meld("different-card-id", "Result")).get("all_parts_meld").is_none(),
-        "different concrete Scryfall ids must take precedence over a matching name"
-    );
+fn meld_result_matched_by_name_when_part_entry_is_another_printing() {
+    assert_eq!(bulk::slim_bulk(&meld("different-card-id", "Result")).get("all_parts_meld"), Some(&J::Bool(true)));
 }
 
 fn rendered(cards: Vec<J>) -> String {

@@ -1,4 +1,4 @@
-//! `cardgen bulk-sync` on a 46-card fixture in Scryfall's bulk shape (every layout, a banned card, an un-card, null
+//! `cardgen bulk-sync` on a 51-card fixture in Scryfall's bulk shape (every layout, a banned card, an un-card, null
 //! prices and edhrec rank, a foil-only price, a duplicate oracle_id). Nothing here uses the network: the sync runs on
 //! `--from-file`, or against a `Remote` that copies the fixture.
 
@@ -118,7 +118,7 @@ fn no_tmp_files(dir: &Path) {
 #[test]
 fn slim_bulk_agrees_with_slim_on_the_cache_fields() {
     let cards = fixture_cards();
-    assert_eq!(cards.len(), 46);
+    assert_eq!(cards.len(), 51);
     for c in &cards {
         let (s, b) = (cardgen::scryfall::slim(c), bulk::slim_bulk(c));
         let (s, b) = (s.as_obj().unwrap(), b.as_obj().unwrap());
@@ -172,6 +172,21 @@ fn slim_bulk_extras() {
     // only the meld result is flagged
     assert_eq!(slim("Brisela, Voice of Nightmares").get("all_parts_meld"), Some(&J::Bool(true)));
     assert!(slim("Bruna, the Fading Light").get("all_parts_meld").is_none());
+    // a meld result lists the names of its parts; parts and other cards have no meld_parts
+    let names = |c: &J, k: &str| {
+        c.get(k).unwrap().as_arr().unwrap().iter().map(|n| n.as_str().unwrap().to_string()).collect::<Vec<_>>()
+    };
+    assert_eq!(
+        names(&slim("Brisela, Voice of Nightmares"), "meld_parts"),
+        ["Bruna, the Fading Light", "Gisela, the Broken Blade"]
+    );
+    assert!(
+        slim("Bruna, the Fading Light").get("meld_parts").is_none() && slim("Sol Ring").get("meld_parts").is_none()
+    );
+    // the real shape: the result's own entry carries another printing's id, so it is matched by name
+    let rag = slim("Ragnarok, Divine Deliverance");
+    assert_eq!(rag.get("all_parts_meld"), Some(&J::Bool(true)));
+    assert_eq!(names(&rag, "meld_parts"), ["Fang, Fearless l'Cie", "Vanille, Cheerful l'Cie"]);
     assert!(slim("Gisela, the Broken Blade").get("all_parts_meld").is_none());
     // faces gain their colours
     let delver = slim("Delver of Secrets // Insectile Aberration");
@@ -189,25 +204,30 @@ fn slim_bulk_extras() {
 #[test]
 fn drop_list_dedupe_and_layout_counts() {
     let s = bulk::read_bulk(&fixture()).unwrap();
-    assert_eq!((s.read, s.kept(), s.dropped()), (46, 37, 9));
-    assert_eq!((s.dropped_layout, s.dropped_duplicate), (8, 1));
+    assert_eq!((s.read, s.kept(), s.dropped()), (51, 38, 13));
+    assert_eq!((s.dropped_layout, s.dropped_type, s.dropped_duplicate), (9, 3, 1));
     let n = |l: &str| (s.layouts[l].kept, s.layouts[l].dropped);
-    assert_eq!(n("normal"), (20, 1)); // 21 records: only the duplicate oracle_id is dropped
+    assert_eq!(n("normal"), (21, 3)); // 24 records: a duplicate oracle_id, a "Card" helper and a Dungeon are dropped
     for l in ["transform", "modal_dfc", "split", "adventure"] {
         assert_eq!(n(l), (2, 0), "{l}");
     }
-    for (l, kept) in
-        [("flip", 1), ("meld", 3), ("saga", 1), ("class", 1), ("leveler", 1), ("front_card", 1), ("foobar_layout", 1)]
-    {
+    for (l, kept) in [("meld", 4), ("saga", 1), ("class", 1), ("leveler", 1), ("foobar_layout", 1)] {
         assert_eq!(n(l), (kept, 0), "{l}");
     }
+    // the flip-layout Role token goes by its type line
+    assert_eq!(n("flip"), (1, 1));
     assert_eq!(n("token"), (0, 2));
-    for l in ["double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"] {
+    for l in ["double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard", "front_card"] {
         assert_eq!(n(l), (0, 1), "{l}");
     }
     let names: Vec<&str> = s.cards.iter().map(|(_, c)| c.s_or("name")).collect();
     assert!(names.contains(&"Sol Ring") && !names.contains(&"Duplicate Oracle Copy"), "first oracle_id wins");
-    assert!(!names.contains(&"Goblin"));
+    assert!(!names.contains(&"Goblin") && !names.contains(&"Surprise!"));
+    // type-line drops: first word Token, Card or Dungeon (top or any face); a later word does not count
+    for n in ["Monster // Virtuous", "Experience", "Lost Mine of Phandelver"] {
+        assert!(!names.contains(&n), "{n} is not a card");
+    }
+    assert!(names.contains(&"Tokenizer"), "Creature — Token Wizard is a card");
     // digital printings are kept, with their legality
     assert!(names.contains(&"A-Mother of Runes") && names.contains(&"Mind Twist"));
     // banned, not-legal and un-cards stay, with their legality
@@ -243,11 +263,15 @@ fn summary_lists_counts_per_layout() {
     let t = Tmp::new();
     let out = sync_fixture(&t.0, SYNCED);
     assert!(out.text.contains("bulk updated_at: from-file"));
-    for (l, k, d) in [("normal", 20, 1), ("token", 0, 2), ("meld", 3, 0)] {
+    for (l, k, d) in [("normal", 21, 3), ("token", 0, 2), ("meld", 4, 0), ("front_card", 0, 1)] {
         let line = format!("{l:<22}{k:>8}{d:>9}");
         assert!(out.text.contains(&line), "missing {line:?} in\n{}", out.text);
     }
-    assert!(out.text.contains("read 46, kept 37, dropped 9 (layout 8, duplicate oracle_id 1)"), "{}", out.text);
+    assert!(
+        out.text.contains("read 51, kept 38, dropped 13 (layout 9, type 3, duplicate oracle_id 1)"),
+        "{}",
+        out.text
+    );
 }
 
 // ------------------------------------------------------------------ writing
@@ -267,10 +291,10 @@ fn output_is_sorted_complete_and_deterministic() {
     let v = read_oracle(&a.0);
     let meta = v.get("meta").unwrap();
     assert_eq!(meta.get("schema"), Some(&J::Int(1)));
-    assert_eq!(meta.get("count"), Some(&J::Int(37)));
+    assert_eq!(meta.get("count"), Some(&J::Int(38)));
     assert_eq!(meta.s("synced"), Some(SYNCED));
     let cards = v.get("cards").unwrap().as_arr().unwrap();
-    assert_eq!(cards.len(), 37);
+    assert_eq!(cards.len(), 38);
     let names: Vec<String> = cards.iter().map(|c| c.s_or("name").to_lowercase()).collect();
     let mut sorted = names.clone();
     sorted.sort();
@@ -286,7 +310,7 @@ fn output_is_sorted_complete_and_deterministic() {
             bulk_updated_at: "from-file".into(),
             download_uri: format!("file:{}", fixture().display()),
             synced: SYNCED.into(),
-            count: 37
+            count: 38
         }
     );
     no_tmp_files(&a.0);
@@ -302,11 +326,12 @@ fn sync_lock_records_the_bulk_file_and_the_hash() {
     sync_fixture(&t.0, SYNCED);
     let lock = read(&t, "sync.lock");
     let kv: Vec<(&str, &str)> = lock.lines().map(|l| l.split_once('=').unwrap()).collect();
-    assert_eq!(kv.iter().map(|k| k.0).collect::<Vec<_>>(), ["bulk_updated_at", "count", "fnv1a64"]);
-    assert_eq!(kv[0].1, "from-file");
-    assert_eq!(kv[1].1, "37");
+    assert_eq!(kv.iter().map(|k| k.0).collect::<Vec<_>>(), ["schema", "bulk_updated_at", "count", "fnv1a64"]);
+    assert_eq!(kv[0].1, "1");
+    assert_eq!(kv[1].1, "from-file");
+    assert_eq!(kv[2].1, "38");
     let want = format!("{:016x}", bulk::hash_of_file(&t.join("oracle.json")).unwrap());
-    assert_eq!(kv[2].1, want);
+    assert_eq!(kv[3].1, want);
     assert_eq!(want.len(), 16);
     // a changed card changes the hash
     let text = read(&t, "oracle.json").replace("Sol Ring", "Sol Rinh");
@@ -354,7 +379,7 @@ fn json_lines_and_gzip_read_back_the_same_as_the_array() {
         let t = Tmp::new();
         let o = opts(&t.0, Some(src.join(name)), 1, SYNCED);
         let out = bulk::run(&o, &mut Panics).unwrap_or_else(|e| panic!("{name}: {e}"));
-        assert!(out.text.contains("read 46, kept 37, dropped 9"), "{name}: {}", out.text);
+        assert!(out.text.contains("read 51, kept 38, dropped 13"), "{name}: {}", out.text);
         // only the recorded source differs
         let got = read(&t, "oracle.json").replace(&src.join(name).display().to_string(), "SRC");
         let want = want.replace(&fixture().display().to_string(), "SRC");
@@ -443,6 +468,61 @@ fn a_failed_download_leaves_the_existing_file_untouched() {
     no_tmp_files(&t.0);
 }
 
+#[test]
+fn a_lock_that_cannot_be_replaced_rolls_the_oracle_back() {
+    let t = Tmp::new();
+    let mut remote = Mock::new("2026-11-20T21:00:00.000+00:00");
+    bulk::run(&opts(&t.0, None, 1, SYNCED), &mut remote).unwrap();
+    let old = std::fs::read(t.join("oracle.json")).unwrap();
+    // sync.lock becomes a non-empty directory: renaming the new lock onto it fails after the new oracle is in place
+    std::fs::remove_file(t.join("sync.lock")).unwrap();
+    std::fs::create_dir(t.join("sync.lock")).unwrap();
+    std::fs::write(t.join("sync.lock/keep"), "mine").unwrap();
+    remote.updated_at = "2026-11-27T21:00:00.000+00:00".into();
+    let err = bulk::run(&opts(&t.0, None, 1, "2026-11-28T00:00:00Z"), &mut remote).unwrap_err();
+    assert!(err.contains("sync.lock") && err.contains("restored") && !err.contains("NOT"), "{err}");
+    assert_eq!(std::fs::read(t.join("oracle.json")).unwrap(), old, "the old oracle is back");
+    assert_eq!(std::fs::read_to_string(t.join("sync.lock/keep")).unwrap(), "mine");
+    assert!(t.join("sync.lock").is_dir());
+    no_tmp_files(&t.0);
+    // with no oracle before the sync, the new one is removed again
+    std::fs::remove_file(t.join("oracle.json")).unwrap();
+    let err = bulk::run(&opts(&t.0, None, 1, "2026-11-28T00:00:00Z"), &mut remote).unwrap_err();
+    assert!(err.contains("restored"), "{err}");
+    assert!(!t.join("oracle.json").exists());
+    no_tmp_files(&t.0);
+}
+
+#[test]
+fn a_lock_without_the_current_schema_line_is_not_trusted() {
+    let t = Tmp::new();
+    let mut remote = Mock::new("2026-11-20T21:00:00.000+00:00");
+    bulk::run(&opts(&t.0, None, 1, SYNCED), &mut remote).unwrap();
+    let lock = read(&t, "sync.lock");
+    assert!(lock.starts_with("schema=1\n"), "{lock}");
+    assert!(bulk::read_lock(&t.join("sync.lock")).is_some());
+    // the same lock minus its schema line, or with another schema: invalid, so the next run downloads again
+    for bad in [lock.replacen("schema=1\n", "", 1), lock.replacen("schema=1", "schema=2", 1)] {
+        std::fs::write(t.join("sync.lock"), bad).unwrap();
+        assert!(bulk::read_lock(&t.join("sync.lock")).is_none());
+        let before = remote.downloads;
+        let out = bulk::run(&opts(&t.0, None, 1, SYNCED), &mut remote).unwrap();
+        assert!(!out.up_to_date && remote.downloads == before + 1);
+        assert!(read(&t, "sync.lock").starts_with("schema=1\n"));
+    }
+}
+
+#[test]
+fn only_https_downloads_are_allowed() {
+    let t = Tmp::new();
+    for uri in ["http://data.scryfall.io/x.jsonl.gz", "file:///etc/passwd", "ftp://x/y", ""] {
+        let dest = t.join("download");
+        let err = bulk::Http.download(uri, &dest).unwrap_err();
+        assert!(err.contains("https://") && err.contains("refusing"), "{err}");
+        assert!(!dest.exists(), "nothing is written");
+    }
+}
+
 // ------------------------------------------------------------------ failures leave oracle.json alone
 
 fn assert_untouched(dir: &Tmp, old: &[u8]) {
@@ -480,12 +560,12 @@ fn too_few_cards_fails_and_leaves_oracle_json_byte_identical() {
     let t = Tmp::new();
     sync_fixture(&t.0, SYNCED);
     let old = std::fs::read(t.join("oracle.json")).unwrap();
-    // the default floor is 25,000 cards: the 37-card fixture does not reach it
+    // the default floor is 25,000 cards: the 38-card fixture does not reach it
     let err = bulk::run(&opts(&t.0, Some(fixture()), bulk::MIN_COUNT, SYNCED), &mut Panics).unwrap_err();
-    assert!(err.contains("only 37 cards kept") && err.contains("25000"), "{err}");
+    assert!(err.contains("only 38 cards kept") && err.contains("25000"), "{err}");
     assert_untouched(&t, &old);
     // the floor is on kept cards, not cards read
-    assert!(bulk::run(&opts(&t.0, Some(fixture()), 38, SYNCED), &mut Panics).is_err());
+    assert!(bulk::run(&opts(&t.0, Some(fixture()), 39, SYNCED), &mut Panics).is_err());
     assert_untouched(&t, &old);
     assert_eq!(bulk::MIN_COUNT, 25_000);
 }
@@ -506,7 +586,7 @@ fn command_exits_non_zero_on_a_corrupt_file_and_zero_on_the_fixture() {
     let ok = cardgen(&["bulk-sync", "--from-file", f, "--data-dir", d, "--min-count", "1"]);
     assert!(ok.status.success(), "{}", String::from_utf8_lossy(&ok.stderr));
     let stdout = String::from_utf8_lossy(&ok.stdout);
-    assert!(stdout.contains("read 46, kept 37, dropped 9"), "{stdout}");
+    assert!(stdout.contains("read 51, kept 38, dropped 13"), "{stdout}");
     assert!(String::from_utf8_lossy(&ok.stderr).contains("foobar_layout"), "the unknown layout is warned about");
     let old = std::fs::read(dir.join("oracle.json")).unwrap();
 

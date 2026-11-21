@@ -24,9 +24,13 @@ const USER_AGENT: &str = "commander-pod-sim/1.0 (personal deck testing)";
 pub const SCHEMA: i64 = 1;
 /// a real sync keeps about 30,000 cards; fewer than this means a truncated or wrong file
 pub const MIN_COUNT: usize = 25_000;
-/// the only layouts dropped at sync; nothing else branches on a layout name
-pub const DROP_LAYOUTS: [&str; 7] =
-    ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"];
+/// the layouts dropped at sync (`front_card` is memorabilia: type "Card", all not_legal, and it repeats real names);
+/// the only other drop is by type line, see `JUNK_TYPES`
+pub const DROP_LAYOUTS: [&str; 8] =
+    ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard", "front_card"];
+/// a card whose type line (or a face's) starts with one of these words is not a card: Role and other tokens that
+/// have a card layout, helper cards (Experience, Poison Counter), Dungeons
+const JUNK_TYPES: [&str; 3] = ["Token", "Card", "Dungeon"];
 /// layouts Scryfall documents; anything else is kept, with a warning
 const KNOWN_LAYOUTS: [&str; 26] = [
     "normal",
@@ -47,8 +51,6 @@ const KNOWN_LAYOUTS: [&str; 26] = [
     "host",
     "reversible_card",
     "prepare",
-    // memorabilia cards (type "Card", not_legal): kept deliberately for now
-    "front_card",
     "token",
     "double_faced_token",
     "emblem",
@@ -56,6 +58,7 @@ const KNOWN_LAYOUTS: [&str; 26] = [
     "scheme",
     "planar",
     "vanguard",
+    "front_card",
 ];
 
 /// FNV-1a, 64 bit
@@ -101,6 +104,11 @@ pub fn slim_bulk(card: &J) -> J {
     }
     if is_meld_result(card) {
         out.set("all_parts_meld", true);
+        // the names of the cards that meld into it (the result's own `all_parts` entries of component meld_part)
+        let parts = card.get("all_parts").and_then(|p| p.as_arr()).into_iter().flatten();
+        let names: Vec<J> =
+            parts.filter(|p| p.s("component") == Some("meld_part")).filter_map(|p| p.s("name")).map(J::from).collect();
+        out.set("meld_parts", names);
     }
     J::Obj(out)
 }
@@ -111,17 +119,25 @@ fn oracle_id(card: &J) -> Option<&str> {
     })
 }
 
-/// the card is the result of a meld: its own entry in `all_parts` is a `meld_result`
+/// the card is the result of a meld: its own entry in `all_parts` is a `meld_result`. Matched by id or by name: the
+/// ids in `all_parts` are printing ids, and the bulk file keeps one arbitrary printing per Oracle card, so an id
+/// mismatch says nothing (Ragnarok, Divine Deliverance is card 01c5bafe..., its own entry says a951cc35...).
 fn is_meld_result(card: &J) -> bool {
     let (name, id) = (card.s("name"), card.s("id"));
     card.get("all_parts").and_then(|p| p.as_arr()).is_some_and(|parts| {
         parts.iter().any(|p| {
-            // by id, or by name: in the real file a result's own `all_parts` entry can carry another printing's id
-            // (Ragnarok, Divine Deliverance: card 01c5bafe..., entry a951cc35...), so a different id does not rule it out
             p.s("component") == Some("meld_result")
                 && (id.is_some() && p.s("id") == id || name.is_some() && p.s("name") == name)
         })
     })
+}
+
+/// the first word of the card's type line or of any face's type line is a `JUNK_TYPES` word
+fn junk_type(card: &J) -> bool {
+    let faces = card.get("card_faces").and_then(|f| f.as_arr()).into_iter().flatten();
+    std::iter::once(card)
+        .chain(faces)
+        .any(|c| c.s("type_line").and_then(|t| t.split_whitespace().next()).is_some_and(|w| JUNK_TYPES.contains(&w)))
 }
 
 // ------------------------------------------------------------------ reading the bulk file
@@ -140,6 +156,7 @@ pub struct Slimmed {
     pub layouts: BTreeMap<String, LayoutCount>,
     pub read: usize,
     pub dropped_layout: usize,
+    pub dropped_type: usize,
     pub dropped_duplicate: usize,
     seen: HashSet<String>,
 }
@@ -151,11 +168,15 @@ impl Slimmed {
         let drop_layout = DROP_LAYOUTS.contains(&layout.as_str());
         // `digital` is NOT a drop reason: the one printing the Oracle Cards file keeps for an old staple is often a
         // digital Masters set. Commander legality decides playability.
-        let dup = !drop_layout && oracle_id(&card).is_some_and(|id| self.seen.contains(id));
+        let drop_type = !drop_layout && junk_type(&card);
+        let dup = !drop_layout && !drop_type && oracle_id(&card).is_some_and(|id| self.seen.contains(id));
         let count = self.layouts.entry(layout).or_default();
         if drop_layout {
             count.dropped += 1;
             self.dropped_layout += 1;
+        } else if drop_type {
+            count.dropped += 1;
+            self.dropped_type += 1;
         } else if dup {
             count.dropped += 1;
             self.dropped_duplicate += 1;
@@ -347,21 +368,23 @@ pub struct Lock {
 /// an existing `sync.lock`; None if missing or not three well-formed `key=value` lines
 pub fn read_lock(path: &Path) -> Option<Lock> {
     let text = std::fs::read_to_string(path).ok()?;
-    let (mut updated, mut count, mut hash) = (None, None, None);
+    let (mut schema, mut updated, mut count, mut hash) = (None, None, None, None);
     for line in text.lines() {
         let (k, v) = line.split_once('=')?;
         match k {
+            "schema" => schema = v.parse::<i64>().ok(),
             "bulk_updated_at" => updated = Some(v.to_string()),
             "count" => count = v.parse().ok(),
             "fnv1a64" => hash = Some(v.to_string()),
             _ => return None,
         }
     }
-    Some(Lock { bulk_updated_at: updated?, count: count?, fnv1a64: hash? })
+    // a lock without the current schema line is invalid (an older or newer cardgen wrote it): re-sync
+    (schema? == SCHEMA).then_some(Lock { bulk_updated_at: updated?, count: count?, fnv1a64: hash? })
 }
 
 fn lock_text(meta: &Meta, hash: u64) -> String {
-    format!("bulk_updated_at={}\ncount={}\nfnv1a64={hash:016x}\n", meta.bulk_updated_at, meta.count)
+    format!("schema={SCHEMA}\nbulk_updated_at={}\ncount={}\nfnv1a64={hash:016x}\n", meta.bulk_updated_at, meta.count)
 }
 
 // ------------------------------------------------------------------ the sync
@@ -412,6 +435,9 @@ impl Remote for Http {
     /// streamed to `dest` as served (a gzip file of about 25 MB; `read_bulk` decompresses it): no total timeout, 60 s
     /// without a byte is a failure
     fn download(&mut self, uri: &str, dest: &Path) -> Result<(), String> {
+        if !uri.starts_with("https://") {
+            return Err(format!("refusing to download {uri}: only https:// is allowed"));
+        }
         let agent = ureq::AgentBuilder::new()
             .timeout_connect(Duration::from_secs(30))
             .timeout_read(Duration::from_secs(60))
@@ -470,7 +496,14 @@ pub fn run(opts: &Options, remote: &mut dyn Remote) -> Result<Outcome, String> {
         lock: opts.dir.join(format!("sync.{tok}.lock.tmp")),
     };
     let (updated_at, uri, source, downloaded) = match &opts.from_file {
-        Some(p) => ("from-file".to_string(), format!("file:{}", p.display()), p.clone(), false),
+        Some(p) => {
+            eprintln!(
+                "warning: --from-file writes bulk_updated_at=from-file into {}/sync.lock; pass --data-dir for a \
+                 scratch directory",
+                opts.dir.display()
+            );
+            ("from-file".to_string(), format!("file:{}", p.display()), p.clone(), false)
+        }
         None => {
             let e = remote.latest()?;
             if let Some(n) = current_count(&opts.dir, &e.updated_at) {
@@ -541,11 +574,12 @@ fn sync_file(
         text.push_str(&format!("{l:<22}{:>8}{:>9}\n", c.kept, c.dropped));
     }
     text.push_str(&format!(
-        "read {}, kept {}, dropped {} (layout {}, duplicate oracle_id {})\n",
+        "read {}, kept {}, dropped {} (layout {}, type {}, duplicate oracle_id {})\n",
         s.read,
         s.kept(),
         s.dropped(),
         s.dropped_layout,
+        s.dropped_type,
         s.dropped_duplicate
     ));
     let meta = Meta { bulk_updated_at: updated_at, download_uri: uri, synced: opts.synced.clone(), count: s.kept() };
@@ -571,14 +605,42 @@ fn sync_file(
     // the lock is renamed into place (a rename replaces a symlink, it never writes through it); if that fails the
     // new oracle is rolled back, so oracle.json and sync.lock always describe the same sync
     if let Err(e) = std::fs::rename(&tmps.lock, &lock) {
-        let _ = if had_old { std::fs::rename(&prev, oracle) } else { std::fs::remove_file(oracle) };
-        return Err(format!("{}: {e}; {} restored", lock.display(), oracle.display()));
+        let undone = if had_old { std::fs::rename(&prev, oracle) } else { std::fs::remove_file(oracle) };
+        return Err(rollback_message(&lock, &e, oracle, undone));
     }
     text.push_str(&format!("wrote {} ({} cards), {}\n", oracle.display(), meta.count, lock.display()));
     Ok(Outcome { text, warnings, up_to_date: false })
 }
 
+/// the error for a failed lock rename, saying truthfully whether the oracle was put back
+fn rollback_message(lock: &Path, err: &std::io::Error, oracle: &Path, undone: std::io::Result<()>) -> String {
+    match undone {
+        Ok(()) => format!("{}: {err}; {} restored", lock.display(), oracle.display()),
+        Err(e) => format!(
+            "{}: {err}; {} NOT restored: {e}; oracle.prev.json holds the previous sync",
+            lock.display(),
+            oracle.display()
+        ),
+    }
+}
+
 /// the time for `meta.synced`
 pub fn now_utc() -> String {
     chrono::Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rollback_message_says_whether_the_oracle_was_restored() {
+        let (lock, oracle) = (Path::new("d/sync.lock"), Path::new("d/oracle.json"));
+        let e = std::io::Error::other("is a directory");
+        let ok = rollback_message(lock, &e, oracle, Ok(()));
+        assert!(ok.contains("d/oracle.json restored") && !ok.contains("NOT"), "{ok}");
+        let failed = rollback_message(lock, &e, oracle, Err(std::io::Error::other("gone")));
+        assert!(failed.contains("d/oracle.json NOT restored: gone") && failed.contains("oracle.prev.json"), "{failed}");
+        assert!(!failed.contains(" restored;") && failed.matches("restored").count() == 1, "{failed}");
+    }
 }

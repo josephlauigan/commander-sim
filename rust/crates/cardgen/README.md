@@ -116,35 +116,49 @@ happen when a listed card is missing from the cache. The tests never use the net
 cardgen bulk-sync [--from-file PATH] [--data-dir DIR] [--min-count N]
 ```
 
-Downloads Scryfall's "Oracle Cards" bulk file (one record per Oracle card; a gzip file of JSON Lines, about 25 MB, 160 MB
-unpacked; the `jsonl_download_uri` and `updated_at` come from `api.scryfall.com/bulk-data`, type `oracle_cards`) and writes, in `data/knowledge/` (override with `--data-dir` or
+Downloads Scryfall's "Oracle Cards" bulk file (one record per Oracle card; a gzip file of JSON Lines, about 25 MB,
+160 MB unpacked; the `jsonl_download_uri` and `updated_at` come from `api.scryfall.com/bulk-data`, type `oracle_cards`;
+only an `https://` URI is downloaded) and writes, in `data/knowledge/` (override with `--data-dir` or
 `CARDGEN_KNOWLEDGE_DIR`):
 
-- `oracle.json` (generated, gitignored): `{"meta": {schema, bulk_updated_at, download_uri, synced, count}, "cards": [...]}`,
-  one slim record per line, sorted by lower-case name, so the same bulk file gives the same bytes apart from
-  `meta.synced`. A record is `scryfall::slim` (the cache's 15 fields, unchanged) plus `oracle_id`, `edhrec_rank`
-  (absent when null), `usd` (`usd_foil` only when there is no `usd`; absent when neither), `released_at`, `set`,
-  `rarity`, `reserved`, `all_parts_meld` (true only on a meld result) and a `colors` list on each face. `set` and
-  `released_at` describe Scryfall's chosen printing, **not** the first printing; detect new cards by `oracle_id`.
-- `oracle.prev.json` (generated, gitignored): the previous sync.
-- `sync.lock` (tracked): `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of `oracle.json`'s
-  `cards` array (from its `[` to its `]`).
+- `oracle.json` (generated, gitignored): `{"meta": {schema, bulk_updated_at, download_uri, synced, count}, "cards":
+  [...]}`, one slim record per line, sorted by lower-case name (ties: oracle_id, name, record text), so the same bulk
+  file gives the same bytes apart from `meta.synced`. A record is `scryfall::slim` (the cache's 15 fields, unchanged)
+  plus `oracle_id`, `edhrec_rank` (absent when null), `usd` (`usd_foil` only when there is no `usd`; absent when
+  neither), `released_at`, `set`, `rarity`, `reserved`, a `colors` list on each face, and on a meld result
+  `all_parts_meld` (true) and `meld_parts` (the names of the cards that meld into it). A meld result is found by id or
+  by name: the ids in `all_parts` are printing ids and the file keeps one arbitrary printing per Oracle card, so the
+  id can differ from the card's own (Ragnarok, Divine Deliverance). `set` and `released_at` describe Scryfall's chosen
+  printing, **not** the first printing; detect new cards by `oracle_id`.
+- `oracle.prev.json` (generated, gitignored): the previous sync. It is a hard link (a copy if linking fails) made
+  before the new file replaces `oracle.json`, so it is the generation just before the current one; it is gone after a
+  rolled-back sync, and the next successful sync makes it again.
+- `sync.lock` (tracked): `schema=1`, `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of
+  `oracle.json`'s `cards` array (from its `[` to its `]`). A lock without the current `schema=` line is invalid and
+  causes a normal re-sync.
 
-Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar` and `vanguard`, and a repeated
-`oracle_id` (the first wins). Everything else is kept with its commander legality, banned and not-legal cards and
-un-cards included. Digital-only printings are kept: the one printing the file holds for an old staple is often a digital
-Masters set, so legality, not the `digital` flag, decides playability. `front_card` (memorabilia cards, all `not_legal`)
-is kept for now. Nothing else branches on a layout name, and an unknown layout is a warning (the
-cards are kept). The summary prints kept and dropped per layout.
+Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar`, `vanguard` and
+`front_card` (memorabilia cards: type "Card", all `not_legal`, and 13 of them repeat a real card's name); a card whose
+type line, or any face's, starts with the word `Token`, `Card` or `Dungeon` (Role tokens that have a card layout, helper
+cards such as Experience, Dungeons); and a repeated `oracle_id` (the first wins). Everything else is kept with its
+commander legality, banned and not-legal cards and un-cards included. Digital-only printings are kept: the one printing
+the file holds for an old staple is often a digital Masters set, so legality, not the `digital` flag, decides
+playability. Nothing else branches on a layout name, and an unknown layout is a warning (the cards are kept). The
+summary prints kept and dropped per layout, and the drops by layout, type and duplicate.
 
-If the bulk file's `updated_at` equals the one in the current `oracle.json`, it prints `up to date` and downloads
-nothing. Otherwise it streams the file to a temp file (a dedicated ureq agent: 60 s read timeout, no total cap),
-decompresses and parses it one card at a time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes),
-refuses fewer than 25,000 cards (`--min-count N` lowers this for fixtures), moves the old
-`oracle.json` to `oracle.prev.json` and renames the new file into place. Any failure leaves `oracle.json` byte-identical.
-`--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check; `bulk_updated_at` is recorded as
-`from-file`). `tests/bulk_sync.rs` runs on a 46-card fixture (`tests/fixtures/bulk_fixture.json`) and never uses the
-network.
+`up to date` (and no download) needs all of these to agree: the bulk file's `updated_at`, `oracle.json`'s meta, and
+`sync.lock` (`bulk_updated_at` and `count`), and the lock's hash must equal the one recomputed from `oracle.json`. A
+missing, corrupt or stale file means a normal re-sync, never a crash or a silent "up to date". Otherwise it streams the
+file to a temp file (a dedicated ureq agent: 60 s read timeout, no total cap), decompresses and parses it one card at a
+time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes), refuses fewer than 25,000 cards
+(`--min-count N` lowers this for fixtures), and writes `oracle.json` and `sync.lock` as staged temp files
+(`oracle.<pid>-<n>.new.tmp`, `sync.<pid>-<n>.lock.tmp`, so concurrent runs do not share them), then renames them into
+place. If the lock cannot be put in place the new oracle is rolled back (the error says whether the old one was
+restored). An existing read-only `sync.lock` is refused before anything is touched. Any failure leaves `oracle.json`
+byte-identical. `--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check;
+`bulk_updated_at` is recorded as `from-file`, so it overwrites the lock: it warns on stderr, and `--data-dir` points a
+scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
+uses the network.
 
 ## Equivalence
 
