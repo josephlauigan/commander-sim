@@ -305,7 +305,7 @@ fn offset_and_limit_page_through_the_sorted_list() {
     assert_eq!(e.names(&["--type", "artifact", "--limit", "2", "--offset", "1"]), &all[1..3]);
     assert_eq!(e.names(&["--type", "artifact", "--offset", "7"]), &all[7..]);
     assert!(e.names(&["--type", "artifact", "--offset", "50"]).is_empty());
-    assert!(e.names(&["--type", "artifact", "--limit", "0"]).is_empty());
+    assert!(usage_err(e.find(&["--type", "artifact", "--limit", "0"])).contains("--limit 0"));
     // the default limit is 30
     assert_eq!(e.names(&[]).len(), 30);
     // a table says there is more
@@ -465,6 +465,8 @@ fn json_has_the_documented_shape() {
     // serde_json sorts keys unless preserve_order is on in the workspace; compare as sets
     let mut want = vec![
         "name",
+        "oracle_id",
+        "layout",
         "mana_cost",
         "cmc",
         "type_line",
@@ -474,9 +476,12 @@ fn json_has_the_documented_shape() {
         "edhrec_rank",
         "usd",
         "oracle_text",
+        "keywords",
+        "produced_mana",
         "set",
         "released_at",
         "rarity",
+        "reserved",
     ];
     let mut got = keys.clone();
     want.sort();
@@ -498,8 +503,12 @@ fn json_has_the_documented_shape() {
     let mut fk = fk;
     fk.sort();
     assert_eq!(fk, ["mana_cost", "name", "oracle_text", "type_line"]);
-    assert_eq!(bb["oracle_text"], "");
+    // the text is the faces' texts joined by a line holding only `//` (what --text matches), not ""
+    let text = bb["oracle_text"].as_str().unwrap();
+    assert!(text.starts_with("Flash\nFlying") && text.contains("\n//\nReturn target nonland permanent"), "{text}");
     assert_eq!(bb["identity"], "U");
+    assert_eq!(bb["layout"], "adventure");
+    assert_eq!(bb["keywords"], serde_json::json!(["Flash", "Flying"]));
     // absent fields do not break a card: Command Tower has no cost, Zed Unranked no rank or price
     assert_eq!(e.json(&["--name", "Command Tower"])[0]["mana_cost"], "");
     let z = &e.json(&["--name", "Zed Unranked"])[0];
@@ -513,6 +522,9 @@ fn json_has_the_documented_shape() {
 #[test]
 fn full_adds_the_rest_of_the_record() {
     let e = Env::new();
+    // --full changes only the text output: the JSON row is the same shape with or without it
+    assert_eq!(e.json(&["--name", "Sol Ring", "--full"]), e.json(&["--name", "Sol Ring"]));
+    assert_eq!(e.json(&["--name", "Petty Theft", "--full"]), e.json(&["--name", "Petty Theft"]));
     let sol = &e.json(&["--name", "Sol Ring", "--full"])[0];
     assert_eq!(sol["produced_mana"], serde_json::json!(["C"]));
     assert_eq!(sol["oracle_id"], "00000000-0000-0000-0000-000000000001");
@@ -523,8 +535,6 @@ fn full_adds_the_rest_of_the_record() {
     assert_eq!(jace["loyalty"], "3");
     let llanowar = &e.json(&["--name", "Llanowar Elves", "--full"])[0];
     assert_eq!((&llanowar["power"], &llanowar["toughness"]), (&Value::from("1"), &Value::from("1")));
-    // the default JSON stays slim
-    assert!(e.json(&["--name", "Sol Ring"])[0].get("oracle_id").is_none());
     // readable text: every face and the facts
     let t = e.ok(&["--name", "Petty Theft", "--full"]);
     for want in [
@@ -733,7 +743,7 @@ fn the_knowledge_dir_comes_from_the_flag_then_the_environment_then_the_project()
         alt.join("oracle.json"),
         concat!(
             r#"{"meta": {"schema": 1, "count": 1}, "cards": [{"name": "Only Card", "cmc": 0.0, "type_line": "Land","#,
-            r#" "color_identity": [], "legalities": {"commander": "legal"}}]}"#
+            r#" "color_identity": [], "oracle_id": "only", "legalities": {"commander": "legal"}}]}"#
         ),
     )
     .unwrap();
@@ -1023,9 +1033,13 @@ fn an_empty_name_or_a_repeated_oracle_id_is_a_bad_catalog() {
         "{m}"
     );
     // a shared name with different ids is fine, and records without an id are not compared
-    let e = Env::with_cards(vec![rec("Twin", "a"), rec("Twin", "b"), rec("No Id", ""), rec("No Id 2", "")], decks);
+    let e = Env::with_cards(vec![rec("Twin", "a"), rec("Twin", "b"), rec("Three", "c")], decks.clone());
     assert_eq!(e.count(&["--name", "Twin"]), 2);
-    assert_eq!(e.count(&[]), 4);
+    assert_eq!(e.count(&[]), 3, "a shared name is two cards");
+    // an empty oracle_id is rejected too (roles are keyed on it)
+    let e = Env::with_cards(vec![rec("Ok", "a"), rec("No Id", "")], decks);
+    let m = failed_err(e.find(&[]));
+    assert!(m.contains("record 2") && m.contains("no oracle_id") && m.contains("bulk-sync"), "{m}");
 }
 
 #[test]
@@ -1050,4 +1064,278 @@ fn table_columns_line_up_for_wide_and_combining_names() {
     let cells: Vec<usize> =
         t.lines().map(|l| knowledge::display_width(&l[..l.find("{1}").or_else(|| l.find("cost")).unwrap()])).collect();
     assert!(cells.windows(2).all(|w| w[0] == w[1]), "the cost column starts at one cell: {cells:?}\n{t}");
+}
+
+// ------------------------------------------------------------------------------------------------ round 3 fixes
+
+impl Env {
+    fn notes(&self, args: &[&str]) -> knowledge::FindOutput {
+        let mut a: Vec<String> = args.iter().map(|s| s.to_string()).collect();
+        a.push("--data-dir".into());
+        a.push(self.dir().display().to_string());
+        knowledge::find_with_notes(&Project::new(&self.0), &a).unwrap_or_else(|e| panic!("find {args:?}: {e}"))
+    }
+}
+
+#[test]
+fn the_cost_of_a_card_without_its_own_is_its_face_costs() {
+    let mut mdfc = rec("Front // Back", "m");
+    mdfc.as_object_mut().unwrap().remove("mana_cost");
+    mdfc["type_line"] = serde_json::json!("Creature — Human // Sorcery");
+    mdfc["card_faces"] = serde_json::json!([
+        {"name": "Front", "mana_cost": "{2}{W}", "type_line": "Creature — Human", "oracle_text": "Front line one.\nFront line two."},
+        {"name": "Back", "mana_cost": "{1}{R}", "type_line": "Sorcery", "oracle_text": "Back line."}]);
+    let mut land_back = rec("Spell // Land", "l");
+    land_back.as_object_mut().unwrap().remove("mana_cost");
+    land_back["card_faces"] = serde_json::json!([
+        {"name": "Spell", "mana_cost": "{G}", "type_line": "Sorcery"},
+        {"name": "Land", "mana_cost": "", "type_line": "Land"}]);
+    let e = Env::with_cards(vec![mdfc, land_back, rec("Plain", "p")], serde_json::json!({"mine": [], "pool": []}));
+    let rows = e.json(&["--sort", "name", "--limit", "all"]);
+    assert_eq!(rows[0]["mana_cost"], "{2}{W} // {1}{R}");
+    assert_eq!(rows[1]["mana_cost"], "{1}", "its own");
+    assert_eq!(rows[2]["mana_cost"], "{G}", "empty face costs are left out");
+    assert_eq!(rows[0]["oracle_text"], "Front line one.\nFront line two.\n//\nBack line.");
+    let t = e.ok(&["--sort", "name"]);
+    assert!(t.contains("{2}{W} // {1}{R}"), "{t}");
+    assert!(e.ok(&["--name", "Front", "--full"]).contains("{2}{W} // {1}{R}"));
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let c = &idx.cards[idx.lookup("front // back")[0] as usize];
+    assert_eq!(c.cost(), "{2}{W} // {1}{R}");
+    // the canonical line numbering has no joiner line, and says which face a line is on
+    assert_eq!(c.lines(), [(Some(0), "Front line one."), (Some(0), "Front line two."), (Some(1), "Back line.")]);
+    assert_eq!(c.subtypes(), ["Human"]);
+}
+
+#[test]
+fn card_helpers_for_later_phases() {
+    let e = Env::new();
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let get = |n: &str| &idx.cards[idx.lookup(n)[0] as usize];
+    assert_eq!(get("Sol Ring").lines(), [(None, "{T}: Add {C}{C}.")]);
+    assert_eq!(get("Sol Ring").cost(), "{1}");
+    assert_eq!(get("Command Tower").cost(), "");
+    assert_eq!(get("Brazen Borrower").subtypes(), ["Faerie", "Rogue", "Adventure"]);
+    assert_eq!(get("Llanowar Elves").subtypes(), ["Elf", "Druid"]);
+    assert!(get("Sol Ring").subtypes().is_empty());
+}
+
+#[test]
+fn self_names_are_the_printed_names() {
+    let e = Env::with_cards(accent_catalog(), serde_json::json!({"mine": [], "pool": []}));
+    let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
+    let c = &idx.cards[idx.lookup("anduril, narsil reforged")[0] as usize];
+    assert_eq!(c.self_names(), ["Andúril, Narsil Reforged", "Andúril"]);
+    let c = &idx.cards[idx.lookup("sol ring")[0] as usize];
+    assert_eq!(c.self_names(), ["Sol Ring"]);
+    let f = Env::new();
+    let idx = Index::load(&f.dir().join("oracle.json")).unwrap();
+    let c = &idx.cards[idx.lookup("fire // ice")[0] as usize];
+    assert_eq!(c.self_names(), ["Fire // Ice", "Fire", "Ice"]);
+    let c = &idx.cards[idx.lookup("jace, the mind sculptor")[0] as usize];
+    assert_eq!(c.self_names(), ["Jace, the Mind Sculptor", "Jace"]);
+}
+
+#[test]
+fn the_index_api_for_later_phases() {
+    let e = Env::new();
+    let project = Project::new(&e.0);
+    // open = knowledge_dir + load
+    let idx = Index::open(&project, Some(&e.dir())).unwrap();
+    assert_eq!(idx.cards.len(), 41);
+    assert!(Index::open(&project, Some(&e.0.join("nowhere"))).err().unwrap().contains("bulk-sync"));
+    // by_oracle_id
+    let sol = idx.by_oracle_id("00000000-0000-0000-0000-000000000001").unwrap();
+    assert_eq!(idx.cards[sol as usize].raw.name, "Sol Ring");
+    assert_eq!(idx.by_oracle_id("nope"), None);
+    // subtype vocabulary: each word once per card, sorted by word
+    let v = idx.subtype_vocab();
+    assert!(v.windows(2).all(|w| w[0].0 < w[1].0));
+    assert_eq!(v.iter().find(|(w, _)| w == "Druid").unwrap().1, 2);
+    assert_eq!(v.iter().find(|(w, _)| w == "Island").unwrap().1, 1);
+    // Index::sort is find's order: EDHREC with unranked last, ties by name
+    let mut ids: Vec<u32> = (0..idx.cards.len() as u32).collect();
+    idx.sort(&mut ids, knowledge::Sort::Edhrec);
+    let by_find = e.names(&["--legal", "any", "--meld", "--limit", "all"]);
+    let sorted: Vec<&str> = ids.iter().map(|i| idx.cards[*i as usize].raw.name.as_str()).collect();
+    assert_eq!(sorted, by_find);
+    // Query::default: legal only, EDHREC, no limit
+    let q = Query::default();
+    assert_eq!((q.sort, q.limit, q.offset), (knowledge::Sort::Edhrec, Some(usize::MAX), 0));
+    let hits = idx.matches(&q, None, &[], &[]).unwrap();
+    assert_eq!(hits.len(), 37);
+    // ident helpers
+    assert_eq!(knowledge::parse_ident("ub").unwrap(), 0b00110);
+    assert_eq!(knowledge::ident_string(0b00110), "UB");
+    assert_eq!(knowledge::ident_string(0), "");
+    // decks
+    let d = knowledge::load_deck(&project, "azorius").unwrap();
+    assert_eq!(knowledge::deck_ident(&d).unwrap(), 0b00011);
+    let (marks, unresolved) = idx.deck_members(&d);
+    assert_eq!(unresolved, ["Not In Catalog"]);
+    let names: Vec<&str> =
+        marks.iter().enumerate().filter(|(_, m)| **m).map(|(i, _)| idx.cards[i].raw.name.as_str()).collect();
+    for n in [
+        "Sol Ring",
+        "Brazen Borrower // Petty Theft",
+        "Fire // Ice",
+        "Counterspell",
+        "Island",
+        "Isamaru, Hound of Konda",
+    ] {
+        assert!(names.contains(&n), "{n}");
+    }
+    assert_eq!(names.len(), 6);
+    let mut bad = d.clone();
+    bad.ident = "X".into();
+    assert!(knowledge::deck_ident(&bad).unwrap_err().contains("azorius"));
+}
+
+#[test]
+fn a_page_cut_says_so_even_in_json() {
+    let e = Env::new();
+    let o = e.notes(&["--type", "artifact", "--limit", "2", "--offset", "1", "--json"]);
+    assert_eq!(o.notes, ["(showing 2-3 of 9; --offset 3 or --limit all)"]);
+    assert!(o.notes_on_stderr);
+    assert!(!o.stdout().contains("showing"), "stdout stays a bare JSON array");
+    assert!(serde_json::from_str::<Value>(&o.stdout()).unwrap().is_array());
+    assert_eq!(o.stderr(), "(showing 2-3 of 9; --offset 3 or --limit all)\n");
+    // a table gets it as a trailing line on stdout
+    let t = e.notes(&["--type", "artifact", "--limit", "2"]);
+    assert!(!t.notes_on_stderr && t.stdout().ends_with("(showing 1-2 of 9; --offset 2 or --limit all)\n"));
+    assert_eq!(t.stderr(), "");
+    // no note when everything is shown, with --limit all, or for --count
+    assert!(e.notes(&["--type", "artifact", "--json"]).notes.is_empty());
+    assert!(e.notes(&["--type", "artifact", "--limit", "all", "--json"]).notes.is_empty());
+    assert_eq!(e.ok(&["--type", "artifact", "--count"]), "9\n");
+}
+
+#[test]
+fn a_named_card_the_filters_removed_says_why() {
+    let e = Env::new();
+    // banned
+    let t = e.notes(&["--name", "Primeval Titan", "--json"]);
+    assert_eq!(t.out, "[]\n");
+    assert_eq!(t.notes, ["(1 card(s) named Primeval Titan exist outside these filters: banned; try --legal any)"]);
+    assert!(e.ok(&["--name", "Primeval Titan"]).ends_with("try --legal any)\n"));
+    // a deck's own card, and the identity
+    let t = e.notes(&["--name", "Sol Ring", "--deck", "azorius", "--json"]);
+    assert!(
+        t.notes.iter().any(|n| n.contains("1 card(s) named Sol Ring") && n.contains("in deck azorius")),
+        "{:?}",
+        t.notes
+    );
+    let t = e.notes(&["--name", "Lightning Bolt", "--ident", "U", "--json"]);
+    assert!(t.notes[0].contains("outside the identity") && !t.notes[0].contains("--legal any"), "{:?}", t.notes);
+    // another filter
+    let t = e.notes(&["--name", "Sol Ring", "--cmc", ">5", "--count"]);
+    assert_eq!(t.out, "0\n");
+    assert!(t.notes[0].contains("other filters"));
+    // two cards of one name: both counted
+    let t = e.notes(&["--name", "Pick Your Poison", "--legal", "banned", "--json"]);
+    assert!(t.notes[0].starts_with("(2 card(s) named Pick Your Poison"), "{:?}", t.notes);
+    // a name that is not in the catalog at all, and a name that matched, say nothing
+    assert!(e.notes(&["--name", "zzz", "--json"]).notes.is_empty());
+    assert!(e.notes(&["--name", "Sol Ring", "--json"]).notes.is_empty());
+}
+
+#[test]
+fn deck_names_that_match_no_card_are_reported() {
+    let e = Env::new();
+    let t = e.notes(&["--deck", "azorius", "--count"]);
+    assert_eq!(t.notes, ["(deck azorius: 1 name(s) not in the catalog: Not In Catalog)"]);
+    let t = e.notes(&["--deck", "mono-white", "--json", "--limit", "1"]);
+    assert!(t.notes.iter().all(|n| !n.contains("not in the catalog")), "{:?}", t.notes);
+    // the list is cut at ten
+    let names: Vec<String> = (0..12).map(|i| format!("Ghost {i:02}")).collect();
+    let decks =
+        serde_json::json!({"mine": [{"key": "g", "ident": "C", "commander": "Plain", "cards": names}], "pool": []});
+    let g = Env::with_cards(vec![rec("Plain", "p"), rec("Other", "o")], decks);
+    let n = &g.notes(&["--deck", "g", "--count"]).notes[0];
+    assert!(n.starts_with("(deck g: 12 name(s) not in the catalog: Ghost 00,") && n.ends_with(", ...)"), "{n}");
+}
+
+#[test]
+fn the_meld_hint_is_a_note() {
+    let e = Env::new();
+    let o = e.notes(&["--text", "first strike, lifelink"]);
+    assert_eq!(o.out, "no matches\n");
+    assert_eq!(o.notes, ["(1 meld result(s) are hidden; add --meld)"]);
+    let j = e.notes(&["--text", "first strike, lifelink", "--json"]);
+    assert_eq!(j.out, "[]\n");
+    assert_eq!(j.stderr(), "(1 meld result(s) are hidden; add --meld)\n");
+}
+
+#[test]
+fn ident_under_a_deck_narrows_and_never_widens() {
+    let e = Env::new();
+    let m = usage_err(e.find(&["--deck", "mono-white", "--ident", "U", "--count"]));
+    assert_eq!(m, "--ident U is outside deck mono-white's identity W");
+    assert!(
+        usage_err(e.find(&["--deck", "mono-white", "--ident", "WU", "--count"])).contains("outside deck mono-white")
+    );
+    assert!(usage_err(e.find(&["--deck", "colorless", "--ident", "W"])).contains("identity C"));
+    assert!(usage_err(e.find(&["--deck", "azorius", "--ident", "WUBRG"])).contains("--ident WUBRG is outside"));
+    // narrowing works: W within WU; C within anything
+    let w = e.json(&["--deck", "azorius", "--ident", "W", "--limit", "all"]);
+    assert!(!w.is_empty() && w.iter().all(|c| ["", "W"].contains(&c["identity"].as_str().unwrap())));
+    assert!(e.count(&["--deck", "azorius", "--ident", "C"]) < e.count(&["--deck", "azorius", "--ident", "W"]));
+    assert_eq!(e.count(&["--deck", "azorius", "--ident", "WU"]), e.count(&["--deck", "azorius"]));
+    // the error is a usage error, so the binary prints the usage text
+    let out = bin()
+        .arg("--root")
+        .arg(&e.0)
+        .args(["find", "--deck", "mono-white", "--ident", "U", "--count"])
+        .output()
+        .unwrap();
+    assert!(!out.status.success() && String::from_utf8_lossy(&out.stderr).contains("usage:"));
+}
+
+#[test]
+fn small_parser_rules() {
+    let e = Env::new();
+    // --type needs a word
+    for v in ["", "  ", "—", "//"] {
+        assert!(usage_err(e.find(&["--type", v])).contains("--type needs a word"), "{v:?}");
+    }
+    // --limit 0 is an error, --limit 1 is not
+    assert!(usage_err(e.find(&["--limit", "0"])).contains("use --count"));
+    assert_eq!(e.names(&["--limit", "1"]).len(), 1);
+    // --name-contains does not trim: " of " keeps its spaces
+    let decks = serde_json::json!({"mine": [], "pool": []});
+    let c = Env::with_cards(vec![rec("Wrath of God", "a"), rec("Profit", "b"), rec("Sword of Fire", "c")], decks);
+    assert_eq!(c.names(&["--name-contains", " of ", "--sort", "name"]), ["Sword of Fire", "Wrath of God"]);
+    assert_eq!(c.names(&["--name-contains", "of", "--sort", "name"]), ["Profit", "Sword of Fire", "Wrath of God"]);
+    // a regex error shows the user's pattern, not the (?i) prefix
+    let m = failed_err(e.find(&["--text", "["]));
+    assert!(m.contains("'['") && !m.contains("(?i)"), "{m}");
+    // U+A789 folds to a colon; lower-casing happens after NFKD too
+    assert_eq!(knowledge::fold("Ratonhnhaké\u{a789}ton"), "ratonhnhake:ton");
+    assert_eq!(knowledge::fold("Foo\u{2122}"), "footm");
+    assert_eq!(knowledge::fold_raw(" Of "), " of ");
+}
+
+#[test]
+fn git_environment_does_not_redirect_the_worktree_fallback() {
+    // a worktree-style fallback that must not follow a caller's GIT_DIR
+    let e = Env::new();
+    let main = e.0.join("m2");
+    std::fs::create_dir_all(main.join("data/knowledge")).unwrap();
+    std::fs::write(main.join("data/knowledge/sync.lock"), "schema=1\n").unwrap();
+    git(&main, &["init", "-q"]);
+    git(&main, &["add", "-A"]);
+    git(&main, &["commit", "-q", "-m", "x"]);
+    std::fs::copy(fixture("find_oracle.json"), main.join("data/knowledge/oracle.json")).unwrap();
+    let wt = e.0.join("wt2");
+    git(&main, &["worktree", "add", "-q", wt.to_str().unwrap()]);
+    let out = bin()
+        .env("GIT_DIR", e.0.join("elsewhere"))
+        .env("GIT_COMMON_DIR", e.0.join("elsewhere"))
+        .arg("--root")
+        .arg(&wt)
+        .args(["find", "--name", "Sol Ring", "--count"])
+        .output()
+        .unwrap();
+    assert_eq!(String::from_utf8_lossy(&out.stdout).trim(), "1", "{}", String::from_utf8_lossy(&out.stderr));
+    let _ = Command::new("git").arg("-C").arg(&main).args(["worktree", "remove", "--force"]).arg(&wt).output();
 }

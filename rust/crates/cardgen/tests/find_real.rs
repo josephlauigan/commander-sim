@@ -234,3 +234,38 @@ fn a_full_scan_is_fast() {
     eprintln!("load {load:?}, scan {scan:?}, {} hits", hits.len());
     assert!(scan.as_millis() < 1000, "scan took {scan:?}");
 }
+
+/// every card of every deck of `data/decks.json` (yours and the pool), and each commander, resolves to a catalog card;
+/// a name that does not is reported, never skipped
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn every_deck_name_resolves() {
+    let idx = Index::open(&project(), None).unwrap();
+    let decks: Value = serde_json::from_str(&std::fs::read_to_string(project().data("decks.json")).unwrap()).unwrap();
+    let mut unresolved = vec![];
+    let mut n = 0;
+    for group in ["mine", "pool"] {
+        for d in decks[group].as_array().unwrap() {
+            let deck: knowledge::Deck = serde_json::from_value(d.clone()).unwrap();
+            let (marks, missing) = idx.deck_members(&deck);
+            n += 1;
+            assert!(marks.iter().any(|m| *m), "{}", deck.key);
+            unresolved.extend(missing.into_iter().map(|m| format!("{}: {m}", deck.key)));
+        }
+    }
+    assert!(n >= 40, "{n} decks");
+    assert!(unresolved.is_empty(), "deck names with no catalog card: {unresolved:?}");
+}
+
+/// the JSON row of a face-only card carries its text and cost; a deck's identity is a ceiling
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn json_rows_are_complete_and_ident_cannot_widen_a_deck() {
+    let sink = json(&["--name", "Sink into Stupor"]);
+    assert_eq!(sink.len(), 1);
+    assert!(!sink[0]["oracle_text"].as_str().unwrap().is_empty());
+    assert!(!sink[0]["mana_cost"].as_str().unwrap().is_empty());
+    let a: Vec<String> = ["--deck", "cloud", "--ident", "U", "--count"].iter().map(|s| s.to_string()).collect();
+    assert!(matches!(knowledge::find(&project(), &a), Err(knowledge::FindError::Usage(_))));
+    assert!(json(&["--deck", "cloud", "--ident", "W", "--limit", "5"]).len() == 5);
+}

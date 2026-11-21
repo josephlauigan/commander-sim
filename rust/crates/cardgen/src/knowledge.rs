@@ -167,21 +167,32 @@ fn is_combining(c: char) -> bool {
     ('\u{300}'..='\u{36F}').contains(&c)
 }
 
-/// The search key of a name: lower-case, accents and other combining marks dropped (NFKD), every apostrophe variant a
-/// plain `'`, `Æ`/`Œ`/`ß` spelled `ae`/`oe`/`ss`, the ends trimmed. Hyphens, commas and spaces stay. `Andúril` and
-/// `Anduril`, `Urza’s Saga` and `Urza's Saga`, `Æther Vial` and `Aether Vial` have the same key.
-pub fn fold(s: &str) -> String {
+/// The search key of a name, not trimmed (what `--name-contains` uses, so `" of "` stays `" of "`): lower-case, accents
+/// and other combining marks dropped (NFKD, lower-cased again after it), every apostrophe variant a plain `'`, U+A789
+/// (the modifier colon in Ratonhnhaké꞉ton) a `:`, `Æ`/`Œ`/`ß` spelled `ae`/`oe`/`ss`. Hyphens, commas and spaces stay.
+pub fn fold_raw(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     for c in s.to_lowercase().chars() {
         match c {
             '\u{2019}' | '\u{2018}' | '\u{2bc}' | '`' | '\u{b4}' => out.push('\''),
+            '\u{a789}' => out.push(':'),
             'æ' => out.push_str("ae"),
             'œ' => out.push_str("oe"),
             'ß' => out.push_str("ss"),
-            c => out.extend(std::iter::once(c).nfkd().filter(|c| !is_combining(*c))),
+            c => {
+                for d in std::iter::once(c).nfkd().filter(|d| !is_combining(*d)) {
+                    out.extend(d.to_lowercase());
+                }
+            }
         }
     }
-    out.trim().to_string()
+    out
+}
+
+/// The search key of a name: [`fold_raw`] with the ends trimmed. `Andúril` and `Anduril`, `Urza’s Saga` and
+/// `Urza's Saga`, `Æther Vial` and `Aether Vial` have the same key.
+pub fn fold(s: &str) -> String {
+    fold_raw(s).trim().to_string()
 }
 
 /// Terminal cells a string takes: combining marks 0, East Asian wide and emoji ranges 2, everything else 1.
@@ -219,10 +230,10 @@ pub struct Card {
     pub types: u16,
     pub legal: Legal,
     pub usd: Option<f32>,
-    /// the folded full name (see [`fold`])
-    pub name_lc: String,
-    /// the folded full name and every folded face name, one per line
-    pub names_lc: String,
+    /// the folded full name (see [`fold`]): the name lookups and the sort key
+    pub key: String,
+    /// the folded full name and every folded face name, one per line (what `--name-contains` searches)
+    pub keys: String,
     /// the lower-case type line of the card and of every face
     pub type_lc: String,
     /// the Oracle text of the card and of every face, joined with `\n//\n`
@@ -238,11 +249,11 @@ impl Card {
             }
         }
         let faces = raw.card_faces.as_deref().unwrap_or(&[]);
-        let name_lc = fold(&raw.name);
-        let mut names_lc = name_lc.clone();
+        let key = fold(&raw.name);
+        let mut keys = key.clone();
         for f in faces {
-            names_lc.push('\n');
-            names_lc.push_str(&fold(&f.name));
+            keys.push('\n');
+            keys.push_str(&fold(&f.name));
         }
         let mut type_lc = raw.type_line.to_lowercase();
         for f in faces {
@@ -260,26 +271,90 @@ impl Card {
                 }
             }
         }
-        let mut parts: Vec<&str> = vec![];
-        for t in std::iter::once(raw.oracle_text.as_deref()).chain(faces.iter().map(|f| f.oracle_text.as_deref())) {
-            match t {
-                Some(t) if !t.is_empty() && !parts.contains(&t) => parts.push(t),
-                _ => {}
-            }
-        }
-        let text = parts.join("\n//\n");
+        let text = Card::parts(&raw).iter().map(|p| p.1).collect::<Vec<_>>().join("\n//\n");
         Card {
             ident,
             cmc: raw.cmc as f32,
             types,
             legal: Legal::parse(raw.legalities.commander.as_deref()),
             usd: raw.usd.as_deref().and_then(|u| u.parse::<f32>().ok()),
-            name_lc,
-            names_lc,
+            key,
+            keys,
             type_lc,
             text,
             raw,
         }
+    }
+
+    /// the Oracle text of the card (if it has its own) and of each face, empty and repeated texts left out, with the
+    /// face index (`None` for the card's own text)
+    fn parts(raw: &Raw) -> Vec<(Option<usize>, &str)> {
+        let faces = raw.card_faces.as_deref().unwrap_or(&[]);
+        let mut parts: Vec<(Option<usize>, &str)> = vec![];
+        let texts = std::iter::once((None, raw.oracle_text.as_deref()))
+            .chain(faces.iter().enumerate().map(|(i, f)| (Some(i), f.oracle_text.as_deref())));
+        for (i, t) in texts {
+            match t {
+                Some(t) if !t.is_empty() && !parts.iter().any(|p| p.1 == t) => parts.push((i, t)),
+                _ => {}
+            }
+        }
+        parts
+    }
+
+    /// The mana cost: the card's own, else the non-empty face costs joined with ` // ` (a transform or modal card has
+    /// none of its own).
+    pub fn cost(&self) -> String {
+        match self.raw.mana_cost.as_deref() {
+            Some(c) if !c.is_empty() => c.to_string(),
+            _ => {
+                let faces = self.raw.card_faces.as_deref().unwrap_or(&[]);
+                let costs: Vec<&str> =
+                    faces.iter().filter_map(|f| f.mana_cost.as_deref()).filter(|c| !c.is_empty()).collect();
+                costs.join(" // ")
+            }
+        }
+    }
+
+    /// The Oracle lines with the face each belongs to (`None`: the card's own text): the numbering [`Card::text`] has
+    /// without its `//` joiner lines, so an evidence index and a digest gist cite the same line.
+    pub fn lines(&self) -> Vec<(Option<usize>, &str)> {
+        Card::parts(&self.raw)
+            .into_iter()
+            .flat_map(|(i, t)| t.split('\n').filter(|l| !l.is_empty()).map(move |l| (i, l)))
+            .collect()
+    }
+
+    /// The subtypes: the words after the `—` of the type line of each face, in order, each once.
+    pub fn subtypes(&self) -> Vec<&str> {
+        let mut out: Vec<&str> = vec![];
+        for line in self.raw.type_line.split(" // ") {
+            if let Some((_, subs)) = line.split_once('—') {
+                for w in subs.split_whitespace() {
+                    if !out.contains(&w) {
+                        out.push(w);
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    /// What the card's Oracle text may call itself, for a `~` substitution: the full name, each face name and the short
+    /// name before a comma (`Andúril` for `Andúril, Narsil Reforged`), as printed (accents kept), each once.
+    pub fn self_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = vec![self.raw.name.clone()];
+        names.extend(self.raw.card_faces.iter().flatten().map(|f| f.name.clone()));
+        let shorts: Vec<String> =
+            names.iter().filter_map(|n| n.split_once(',').map(|(a, _)| a.trim().to_string())).collect();
+        names.extend(shorts);
+        let mut out: Vec<String> = vec![];
+        for n in names {
+            if !n.is_empty() && !out.contains(&n) {
+                out.push(n);
+            }
+        }
+        out
     }
 
     /// the identity as letters in WUBRG order (empty = colourless)
@@ -299,7 +374,7 @@ impl Card {
     }
 }
 
-fn ident_string(bits: u8) -> String {
+pub fn ident_string(bits: u8) -> String {
     COLORS.iter().enumerate().filter(|(i, _)| bits & (1 << i) != 0).map(|(_, c)| *c).collect()
 }
 
@@ -311,9 +386,15 @@ pub struct Index {
     names: HashMap<String, Vec<u32>>,
     /// lower-case face name (when different from the full name) -> every card with such a face
     faces: HashMap<String, Vec<u32>>,
+    ids: HashMap<String, u32>,
 }
 
 impl Index {
+    /// `knowledge_dir` plus `load`: the catalog `find` would read (see [`knowledge_dir`])
+    pub fn open(project: &Project, data_dir: Option<&Path>) -> Result<Index, String> {
+        Index::load(&knowledge_dir(project, data_dir)?.join("oracle.json"))
+    }
+
     /// Reads `oracle.json`; a missing file, bad JSON or another `meta.schema` is an error.
     pub fn load(path: &Path) -> Result<Index, String> {
         let file = std::fs::File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
@@ -347,10 +428,11 @@ impl Index {
             if c.name.trim().is_empty() {
                 return Err(bad(format!("has an empty name (oracle_id '{}')", c.oracle_id)));
             }
-            if !c.oracle_id.is_empty() {
-                if let Some(first) = ids.insert(&c.oracle_id, n + 1) {
-                    return Err(bad(format!("('{}') repeats oracle_id {} of record {first}", c.name, c.oracle_id)));
-                }
+            if c.oracle_id.is_empty() {
+                return Err(bad(format!("('{}') has no oracle_id", c.name)));
+            }
+            if let Some(first) = ids.insert(&c.oracle_id, n + 1) {
+                return Err(bad(format!("('{}') repeats oracle_id {} of record {first}", c.name, c.oracle_id)));
             }
         }
         drop(ids);
@@ -359,19 +441,37 @@ impl Index {
             bulk_updated_at: oracle.meta.bulk_updated_at,
             names: HashMap::new(),
             faces: HashMap::new(),
+            ids: HashMap::new(),
         };
         for (i, c) in idx.cards.iter().enumerate() {
-            idx.names.entry(c.name_lc.clone()).or_default().push(i as u32);
+            idx.ids.insert(c.raw.oracle_id.clone(), i as u32);
+            idx.names.entry(c.key.clone()).or_default().push(i as u32);
             let mut seen: Vec<String> = vec![];
             for f in c.raw.card_faces.as_deref().unwrap_or(&[]) {
                 let n = fold(&f.name);
-                if n != c.name_lc && !seen.contains(&n) {
+                if n != c.key && !seen.contains(&n) {
                     idx.faces.entry(n.clone()).or_default().push(i as u32);
                     seen.push(n);
                 }
             }
         }
         Ok(idx)
+    }
+
+    /// the index of the card with this `oracle_id`
+    pub fn by_oracle_id(&self, id: &str) -> Option<u32> {
+        self.ids.get(id).copied()
+    }
+
+    /// Every subtype word (see [`Card::subtypes`]) with the number of cards that have it, sorted by word.
+    pub fn subtype_vocab(&self) -> Vec<(String, usize)> {
+        let mut m: std::collections::BTreeMap<String, usize> = Default::default();
+        for c in &self.cards {
+            for w in c.subtypes() {
+                *m.entry(w.to_string()).or_default() += 1;
+            }
+        }
+        m.into_iter().collect()
     }
 
     /// Every name key shared by two or more cards, with the cards (for reports and tests).
@@ -427,6 +527,9 @@ fn main_checkout(root: &Path) -> Option<PathBuf> {
         .arg("-C")
         .arg(root)
         .args(["rev-parse", "--git-common-dir"])
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
+        .env_remove("GIT_COMMON_DIR")
         .stdin(std::process::Stdio::null())
         .output()
         .ok()?;
@@ -500,7 +603,7 @@ pub struct Query {
 
 pub const DEFAULT_LIMIT: usize = 30;
 
-fn parse_ident(s: &str) -> Result<u8, String> {
+pub fn parse_ident(s: &str) -> Result<u8, String> {
     let mut bits = 0;
     for ch in s.chars() {
         match ch.to_ascii_uppercase() {
@@ -528,9 +631,10 @@ fn parse_cmp(s: &str) -> Option<(Cmp, f32)> {
     n.is_finite().then_some((op, n))
 }
 
-impl Query {
-    pub fn parse(args: &[String]) -> Result<Query, FindError> {
-        let mut q = Query {
+impl Default for Query {
+    /// every Commander-legal card, EDHREC order, no limit (what code that builds a query without argv starts from)
+    fn default() -> Query {
+        Query {
             name: None,
             name_contains: None,
             ident: None,
@@ -541,14 +645,20 @@ impl Query {
             gc: false,
             deck: None,
             sort: Sort::Edhrec,
-            limit: None,
+            limit: Some(usize::MAX),
             offset: 0,
             count: false,
             json: false,
             full: false,
             meld: false,
             data_dir: None,
-        };
+        }
+    }
+}
+
+impl Query {
+    pub fn parse(args: &[String]) -> Result<Query, FindError> {
+        let mut q = Query { limit: Some(DEFAULT_LIMIT), ..Query::default() };
         let mut seen: Vec<&str> = vec![];
         let mut i = 0;
         while i < args.len() {
@@ -574,7 +684,7 @@ impl Query {
                     seen.push(a);
                     match a {
                         "--name" => q.name = Some(v.clone()),
-                        "--name-contains" => q.name_contains = Some(fold(v)),
+                        "--name-contains" => q.name_contains = Some(fold_raw(v)),
                         "--ident" => q.ident = Some(parse_ident(v).or_else(usage)?),
                         "--legal" => {
                             q.legal = match v.as_str() {
@@ -594,7 +704,12 @@ impl Query {
                                 ));
                             }
                         },
-                        "--type" => q.types.push(v.trim().to_lowercase()),
+                        "--type" => {
+                            if words(v).next().is_none() {
+                                return usage(format!("--type needs a word of a type line, got '{v}'"));
+                            }
+                            q.types.push(v.trim().to_lowercase())
+                        }
                         "--text" => q.texts.push(v.clone()),
                         "--deck" => q.deck = Some(v.clone()),
                         "--sort" => {
@@ -608,6 +723,7 @@ impl Query {
                         }
                         "--limit" if v == "all" => q.limit = Some(usize::MAX),
                         "--limit" => match v.parse() {
+                            Ok(0) => return usage("--limit 0 shows nothing; use --count for the number of matches"),
                             Ok(n) => q.limit = Some(n),
                             Err(_) => return usage(format!("--limit needs a number or 'all', got '{v}'")),
                         },
@@ -633,21 +749,27 @@ struct DecksFile {
     pool: Vec<Deck>,
 }
 
-#[derive(Deserialize)]
-struct Deck {
-    key: String,
+/// A deck of `data/decks.json`.
+#[derive(Deserialize, Clone, Debug)]
+pub struct Deck {
+    pub key: String,
     #[serde(default)]
-    ident: String,
+    pub ident: String,
     #[serde(default)]
-    commander: String,
+    pub commander: String,
     #[serde(default)]
-    commander2: Option<String>,
+    pub commander2: Option<String>,
     #[serde(default)]
-    cards: Vec<String>,
+    pub cards: Vec<String>,
+}
+
+/// the colour identity limit of a deck (its `ident`)
+pub fn deck_ident(d: &Deck) -> Result<u8, String> {
+    parse_ident(&d.ident).map_err(|e| format!("deck {}: {e}", d.key))
 }
 
 /// a deck's key in `data/decks.json` (`mine`, then `pool`)
-fn load_deck(project: &Project, key: &str) -> Result<Deck, FindError> {
+pub fn load_deck(project: &Project, key: &str) -> Result<Deck, FindError> {
     let path = project.data("decks.json");
     let text = std::fs::read_to_string(&path).map_err(|e| FindError::Failed(format!("{}: {e}", path.display())))?;
     let file: DecksFile =
@@ -662,6 +784,24 @@ fn load_deck(project: &Project, key: &str) -> Result<Deck, FindError> {
 }
 
 impl Index {
+    /// The cards a deck already plays (its list and its commanders, resolved by [`Index::lookup`]: name or face name,
+    /// either spelling) as a mark per card index, and the names that resolve to no card.
+    pub fn deck_members(&self, d: &Deck) -> (Vec<bool>, Vec<String>) {
+        let mut marks = vec![false; self.cards.len()];
+        let mut unresolved: Vec<String> = vec![];
+        let names = d.cards.iter().chain(std::iter::once(&d.commander)).chain(d.commander2.iter());
+        for n in names.filter(|n| !n.trim().is_empty()) {
+            let found = self.lookup(n);
+            if found.is_empty() && !unresolved.contains(n) {
+                unresolved.push(n.clone());
+            }
+            for &i in found {
+                marks[i as usize] = true;
+            }
+        }
+        (marks, unresolved)
+    }
+
     fn legal_ok(c: &Card, q: &Query) -> bool {
         match q.legal {
             LegalFilter::Any => true,
@@ -691,7 +831,7 @@ impl Index {
                 || q.cmc.is_some_and(|(op, n)| !op.test(c.cmc, n))
                 || (q.gc && !c.raw.game_changer)
                 || exclude.get(i as usize).copied().unwrap_or(false)
-                || q.name_contains.as_deref().is_some_and(|s| !c.names_lc.contains(s))
+                || q.name_contains.as_deref().is_some_and(|s| !c.keys.contains(s))
                 || !q.types.iter().all(|t| t.split_whitespace().all(|w| c.has_type_word(w)))
             {
                 continue;
@@ -704,7 +844,10 @@ impl Index {
                         ok = false;
                         break;
                     }
-                    Err(e) => return failed(format!("--text {}: {e}", re.as_str())),
+                    Err(e) => {
+                        let shown = re.as_str().strip_prefix("(?i)").unwrap_or(re.as_str());
+                        return failed(format!("--text {shown}: {e}"));
+                    }
                 }
             }
             if ok {
@@ -714,9 +857,15 @@ impl Index {
         Ok(out)
     }
 
+    /// Sorts card indices as `find` does: by the key (EDHREC rank with unranked last, name, cmc or price), ties by
+    /// folded name, then name, then index.
+    pub fn sort(&self, ids: &mut [u32], sort: Sort) {
+        ids.sort_by(|a, b| self.order(*a, *b, sort, false));
+    }
+
     fn order(&self, a: u32, b: u32, sort: Sort, legal_first: bool) -> Ordering {
         let (ca, cb) = (&self.cards[a as usize], &self.cards[b as usize]);
-        let by_name = || ca.name_lc.cmp(&cb.name_lc).then_with(|| ca.raw.name.cmp(&cb.raw.name)).then(a.cmp(&b));
+        let by_name = || ca.key.cmp(&cb.key).then_with(|| ca.raw.name.cmp(&cb.raw.name)).then(a.cmp(&b));
         // a name with several cards: the Commander-legal one first
         let legal =
             if legal_first { (ca.legal != Legal::Legal).cmp(&(cb.legal != Legal::Legal)) } else { Ordering::Equal };
@@ -744,6 +893,7 @@ impl Index {
 
 // ------------------------------------------------------------------------------------------------ output
 
+/// One face in a JSON row.
 #[derive(Serialize)]
 struct OutFace<'a> {
     name: &'a str,
@@ -758,10 +908,13 @@ struct OutFace<'a> {
     loyalty: Option<&'a str>,
 }
 
+/// The one JSON row shape of `find --json`. Keys are only ever added, never renamed or removed.
 #[derive(Serialize)]
 struct OutCard<'a> {
     name: &'a str,
-    mana_cost: &'a str,
+    oracle_id: &'a str,
+    layout: &'a str,
+    mana_cost: String,
     cmc: f32,
     type_line: &'a str,
     identity: String,
@@ -769,17 +922,15 @@ struct OutCard<'a> {
     gc: bool,
     edhrec_rank: Option<u32>,
     usd: Option<f32>,
+    /// `Card::text`: the card's and its faces' text joined by `\n//\n`, what `--text` matches
     oracle_text: &'a str,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    faces: Option<Vec<OutFace<'a>>>,
+    keywords: &'a [String],
     set: &'a str,
     released_at: &'a str,
     rarity: &'a str,
-    // only with --full
+    reserved: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    keywords: Option<&'a [String]>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    produced_mana: Option<&'a [String]>,
+    faces: Option<Vec<OutFace<'a>>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     power: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -787,14 +938,12 @@ struct OutCard<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     loyalty: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    oracle_id: Option<&'a str>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    reserved: Option<bool>,
+    produced_mana: Option<&'a [String]>,
     #[serde(skip_serializing_if = "Option::is_none")]
     meld_parts: Option<&'a [String]>,
 }
 
-fn out_card(c: &Card, full: bool) -> OutCard<'_> {
+fn out_card(c: &Card) -> OutCard<'_> {
     let r = &c.raw;
     let faces = r.card_faces.as_ref().filter(|f| !f.is_empty()).map(|fs| {
         fs.iter()
@@ -803,15 +952,17 @@ fn out_card(c: &Card, full: bool) -> OutCard<'_> {
                 mana_cost: f.mana_cost.as_deref().unwrap_or(""),
                 type_line: &f.type_line,
                 oracle_text: f.oracle_text.as_deref().unwrap_or(""),
-                power: f.power.as_deref().filter(|_| full),
-                toughness: f.toughness.as_deref().filter(|_| full),
-                loyalty: f.loyalty.as_deref().filter(|_| full),
+                power: f.power.as_deref(),
+                toughness: f.toughness.as_deref(),
+                loyalty: f.loyalty.as_deref(),
             })
             .collect()
     });
     OutCard {
         name: &r.name,
-        mana_cost: r.mana_cost.as_deref().unwrap_or(""),
+        oracle_id: &r.oracle_id,
+        layout: &r.layout,
+        mana_cost: c.cost(),
         cmc: c.cmc,
         type_line: &r.type_line,
         identity: c.identity(),
@@ -819,25 +970,25 @@ fn out_card(c: &Card, full: bool) -> OutCard<'_> {
         gc: r.game_changer,
         edhrec_rank: r.edhrec_rank,
         usd: c.usd,
-        oracle_text: r.oracle_text.as_deref().unwrap_or(""),
-        faces,
+        oracle_text: &c.text,
+        keywords: &r.keywords,
         set: &r.set,
         released_at: &r.released_at,
         rarity: &r.rarity,
-        keywords: Some(&r.keywords[..]).filter(|_| full),
-        produced_mana: r.produced_mana.as_deref().filter(|_| full),
-        power: r.power.as_deref().filter(|_| full),
-        toughness: r.toughness.as_deref().filter(|_| full),
-        loyalty: r.loyalty.as_deref().filter(|_| full),
-        oracle_id: Some(&r.oracle_id[..]).filter(|_| full),
-        reserved: Some(r.reserved).filter(|_| full),
-        meld_parts: r.meld_parts.as_deref().filter(|_| full),
+        reserved: r.reserved,
+        faces,
+        power: r.power.as_deref(),
+        toughness: r.toughness.as_deref(),
+        loyalty: r.loyalty.as_deref(),
+        produced_mana: r.produced_mana.as_deref(),
+        meld_parts: r.meld_parts.as_deref(),
     }
 }
 
-fn json_array(cards: &[&Card], full: bool) -> String {
+/// a bare array, one object per line
+fn json_array(cards: &[&Card]) -> String {
     let rows: Vec<String> =
-        cards.iter().map(|c| serde_json::to_string(&out_card(c, full)).expect("a card serialises")).collect();
+        cards.iter().map(|c| serde_json::to_string(&out_card(c)).expect("a card serialises")).collect();
     if rows.is_empty() { "[]\n".into() } else { format!("[\n{}\n]\n", rows.join(",\n")) }
 }
 
@@ -851,7 +1002,7 @@ fn table(cards: &[&Card]) -> String {
         .map(|c| {
             [
                 c.raw.name.clone(),
-                dash(c.raw.mana_cost.as_deref().unwrap_or("")).to_string(),
+                dash(&c.cost()).to_string(),
                 c.raw.type_line.clone(),
                 c.raw.edhrec_rank.map_or("-".into(), |r| r.to_string()),
                 c.raw.usd.clone().unwrap_or_else(|| "-".into()),
@@ -885,7 +1036,7 @@ fn table(cards: &[&Card]) -> String {
 fn readable(c: &Card) -> String {
     let r = &c.raw;
     let mut s = String::new();
-    let _ = writeln!(s, "{}  {}  (cmc {})", r.name, dash(r.mana_cost.as_deref().unwrap_or("")), c.cmc);
+    let _ = writeln!(s, "{}  {}  (cmc {})", r.name, dash(&c.cost()), c.cmc);
     let _ = writeln!(s, "{}", r.type_line);
     let pt = match (&r.power, &r.toughness, &r.loyalty) {
         (Some(p), Some(t), _) => format!("  P/T {p}/{t}"),
@@ -942,8 +1093,56 @@ fn readable(c: &Card) -> String {
 
 // ------------------------------------------------------------------------------------------------ the command
 
-/// `cardgen find`: returns the text to print. Read-only.
+/// What `find` produced: the text for stdout and notes about what the result leaves out (a cut page, a named card the
+/// filters removed, deck names that match no card, hidden meld results).
+#[derive(Debug)]
+pub struct FindOutput {
+    pub out: String,
+    pub notes: Vec<String>,
+    /// JSON and `--count` output is for a program: its notes go to stderr; a table gets them as trailing lines
+    pub notes_on_stderr: bool,
+}
+
+impl FindOutput {
+    /// the text for stdout: the output, then the notes when they are not for stderr
+    pub fn stdout(&self) -> String {
+        let mut s = self.out.clone();
+        if !self.notes_on_stderr {
+            for n in &self.notes {
+                s.push_str(n);
+                s.push('\n');
+            }
+        }
+        s
+    }
+
+    /// the text for stderr: the notes when they are for stderr
+    pub fn stderr(&self) -> String {
+        if self.notes_on_stderr { self.notes.iter().map(|n| format!("{n}\n")).collect() } else { String::new() }
+    }
+}
+
+/// `cardgen find`: the text to print (notes included when they belong on stdout). Read-only.
 pub fn find(project: &Project, args: &[String]) -> Result<String, FindError> {
+    find_with_notes(project, args).map(|o| o.stdout())
+}
+
+/// why a card that `--name` found is not in the result
+fn why_filtered(c: &Card, i: u32, q: &Query, ident: Option<u8>, exclude: &[bool]) -> &'static str {
+    if !Index::legal_ok(c, q) {
+        return c.legal.as_str();
+    }
+    if exclude.get(i as usize).copied().unwrap_or(false) {
+        return "in the deck";
+    }
+    if ident.is_some_and(|l| c.ident & !l != 0) {
+        return "outside the identity";
+    }
+    "other filters"
+}
+
+/// `cardgen find` with its notes kept apart from the output.
+pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput, FindError> {
     let q = Query::parse(args)?;
     let mut regexes = vec![];
     for t in &q.texts {
@@ -953,52 +1152,94 @@ pub fn find(project: &Project, args: &[String]) -> Result<String, FindError> {
         regexes.push(Regex::new(&format!("(?i){t}")).map_err(bad)?);
     }
     let deck = q.deck.as_deref().map(|k| load_deck(project, k)).transpose()?;
-    let ident = match (&q.ident, &deck) {
-        (Some(i), _) => Some(*i),
-        (None, Some(d)) => Some(parse_ident(&d.ident).map_err(|e| FindError::Failed(format!("deck {}: {e}", d.key)))?),
-        (None, None) => None,
-    };
-    let dir = knowledge_dir(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
-    let index = Index::load(&dir.join("oracle.json")).map_err(FindError::Failed)?;
-    let mut exclude = vec![false; index.cards.len()];
-    if let Some(d) = &deck {
-        for n in d.cards.iter().chain(std::iter::once(&d.commander)).chain(d.commander2.iter()) {
-            for &i in index.lookup(n) {
-                exclude[i as usize] = true;
+    // a deck's identity is a ceiling: --ident may narrow it, never widen it
+    let ident = match &deck {
+        Some(d) => {
+            let limit = deck_ident(d).map_err(FindError::Failed)?;
+            if let Some(given) = q.ident.filter(|g| g & !limit != 0) {
+                let name = |b: u8| if b == 0 { "C".to_string() } else { ident_string(b) };
+                return usage(format!("--ident {} is outside deck {}'s identity {}", name(given), d.key, name(limit)));
             }
+            Some(q.ident.unwrap_or(limit))
         }
+        None => q.ident,
+    };
+    let index = Index::open(project, q.data_dir.as_deref()).map_err(FindError::Failed)?;
+    let (exclude, unresolved) = match &deck {
+        Some(d) => index.deck_members(d),
+        None => (vec![false; index.cards.len()], vec![]),
+    };
+    let mut notes: Vec<String> = vec![];
+    if let (Some(d), false) = (&deck, unresolved.is_empty()) {
+        let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
+        let more = if unresolved.len() > 10 { ", ..." } else { "" };
+        notes.push(format!(
+            "(deck {}: {} name(s) not in the catalog: {}{more})",
+            d.key,
+            unresolved.len(),
+            shown.join(", ")
+        ));
     }
     let mut hits = index.matches(&q, ident, &exclude, &regexes)?;
+    let notes_on_stderr = q.json || q.count;
+    let named_but_filtered = |notes: &mut Vec<String>, empty: bool| {
+        let (Some(n), true) = (&q.name, empty) else { return };
+        let found = index.lookup(n);
+        if found.is_empty() {
+            return;
+        }
+        let mut why: Vec<&str> = vec![];
+        for &i in found {
+            let w = why_filtered(&index.cards[i as usize], i, &q, ident, &exclude);
+            if !why.contains(&w) {
+                why.push(w);
+            }
+        }
+        let hint = if why.iter().any(|w| ["legal", "banned", "not_legal", "restricted", "unknown"].contains(w)) {
+            "; try --legal any"
+        } else {
+            ""
+        };
+        let in_deck = |w: &str| {
+            if w == "in the deck" { format!("in deck {}", deck.as_ref().map_or("", |d| &d.key)) } else { w.to_string() }
+        };
+        let why: Vec<String> = why.iter().map(|w| in_deck(w)).collect();
+        notes.push(format!(
+            "({} card(s) named {n} exist outside these filters: {}{hint})",
+            found.len(),
+            why.join(" / ")
+        ));
+    };
     if q.count {
-        return Ok(format!("{}\n", hits.len()));
+        named_but_filtered(&mut notes, hits.is_empty());
+        return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr });
     }
     let name_query = q.name.is_some();
     hits.sort_by(|a, b| index.order(*a, *b, q.sort, name_query));
     let total = hits.len();
     let limit = q.limit.unwrap_or(DEFAULT_LIMIT);
     let shown: Vec<&Card> = hits.iter().skip(q.offset).take(limit).map(|i| &index.cards[*i as usize]).collect();
-    if q.json {
-        return Ok(json_array(&shown, q.full));
+    let end = q.offset.saturating_add(shown.len());
+    if !shown.is_empty() && end < total {
+        notes.push(format!("(showing {}-{end} of {total}; --offset {end} or --limit all)", q.offset + 1));
     }
-    let mut out = String::new();
     if shown.is_empty() {
-        out.push_str(if total == 0 { "no matches\n" } else { "no matches in this page\n" });
+        named_but_filtered(&mut notes, total == 0);
         if total == 0 && !q.meld && q.name.is_none() {
             let hidden = index.matches(&Query { meld: true, ..q.clone() }, ident, &exclude, &regexes)?;
             if !hidden.is_empty() {
-                let _ = writeln!(out, "({} meld result(s) are hidden; add --meld)", hidden.len());
+                notes.push(format!("({} meld result(s) are hidden; add --meld)", hidden.len()));
             }
         }
-        return Ok(out);
     }
-    if q.full {
-        out = shown.iter().map(|c| readable(c)).collect::<Vec<_>>().join("\n");
+    let out = if q.json {
+        json_array(&shown)
+    } else if shown.is_empty() {
+        (if total == 0 { "no matches\n" } else { "no matches in this page\n" }).to_string()
+    } else if q.full {
+        shown.iter().map(|c| readable(c)).collect::<Vec<_>>().join("\n")
     } else {
-        out = table(&shown);
-    }
-    let end = q.offset + shown.len();
-    if end < total {
-        let _ = writeln!(out, "(showing {}-{} of {total}; --offset {end} for the next page)", q.offset + 1, end);
-    }
-    Ok(out)
+        table(&shown)
+    };
+    Ok(FindOutput { out, notes, notes_on_stderr })
 }

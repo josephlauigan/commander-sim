@@ -26,10 +26,11 @@ const USAGE: &str = "usage:
                                                 (WU = any card inside W and U, C or empty = colourless only);
                                                 --legal defaults to legal; --type and --text repeat (all must match;
                                                 --text is a case-insensitive regex over the Oracle text of every
-                                                face); --deck KEY limits to that deck's colours and leaves out its
-                                                cards; a meld result needs --meld unless --name is given; --sort
-                                                defaults to edhrec, --limit to 30 (all = no limit); --count prints
-                                                only the number of matches
+                                                face); --deck KEY limits to that deck's colours (--ident may
+                                                only narrow them) and leaves out its cards; a meld result needs
+                                                --meld unless --name is given; --sort defaults to edhrec, --limit to
+                                                30 (all = no limit); --count prints only the number of matches;
+                                                notes about a cut page or a filtered-out name go to stderr
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -209,16 +210,20 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
 fn find(project: &Project, args: &[String]) -> Result<(), String> {
     use cardgen::knowledge::FindError;
     use std::io::Write;
-    match cardgen::knowledge::find(project, args) {
-        Ok(out) => match std::io::stdout().write_all(out.as_bytes()).and_then(|_| std::io::stdout().flush()) {
-            Ok(()) => Ok(()),
-            // a closed pipe (`| head`) is not an error
-            Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => Ok(()),
-            Err(e) => Err(format!("cannot write the result: {e}")),
-        },
-        Err(FindError::Usage(m)) => Err(format!("{m}\n{USAGE}")),
-        Err(FindError::Failed(m)) => Err(m),
+    let o = match cardgen::knowledge::find_with_notes(project, args) {
+        Ok(o) => o,
+        Err(FindError::Usage(m)) => return Err(format!("{m}\n{USAGE}")),
+        Err(FindError::Failed(m)) => return Err(m),
+    };
+    let wrote = std::io::stdout().write_all(o.stdout().as_bytes()).and_then(|_| std::io::stdout().flush());
+    match wrote {
+        Ok(()) => {}
+        // a closed pipe (`| head`) is not an error
+        Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => return Ok(()),
+        Err(e) => return Err(format!("cannot write the result: {e}")),
     }
+    let _ = std::io::stderr().write_all(o.stderr().as_bytes());
+    Ok(())
 }
 
 fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {

@@ -245,8 +245,9 @@ fn parser_missing_repeated_unknown_and_numeric_edges() {
     for value in ["<=2", ">=2", "1e3", ".5", "-1", " 2 ", "< .5", ">-1"] {
         assert!(parse(&["--cmc", value]).is_ok(), "{value}");
     }
+    assert!(parse(&["--limit", "0"]).is_err(), "--limit 0 is a usage error");
     for flag in ["--limit", "--offset"] {
-        assert!(parse(&[flag, "0"]).is_ok());
+        assert!(flag == "--limit" || parse(&[flag, "0"]).is_ok());
         assert!(parse(&[flag, &usize::MAX.to_string()]).is_ok());
         for value in ["18446744073709551616", "99999999999999999999999999999", "-1", "NaN", "1e3", " 2 "] {
             assert!(parse(&[flag, value]).is_err(), "{flag} {value}");
@@ -376,7 +377,7 @@ fn decks_priority_commanders_faces_unknown_names_and_override() {
     e.decks(json!({"mine":[{"key":"same","ident":"WU","commander":"Isamaru, Hound of Konda",
         "commander2":"Petty Theft","cards":["Ice","Island","Island","Not in Catalog"]}],
         "pool":[{"key":"same","ident":"R","cards":["Sol Ring"]}]}));
-    let rows = e.rows(&["--deck", "SAME", "--ident", "WUBRG", "--limit", "100000"]);
+    let rows = e.rows(&["--deck", "SAME", "--limit", "100000"]);
     let names: Vec<_> = rows.iter().map(|c| c["name"].as_str().unwrap()).collect();
     for excluded in ["Isamaru, Hound of Konda", "Brazen Borrower // Petty Theft", "Fire // Ice", "Island"] {
         assert!(!names.contains(&excluded), "{excluded}");
@@ -395,7 +396,7 @@ fn decks_priority_commanders_faces_unknown_names_and_override() {
     }
     e.decks(json!({"mine":[{"key":"test","ident":"X"}]}));
     assert!(matches!(e.run(&["--deck", "test"]), Err(FindError::Failed(_))));
-    assert!(!e.rows(&["--deck", "test", "--ident", "C"]).is_empty());
+    assert!(matches!(e.run(&["--deck", "test", "--ident", "C"]), Err(FindError::Failed(_))));
     assert!(e.run(&["--deck", "unknown"]).unwrap_err().to_string().contains("test"));
 }
 #[test]
@@ -491,9 +492,9 @@ fn paging_extremes_count_notes_and_all_sort_ties() {
         assert_eq!(pages, all, "paging: {sort}");
         assert_eq!(pages.iter().map(|c| c["oracle_id"].as_str().unwrap()).collect::<BTreeSet<_>>().len(), 43);
     }
-    assert_eq!(e.ok(&["--count", "--json", "--full", "--limit", "0", "--offset", &usize::MAX.to_string()]), "43\n");
+    assert_eq!(e.ok(&["--count", "--json", "--full", "--limit", "1", "--offset", &usize::MAX.to_string()]), "43\n");
     assert!(e.rows(&["--offset", &usize::MAX.to_string(), "--limit", &usize::MAX.to_string()]).is_empty());
-    assert!(e.rows(&["--limit", "0"]).is_empty());
+    assert!(matches!(e.run(&["--limit", "0"]), Err(FindError::Usage(_))));
     assert_eq!(e.ok(&["--offset", "43"]), "no matches in this page\n");
     assert!(e.ok(&["--limit", "7", "--offset", "7"]).contains("showing 8-14 of 43; --offset 14"));
 }
