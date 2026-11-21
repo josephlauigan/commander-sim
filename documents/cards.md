@@ -76,6 +76,10 @@ Unmodeled ([`documents/testing-decks.md`](testing-decks.md)).
 What the engine can't do yet, found while modeling the Tier 6 cards, is listed in
 `rust/agents/engine-needs-*.md` (one file per batch).
 
+The whole Magic catalog (not only the cards the engine models) is covered by the card knowledge base: a local
+Scryfall bulk sync, role tags and per-deck digests an agent can load as context when it makes a card decision. See
+[`card-knowledge.md`](card-knowledge.md).
+
 ## Deck files
 
 Every deck is a Markdown file: JD's in `decklists/JD/`, retired lists in `decklists/pool/retired/`, the pool in
