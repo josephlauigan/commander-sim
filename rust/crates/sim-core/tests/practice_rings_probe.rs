@@ -146,6 +146,14 @@ fn prep(g: &mut Game, name: &str, m: PermId) {
             g.player_mut(P0).sagas.retain(|x| x.0 != m);
             g.player_mut(P0).sagas.push((m, 2));
         }
+        "Minas Tirith" => {
+            // its draw needs an attack with two or more creatures this turn
+            let (a, b) = (perm(g, P0, "Llanowar Elves"), perm(g, P0, "Birds of Paradise"));
+            let st = g.turn_stamp();
+            let pl = g.player_mut(P0);
+            pl.attacking = Some(st);
+            pl.attackers = vec![a, b];
+        }
         "Otherworld Atlas" => g.perm_mut(m).data.set(DataKey::Charge, Val::Int(2)),
         "Dragon's Hoard" => g.perm_mut(m).data.set(DataKey::T45Dragon, Val::Int(2)),
         "Dauthi Voidwalker" => {

@@ -607,7 +607,7 @@ about to swing (not against Isshin, Aurelia, Kaalia, Lathril's drain or Craterho
 
 ## Mana
 
-33 lands: 27 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
+33 lands: 26 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Minas Tirith (makes {W}; enters tapped unless you control a legendary creature, and {1}{W}, {T}: draw a card after you attacked with two or more creatures this turn), Path of Ancestry (enters tapped; scry 1
 when you cast a creature that shares a type with Cloud), Plaza of Heroes, Rogue's Passage and Terminal Moraine. Ash
 Barrens, Terminal Moraine and Rogue's Passage make only {C}; Plaza of Heroes makes any colour for a legendary spell.
 Cloud, Kor Outfitter, Puresteel Paladin, Knight of the White Orchid and Grand Abolisher need {W}{W}; Archangel of Tithes
@@ -648,7 +648,7 @@ on its own. Tell the table before the game that:
 
 **Instants (7).** Akroma's Will, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares
 
-**Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Terminal Moraine, 27 Plains
+**Lands (33).** Ash Barrens, Evolving Wilds, Minas Tirith, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Terminal Moraine, 26 Plains
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -697,6 +697,7 @@ on its own. Tell the table before the game that:
 1 Loyal Warhound
 1 Marvin, Murderous Mimic
 1 Mask of Memory
+1 Minas Tirith
 1 Mind Stone
 1 Mithril Coat
 1 Norn's Annex
@@ -728,5 +729,5 @@ on its own. Tell the table before the game that:
 1 Winds of Abandon
 1 Wrath of God
 1 Zack Fair
-27 Plains
+26 Plains
 ```

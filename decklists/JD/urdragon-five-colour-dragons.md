@@ -146,8 +146,9 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
   paying their mana costs. About a third of the 99 are lands (a land flip gives no free spell, but you may play it as your
   land drop) and 29 are Dragons, mostly costing 5 to 7, so a flip is a free Dragon about three times in ten, and the
   higher the card you flip, the more of the opponents' exiled cards qualify. It needs three red sources.
-- **Temur Ascendancy:** gives your creatures haste, and you may draw a card whenever a creature with power 4 or more
-  enters under your control (nearly every Dragon, including the ones The Ur-Dragon puts in).
+- **Rhythm of the Wild** ({1}{R}{G}, enchantment): your creature spells can't be countered, and your nontoken creatures
+  have riot, so each enters with a +1/+1 counter or haste, your choice (the Dragons The Ur-Dragon puts in included). Tokens
+  get no haste from it.
 
 ### Game plan
 
@@ -280,7 +281,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Artifacts (7).** Arcane Signet, Cursed Mirror, Mana Vault, Mox Jasper, Relic of Sauron, Sol Ring, The One Ring
 
-**Enchantments (5).** Doubling Season, Dragon Tempest, Rhystic Study, Temur Ascendancy, Triple Triad
+**Enchantments (5).** Doubling Season, Dragon Tempest, Rhystic Study, Rhythm of the Wild, Triple Triad
 
 **Instants (10).** Chaos Warp, Cyclonic Rift, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
@@ -348,6 +349,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Polluted Delta
 1 Relic of Sauron
 1 Rhystic Study
+1 Rhythm of the Wild
 1 Rivaz of the Claw
 1 Sacred Foundry
 1 Savannah
@@ -370,7 +372,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Swords to Plowshares
 1 Taiga
 1 Teferi's Protection
-1 Temur Ascendancy
 1 Terror of the Peaks
 1 The One Ring
 1 The Ur-Dragon
