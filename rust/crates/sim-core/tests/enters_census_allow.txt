@@ -62,6 +62,7 @@ Lotus Cobra | [fixture] No land enters after this permanent is installed; its la
 Mana Echoes | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever a creature enters, you may add an amount of {C} equal to the number of creatures you control that share a creature type with it.
 Marwyn, the Nurturer | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another Elf you control enters, put a +1/+1 counter on Marwyn.
 Mavren Fein, Dusk Apostle | [deferred] Pre-existing Tok=1 entry proxy invents an ETB for an attack ability. Correcting the underlying card model is out of the round-three diff.
+Mentor of the Meek | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another creature with power 2 or less enters the battlefield under your control, you may pay {1}. If you do, draw a card.
 Metastatic Evangel | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another nontoken creature you control enters, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)
 Miirym, Sentinel Wyrm | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.
 Mossborn Hydra | [fixture] No land enters after this permanent is installed; its landfall guard is not exercised.
@@ -127,5 +128,6 @@ Will of the Mardu | [fixture] Extra opposing Elesh body changes AI choices or th
 Windfall | [fixture] Extra opposing Elesh body changes AI choices or their bookkeeping; live versus inert same-body control is identical, so no suppression of this card was observed.
 Winds of Abandon | [fixture] Extra opposing Elesh body changes AI choices or their bookkeeping; live versus inert same-body control is identical, so no suppression of this card was observed.
 Wolverine Riders | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another Elf you control enters, you gain life equal to its toughness.
+Yoshimaru, Ever Faithful | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another legendary permanent you control enters, put a +1/+1 counter on Yoshimaru, Ever Faithful.
 Youthful Valkyrie | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another Angel you control enters, put a +1/+1 counter on this creature.
 Zendikar's Roil | [fixture] No land enters after this permanent is installed; its landfall guard is not exercised.
