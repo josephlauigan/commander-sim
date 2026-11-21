@@ -50,10 +50,12 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }
 
-/// The permanent whose leaving a trigger is for: what a `Dies`, `Leaves` or compiled "dies" trigger hears.
+/// The permanent whose leaving a trigger is for: what a `Dies`, `Leaves`, `Sacrifice` or compiled "dies" trigger hears.
 fn cause_of(t: &Trigger) -> Option<PermId> {
+    use crate::hooks::{Call, Sacrificed};
     match &t.act {
-        TrigAct::Hook { call: crate::hooks::Call::Dies { m, .. } | crate::hooks::Call::Leaves { m }, .. } => Some(*m),
+        TrigAct::Hook { call: Call::Dies { m, .. } | Call::Leaves { m }, .. } => Some(*m),
+        TrigAct::Hook { call: Call::Sacrifice { what: Sacrificed::Perm(m), .. }, .. } => Some(*m),
         TrigAct::Dsl { ctx, .. } => ctx.event_perm,
         _ => None,
     }
