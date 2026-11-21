@@ -63,7 +63,7 @@ fn cause_of(t: &Trigger) -> Option<PermId> {
 
 /// `extra_for`, for a trigger of src caused by `cause` leaving: when a doubler left alone, src (which stays) counts the
 /// doubler's extra for what its leaving caused (CR 603.10a), as recorded by `note_leaving`.
-fn extra_for_cause(g: &Game, src: PermId, cause: Option<PermId>) -> usize {
+pub fn extra_for_cause(g: &Game, src: PermId, cause: Option<PermId>) -> usize {
     if let (Some(c), Some((n, _, Some(leaver)))) = (cause, extra_record(g, src))
         && c == leaver
     {
