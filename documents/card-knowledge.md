@@ -34,9 +34,9 @@ back to the main checkout's). Generated data is gitignored except what cannot be
 
 | File | Tracked | Content |
 |---|---|---|
-| `oracle.json` | no | Every catalog card as a slim record, from Scryfall's Oracle Cards bulk file |
+| `oracle.json` | no | Every catalog card as a slim record, from Scryfall's Oracle Cards bulk file (a gzip file of JSON Lines, read with `flate2`) |
 | `oracle.prev.json` | no | The previous sync, for the weekly diff |
-| `sync.lock` | yes | Which bulk file (`updated_at`, count, hash) the tracked caches correspond to |
+| `sync.lock` | yes | Which bulk file the tracked caches correspond to: `bulk_updated_at`, `count` and `fnv1a64` (FNV-1a-64 of the `cards` array text) |
 | `roles.toml` | yes | Role taxonomy: ids, one-line definitions (used verbatim in the LLM prompt), guard regexes |
 | `roles_overrides.toml` | yes | Hand role sets, highest precedence |
 | `roles_gold.toml` | yes | About 150 hand-labelled cards, the precision standard |
@@ -54,13 +54,17 @@ predicted model status without a second parser.
 **Slim record.** The cache's 15 fields stay byte-compatible; the bulk record adds `oracle_id`, `edhrec_rank`, `usd`,
 `released_at`, `set`, `rarity`, `reserved` and the meld/face extras. `set` and `released_at` describe Scryfall's chosen
 printing, not the first printing; new-card detection uses an `oracle_id` diff. Tokens, emblems, art cards, schemes,
-planes, vanguards and digital-only cards are dropped. Banned and not-legal cards are kept so "why can't I play X"
-answers correctly, but `find` and `digest` default to legal only. Faces are searched by every face name and text;
+planes and vanguards are dropped, and so is a repeated `oracle_id`. Digital printings are **not** dropped: Scryfall
+picks one representative printing per card, and for many paper staples (Mind Twist, Lotus Petal, Badlands) it is a
+Masters or Remastered set flagged `digital`, so dropping them would lose over a thousand Commander-legal cards. Banned
+and not-legal cards are kept so "why can't I play X" answers correctly, but `find` and `digest` default to legal
+only. Faces are searched by every face name and text;
 nothing branches on layout names except the drop list.
 
 **Index.** Typed serde load of `oracle.json` into an in-memory index (identity bits, cmc, type flags, a lower-case
-search string, a role bitset). Every query is a linear scan, milliseconds for 30k cards. No new dependency: `ureq`
-(with gzip) and `fancy-regex` are already in `cardgen`.
+search string, a role bitset). Every query is a linear scan, milliseconds for 30k cards. The only dependency added
+is `flate2` (already in the lockfile through `ureq`), because Scryfall serves the bulk file as a plain gzip file, not
+with a `Content-Encoding` header; `ureq` and `fancy-regex` were already in `cardgen`.
 
 **Roles.** Twenty-six roles (ramp, fixing, draw, selection, tutor, removal, wipe, counter, protection, stax, discard,
 gy-hate, recursion, reanimate, self-mill, tokens, anthem, sac-outlet, drain, lifegain, counters, blink, copy,
@@ -94,7 +98,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 
 | Phase | Check |
 |---|---|
-| 1 | `bulk-sync` yields 25,000 to 40,000 cards, none a token; a second run reports "up to date" and downloads nothing; `slim_bulk` agrees with `slim` on the 15 cache fields; a corrupt `--from-file` exits non-zero and leaves `oracle.json` byte-identical; peak memory under 2 GB |
+| 1 | `bulk-sync` yields 25,000 to 40,000 cards, none a token, and every card in `data/scryfall_cache.json` present; a second run reports "up to date" and downloads nothing; `slim_bulk` agrees with `slim` on the 15 cache fields; a corrupt `--from-file` exits non-zero and leaves `oracle.json` byte-identical; peak memory under 2 GB |
 | 2 | `find` returns the right cards for each filter and never an off-identity or already-in-deck card under `--deck`; back-face names resolve; a bad regex exits non-zero; a full scan under 1 s |
 | 3 | `roles --rules` is byte-deterministic; hand-tag recall at least 0.95; gold precision at least 0.90 and recall at least 0.85; the LLM stage beats rules alone on the gold cards it handles or stays off for that role; bait cards get no guarded role; schema-valid after retries at least 99% |
 | 3b | `map.md` under 32 KB; the five-colour digest under 200 KB; every digest line has six fields and at most 160 characters; two runs byte-identical |
@@ -116,7 +120,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 |---|---|---|
 | 0 Design consult (Opus) | none | done |
 | Approach doc | `knowledge-base` | written |
-| 1 `bulk-sync` | `knowledge-bulk-sync` | not started |
+| 1 `bulk-sync` | `knowledge-bulk-sync` | built; fixing a review finding |
 | 2 `find` | `knowledge-find` | not started |
 | 3 Roles (rules + local LLM) | `knowledge-roles` | not started |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
