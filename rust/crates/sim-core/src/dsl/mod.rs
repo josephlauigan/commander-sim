@@ -1612,8 +1612,8 @@ fn fire_inner(g: &mut Game, event: &str, kw: &Fired, keep: &dyn Fn(&Game, Player
         if !g.player(q).alive || !keep(g, q) {
             continue;
         }
-        if matches!(event, "etb" | "landfall") && crate::engine::hooks::enter_blanked(g, q, kw.perm) {
-            continue; // an opponent's Elesh Norn, Mother of Machines
+        if matches!(event, "etb" | "landfall") && crate::engine::hooks::enter_silenced(g, q, kw.perm) {
+            continue; // an opponent's Elesh Norn, Mother of Machines, or Hushbringer for a creature
         }
         let mut srcs = g.player(q).perms.clone();
         srcs.extend(land_sources(g, q)); // Phase 3: lands' compiled triggers, after the other permanents'

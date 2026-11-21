@@ -301,8 +301,7 @@ pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Re
 /// what happens as a permanent enters (a name chosen, enters tapped or with counters or prepared, an Aura attaching,
 /// devour, a Saga's lore counter), static and state registrations, and the abilities of cards in other zones (a
 /// graveyard landfall) still happen. A hook is a trigger or setup by `enter_hook_is_trigger`; a hook that mixes the
-/// two asks `enters_trigger_times`. (Hushbringer is checked apart, in `zones::enter` and at the head of
-/// `fire_trigger_where`.)
+/// two asks `enters_trigger_times`. (Hushbringer, for a creature entering, is `enter_silenced`.)
 pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) -> bool {
     g.opps(controller).any(|q| {
         g.player(q).perms.iter().any(|&m| {
@@ -310,6 +309,15 @@ pub fn enter_blanked(g: &Game, controller: PlayerId, _entering: Option<PermId>) 
             x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Mother))
         })
     })
+}
+
+/// A triggered ability of `controller`'s permanent caused by `entering` does not trigger: an opponent's Elesh Norn, Mother of
+/// Machines (`enter_blanked`), or Hushbringer for a creature entering ("Creatures entering the battlefield or dying don't
+/// cause abilities to trigger": every player's, a land that is a creature too). `entering` None: a land or tokens, or an
+/// artifact token that is no creature (only Elesh blanks those).
+pub fn enter_silenced(g: &Game, controller: PlayerId, entering: Option<PermId>) -> bool {
+    enter_blanked(g, controller, entering)
+        || entering.is_some_and(|m| g.is_creature(m)) && crate::engine::repl::hushed(g)
 }
 
 /// Is the hook of `imp` for event `e` an enters-caused triggered ability (so an opponent's Elesh Norn blanks it and the
@@ -342,7 +350,7 @@ pub fn leave_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
 /// Only mixed hooks, land paths and inline proxies call this; never dispatcher-multiplied T hooks or repeat passes.
 /// None denotes an artifact token only.
 pub fn enters_trigger_times(g: &Game, controller: PlayerId, src: Option<PermId>, entering: Option<PermId>) -> u32 {
-    if enter_blanked(g, controller, entering) {
+    if enter_silenced(g, controller, entering) {
         0
     } else {
         1 + enter_copies(g, controller, entering) + src.map_or(0, |s| crate::engine::stack::extra_for(g, s) as u32)
@@ -380,16 +388,27 @@ pub fn fire_trigger_where(
     keep: &dyn Fn(&Game, PermId) -> bool,
     repeat: bool,
 ) -> Res {
-    // Hushbringer: a creature entering (a land that is also a creature) sets off nothing
-    if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
-        && g.is_creature(*m)
-        && crate::engine::repl::hushed(g)
-    {
-        return Ok(());
-    }
+    fire_trigger_entering(g, e, call, keep, repeat, None)
+}
+
+/// `fire_trigger_where` for an event whose call does not name the permanent that entered (landfall: `entering` is the
+/// land), so Elesh Norn and Hushbringer can tell what caused it
+pub fn fire_trigger_entering(
+    g: &mut Game,
+    e: Event,
+    call: Call,
+    keep: &dyn Fn(&Game, PermId) -> bool,
+    repeat: bool,
+    entering: Option<PermId>,
+) -> Res {
     let enters =
         matches!(e, Event::Etb | Event::LandEnters | Event::Landfall | Event::TokensEnter | Event::TokenCreated);
-    let entering = if let Call::Etb { m, .. } = &call { Some(*m) } else { None };
+    let entering = match &call {
+        Call::Etb { m, .. } => Some(*m),
+        Call::Tokens { toks, .. } => toks.first().copied(),
+        _ => entering,
+    };
+    let hushed = enters && entering.is_some_and(|m| g.is_creature(m)) && crate::engine::repl::hushed(g);
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
         if !keep(g, src) {
@@ -398,8 +417,9 @@ pub fn fire_trigger_where(
         let owner = g.perm(src).owner;
         let now = imp.runs_at_once(e) || !e.is_trigger();
         let trig = enter_hook_is_trigger(&imp, e);
-        // an opponent's Elesh Norn: no trigger of this permanent is caused by the entering
-        if enters && trig && enter_blanked(g, owner, entering) {
+        // an opponent's Elesh Norn, or Hushbringer for a creature: no trigger of this permanent is caused by the entering
+        // (a hook that is not a trigger, a permanent setting itself up as it enters, still runs)
+        if enters && trig && (hushed || enter_blanked(g, owner, entering)) {
             continue;
         }
         let mut reps = 1;

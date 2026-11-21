@@ -287,7 +287,6 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     if n == 0 {
         return Ok(out);
     }
-    let blank = hooks::enter_blanked(g, p, None);
     let (mut pw, mut tg, mut sick) = (spec.pow, spec.tgh, spec.sick);
     if has(g, p, Tag::Jinnie) && pw < 2 && !spec.attacking {
         (pw, tg, sick) = (2, Some(2), false); // Jinnie Fay: 2/2 Cats with haste instead
@@ -335,6 +334,8 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         out.push(m);
     }
     let k = out.len() as i32;
+    // an opponent's Elesh Norn, or Hushbringer for creature tokens: what their entering would trigger does not
+    let blank = hooks::enter_silenced(g, p, out.first().copied());
     note_tokens(g, p, k as u32);
     crate::impls::t45_krenko::note_entered(g, p, &out); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     if k > 0 && !g.no_fang {
@@ -399,7 +400,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
 
 /// Aura Shards: whenever a creature enters under your control, destroy target artifact or enchantment
 pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32, entering: Option<PermId>) -> Res {
-    if k <= 0 || !has(g, p, Tag::Shards) || hooks::enter_blanked(g, p, None) {
+    if k <= 0 || !has(g, p, Tag::Shards) || hooks::enter_silenced(g, p, entering) {
         return Ok(());
     }
     let reps = k * (1 + hooks::enter_copies(g, p, entering) as i32);
@@ -493,7 +494,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if etgh(g, m) <= 0 && !g.perm(m).army {
         return die(g, m, "sba");
     }
-    if !hooks::enter_blanked(g, p, Some(m)) {
+    if !hooks::enter_silenced(g, p, Some(m)) {
         if has(g, p, Tag::Crusade) {
             let n = find(g, p, Tag::Crusade).len() as i32 * (1 + hooks::enter_copies(g, p, Some(m)) as i32);
             for x in g.player(p).perms.clone() {
@@ -542,6 +543,8 @@ pub fn detach(g: &mut Game, m: PermId) {
 pub fn leave(g: &mut Game, m: PermId) -> Res {
     let p = g.perm(m).owner;
     let on = g.perm(m).on_bf;
+    // a creature dying under Hushbringer causes no triggered ability (what it set up before, and a duration that ends, still do)
+    let hushed = g.dying == Some(m) && g.is_creature(m) && repl::hushed(g);
     if on {
         crate::impls::vondam_elspeth::leaving(g, m); // Syr Vondam: his power as he leaves, and the wipe he leaves in
         crate::engine::stack::note_leaving(g, m);
@@ -578,8 +581,12 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
         {
             // a leave-caused trigger happens once more for each Teysa Karlov, Drivnod or Gandalf the White; a duration that
             // ends with the leaving ("until this leaves the battlefield") is not a trigger
-            let times =
-                if hooks::leave_hook_is_trigger(&imp, Event::Leaves) { hooks::leave_trigger_times(g, p, m) } else { 1 };
+            let trigger = hooks::leave_hook_is_trigger(&imp, Event::Leaves);
+            let times = match (trigger, hushed) {
+                (true, true) => 0,
+                (true, false) => hooks::leave_trigger_times(g, p, m),
+                (false, _) => 1,
+            };
             let mut entries = vec![];
             for k in 0..times {
                 if imp.runs_at_once(Event::Leaves) {
@@ -592,7 +599,7 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
             queue_triggers(g, entries)?;
         }
     }
-    if on {
+    if on && !hushed {
         for s in crate::impls::t0_giada::sleuths_for(g, m) {
             let o = g.perm(s).owner;
             let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
@@ -604,7 +611,9 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     }
     if on && g.perm(m).token {
         crate::impls::karn_cards::ugin_token_left(g, m); // Ugin, the Ineffable: the Spirit's exiled card
-        crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
+        if !hushed {
+            crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
+        }
     }
     if on {
         crate::impls::t0_anikthea::calix_link_left(g, m)?; // Calix's -3 link
@@ -1339,7 +1348,8 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.entered.push((st, m));
     crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     let creature = g.db.get(cd).creature;
-    let quiet = g.skip_etb || (creature && (repl::hushed(g) || cardcode::tidebinder_response(g, p, m)?));
+    // (Hushbringer silences what the creature entering triggers, not how it enters: `enter_silenced`)
+    let quiet = g.skip_etb || (creature && cardcode::tidebinder_response(g, p, m)?);
     if quiet {
         // an enchantment's own enters hook still runs (it sets itself up)
         let d = g.db.get(cd);
@@ -1446,7 +1456,7 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         return Ok(()); // the ability language handles its abilities
     }
     etb_static(g, p, m)?; // as it enters, not triggered: an opponent's Elesh Norn leaves it alone
-    if hooks::enter_blanked(g, p, Some(m)) || !etb_triggers(g, cd) {
+    if hooks::enter_silenced(g, p, Some(m)) || !etb_triggers(g, cd) {
         return Ok(());
     }
     let (name, imp) = etb_text(g, cd);
@@ -1970,7 +1980,7 @@ fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32], land: Opt
     let own_pass = copies[p.0 as usize] >= pass;
     // an opponent's Elesh Norn, Mother of Machines: the permanents' landfall effects below don't trigger (the
     // compiled and card-code ones are blanked where they fire, a graveyard card's not at all)
-    let blanked = hooks::enter_blanked(g, p, None);
+    let blanked = hooks::enter_silenced(g, p, land);
     let felidars = if blanked || !own_pass { vec![] } else { find(g, p, Tag::Landfall2) };
     for r in felidars {
         if crate::human::is_human(g, p) {
@@ -2020,15 +2030,18 @@ fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32], land: Opt
         )?;
     }
     if !g.hooks.is_empty() {
-        hooks::fire_trigger_where(
+        hooks::fire_trigger_entering(
             g,
             Event::Landfall,
             Call::Player { p },
             &|g, s| copies[g.perm(s).owner.0 as usize] >= pass,
             repeat,
+            land,
         )?;
     }
-    if repeat { Ok(()) } else { cardcode::gy_landfall(g, p) } // a graveyard card's ability is no permanent's: once
+    // a graveyard card's ability is no permanent's: once; Hushbringer stops abilities in every zone
+    let hushed_land = land.is_some_and(|l| g.is_creature(l)) && repl::hushed(g);
+    if repeat || hushed_land { Ok(()) } else { cardcode::gy_landfall(g, p) }
 }
 
 /// search for a basic land and put it into your hand. Every such search in the pool reveals the land (landcycling,
