@@ -160,6 +160,94 @@ byte-identical (unless the rollback itself fails, which the error says). `--from
 `CARDGEN_KNOWLEDGE_DIR` is given, and `--data-dir` points a scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
 uses the network.
 
+## Find (search the whole catalog)
+
+```
+cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
+             [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
+             [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+```
+
+Searches every Oracle card in `data/knowledge/oracle.json` (written by `bulk-sync`); read-only, offline. The catalog is
+loaded into memory (a typed serde read, no persisted index, about 0.1 s) and every query is a linear scan. All filters are
+optional and combine with AND.
+
+| Flag | Meaning |
+|---|---|
+| `--name N` | the card's name, exact; case, accents and apostrophe style do not matter (see below); a face name works too (`Petty Theft` finds Brazen Borrower). An exact full name beats a face name: `Lightning Bolt` is the instant, not the `prepare` card `Emeritus of Conflict // Lightning Bolt` that has it as a face. Several cards with one name (15 names are shared): the Commander-legal one first |
+| `--name-contains S` | substring of the full name or of any face name (same folding, but the value is not trimmed: `" of "` keeps its spaces; an empty value is a usage error) |
+| `--ident WU` | colour identity limit: the card's identity must be a **subset** of the letters (a colourless card fits any limit; `WU` admits W, U, WU and colourless). `C` or an empty value means colourless only |
+| `--legal` | Commander legality: `legal` (default), `banned`, `not_legal`, `restricted`, or `any` |
+| `--cmc '<=2'` | mana value; operators `<`, `<=`, `=`, `>=`, `>`, a plain number means `=` (quote `<` and `>` in the shell) |
+| `--type WORD` | a word of the type line of any face (`instant`, `Elf`, `legendary`; a word, not a substring); repeatable, all must match; a value with no word (`""`, `"—"`) is a usage error |
+| `--text REGEX` | fancy-regex over the Oracle text of every face, case-insensitive unless the pattern says `(?-i)`; repeatable, all must match; a bad pattern exits non-zero |
+| `--gc` | Game Changers only |
+| `--deck KEY` | a deck of `data/decks.json` (yours, then the pool; an unknown key lists the valid ones). Its `ident` is the identity ceiling: `--ident` may only narrow it (an `--ident` outside the deck's identity is a usage error, `--ident U is outside deck cloud's identity W`). Leaves out every card of the deck (its list and its commanders, matched by name and by face name) |
+| `--meld` | include meld results (Brisela, Hanweir, ...), which every search except `--name` leaves out by default (an exact `--name` shows them) |
+| `--sort` | `edhrec` (default: ascending, unranked last), `name`, `cmc`, `usd` (ascending, no price last); ties by name |
+| `--limit N\|all`, `--offset N` | page through the result (default limit 30; `--limit all` is no limit; `--limit 0` is a usage error, use `--count`) |
+| `--count` | print only the number of matches (ignores `--limit`, `--offset` and `--json`) |
+| `--json` | a bare array, one object per line, always the same complete row: `name, oracle_id, layout, mana_cost, cmc, type_line, identity, legal, gc, edhrec_rank, usd, oracle_text, keywords, set, released_at, rarity, reserved`, plus `faces, power, toughness, loyalty, produced_mana, meld_parts` when they apply. `identity` is a string such as `"WU"` (`""` = colourless); `mana_cost` is the card's own, else its face costs joined with ` // ` (`""` for a land); `oracle_text` is the text the regex sees: the card's faces joined by `\n//\n`; `edhrec_rank` and `usd` are `null` when absent. See "The JSON contract" below |
+| `--full` | switches the text output to one readable block per card (every face, keywords, produced mana, meld parts, `oracle_id`); the JSON row is the same with or without it |
+| `--data-dir DIR` | the knowledge directory |
+
+Names are compared by a folded search key (`fold` in `knowledge.rs`): lower-case, accents and other combining marks
+dropped, every apostrophe variant (`’ ‘ ʼ` `` ` `` `´`) a plain `'`, `Æ`/`Œ`/`ß` spelled `ae`/`oe`/`ss`, the ends trimmed. So
+`Anduril, Narsil Reforged`, `Lim-Dul's Vault`, `Urza’s Saga` and `Æther Vial` find the catalog's `Andúril...`,
+`Lim-Dûl's Vault`, `Urza's Saga` and `Aether Vial`. Hyphens, commas and inner spaces stay significant. The same key is used
+for `--name-contains` and for `--deck` (a deck list and the catalog may spell a name either way); the output always shows
+the catalog's spelling.
+
+A flag that takes a value rejects a value that starts with `--` (`--name --json` is "needs a value", not a search for
+`--json`); negative numbers are fine, and a regex that must start with `--` can be written `[-]-`. On load, a record with an empty name, no `oracle_id` or an `oracle_id` already used by another record
+is an error that names the record and suggests `cardgen bulk-sync` (shared names with different `oracle_id`s are normal).
+
+`--text` runs on the Oracle text with the card's faces joined by a line holding only `//`, so a multi-face card is one
+string (`(?m)^//$` matches the joiner; two `--text` patterns may match different faces); the card's name and type line are
+not searched. Table columns are padded by display width (wide characters count 2, combining marks 0).
+
+The default output is a table: name, cost, type line, EDHREC rank, price, legality.
+
+**The JSON contract.** Keys are only ever added, never renamed or removed, and a consumer ignores keys it does not know
+(later phases add `roles`, `primary`, `status`, `decks`, `findings`). There is no compact form: the digest is the compact
+view, `--json` is the detail.
+
+**Notes.** A result never silently leaves something out. `find` also prints notes, to stderr for `--json` and `--count`
+(so stdout stays one parseable value) and as trailing lines for a table:
+
+- `(showing 2-3 of 9; --offset 3 or --limit all)` when a page is cut;
+- `(1 card(s) named Primeval Titan exist outside these filters: banned; try --legal any)` when `--name` found cards but the
+  other filters (legality, `--deck`, `--ident`, ...) removed them all;
+- `(deck cloud: 2 name(s) not in the catalog: ...)` when a deck list names a card the catalog does not have (it could not
+  be left out of the candidates);
+- `(1 meld result(s) are hidden; add --meld)` when nothing matched and a meld result would have.
+
+The knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else `<repo>/data/knowledge`; when the default has
+no `oracle.json` (a worktree has the directory, because `sync.lock` is tracked, but not the generated file) it falls
+back to the main checkout's (`<git-common-dir>/../data/knowledge`). A missing catalog is an error that names
+`cardgen bulk-sync`. A `--data-dir` or `CARDGEN_KNOWLEDGE_DIR` without an `oracle.json` is an error too, with no fallback.
+An unknown flag (`--role`, `--digest` and `--map` do not exist yet), a flag without its value or a non-numeric number prints
+the usage text and exits non-zero.
+
+Examples:
+
+```
+cardgen find --ident WU --cmc '<=2' --type instant --text 'counter target' --limit 10
+cardgen find --deck cloud --text 'search your library' --json --limit 20     # candidates for the Cloud deck
+cardgen find --deck cloud --count                                            # how many cards a digest would cover
+cardgen find --name "Sol Ring" --full                                        # layer 3: everything about one card
+cardgen find --legal any --name "Primeval Titan"                             # banned, and why it is not in a default search
+cardgen find --gc --count
+```
+
+For code, `knowledge.rs` exports the same engine: `Index::open`, `by_oracle_id`, `lookup`, `search` (everything `find` does before it prints: the deck's
+identity ceiling, the deck's own cards left out, the filters, the sort), `sort`, `deck_members`, `subtype_vocab`
+(`Time Lord` is one subtype), `Query::default()` (no limit; `find` parses to 30) and `Card::{cost, lines, subtypes, self_names}` (`lines` numbers the Oracle lines without
+the `//` joiner, so evidence indices and digest gists cite the same line).
+
+`--deck KEY --count` is the size of a deck's candidate pool: the Commander-legal cards in its colours that it does not
+already play. It is the number to size a digest against.
+
 ## Equivalence
 
 `cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
@@ -176,5 +264,6 @@ src/sources.rs     the build order above              src/cardinfo.rs  Phyrexian
 src/export.rs      cards.json / decks.json            src/scryfall.rs  the cache and the client
 src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/audit.rs
 src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.json)
+src/knowledge.rs   the in-memory card index and `find` (queries oracle.json)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```

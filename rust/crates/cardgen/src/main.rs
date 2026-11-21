@@ -17,6 +17,20 @@ const USAGE: &str = "usage:
                                                 \"up to date\" when the bulk file has not changed. --from-file
                                                 parses a local bulk file (no network); the directory can also be
                                                 set with CARDGEN_KNOWLEDGE_DIR
+  cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
+               [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
+               [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+                                                search the whole Commander catalog (data/knowledge/oracle.json, see
+                                                bulk-sync); filters combine with AND. --name is exact (also a face
+                                                name, accents and apostrophe style ignored); --ident is a limit
+                                                (WU = any card inside W and U, C or empty = colourless only);
+                                                --legal defaults to legal; --type and --text repeat (all must match;
+                                                --text is a case-insensitive regex over the Oracle text of every
+                                                face); --deck KEY limits to that deck's colours (--ident may
+                                                only narrow them) and leaves out its cards; a meld result needs
+                                                --meld unless --name is given; --sort defaults to edhrec, --limit to
+                                                30 (all = no limit); --count prints only the number of matches;
+                                                notes about a cut page or a filtered-out name go to stderr
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -67,6 +81,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "validate" => validate(&project, &args),
         "deck" => deck(&project, &mut args),
         "bulk-sync" => bulk_sync(&project, &mut args),
+        "find" => find(&project, &args),
         _ => Err(USAGE.into()),
     }
 }
@@ -189,6 +204,25 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     if !o.ok {
         std::process::exit(1);
     }
+    Ok(())
+}
+
+fn find(project: &Project, args: &[String]) -> Result<(), String> {
+    use cardgen::knowledge::FindError;
+    use std::io::Write;
+    let o = match cardgen::knowledge::find_with_notes(project, args) {
+        Ok(o) => o,
+        Err(FindError::Usage(m)) => return Err(format!("{m}\n{USAGE}")),
+        Err(FindError::Failed(m)) => return Err(m),
+    };
+    let wrote = std::io::stdout().write_all(o.stdout().as_bytes()).and_then(|_| std::io::stdout().flush());
+    match wrote {
+        Ok(()) => {}
+        // a closed pipe (`| head`) is not an error
+        Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => return Ok(()),
+        Err(e) => return Err(format!("cannot write the result: {e}")),
+    }
+    let _ = std::io::stderr().write_all(o.stderr().as_bytes());
     Ok(())
 }
 
