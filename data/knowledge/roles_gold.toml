@@ -134,6 +134,19 @@
 #      only. [JD-approved 2026-11-21, replacing the earlier tokens-only note]
 #  Catalog scope: cards of type "Stickers" and Attractions are not deck cards and are excluded from role samples.
 #
+# Clauses C7-C13 (2026-11-21, JD-approved after the independent audit of the classifier):
+#  C7 (ramp / fixing). A mana filter (an activation whose mana cost equals the mana it adds, e.g. '{1}, {T}: Add one mana of any
+#      color') is `fixing`, not `ramp`: ramp needs net mana beyond a land drop.
+#  C8 (anthem). A team-wide haste grant alone is not `anthem`: anthem needs a stat pump or an evasion/combat-damage keyword
+#      (flying, double strike, trample, menace, 'can't be blocked') for your whole team.
+#  C9 (anthem). A pump or grant on 'up to N target creatures' (not your whole team) is not `anthem`.
+#  C10 (draw). A self-replacing aura or equipment ('When enchanted creature dies, draw a card', 'when this dies, draw') replaces
+#      itself like a cantrip and is not `draw` (convention 3).
+#  C11 (tutor). 'Search your library for a card named ~' (a copy of itself) is not `tutor`.
+#  C12 (tokens / removal). Tokens given to an opponent as compensation (Mercy Killing) are not `tokens`; the edict or destroy part
+#      is still `removal`.
+#  C13 (draw). The monarch draws a card every end step: becoming the monarch repeatably is `draw`.
+#
 [[card]]
 name = "Absorbing Man and Titania"
 oracle_id = "a1afb796-1b0b-4f41-9c8f-5320c9af5989"
