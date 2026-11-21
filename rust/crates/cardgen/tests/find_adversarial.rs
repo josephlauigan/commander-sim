@@ -846,7 +846,7 @@ fn real_identity_mana_indicators_back_faces_and_shared_names() {
     }
     assert!(real_rows(&["--name", "Little Girl"]).is_empty());
     assert_eq!(real_rows(&["--name", "Little Girl", "--legal", "not_legal"])[0]["cmc"], 0.5);
-    assert!(real_rows(&["--name", "Brisela, Voice of Nightmares"]).is_empty());
+    assert_eq!(real_rows(&["--name", "Brisela, Voice of Nightmares"]).len(), 1, "an exact name shows a meld result");
     assert_eq!(real_rows(&["--name", "Brisela, Voice of Nightmares", "--meld"]).len(), 1);
 }
 #[test]

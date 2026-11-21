@@ -165,7 +165,7 @@ uses the network.
 ```
 cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
              [--type WORD]... [--text REGEX]... [--gc] [--deck KEY] [--meld]
-             [--sort edhrec|name|cmc|usd] [--limit N] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+             [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
 ```
 
 Searches every Oracle card in `data/knowledge/oracle.json` (written by `bulk-sync`); read-only, offline. The catalog is
@@ -174,8 +174,8 @@ optional and combine with AND.
 
 | Flag | Meaning |
 |---|---|
-| `--name N` | the card's name, exact and case-insensitive; a face name works too (`Petty Theft` finds Brazen Borrower). An exact full name beats a face name: `Lightning Bolt` is the instant, not the `prepare` card `Emeritus of Conflict // Lightning Bolt` that has it as a face. Several cards with one name (15 names are shared): the Commander-legal one first |
-| `--name-contains S` | substring of the full name or of any face name |
+| `--name N` | the card's name, exact; case, accents and apostrophe style do not matter (see below); a face name works too (`Petty Theft` finds Brazen Borrower). An exact full name beats a face name: `Lightning Bolt` is the instant, not the `prepare` card `Emeritus of Conflict // Lightning Bolt` that has it as a face. Several cards with one name (15 names are shared): the Commander-legal one first |
+| `--name-contains S` | substring of the full name or of any face name (same folding) |
 | `--ident WU` | colour identity limit: the card's identity must be a **subset** of the letters (a colourless card fits any limit; `WU` admits W, U, WU and colourless). `C` or an empty value means colourless only |
 | `--legal` | Commander legality: `legal` (default), `banned`, `not_legal`, `restricted`, or `any` |
 | `--cmc '<=2'` | mana value; operators `<`, `<=`, `=`, `>=`, `>`, a plain number means `=` (quote `<` and `>` in the shell) |
@@ -183,13 +183,28 @@ optional and combine with AND.
 | `--text REGEX` | fancy-regex over the Oracle text of every face, case-insensitive unless the pattern says `(?-i)`; repeatable, all must match; a bad pattern exits non-zero |
 | `--gc` | Game Changers only |
 | `--deck KEY` | a deck of `data/decks.json` (yours, then the pool; an unknown key lists the valid ones). Uses its `ident` as the identity limit (unless `--ident` is given) and leaves out every card of the deck (its list and its commanders, matched by name and by face name) |
-| `--meld` | include meld results (Brisela, Hanweir, ...), which are left out by default because the pair that makes them is not one card |
+| `--meld` | include meld results (Brisela, Hanweir, ...), which every search except `--name` leaves out by default (an exact `--name` shows them) |
 | `--sort` | `edhrec` (default: ascending, unranked last), `name`, `cmc`, `usd` (ascending, no price last); ties by name |
-| `--limit N`, `--offset N` | page through the result (default limit 30) |
+| `--limit N\|all`, `--offset N` | page through the result (default limit 30; `--limit all` is no limit) |
 | `--count` | print only the number of matches (ignores `--limit`, `--offset` and `--json`) |
 | `--json` | an array of `{name, mana_cost, cmc, type_line, identity, legal, gc, edhrec_rank, usd, oracle_text, faces?, set, released_at, rarity}`; `identity` is a string such as `"WU"` (`""` = colourless), `mana_cost` and `oracle_text` are `""` when the card has none (a multi-face card's text is in `faces`), `edhrec_rank` and `usd` are `null` when absent |
 | `--full` | the complete record: adds `keywords`, `produced_mana`, `power`, `toughness`, `loyalty`, `oracle_id`, `reserved`, `meld_parts` (and per-face power, toughness, loyalty); without `--json` it is readable text, one block per card |
 | `--data-dir DIR` | the knowledge directory |
+
+Names are compared by a folded search key (`fold` in `knowledge.rs`): lower-case, accents and other combining marks
+dropped, every apostrophe variant (`’ ‘ ʼ` `` ` `` `´`) a plain `'`, `Æ`/`Œ`/`ß` spelled `ae`/`oe`/`ss`, the ends trimmed. So
+`Anduril, Narsil Reforged`, `Lim-Dul's Vault`, `Urza’s Saga` and `Æther Vial` find the catalog's `Andúril...`,
+`Lim-Dûl's Vault`, `Urza's Saga` and `Aether Vial`. Hyphens, commas and inner spaces stay significant. The same key is used
+for `--name-contains` and for `--deck` (a deck list and the catalog may spell a name either way); the output always shows
+the catalog's spelling.
+
+A flag that takes a value rejects a value that starts with `--` (`--name --json` is "needs a value", not a search for
+`--json`); negative numbers are fine. On load, a record with an empty name or an `oracle_id` already used by another record
+is an error that names the record and suggests `cardgen bulk-sync` (shared names with different `oracle_id`s are normal).
+
+`--text` runs on the Oracle text with the card's faces joined by a line holding only `//`, so a multi-face card is one
+string (`(?m)^//$` matches the joiner; two `--text` patterns may match different faces); the card's name and type line are
+not searched. Table columns are padded by display width (wide characters count 2, combining marks 0).
 
 The default output is a table: name, cost, type line, EDHREC rank, price, legality.
 

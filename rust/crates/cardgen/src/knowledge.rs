@@ -12,6 +12,7 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
+use unicode_normalization::UnicodeNormalization;
 
 /// the `oracle.json` schema this code reads (the one `bulk-sync` writes)
 pub const SCHEMA: i64 = crate::bulk::SCHEMA;
@@ -162,6 +163,46 @@ const TYPE_WORDS: [(&str, u16); 9] = [
 
 const COLORS: [char; 5] = ['W', 'U', 'B', 'R', 'G'];
 
+fn is_combining(c: char) -> bool {
+    ('\u{300}'..='\u{36F}').contains(&c)
+}
+
+/// The search key of a name: lower-case, accents and other combining marks dropped (NFKD), every apostrophe variant a
+/// plain `'`, `Æ`/`Œ`/`ß` spelled `ae`/`oe`/`ss`, the ends trimmed. Hyphens, commas and spaces stay. `Andúril` and
+/// `Anduril`, `Urza’s Saga` and `Urza's Saga`, `Æther Vial` and `Aether Vial` have the same key.
+pub fn fold(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.to_lowercase().chars() {
+        match c {
+            '\u{2019}' | '\u{2018}' | '\u{2bc}' | '`' | '\u{b4}' => out.push('\''),
+            'æ' => out.push_str("ae"),
+            'œ' => out.push_str("oe"),
+            'ß' => out.push_str("ss"),
+            c => out.extend(std::iter::once(c).nfkd().filter(|c| !is_combining(*c))),
+        }
+    }
+    out.trim().to_string()
+}
+
+/// Terminal cells a string takes: combining marks 0, East Asian wide and emoji ranges 2, everything else 1.
+pub fn display_width(s: &str) -> usize {
+    s.chars()
+        .map(|c| match c as u32 {
+            0x300..=0x36F => 0,
+            0x1100..=0x115F
+            | 0x2E80..=0xA4CF
+            | 0xAC00..=0xD7A3
+            | 0xF900..=0xFAFF
+            | 0xFE30..=0xFE6F
+            | 0xFF00..=0xFF60
+            | 0xFFE0..=0xFFE6
+            | 0x1F300..=0x1F64F
+            | 0x20000..=0x3FFFD => 2,
+            _ => 1,
+        })
+        .sum()
+}
+
 /// words of a type line: split on anything but letters, digits, apostrophes and hyphens (`Creature — Elf // Instant`)
 fn words(line: &str) -> impl Iterator<Item = &str> {
     line.split(|c: char| !(c.is_alphanumeric() || c == '\'' || c == '-')).filter(|w| !w.is_empty())
@@ -178,9 +219,9 @@ pub struct Card {
     pub types: u16,
     pub legal: Legal,
     pub usd: Option<f32>,
-    /// the lower-case full name
+    /// the folded full name (see [`fold`])
     pub name_lc: String,
-    /// the lower-case full name and every face name, one per line
+    /// the folded full name and every folded face name, one per line
     pub names_lc: String,
     /// the lower-case type line of the card and of every face
     pub type_lc: String,
@@ -197,11 +238,11 @@ impl Card {
             }
         }
         let faces = raw.card_faces.as_deref().unwrap_or(&[]);
-        let name_lc = raw.name.to_lowercase();
+        let name_lc = fold(&raw.name);
         let mut names_lc = name_lc.clone();
         for f in faces {
             names_lc.push('\n');
-            names_lc.push_str(&f.name.to_lowercase());
+            names_lc.push_str(&fold(&f.name));
         }
         let mut type_lc = raw.type_line.to_lowercase();
         for f in faces {
@@ -298,6 +339,21 @@ impl Index {
                 oracle.cards.len()
             ));
         }
+        let mut ids: HashMap<&str, usize> = HashMap::new();
+        for (n, c) in oracle.cards.iter().enumerate() {
+            let bad = |what: String| {
+                format!("{}: record {} {what}; run `cardgen bulk-sync` to rebuild it", path.display(), n + 1)
+            };
+            if c.name.trim().is_empty() {
+                return Err(bad(format!("has an empty name (oracle_id '{}')", c.oracle_id)));
+            }
+            if !c.oracle_id.is_empty() {
+                if let Some(first) = ids.insert(&c.oracle_id, n + 1) {
+                    return Err(bad(format!("('{}') repeats oracle_id {} of record {first}", c.name, c.oracle_id)));
+                }
+            }
+        }
+        drop(ids);
         let mut idx = Index {
             cards: oracle.cards.into_iter().map(Card::new).collect(),
             bulk_updated_at: oracle.meta.bulk_updated_at,
@@ -308,7 +364,7 @@ impl Index {
             idx.names.entry(c.name_lc.clone()).or_default().push(i as u32);
             let mut seen: Vec<String> = vec![];
             for f in c.raw.card_faces.as_deref().unwrap_or(&[]) {
-                let n = f.name.to_lowercase();
+                let n = fold(&f.name);
                 if n != c.name_lc && !seen.contains(&n) {
                     idx.faces.entry(n.clone()).or_default().push(i as u32);
                     seen.push(n);
@@ -318,11 +374,20 @@ impl Index {
         Ok(idx)
     }
 
-    /// The cards a name stands for (case-insensitive): every card with that full name; only when there is none, the
-    /// cards that have a face of that name. An exact full name therefore beats a face name (`Lightning Bolt` is the
-    /// instant, not the `prepare` card that has it as a face).
+    /// Every name key shared by two or more cards, with the cards (for reports and tests).
+    pub fn shared_names(&self) -> Vec<(&str, &[u32])> {
+        let mut v: Vec<(&str, &[u32])> =
+            self.names.iter().filter(|(_, c)| c.len() > 1).map(|(k, c)| (k.as_str(), c.as_slice())).collect();
+        v.sort();
+        v
+    }
+
+    /// The cards a name stands for (compared by [`fold`]: case, accents and apostrophe style do not matter): every
+    /// card with that full name; only when there is none, the cards that have a face of that name. An exact full
+    /// name therefore beats a face name (`Lightning Bolt` is the instant, not the `prepare` card that has it as a
+    /// face).
     pub fn lookup(&self, name: &str) -> &[u32] {
-        let n = name.trim().to_lowercase();
+        let n = fold(name);
         match self.names.get(&n) {
             Some(v) => v,
             None => self.faces.get(&n).map(Vec::as_slice).unwrap_or(&[]),
@@ -498,6 +563,9 @@ impl Query {
                 "--name" | "--name-contains" | "--ident" | "--legal" | "--cmc" | "--type" | "--text" | "--deck"
                 | "--sort" | "--limit" | "--offset" | "--data-dir" => {
                     let Some(v) = args.get(i) else { return usage(format!("{a} needs a value")) };
+                    if v.starts_with("--") {
+                        return usage(format!("{a} needs a value (got '{v}')"));
+                    }
                     i += 1;
                     let repeatable = a == "--type" || a == "--text";
                     if !repeatable && seen.contains(&a) {
@@ -506,7 +574,7 @@ impl Query {
                     seen.push(a);
                     match a {
                         "--name" => q.name = Some(v.clone()),
-                        "--name-contains" => q.name_contains = Some(v.to_lowercase()),
+                        "--name-contains" => q.name_contains = Some(fold(v)),
                         "--ident" => q.ident = Some(parse_ident(v).or_else(usage)?),
                         "--legal" => {
                             q.legal = match v.as_str() {
@@ -538,9 +606,10 @@ impl Query {
                                 _ => return usage(format!("--sort takes edhrec, name, cmc or usd, got '{v}'")),
                             }
                         }
+                        "--limit" if v == "all" => q.limit = Some(usize::MAX),
                         "--limit" => match v.parse() {
                             Ok(n) => q.limit = Some(n),
-                            Err(_) => return usage(format!("--limit needs a number, got '{v}'")),
+                            Err(_) => return usage(format!("--limit needs a number or 'all', got '{v}'")),
                         },
                         "--offset" => match v.parse() {
                             Ok(n) => q.offset = n,
@@ -616,7 +685,7 @@ impl Index {
         let mut out = vec![];
         for i in pool {
             let c = &self.cards[i as usize];
-            if (c.is_meld() && !q.meld)
+            if (c.is_meld() && !q.meld && q.name.is_none())
                 || !Self::legal_ok(c, q)
                 || ident.is_some_and(|l| c.ident & !l != 0)
                 || q.cmc.is_some_and(|(op, n)| !op.test(c.cmc, n))
@@ -794,14 +863,14 @@ fn table(cards: &[&Card]) -> String {
     let mut w = [0usize; 6];
     for r in std::iter::once(&head).chain(rows.iter()) {
         for (i, cell) in r.iter().enumerate() {
-            w[i] = w[i].max(cell.chars().count());
+            w[i] = w[i].max(display_width(cell));
         }
     }
     let mut out = String::new();
     for r in std::iter::once(&head).chain(rows.iter()) {
         let mut line = String::new();
         for (i, cell) in r.iter().enumerate() {
-            let pad = w[i] - cell.chars().count();
+            let pad = w[i] - display_width(cell);
             line.push_str(cell);
             if i + 1 < r.len() {
                 line.push_str(&" ".repeat(pad + 2));
@@ -914,7 +983,7 @@ pub fn find(project: &Project, args: &[String]) -> Result<String, FindError> {
     let mut out = String::new();
     if shown.is_empty() {
         out.push_str(if total == 0 { "no matches\n" } else { "no matches in this page\n" });
-        if total == 0 && !q.meld {
+        if total == 0 && !q.meld && q.name.is_none() {
             let hidden = index.matches(&Query { meld: true, ..q.clone() }, ident, &exclude, &regexes)?;
             if !hidden.is_empty() {
                 let _ = writeln!(out, "({} meld result(s) are hidden; add --meld)", hidden.len());

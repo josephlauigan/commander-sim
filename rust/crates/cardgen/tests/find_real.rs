@@ -172,10 +172,44 @@ fn a_bad_regex_fails() {
 
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
-fn meld_results_are_hidden_by_default() {
-    let hidden = names(&["--name", "Brisela, Voice of Nightmares", "--legal", "any"]);
-    assert!(hidden.is_empty());
-    assert_eq!(names(&["--name", "Brisela, Voice of Nightmares", "--meld"]).len(), 1);
+fn meld_results_are_hidden_unless_named() {
+    let name = ["--name", "Brisela, Voice of Nightmares", "--legal", "any"];
+    assert_eq!(names(&name), ["Brisela, Voice of Nightmares"], "an exact name shows a meld result");
+    assert!(
+        !names(&["--text", "first strike, vigilance, lifelink", "--limit", "all"])
+            .contains(&"Brisela, Voice of Nightmares".to_string())
+    );
+    assert!(
+        names(&["--text", "first strike, vigilance, lifelink", "--meld", "--limit", "all"])
+            .contains(&"Brisela, Voice of Nightmares".to_string())
+    );
+}
+
+/// names shared by two or more cards after folding, and the ones folding adds (reported, never hidden)
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn shared_names_after_folding() {
+    let dir = knowledge::knowledge_dir(&project(), None).unwrap();
+    let idx = Index::load(&dir.join("oracle.json")).unwrap();
+    let shared = idx.shared_names();
+    let mut plain: std::collections::HashMap<String, usize> = Default::default();
+    for c in &idx.cards {
+        *plain.entry(c.raw.name.to_lowercase()).or_default() += 1;
+    }
+    let plain_shared = plain.values().filter(|n| **n > 1).count();
+    let new: Vec<_> = shared
+        .iter()
+        .filter(|(_, cs)| {
+            let mut n: Vec<String> = cs.iter().map(|i| idx.cards[*i as usize].raw.name.to_lowercase()).collect();
+            n.sort();
+            n.dedup();
+            n.len() > 1
+        })
+        .map(|(k, cs)| (*k, cs.iter().map(|i| idx.cards[*i as usize].raw.name.clone()).collect::<Vec<_>>()))
+        .collect();
+    eprintln!("shared names: {} after folding, {plain_shared} by lower-case", shared.len());
+    eprintln!("new collisions from folding: {new:?}");
+    assert_eq!(shared.len(), plain_shared + new.len());
 }
 
 /// a full-catalog regex scan takes under a second once the catalog is loaded

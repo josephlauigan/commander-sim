@@ -3,7 +3,7 @@
 //! card, Game Changers, ties and unranked cards) and `tests/fixtures/find_decks.json`. Nothing uses the network.
 
 use cardgen::data::Project;
-use cardgen::knowledge::{self, FindError, Index, Legal};
+use cardgen::knowledge::{self, FindError, Index, Legal, Query};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -370,18 +370,20 @@ fn face_names_resolve() {
 // ------------------------------------------------------------------------------------------------ meld
 
 #[test]
-fn a_meld_result_needs_meld() {
+fn a_meld_result_needs_meld_unless_named() {
     let e = Env::new();
     let idx = Index::load(&e.dir().join("oracle.json")).unwrap();
     assert_eq!(idx.lookup("Brisela, Voice of Nightmares").len(), 1, "it is indexed");
-    assert!(e.names(&["--name", "Brisela, Voice of Nightmares"]).is_empty());
-    let t = e.ok(&["--name", "Brisela, Voice of Nightmares"]);
-    assert!(t.contains("no matches") && t.contains("--meld"), "a hint that a meld result is hidden: {t}");
+    // an exact name shows it, with or without --meld
+    assert_eq!(e.names(&["--name", "Brisela, Voice of Nightmares"]), ["Brisela, Voice of Nightmares"]);
     assert_eq!(e.names(&["--name", "Brisela, Voice of Nightmares", "--meld"]), ["Brisela, Voice of Nightmares"]);
+    // any other search leaves it out and says so when nothing else matched
+    let t = e.ok(&["--text", "first strike, lifelink"]);
+    assert!(t.contains("no matches") && t.contains("--meld"), "a hint that a meld result is hidden: {t}");
     assert!(!e.names(&["--text", "lifelink", "--limit", "500"]).contains(&"Brisela, Voice of Nightmares".to_string()));
     assert!(e.names(&["--text", "lifelink", "--meld"]).contains(&"Brisela, Voice of Nightmares".to_string()));
     assert_eq!(e.count(&["--meld"]), e.count(&[]) + 1);
-    let full = e.json(&["--name", "Brisela, Voice of Nightmares", "--meld", "--full"]);
+    let full = e.json(&["--name", "Brisela, Voice of Nightmares", "--full"]);
     assert_eq!(full[0]["meld_parts"], serde_json::json!(["Bruna, the Fading Light", "Gisela, the Broken Blade"]));
 }
 
@@ -834,4 +836,218 @@ fn a_bulk_sync_catalog_loads() {
     let a: Vec<String> = ["--data-dir", dir.to_str().unwrap(), "--legal", "any", "--count"].map(String::from).to_vec();
     let n: usize = knowledge::find(&Project::new(&e.0), &a).unwrap().trim().parse().unwrap();
     assert!(n >= idx.cards.iter().filter(|c| !c.is_meld()).count());
+}
+
+// ------------------------------------------------------------------------------------------------ round 2 fixes
+
+/// a minimal legal record; `id` is its oracle_id
+fn rec(name: &str, id: &str) -> Value {
+    serde_json::json!({"name": name, "cmc": 1.0, "type_line": "Artifact", "color_identity": [],
+        "legalities": {"commander": "legal"}, "oracle_id": id, "mana_cost": "{1}"})
+}
+
+impl Env {
+    /// replace the catalog with these records (and the decks file with `decks`)
+    fn with_cards(cards: Vec<Value>, decks: Value) -> Env {
+        let e = Env::new();
+        let meta = serde_json::json!({"schema": 1, "count": cards.len()});
+        let text = serde_json::to_string(&serde_json::json!({"meta": meta, "cards": cards})).unwrap();
+        std::fs::write(e.dir().join("oracle.json"), text).unwrap();
+        std::fs::write(e.0.join("data/decks.json"), decks.to_string()).unwrap();
+        e
+    }
+}
+
+fn accent_catalog() -> Vec<Value> {
+    [
+        "Andúril, Narsil Reforged",
+        "Barad-dûr",
+        "Gríma Wormtongue",
+        "Lim-Dûl's Vault",
+        "Jötun Grunt",
+        "Séance",
+        "Urza’s Tower",
+        "Aether Vial",
+        "Æsop's Fable",
+        "Sol Ring",
+    ]
+    .iter()
+    .enumerate()
+    .map(|(i, n)| rec(n, &format!("id-{i}")))
+    .collect()
+}
+
+#[test]
+fn fold_is_the_shared_search_key() {
+    use knowledge::fold;
+    assert_eq!(fold("Andúril, Narsil Reforged"), "anduril, narsil reforged");
+    assert_eq!(fold("Barad-dûr"), "barad-dur", "hyphens stay");
+    assert_eq!(fold("Gríma Wormtongue"), "grima wormtongue");
+    assert_eq!(fold("Lim-Dûl’s Vault"), "lim-dul's vault");
+    assert_eq!(fold("Jötun Grunt"), "jotun grunt");
+    assert_eq!(fold("Séance"), "seance");
+    for a in ["’", "‘", "ʼ", "`", "´"] {
+        assert_eq!(fold(&format!("Urza{a}s Saga")), "urza's saga", "{a}");
+    }
+    assert_eq!(fold("Æther Vial"), "aether vial");
+    assert_eq!(fold("ÆTHER"), "aether");
+    assert_eq!(fold("Œuvre"), "oeuvre");
+    assert_eq!(fold("Straße"), "strasse");
+    assert_eq!(fold("  Sol Ring \n"), "sol ring");
+    assert_eq!(fold("Fire // Ice"), "fire // ice", "punctuation and inner spaces stay");
+    assert_eq!(fold("Sol  Ring"), "sol  ring");
+    assert_eq!(fold(""), "");
+}
+
+#[test]
+fn names_match_across_spellings() {
+    let decks = serde_json::json!({"mine": [], "pool": []});
+    let e = Env::with_cards(accent_catalog(), decks);
+    let cases = [
+        ("Anduril, Narsil Reforged", "Andúril, Narsil Reforged"),
+        ("Andúril, Narsil Reforged", "Andúril, Narsil Reforged"),
+        ("barad-dur", "Barad-dûr"),
+        ("Grima Wormtongue", "Gríma Wormtongue"),
+        ("Lim-Dul's Vault", "Lim-Dûl's Vault"),
+        ("Lim-Dul’s Vault", "Lim-Dûl's Vault"),
+        ("Jotun Grunt", "Jötun Grunt"),
+        ("Seance", "Séance"),
+        ("Urza's Tower", "Urza’s Tower"),
+        ("Urza’s Tower", "Urza’s Tower"),
+        ("Æther Vial", "Aether Vial"),
+        ("Aether Vial", "Aether Vial"),
+        ("Aesop's Fable", "Æsop's Fable"),
+    ];
+    for (q, canon) in cases {
+        assert_eq!(e.names(&["--name", q]), [canon], "--name {q}");
+    }
+    let subs = [
+        ("anduril", "Andúril, Narsil Reforged"),
+        ("barad-dur", "Barad-dûr"),
+        ("grima", "Gríma Wormtongue"),
+        ("lim-dul", "Lim-Dûl's Vault"),
+        ("jotun", "Jötun Grunt"),
+        ("seance", "Séance"),
+        ("urza's", "Urza’s Tower"),
+        ("urza’s", "Urza’s Tower"),
+        ("Æther", "Aether Vial"),
+        ("aether", "Aether Vial"),
+    ];
+    for (q, canon) in subs {
+        assert_eq!(e.names(&["--name-contains", q]), [canon], "--name-contains {q}");
+    }
+    // punctuation is not stripped: a missing hyphen is a different name
+    assert!(e.names(&["--name", "Barad dur"]).is_empty());
+    // the output keeps the canonical spelling
+    assert_eq!(e.json(&["--name", "Seance"])[0]["name"], "Séance");
+}
+
+#[test]
+fn deck_exclusion_matches_either_spelling() {
+    let ascii: Vec<&str> =
+        vec!["Anduril, Narsil Reforged", "Barad-dur", "Grima Wormtongue", "Lim-Dul's Vault", "Jotun Grunt", "Seance"];
+    let accented: Vec<&str> = vec!["Urza's Tower", "Æther Vial", "Aesop's Fable"];
+    let decks = serde_json::json!({"mine": [
+        {"key": "a", "ident": "WUBRG", "commander": "Sol Ring", "cards": ascii},
+        {"key": "b", "ident": "WUBRG", "commander": "Sol Ring", "cards": accented}], "pool": []});
+    let e = Env::with_cards(accent_catalog(), decks);
+    // the catalog spells the first six with accents and the deck without; the last three the other way
+    assert_eq!(
+        e.names(&["--deck", "a", "--limit", "all", "--sort", "name"]),
+        ["Æsop's Fable", "Aether Vial", "Urza’s Tower"]
+    );
+    assert_eq!(
+        e.names(&["--deck", "b", "--limit", "all", "--sort", "name"]),
+        ["Andúril, Narsil Reforged", "Barad-dûr", "Gríma Wormtongue", "Jötun Grunt", "Lim-Dûl's Vault", "Séance"]
+    );
+}
+
+#[test]
+fn limit_all_is_unlimited() {
+    let e = Env::new();
+    assert_eq!(e.names(&["--limit", "all"]).len(), 37);
+    assert_eq!(e.names(&[]).len(), 30, "the default stays 30");
+    assert_eq!(e.names(&["--limit", "all", "--offset", "5"]).len(), 32);
+    assert!(!e.ok(&["--limit", "all"]).contains("showing"));
+    for bad in ["ALL", "alll", ""] {
+        assert!(usage_err(e.find(&["--limit", bad])).contains("--limit needs a number or 'all'"), "{bad:?}");
+    }
+}
+
+#[test]
+fn a_value_that_looks_like_a_flag_is_a_missing_value() {
+    let e = Env::new();
+    for flag in ["--name", "--name-contains", "--type", "--text", "--deck", "--data-dir", "--legal", "--limit"] {
+        let m = usage_err(e.find(&[flag, "--json"]));
+        assert!(m.contains(&format!("{flag} needs a value (got '--json')")), "{m}");
+    }
+    assert!(usage_err(e.find(&["--name", "--role"])).contains("--name needs a value (got '--role')"));
+    // negative numbers are values
+    assert!(Query::parse(&["--cmc".to_string(), "-1".to_string()]).is_ok());
+    // and the binary exits non-zero with the usage text
+    let e2 = Env::new();
+    let out = bin().arg("--root").arg(&e2.0).args(["find", "--name", "--role"]).output().unwrap();
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("usage:"));
+}
+
+#[test]
+fn a_failed_stdout_write_is_an_error() {
+    let Ok(full) = std::fs::OpenOptions::new().write(true).open("/dev/full") else { return };
+    let e = Env::new();
+    let out = bin()
+        .arg("--root")
+        .arg(&e.0)
+        .args(["find", "--json", "--limit", "all"])
+        .stdout(full)
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .unwrap();
+    assert!(!out.status.success(), "a full disk is not success");
+    assert!(String::from_utf8_lossy(&out.stderr).contains("cardgen: cannot write the result"));
+}
+
+#[test]
+fn an_empty_name_or_a_repeated_oracle_id_is_a_bad_catalog() {
+    let decks = serde_json::json!({"mine": [], "pool": []});
+    for name in ["", "   "] {
+        let e = Env::with_cards(vec![rec("Ok", "a"), rec(name, "b")], decks.clone());
+        let m = failed_err(e.find(&[]));
+        assert!(m.contains("record 2") && m.contains("empty name") && m.contains("bulk-sync"), "{m}");
+        assert!(m.contains("oracle.json"), "{m}");
+    }
+    let e = Env::with_cards(vec![rec("One", "same"), rec("Two", "x"), rec("Three", "same")], decks.clone());
+    let m = failed_err(e.find(&[]));
+    assert!(
+        m.contains("record 3") && m.contains("repeats oracle_id same of record 1") && m.contains("bulk-sync"),
+        "{m}"
+    );
+    // a shared name with different ids is fine, and records without an id are not compared
+    let e = Env::with_cards(vec![rec("Twin", "a"), rec("Twin", "b"), rec("No Id", ""), rec("No Id 2", "")], decks);
+    assert_eq!(e.count(&["--name", "Twin"]), 2);
+    assert_eq!(e.count(&[]), 4);
+}
+
+#[test]
+fn display_width_counts_cells() {
+    use knowledge::display_width;
+    assert_eq!(display_width(""), 0);
+    assert_eq!(display_width("Sol Ring"), 8);
+    assert_eq!(display_width("Séance"), 6, "precomposed");
+    assert_eq!(display_width("Se\u{301}ance"), 6, "a combining mark takes no cell");
+    assert_eq!(display_width("長い名前"), 8, "CJK and kana are two cells each");
+    assert_eq!(display_width("한글"), 4);
+    assert_eq!(display_width("ＡＢ"), 4, "full-width forms");
+    assert_eq!(display_width("🌀"), 2);
+    assert_eq!(display_width("—"), 1);
+}
+
+#[test]
+fn table_columns_line_up_for_wide_and_combining_names() {
+    let decks = serde_json::json!({"mine": [], "pool": []});
+    let e = Env::with_cards(vec![rec("Se\u{301}ance", "a"), rec("長い名前", "b"), rec("Plain", "c")], decks);
+    let t = e.ok(&["--sort", "name"]);
+    let cells: Vec<usize> =
+        t.lines().map(|l| knowledge::display_width(&l[..l.find("{1}").or_else(|| l.find("cost")).unwrap()])).collect();
+    assert!(cells.windows(2).all(|w| w[0] == w[1]), "the cost column starts at one cell: {cells:?}\n{t}");
 }
