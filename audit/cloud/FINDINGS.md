@@ -4,6 +4,17 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## 2026-11-20: Plains => Minas Tirith (JD's choice, not simulated)
+Minas Tirith (legendary land; model status Full) takes one of the 27 Plains (26 now). It makes {W}, enters tapped
+unless you control a legendary creature, and `{1}{W}, {T}`: draw a card, only after you attacked with two or more
+creatures this turn. The case for it, from the card text: twelve of the 100 cards are legendary creatures (Cloud,
+Danitha, Balan, Baird, Sram, Thalia, Zack Fair and others), and Cloud's equipped attackers plus a second creature give
+the draw a turn to run. What it costs: it enters tapped on every turn with no legend out (early turns most of all),
+the draw needs {1}{W} spare and a two-creature attack, and a basic Plains is also what Knight of the White Orchid, Loyal
+Warhound and Ash Barrens fetch or copy (26 left). The Kor Haven for a Plains test (-2.5) was a colourless land, so it
+does not predict this one. Not measured. To check in the first run: how often it enters tapped, how often the draw is
+used, and the games where the swap changes the turn-2 Cloud.
+
 ## 2026-11-14: Lay Down Arms => Champion's Helm (JD's choice, not simulated)
 Champion's Helm ({3}, Equipment, equip {1}; +2/+2, hexproof while the equipped creature is legendary; model status Full)
 takes Lay Down Arms' slot. Why: a twelfth Equipment for Cloud's search, Stoneforge, Steelshaper's Gift, Sram and

@@ -7,6 +7,18 @@ proxies allowed, reworked 2026-11-14 (28 Dragons besides the commander, 29 with 
 Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). **No sims yet.** The findings of the
 retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 
+## 2026-11-20: Temur Ascendancy => Rhythm of the Wild (JD's choice, not simulated)
+Rhythm of the Wild ({1}{R}{G}, enchantment; model status Full) takes Temur Ascendancy's slot. It makes your creature
+spells uncounterable and gives your nontoken creatures riot (each enters with a +1/+1 counter or haste, your choice; it
+applies to creatures put onto the battlefield too, such as The Ur-Dragon's free drop). What it gives up: Temur Ascendancy
+gave every creature haste, tokens included (Lathliss's 5/5 Dragons), and drew a card whenever a creature with power 4 or
+more entered, which is nearly every Dragon. What it gains: uncounterable creature spells against the table's counters
+(the deck already has Cavern of Souls and Delighted Halfling for the key Dragon), and a cost of two colours, red and green,
+instead of blue, the thinnest colour (15 sources). Rhythm is not in the plan's `plays` set (it does nothing on its own;
+Temur Ascendancy had been added by JD on 11/14), so a hand whose only play is Rhythm now mulligans: JD to confirm. Not
+measured. To check in the first run: Rhythm's cast and stuck-in-hand numbers, how often the haste choice decides a
+Dragon's first attack, and what the missing draw costs in cards by turn 8.
+
 ## 2026-11-15: Talrand, Sky Summoner => Triple Triad (JD's choice, not simulated)
 Triple Triad ({3}{R}{R}{R}, model status Full: `data/card_overrides.toml`, tests in
 `rust/crates/sim-core/tests/cards_seph_triad.rs`) takes Talrand's slot. Why: at your upkeep each player exiles their top
