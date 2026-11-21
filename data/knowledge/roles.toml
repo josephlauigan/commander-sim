@@ -132,7 +132,7 @@ guard = '(?i)mill|discard|graveyard'
 [[role]]
 id = "tokens"
 definition = """\
-creates creature or treasure/clue tokens. Creature, Treasure and Clue tokens count. Manifest makes a face-down \
+creates creature or treasure/clue tokens. Creature, Treasure and Clue tokens count. A token copy of a creature is copy AND tokens, copy first. Manifest makes a face-down \
 card, not a token. Tokens made as opponent compensation do not describe your deck-building function. Main or \
 repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least \
 starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Food, Blood, Map, Junk and other non-Treasure, non-Clue artifact \
@@ -175,7 +175,7 @@ trigger. Small riders on other spell effects and life paid or lost by the caster
 lifelink on permanents and repeatable activated lifelink grants count, listed last. One-turn lifelink from a \
 spell or trigger is incidental. Main or repeatable effects only; at most four roles ordered by prominence. \
 Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare \
-cards use the spell face. Granting ward to other permanents is protection. A team-wide lifelink-only grant is \
+cards use their spell face and their creature face's own abilities. Granting ward to other permanents is protection. A team-wide lifelink-only grant is \
 lifegain, not anthem (anthem needs a stat pump or evasion/combat keyword grant)."""
 src = "rules"
 guard = '(?i)gain.*life|lifelink|food token|double.*life total'
@@ -203,7 +203,7 @@ guard = '(?i)exile.*(?:return|put both cards onto the battlefield)'
 
 [[role]]
 id = "copy"
-definition = """copies spells, permanents or tokens (clones included). Spell, permanent and token copies count. A prepare reminder saying cast a copy of its spell never counts. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+definition = """copies spells, permanents or tokens (clones included). Spell, permanent and token copies count. A token copy of a creature is copy AND tokens, copy first. A prepare reminder saying cast a copy of its spell never counts. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
 src = "rules+llm"
 guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'
 
