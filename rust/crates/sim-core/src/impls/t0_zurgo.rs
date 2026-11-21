@@ -116,13 +116,16 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         if !g.perm(z).on_bf || g.over {
             continue;
         }
-        if attacking {
-            crate::glog!(g, "    Zurgo Stormrender: an attacking token left, {} draws", g.player(p).name);
-            draw(g, p, 1, false)?;
-        } else {
-            crate::glog!(g, "    Zurgo Stormrender: a token left, each opponent loses 1");
-            for q in g.opps(p).collect::<Vec<_>>() {
-                lose_life(g, q, 1, Some(p), "drain", None)?;
+        // each time it triggers: once, and once more for each Teysa Karlov, Drivnod or Gandalf the White
+        for _ in 0..crate::engine::hooks::leave_trigger_times(g, p, m) {
+            if attacking {
+                crate::glog!(g, "    Zurgo Stormrender: an attacking token left, {} draws", g.player(p).name);
+                draw(g, p, 1, false)?;
+            } else {
+                crate::glog!(g, "    Zurgo Stormrender: a token left, each opponent loses 1");
+                for q in g.opps(p).collect::<Vec<_>>() {
+                    lose_life(g, q, 1, Some(p), "drain", None)?;
+                }
             }
         }
     }
@@ -130,7 +133,9 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     for q in all {
         for d in named(g, q, "Twilight Drover") {
             if g.perm(d).on_bf {
-                repl::put_plus(g, d, 1);
+                for _ in 0..crate::engine::hooks::leave_trigger_times(g, q, m) {
+                    repl::put_plus(g, d, 1);
+                }
             }
         }
     }

@@ -177,7 +177,8 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 let cd = g.perm(l).card();
                 crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
                 if !g.hooks.is_empty() {
-                    fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) })?;
+                    let what = Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) };
+                    crate::engine::hooks::fire_trigger_for_land(g, l, Event::Sacrifice, what)?;
                 }
             }
             Choice::Sac(Fodder::Treasure) => {

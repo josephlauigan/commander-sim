@@ -525,7 +525,8 @@ fn went_to_hand(g: &Game, m: PermId) -> bool {
 pub fn bounced(g: &mut Game, m: PermId, note: Option<(PlayerId, u32)>) -> Res {
     let Some((o, n)) = note else { return Ok(()) };
     if went_to_hand(g, m) {
-        soldiers(g, o, n)?;
+        // each Riders' trigger happens once, and once more for each Teysa Karlov, Drivnod or Gandalf the White
+        soldiers(g, o, n * crate::engine::hooks::leave_trigger_times(g, o, m))?;
     }
     Ok(())
 }

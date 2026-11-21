@@ -8,7 +8,6 @@
 //! to the graveyard.
 
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::hooks::fire_trigger;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -139,7 +138,7 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
         card = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
     }
     if card && !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
     }
     Ok(())
 }
@@ -156,7 +155,7 @@ fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     let went = crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
     if went && !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
     }
     Ok(())
 }

@@ -39,7 +39,7 @@ pub fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     let went = crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
     if went && !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
     }
     Ok(())
 }
@@ -707,7 +707,7 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let cd = g.perm(sac).real_card();
     let went = crate::engine::turn::remove_land(g, p, sac, Some(crate::engine::zones::Zone::Gy));
     if went && !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+        crate::engine::hooks::fire_trigger_for_land(g, sac, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
     }
     let Some(target) = target.filter(|t| g.player(p).library.contains(t)) else { return Ok("gy") };
     remove_card(&mut g.player_mut(p).library, target);

@@ -136,11 +136,15 @@ pub fn left_with(g: &mut Game, m: PermId, dying: Option<Sym>) -> Res {
         {
             continue;
         }
-        let (event, call) = match dying {
-            Some(cause) => (Event::Dies, Call::Dies { m, cause }),
-            None => (Event::ExiledFromBf, Call::Leaves { m }),
+        let (event, call, kind) = match dying {
+            Some(cause) => (Event::Dies, Call::Dies { m, cause }, "dies"),
+            None => (Event::ExiledFromBf, Call::Leaves { m }, "leaves"),
         };
-        ts.push(Trigger::new(x.owner, Some(v), TrigAct::Hook { event, call }));
+        // one instance, and one more for each Teysa Karlov, Drivnod or Gandalf the White of his controller
+        for k in 0..1 + crate::engine::hooks::total_trigger_copies(g, x.owner, kind, Some(m)).max(0) {
+            let act = TrigAct::Hook { event, call: call.clone() };
+            ts.push(Trigger { repeat: k > 0, ..Trigger::new(x.owner, Some(v), act) });
+        }
     }
     queue_triggers(g, ts)
 }

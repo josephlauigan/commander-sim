@@ -1278,6 +1278,10 @@ pub struct Game {
     pub dying: Option<PermId>,
     /// the permanent being exiled now (Kaya's Ghostform)
     pub exiling: Option<PermId>,
+    /// the permanent whose leaving fires the event now, when the call has no permanent (a land card put into a graveyard,
+    /// a land sacrificed): set around those fires like `dying` and `exiling`; Teysa Karlov, Drivnod and Gandalf the White
+    /// read it
+    pub leaving: Option<PermId>,
     /// the last turn a creature died (Barad-dûr)
     pub died_turn: Option<TurnStamp>,
     /// creatures that died this turn: (the turn, how many) (Lagomos, Hand of Hatred)
@@ -1558,6 +1562,7 @@ impl Game {
             returns: IndexMap::new(),
             dying: None,
             exiling: None,
+            leaving: None,
             died_turn: None,
             died_count: (None, 0),
             treasure_paid: 0,

@@ -209,9 +209,10 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
         let cd = g.perm(l).card();
         let went = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
         if !g.hooks.is_empty() {
-            fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Card(cd) })?;
+            let what = Call::Sacrifice { p, what: Sacrificed::Card(cd) };
+            crate::engine::hooks::fire_trigger_for_land(g, l, Event::Sacrifice, what)?;
             if went {
-                fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+                crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
             }
         }
         return Ok(Some(Sacrificed::Card(cd)));

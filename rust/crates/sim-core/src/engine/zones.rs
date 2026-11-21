@@ -576,19 +576,30 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
         if let Some(imp) = imp
             && imp.leaves.is_some()
         {
-            if imp.runs_at_once(Event::Leaves) {
-                (imp.leaves.unwrap())(g, m, m)?; // an effect ending
-            } else {
-                let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
-                queue_triggers(g, vec![Trigger::new(p, Some(m), act)])?; // "when it leaves" (Oblivion Ring)
+            // a leave-caused trigger happens once more for each Teysa Karlov, Drivnod or Gandalf the White; a duration that
+            // ends with the leaving ("until this leaves the battlefield") is not a trigger
+            let times =
+                if hooks::leave_hook_is_trigger(&imp, Event::Leaves) { hooks::leave_trigger_times(g, p, m) } else { 1 };
+            let mut entries = vec![];
+            for k in 0..times {
+                if imp.runs_at_once(Event::Leaves) {
+                    (imp.leaves.unwrap())(g, m, m)?; // an effect ending, or a trigger that has no window (Oblivion Ring)
+                } else {
+                    let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
+                    entries.push(Trigger { repeat: k > 0, ..Trigger::new(p, Some(m), act) }); // "when it leaves"
+                }
             }
+            queue_triggers(g, entries)?;
         }
     }
     if on {
         for s in crate::impls::t0_giada::sleuths_for(g, m) {
+            let o = g.perm(s).owner;
             let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
-            let t = Trigger::new(g.perm(s).owner, Some(s), act);
-            queue_triggers(g, vec![t])?; // Angelic Sleuth: another permanent of yours with counters left
+            let entries = (0..hooks::leave_trigger_times(g, o, m))
+                .map(|k| Trigger { repeat: k > 0, ..Trigger::new(o, Some(s), act.clone()) })
+                .collect();
+            queue_triggers(g, entries)?; // Angelic Sleuth: another permanent of yours with counters left
         }
     }
     if on && g.perm(m).token {
@@ -842,6 +853,8 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
 
 fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool, creature: bool) -> Res {
     let token = g.perm(m).token;
+    // Marchesa, Avacyn and Liesa return the card once whatever the number of times their trigger happens: the second
+    // instance finds it already on its way back, so Teysa Karlov and Gandalf the White add nothing here
     if g.marchesa_on && creature && !token {
         cardcode::marchesa_dies(g, p, m)?;
     }
@@ -862,8 +875,12 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         crate::impls::vondam_elspeth::left_with(g, m, Some(cause))?; // Syr Vondam, if he left earlier in this wipe
     }
     if selfdies {
-        let n = 1 + repl::trigger_copies(g, p, "dies", Some(m));
         let imp = g.registry.get(g.perm(m).cd.unwrap()).copied().unwrap();
+        let n = if hooks::leave_hook_is_trigger(&imp, Event::SelfDies) {
+            1 + repl::trigger_copies(g, p, "dies", Some(m))
+        } else {
+            1
+        };
         for k in 0..n {
             if imp.runs_at_once(Event::SelfDies) {
                 (imp.self_dies.unwrap())(g, m, m, cause)?;
@@ -883,17 +900,25 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
             hand_tag_death(g, q, p, m, creature)?;
         }
     }
+    // the engine's own "when this dies" triggers happen once more for each Teysa Karlov, Drivnod or Gandalf the White
+    let times = 1 + repl::trigger_copies(g, p, "dies", Some(m)).max(0);
     if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
-        crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
+        for _ in 0..times {
+            crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
+        }
     }
     if creature && g.perm(m).data.truthy(DataKey::DemonGift) {
-        crate::impls::t45_edgar::demon_dies(g, m)?; // --- Tiers 4/5 (edgar): Clavileño's gift
+        for _ in 0..times {
+            crate::impls::t45_edgar::demon_dies(g, m)?; // --- Tiers 4/5 (edgar): Clavileño's gift
+        }
     }
     if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }
     if card_tag_str(g, m, Tag::Fill) == Some("stitcher") {
-        mill(g, p, 3)?;
+        for _ in 0..times {
+            mill(g, p, 3)?;
+        }
     }
     die_rest(g, m, p, cause, creature)?;
     // die_rest puts the card in the graveyard; the granted trigger must resolve after that move.
@@ -955,27 +980,40 @@ fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, m: PermId, creature: b
 fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) -> Res {
     if creature {
         for q in g.opps(p).collect::<Vec<_>>() {
+            // each of their triggers happens once more per Teysa Karlov, Drivnod or Gandalf the White of theirs
+            let times = 1 + repl::trigger_copies(g, q, "dies", Some(m)).max(0);
             if has(g, q, Tag::Wurmdrain) {
                 let src = find(g, q, Tag::Wurmdrain)[0];
                 let name = format!("{} loses 2 life", g.player(p).name);
-                if trigger_window(g, q, Some(src), &name, None)? {
-                    lose_life(g, p, 2, Some(q), "drain", None)?; // Massacre Wurm
+                for _ in 0..times {
+                    if trigger_window(g, q, Some(src), &name, None)? {
+                        lose_life(g, p, 2, Some(q), "drain", None)?; // Massacre Wurm
+                    }
                 }
             }
             for h in find(g, q, Tag::Heir) {
-                repl::put_plus(g, h, 1); // Sephiroth, Planet's Heir
+                for _ in 0..times {
+                    repl::put_plus(g, h, 1); // Sephiroth, Planet's Heir
+                }
             }
         }
     }
-    if card_tag(g, m, Tag::Wurmcoil) && trigger_window(g, p, Some(m), "two 3/3 Wurms", Some(5.0))? {
-        // Oracle: colorless Phyrexian Wurm *artifact* creature tokens (they count for Karn, Mirrorworks, a Construct)
-        let mut art = PermData::default();
-        art.set(DataKey::Artifact, Val::Bool(true));
-        let wurm =
-            Tokens { color: Some(Colors::NONE), types: vec!["phyrexian", "wurm"], data: art, ..Tokens::new(1, 3) };
-        make_tokens(g, p, Tokens { dt: true, ..wurm.clone() })?;
-        make_tokens(g, p, Tokens { lifelink: true, ..wurm })?;
+    if card_tag(g, m, Tag::Wurmcoil) {
+        for _ in 0..1 + repl::trigger_copies(g, p, "dies", Some(m)).max(0) {
+            if !trigger_window(g, p, Some(m), "two 3/3 Wurms", Some(5.0))? {
+                continue;
+            }
+            // Oracle: colorless Phyrexian Wurm *artifact* creature tokens (they count for Karn, Mirrorworks, a Construct)
+            let mut art = PermData::default();
+            art.set(DataKey::Artifact, Val::Bool(true));
+            let wurm =
+                Tokens { color: Some(Colors::NONE), types: vec!["phyrexian", "wurm"], data: art, ..Tokens::new(1, 3) };
+            make_tokens(g, p, Tokens { dt: true, ..wurm.clone() })?;
+            make_tokens(g, p, Tokens { lifelink: true, ..wurm })?;
+        }
     }
+    // What comes back from the graveyard (undying, persist, Mikaeus, Ghostform, Ferocity, Perigee Beckoner) returns the
+    // card once: a second instance of the trigger finds it gone, so the trigger copiers add nothing below
     let x = g.perm(m).clone();
     if x.token {
         return crate::impls::t45_urza_yawgmoth::pest_dies(g, &x); // --- Tiers 4/5 (urza-yawgmoth): Blight Mound
@@ -1096,12 +1134,23 @@ fn exiled_from_bf_upto(g: &mut Game, m: PermId, last_born: Option<u32>) -> Res {
     }
     let imp = g.perm(m).cd.and_then(|c| g.registry.get(c).copied()).filter(|i| i.self_exiled.is_some());
     if let Some(imp) = imp {
-        if imp.runs_at_once(Event::SelfExiled) {
-            (imp.self_exiled.unwrap())(g, m, m)?;
+        let o = g.perm(m).owner;
+        // put into exile from the battlefield: a leaving that is not a death
+        let times = if hooks::leave_hook_is_trigger(&imp, Event::SelfExiled) {
+            1 + hooks::total_trigger_copies(g, o, "leaves", Some(m)).max(0) as u32
         } else {
-            let act = TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } };
-            queue_triggers(g, vec![Trigger::new(g.perm(m).owner, Some(m), act)])?;
+            1
+        };
+        let mut entries = vec![];
+        for k in 0..times {
+            if imp.runs_at_once(Event::SelfExiled) {
+                (imp.self_exiled.unwrap())(g, m, m)?;
+            } else {
+                let act = TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } };
+                entries.push(Trigger { repeat: k > 0, ..Trigger::new(o, Some(m), act) });
+            }
         }
+        queue_triggers(g, entries)?;
     }
     Ok(())
 }

@@ -6,7 +6,7 @@
 //! (engine/stack.rs), unless its card marks it as running at once.
 
 use crate::flow::Res;
-use crate::hooks::{Call, CardImpl, Event, TrigAct, Trigger};
+use crate::hooks::{Call, CardImpl, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
@@ -94,6 +94,36 @@ pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Opt
         return 0;
     }
     hooked(g, Event::TriggerCopies).iter().map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x)).sum()
+}
+
+/// The event that m's leaving is for the trigger copiers: a death ("dies": Teysa Karlov, Drivnod, Gandalf the White) or
+/// any other leaving ("leaves": Gandalf only). `Game::dying` is set around `zones::leave` for a death.
+pub fn leave_kind(g: &Game, m: PermId) -> crate::sym::Sym {
+    if g.dying == Some(m) { "dies" } else { "leaves" }
+}
+
+/// How many times a triggered ability of `controller`'s permanent caused by m leaving the battlefield happens: once, and
+/// once more for each Teysa Karlov, Drivnod or Gandalf the White (CR 603.2d). Call it from `zones::leave` and its helpers;
+/// the first instance is the original, the rest are repeats.
+pub fn leave_trigger_times(g: &Game, controller: PlayerId, m: PermId) -> u32 {
+    1 + total_trigger_copies(g, controller, leave_kind(g, m), Some(m)).max(0) as u32
+}
+
+/// What a leave event is, for the trigger copiers: (the kind, the permanent that left). A land card put into a graveyard
+/// and a land sacrificed carry no permanent: it is `Game::leaving`. None: no permanent (the copiers add nothing), or the
+/// event is not a leaving.
+fn leave_cause(g: &Game, e: Event, call: &Call) -> Option<(crate::sym::Sym, Option<PermId>)> {
+    match (e, call) {
+        (Event::Dies, Call::Dies { m, .. }) | (Event::CreatureToGy, Call::Leaves { m }) => Some(("dies", Some(*m))),
+        (Event::ExiledFromBf, Call::Leaves { m }) => Some(("leaves", Some(*m))),
+        (Event::LandGy, _) => g.leaving.map(|l| ("dies", Some(l))),
+        (Event::Sacrifice, Call::Sacrifice { what, .. }) => match what {
+            Sacrificed::Perm(m) => Some(("dies", Some(*m))),
+            Sacrificed::Token(_) => Some(("dies", None)),
+            Sacrificed::Card(_) => g.leaving.map(|l| ("dies", Some(l))),
+        },
+        _ => None,
+    }
 }
 
 /// Event doublers' additional instances caused by entering. None denotes an artifact token only.
@@ -212,6 +242,15 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
     fire_trigger_where(g, e, call, &|_, _| true, false)
 }
 
+/// `fire_trigger` for an event about a land card that left the battlefield from `l` (a land card put into a graveyard, a land
+/// sacrificed): the call carries no permanent, so `Game::leaving` names the one whose leaving it is, for the trigger copiers.
+pub fn fire_trigger_for_land(g: &mut Game, l: PermId, e: Event, call: Call) -> Res {
+    let prev = g.leaving.replace(l);
+    let r = fire_trigger(g, e, call);
+    g.leaving = prev;
+    r
+}
+
 /// `fire_trigger` for a pass of a loop that fires the whole event once more for each additional time (Ancient
 /// Greenwarden's landfall, Isshin's attacks): with `repeat` its triggers are repeats (`Trigger::repeat`), not firsts
 pub fn fire_trigger_pass(g: &mut Game, e: Event, call: Call, repeat: bool) -> Res {
@@ -327,8 +366,12 @@ pub fn fire_trigger_where(
             continue;
         }
         let mut reps = 1;
-        if let (Event::Dies, Call::Dies { m, .. }) = (e, &call) {
-            reps += total_trigger_copies(g, owner, "dies", Some(*m));
+        // a leave-caused trigger (CR 603.6c, 603.10a): Teysa Karlov, Drivnod, Gandalf the White
+        if matches!(e, Event::Dies | Event::ExiledFromBf | Event::CreatureToGy | Event::LandGy | Event::Sacrifice)
+            && leave_hook_is_trigger(&imp, e)
+            && let Some((kind, x)) = leave_cause(g, e, &call)
+        {
+            reps += total_trigger_copies(g, owner, kind, x);
         }
         if let (Event::Etb, Call::Etb { m, .. }) = (e, &call)
             && trig

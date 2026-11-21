@@ -572,7 +572,12 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
             let fetch = g.perm(l).card();
             if remove_land(g, p, l, Some(Zone::Gy)) {
-                fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+                crate::engine::hooks::fire_trigger_for_land(
+                    g,
+                    l,
+                    Event::LandGy,
+                    Call::Cards { p, cards: vec![fetch] },
+                )?;
             }
         }
         return Ok(());
@@ -602,7 +607,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if let Some(a) = agent_for(g, p) {
         agent_take(g, a, p, c);
         if went && !g.hooks.is_empty() {
-            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+            crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
         }
         return Ok(());
     }
@@ -615,7 +620,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     g.add_land(p, c, tapped || t);
     crate::glog!(g, "    cracks {} for {}", name, g.db.get(c).name);
     if went && !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
     }
     landfall(g, p)
 }

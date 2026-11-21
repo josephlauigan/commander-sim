@@ -124,7 +124,8 @@ pub fn sac_given_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     crate::glog!(g, "    {} sacrifices {}", pname(g, q), g.db.get(cd).name);
     super::lands::sac_land(g, q, l)?;
     if !g.hooks.is_empty() {
-        crate::engine::hooks::fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p: q, what: Sacrificed::Card(cd) })?;
+        let what = Call::Sacrifice { p: q, what: Sacrificed::Card(cd) };
+        crate::engine::hooks::fire_trigger_for_land(g, l, Event::Sacrifice, what)?;
     }
     crate::engine::zones::tergrid_steal(g, q, cd, q)
 }

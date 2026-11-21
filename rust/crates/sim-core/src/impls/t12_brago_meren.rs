@@ -341,12 +341,15 @@ pub fn creature_left(g: &mut Game, m: PermId) -> Res {
         let waiting = g
             .trig_queue
             .iter()
-            .any(|t| t.src == Some(s) && matches!(t.act, TrigAct::Hook { event: Event::Leaves, .. }));
-        if waiting {
-            continue;
-        }
+            .filter(|t| t.src == Some(s) && matches!(t.act, TrigAct::Hook { event: Event::Leaves, .. }))
+            .count() as u32;
+        // one trigger for the creatures that leave together; one more time for each Gandalf the White of the player when
+        // one of them is legendary or an artifact (what is waiting already counts)
+        let want = crate::engine::hooks::leave_trigger_times(g, p, m);
         let act = TrigAct::Hook { event: Event::Leaves, call: Call::Leaves { m } };
-        queue_triggers(g, vec![Trigger::new(p, Some(s), act)])?;
+        let entries =
+            (waiting..want).map(|k| Trigger { repeat: k > 0, ..Trigger::new(p, Some(s), act.clone()) }).collect();
+        queue_triggers(g, entries)?;
     }
     Ok(())
 }
