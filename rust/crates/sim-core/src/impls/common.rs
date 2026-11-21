@@ -866,7 +866,9 @@ fn drain_tags(g: &Game, p: PlayerId) -> f64 {
         as f64
 }
 
-/// common.death_value: what one creature death is worth to p right now (drains, cards, edicts), with copies
+/// common.death_value: what one creature death is worth to p right now (drains, cards, edicts), with copies. m is the
+/// creature that dies; with none the estimate is for p's cheapest creature (the doublers answer to what dies: Teysa
+/// Karlov and Drivnod to a creature, Gandalf the White to a legendary or artifact permanent)
 pub fn death_value(g: &Game, p: PlayerId, m: Option<PermId>) -> f64 {
     let names: Vec<&str> = g
         .player(p)
@@ -877,7 +879,11 @@ pub fn death_value(g: &Game, p: PlayerId, m: Option<PermId>) -> f64 {
         .collect();
     let drain = names.iter().map(|n| lookup(&DEATH_DRAIN, n)).psum() + drain_tags(g, p);
     let draw_ = names.iter().map(|n| lookup(&DEATH_DRAW, n)).psum();
-    let copies = 1 + if g.hooks.is_empty() { 0 } else { repl::trigger_copies(g, p, "dies", m) };
+    let copies = 1 + if g.hooks.is_empty() {
+        0
+    } else {
+        repl::trigger_copies(g, p, "dies", m.or_else(|| cheapest_creature(g, p)))
+    };
     let mut edict_v = 0.0;
     let k = names.iter().filter(|n| EDICTS.contains(n)).count() as f64;
     if k > 0.0 {
@@ -892,6 +898,13 @@ pub fn death_value(g: &Game, p: PlayerId, m: Option<PermId>) -> f64 {
     }
     let n = g.opps(p).count() as f64;
     copies as f64 * (drain * n * 0.8 + draw_ * 1.5 + k * edict_v) + super::sheoldred::seph_flip_bonus(g, p)
+}
+
+/// p's creature that is worth the least (not phased out)
+fn cheapest_creature(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cr: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&x| g.is_creature(x) && !g.perm(x).phased).collect();
+    min_by(&cr, |x| pval(g, x))
 }
 
 /// common.outlets: p's free sacrifice outlets
@@ -1021,9 +1034,9 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     let mut drain_per =
         pl.perms.iter().filter(|&&x| g.perm(x).cd.is_some()).map(|&x| lookup(&DEATH_DRAIN, card_name(g, x))).psum()
             + drain_tags(g, p);
-    drain_per *= (1 + if g.hooks.is_empty() { 0 } else { repl::trigger_copies(g, p, "dies", None) }) as f64;
-    let lethal = drain_per != 0.0 && g.opps(p).all(|q| g.player(q).life as f64 <= drain_per * fod.len() as f64);
     let m = min_by(&fod, |x| sac_worth(g, x)).unwrap();
+    drain_per *= (1 + if g.hooks.is_empty() { 0 } else { repl::trigger_copies(g, p, "dies", Some(m)) }) as f64;
+    let lethal = drain_per != 0.0 && g.opps(p).all(|q| g.player(q).life as f64 <= drain_per * fod.len() as f64);
     let x = g.perm(m);
     let busy = if post == Some(false) && !x.sick && !x.tapped { 0.8 } else { 0.0 };
     let gain_ = per - 1.5 * sac_worth(g, m) - busy;
