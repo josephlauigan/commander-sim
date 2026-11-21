@@ -921,3 +921,79 @@ fn creature_tokens_entering_under_hushbringer_give_cathars_crusade_nothing() {
     zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
     assert_eq!(counters(&g, runes), before, "creature tokens entering cause no ability to trigger");
 }
+
+#[test]
+fn tishanas_tidebinder_has_nothing_to_counter_under_hushbringer() {
+    let mut g = table(&["seph", "cloud", "sauron"]);
+    perm(&mut g, P2, HUSH);
+    let tide = hand(&mut g, P1, &["Tishana's Tidebinder"])[0];
+    lands(&mut g, P1, "Island", 3, false);
+    let archon = perm(&mut g, P0, "Archon of Cruelty");
+    assert!(!g.perm(archon).neutered, "its enters trigger never triggers, so nothing is countered");
+    assert!(g.player(P1).hand.contains(&tide), "Tidebinder stays in the hand");
+}
+
+// ------------------------------------------------------------------ the sacrifice routes
+#[test]
+fn a_treasure_spent_for_mana_is_an_artifact_put_into_a_graveyard_for_gandalf_but_not_for_teysa() {
+    use sim_core::cards::Colors;
+    use sim_core::engine::mana::{self, Source, Unit};
+    let drains = |copier: &str| {
+        let mut g = mine();
+        perm(&mut g, P0, "Disciple of the Vault");
+        perm(&mut g, P0, copier);
+        g.player_mut(P0).treasures = 1;
+        let opp = g.player(P1).life + g.player(P2).life;
+        mana::spend_unit(&mut g, P0, Unit::free(Source::Treasure, Colors::NONE, 1), 1, "").unwrap();
+        assert_eq!(g.player(P0).treasures, 0, "the Treasure was sacrificed");
+        opp - (g.player(P1).life + g.player(P2).life)
+    };
+    assert_eq!(drains(GANDALF), 2, "1 + Gandalf");
+    assert_eq!(drains(TEYSA), 1, "a Treasure is no creature");
+}
+
+#[test]
+fn a_hook_that_only_notes_the_wipe_a_creature_dies_in_is_not_copied_by_teysa() {
+    // Liesa, Forgotten Archangel's own death only records the wipe, for the creatures that die with her
+    let mut g = mine();
+    perm(&mut g, P0, "Liesa, Forgotten Archangel");
+    perm(&mut g, P0, TEYSA);
+    wipe(&mut g);
+    assert_eq!(g.t12_batch.len(), 1, "one record of the wipe, not one per additional time");
+}
+
+// ------------------------------------------------------------------ the land a leave event is about
+#[test]
+fn a_leave_event_fired_while_another_is_handled_is_not_about_the_first_land() {
+    use std::sync::atomic::{AtomicBool, Ordering};
+    static NESTED: AtomicBool = AtomicBool::new(false);
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Titania, Protector of Argoth");
+    // Titania's hook counts a life point each time it happens, and once, as it happens, fires the event for a basic land
+    // card that no permanent left from
+    let mut registry = sim_core::hooks::Registry::new(&g.db);
+    for d in g.db.iter() {
+        let c = card(&g, &d.name);
+        if let Some(i) = g.registry.get(c) {
+            registry.on(&g.db, &d.name, *i).unwrap();
+        }
+    }
+    registry.card(&g.db, "Titania, Protector of Argoth").unwrap().land_gy = Some(|g, _src, p, _c| {
+        g.player_mut(p).life += 1;
+        if !NESTED.swap(true, Ordering::SeqCst) {
+            let plains = card(g, "Plains");
+            sim_core::engine::hooks::fire_trigger(
+                g,
+                sim_core::hooks::Event::LandGy,
+                sim_core::hooks::Call::Cards { p, cards: vec![plains] },
+            )?;
+        }
+        Ok(())
+    });
+    g.registry = std::sync::Arc::new(registry);
+    let cradle = lands(&mut g, P0, "Gaea's Cradle", 1, false)[0];
+    let life = g.player(P0).life;
+    sim_core::impls::fixes::destroy_land(&mut g, P0, cradle).unwrap();
+    assert_eq!(g.player(P0).life - life, 3, "a legendary land: twice; the nested event is about no permanent: once");
+}
