@@ -32,8 +32,8 @@ use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
-    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, maskwood as maskwood_on, once_per_turn, protected_from,
-    pval, subtypes, untargetable,
+    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, is_artifact_perm, maskwood as maskwood_on, once_per_turn,
+    protected_from, pval, subtypes, untargetable,
 };
 use crate::engine::zones::{
     Enter, Tokens, Zone, die, draw, enter, landfall, leave, make_tokens, max_by, searchable, to_zone_card,
@@ -472,8 +472,7 @@ fn panharmonicon(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) 
         return 0;
     }
     let Some(m) = x else { return 1 }; // ("etb", None): an artifact token entering (`repl::trigger_copies`)
-    let art = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
-    (g.is_creature(m) || art) as i32
+    (g.is_creature(m) || is_artifact_perm(g, m)) as i32
 }
 
 // ================================================================== the Rebel searchers

@@ -297,6 +297,11 @@ fn a_token_that_is_an_artifact_counts_for_gandalf() {
     assert_eq!(total_trigger_copies(&g, P0, "etb", Some(wurm)), 0, "a plain creature token");
     g.perm_mut(wurm).data.set(sim_core::state::DataKey::Artifact, sim_core::state::Val::Bool(true));
     assert_eq!(total_trigger_copies(&g, P0, "etb", Some(wurm)), 1, "an artifact creature token (Wurmcoil's Wurm)");
+    assert!(sim_core::engine::values::is_artifact_perm(&g, wurm));
+    let runes = perm(&mut g, P0, "Mother of Runes");
+    assert!(!sim_core::engine::values::is_artifact_perm(&g, runes));
+    let ring = perm(&mut g, P0, "Sol Ring");
+    assert!(sim_core::engine::values::is_artifact_perm(&g, ring));
 }
 
 #[test]

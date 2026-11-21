@@ -8,7 +8,7 @@ use crate::engine::life::lose_life;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{card_name, epow};
+use crate::engine::values::{card_name, epow, is_artifact_perm};
 use crate::engine::zones::{agent_for, agent_take, draw, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -447,11 +447,29 @@ pub fn gandalf_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         })
 }
 
+/// **Gandalf the White**, second ability: "If a legendary permanent or an artifact entering or leaving the battlefield
+/// causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time." x is
+/// the permanent that entered or left as it last existed ("etb": entered; "dies": put into a graveyard from the
+/// battlefield; "leaves": left any other way; "landfall": a land entered). It need not be yours: the ability is. None
+/// is an artifact token that is a counter on the player (Treasure, Food, Clue): ("etb", None) entering and
+/// ("dies", None) put into a graveyard from the battlefield (sacrificed). A cast, an attack and the like are not
+/// entering or leaving. The caller checks that Gandalf is live (`hooked`).
+fn gandalf_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>) -> i32 {
+    if p != g.perm(src).owner || !matches!(kind, "etb" | "landfall" | "dies" | "leaves") {
+        return 0;
+    }
+    match x {
+        None => matches!(kind, "etb" | "dies") as i32,
+        Some(m) => (legendary(g, m) || is_artifact_perm(g, m)) as i32,
+    }
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Yoshimaru, Ever Faithful")?;
     c.etb = Some(yoshimaru_etb);
     c.land_enters = Some(yoshimaru_land);
+    r.card(db, GANDALF)?.trigger_copies = Some(gandalf_copies);
     r.card(db, "Minas Tirith")?.land_options = Some(minas_options);
     let w = r.card(db, WITCH)?;
     w.land_cols = Some(meadow_cols);

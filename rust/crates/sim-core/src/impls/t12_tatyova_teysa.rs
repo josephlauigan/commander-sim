@@ -407,9 +407,9 @@ fn market_main(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 // ================================================================== Drivnod, Carnage Dominus
 /// If a creature dying causes a triggered ability of a permanent you control to trigger, that ability triggers an
-/// additional time.
+/// additional time. ("dies", None) is an artifact token put into a graveyard from the battlefield: not a creature dying.
 fn drivnod_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, m: Option<PermId>) -> i32 {
-    (kind == "dies" && owner(g, src) == p && live(g, src) && m.is_none_or(|m| g.is_creature(m))) as i32
+    (kind == "dies" && owner(g, src) == p && m.is_some_and(|m| g.is_creature(m))) as i32
 }
 
 fn gy_creatures(g: &Game, p: PlayerId) -> Vec<CardId> {
