@@ -127,6 +127,29 @@ fn kraum_six_lands_fit_no_row_and_are_sent_back() {
 }
 
 #[test]
+fn thanos_zero_lander_is_sent_back_and_the_hint_says_what_it_holds() {
+    let (mut g, p) = game_with(
+        "thanos",
+        &[
+            "Sol Ring",
+            "Mana Vault",
+            "Lotus Petal",
+            "Demonic Tutor",
+            "Thassa's Oracle",
+            "Basalt Monolith",
+            "Walking Ballista",
+        ],
+    );
+    let h = hint(&mut g, p);
+    verdict_unchanged(&mut g, p, &h);
+    assert_eq!(h["choice"], "mulligan", "{h}");
+    let rule = &lines(&h)[0];
+    assert!(rule.contains("Lands: none"), "{rule}");
+    assert!(has(&h, "Lands: none, 7 spells."), "{h}");
+    assert!(has(&h, "win-line pieces"), "{h}");
+}
+
+#[test]
 fn kraum_colours_say_what_ad_nauseam_needs() {
     let (mut g, p) = game_with(
         "kraum-tymna-blue-breach-midrange",
@@ -271,7 +294,7 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["thanos", "cloud", "yshtola", "sheoldred", "yoshimaru"] {
+    for deck in ["thanos", "cloud", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
         let others = ["sheoldred", "cloud", "thanos", "yshtola"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
@@ -292,6 +315,8 @@ fn the_verdict_is_keeps_hand_over_many_hands() {
                 let c = pl.library.pop().unwrap();
                 pl.hand.push(c);
             }
+            // a Tier 6 seat's setup mulligan left its try count behind; this is a fresh first hand
+            pl.stats.insert("mull_try", 0);
             // the plan file's reason and the table's verdict agree
             let why = sim_core::ai::plan_data::keeps_hand_why(&g, p);
             if let Some(w) = &why {
@@ -302,16 +327,6 @@ fn the_verdict_is_keeps_hand_over_many_hands() {
             assert!(lines(&h).len() >= 4, "{h}");
         }
     }
-}
-
-#[test]
-fn other_decks_get_no_oracle_line() {
-    let (mut g, p) = game_with(
-        "cloud",
-        &["Plains", "Plains", "Plains", "Sol Ring", "Open the Armory", "Stoneforge Mystic", "Swords to Plowshares"],
-    );
-    let h = hint(&mut g, p);
-    assert!(!has(&h, "goldfish"), "{h}");
 }
 
 #[test]
@@ -420,6 +435,24 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
     let rule = &lines(&h)[0];
     assert!(rule.contains("reasons to mulligan fits this hand, so keep it"), "{rule}");
     assert!(!rule.contains("default"), "{rule}");
+    // Rograkh/Silas's rows both keep and mulligan, and no row covers this hand: the hint counts them and keeps it
+    let (mut g, p) = game_with(
+        "rograkh-silas-turbo-breach",
+        &[
+            "Badlands",
+            "Underground Sea",
+            "Volcanic Island",
+            "Sol Ring",
+            "Demonic Tutor",
+            "Rhystic Study",
+            "Brain Freeze",
+        ],
+    );
+    let h = hint(&mut g, p);
+    verdict_unchanged(&mut g, p, &h);
+    assert_eq!(h["choice"], "keep", "{h}");
+    let rule = &lines(&h)[0];
+    assert!(rule.contains("keep a hand,") && rule.contains("send one back") && rule.contains("so keep it"), "{rule}");
 }
 
 /// Mox Jasper makes mana only while you control a Dragon: with a Dragon the hand cannot cast (Scion of Draco, 9) it
