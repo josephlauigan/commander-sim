@@ -820,13 +820,13 @@ mod tests {
     #[test]
     fn hand_features_count_what_the_hand_holds() {
         let sim = sim();
-        let ctx = TierCtx::new(&sim, "yoshimaru", "t4", "loose", 2, false).unwrap();
+        // a Tier 6 pool deck: the oracle's effective mana (`eff`) is set for Tier 6 players only
+        let ctx = TierCtx::new(&sim, "kraum-tymna-blue-breach-midrange", "t6", "loose", 2, false).unwrap();
         for seed in 500000..500020u64 {
             for th in ctx.tries(seed) {
                 let f = hand_features(&sim.engine.db, &sim.engine.registry, &ctx.settings, &ctx.seat, &th.hand);
                 assert_eq!(f.lands, th.lands);
-                // the oracle's effective mana is a Tier 6 figure; none of JD's decks is Tier 6 now
-                assert!(th.eff.is_none_or(|e| e == f.eff));
+                assert_eq!(Some(f.eff), th.eff);
                 assert!(f.fast_mana <= 7 - f.lands && f.tutors <= 7 - f.lands && f.payoffs <= 7 - f.lands);
             }
         }
