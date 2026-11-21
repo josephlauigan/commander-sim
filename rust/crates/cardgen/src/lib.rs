@@ -4,6 +4,7 @@
 
 pub mod audit;
 pub mod autotag;
+pub mod bulk;
 pub mod cardinfo;
 pub mod cd;
 pub mod data;
