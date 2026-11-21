@@ -1,0 +1,1980 @@
+# roles_gold.toml: hand-labelled gold set for the card-knowledge role classifier.
+#
+# Purpose: the PRECISION STANDARD that the rule-based role classifier (cardgen roles) and the local LLM stage are
+#   measured against (documents/card-knowledge.md, "Role"; acceptance: gold micro-precision >= 0.90, micro-recall >= 0.85).
+# Date: 2026-11-21 (round 2: Opus review applied, JD approved the revisions). Catalog: data/knowledge/oracle.json (bulk_updated_at 2026-11-21T10:01:56Z, 35,113 cards).
+# Seed: 20261121 (Python random.Random). Sampling script: scratchpad gold/sample.py (deterministic; the seed lives here).
+#
+# Labels are hand-made from Oracle text; JD approves this file before it counts.
+# No classifier, regex tagger, carddb tag or existing tagging code was used to decide any label (independence is the point).
+#
+# Sampling
+#   source = "deck"   75 cards: the union of `cards` of every deck in data/decks.json `mine`, commander-legal, not a basic
+#                     land and not a meld result, sorted by name, shuffled with the seed, lands capped at 15 (15 drawn).
+#   source = "random" 75 cards: the same seed over every other commander-legal, non-basic, non-meld card in oracle.json
+#                     (sorted by name, Group A excluded), lands capped at 15 (1 drawn).
+#   source = "topup"  cards added by reading Oracle text so that every role has at least 5 (target 6) positive cards,
+#                     preferring real tournament-relevant Commander cards, and covering several roles at once where
+#                     the card really has them. Toxic Deluge, Cyclonic Rift, Esper Sentinel and Spark Double are in
+#                     JD's decks but not in the seeded sample, so they are "topup", not "deck".
+#   source = "decoy"  bait: looks like a role but is not. `not_roles` lists the roles it must NOT get. Many deck/random
+#                     cards also carry a `not_roles` for a tempting wrong role; the classifier must avoid those too.
+#
+# Labelling rule (from the design): a card gets every role one of its abilities fulfils as a MAIN or REPEATABLE effect,
+# at most 4, ordered by prominence; the first is `primary`. Incidental effects do not count. Lands get roles only
+# beyond tapping for one mana. An MDFC's land face adds nothing. Zero roles is allowed: roles = [] and primary = "".
+# Multi-face cards are judged as a whole card; a `prepare`-layout card gets the roles of its spell face (convention 21).
+#
+# Role definitions (design file, section 3, used as the standard):
+#   ramp        adds mana beyond a land drop: rocks, dorks, land ramp, rituals, cost reducers
+#   fixing      produces 2+ colours or any colour (lands included)
+#   draw        net cards in hand: draw, impulse draw, wheels
+#   selection   loot/rummage, scry or surveil 2+, card filtering with no net cards
+#   tutor       searches the library for a nonland card (a land search is ramp/fixing)
+#   removal     removes, steals or neutralises one opposing permanent (destroy, exile, bounce, -X/-X, fight, edict)
+#   wipe        removes 2+ permanents at once (each/all, or a mass -X/-X)
+#   counter     counters a spell or ability
+#   protection  protects your permanents or yourself (hexproof, indestructible, phasing, Fog, Boots)
+#   stax        taxes or restricts opponents, symmetrically or not (Rule of Law, Drannith, Esper Sentinel tax)
+#   discard     makes opponents discard
+#   gy-hate     exiles graveyards or stops graveyard use
+#   recursion   returns cards from your graveyard to hand or library, or lets you cast them from there
+#   reanimate   puts creatures from a graveyard onto the battlefield
+#   self-mill   puts your own cards into your graveyard (mill, Entomb, discard outlets)
+#   tokens      creates creature or treasure/clue tokens
+#   anthem      pumps or grants keywords to your team
+#   sac-outlet  sacrifices a permanent as a cost, repeatably
+#   drain       opponents lose life from triggers (aristocrats, Y'shtola-style payoffs)
+#   lifegain    gains life, or pays off life gained
+#   counters    puts +1/+1 or other counters; proliferate
+#   blink       exiles and returns your permanents
+#   copy        copies spells, permanents or tokens (clones included)
+#   extra-phase extra turns or extra combats
+#   finisher    ends or wins the game when resolved or untouched: alt-win, mass pump-and-attack, infinite enabler, overwhelming bomb
+#   evasion     makes your attackers unblockable or hard to block, or grants double strike
+#
+# Conventions applied to borderline calls. Each is a short self-contained clause that can be pasted into a role
+# definition or the LLM prompt; the notes cite them by number. Reviewers should challenge any of them.
+#  1. Keywords printed on a card that affect only that card give no evasion or protection role: flying, menace, shadow,
+#     landwalk, trample, hexproof, ward, protection from, indestructible, and text such as "this creature can't be
+#     blocked". Printed or static lifelink on a permanent, or a repeatable lifelink grant, is lifegain, listed last; a
+#     one-turn lifelink from a spell or trigger is incidental and gives no role. Giving evasion (flying, menace, fear,
+#     "can't be blocked", double strike) or protection (hexproof, shroud, indestructible, protection from) to other
+#     creatures is evasion or protection. A team-wide grant or pump of evasion or combat keywords is also anthem,
+#     applied evenly (Akroma's Will, Archetype of Imagination, Savage Beating); a team-wide grant of protection keywords
+#     only (Heroic Intervention) is protection, not anthem; granting trample alone is not evasion.
+#  2. A discard outlet is a repeatable ability whose only cost is discarding a card (Putrid Imp). Sacrificing or discarding
+#     as part of the cost of the card's own effect gives no sac-outlet or self-mill role: self-sacrifice (Evolving Wilds,
+#     Zack Fair, Mogg Fanatic), a one-time additional cost (Deadly Dispute, Bone Splinters), echo (Deepcavern Imp), a
+#     one-shot hand dump (Lion's Eye Diamond), random discard (Gamble) and mana-plus-discard activations (Rakdos
+#     Guildmage). Cards an effect puts into your graveyard by your choice (Entomb, Intuition, Scion of the Ur-Dragon) are
+#     self-mill; a pile the opponent splits (Fact or Fiction) is not.
+#  3. Draw means net card advantage. A spell's cantrip (Ponder, Smash, Startle, Relic of Progenitus) and a permanent that
+#     sacrifices itself to draw one card (Maze Skullbomb, Scroll of Avacyn) replace themselves and are not draw; a
+#     permanent that draws repeatedly or two or more cards (Investigator's Journal, Sinister Monolith, Bonders' Enclave)
+#     is draw. Impulse draw and playing cards from the top of the library are draw (Fblthp, Urza).
+#  4. Counters means a repeatable trigger or activation that puts +1/+1 or other counters on the card itself (K'rrik,
+#     Pests of Honor, Katara), on another permanent (backup, Arbor Armament), or proliferate. A counter placed once on the
+#     card itself by a keyword (renown, "enters with a +1/+1 counter") is not counters, and neither are bookkeeping
+#     counters (ki, suspect, void, finality, time).
+#  5. A land search that can reach lands of two or more colours (two basic types, any basic, any land) is fixing (Arid
+#     Mesa, Evolving Wilds, Urza's Cave, Ash Barrens' basic landcycling, Natural Connection); a search for ONE basic type
+#     (Mountaincycling, "basic Plains card") is not fixing. A search that puts the land onto the battlefield from a spell
+#     or an enter trigger, beyond your land drop, is also ramp; a fetch that only replaces itself is not ramp.
+#  6. Narrow or conditional versions of an effect still count when the effect is the card's main ability (Loyal
+#     Warhound's conditional land ramp, Delighted Halfling's restricted mana, Mox Jasper's Dragon condition).
+#  7. Cost reducers are ramp, even narrow ones (Danitha, Bladegraft Aspirant, Melek, Tam) and a life payment in place
+#     of mana (K'rrik); a cost reduction for the card itself only (The Pride of Hull Clade) is not ramp.
+#  8. Drain is repeatable opponent life loss (a trigger or an activation) or a spell that makes EACH opponent lose life
+#     (Exsanguinate); one-shot burn or damage to one player on a spell (Blightning, Refuse) is not drain. Damage or -X/-X
+#     that can hit a creature or any target is removal and not also drain (Lightning Bolt, Triskelion, Dragon Tempest).
+#     A targeted multi-permanent destroy (Decimate) is removal, not wipe; a 1-damage enter trigger (Thundermaw Hellkite)
+#     and combat-only damage (Ashmouth Hound) are neither wipe nor removal.
+#  9. A temporary steal (Metallic Mastery, "until end of turn") is not removal.
+# 10. An attack tax (Propaganda, Baird) is stax, not protection.
+# 11. A bare "tap target creature" (Flanking Troops, Pressure Point) gets no role.
+# 12. Manifest puts a card face down; it is not a token, so no tokens role (Ugin's Mastery).
+# 13. A card's alternate-mode ability counts when it is a real function of the card even though it is not repeatable:
+#     channel (Otawara), landcycling (Ash Barrens), flashback, and the spell face of an MDFC (Agadeem's Awakening). A
+#     planeswalker ultimate (a minus ability costing at least the starting loyalty) gives no role.
+# 14. Creature, Treasure and Clue tokens count as tokens (Deadly Dispute's Treasure, Undercity Dire Rat).
+# 15. Scry or surveil 2+ and dig effects that find a card without netting cards (Bond of Flourishing) are selection;
+#     scry 1 (Viscera Seer, Skywhaler's Shot) is not.
+# 16. Life: "gain/lose N life" is a role only when it is the effect's purpose (Exsanguinate, Approach of the Second Sun,
+#     Sinister Monolith's trigger) or a trigger that pays off life (Marauding Blight-Priest). A small rider on a spell
+#     whose main effect is something else is not (Sephiroth's Intervention, Bond of Flourishing). Life paid or lost by
+#     the caster (Reanimate, Thoughtseize, Phyrexian Arena) is neither drain nor lifegain.
+# 17. "Can't be countered" is neither counter nor protection (Mistrise Village, Delighted Halfling, Shifting Ceratops),
+#     and ward reminder text ("counter it unless that player pays") is not counter (Tomakul Honor Guard).
+# 18. A static, permanent mass -1/-1 (Curse of Death's Hold) counts as wipe.
+# 19. Mana from sacrificing (Ashnod's Altar, Phyrexian Altar) is ramp AND sac-outlet, ramp listed first; Phyrexian
+#     Altar also fixing (any colour).
+# 20. Roles never come from commander-deck context or combo knowledge that is not in the Oracle text (Doomsday is a
+#     tutor, not a finisher; Exquisite Blood is lifegain, not drain or finisher).
+# 21. A card with the prepare layout gets the roles of its spell face, because the card makes itself prepared and the
+#     spell is its repeatable function (Emeritus of Conflict // Lightning Bolt is removal); the reminder "you may cast a
+#     copy of its spell" is never copy.
+
+
+[[card]]
+name = "Absorbing Man and Titania"
+oracle_id = "a1afb796-1b0b-4f41-9c8f-5320c9af5989"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["finisher"]
+note = "'Double all damage that creature sources you control would deal.' is a damage doubler, not one of the 26 roles."
+
+[[card]]
+name = "Agadeem's Awakening // Agadeem, the Undercrypt"
+oracle_id = "562d71b9-1646-474e-9293-55da6947a758"
+roles = ["reanimate"]
+primary = "reanimate"
+source = "topup"
+not_roles = ["fixing", "ramp"]
+note = "Spell face: 'Return from your graveyard to the battlefield any number of target creature cards'; the land face adds nothing (MDFC rule)."
+
+[[card]]
+name = "Akroma's Will"
+oracle_id = "fd949f82-fc10-4e37-8aa9-6c7569fe3c55"
+roles = ["protection", "anthem", "evasion"]
+primary = "protection"
+source = "deck"
+not_roles = ["lifegain"]
+note = "Modes: 'indestructible, and protection from each color' (protection), 'Creatures you control gain flying, vigilance, and double strike' (anthem/evasion); both modes grant keywords to the whole team."
+
+[[card]]
+name = "Angelic Curator"
+oracle_id = "cca29a9b-794f-4712-8e6c-36ce3da9cb8b"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["protection"]
+note = "'Flying, protection from artifacts' are printed keywords on itself (convention 1)."
+
+[[card]]
+name = "Animate Dead"
+oracle_id = "c0d8fef4-65f4-4769-982d-b397d2b7e977"
+roles = ["reanimate"]
+primary = "reanimate"
+source = "topup"
+not_roles = []
+note = "'Return enchanted creature card to the battlefield under your control.'"
+
+[[card]]
+name = "Approach of the Second Sun"
+oracle_id = "e4125377-34c0-4b54-bdf8-4e88f5d24565"
+roles = ["finisher", "lifegain"]
+primary = "finisher"
+source = "topup"
+not_roles = []
+note = "'you win the game' on the second cast; the first cast gains 7 life (a main effect of that cast)."
+
+[[card]]
+name = "Arbor Armament"
+oracle_id = "504f21e8-82ac-4433-b5e9-640989480f58"
+roles = ["counters"]
+primary = "counters"
+source = "random"
+not_roles = ["protection"]
+note = "'Put a +1/+1 counter on target creature.' is the main effect; reach is a minor temporary grant."
+
+[[card]]
+name = "Archetype of Imagination"
+oracle_id = "a5458de0-0f61-49a3-a013-d90f92559809"
+roles = ["evasion", "anthem"]
+primary = "evasion"
+source = "topup"
+not_roles = ["stax"]
+note = "'Creatures you control have flying' is a team-wide keyword grant (evasion and anthem, convention 1); 'Creatures your opponents control lose flying and can't have or gain flying' removes opposing flyers and is not a tax or restriction on play."
+
+[[card]]
+name = "Ardenn, Intrepid Archaeologist"
+oracle_id = "7c521612-21c6-4c4b-b10e-66e70928609b"
+roles = []
+primary = ""
+source = "deck"
+not_roles = []
+note = "'attach any number of Auras and Equipment you control to target permanent or player' is equipment management, not one of the 26 roles; Partner is a keyword."
+
+[[card]]
+name = "Arid Mesa"
+oracle_id = "c5acf2a5-40f4-433d-a74d-1cb56c521464"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'Search your library for a Mountain or Plains card, put it onto the battlefield': a two-colour fetch is fixing (convention 5)."
+
+[[card]]
+name = "Ash Barrens"
+oracle_id = "58257464-278e-45fa-8e0b-bcd9a7500bc1"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'Basic landcycling {1}' finds any basic land: fixing beyond the {C} tap (convention 5, 13)."
+
+[[card]]
+name = "Ashmouth Hound"
+oracle_id = "d40fd63b-f55d-49f6-b4e5-a8d00f22e8e1"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["removal"]
+note = "'deals 1 damage to that creature' only when it blocks or is blocked: combat-only incidental damage."
+
+[[card]]
+name = "Ashnod's Altar"
+oracle_id = "4d18bcba-a346-445e-a182-6cc30b7e066d"
+roles = ["ramp", "sac-outlet"]
+primary = "ramp"
+source = "deck"
+not_roles = []
+note = "'Sacrifice a creature: Add {C}{C}.' is a repeatable sacrifice cost (sac-outlet) that makes mana (ramp)."
+
+[[card]]
+name = "Aurelia, the Warleader"
+oracle_id = "0f5a3a09-2f07-4774-9e0f-e99d9a444166"
+roles = ["extra-phase"]
+primary = "extra-phase"
+source = "topup"
+not_roles = ["evasion"]
+note = "'After this phase, there is an additional combat phase'; flying/vigilance/haste are printed."
+
+[[card]]
+name = "Baird, Steward of Argive"
+oracle_id = "69aa6809-5468-413a-94c9-562e6de93957"
+roles = ["stax"]
+primary = "stax"
+source = "deck"
+not_roles = ["protection"]
+note = "'Creatures can't attack you ... unless their controller pays {1} for each' is an attack tax: stax (convention 10)."
+
+[[card]]
+name = "Banisher Priest"
+oracle_id = "9f560b83-32d4-4bb4-a956-8f5db18599db"
+roles = ["removal"]
+primary = "removal"
+source = "decoy"
+not_roles = ["blink"]
+note = "'exile target creature an opponent controls until this creature leaves the battlefield' is removal; it exiles an opposing creature, not your own, so it is not blink."
+
+[[card]]
+name = "Banishment Decree"
+oracle_id = "567b676b-54f3-44c7-8654-4d2b0262ea12"
+roles = ["removal"]
+primary = "removal"
+source = "random"
+not_roles = []
+note = "'Put target artifact, creature, or enchantment on top of its owner's library.' (tuck)"
+
+[[card]]
+name = "Beseech the Mirror"
+oracle_id = "cbbe535b-12d6-4e6c-8b26-9220f06a1604"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = []
+note = "'Search your library for a card, exile it face down' finds any nonland card."
+
+[[card]]
+name = "Bladegraft Aspirant"
+oracle_id = "644c785d-3061-44bc-9f78-bc939c565bf4"
+roles = ["ramp"]
+primary = "ramp"
+source = "random"
+not_roles = ["evasion"]
+note = "'Equipment spells you cast cost {1} less to cast' is a (narrow) cost reducer; printed menace is not evasion."
+
+[[card]]
+name = "Blightning"
+oracle_id = "a6496440-dc0c-4d9b-bf37-f537b6f0187b"
+roles = ["discard"]
+primary = "discard"
+source = "topup"
+not_roles = ["drain"]
+note = "'That player or that planeswalker's controller discards two cards.' is the role; 'deals 3 damage to target player or planeswalker' is one-shot burn of one player, not drain (convention 8)."
+
+[[card]]
+name = "Blightsteel Colossus"
+oracle_id = "e80772e2-8623-4094-81a2-70828b2b151c"
+roles = ["finisher"]
+primary = "finisher"
+source = "deck"
+not_roles = ["evasion"]
+note = "'Trample, infect, indestructible': a 12-mana infect bomb that ends the game when untouched; printed trample is not evasion (convention 1)."
+
+[[card]]
+name = "Bojuka Bog"
+oracle_id = "04b7362d-0490-4cb0-b5d7-2a7732f659ce"
+roles = ["gy-hate"]
+primary = "gy-hate"
+source = "topup"
+not_roles = ["fixing"]
+note = "'When this land enters, exile target player's graveyard.' Taps for {B} only."
+
+[[card]]
+name = "Bond of Flourishing"
+oracle_id = "e9c9e730-3b73-48e3-845b-1b7f2d16050c"
+roles = ["selection"]
+primary = "selection"
+source = "random"
+not_roles = ["lifegain", "draw"]
+note = "'Look at the top three ... reveal a permanent card ... put it into your hand' is a dig that nets no extra card; the 3 life is incidental on a dig spell."
+
+[[card]]
+name = "Bonders' Enclave"
+oracle_id = "f33ce38a-34ec-4b65-a0fc-160484a02007"
+roles = ["draw"]
+primary = "draw"
+source = "deck"
+not_roles = []
+note = "'{3}, {T}: Draw a card. Activate only if you control a creature with power 4 or greater.' is a repeatable draw land ability."
+
+[[card]]
+name = "Bone Splinters"
+oracle_id = "0c936582-d4c0-4da8-bc7e-49da5a433939"
+roles = ["removal"]
+primary = "removal"
+source = "random"
+not_roles = ["sac-outlet"]
+note = "'Destroy target creature.' The sacrifice is a one-time additional cost."
+
+[[card]]
+name = "Brago, King Eternal"
+oracle_id = "fcb0c7db-bd07-4c25-b7f8-b6c207e4f6be"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = ["evasion"]
+note = "'exile any number of target nonland permanents you control, then return those cards to the battlefield'; flying is printed."
+
+[[card]]
+name = "Brushland"
+oracle_id = "5eb8b497-ec9a-4a89-ad29-1ec3ca82da7c"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'{T}: Add {G} or {W}': produces two colours."
+
+[[card]]
+name = "Carrion Feeder"
+oracle_id = "a1cc5e37-b09a-4b7f-afd5-77c1c35aa425"
+roles = ["sac-outlet", "counters"]
+primary = "sac-outlet"
+source = "topup"
+not_roles = []
+note = "'Sacrifice a creature: Put a +1/+1 counter on this creature.'"
+
+[[card]]
+name = "Chain of Vapor"
+oracle_id = "2167ac25-d042-4b48-b770-8b94acc1a965"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["copy"]
+note = "'Return target nonland permanent to its owner's hand' is bounce removal; the copy clause is the opponent's option, not the caster's effect."
+
+[[card]]
+name = "Conjurer's Closet"
+oracle_id = "cd1eda60-53e4-44d0-9b2c-7a57395e291f"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = []
+note = "'At the beginning of your end step, you may exile target creature you control, then return that card to the battlefield.'"
+
+[[card]]
+name = "Consecrated Sphinx"
+oracle_id = "311a449d-dc74-46e6-9a47-6a597931f736"
+roles = ["draw"]
+primary = "draw"
+source = "deck"
+not_roles = ["evasion"]
+note = "'Whenever an opponent draws a card, you may draw two cards.' is repeatable draw; printed flying is not evasion."
+
+[[card]]
+name = "Constant Mists"
+oracle_id = "c850a29e-dc40-4ab6-89f1-d501a1a350d1"
+roles = ["protection"]
+primary = "protection"
+source = "random"
+not_roles = []
+note = "'Prevent all combat damage that would be dealt this turn.' (Fog, rebuyable)"
+
+[[card]]
+name = "Craterhoof Behemoth"
+oracle_id = "8c52bd39-0586-48ca-b263-17210cf9feb6"
+roles = ["finisher", "anthem"]
+primary = "finisher"
+source = "topup"
+not_roles = []
+note = "'creatures you control gain trample and get +X/+X until end of turn' is a mass pump-and-attack finisher; trample is not evasion."
+
+[[card]]
+name = "Curse of Death's Hold"
+oracle_id = "7194cf15-69fc-46f0-987a-2cea8b498f50"
+roles = ["wipe"]
+primary = "wipe"
+source = "random"
+not_roles = ["stax"]
+note = "'Creatures enchanted player controls get -1/-1.' is a permanent mass -X/-X (convention 18)."
+
+[[card]]
+name = "Cyclonic Rift"
+oracle_id = "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b"
+roles = ["removal", "wipe"]
+primary = "removal"
+source = "topup"
+not_roles = []
+note = "'Return target nonland permanent you don't control to its owner's hand' is bounce removal; 'Overload {6}{U}' turns 'target' into 'each' and makes it a wipe."
+
+[[card]]
+name = "Danitha Capashen, Paragon"
+oracle_id = "4b6377da-83e7-4519-9582-16a9c16b8faa"
+roles = ["ramp", "lifegain"]
+primary = "ramp"
+source = "deck"
+not_roles = ["evasion"]
+note = "'Aura and Equipment spells you cast cost {1} less to cast' is a (narrow) cost reducer = ramp; printed 'lifelink' is lifegain, listed last (convention 1); first strike and vigilance give no role."
+
+[[card]]
+name = "Dauthi Voidwalker"
+oracle_id = "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786"
+roles = ["gy-hate"]
+primary = "gy-hate"
+source = "topup"
+not_roles = ["evasion"]
+note = "'If a card would be put into an opponent's graveyard from anywhere, instead exile it'; shadow is printed (convention 1)."
+
+[[card]]
+name = "Deadbridge Chant"
+oracle_id = "506667b1-7922-4959-a5b3-0f8abe8c3615"
+roles = ["self-mill", "recursion", "reanimate"]
+primary = "self-mill"
+source = "topup"
+not_roles = []
+note = "'When this enchantment enters, mill ten cards' and each upkeep a random graveyard card goes to the battlefield (creature) or to hand (otherwise)."
+
+[[card]]
+name = "Deadly Dispute"
+oracle_id = "457af74a-02b3-4659-846d-63e482667f34"
+roles = ["draw", "tokens"]
+primary = "draw"
+source = "deck"
+not_roles = ["sac-outlet"]
+note = "'Draw two cards and create a Treasure token'; the sacrifice is a one-time additional cost, not a repeatable outlet."
+
+[[card]]
+name = "Decimate"
+oracle_id = "a4e5693f-12a0-451e-818d-d6efc7b4ed25"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["wipe"]
+note = "'Destroy target artifact, target creature, target enchantment, and target land' is targeted removal, not each/all (convention 8, borderline vs wipe)."
+
+[[card]]
+name = "Deepcavern Imp"
+oracle_id = "1f295f2f-969a-4b82-98d1-7fe307ec83a7"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["discard", "self-mill"]
+note = "'Echo—Discard a card.' is an upkeep cost to yourself, not an opponent discard or a self-mill effect."
+
+[[card]]
+name = "Delighted Halfling"
+oracle_id = "f9d3b046-0b95-4103-a630-4b3fb88bb60b"
+roles = ["ramp", "fixing"]
+primary = "ramp"
+source = "deck"
+not_roles = ["protection", "counter"]
+note = "'{T}: Add {C}' and '{T}: Add one mana of any color' (restricted to legendary spells) make mana; 'can't be countered' is not protection (convention 17)."
+
+[[card]]
+name = "Demon's Jester"
+oracle_id = "da67c329-ca12-45fc-a9cd-8fb6f27501a9"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'Hellbent — This creature gets +2/+1' only pumps itself."
+
+[[card]]
+name = "Demonic Bargain"
+oracle_id = "ae18580a-1753-4dc8-b437-8a779b1a6e4d"
+roles = ["tutor"]
+primary = "tutor"
+source = "random"
+not_roles = ["self-mill"]
+note = "'then search your library for a card. Put that card into your hand'; the exiled top thirteen are not put into the graveyard."
+
+[[card]]
+name = "Doomsday"
+oracle_id = "721eb5a2-d7cf-4db0-8013-ef3f596c52a5"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = ["finisher", "self-mill"]
+note = "'Search your library and graveyard for five cards and exile the rest' finds any cards; Oracle text alone does not win the game."
+
+[[card]]
+name = "Dragon Tempest"
+oracle_id = "b9bacb46-fd1d-459b-81c2-d7d08fe73848"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["evasion"]
+note = "'Whenever a Dragon you control enters, it deals X damage to any target' is repeatable damage removal; haste to flyers is not evasion."
+
+[[card]]
+name = "Eladamri's Call"
+oracle_id = "4acb6612-54e8-428d-acb6-c7259a5ad6a8"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = []
+note = "'Search your library for a creature card, reveal that card, put it into your hand'."
+
+[[card]]
+name = "Emeritus of Conflict // Lightning Bolt"
+oracle_id = "5963eef1-1022-42b1-8a0c-fc9850bfc2a3"
+roles = ["removal"]
+primary = "removal"
+source = "decoy"
+not_roles = ["copy"]
+note = "Prepare layout: the card gets its spell face's roles (convention 21): 'Lightning Bolt deals 3 damage to any target.' is removal (conditional on becoming prepared, convention 6); 'you may cast a copy of its spell' is prepared-state reminder text and is never copy."
+
+[[card]]
+name = "Enlightened Tutor"
+oracle_id = "c5229c17-b7be-4b05-b683-f2277edc4849"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = []
+note = "'Search your library for an artifact or enchantment card ... put that card on top'."
+
+[[card]]
+name = "Entomb"
+oracle_id = "299fc083-0834-4064-8344-f895aff68867"
+roles = ["self-mill", "tutor"]
+primary = "self-mill"
+source = "topup"
+not_roles = []
+note = "'Search your library for a card, put that card into your graveyard': finds any card (tutor) and fills the graveyard."
+
+[[card]]
+name = "Ephemerate"
+oracle_id = "0fd57894-b917-41c8-a394-360d1d31b236"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = []
+note = "'Exile target creature you control, then return it to the battlefield under its owner's control.'"
+
+[[card]]
+name = "Esper Sentinel"
+oracle_id = "5def9f38-0a0b-4e8d-9f9d-29dcb46520b4"
+roles = ["stax", "draw"]
+primary = "stax"
+source = "topup"
+not_roles = []
+note = "'draw a card unless that player pays {X}, where X is this creature's power' taxes each opponent's first noncreature spell (stax) and draws when they decline."
+
+[[card]]
+name = "Essence Sliver"
+oracle_id = "1f35f5e3-ddd1-4293-96f8-1181bbda77eb"
+roles = ["lifegain"]
+primary = "lifegain"
+source = "random"
+not_roles = []
+note = "'Whenever a Sliver deals damage, its controller gains that much life.'"
+
+[[card]]
+name = "Eternal Witness"
+oracle_id = "30b24e8e-3b0e-4d8e-90f3-f66eb7c1858c"
+roles = ["recursion"]
+primary = "recursion"
+source = "topup"
+not_roles = []
+note = "'you may return target card from your graveyard to your hand.'"
+
+[[card]]
+name = "Evolving Wilds"
+oracle_id = "a75445d3-1303-4bb5-89ad-26ea93fecd48"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = ["ramp", "sac-outlet"]
+note = "'Search your library for a basic land card, put it onto the battlefield tapped': fixes any basic but is not ramp (replaces itself); self-sacrifice is not an outlet."
+
+[[card]]
+name = "Exalted Angel"
+oracle_id = "2f6e9ab8-6951-4c5f-bcde-0e96e0fe87f2"
+roles = ["lifegain"]
+primary = "lifegain"
+source = "deck"
+not_roles = ["evasion"]
+note = "'Whenever this creature deals damage, you gain that much life.' is explicit repeatable lifegain; printed flying is not evasion."
+
+[[card]]
+name = "Exquisite Blood"
+oracle_id = "8f933fae-6c0c-42d7-a817-14760d8285cd"
+roles = ["lifegain"]
+primary = "lifegain"
+source = "deck"
+not_roles = ["drain"]
+note = "'Whenever an opponent loses life, you gain that much life.' pays off life loss with lifegain; it does not itself make opponents lose life."
+
+[[card]]
+name = "Exsanguinate"
+oracle_id = "8164b1e8-3350-465e-8a17-75f57d326344"
+roles = ["drain", "lifegain"]
+primary = "drain"
+source = "deck"
+not_roles = []
+note = "'Each opponent loses X life. You gain life equal to the life lost this way.'"
+
+[[card]]
+name = "Fact or Fiction"
+oracle_id = "437b2dab-15e0-4b9a-a204-58622d37a3b3"
+roles = ["draw"]
+primary = "draw"
+source = "deck"
+not_roles = []
+note = "'Put one pile into your hand and the other into your graveyard' nets cards in hand (the graveyard pile is incidental)."
+
+[[card]]
+name = "Farewell"
+oracle_id = "4eb813fd-2d5a-4b02-8193-662681ef4e7d"
+roles = ["wipe", "gy-hate"]
+primary = "wipe"
+source = "topup"
+not_roles = []
+note = "'Exile all creatures' (and artifacts, enchantments) is a mass wipe; the 'Exile all graveyards' mode is graveyard hate."
+
+[[card]]
+name = "Fatal Push"
+oracle_id = "16437a83-be52-44cd-a768-a767c9347eb2"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = []
+note = "'Destroy target creature if it has mana value 2 or less.'"
+
+[[card]]
+name = "Fblthp, Lost on the Range"
+oracle_id = "764f6412-c4ff-4eec-9a9d-870661f97f8b"
+roles = ["draw"]
+primary = "draw"
+source = "random"
+not_roles = ["protection"]
+note = "'You may plot nonland cards from the top of your library' lets you play cards off the top (impulse draw); 'Ward {2}' is a printed keyword (convention 1)."
+
+[[card]]
+name = "Felidar Guardian"
+oracle_id = "33869ba6-13e5-4e48-8963-92f7965648fb"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = []
+note = "'you may exile another target permanent you control, then return that card to the battlefield'."
+
+[[card]]
+name = "Flanking Troops"
+oracle_id = "47bbb630-2bf7-47a2-93bb-266e491803c3"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["removal", "stax", "evasion"]
+note = "'Whenever this creature attacks, you may tap target creature.' is a temporary tap on one creature: no role under convention 11 (borderline)."
+
+[[card]]
+name = "Flooded Strand"
+oracle_id = "f3c7af78-a77d-4134-82a2-a5ce84285a84"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'Search your library for a Plains or Island card, put it onto the battlefield': two-colour fetch (convention 5)."
+
+[[card]]
+name = "Forge Boss"
+oracle_id = "c234d2ab-21d5-41a9-9ab8-47a8bd53a686"
+roles = ["drain"]
+primary = "drain"
+source = "random"
+not_roles = []
+note = "'Whenever you sacrifice one or more other creatures, this creature deals 2 damage to each opponent.'"
+
+[[card]]
+name = "Furnace Host Charger"
+oracle_id = "fea60c45-cc36-4dd1-8475-23a9361e370d"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["fixing", "ramp", "tutor"]
+note = "'Mountaincycling {2}' fetches one basic type only: no second colour, so no fixing (convention 5)."
+
+[[card]]
+name = "Gamble"
+oracle_id = "a54f0869-94c8-42af-9080-166efb9486a4"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = ["discard"]
+note = "'Search your library for a card, put that card into your hand'; the random discard is a cost to yourself."
+
+[[card]]
+name = "Genji Glove"
+oracle_id = "8242cd78-6675-43b5-8924-0a88c3aa6f76"
+roles = ["extra-phase", "evasion"]
+primary = "extra-phase"
+source = "topup"
+not_roles = []
+note = "'After this phase, there is an additional combat phase'; 'Equipped creature has double strike' (a grant, not a printed keyword)."
+
+[[card]]
+name = "Ghost Quarter"
+oracle_id = "2ec4288e-34c6-4831-a2c0-ba1ca1d9d1dc"
+roles = ["removal"]
+primary = "removal"
+source = "decoy"
+not_roles = ["fixing", "ramp", "tutor"]
+note = "'Destroy target land.' The 'Its controller may search their library' clause is the opponent's land, not the caster's ramp, fixing or tutor."
+
+[[card]]
+name = "Ghostform"
+oracle_id = "8d813b72-8ead-4a61-88ff-e93c8d843196"
+roles = ["evasion"]
+primary = "evasion"
+source = "random"
+not_roles = []
+note = "'Up to two target creatures can't be blocked this turn.'"
+
+[[card]]
+name = "Ghostly Flicker"
+oracle_id = "ad0070db-6454-41cb-861f-8f5b8fc2a3b8"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = []
+note = "'Exile two target artifacts, creatures, and/or lands you control, then return those cards to the battlefield.'"
+
+[[card]]
+name = "Glacial Floodplain"
+oracle_id = "5d3563dd-a2c1-463c-a0ed-5ac22388bdbe"
+roles = ["fixing"]
+primary = "fixing"
+source = "random"
+not_roles = []
+note = "'({T}: Add {W} or {U}.)' via its basic land types."
+
+[[card]]
+name = "Goblin Bombardment"
+oracle_id = "edad60c6-80de-4033-af1b-a703ac332983"
+roles = ["sac-outlet", "removal"]
+primary = "sac-outlet"
+source = "topup"
+not_roles = []
+note = "'Sacrifice a creature: This enchantment deals 1 damage to any target.'"
+
+[[card]]
+name = "Grafdigger's Cage"
+oracle_id = "753cb2b2-24ce-484f-a2d0-be6fd2c67ebd"
+roles = ["gy-hate", "stax"]
+primary = "gy-hate"
+source = "topup"
+not_roles = []
+note = "'Players can't cast spells from graveyards or libraries' stops graveyard use (gy-hate) and symmetrically restricts every player (stax)."
+
+[[card]]
+name = "Heroic Intervention"
+oracle_id = "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27"
+roles = ["protection"]
+primary = "protection"
+source = "deck"
+not_roles = []
+note = "'Permanents you control gain hexproof and indestructible until end of turn.'"
+
+[[card]]
+name = "Hidden Retreat"
+oracle_id = "a116329a-343e-4f10-a122-38bf8b5ac2c8"
+roles = ["protection"]
+primary = "protection"
+source = "random"
+not_roles = []
+note = "'Put a card from your hand on top of your library: Prevent all damage that would be dealt by target instant or sorcery spell this turn.'"
+
+[[card]]
+name = "Hired Muscle // Scarmaker"
+oracle_id = "ea31c9a4-af4f-4cab-b53c-77ef4241d4a6"
+roles = ["evasion"]
+primary = "evasion"
+source = "random"
+not_roles = ["counters"]
+note = "Scarmaker: 'Target creature gains fear until end of turn' is a repeatable evasion grant; 'you may put a ki counter on this creature' is flip bookkeeping (convention 4)."
+
+[[card]]
+name = "Hymn to Tourach"
+oracle_id = "992d9a72-d34d-47d7-96fb-37f0efb515ef"
+roles = ["discard"]
+primary = "discard"
+source = "topup"
+not_roles = []
+note = "'Target player discards two cards at random.'"
+
+[[card]]
+name = "Imperiosaur"
+oracle_id = "e9ced5d8-8337-403f-86a3-bddb9c77d658"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'Spend only mana produced by basic lands to cast this spell.' is a vanilla body."
+
+[[card]]
+name = "Intuition"
+oracle_id = "3c9faba7-f2d3-4978-be94-020dc8003dc0"
+roles = ["tutor", "self-mill"]
+primary = "tutor"
+source = "deck"
+not_roles = ["discard"]
+note = "'Search your library for three cards' is a tutor; 'the rest into your graveyard' puts two chosen cards into your graveyard by effect (convention 2), which is why it is played."
+
+[[card]]
+name = "Investigator's Journal"
+oracle_id = "22e0e822-c4aa-4ec1-b7e4-0c1c869ef71b"
+roles = ["draw"]
+primary = "draw"
+source = "random"
+not_roles = ["counters"]
+note = "'{2}, {T}, Remove a suspect counter from this artifact: Draw a card.' and a second '{2}, Sacrifice ...: Draw a card.' (a permanent that draws counts, convention 3)."
+
+[[card]]
+name = "Invisible Stalker"
+oracle_id = "1a137a67-4156-45c8-aae9-838f688e12bd"
+roles = []
+primary = ""
+source = "decoy"
+not_roles = ["evasion", "protection"]
+note = "Printed 'Hexproof' and 'This creature can't be blocked.' affect only itself and give no role (convention 1)."
+
+[[card]]
+name = "Jade Avenger"
+oracle_id = "177248b7-f3fd-42f8-b325-2625a2bb28ff"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'Bushido 2' only pumps itself."
+
+[[card]]
+name = "K'rrik, Son of Yawgmoth"
+oracle_id = "cbe3a4e7-5dbe-4f58-8ee6-a1762b65acfd"
+roles = ["ramp", "counters", "lifegain"]
+primary = "ramp"
+source = "deck"
+not_roles = []
+note = "'For each {B} in a cost, you may pay 2 life rather than pay that mana' is a mana-cost substitution (ramp, convention 7); 'put a +1/+1 counter on K'rrik' is repeatable; printed 'Lifelink' is lifegain, listed last (convention 1)."
+
+[[card]]
+name = "Karn, Gilded Guardian"
+oracle_id = "20b90a18-ff62-4995-b0d6-fbef44dca357"
+roles = ["draw"]
+primary = "draw"
+source = "random"
+not_roles = []
+note = "'When Karn enters, draw a card for each color among other artifacts you control.'"
+
+[[card]]
+name = "Katara, Bending Prodigy"
+oracle_id = "55adde23-c818-40fe-9bba-123de93568a5"
+roles = ["counters", "draw"]
+primary = "counters"
+source = "random"
+not_roles = []
+note = "'put a +1/+1 counter on her' each end step if tapped; 'Waterbend {6}: Draw a card.'"
+
+[[card]]
+name = "Laquatus's Disdain"
+oracle_id = "68f330ca-8279-46c5-900d-a9b443676104"
+roles = ["counter"]
+primary = "counter"
+source = "random"
+not_roles = ["draw"]
+note = "'Counter target spell cast from a graveyard.' The cantrip replaces the spell (convention 3)."
+
+[[card]]
+name = "Lathliss, Dragon Queen"
+oracle_id = "15fef45d-f1a9-49b2-abaa-fe77bb9d1afd"
+roles = ["tokens", "anthem"]
+primary = "tokens"
+source = "deck"
+not_roles = ["evasion"]
+note = "'create a 5/5 red Dragon creature token with flying' whenever another Dragon enters; '{1}{R}: Dragons you control get +1/+0' pumps the team."
+
+[[card]]
+name = "Lightning Bolt"
+oracle_id = "4457ed35-7c10-48c8-9776-456485fdf070"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["drain"]
+note = "'deals 3 damage to any target': damage removal (convention 8)."
+
+[[card]]
+name = "Liliana of the Veil"
+oracle_id = "0ba134d8-ee7d-48ec-8dc6-57942b8e9261"
+roles = ["discard", "removal"]
+primary = "discard"
+source = "topup"
+not_roles = []
+note = "'+1: Each player discards a card.' and '-2: Target player sacrifices a creature.' (edict)"
+
+[[card]]
+name = "Liliana, Death's Majesty"
+oracle_id = "7fca595e-1902-40fd-a359-622caa612b6a"
+roles = ["tokens", "reanimate", "self-mill"]
+primary = "tokens"
+source = "topup"
+not_roles = ["wipe"]
+note = "'+1: Create a 2/2 black Zombie creature token. Mill two cards.' and '-3: Return target creature card from your graveyard to the battlefield'; '-7: Destroy all non-Zombie creatures.' is an ultimate and gives no role (convention 13)."
+
+[[card]]
+name = "Lion's Eye Diamond"
+oracle_id = "ee6099b0-fb1f-42f1-b862-7708c6e36d05"
+roles = ["ramp"]
+primary = "ramp"
+source = "deck"
+not_roles = ["self-mill", "sac-outlet"]
+note = "'Discard your hand, Sacrifice this artifact: Add three mana of any one color': a one-shot ritual; discarding your hand is a cost (convention 2)."
+
+[[card]]
+name = "Living Death"
+oracle_id = "9e6a3df4-67a3-452e-a6ef-f04dbadb21ef"
+roles = ["reanimate", "wipe"]
+primary = "reanimate"
+source = "topup"
+not_roles = []
+note = "'puts all cards they exiled this way onto the battlefield' (mass reanimation) after 'sacrifices all creatures they control' (a creature wipe)."
+
+[[card]]
+name = "Long Lake Nuisance"
+oracle_id = "a833fdf1-db0c-4846-8452-d3b2059c2355"
+roles = ["selection", "tokens"]
+primary = "selection"
+source = "random"
+not_roles = ["evasion"]
+note = "'recruit' is 'Draw a card, then discard a card.' (a loot) and, if a nonland card was discarded, 'create a 1/1' Human Soldier token (a conditional token)."
+
+[[card]]
+name = "Loyal Warhound"
+oracle_id = "cc6a83c7-e645-4a53-9550-be79b42cd851"
+roles = ["ramp"]
+primary = "ramp"
+source = "deck"
+not_roles = ["fixing", "tutor"]
+note = "'search your library for a basic Plains card, put it onto the battlefield tapped' (conditional land ramp; Plains only, so no fixing)."
+
+[[card]]
+name = "Madame Hydra, Reanimated"
+oracle_id = "7274f6ed-310d-4b65-8083-eedb8e885a33"
+roles = ["self-mill"]
+primary = "self-mill"
+source = "random"
+not_roles = ["counters", "evasion"]
+note = "'Whenever Madame Hydra enters or attacks, mill two cards.' repeatable self-mill; the +1/+1 is a static bonus, menace is printed."
+
+[[card]]
+name = "Mana Drain"
+oracle_id = "74d3277a-38e5-4732-afed-084a56148f20"
+roles = ["counter", "ramp"]
+primary = "counter"
+source = "topup"
+not_roles = []
+note = "'Counter target spell.' then 'add an amount of {C} equal to that spell's mana value'."
+
+[[card]]
+name = "Marauding Blight-Priest"
+oracle_id = "814b87fe-2a75-4ff2-8637-7e69e3fb285b"
+roles = ["drain", "lifegain"]
+primary = "drain"
+source = "deck"
+not_roles = []
+note = "'Whenever you gain life, each opponent loses 1 life.' drains, and pays off life gained (lifegain definition)."
+
+[[card]]
+name = "Mardu Blazebringer"
+oracle_id = "352844c5-2160-4787-97f1-9cd0fed060eb"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'When this creature attacks or blocks, sacrifice it at end of combat.' is a drawback body."
+
+[[card]]
+name = "Mask of Intolerance"
+oracle_id = "990d4798-3f59-462d-952c-777da5af1c41"
+roles = ["drain"]
+primary = "drain"
+source = "random"
+not_roles = ["stax"]
+note = "'this artifact deals 3 damage to that player' at each player's upkeep (symmetric; borderline vs stax)."
+
+[[card]]
+name = "Mask of Memory"
+oracle_id = "d6b2c998-a226-426c-a40d-6e6007041bfe"
+roles = ["draw"]
+primary = "draw"
+source = "deck"
+not_roles = ["selection"]
+note = "'you may draw two cards. If you do, discard a card' nets +1 card per hit."
+
+[[card]]
+name = "Maze Skullbomb"
+oracle_id = "3cb91e96-285d-4191-97cd-ee7ce5d86eb2"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["draw", "anthem", "sac-outlet"]
+note = "'{1}, Sacrifice this artifact: Draw a card.' replaces itself like a cantrip (convention 3); the '+3/+3' goes to one creature."
+
+[[card]]
+name = "Medomai the Ageless"
+oracle_id = "b6b91ea7-a22c-4835-8c62-3360b0fd3a8b"
+roles = ["extra-phase"]
+primary = "extra-phase"
+source = "topup"
+not_roles = []
+note = "'Whenever Medomai deals combat damage to a player, take an extra turn after this one.'"
+
+[[card]]
+name = "Melek, Reforged Researcher"
+oracle_id = "23140c6f-c674-4d13-9b78-bce0ffcb981f"
+roles = ["ramp"]
+primary = "ramp"
+source = "random"
+not_roles = []
+note = "'The first instant or sorcery spell you cast each turn costs {3} less to cast.' (cost reducer)"
+
+[[card]]
+name = "Mental Misstep"
+oracle_id = "1a0770e6-b093-4439-baff-6889a50ba12e"
+roles = ["counter"]
+primary = "counter"
+source = "deck"
+not_roles = []
+note = "'Counter target spell with mana value 1.'"
+
+[[card]]
+name = "Merchant Scroll"
+oracle_id = "86cebe2a-95e7-4f22-99cc-e805aeaf347e"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = []
+note = "'Search your library for a blue instant card, reveal that card, put it into your hand'."
+
+[[card]]
+name = "Metallic Mastery"
+oracle_id = "7de034a4-a42a-4e60-9ec9-5e9bb9987cfa"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["removal"]
+note = "'Gain control of target artifact until end of turn' is a temporary steal: no role (convention 9)."
+
+[[card]]
+name = "Mind Twist"
+oracle_id = "78f9c223-9982-4282-a496-a6f892f0a5bf"
+roles = ["discard"]
+primary = "discard"
+source = "topup"
+not_roles = []
+note = "'Target player discards X cards at random.'"
+
+[[card]]
+name = "Mistrise Village"
+oracle_id = "339f5334-b65a-445a-a016-20e997e0b4bb"
+roles = []
+primary = ""
+source = "deck"
+not_roles = ["protection", "counter", "fixing"]
+note = "Taps for {U} only (no second colour) and 'The next spell you cast this turn can't be countered' is not protection (convention 17)."
+
+[[card]]
+name = "Mogg Fanatic"
+oracle_id = "7efd5d62-6da2-428a-98e3-5b842f668656"
+roles = ["removal"]
+primary = "removal"
+source = "decoy"
+not_roles = ["sac-outlet"]
+note = "'Sacrifice this creature: It deals 1 damage to any target.' sacrifices only itself (convention 2)."
+
+[[card]]
+name = "Moraug, Fury of Akoum"
+oracle_id = "6288c0cb-cf32-4ae9-abf0-104ec71654fa"
+roles = ["extra-phase", "anthem"]
+primary = "extra-phase"
+source = "topup"
+not_roles = []
+note = "'there's an additional combat phase after this phase' on landfall; 'Each creature you control gets +1/+0 for each time it has attacked this turn.'"
+
+[[card]]
+name = "Most Decrepit Old Bird // Speak Secrets"
+oracle_id = "34d34f2c-06ff-4acf-8f2f-ff867774b777"
+roles = ["self-mill", "selection"]
+primary = "self-mill"
+source = "random"
+not_roles = []
+note = "Speak Secrets: 'Mill four cards, then put an instant or sorcery card from among them into your hand.'"
+
+[[card]]
+name = "Mox Jasper"
+oracle_id = "d5fca77c-377f-41b4-a9e9-e91a89d351cc"
+roles = ["ramp", "fixing"]
+primary = "ramp"
+source = "deck"
+not_roles = []
+note = "'{T}: Add one mana of any color.' (conditional on a Dragon) is a mana rock producing any colour."
+
+[[card]]
+name = "Mystic Confluence"
+oracle_id = "cd11c27b-9368-4622-bc5a-2e0b993cc42b"
+roles = ["counter", "removal", "draw"]
+primary = "counter"
+source = "deck"
+not_roles = []
+note = "'Counter target spell unless its controller pays {3}', 'Return target creature to its owner's hand', 'Draw a card': three modes."
+
+[[card]]
+name = "Narcolepsy"
+oracle_id = "3da1412e-a72c-4da1-8848-37145ca6614a"
+roles = ["removal"]
+primary = "removal"
+source = "random"
+not_roles = []
+note = "'if enchanted creature is untapped, tap it' neutralises the creature (Pacifism-style)."
+
+[[card]]
+name = "Natural Connection"
+oracle_id = "dc85c659-f2ed-4b13-807c-d853f74de410"
+roles = ["ramp", "fixing"]
+primary = "ramp"
+source = "random"
+not_roles = []
+note = "'Search your library for a basic land card, put it onto the battlefield tapped' is land ramp, and an any-basic search is fixing (convention 5)."
+
+[[card]]
+name = "Nevinyrral's Disk"
+oracle_id = "96230edf-568a-47dd-b877-9d92aa58fac8"
+roles = ["wipe"]
+primary = "wipe"
+source = "deck"
+not_roles = []
+note = "'{1}, {T}: Destroy all artifacts, creatures, and enchantments.'"
+
+[[card]]
+name = "Nibelheim Aflame"
+oracle_id = "eab5eef8-d180-4b08-a770-6b3a1df03745"
+roles = ["wipe", "draw"]
+primary = "wipe"
+source = "deck"
+not_roles = []
+note = "'deals damage equal to its power to each other creature' (wipe); the flashback mode 'discard your hand and draw four cards' draws (borderline)."
+
+[[card]]
+name = "Ob Nixilis, the Fallen"
+oracle_id = "154104b7-4125-4276-8bc7-9a6edfe48cb9"
+roles = ["drain", "counters"]
+primary = "drain"
+source = "deck"
+not_roles = []
+note = "'Landfall ... target player lose 3 life. If you do, put three +1/+1 counters on Ob Nixilis.' drains and counters."
+
+[[card]]
+name = "Obelisk of Urd"
+oracle_id = "e2ef3a24-9e78-47fc-9192-049aa0ddb7a0"
+roles = ["anthem"]
+primary = "anthem"
+source = "random"
+not_roles = []
+note = "'Creatures you control of the chosen type get +2/+2.'"
+
+[[card]]
+name = "Odylic Wraith"
+oracle_id = "613fa223-856e-49c4-8952-224895e00b5e"
+roles = ["discard"]
+primary = "discard"
+source = "random"
+not_roles = ["evasion"]
+note = "'Whenever this creature deals damage to a player, that player discards a card.' swampwalk is printed."
+
+[[card]]
+name = "Ogre Berserker"
+oracle_id = "9e6f76dc-b7db-49b6-a61e-3495b81e61d7"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'Haste' only."
+
+[[card]]
+name = "Orim's Cure"
+oracle_id = "61eacaab-625b-499c-8602-f37ad5dda138"
+roles = ["protection"]
+primary = "protection"
+source = "random"
+not_roles = []
+note = "'Prevent the next 4 damage that would be dealt to any target this turn.'"
+
+[[card]]
+name = "Osteomancer Adept"
+oracle_id = "791cbb7c-7935-4902-b050-9ea9d030e9fa"
+roles = ["recursion"]
+primary = "recursion"
+source = "random"
+not_roles = []
+note = "'{T}: Until end of turn, you may cast creature spells from your graveyard by foraging' lets you cast from the graveyard."
+
+[[card]]
+name = "Otawara, Soaring City"
+oracle_id = "e9b6a394-691c-425a-9307-76d8edc7375e"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["fixing"]
+note = "'Channel ... Return target artifact, creature, enchantment, or planeswalker to its owner's hand' is bounce removal beyond the single-colour tap (convention 13)."
+
+[[card]]
+name = "Overrun"
+oracle_id = "204f9afe-c20b-4933-b5cd-aa572784762a"
+roles = ["finisher", "anthem"]
+primary = "finisher"
+source = "topup"
+not_roles = []
+note = "'Creatures you control get +3/+3 and gain trample until end of turn.' (mass pump finisher)"
+
+[[card]]
+name = "Paradigm Shift"
+oracle_id = "7179c2c5-c59c-4793-a3b5-28d26d755157"
+roles = ["recursion"]
+primary = "recursion"
+source = "random"
+not_roles = []
+note = "'Then shuffle your graveyard into your library.' returns graveyard cards to the library (borderline; exiling your library is not a role)."
+
+[[card]]
+name = "Path to Exile"
+oracle_id = "d683d985-9888-4d21-8b5f-69e69ce4a03b"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["ramp"]
+note = "'Exile target creature.' The land is given to the opponent, which is not ramp for the caster."
+
+[[card]]
+name = "Pests of Honor"
+oracle_id = "c2a4066a-f911-4622-beb2-683e7e10822f"
+roles = ["counters"]
+primary = "counters"
+source = "random"
+not_roles = []
+note = "'put a +1/+1 counter on this creature' each turn if celebration is met (repeatable)."
+
+[[card]]
+name = "Pharika's Disciple"
+oracle_id = "d7798312-657c-4f4a-9e2d-906284caf50f"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["counters"]
+note = "'Renown 1' is a one-time keyword counter on itself (convention 4); deathtouch is printed."
+
+[[card]]
+name = "Phyrexian Altar"
+oracle_id = "8d02b297-97c4-4379-9862-0a462400f66f"
+roles = ["ramp", "sac-outlet", "fixing"]
+primary = "ramp"
+source = "topup"
+not_roles = []
+note = "'Sacrifice a creature: Add one mana of any color.'"
+
+[[card]]
+name = "Phyrexian Arena"
+oracle_id = "ee579a32-a048-4335-b966-231ba731cdea"
+roles = ["draw"]
+primary = "draw"
+source = "deck"
+not_roles = []
+note = "'At the beginning of your upkeep, you draw a card and lose 1 life.'"
+
+[[card]]
+name = "Phyrexian Gargantua"
+oracle_id = "a3925dfd-62b0-44ef-8545-7bee92cad5a2"
+roles = ["draw"]
+primary = "draw"
+source = "random"
+not_roles = []
+note = "'When this creature enters, you draw two cards and you lose 2 life.'"
+
+[[card]]
+name = "Pipsqueak, Rebel Strongarm"
+oracle_id = "08a5445b-e9e6-44c3-9bc4-aff1b91c18a7"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'can't attack alone unless he has a +1/+1 counter' is a restriction on itself."
+
+[[card]]
+name = "Polluted Bonds"
+oracle_id = "13b33a41-c22b-4e7a-8323-abadf7f80961"
+roles = ["drain", "lifegain"]
+primary = "drain"
+source = "deck"
+not_roles = []
+note = "'that player loses 2 life and you gain 2 life' whenever an opponent's land enters."
+
+[[card]]
+name = "Ponder"
+oracle_id = "02090581-61aa-4348-ad57-451be8ee91c2"
+roles = ["selection"]
+primary = "selection"
+source = "deck"
+not_roles = ["draw"]
+note = "'Look at the top three cards ... put them back in any order. You may shuffle. Draw a card.' is filtering that replaces itself (no net card)."
+
+[[card]]
+name = "Pressure Point"
+oracle_id = "d4bbdd0c-e578-49ed-b2f7-b1decb04ee87"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["draw", "stax"]
+note = "'Tap target creature. Draw a card.' is a cantrip with a tap (conventions 3 and 11)."
+
+[[card]]
+name = "Propaganda"
+oracle_id = "ea9709b6-4c37-4d5a-b04d-cd4c42e4f9dd"
+roles = ["stax"]
+primary = "stax"
+source = "deck"
+not_roles = ["protection"]
+note = "'Creatures can't attack you unless their controller pays {2} for each creature' is an attack tax (convention 10)."
+
+[[card]]
+name = "Raffine, Scheming Seer"
+oracle_id = "9307f7e9-bcd9-41f9-88f8-0fb9700a6b12"
+roles = ["selection", "counters"]
+primary = "selection"
+source = "random"
+not_roles = ["evasion", "protection"]
+note = "'target attacking creature connives X' (draw X, discard X, +1/+1 counter per nonland discarded); flying and ward are printed."
+
+[[card]]
+name = "Rakdos Guildmage"
+oracle_id = "650949ca-609b-46c5-bc6b-6f782cdcb6d2"
+roles = ["removal", "tokens"]
+primary = "removal"
+source = "random"
+not_roles = ["self-mill", "discard"]
+note = "'{3}{B}, Discard a card: Target creature gets -2/-2' and '{3}{R}: Create a 2/1 red Goblin creature token with haste'; the discard is a cost (convention 2)."
+
+[[card]]
+name = "Rattleback Apothecary"
+oracle_id = "5538d4cf-98eb-4e20-a9c1-42c7cdcad194"
+roles = ["evasion"]
+primary = "evasion"
+source = "random"
+not_roles = ["lifegain"]
+note = "'target creature you control gains your choice of menace or lifelink until end of turn' is a repeatable crime-triggered menace grant (evasion); the one-turn lifelink option is incidental (convention 1); deathtouch is printed."
+
+[[card]]
+name = "Read the Bones"
+oracle_id = "5bf4d8d9-a2b2-4dba-ac05-9d4470a89db2"
+roles = ["draw", "selection"]
+primary = "draw"
+source = "deck"
+not_roles = ["lifegain"]
+note = "'Scry 2, then draw two cards. You lose 2 life.' draws; scry 2 meets the selection threshold."
+
+[[card]]
+name = "Reanimate"
+oracle_id = "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0"
+roles = ["reanimate"]
+primary = "reanimate"
+source = "topup"
+not_roles = ["drain"]
+note = "'Put target creature card from a graveyard onto the battlefield under your control.' The life loss is the caster's own."
+
+[[card]]
+name = "Refuse // Cooperate"
+oracle_id = "7db22241-fe43-4071-9af9-de1cf394f7f5"
+roles = ["copy"]
+primary = "copy"
+source = "random"
+not_roles = ["drain"]
+note = "Cooperate: 'Copy target instant or sorcery spell.'; Refuse 'deals damage to target spell's controller equal to that spell's mana value' is one-shot burn of one player, not drain (convention 8)."
+
+[[card]]
+name = "Regrowth"
+oracle_id = "e6e4a8bd-5c40-4654-8de1-0da9afed90fd"
+roles = ["recursion"]
+primary = "recursion"
+source = "topup"
+not_roles = []
+note = "'Return target card from your graveyard to your hand.'"
+
+[[card]]
+name = "Relic of Progenitus"
+oracle_id = "6a9c3401-570c-41cb-a605-75dfa57d6ab7"
+roles = ["gy-hate"]
+primary = "gy-hate"
+source = "topup"
+not_roles = ["draw"]
+note = "'{1}, Exile this artifact: Exile all graveyards. Draw a card.' The cantrip is incidental."
+
+[[card]]
+name = "Rest in Peace"
+oracle_id = "087f9ad7-e74f-40e2-8102-1ed2925d0418"
+roles = ["gy-hate"]
+primary = "gy-hate"
+source = "topup"
+not_roles = []
+note = "'If a card or token would be put into a graveyard from anywhere, exile it instead.'"
+
+[[card]]
+name = "Restoration Angel"
+oracle_id = "dfbd3afc-9905-4cff-a4f4-df08a4d0a7fa"
+roles = ["blink"]
+primary = "blink"
+source = "topup"
+not_roles = ["evasion"]
+note = "'you may exile target non-Angel creature you control, then return that card to the battlefield'; flying is printed."
+
+[[card]]
+name = "Revel in Riches"
+oracle_id = "cc3fcd26-c088-4335-9a35-0e11019e3d5b"
+roles = ["finisher", "tokens"]
+primary = "finisher"
+source = "topup"
+not_roles = []
+note = "'if you control ten or more Treasures, you win the game'; 'create a Treasure token' whenever an opposing creature dies."
+
+[[card]]
+name = "Rings of Brighthearth"
+oracle_id = "bbf9494c-c4bb-4d36-98fe-8387846b342e"
+roles = ["copy"]
+primary = "copy"
+source = "deck"
+not_roles = []
+note = "'you may pay {2}. If you do, copy that ability.'"
+
+[[card]]
+name = "Savage Beating"
+oracle_id = "89d1cd45-8148-4396-a9b8-e0f495e94b5b"
+roles = ["extra-phase", "anthem", "evasion"]
+primary = "extra-phase"
+source = "topup"
+not_roles = []
+note = "Mode 2: 'there is an additional combat phase'; mode 1: 'Creatures you control gain double strike until end of turn' (team keyword grant; double strike counts as evasion)."
+
+[[card]]
+name = "Scion of the Ur-Dragon"
+oracle_id = "b4031540-584b-4c8a-9e4e-d68ae5cdec5b"
+roles = ["tutor", "copy", "self-mill"]
+primary = "tutor"
+source = "deck"
+not_roles = ["evasion"]
+note = "'{2}: Search your library for a Dragon permanent card and put it into your graveyard ... becomes a copy of that card until end of turn'."
+
+[[card]]
+name = "Scoria Cat"
+oracle_id = "88ef3413-21bc-428a-9803-d275e437c4bd"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'gets +3/+3 as long as you control no untapped lands' only pumps itself."
+
+[[card]]
+name = "Scroll of Avacyn"
+oracle_id = "f728c4f1-178f-421b-a713-21f85892f051"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["draw", "lifegain"]
+note = "'{1}, Sacrifice this artifact: Draw a card.' replaces itself like a cantrip (convention 3); 'you gain 5 life' is a conditional rider (convention 16)."
+
+[[card]]
+name = "Seagraf Skaab"
+oracle_id = "1c7dd66f-a062-49ac-aa7c-1bf5ec069d73"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "No Oracle text: a vanilla body."
+
+[[card]]
+name = "Sephiroth's Intervention"
+oracle_id = "94ac2990-58a5-43d4-bdac-ec2f6daf0b51"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["lifegain"]
+note = "'Destroy target creature.' The 'gain 2 life' is incidental."
+
+[[card]]
+name = "Shatter the Source"
+oracle_id = "d8b3bcf2-1be1-46ed-9531-ca4ce98e3b3c"
+roles = ["removal"]
+primary = "removal"
+source = "random"
+not_roles = []
+note = "'deals 6 damage to target creature, planeswalker, or battle' or 'Destroy target artifact.'"
+
+[[card]]
+name = "Shields Up!"
+oracle_id = "0e14940b-87e1-4139-8f30-3629b3ad3a59"
+roles = ["protection"]
+primary = "protection"
+source = "random"
+not_roles = ["counters"]
+note = "'gains hexproof and indestructible until end of turn'; the counter is conditional and incidental."
+
+[[card]]
+name = "Shifting Ceratops"
+oracle_id = "6cac6f76-f3c6-4b00-a468-166b07853401"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["protection", "counter"]
+note = "'This spell can't be countered' and 'Protection from blue' are about itself (conventions 1 and 17)."
+
+[[card]]
+name = "Shivan Reef"
+oracle_id = "0fe16212-66c3-4e45-a641-7391e9b2e304"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'{T}: Add {U} or {R}.'"
+
+[[card]]
+name = "Silverblade Paladin"
+oracle_id = "ded0316f-5eed-4a80-91ad-ca236fd16f01"
+roles = ["evasion"]
+primary = "evasion"
+source = "deck"
+not_roles = []
+note = "'both creatures have double strike' grants double strike (soulbond pair only)."
+
+[[card]]
+name = "Sinister Monolith"
+oracle_id = "ae8003eb-9f19-4f23-be3b-0ac3ddc03a72"
+roles = ["drain", "draw", "lifegain"]
+primary = "drain"
+source = "random"
+not_roles = []
+note = "'each opponent loses 1 life and you gain 1 life' every combat; '{T}, Pay 2 life, Sacrifice ...: Draw two cards.'"
+
+[[card]]
+name = "Skirsdag High Priest"
+oracle_id = "c6064c08-e4e0-49f4-9f0b-55cdecf443af"
+roles = ["tokens"]
+primary = "tokens"
+source = "random"
+not_roles = []
+note = "'Create a 5/5 black Demon creature token with flying.'"
+
+[[card]]
+name = "Skywhaler's Shot"
+oracle_id = "f3d4e48e-5f98-44a6-ad5c-a1c068aa01eb"
+roles = ["removal"]
+primary = "removal"
+source = "decoy"
+not_roles = ["selection"]
+note = "'Destroy target creature with power 3 or greater.' The trailing 'Scry 1.' is below the selection threshold."
+
+[[card]]
+name = "Smash"
+oracle_id = "1602f8c7-fe00-4bc9-b4fc-b26b7223ac75"
+roles = ["removal"]
+primary = "removal"
+source = "random"
+not_roles = ["draw"]
+note = "'Destroy target artifact.' Draw a card is a cantrip."
+
+[[card]]
+name = "Snapcaster Mage"
+oracle_id = "2bb2eda7-3b38-4c56-870f-c3218a1056f5"
+roles = ["recursion"]
+primary = "recursion"
+source = "topup"
+not_roles = []
+note = "'target instant or sorcery card in your graveyard gains flashback until end of turn' (cast from graveyard)."
+
+[[card]]
+name = "Spark Double"
+oracle_id = "8dcb35e5-ae44-455f-86e3-4a77d496ff34"
+roles = ["copy"]
+primary = "copy"
+source = "topup"
+not_roles = ["counters"]
+note = "'You may have this creature enter as a copy of a creature or planeswalker you control' is a clone; the 'additional +1/+1 counter' is a one-time enters-with counter, which convention 4 excludes (coordinator ruling, 2026-11-21: dropped from the Opus review's labels)."
+
+[[card]]
+name = "Spinnerette, Arachnobat"
+oracle_id = "9372f286-5ea6-4abb-b695-1ad5f46efe34"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["evasion"]
+note = "'open an Attraction' is an Un-set mechanic outside the roles; reach and menace are printed."
+
+[[card]]
+name = "Spirebluff Canal"
+oracle_id = "eb0d8093-5f93-4b25-9384-08f9731bfb28"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'{T}: Add {U} or {R}.'"
+
+[[card]]
+name = "Spirit of Resilience"
+oracle_id = "ddc85b23-113a-46e9-ab09-fae9312c72fa"
+roles = ["counters", "copy"]
+primary = "counters"
+source = "random"
+not_roles = []
+note = "'put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card' whenever cards leave your graveyard."
+
+[[card]]
+name = "Startle"
+oracle_id = "7996222e-68c8-4a5c-9531-c60cdd88ae05"
+roles = ["tokens"]
+primary = "tokens"
+source = "random"
+not_roles = ["draw"]
+note = "'Create a 2/2 black Zombie creature token with decayed.' draw is a cantrip; -2/-0 is a minor trick."
+
+[[card]]
+name = "Stomping Ground"
+oracle_id = "16052b52-ade1-406f-a06b-ce7ea607fb63"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'({T}: Add {R} or {G}.)' via its basic land types."
+
+[[card]]
+name = "Stonybrook Schoolmaster"
+oracle_id = "7ef67bae-4af3-47b9-95d2-08f3c5a0b39d"
+roles = ["tokens"]
+primary = "tokens"
+source = "random"
+not_roles = []
+note = "'Whenever this creature becomes tapped, you may create a 1/1 blue Merfolk Wizard creature token.'"
+
+[[card]]
+name = "Streetwise Negotiator"
+oracle_id = "74b631c5-9420-496e-8845-3b050d3d5340"
+roles = ["counters"]
+primary = "counters"
+source = "random"
+not_roles = []
+note = "'Backup 1 (When this creature enters, put a +1/+1 counter on target creature.'"
+
+[[card]]
+name = "Sublime Epiphany"
+oracle_id = "56148ae7-a9df-4771-8d53-d9ffb815c884"
+roles = ["counter", "removal", "copy", "draw"]
+primary = "counter"
+source = "topup"
+not_roles = []
+note = "Modes: 'Counter target spell', 'Return target nonland permanent to its owner's hand', 'Create a token that's a copy of target creature you control', 'Target player draws a card'."
+
+[[card]]
+name = "Swan Song"
+oracle_id = "8ddfc283-c9b4-41a5-af88-cf0068e986cc"
+roles = ["counter"]
+primary = "counter"
+source = "deck"
+not_roles = ["tokens"]
+note = "'Counter target enchantment, instant, or sorcery spell.' The Bird token goes to the opponent."
+
+[[card]]
+name = "Swarm of Rats"
+oracle_id = "7fe21ade-01f1-45ff-9b70-bc6302c3d284"
+roles = []
+primary = ""
+source = "random"
+not_roles = []
+note = "'power is equal to the number of Rats you control' only affects itself."
+
+[[card]]
+name = "Talisman of Progress"
+oracle_id = "00e35322-1a9a-41e3-9ce1-359c8eaa3bc7"
+roles = ["ramp", "fixing"]
+primary = "ramp"
+source = "deck"
+not_roles = []
+note = "'{T}: Add {W} or {U}.' is a mana rock with two colours."
+
+[[card]]
+name = "Tam, the Possibility"
+oracle_id = "c92c7744-0c92-4a36-9ada-4ffca812009e"
+roles = ["ramp", "counters"]
+primary = "ramp"
+source = "random"
+not_roles = []
+note = "'Planeswalker spells you cast cost {1} less' (cost reducer) and '{W}{U}{B}{R}{G}, {T}: Proliferate X times'."
+
+[[card]]
+name = "Tezzeret the Seeker"
+oracle_id = "4aeafdf3-7828-4114-8c74-3bd46357caec"
+roles = ["tutor"]
+primary = "tutor"
+source = "random"
+not_roles = []
+note = "'−X: Search your library for an artifact card with mana value X or less, put it onto the battlefield'."
+
+[[card]]
+name = "Thalia, the Survivor"
+oracle_id = "55ef129e-698e-424f-be3c-3fbba6c2cc3e"
+roles = ["stax", "lifegain"]
+primary = "stax"
+source = "deck"
+not_roles = []
+note = "'Noncreature spells your opponents cast cost {1} more to cast' is a tax; printed 'Lifelink' is lifegain, listed last (convention 1)."
+
+[[card]]
+name = "Thassa's Oracle"
+oracle_id = "1de1b591-a73f-4974-b507-8c63e07a0868"
+roles = ["finisher"]
+primary = "finisher"
+source = "topup"
+not_roles = ["selection"]
+note = "'If X is greater than or equal to the number of cards in your library, you win the game.' The top-X look is incidental."
+
+[[card]]
+name = "The Pride of Hull Clade"
+oracle_id = "bbd7b756-bbee-451e-9446-06019791cb36"
+roles = ["draw"]
+primary = "draw"
+source = "random"
+not_roles = ["ramp"]
+note = "'{2}{U}{U}: Until end of turn, target creature you control gets +1/+0' and gains a trigger to 'draw cards equal to its toughness'; the self cost reduction is not ramp (convention 7)."
+
+[[card]]
+name = "Thoughtseize"
+oracle_id = "edd8d1e8-be43-4c38-bb3a-83081fbaf0b5"
+roles = ["discard"]
+primary = "discard"
+source = "topup"
+not_roles = []
+note = "'You choose a nonland card from it. That player discards that card.'"
+
+[[card]]
+name = "Thundermaw Hellkite"
+oracle_id = "e958144e-01bc-46ff-8f56-ddf2eb098630"
+roles = []
+primary = ""
+source = "deck"
+not_roles = ["wipe", "removal", "evasion"]
+note = "'deals 1 damage to each creature with flying your opponents control. Tap those creatures' is an incidental enter trigger, not a board wipe; flying and haste are printed keywords."
+
+[[card]]
+name = "Time Warp"
+oracle_id = "dbd6a94b-62ff-4a10-9d52-bdd90b26e425"
+roles = ["extra-phase"]
+primary = "extra-phase"
+source = "topup"
+not_roles = []
+note = "'Target player takes an extra turn after this one.'"
+
+[[card]]
+name = "Tomakul Honor Guard"
+oracle_id = "b68cf4e6-205e-40b6-b28b-f4b7d8af7017"
+roles = []
+primary = ""
+source = "decoy"
+not_roles = ["counter", "protection"]
+note = "'Ward {2}' is a printed keyword on itself (convention 1); the reminder 'counter it unless that player pays {2}' is not a counter effect (convention 17)."
+
+[[card]]
+name = "Toxic Deluge"
+oracle_id = "afaef788-34d1-460b-b884-9d7ae6ddeb18"
+roles = ["wipe"]
+primary = "wipe"
+source = "topup"
+not_roles = []
+note = "'All creatures get -X/-X until end of turn.' is a mass -X/-X; paying X life is the caster's cost."
+
+[[card]]
+name = "Triskelion"
+oracle_id = "74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1"
+roles = ["removal"]
+primary = "removal"
+source = "deck"
+not_roles = ["counters"]
+note = "'Remove a +1/+1 counter from this creature: It deals 1 damage to any target.' repeatable pinger; removing its own counters is a cost."
+
+[[card]]
+name = "Tropical Island"
+oracle_id = "74b7fe23-5d3a-4092-8d78-7c0eba8f6f73"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'({T}: Add {G} or {U}.)' via its basic land types."
+
+[[card]]
+name = "Twinflame"
+oracle_id = "83cf1169-5853-4332-b897-7b17d72d76ab"
+roles = ["copy", "tokens"]
+primary = "copy"
+source = "deck"
+not_roles = []
+note = "'create a token that's a copy of that creature, except it has haste' for each chosen creature."
+
+[[card]]
+name = "Ugin's Mastery"
+oracle_id = "d6158860-ada8-4e39-8156-23dee2f68f79"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["tokens"]
+note = "'manifest the top card of your library' makes a face-down card, not a token (convention 12)."
+
+[[card]]
+name = "Undercity Dire Rat"
+oracle_id = "f09811d0-c5da-4061-aaa7-835ccee3b05a"
+roles = ["tokens"]
+primary = "tokens"
+source = "deck"
+not_roles = []
+note = "'When this creature dies, create a Treasure token.'"
+
+[[card]]
+name = "Underground River"
+oracle_id = "857febd9-cdd7-4f8e-a852-d88084b0cfbc"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'{T}: Add {U} or {B}.'"
+
+[[card]]
+name = "Underworld Dreams"
+oracle_id = "967cf377-ae26-464d-85ac-8448b5a911f7"
+roles = ["drain"]
+primary = "drain"
+source = "deck"
+not_roles = []
+note = "'Whenever an opponent draws a card, this enchantment deals 1 damage to that player.'"
+
+[[card]]
+name = "Urza's Cave"
+oracle_id = "4474ecee-0ec3-409b-90df-738d9313fe3c"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = ["ramp", "tutor"]
+note = "'{3}, {T}, Sacrifice this land: Search your library for a land card, put it onto the battlefield tapped' reaches any land (fixing, convention 5); it replaces itself so it is not ramp."
+
+[[card]]
+name = "Urza, Lord High Artificer"
+oracle_id = "e87906d2-db1a-4e19-b910-adb4eb339945"
+roles = ["ramp", "tokens", "draw"]
+primary = "ramp"
+source = "deck"
+not_roles = []
+note = "'Tap an untapped artifact you control: Add {U}' (ramp); 'create a 0/0 colorless Construct artifact creature token'; '{5}: ... exile the top card ... you may play that card without paying its mana cost' (impulse draw)."
+
+[[card]]
+name = "Vampiric Tutor"
+oracle_id = "ededbdae-d9dc-4206-9335-d7158f2d7700"
+roles = ["tutor"]
+primary = "tutor"
+source = "deck"
+not_roles = []
+note = "'Search your library for a card, then shuffle and put that card on top.'"
+
+[[card]]
+name = "Viscera Seer"
+oracle_id = "f82a4e85-526d-4456-b700-7760043a31be"
+roles = ["sac-outlet"]
+primary = "sac-outlet"
+source = "deck"
+not_roles = ["selection"]
+note = "'Sacrifice a creature: Scry 1.' is a free repeatable outlet; scry 1 is below the selection threshold."
+
+[[card]]
+name = "Wall of Forgotten Pharaohs"
+oracle_id = "7ab15fcd-8371-4b3c-b534-e9ef44249213"
+roles = ["drain"]
+primary = "drain"
+source = "random"
+not_roles = []
+note = "'{T}: This creature deals 1 damage to target player or planeswalker.' (Desert-gated pinger; borderline)"
+
+[[card]]
+name = "Wall of Light"
+oracle_id = "d0c05cad-6e14-4726-b7fc-8f2fc7df7267"
+roles = []
+primary = ""
+source = "random"
+not_roles = ["protection"]
+note = "'Protection from black' is a printed keyword on itself (convention 1)."
+
+[[card]]
+name = "Whispersilk Cloak"
+oracle_id = "9ad4f730-a18e-4a7c-a468-a926c718c741"
+roles = ["evasion", "protection"]
+primary = "evasion"
+source = "topup"
+not_roles = []
+note = "'Equipped creature can't be blocked and has shroud.' grants evasion and protection to another creature."
+
+[[card]]
+name = "Windswept Heath"
+oracle_id = "29737a60-3ebd-40d9-b935-c4f54b90d45d"
+roles = ["fixing"]
+primary = "fixing"
+source = "deck"
+not_roles = []
+note = "'Search your library for a Forest or Plains card, put it onto the battlefield': two-colour fetch."
+
+[[card]]
+name = "Witch Hunt"
+oracle_id = "e86bd38f-7804-449d-af29-21e96a56ab30"
+roles = ["stax"]
+primary = "stax"
+source = "random"
+not_roles = []
+note = "'Players can't gain life.' restricts every player."
+
+[[card]]
+name = "Yawgmoth, Thran Physician"
+oracle_id = "a1e232c0-dc38-47be-a5a0-f68bc1d86a29"
+roles = ["sac-outlet", "draw", "removal", "counters"]
+primary = "sac-outlet"
+source = "topup"
+not_roles = []
+note = "'Pay 1 life, Sacrifice another creature: Put a -1/-1 counter on up to one target creature and draw a card.' and '{B}{B}, Discard a card: Proliferate.'"
+
+[[card]]
+name = "Zack Fair"
+oracle_id = "e84d146a-1c67-49df-b062-622794e45c42"
+roles = ["protection"]
+primary = "protection"
+source = "deck"
+not_roles = ["counters", "sac-outlet"]
+note = "'{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn.' The counter is one-time (convention 4); self-sacrifice is not an outlet."
