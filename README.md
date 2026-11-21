@@ -61,7 +61,7 @@ cardgen validate                                                                
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `yshtola`, `sheoldred`, `cloud`, `thrasios`, `thanos` or `urdragon`.
+- `--deck`: `yshtola`, `sheoldred`, `cloud`, `thrasios`, `thanos`, `urdragon` or `yoshimaru`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -100,6 +100,7 @@ the same opponents and draws.
 | --- | --- |
 | yshtola, thanos | t5 |
 | sheoldred | t3-t4 |
+| yoshimaru | t4-t5 |
 | cloud | t1-t3 |
 | thrasios (cEDH) | t6 |
 
