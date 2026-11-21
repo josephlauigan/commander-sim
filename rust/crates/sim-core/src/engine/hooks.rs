@@ -8,7 +8,7 @@
 use crate::flow::Res;
 use crate::hooks::{Call, CardImpl, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{DataKey, Game, Val};
 use crate::tag::Tag;
 
 /// (source permanent, its card code) for every live permanent handling event e
@@ -90,10 +90,35 @@ pub fn land_colorless(g: &Game, p: PlayerId, l: crate::ids::PermId, n: u32) -> b
 
 /// trigger_copies summed for p's triggered abilities of this kind (Panharmonicon, Teysa, Ancient Greenwarden)
 pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Option<PermId>) -> i32 {
-    if g.hooks.is_empty() {
+    if g.hooks.is_empty() && g.left_copiers.is_empty() {
         return 0;
     }
-    hooked(g, Event::TriggerCopies).iter().map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x)).sum()
+    let live: i32 = hooked(g, Event::TriggerCopies)
+        .iter()
+        .map(|(src, imp)| (imp.trigger_copies.unwrap())(g, *src, p, kind, x))
+        .sum();
+    live + x.map_or(0, |x| left_copies(g, p, kind, x))
+}
+
+/// A leaving looks back in time (CR 603.10a): a trigger copier that left at the same time as `x` (it is `x`, or it left
+/// earlier in the wipe `x` leaves in) still adds its additional times for what `x` leaving causes. Only for "dies" and
+/// "leaves" of a permanent that is gone; the copiers on the battlefield are counted by `hooked`.
+fn left_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: PermId) -> i32 {
+    if g.left_copiers.is_empty() || !matches!(kind, "dies" | "leaves") || g.perm(x).on_bf {
+        return 0;
+    }
+    let together = |v: PermId| {
+        v == x
+            || matches!(g.perm(v).data.get(DataKey::LkiCopier), Some(Val::Int(b)) if *b != 0 && g.cur_batch == Some(*b as u32))
+    };
+    g.left_copiers
+        .iter()
+        .filter(|&&v| !g.perm(v).on_bf && together(v))
+        .filter_map(|&v| {
+            let imp = g.registry.get(g.perm(v).cd?)?;
+            imp.trigger_copies.map(|f| f(g, v, p, kind, Some(x)))
+        })
+        .sum()
 }
 
 /// The event that m's leaving is for the trigger copiers: a death ("dies": Teysa Karlov, Drivnod, Gandalf the White) or

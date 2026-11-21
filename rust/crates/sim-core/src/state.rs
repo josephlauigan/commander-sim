@@ -155,8 +155,15 @@ pub enum DataKey {
     /// last known information of a permanent that has left the battlefield: Syr Vondam's power as he left and the wipe
     /// he left in, `[Int power, Int batch]` (`impls/vondam_elspeth.rs`; only that card sets it)
     LastKnown,
-    /// source trigger extras just before leaving, `[Int extras, Int batch]` (`engine::stack::note_leaving`)
+    /// source trigger extras just before leaving, `[Int extras, Int batch]` (`engine::stack::note_leaving`); a source
+    /// that stays while a doubler leaves alone has `[Int extras, Int 0, Int leaver]`: its extras for what that leaving caused
     LkiExtra,
+    /// the wipe (`Game::cur_batch`, 0 outside one) a trigger copier left in, `Int` (`engine::stack::note_leaving`; only
+    /// Gandalf the White, Teysa Karlov and Drivnod set it)
+    LkiCopier,
+    /// whether a permanent was legendary or an artifact as it left, `Bool` (Gandalf the White reads it; set on every
+    /// permanent that leaves while a Gandalf is on the battlefield or a copier left in the same wipe)
+    LkiLegArt,
     /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
     WeirdToken,
     Lure,
@@ -1282,6 +1289,9 @@ pub struct Game {
     /// a land sacrificed): set around those fires like `dying` and `exiling`; Teysa Karlov, Drivnod and Gandalf the White
     /// read it
     pub leaving: Option<PermId>,
+    /// trigger copiers (Gandalf the White, Teysa Karlov, Drivnod) that have left the battlefield: what they caused as they
+    /// left, and what left with them in the same wipe, still triggers an additional time (CR 603.10a)
+    pub left_copiers: Vec<PermId>,
     /// the last turn a creature died (Barad-dûr)
     pub died_turn: Option<TurnStamp>,
     /// creatures that died this turn: (the turn, how many) (Lagomos, Hand of Hatred)
@@ -1563,6 +1573,7 @@ impl Game {
             dying: None,
             exiling: None,
             leaving: None,
+            left_copiers: vec![],
             died_turn: None,
             died_count: (None, 0),
             treasure_paid: 0,

@@ -460,7 +460,11 @@ fn gandalf_copies(g: &Game, src: Src, p: PlayerId, kind: Sym, x: Option<PermId>)
     }
     match x {
         None => matches!(kind, "etb" | "dies") as i32,
-        Some(m) => (legendary(g, m) || is_artifact_perm(g, m)) as i32,
+        // as it last existed: what a permanent that has left kept of its being legendary or an artifact
+        Some(m) => match g.perm(m).data.get(DataKey::LkiLegArt) {
+            Some(Val::Bool(b)) if !g.perm(m).on_bf => *b as i32,
+            _ => (legendary(g, m) || is_artifact_perm(g, m)) as i32,
+        },
     }
 }
 
