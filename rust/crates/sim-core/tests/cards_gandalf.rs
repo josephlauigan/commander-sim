@@ -6,9 +6,9 @@
 mod play_common;
 use play_common::*;
 use sim_core::ai::brain;
-use sim_core::engine::cast;
+use sim_core::engine::{cast, zones};
 use sim_core::human::{human, legal};
-use sim_core::state::Step;
+use sim_core::state::{Ctx, Step};
 
 const GANDALF: &str = "Gandalf the White";
 
@@ -144,4 +144,170 @@ fn the_ai_casts_an_artifact_at_the_end_of_an_opponents_turn_with_gandalf() {
     assert!(on_bf(&with, P0, "Mind Stone"), "cast in the end-of-turn window");
     let without = build(false);
     assert!(!on_bf(&without, P0, "Mind Stone"), "no grant: it stays in hand");
+}
+
+// ------------------------------------------------------------------ entering: one additional time
+const Y: &str = "Yoshimaru, Ever Faithful";
+const ELESH: &str = "Elesh Norn, Mother of Machines";
+
+fn mine() -> Game {
+    let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
+    g.active = Some(P0);
+    g.step = Step::Main1;
+    g
+}
+
+fn counters(g: &Game, m: PermId) -> i32 {
+    g.perm(m).plus
+}
+
+#[test]
+fn a_legendary_permanent_entering_triggers_yoshimaru_twice_and_a_plain_creature_not_at_all() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Syr Vondam, Sunstar Exemplar");
+    assert_eq!(counters(&g, y), 2, "a legendary creature enters: 1 + Gandalf");
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(counters(&g, y), 2, "a nonlegendary creature causes nothing");
+}
+
+#[test]
+fn gandalf_entering_is_doubled_with_his_own_copy_ability() {
+    let mut g = mine();
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, GANDALF);
+    assert_eq!(counters(&g, y), 2, "Gandalf is legendary and sees himself enter");
+}
+
+#[test]
+fn an_artifact_creature_entering_triggers_a_compiled_listener_twice() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Elas il-Kor, Sadistic Pilgrim");
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Solemn Simulacrum");
+    assert_eq!(g.player(P0).life, life + 2, "an artifact creature: 1 + Gandalf");
+    let life = g.player(P0).life;
+    perm(&mut g, P0, "Mother of Runes");
+    assert_eq!(g.player(P0).life, life + 1, "neither legendary nor an artifact");
+}
+
+#[test]
+fn a_legendary_artifact_with_panharmonicon_triggers_three_times() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Panharmonicon");
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Mox Amber");
+    assert_eq!(counters(&g, y), 3, "1 + Panharmonicon + Gandalf");
+}
+
+#[test]
+fn gandalf_and_delney_make_three_triggers() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Delney, Streetwise Lookout");
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Tymna the Weaver");
+    assert_eq!(counters(&g, y), 3, "1 + Gandalf + Delney");
+}
+
+#[test]
+fn gandalf_and_your_own_elesh_make_three_triggers() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, ELESH);
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Tymna the Weaver");
+    assert_eq!(counters(&g, y), 3, "1 + Gandalf + Elesh Norn");
+}
+
+#[test]
+fn haliya_gains_two_life_for_a_treasure_with_gandalf_and_three_with_elesh_too() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Haliya, Guided by Light");
+    let life = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, life + 2, "a Treasure is an artifact: 1 + Gandalf");
+    perm(&mut g, P0, ELESH);
+    let life = g.player(P0).life;
+    zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).life, life + 3, "1 + Gandalf + Elesh Norn");
+}
+
+#[test]
+fn gandalf_adds_nothing_to_a_cast_trigger() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, "Lotho, Corrupt Shirriff");
+    let t0 = g.player(P0).treasures;
+    g.active = Some(P1);
+    for n in ["Opt", "Brainstorm"] {
+        let c = hand(&mut g, P1, &[n])[0];
+        cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap();
+    }
+    assert_eq!(g.player(P0).treasures, t0 + 1, "a cast is not an entering");
+}
+
+#[test]
+fn an_opponents_gandalf_adds_nothing_to_your_triggers() {
+    let mut g = mine();
+    perm(&mut g, P1, GANDALF);
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Syr Vondam, Sunstar Exemplar");
+    assert_eq!(counters(&g, y), 1, "the ability is the controller's own");
+}
+
+// ------------------------------------------------------------------ the copy rule itself
+use sim_core::engine::hooks::total_trigger_copies;
+
+#[test]
+fn gandalfs_copies_follow_what_entered_or_left() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let legend = perm(&mut g, P0, "Tymna the Weaver");
+    let ring = perm(&mut g, P0, "Sol Ring");
+    let plain = perm(&mut g, P0, "Mother of Runes");
+    let cradle = lands(&mut g, P0, "Gaea's Cradle", 1, false)[0];
+    let basic = lands(&mut g, P0, "Plains", 1, false)[0];
+    let n = |g: &Game, p: PlayerId, kind: &'static str, x: Option<PermId>| total_trigger_copies(g, p, kind, x);
+    for kind in ["etb", "dies", "leaves"] {
+        assert_eq!(n(&g, P0, kind, Some(legend)), 1, "{kind}: a legendary permanent");
+        assert_eq!(n(&g, P0, kind, Some(ring)), 1, "{kind}: an artifact");
+        assert_eq!(n(&g, P0, kind, Some(plain)), 0, "{kind}: neither");
+        assert_eq!(n(&g, P1, kind, Some(legend)), 0, "{kind}: only the controller's own abilities");
+    }
+    assert_eq!(n(&g, P0, "landfall", Some(cradle)), 1, "a legendary land");
+    assert_eq!(n(&g, P0, "landfall", Some(basic)), 0, "a basic land");
+    assert_eq!(n(&g, P0, "etb", None), 1, "an artifact token that is a counter on the player (Treasure)");
+    assert_eq!(n(&g, P0, "dies", None), 1, "one of those put into the graveyard from the battlefield");
+    for kind in ["cast", "attack", "landfall"] {
+        assert_eq!(n(&g, P0, kind, None), 0, "{kind}: not an entering or leaving");
+    }
+    assert_eq!(n(&g, P0, "cast", Some(legend)), 0, "a cast is neither");
+}
+
+#[test]
+fn a_token_that_is_an_artifact_counts_for_gandalf() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let wurm = token(&mut g, P0, 3);
+    assert_eq!(total_trigger_copies(&g, P0, "etb", Some(wurm)), 0, "a plain creature token");
+    g.perm_mut(wurm).data.set(sim_core::state::DataKey::Artifact, sim_core::state::Val::Bool(true));
+    assert_eq!(total_trigger_copies(&g, P0, "etb", Some(wurm)), 1, "an artifact creature token (Wurmcoil's Wurm)");
+}
+
+#[test]
+fn teysa_and_drivnod_read_none_as_not_a_creature() {
+    let mut g = mine();
+    perm(&mut g, P0, "Teysa Karlov");
+    perm(&mut g, P0, "Drivnod, Carnage Dominus");
+    let tok = token(&mut g, P0, 1);
+    let ring = perm(&mut g, P0, "Sol Ring");
+    // Teysa and Drivnod each add one for a creature dying
+    assert_eq!(total_trigger_copies(&g, P0, "dies", Some(tok)), 2, "a creature token dying");
+    assert_eq!(total_trigger_copies(&g, P0, "dies", Some(ring)), 0, "an artifact that is not a creature");
+    assert_eq!(total_trigger_copies(&g, P0, "dies", None), 0, "an artifact token put into a graveyard (a Treasure)");
 }
