@@ -25,6 +25,7 @@ fn the_catalog_lists_yoshimaru_with_both_commanders() {
         (Some("Yoshimaru, Ever Faithful"), Some("Tymna the Weaver"))
     );
     assert_eq!(k["ident"], "WB");
+    assert_eq!(k["name"], "Yoshimaru and Tymna the Weaver"); // the deck file's two commanders
     // one commander elsewhere: no second one
     let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "cloud").unwrap();
     assert_eq!(s["commander2"], Value::Null);
