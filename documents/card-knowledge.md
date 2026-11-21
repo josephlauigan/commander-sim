@@ -116,7 +116,7 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
 - **Names are not unique.** 15 names are shared by two or more kept cards (Un-card variants, plus pairs such as Pick
   Your Poison, Red Herring and Fast // Furious). The `find` index maps a name to a list of cards, prefers a
   Commander-legal one, and shows all under `--legal any`.
-- **An exact full name beats a face name.** 27 face names equal another card's full name, mostly the `prepare` layout
+- **An exact full name beats a face name.** About 25 face names (27 before name folding) equal another card's full name, mostly the `prepare` layout
   (Emeritus of Conflict // Lightning Bolt) and split cards. `find --name "Lightning Bolt"` returns Lightning Bolt first,
   and roles and digests never credit a `prepare` card as the spell it names.
 - **Fields are absent, never null.** `mana_cost` is absent on 493 records and `oracle_text` on 896 (the text is on
@@ -127,6 +127,15 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
   excludes them by default. Meld is matched by id or name because `all_parts` ids are printing ids.
 - **Digital printings are real cards.** Scryfall's one representative printing per card is a digital Masters set for
   many paper staples, so the `digital` flag says nothing about playability; Commander legality does.
+- **Names are matched folded.** `find` compares names, face names, `--name-contains` and deck lists after a fold:
+  lower case, accents and combining marks dropped, every apostrophe a plain `'`, `Æ`/`Œ`/`ß` spelled out. So `Anduril`
+  finds Andúril and a deck list may spell a name either way. Hyphens, commas and spaces stay, so folding creates no new
+  shared names.
+- **A deck's identity is a ceiling.** Under `--deck`, `--ident` may only narrow it. `Index::search` is the one place
+  that applies the ceiling, the deck's exclusions and the filters, so the digest cannot re-implement it.
+- **`find --json` is a contract.** One row shape, `oracle_text` is the joined text, keys are only added, never
+  renamed or removed, and consumers ignore unknown keys. A cut page, a named card removed by the filters and
+  unresolved deck names are reported as notes (stderr for JSON), never silently.
 - **Worktrees.** `data/knowledge/` exists in every checkout because `sync.lock` is tracked, so a worktree falls back
   to the main checkout's store when `oracle.json` is missing, not when the directory is.
 - **Open for phase 6.** Every new bulk file rewrites the tracked `sync.lock`, which conflicts with a weekly job that
@@ -149,7 +158,7 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
 | 0 Design consult (Opus) | none | done |
 | Approach doc | `knowledge-base` | written |
 | 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
-| 2 `find` | `knowledge-find` | not started |
+| 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
 | 3 Roles (rules + local LLM) | `knowledge-roles` | not started |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
 | 4 Status, decks and findings join | `knowledge-status` | not started |
