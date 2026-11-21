@@ -496,14 +496,7 @@ pub fn run(opts: &Options, remote: &mut dyn Remote) -> Result<Outcome, String> {
         lock: opts.dir.join(format!("sync.{tok}.lock.tmp")),
     };
     let (updated_at, uri, source, downloaded) = match &opts.from_file {
-        Some(p) => {
-            eprintln!(
-                "warning: --from-file writes bulk_updated_at=from-file into {}/sync.lock; pass --data-dir for a \
-                 scratch directory",
-                opts.dir.display()
-            );
-            ("from-file".to_string(), format!("file:{}", p.display()), p.clone(), false)
-        }
+        Some(p) => ("from-file".to_string(), format!("file:{}", p.display()), p.clone(), false),
         None => {
             let e = remote.latest()?;
             if let Some(n) = current_count(&opts.dir, &e.updated_at) {

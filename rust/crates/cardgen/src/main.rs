@@ -195,11 +195,11 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
 fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     use cardgen::bulk;
     let from_file = opt(args, "--from-file")?.map(PathBuf::from);
-    let dir = match opt(args, "--data-dir")? {
-        Some(d) => PathBuf::from(d),
+    let (dir, explicit_dir) = match opt(args, "--data-dir")? {
+        Some(d) => (PathBuf::from(d), true),
         None => match std::env::var_os("CARDGEN_KNOWLEDGE_DIR") {
-            Some(d) if !d.is_empty() => PathBuf::from(d),
-            _ => project.data("knowledge"),
+            Some(d) if !d.is_empty() => (PathBuf::from(d), true),
+            _ => (project.data("knowledge"), false),
         },
     };
     let min_count = match opt(args, "--min-count")? {
@@ -208,6 +208,13 @@ fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     };
     if !args.is_empty() {
         return Err(USAGE.into());
+    }
+    if from_file.is_some() && !explicit_dir {
+        eprintln!(
+            "warning: --from-file writes bulk_updated_at=from-file into {}/sync.lock; pass --data-dir for a scratch \
+             directory",
+            dir.display()
+        );
     }
     let opts = bulk::Options { dir, from_file, min_count, synced: bulk::now_utc() };
     print!("{}", bulk::run(&opts, &mut bulk::Http)?.text);

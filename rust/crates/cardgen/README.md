@@ -155,9 +155,9 @@ time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes), ref
 (`oracle.<pid>-<n>.new.tmp`, `sync.<pid>-<n>.lock.tmp`, so concurrent runs do not share them), then renames them into
 place. If the lock cannot be put in place the new oracle is rolled back (the error says whether the old one was
 restored). An existing read-only `sync.lock` is refused before anything is touched. Any failure leaves `oracle.json`
-byte-identical. `--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check;
-`bulk_updated_at` is recorded as `from-file`, so it overwrites the lock: it warns on stderr, and `--data-dir` points a
-scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
+byte-identical (unless the rollback itself fails, which the error says). `--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check;
+`bulk_updated_at` is recorded as `from-file`, so it overwrites the lock: it warns on stderr when no `--data-dir` or
+`CARDGEN_KNOWLEDGE_DIR` is given, and `--data-dir` points a scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
 uses the network.
 
 ## Equivalence
