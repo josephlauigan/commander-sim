@@ -681,7 +681,11 @@ pub struct CardImpl {
     /// the events whose hook is wholly an enters-caused triggered ability (Thassa's Oracle's, a Treasure watcher's):
     /// an opponent's Elesh Norn, Mother of Machines blanks it and the event doublers copy it. The default for a hook
     /// of `Etb`, `LandEnters` or `Landfall` that goes on the stack; a hook that runs at once (or a `TokensEnter` or
-    /// `TokenCreated` hook) needs this bit. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger`.
+    /// `TokenCreated` hook) needs this bit. For a leave event (`Leaves`, `Dies`, `SelfDies`, `SelfExiled`,
+    /// `ExiledFromBf`, `CreatureToGy`, `LandGy`, `Sacrifice`) it means a leave-caused triggered ability that Teysa
+    /// Karlov, Drivnod and Gandalf the White copy: the default for a hook that goes on the stack (but not for
+    /// `Sacrifice`), needed by a hook that runs at once and by a `Sacrifice` hook that models an artifact put into a
+    /// graveyard. A bit per `Event`. See `engine::hooks::enter_hook_is_trigger` and `leave_hook_is_trigger`.
     pub enter_trigger: u128,
     /// a run-now hook that only queues the real triggers (one per token); they get their own event copies and
     /// source extras when queued. Still an enters-caused trigger for blanking, but the dispatcher runs it once.
@@ -693,7 +697,8 @@ pub struct CardImpl {
     /// enters with counters, a name chosen as it enters, a static or state registration, an Aura attaching) is not a
     /// triggered ability and never waits in the queue: its hook runs at once (`at_once`), and a hook that mixes it with
     /// a trigger part runs at once too and loops `engine::hooks::enters_trigger_times` for that part. A bit per
-    /// `Event`; never set together with `enter_trigger`.
+    /// `Event`; never set together with `enter_trigger`. For a leave event: a queued hook that the leave did not
+    /// cause (a duration the engine queues, "until this leaves the battlefield").
     pub enter_setup: u128,
 }
 

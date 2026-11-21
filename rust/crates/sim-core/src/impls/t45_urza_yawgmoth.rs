@@ -1020,6 +1020,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Etb, true);
     c.self_dies = Some(nine_dies);
     at_once(c, Event::SelfDies, true);
+    *c = c.enter_trigger(Event::SelfDies); // "When this creature dies": runs at once, but it is a trigger
     let c = r.card(db, MEATHOOK)?;
     c.etb = Some(meathook_etb);
     c.prio = Some(meathook_prio);

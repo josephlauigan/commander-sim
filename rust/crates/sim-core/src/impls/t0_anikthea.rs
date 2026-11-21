@@ -1053,7 +1053,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.main1 = Some(saga_main1);
         c.saga = Some((saga_wants, saga_lore));
     }
-    r.card(db, HELVAULT)?.leaves = Some(saga_leaves);
+    let c = r.card(db, HELVAULT)?;
+    c.leaves = Some(saga_leaves);
+    *c = c.enter_setup(crate::hooks::Event::Leaves); // chapters I and II exile "until this Saga leaves": a duration
     r.card(db, COMPOSER)?.etb = Some(composer);
     r.card(db, NESSIAN)?.etb = Some(nessian);
     r.card(db, DOOMWAKE)?.etb = Some(doomwake);

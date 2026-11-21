@@ -1708,10 +1708,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.landfall = Some(admonition);
     c.leaves = Some(admonition_leave);
     at_once(c, Event::Leaves, true);
+    *c = c.enter_trigger(Event::Leaves); // "When this creature leaves the battlefield, return all cards exiled with it"
     let c = r.card(db, "Angel of Serenity")?;
     c.etb = Some(serenity);
     c.leaves = Some(serenity_leave);
     at_once(c, Event::Leaves, true);
+    *c = c.enter_trigger(Event::Leaves); // "When this creature leaves the battlefield, return the exiled cards"
     r.card(db, "Archangel Avacyn // Avacyn, the Purifier")?.etb = Some(avacyn);
     let c = r.card(db, "Archfiend of Despair")?;
     c.no_lifegain = Some(despair_nolife);

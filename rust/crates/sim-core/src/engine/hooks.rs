@@ -250,11 +250,16 @@ pub fn enter_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
 
 /// Is the hook of `imp` for leave event `e` (`Leaves`, `Dies`, `SelfDies`, `SelfExiled`, `ExiledFromBf`,
 /// `CreatureToGy`, `LandGy`, `Sacrifice`) a leave-caused triggered ability (so Teysa Karlov, Drivnod and Gandalf the
-/// White copy it)? A queued hook is, and so is a hook that runs now and says so (`enter_trigger`): the others are an
-/// effect ending or bookkeeping that runs as the permanent leaves. A `Sacrifice` hook is not, unless marked: a
-/// sacrifice is not a leaving, and "whenever you sacrifice a permanent" is not caused by one.
+/// White copy it)? A hook that goes on the stack is, unless it is marked `enter_setup` (a duration that ends, "until
+/// this leaves the battlefield", that the engine queues); a hook that runs now (marked at once) is not, unless it is
+/// marked `enter_trigger` (a trigger with no window: it runs at once, but it is a triggered ability). A `Sacrifice` hook
+/// is not either way, unless marked `enter_trigger`: a sacrifice is not a leaving, so "whenever you sacrifice a
+/// permanent" is not caused by one, while "whenever an artifact is put into a graveyard from the battlefield" is caused
+/// by a Treasure being sacrificed. The bits are the ones the enters events use; for a leave event they say "leave-caused
+/// trigger" and "a queued hook the leave did not cause".
 pub fn leave_hook_is_trigger(imp: &CardImpl, e: Event) -> bool {
-    e != Event::Sacrifice && !imp.runs_at_once(e) && e.is_trigger()
+    let now = imp.runs_at_once(e) || !e.is_trigger();
+    imp.is_enter_trigger(e) || (e != Event::Sacrifice && !now && !imp.is_enter_setup(e))
 }
 
 /// Instances of src's enters trigger: zero under an opponent's Elesh, otherwise original + event + source extras.

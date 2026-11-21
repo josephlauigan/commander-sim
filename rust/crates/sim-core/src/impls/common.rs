@@ -3740,6 +3740,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.leaves = Some(oring_leaves);
         *c = c.at_once(Event::Leaves);
     }
+    // the return is a leave-caused trigger on these three ("When this enchantment leaves the battlefield"); the others
+    // exile "until this leaves the battlefield", a duration that ends
+    for name in ["Oblivion Ring", "Journey to Nowhere", "Detention Sphere"] {
+        let c = r.card(db, name)?;
+        *c = c.enter_trigger(Event::Leaves);
+    }
     r.card(db, "Esper Sentinel")?.cast = Some(sentinel);
     // cost reducers
     r.card(db, "Danitha Capashen, Paragon")?.cost = Some(danitha);

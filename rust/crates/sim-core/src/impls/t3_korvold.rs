@@ -1090,6 +1090,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(apprentice_etb);
     c.dies = Some(apprentice_dies);
     c.sacrifice = Some(apprentice_sac);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     r.card(db, "Mazirek, Kraul Death Priest")?.sacrifice = Some(mazirek_sac);
     let c = r.card(db, "Ruthless Technomancer")?;
     c.etb = Some(techno_etb);

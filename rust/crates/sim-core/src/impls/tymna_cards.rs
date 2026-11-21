@@ -2202,6 +2202,7 @@ pub fn register_audit_ysh(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, "Lightning, Security Sergeant")? {
         c.combat_damage = Some(lightning_damage);
         c.leaves = Some(lightning_leaves);
+        *c = c.enter_setup(crate::hooks::Event::Leaves); // "for as long as you control Lightning": a duration
     }
     Ok(())
 }

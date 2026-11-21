@@ -886,6 +886,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Disciple of the Vault")?;
     c.dies = Some(disciple_dies);
     c.sacrifice = Some(disciple_sac);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     r.card(db, "Etali, Primal Storm")?.attack = Some(etali_attack);
     let c = r.card(db, "Hex Magic")?;
     c.resolve = Some(hex_resolve);
@@ -897,9 +898,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(master_etb);
     c.dies = Some(master_dies);
     c.sacrifice = Some(master_sac);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     let c = r.card(db, "Nadier's Nightblade")?;
     c.dies = Some(nightblade_dies);
     c.sacrifice = Some(nightblade_sac);
+    *c = c.enter_trigger(crate::hooks::Event::Sacrifice); // an artifact token put into a graveyard from the battlefield
     let c = r.card(db, "Ob Nixilis, Captive Kingpin")?;
     c.lose_life = Some(ob_lose);
     at_once(c, Event::LoseLife, true);
