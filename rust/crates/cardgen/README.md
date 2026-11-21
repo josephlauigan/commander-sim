@@ -110,6 +110,39 @@ Full-auto (every Oracle line compiled), Approximate, Partial, Unmodeled.
 follow Scryfall's API guidelines (User-Agent, at most 10 requests a second, batches of 75, everything cached) and only
 happen when a listed card is missing from the cache. The tests never use the network.
 
+## Bulk sync (the card knowledge store)
+
+```
+cardgen bulk-sync [--from-file PATH] [--data-dir DIR] [--min-count N]
+```
+
+Downloads Scryfall's "Oracle Cards" bulk file (one record per Oracle card, about 160 MB; the URL and `updated_at` come
+from `api.scryfall.com/bulk-data`, type `oracle_cards`) and writes, in `data/knowledge/` (override with `--data-dir` or
+`CARDGEN_KNOWLEDGE_DIR`):
+
+- `oracle.json` (generated, gitignored): `{"meta": {schema, bulk_updated_at, download_uri, synced, count}, "cards": [...]}`,
+  one slim record per line, sorted by lower-case name, so the same bulk file gives the same bytes apart from
+  `meta.synced`. A record is `scryfall::slim` (the cache's 15 fields, unchanged) plus `oracle_id`, `edhrec_rank`
+  (absent when null), `usd` (`usd_foil` only when there is no `usd`; absent when neither), `released_at`, `set`,
+  `rarity`, `reserved`, `all_parts_meld` (true only on a meld result) and a `colors` list on each face. `set` and
+  `released_at` describe Scryfall's chosen printing, **not** the first printing; detect new cards by `oracle_id`.
+- `oracle.prev.json` (generated, gitignored): the previous sync.
+- `sync.lock` (tracked): `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of `oracle.json`'s
+  `cards` array (from its `[` to its `]`).
+
+Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar` and `vanguard`; digital-only
+cards; a repeated `oracle_id` (the first wins). Everything else is kept with its commander legality, banned and
+not-legal cards and un-cards included. Nothing else branches on a layout name, and an unknown layout is a warning (the
+cards are kept). The summary prints kept and dropped per layout.
+
+If the bulk file's `updated_at` equals the one in the current `oracle.json`, it prints `up to date` and downloads
+nothing. Otherwise it streams the file to a temp file (a dedicated ureq agent: 60 s read timeout, no total cap, gzip),
+parses it one card at a time, refuses fewer than 25,000 cards (`--min-count N` lowers this for fixtures), moves the old
+`oracle.json` to `oracle.prev.json` and renames the new file into place. Any failure leaves `oracle.json` byte-identical.
+`--from-file PATH` parses a local bulk file instead (no network, no up-to-date check; `bulk_updated_at` is recorded as
+`from-file`). `tests/bulk_sync.rs` runs on a 44-card fixture (`tests/fixtures/bulk_fixture.json`) and never uses the
+network.
+
 ## Equivalence
 
 `cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
@@ -125,5 +158,6 @@ src/dsl.rs         AI hint tags, build a card         src/cd.rs        a card de
 src/sources.rs     the build order above              src/cardinfo.rs  Phyrexian mana, land enters rules / types
 src/export.rs      cards.json / decks.json            src/scryfall.rs  the cache and the client
 src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/audit.rs
+src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.json)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```

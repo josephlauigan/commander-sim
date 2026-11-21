@@ -11,6 +11,12 @@ const USAGE: &str = "usage:
   cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
                                                 replace a deck's list (KEY: your deck key, a pool deck key, or a path)
+  cardgen bulk-sync [--from-file PATH] [--data-dir DIR] [--min-count N]
+                                                download Scryfall's Oracle Cards bulk file and write
+                                                data/knowledge/oracle.json (+ oracle.prev.json, sync.lock); prints
+                                                \"up to date\" when the bulk file has not changed. --from-file
+                                                parses a local bulk file (no network); the directory can also be
+                                                set with CARDGEN_KNOWLEDGE_DIR
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -60,6 +66,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "audit" => audit(&project, &mut args),
         "validate" => validate(&project, &args),
         "deck" => deck(&project, &mut args),
+        "bulk-sync" => bulk_sync(&project, &mut args),
         _ => Err(USAGE.into()),
     }
 }
@@ -182,5 +189,27 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     if !o.ok {
         std::process::exit(1);
     }
+    Ok(())
+}
+
+fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
+    use cardgen::bulk;
+    let from_file = opt(args, "--from-file")?.map(PathBuf::from);
+    let dir = match opt(args, "--data-dir")? {
+        Some(d) => PathBuf::from(d),
+        None => match std::env::var_os("CARDGEN_KNOWLEDGE_DIR") {
+            Some(d) if !d.is_empty() => PathBuf::from(d),
+            _ => project.data("knowledge"),
+        },
+    };
+    let min_count = match opt(args, "--min-count")? {
+        Some(n) => n.parse::<usize>().map_err(|_| format!("--min-count needs a number, got {n}"))?,
+        None => bulk::MIN_COUNT,
+    };
+    if !args.is_empty() {
+        return Err(USAGE.into());
+    }
+    let opts = bulk::Options { dir, from_file, min_count, synced: bulk::now_utc() };
+    print!("{}", bulk::run(&opts, &mut bulk::Http)?.text);
     Ok(())
 }

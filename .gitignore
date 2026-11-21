@@ -1,6 +1,10 @@
 __pycache__/
 *.tmp
 data/images/
+# generated card knowledge (the tracked files in data/knowledge/ stay tracked)
+data/knowledge/oracle.json
+data/knowledge/oracle.prev.json
+data/knowledge/*.tmp
 data/saves/
 rust/target/
 commander_sim/rust_sim.so
