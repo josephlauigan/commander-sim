@@ -656,3 +656,134 @@ fn a_compiled_dies_trigger_happens_twice_for_a_legendary_creature_with_gandalf()
     zones::die(&mut g, t, "destroy").unwrap();
     assert_eq!(life - g.player(P1).life, 2, "another creature you control dies: 1 + Gandalf");
 }
+
+// ------------------------------------------------------------------ more of a copier that leaves with the cause
+const DRIVNOD: &str = "Drivnod, Carnage Dominus";
+
+#[test]
+fn drivnod_dying_alone_doubles_the_triggers_he_causes() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    indestructible(&mut g, v);
+    let d = perm(&mut g, P0, DRIVNOD);
+    zones::die(&mut g, d, "destroy").unwrap();
+    assert!(!g.perm(d).on_bf);
+    assert_eq!(counters(&g, v), 2, "Drivnod is a creature dying, and his ability looks back");
+}
+
+#[test]
+fn gandalf_exiled_alone_doubles_the_triggers_his_leaving_causes() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    let gan = perm(&mut g, P0, GANDALF);
+    zones::exile_perm(&mut g, gan).unwrap();
+    assert!(!g.perm(gan).on_bf);
+    assert_eq!(counters(&g, v), 2, "a legendary creature put into exile: 1 + Gandalf, who leaves with it");
+}
+
+#[test]
+fn a_second_gandalf_adds_to_the_triggers_a_dying_gandalf_causes() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    indestructible(&mut g, v);
+    let first = perm(&mut g, P0, GANDALF);
+    perm(&mut g, P0, GANDALF);
+    zones::die(&mut g, first, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 3, "1 + the Gandalf that stays + the Gandalf that dies");
+}
+
+#[test]
+fn a_copier_that_left_earlier_adds_nothing_to_a_later_leaving() {
+    let mut g = mine();
+    let v = perm(&mut g, P0, VONDAM);
+    indestructible(&mut g, v);
+    let gan = perm(&mut g, P0, GANDALF);
+    zones::die(&mut g, gan, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 2);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    zones::die(&mut g, t, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 3, "Gandalf is gone: one more trigger for Tymna, not two");
+}
+
+#[test]
+fn a_ring_bearer_that_leaves_is_still_legendary_for_gandalf() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    let v = perm(&mut g, P0, VONDAM);
+    let bearer = perm(&mut g, P0, "Mother of Runes");
+    g.player_mut(P0).ring_level = 1;
+    g.player_mut(P0).ring_bearer = Some(bearer);
+    assert!(sim_core::impls::mine::is_legendary(&g, bearer));
+    zones::die(&mut g, bearer, "destroy").unwrap();
+    assert_eq!(counters(&g, v), 2, "the Ring-bearer was legendary as it died: 1 + Gandalf");
+}
+
+#[test]
+fn nothing_is_remembered_about_a_leaving_permanent_without_a_copier() {
+    let mut g = mine();
+    perm(&mut g, P0, VONDAM);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    let x = perm(&mut g, P0, "Mother of Runes");
+    zones::die(&mut g, t, "destroy").unwrap();
+    wipe(&mut g);
+    assert!(!g.perm(x).on_bf);
+    for p in g.perms.iter() {
+        let d = format!("{:?}", p.data);
+        assert!(!d.contains("LkiCopier") && !d.contains("LkiLegArt"), "{}: {d}", p.name);
+    }
+}
+
+// ------------------------------------------------------------------ a leave hook that is not a trigger is not copied
+#[test]
+fn a_hook_that_only_keeps_count_of_deaths_is_not_copied_by_teysa() {
+    // Mahadi, Emporium Master counts the creatures that died; the Treasures are made at the end step
+    let mut g = mine();
+    perm(&mut g, P0, TEYSA);
+    perm(&mut g, P0, "Mahadi, Emporium Master");
+    let x = perm(&mut g, P0, "Mother of Runes");
+    zones::die(&mut g, x, "destroy").unwrap();
+    assert_eq!(g.deaths_turn.map(|d| d.1), Some(1), "one creature died: bookkeeping, not a trigger");
+}
+
+// ------------------------------------------------------------------ a leave trigger that returns a card returns it once
+fn on_battlefield(g: &Game, p: PlayerId, name: &str) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).name == name).count()
+}
+
+#[test]
+fn oblivion_ring_that_leaves_twice_over_returns_its_card_once() {
+    let mut g = mine();
+    perm(&mut g, P0, GANDALF);
+    perm(&mut g, P1, "Phyrexian Arena");
+    let ring = perm(&mut g, P0, "Oblivion Ring");
+    assert_eq!(on_battlefield(&g, P1, "Phyrexian Arena"), 0, "exiled by Oblivion Ring");
+    g.perm_mut(ring).data.set(DataKey::Legendary, Val::Bool(true));
+    zones::bounce(&mut g, ring).unwrap();
+    assert_eq!(on_battlefield(&g, P1, "Phyrexian Arena"), 1, "its leaves trigger happened twice: one card, once");
+    assert!(g.player(P1).exile.is_empty());
+}
+
+#[test]
+fn angel_of_serenity_that_dies_twice_over_returns_each_card_once() {
+    let mut g = mine();
+    perm(&mut g, P0, TEYSA);
+    for _ in 0..2 {
+        perm(&mut g, P1, "Serra Angel");
+    }
+    let hand = g.player(P1).hand.len();
+    let a = perm(&mut g, P0, "Angel of Serenity");
+    assert_eq!(on_battlefield(&g, P1, "Serra Angel"), 0, "exiled by Angel of Serenity");
+    zones::die(&mut g, a, "destroy").unwrap();
+    assert_eq!(g.player(P1).hand.len() - hand, 2, "returned to their owner's hand once each");
+}
+
+#[test]
+fn nine_lives_familiar_that_dies_twice_over_returns_once() {
+    let mut g = mine();
+    perm(&mut g, P0, TEYSA);
+    let f = perm(&mut g, P0, "Nine-Lives Familiar");
+    g.perm_mut(f).data.set(DataKey::Revival, Val::Int(3));
+    zones::die(&mut g, f, "destroy").unwrap();
+    sim_core::impls::t45_urza_yawgmoth::revival_returns(&mut g).unwrap();
+    assert_eq!(on_battlefield(&g, P0, "Nine-Lives Familiar"), 1, "the second instance finds the card gone");
+}
