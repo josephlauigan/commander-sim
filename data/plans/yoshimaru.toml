@@ -1,0 +1,73 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Yoshimaru, Ever Faithful + Tymna the Weaver deck (key `yoshimaru`, tiers t4-t5,
+# registered 2026-11-20: decklists/JD/yoshimaru-tymna-blink.md, white-black blink and enter-the-battlefield value). The
+# plan: Yoshimaru on turn 1 and Tymna on turn 3 (his counters need him out first), a rock or an enter-effect creature a
+# turn after, Delney to double Tymna and the enters, and the two catalogue lines below (Vito / Exquisite Blood and
+# Heliod / Walking Ballista). The blink cards, Yoshimaru's counters and Tymna's draw are card code, not this file.
+# PROVISIONAL: the priorities come from the guide's game plan, not from a paired test (no sim has run on this list yet).
+# The keep rule is the generic one (two to five lands, no piece needed), a placeholder until a measurement: the guide's
+# mulligan table is not expressed here. Left out (the schema can't express it): the order rule's second half (Tymna
+# only after Yoshimaru is out: a priority gap here, not a gate), Chrome Mox's imprint choice, the end-step plays of the
+# flash creatures, the Archangel of Thune + Walking Ballista and Restoration Angel + Felidar Guardian lines (not in the
+# combo catalogue), and the guide's hold rules for blink spells and sweeper answers.
+deck = "yoshimaru"
+default = "plan"
+# card engines the tutors want once no line wants a card
+engines = ["Delney, Streetwise Lookout", "Elas il-Kor, Sadistic Pilgrim", "Elesh Norn, Mother of Machines", "The One Ring"]
+
+# Yoshimaru costs {W}: cast him from turn 1, ahead of Tymna. Fallback only: both commanders match a [[prio]] rule
+# below, and the rule's priority wins before this block is read.
+[commander]
+prio = 92
+turn = 1
+
+# win lines, best first: the tutors want the first missing piece
+[[line]]
+name = "Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
+combo = "Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
+
+[[line]]
+name = "Heliod, Sun-Crowned + Walking Ballista"
+combo = "Heliod, Sun-Crowned + Walking Ballista"
+
+# Delney first when both commanders can be out: she doubles Tymna's draw and most enters
+[[wish]]
+cards = ["Delney, Streetwise Lookout"]
+when = ["turn<=6"]
+score = 80
+
+# Cast priorities: Yoshimaru, then Tymna (3 less per tax); free and cheap mana early; Delney before the payoffs
+[[prio]]
+cards = ["Yoshimaru, Ever Faithful"]
+value = 92
+
+[[prio]]
+cards = ["Tymna the Weaver"]
+value = 90
+per_tax = -3
+
+[[prio]]
+cards = ["Chrome Mox", "Mox Amber", "Sol Ring", "Mana Vault"]
+when = ["turn<=3"]
+value = 88
+else = 60
+
+[[prio]]
+cards = ["Delney, Streetwise Lookout"]
+value = 84
+
+# the protection cards are kept for the commanders and the engine, not cast proactively
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander"]
+
+[[hold]]
+card = "Eerie Interlude"
+protects = ["commander"]
+
+# keep two to five lands, whatever else the hand holds: the generic rule, a placeholder pending measurement. It does
+# not follow the guide's table (a white source by turn 1 or 2 and a reason to go); `pieces = 1` would send back most
+# playable hands, as only about 46% of 7-card hands hold one of the eight line and engine cards.
+[mulligan]
+lands = [2, 5]
+pieces = 0

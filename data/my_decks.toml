@@ -44,3 +44,12 @@ name = "Ur-Dragon"
 commander = "The Ur-Dragon"
 ident = "WUBRG"
 tiers = ["t5"]
+
+# Two commanders with plain Partner (see thrasios above).
+[yoshimaru]
+file = "JD/yoshimaru-tymna-blink.md"
+name = "Yoshimaru/Tymna"
+commander = "Yoshimaru, Ever Faithful"
+commander2 = "Tymna the Weaver"
+ident = "WB"
+tiers = ["t4", "t5"]

@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 6] = ["yshtola", "sheoldred", "cloud", "thrasios", "thanos", "urdragon"];
+pub const MY_DECKS: [&str; 7] = ["yshtola", "sheoldred", "cloud", "thrasios", "thanos", "urdragon", "yoshimaru"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -35,11 +35,17 @@ fn my_deck_files(data: &Path) -> Vec<(String, String)> {
 }
 
 /// the commander as the deck file names it: `**Commander (1).** Name (anything)`; a Partner deck names both,
-/// `**Commanders (2).** Name, Name2` (shown as "Name and Name2", the short names when it is long)
+/// `**Commanders (2).** Name, Name2` or `Name; Name2` when a name has a comma (shown as "Name and Name2", the short names when it is long)
 pub fn display_name(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("**Commanders (2).**") {
             let s = rest.trim();
+            // a first name with a comma of its own ("Yoshimaru, Ever Faithful; Tymna the Weaver") is set off by ";"
+            if let Some((a, b)) = s.split_once("; ")
+                && !a.is_empty()
+            {
+                return Some(format!("{} and {}", short_name(a), short_name(b)));
+            }
             if let Some((a, b)) = s.split_once(", ")
                 && !a.is_empty()
             {

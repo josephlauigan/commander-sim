@@ -23,6 +23,7 @@ Calix, Guided by Fate | [nonlinear] The AI can put the extra counter/pump on the
 Captain America, Team Leader | [fixture] The standard observer creature is Serra Angel and the vanilla tokens are not Heroes; the another-Hero guard is not exercised.
 Cast Out | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Chains of Custody | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Charming Prince | [exhausted] The first instance blinks the best creature with an enters trigger (an exile, one fewer permanent); the extra instance finds that creature gone and picks another target or the gain-3-life mode, so the first instance's exile metrics do not repeat (prince: blink else gain).
 Cloud of Faeries | [exhausted] The first faeries hook untaps the remaining tapped lands; the extra instance finds them untapped.
 Cloudshift | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
 Cloudstone Curio | [fixture] curio_etb rejects all fixture return candidates through rebuy_value >= 2; none offers the recast value required by the AI optional return.
@@ -70,6 +71,7 @@ Loyal Warhound | [intervening-if] The fixture starts one land behind; the first 
 Marwyn, the Nurturer | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
 Massacre Wurm | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
 Mavren Fein, Dusk Apostle | [deferred] Tok=1 entry proxy invents an ETB for an attack ability. Correcting the underlying card model is outside the source/event-copy scope.
+Mentor of the Meek | [fixture] The small-token entrant exercises it, but the AI pays {1} only while its hand holds six or fewer (mentor_meek) and the fixture's hand is six: the first instance draws and the doubled one finds seven cards and declines. cards_mentor_tokens.rs shows the doubled token drawing twice from a smaller hand.
 Meteor Golem | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Miirym, Sentinel Wyrm | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
 Mithril Coat | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
@@ -133,5 +135,7 @@ Vibrance | [exhausted] The first instance consumes its chosen target; the extra 
 Victimize | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
 Welcoming Vampire | [once-per-turn] The original and additional token-entry triggers queue, but the existing once-per-turn guard permits only one draw; a later batch in the same turn also adds no draw.
 Wingcrafter | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Witch Enchanter // Witch-Blessed Meadow | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection).
 Wolverine Riders | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
 Yorion, Sky Nomad | [exhausted] yorion_etb exiles all worthwhile owned nonland permanents at once; none remains for the extra instance.
+Yoshimaru, Ever Faithful | [fixture] No standard observer entrant is legendary (a creature, tokens, a basic land, a Treasure); his legendary-permanent counter is not exercised (tests/cards_enter_event_copies.rs and tests/cards_gandalf.rs cover it under the doublers).

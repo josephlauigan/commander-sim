@@ -1796,7 +1796,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Shared Animosity")?.attack = Some(animosity);
     r.card(db, "Moonshaker Cavalry")?.etb = Some(moonshaker);
     r.card(db, "Ogre Battledriver")?.etb = Some(battledriver);
-    r.card(db, "Mentor of the Meek")?.etb = Some(mentor_meek);
+    let c = r.card(db, "Mentor of the Meek")?;
+    c.etb = Some(mentor_meek);
+    c.tokens_enter = Some(crate::engine::hooks::queue_etb_per_token); // a creature token entering is an entering creature
+    *c = c.enter_queues(Event::TokensEnter);
     let c = r.card(db, "Welcoming Vampire")?;
     c.etb = Some(welcoming);
     c.tokens_enter = Some(crate::engine::hooks::queue_etb_per_token);

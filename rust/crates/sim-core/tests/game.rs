@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 42); // six decks of yours x seven tiers (aragorn retired as a key 2026-11-15)
+    assert_eq!(played, 49); // seven decks of yours x seven tiers (yoshimaru joined 2026-11-20)
 }
 
 #[test]
