@@ -1091,7 +1091,7 @@ pub fn tag_roles(tag: &str, value: &serde_json::Value) -> (&'static [&'static st
         "rean" | "unearth" | "necromancer" | "suntitan" | "reenact" => &["reanimate"],
         "fill" | "dredge" => &["self-mill"],
         "sac" => &["sac-outlet"],
-        "bartist" | "drain" | "drainetb" | "wurmdrain" | "xdrain" | "gray" | "sheoA" | "vaultping" => &["drain"],
+        "bartist" | "drain" | "drainetb" | "wurmdrain" | "xdrain" | "gray" | "sheoA" => &["drain"],
         "prot" if value.as_str() == Some("blink") => &["blink"],
         "prot" | "mother" | "melira" | "helm" => &["protection"],
         "tok" | "mktok" | "tokatk" | "tokbig" | "tokdt" | "tokfly" | "toklife" | "tokp" | "tokpw" | "tokup"
@@ -1117,6 +1117,7 @@ pub fn tag_roles(tag: &str, value: &serde_json::Value) -> (&'static [&'static st
         return (roles, reason);
     }
     let reason = match tag {
+        "vaultping" => "damage to its own controller; not opposing drain",
         "c" | "oneclr" | "f" | "bounceland" | "rland" => {
             "mana/land metadata; does not by itself imply extra mana or multiple colours"
         }

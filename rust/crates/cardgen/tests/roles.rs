@@ -337,3 +337,14 @@ fn prominence_puts_main_effects_before_their_riders() {
         assert_eq!(got.primary, expected[0], "{name}");
     }
 }
+
+#[test]
+fn recall_translation_excludes_self_punishment_and_preserves_effect_tags() {
+    let (roles, reason) = roles::tag_roles("vaultping", &Value::Bool(true));
+    assert!(roles.is_empty());
+    assert!(reason.contains("own controller"));
+    assert_eq!(roles::tag_roles("bartist", &Value::Bool(true)).0, ["drain"]);
+    assert_eq!(roles::tag_roles("fill", &Value::String("dispute".into())).0, ["self-mill"]);
+    assert_eq!(roles::tag_roles("xtutor", &Value::Bool(true)).0, ["tutor"]);
+    assert_eq!(roles::tag_roles("prot", &Value::String("blink".into())).0, ["blink"]);
+}
