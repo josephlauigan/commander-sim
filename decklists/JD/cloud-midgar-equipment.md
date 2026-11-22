@@ -236,8 +236,8 @@ get stuck in hand. So spend all your mana every turn, and slow the table down so
 
 - **Go** when opponents are tapped low, when a Sword on the battlefield can be equipped this turn, or when a swing now
   gets ahead of a table that is about to wipe.
-- **Hold up {2}{W}{W}** (Galadriel's Dismissal, kicked) when an opponent has a lethal-looking attack (Isshin, Aurelia, Marwyn
-  with Craterhoof, Kaalia). **Hold up {3}** (Mithril Coat) when an opponent has destroy-based removal or a wrath that
+- **Hold up {2}{W}{W}** (Galadriel's Dismissal, kicked) when an opponent has a lethal-looking attack (Isshin, Aurelia,
+  Marwyn with Craterhoof, Kaalia). **Hold up {3}** (Mithril Coat) when an opponent has destroy-based removal or a wrath that
   would kill Cloud. Do not tap out for a second Equipment while Cloud is the only creature.
 - **Equip last, with protection up.** Equip is sorcery speed (Forge Anew aside), so an opponent can answer the
   activation. Equip with Giver of Runes untapped, Swiftfoot Boots on Cloud, {3} spare for Mithril Coat, or opponents tapped out.
@@ -488,7 +488,7 @@ The deck's answers, most of them at instant speed:
 | Path to Exile | {W} | Same; the controller may fetch a basic land tapped. Marit Lage (indestructible) |
 | Stroke of Midnight | {2}{W} | Any nonland permanent: a planeswalker (Windgrace, Atraxa's walkers), Grave Pact, Aura Shards, Rhystic Study. Its controller gets a 1/1 Human |
 | Mithril Coat | {3} | Destroy-based removal or a wrath aimed at Cloud (or another legendary creature): flash it in and it attaches, giving indestructible. It does nothing against exile, sacrifice, -X/-X or bounce |
-| Galadriel's Dismissal | {W} | Removal aimed at Cloud, or a wipe (kicked) |
+| Galadriel's Dismissal | {W} | Removal aimed at Cloud, or a wipe (kicked); a big attack (kicked, on the attacking player) |
 | Akroma's Will | {3}{W} | An attack that would kill Cloud, or a swing back of your own |
 | Giver of Runes, Zack Fair, Plaza of Heroes | {T} / {1} / {3} | Targeted removal on Cloud (Giver cannot tap the turn it enters) |
 | Exalted Angel | {2}{W}{W} to flip | Cast face down for {3}, flip at instant speed mid-combat: a flying blocker that gains you life |
@@ -517,7 +517,7 @@ and then win it. Sword choice below uses the table in "What to tutor for".
 
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
-| Isshin (Mardu attackers) | Isshin doubles attack triggers: Hero of Bladehold, Adeline, Hellrider swing for ten or more on turn four. Swords to Plowshares, Path to Exile, Anguished Unmaking, Blasphemous Act, Damn | Slow the swing, then race. Kill Isshin (mana value 3). Sword of Fire and Ice (protection from red) | Archangel of Tithes, Windborn Muse, Baird, Norn's Annex, Skyclave Apparition, Wrath of God, Mithril Coat (against Damn) |
+| Isshin (Mardu attackers) | Isshin doubles attack triggers: Hero of Bladehold, Adeline, Hellrider swing for ten or more on turn four. Swords to Plowshares, Path to Exile, Anguished Unmaking, Blasphemous Act, Damn | Slow the swing, then race. Kill Isshin (mana value 3). Sword of Fire and Ice (protection from red) | Archangel of Tithes, Windborn Muse, Baird, Norn's Annex, Galadriel's Dismissal (kicked, on Isshin's player), Skyclave Apparition, Wrath of God, Mithril Coat (against Damn) |
 | Lathril (Golgari Elves) | Elves flood the board; Lathril taps ten Elves: you lose 10. Trophy, Putrefy, Beast Within, Reclamation Sage | Sweep before turn 5. Sword of Feast and Famine: green creatures cannot block him, and black or green removal cannot target him | Wrath of God, Fumigate, Winds of Abandon (overload), Archangel, Skyclave Apparition on Lathril (mana value 4) |
 | Light-Paws (Aura voltron) | One huge Aura'd creature, commander damage, instant protection (Blacksmith's Skill, Flickerform). The worst t1 matchup | Kill her (mana value 2) before the Aura chain: Skyclave, Swords to Plowshares, Path to Exile, Stroke of Midnight. Sword of Hearth and Home: white creatures cannot block him, and white damage to him is prevented | Elspeth's -3 (when Cloud has no Sword), Winds of Abandon, Soldier tokens as chump blockers |
 | Tatyova (Simic landfall) | Ramp, then Avenger of Zendikar or Ancient Greenwarden; Counterspell, Negate, Deprive, Aetherize | Race: she rarely attacks. Resolve Cloud before counters. Wrath if Avenger lands | Smothering Tithe (her draws pay or feed you), Thalia, Grand Abolisher (no counters on your turn), Stroke of Midnight on Tatyova |
@@ -538,7 +538,7 @@ and then win it. Sword choice below uses the table in "What to tutor for".
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
 | Atraxa (4-colour proliferate) | Planeswalkers (Oko, Teferi, The Wandering Emperor), poison creatures, Rhystic Study, Narset (you draw one card a turn), Farewell | Attack the planeswalkers. Oko can turn Cloud or an Equipment into an Elk: Sword of Feast and Famine or Hearth and Home blocks the target. Pay Rhystic Study's {1} on key spells | Stroke of Midnight on a planeswalker, Skyclave on Rhystic Study or Narset, Swords to Plowshares on poison creatures |
-| Aurelia (Boros combats) | Aurelia (flying, vigilance, haste, extra combat), Hero of Bladehold, Hellrider, Embercleave; Helm of the Host + Combat Celebrant late | Taxes at the first combat. Exile Aurelia (mana value 6) when she lands. Sword of Fire and Ice plus Sword of Hearth and Home: red and white removal cannot target Cloud | Archangel of Tithes, Windborn Muse, Baird, Winds of Abandon (overload), Swords to Plowshares, Path to Exile, Wrath of God |
+| Aurelia (Boros combats) | Aurelia (flying, vigilance, haste, extra combat), Hero of Bladehold, Hellrider, Embercleave; Helm of the Host + Combat Celebrant late | Taxes at the first combat. Exile Aurelia (mana value 6) when she lands. Sword of Fire and Ice plus Sword of Hearth and Home: red and white removal cannot target Cloud | Archangel of Tithes, Windborn Muse, Baird, Galadriel's Dismissal (kicked, on Aurelia's player), Winds of Abandon (overload), Swords to Plowshares, Path to Exile, Wrath of God |
 | Korvold (Jund sacrifice) | Blood Artist, Zulaport, Mayhem Devil, Goblin Bombardment, Impact Tremors, Terror of the Peaks; Toxic Deluge; Decay, Trophy, Terminate, Bolt | Race. Sword of Fire and Ice plus Sword of Feast and Famine cover red, blue, black and green: nearly all their removal. Kill Korvold (mana value 5). Lifelink for the drain | Stroke of Midnight, Skyclave on Mayhem Devil or Bombardment, Galadriel's Dismissal (against Deluge), Danitha, Adelbert Steiner, Thalia |
 | Marwyn (mono-green Elves) | Elves into Craterhoof Behemoth (Natural Order, Chord, Finale); Gaea's Cradle; Collector Ouphe (no equip); Beast Within | Every creature is green: a Sword with protection from green (Feast and Famine or Hearth and Home) makes Cloud unblockable by them. Hold taxes and Galadriel's Dismissal (kicked) for Craterhoof; sweep before they go wide. Free equips beat Ouphe | Archangel of Tithes, Wrath of God, Fumigate, Ardenn, Kor Outfitter, Armory Automaton |
 | Tergrid (mono-black disruption) | Edicts and discard; Tergrid takes the nontoken permanents you sacrifice or discard; Liliana of the Veil; Painful Quandary; Go for the Throat, Infernal Grasp | Sword of Feast and Famine: protection from black means no creature of theirs can block him or target him. Keep fodder against edicts. Play your hand out before Liliana | Elspeth's tokens, Galadriel's Dismissal, Sword of Feast and Famine, Wrath of God |
@@ -592,8 +592,8 @@ about to swing (not against Isshin, Aurelia, Kaalia, Lathril's drain or Craterho
 6. Aiming both Sword of Hearth and Home triggers at Cloud, or blinking Cloud with an Equipment you cannot re-equip.
 7. Paying {8} to equip Colossus Hammer instead of attaching it with Ardenn, Kor Outfitter, Armory Automaton or Puresteel
    Paladin.
-8. Tapping out for the second Equipment while a kicked Galadriel's Dismissal would have saved the game against Isshin, Aurelia,
-   Kaalia or Craterhoof, or while Mithril Coat would have saved Cloud from a destroy effect.
+8. Tapping out for the second Equipment while a kicked Galadriel's Dismissal would have saved the game against Isshin,
+   Aurelia, Kaalia or Craterhoof, or while Mithril Coat would have saved Cloud from a destroy effect.
 9. Activating Rogue's Passage after blockers are declared; it must come before.
 10. Feeding Tergrid (sacrificing Evolving Wilds or Terminal Moraine, discarding a permanent to Mask of Memory, cycling
     Ash Barrens).

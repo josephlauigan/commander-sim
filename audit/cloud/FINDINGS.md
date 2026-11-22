@@ -4,25 +4,14 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
-## 2026-11-20: Plains => Minas Tirith (JD's choice, not simulated)
-Minas Tirith (legendary land; model status Full) takes one of the 27 Plains (26 now). It makes {W}, enters tapped
-unless you control a legendary creature, and `{1}{W}, {T}`: draw a card, only after you attacked with two or more
-creatures this turn. The case for it, from the card text: twelve of the 100 cards are legendary creatures (Cloud,
-Danitha, Balan, Baird, Sram, Thalia, Zack Fair and others), and Cloud's equipped attackers plus a second creature give
-the draw a turn to run. What it costs: it enters tapped on every turn with no legend out (early turns most of all),
-the draw needs {1}{W} spare and a two-creature attack, and a basic Plains is also what Knight of the White Orchid, Loyal
-Warhound and Ash Barrens fetch or copy (26 left). The Kor Haven for a Plains test (-2.5) was a colourless land, so it
-does not predict this one. Not measured. To check in the first run: how often it enters tapped, how often the draw is
-used, and the games where the swap changes the turn-2 Cloud.
-
 ## 2026-11-21: Judgment of Alexander => a 27th Plains (JD's physical list, not simulated)
 JD's sleeved deck plays 27 Plains and no Judgment of Alexander, so the simulator list now matches it (lands 33 -> 34).
-The cut is JD's, not a measured choice. Judgment ({2}{W} instant: prevent all damage from opponents' sources this turn,
-and each commander creature you control deals damage equal to its power to each creature whose damage was prevented) was
+The cut is JD's, not a measured choice. Judgment ({2}{W} instant: prevent all damage that would be dealt to you by opponents'
+sources this turn, and each commander creature you control deals damage equal to its power to each creature whose damage was prevented) was
 the deck's fog against Isshin, Aurelia, Marwyn with Craterhoof and Kaalia. What the earlier runs say about it: over Stand
 Up for Yourself it was +1.0 on average over t1-t3, inside noise (2026-11-04 below); it was cast in only 17-34% of the
-games it was drawn, at round 9-12, because the AI never casts it in the main phase (the 11/04 breakdown), and in 27% of the
-games drawn in the 11/07 analyze run, which lists it among the cards that sit in hand. So the simulator undervalued it,
+games it was drawn, at round 9-12, because the AI never casts it in the main phase (the 11/04 breakdown), and in 26.9 / 31.4 / 17.7%
+of the games drawn at t1 / t2 / t3 in the 11/07 analyze run (it is among the cards that sit in hand). So the simulator undervalued it,
 and removing it costs the sim little either way. What it costs in real games: the deck's only damage-prevention fog;
 Galadriel's Dismissal, kicked ({2}{W}{W}, phases out an attacking team), the Package D taxes and the wipes remain. The
 guide's advice that named Judgment now names the kicked Dismissal. Not measured. The engine's Judgment code stays (it is
@@ -42,6 +31,17 @@ the cut (rock for rock; the 10/19 Mind Stone test, below, cut it for a different
 flatter the swap in a paired run. Not measured. The plan file's `keep2` list drops Thought Vessel (Bauble is not a
 two-land-hand keep), and no plan row names the Bauble. To check in the next analyze run: the Bauble's cast and stuck-in-hand
 numbers (the breakdown counts casts only, so cracks need a trace).
+
+## 2026-11-20: Plains => Minas Tirith (JD's choice, not simulated)
+Minas Tirith (legendary land; model status Full) takes one of the 27 Plains (26 now). It makes {W}, enters tapped
+unless you control a legendary creature, and `{1}{W}, {T}`: draw a card, only after you attacked with two or more
+creatures this turn. The case for it, from the card text: twelve of the 100 cards are legendary creatures (Cloud,
+Danitha, Balan, Baird, Sram, Thalia, Zack Fair and others), and Cloud's equipped attackers plus a second creature give
+the draw a turn to run. What it costs: it enters tapped on every turn with no legend out (early turns most of all),
+the draw needs {1}{W} spare and a two-creature attack, and a basic Plains is also what Knight of the White Orchid, Loyal
+Warhound and Ash Barrens fetch or copy (26 left). The Kor Haven for a Plains test (-2.5) was a colourless land, so it
+does not predict this one. Not measured. To check in the first run: how often it enters tapped, how often the draw is
+used, and the games where the swap changes the turn-2 Cloud.
 
 ## 2026-11-14: Lay Down Arms => Champion's Helm (JD's choice, not simulated)
 Champion's Helm ({3}, Equipment, equip {1}; +2/+2, hexproof while the equipped creature is legendary; model status Full)
