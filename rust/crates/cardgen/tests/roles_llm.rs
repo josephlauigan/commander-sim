@@ -1032,12 +1032,12 @@ fn taxonomy_prompt_text_hash_and_guards() {
         assert_eq!(text.matches(&format!("\n- {id}: ")).count(), 1, "{id} appears once as a role line");
         assert!(t.guard(id).unwrap().is_match("anything").is_ok());
     }
-    // the frozen configuration: add-only (keep_rule everywhere), the LLM off for the 8 weak roles
+    // the frozen configuration: add-only (keep_rule everywhere), the LLM off for every role until the audit
     let kept: Vec<&str> = t.role.iter().filter(|r| r.keep_rule).map(|r| r.id.as_str()).collect();
     assert_eq!(kept, roles::IDS);
     let off: Vec<&str> = t.role.iter().filter(|r| !r.llm_add).map(|r| r.id.as_str()).collect();
-    assert_eq!(off, ["ramp", "fixing", "draw", "selection", "sac-outlet", "blink", "finisher", "evasion"]);
-    assert!(t.keep_rule("removal") && t.keep_rule("tutor") && !t.llm_add("ramp") && t.llm_add("removal"));
+    assert_eq!(off, roles::IDS);
+    assert!(t.keep_rule("removal") && t.keep_rule("tutor") && !t.llm_add("ramp") && !t.llm_add("removal"));
     // the boilerplate that used to be repeated in every definition is said once
     assert_eq!(text.matches("modal double-faced").count(), 1, "{text}");
     assert_eq!(text.matches("Planeswalker ultimates have been removed").count(), 1);
@@ -1682,12 +1682,146 @@ fn the_frozen_configuration_is_in_the_real_roles_toml_and_think_is_the_default()
     plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     assert_eq!(t.role.iter().filter(|r| r.keep_rule).count(), 26, "add-only: the LLM never removes a rule role");
-    let off: Vec<&str> = t.role.iter().filter(|r| !r.llm_add).map(|r| r.id.as_str()).collect();
-    assert_eq!(off, ["ramp", "fixing", "draw", "selection", "sac-outlet", "blink", "finisher", "evasion"]);
-    assert!(TAXONOMY.contains("FROZEN CONFIGURATION") && TAXONOMY.contains("26 versus 27 errors"));
+    assert!(t.role.iter().all(|r| !r.llm_add), "the LLM is off for every role until its additions are audited");
+    assert_eq!(t.role.iter().filter(|r| r.llm_add).count(), 0);
+    assert!(TAXONOMY.contains("FROZEN CONFIGURATION") && TAXONOMY.contains("unaudited"));
     // a bare environment means `think`; `plain` selects the old prompt
     assert_eq!(llm::Variant::default(), llm::Variant::Think);
     assert_eq!(llm::Variant::parse("plain").unwrap(), llm::Variant::Plain);
+}
+
+#[test]
+fn the_scratch_taxonomy_turns_every_llm_add_on_and_the_real_one_has_none() {
+    plain_variant();
+    // the scratch environments rely on this: stripping the 26 `llm_add = false` lines leaves 26 roles with it on
+    assert_eq!(TAXONOMY.matches("llm_add = false\n").count(), 26);
+    let scratch = Taxonomy::parse(&test_taxonomy()).unwrap();
+    assert_eq!(scratch.role.len(), 26);
+    assert!(scratch.role.iter().all(|r| r.llm_add && r.keep_rule));
+    // the flag is merge-time only: the prompt, hence every cache key, is the same
+    assert_eq!(scratch.hash(), Taxonomy::parse(TAXONOMY).unwrap().hash());
+}
+
+#[test]
+fn with_every_llm_add_off_the_merge_adds_nothing_and_one_role_turned_on_adds_it() {
+    plain_variant();
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    e.command(&["--rules"]).unwrap();
+    let rules = roles::load(&e.dir().join("roles.json")).unwrap();
+    let index = e.index();
+    let shot = |m: &roles::RoleMap| assignment_of(&index, m, "Skywhaler's Shot").roles.clone();
+    // the scratch taxonomy (every role on): the LLM adds `selection` to Skywhaler's Shot
+    let on = e.merged();
+    assert_eq!(shot(&on), ["removal", "selection"]);
+    // the real roles.toml (every role off), same cache, same prompt: the merge is the rules alone, role for role
+    std::fs::write(e.dir().join("roles.toml"), TAXONOMY).unwrap();
+    let (out, _) = e.command(&["--merge"]).unwrap();
+    assert!(
+        out.contains("llm_add = false for removal: 1") && out.contains("llm_add = false for selection: 1"),
+        "{out}"
+    );
+    assert_eq!(fake.chats(), 1, "the cache is warm: the flag is not part of the key");
+    let off = roles::load(&e.dir().join("roles.json")).unwrap();
+    let mut added = 0;
+    for (id, a) in off.iter() {
+        let before: Vec<&String> = rules[id].roles.iter().collect();
+        added += a.roles.iter().filter(|r| !before.contains(r)).count();
+    }
+    assert_eq!(added, 0, "LLM-only additions == 0");
+    assert_eq!(shot(&off), shot(&rules));
+    // turning one role on in a scratch copy of the real file brings its additions back, the rest stay off
+    let one_on = TAXONOMY.replacen(
+        "keep_rule = true\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = true\n\n[[role]]\nid = \"tutor\"",
+        1,
+    );
+    assert_ne!(one_on, TAXONOMY);
+    std::fs::write(e.dir().join("roles.toml"), one_on).unwrap();
+    assert_eq!(shot(&e.merged()), ["removal", "selection"]);
+}
+
+/// A gold file of two cards with the labels the fake model's answers disagree with on one of them.
+fn two_card_gold(e: &Env) -> String {
+    let i = e.index();
+    let id = |n: &str| i.cards[i.lookup(n)[0] as usize].raw.oracle_id.clone();
+    let path = e.0.join("gold.toml");
+    std::fs::write(
+        &path,
+        format!(
+            "[[card]]\nname='Counterspell'\noracle_id='{}'\nroles=['counter']\nprimary='counter'\n\n\
+             [[card]]\nname=\"Skywhaler's Shot\"\noracle_id='{}'\nroles=['removal']\nprimary='removal'\n",
+            id("Counterspell"),
+            id("Skywhaler's Shot")
+        ),
+    )
+    .unwrap();
+    path.to_str().unwrap().to_string()
+}
+
+#[test]
+fn the_merged_gate_ties_when_every_llm_add_is_off_and_still_fails_a_false_positive_when_one_is_on() {
+    plain_variant();
+    let e = Env::new();
+    let gold = two_card_gold(&e);
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    let validate = |e: &Env| -> (String, Value) {
+        e.command(&["--merge"]).unwrap();
+        let (text, _) = e.command(&["--validate", "--gold", &gold, "--stage", "merged"]).unwrap();
+        let (json_text, _) = e.command(&["--validate", "--gold", &gold, "--stage", "merged", "--json"]).unwrap();
+        (text, serde_json::from_str(&json_text).unwrap())
+    };
+    let failures = |v: &Value| -> Vec<String> {
+        v["failures"].as_array().unwrap().iter().map(|f| f.as_str().unwrap().to_string()).collect()
+    };
+    let line = "LLM additions are off for every role: the merged stage equals the rules stage";
+    // additions on: the fake model's `selection` is a false positive on a routed gold card, the gate fires as before
+    let (text, v) = validate(&e);
+    assert!(!text.contains(line), "{text}");
+    assert_eq!(v["llm_additions_off"], false);
+    assert!(failures(&v).iter().any(|f| f.contains("merged F1")), "{:?}", failures(&v));
+    // additions off for every role: one line says so, the routed comparison is a tie and the gate does not fire
+    std::fs::write(e.dir().join("roles.toml"), TAXONOMY).unwrap();
+    let (text, v) = validate(&e);
+    assert!(text.contains(line), "{text}");
+    assert_eq!(v["llm_additions_off"], true);
+    assert_eq!(v["routed_scored_micro"], v["routed_rules_micro"], "a tie");
+    assert!(v["routed_cards"].as_u64().unwrap() >= 1);
+    assert!(!failures(&v).iter().any(|f| f.contains("merged F1")), "{:?}", failures(&v));
+    // the rules stage never prints the line
+    let (rules_text, _) = e.command(&["--validate", "--gold", &gold]).unwrap();
+    assert!(!rules_text.contains(line), "{rules_text}");
+}
+
+#[test]
+fn a_merge_with_no_model_named_and_rows_under_another_prompt_is_an_error_not_a_rules_only_table() {
+    plain_variant();
+    let e = Env::new();
+    // an empty cache merges as before: every routed card is waiting for an answer
+    let answers = |e: &Env, args: &[&str]| -> usize {
+        e.command(args).unwrap();
+        let stats: llm::MergeStats =
+            serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap();
+        stats.with_answer
+    };
+    assert_eq!(answers(&e, &["--merge"]), 0);
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    assert!(answers(&e, &["--merge"]) > 0);
+    // the same rows under another prompt (the run was without --no-think): nothing matches, which is an error naming
+    // the fix, and the merged table that is already there stays as it was
+    let before = std::fs::read(e.dir().join("roles.json")).unwrap();
+    let err = e.command(&["--merge", "--no-think"]).unwrap_err();
+    assert!(err.contains("none for the current prompt") && err.contains("--model <id>"), "{err}");
+    assert!(err.contains("fake-model-1") && err.contains("5 rows"), "{err}");
+    assert_eq!(std::fs::read(e.dir().join("roles.json")).unwrap(), before);
+    // naming the model does not make another prompt's rows match
+    let err = e.command(&["--merge", "--no-think", "--model", "fake-model-1"]).unwrap_err();
+    assert!(err.contains("no cached answers from model 'fake-model-1'"), "{err}");
+    // the run's own flag and model merge as always
+    e.command(&["--merge", "--model", "fake-model-1"]).unwrap();
 }
 
 fn body_of(fake: &Fake, n: usize) -> Value {
@@ -1734,7 +1868,12 @@ fn no_think_adds_the_template_kwarg_to_every_request_and_keeps_its_rows_apart() 
         e2.command(args).unwrap();
         serde_json::from_slice(&std::fs::read(e2.dir().join("reports/merge.json")).unwrap()).unwrap()
     };
-    assert_eq!(stats(&["--merge"]).with_answer, 0, "thinking rows are not these rows");
+    // a merge that finds rows only under the other prompt is an error naming the fix, not a silent 0-answers merge
+    let err = e2.command(&["--merge"]).unwrap_err();
+    assert!(
+        err.contains("none for the current prompt") && err.contains("--model <id>"),
+        "thinking rows are not these rows: {err}"
+    );
     assert!(stats(&["--merge", "--no-think"]).with_answer > 0);
     e2.index().attach_roles(&roles::load(&e2.dir().join("roles.json")).unwrap()).unwrap();
     assert!(e2.command(&["--rules", "--no-think"]).is_err() && e2.command(&["--validate", "--no-think"]).is_err());

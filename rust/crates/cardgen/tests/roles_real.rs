@@ -90,12 +90,47 @@ fn llm_stage_prompt_lines_budget_and_empty_cache_merge_over_the_catalog() {
     );
     assert!(system + worst_batch / 4 + 10 * 160 < 24_000, "a batch of the ten longest cards must fit the 32K context");
     // with nothing cached every routed card keeps its rule roles and is flagged; nothing else changes
-    let (merged, _, stats) =
-        llm::merge_table(&index, &taxonomy, &rules, &Default::default(), &Default::default(), None, &Default::default(), false).unwrap();
+    let (merged, _, stats) = llm::merge_table(
+        &index,
+        &taxonomy,
+        &rules,
+        &Default::default(),
+        &Default::default(),
+        None,
+        &Default::default(),
+        false,
+    )
+    .unwrap();
     for (id, a) in rules.iter() {
         let m = &merged[id];
         assert_eq!((&m.roles, &m.evidence, &m.route, m.needs_llm), (&a.roles, &a.evidence, &a.route, a.needs_llm));
     }
     assert_eq!(stats.with_answer + stats.llm_failed, stats.routed);
+    index.attach_roles(&merged).unwrap();
+}
+
+#[test]
+#[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
+fn the_real_roles_toml_merged_with_the_real_cache_adds_no_llm_only_role() {
+    let p = project();
+    let mut index = Index::load(&p.data("knowledge/oracle.json")).unwrap();
+    let rules = roles::generate(&index, "").unwrap();
+    let taxonomy = Taxonomy::parse(&std::fs::read_to_string(p.data("knowledge/roles.toml")).unwrap()).unwrap();
+    assert_eq!(taxonomy.role.len(), 26);
+    assert!(taxonomy.role.iter().all(|r| r.keep_rule && !r.llm_add), "add-only, and no LLM addition for any role");
+    // the tracked cache, read as the production merge reads it (think prompt variant, no-think rows)
+    let cache = llm::read_rows(&p.data("knowledge/llm_roles.jsonl")).unwrap();
+    assert!(!cache.is_empty(), "the tracked cache holds the production run's rows");
+    let (merged, _, stats) =
+        llm::merge_table(&index, &taxonomy, &rules, &Default::default(), &cache, None, &Default::default(), true)
+            .unwrap();
+    assert!(stats.with_answer > 10_000, "the cache is read, so the check is not vacuous: {stats:?}");
+    let dropped: usize = stats.llm_add_dropped.values().sum();
+    assert!(dropped > 0, "the LLM did propose roles, and the merge refused every one");
+    let mut llm_only_additions = 0;
+    for (id, a) in rules.iter() {
+        llm_only_additions += merged[id].roles.iter().filter(|r| !a.roles.contains(r)).count();
+    }
+    assert_eq!(llm_only_additions, 0, "LLM-only additions == 0");
     index.attach_roles(&merged).unwrap();
 }

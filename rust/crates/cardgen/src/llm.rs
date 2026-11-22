@@ -1292,7 +1292,7 @@ pub fn run(
 // ------------------------------------------------------------------------------------------------ merging a table
 
 /// The model the cache holds answers from for this prompt: the one `--model` names (it must have rows), else the only
-/// one present.
+/// one present. A cache with rows but none under this prompt is an error; only an empty cache merges with no model.
 fn merge_model(rows: &BTreeMap<String, Row>, prompt: &str, wanted: Option<&str>) -> Result<String, String> {
     let models: BTreeSet<&str> = rows.values().filter(|r| r.prompt == prompt).map(|r| r.model.as_str()).collect();
     if let Some(m) = wanted {
@@ -1306,7 +1306,18 @@ fn merge_model(rows: &BTreeMap<String, Row>, prompt: &str, wanted: Option<&str>)
         return Ok(m);
     }
     match models.len() {
-        0 => Ok(String::new()),
+        0 if rows.is_empty() => Ok(String::new()),
+        0 => {
+            // rows exist, but none under this prompt: a merge would silently answer nothing (a rules-only table)
+            let held: BTreeSet<&str> = rows.values().map(|r| r.model.as_str()).collect();
+            Err(format!(
+                "the cache holds {} rows (models: {}) but none for the current prompt, so the merge would use no LLM \
+                 answer at all; pass --model <id> with the same --no-think flag and CARDGEN_LLM_VARIANT the run used \
+                 (an empty --model is never a silent rules-only merge)",
+                rows.len(),
+                held.into_iter().collect::<Vec<_>>().join(", ")
+            ))
+        }
         1 => Ok(models.into_iter().next().unwrap().to_string()),
         _ => Err(format!(
             "the cache holds answers from several models for this prompt ({}); pass --model ID",

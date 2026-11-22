@@ -3055,6 +3055,8 @@ pub struct Validation {
     pub routed_cards: usize,
     pub routed_rules_micro: Score,
     pub routed_scored_micro: Score,
+    /// no role has `llm_add = true`, so the merged stage cannot add anything and its routed score ties the rules'
+    pub llm_additions_off: bool,
     /// the LLM's cached answers alone (guards applied) on the routed gold cards they cover, apart from the merge
     pub llm_alone_cards: usize,
     pub llm_alone_micro: Score,
@@ -3138,6 +3140,7 @@ pub fn validate_with(
         routed_cards: 0,
         routed_rules_micro: Score::default(),
         routed_scored_micro: Score::default(),
+        llm_additions_off: taxonomy.role.iter().all(|r| !r.llm_add),
         llm_alone_cards: 0,
         llm_alone_micro: Score::default(),
         llm_alone: BTreeMap::new(),
@@ -3386,6 +3389,9 @@ impl Validation {
         let _ = writeln!(out, "ROUTED GOLD CARDS ({} cards the rules sent to the LLM; all roles)", self.routed_cards);
         row(&mut out, "rules alone", &self.routed_rules_micro);
         row(&mut out, &format!("{} stage", self.stage), &self.routed_scored_micro);
+        if self.stage == "merged" && self.llm_additions_off {
+            out.push_str("LLM additions are off for every role: the merged stage equals the rules stage\n");
+        }
         if self.llm_alone_cards > 0 {
             let _ = writeln!(
                 out,

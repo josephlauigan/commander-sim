@@ -3328,11 +3328,14 @@ impl RealEnv {
         ));
         let dir = root.join("knowledge");
         std::fs::create_dir_all(&dir).unwrap();
-        for f in ["oracle.json", "roles.toml", "roles_overrides.toml", "sync.lock"] {
+        for f in ["oracle.json", "roles_overrides.toml", "sync.lock"] {
             if real.join(f).exists() {
                 std::fs::copy(real.join(f), dir.join(f)).unwrap();
             }
         }
+        // the repository's taxonomy with the frozen `llm_add = false` lines taken out: these runs check the merge of
+        // answers, which the real file (the LLM off for every role) would refuse
+        std::fs::write(dir.join("roles.toml"), test_taxonomy()).unwrap();
         Self(root)
     }
     fn dir(&self) -> PathBuf {
@@ -3373,7 +3376,7 @@ fn real_catalog_pipeline_with_2000_cards_of_pseudo_random_valid_answers_keeps_ev
     plain_variant();
     let started = Instant::now();
     let e = RealEnv::new();
-    let tax = taxonomy();
+    let tax = Taxonomy::parse(&test_taxonomy()).unwrap();
     let index = Index::load(&e.dir().join("oracle.json")).unwrap();
     let ovr_text = roles::read_overrides(&e.dir().join("oracle.json")).unwrap();
     let rules = roles::generate(&index, "").unwrap();
