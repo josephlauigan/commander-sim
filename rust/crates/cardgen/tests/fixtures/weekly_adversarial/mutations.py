@@ -62,6 +62,11 @@ script_mutations = [
     ('gpu-unknown-is-free', lambda s: s.replace('  *) echo unknown ;;', '  *) echo free ;;')),
     ('no-report-retention', lambda s: s.replace('  prune_reports\n}', '  :\n}')),
     ('claim-before-reprobe', lambda s: s.replace('  if [[ -n "$(llm_models)" ]]; then return 20; fi\n', '')),
+    ('gpu-threshold-ignored', lambda s: s.replace('if ((total_kib >= limit * 1024)); then', 'if ((total_kib >= 1)); then')),
+    ('gpu-unknown-state-is-free', lambda s: s.replace('  elif ((unknown)); then\n    echo unknown', '  elif ((unknown)); then\n    echo free')),
+    ('night-window-removed', lambda s: s.replace('  elif ((in_window != 0)); then', '  elif false; then')),
+    ('timeout-leaves-the-stage-group', lambda s: s.replace('timeout --foreground --kill-after=60', 'timeout --kill-after=60')),
+    ('cargo-lock-waits-forever', lambda s: s.replace('flock -w "${KNOWLEDGE_CARGO_LOCK_WAIT:-3600}" -E 200 "$CARGO_LOCK"', 'flock "$CARGO_LOCK"')),
     ('no-exec-stop-post-cleanup', lambda s: s.replace('    llm_release\n    exit 0\n  fi\n\n  if ((DRY))', '    exit 0\n  fi\n\n  if ((DRY))')),
 ]
 for name, mutate in script_mutations:
@@ -83,6 +88,7 @@ unit.write_text(unit_original)
 rust_mutations = [
     ('src/llm.rs', 'pending-loaded-by-default', 'load_cache_with(dir, false)', 'load_cache_with(dir, true)'),
     ('src/weekly.rs', 'retention-sorts-by-name', 'keyed.sort();', 'keyed.sort_by(|a, b| a.1.cmp(&b.1));'),
+    ('src/weekly.rs', 'ban-only-on-transition', '!is_legal(c) && !listed.contains(c.oracle_id.as_str())', 'false'),
     ('src/weekly.rs', 'first-name-wins', 'digest::resolve(&self.idx, name)', 'self.idx.lookup(name).to_vec()'),
     ('src/weekly.rs', 'impossible-dates-accepted', '&& chrono::NaiveDate::parse_from_str(s, "%Y-%m-%d").is_ok()', ''),
     ('src/weekly.rs', 'markdown-not-escaped', "if matches!(c, '\\\\' | '`' | '[' | ']' | '|' | '#' | '<' | '>' | '*') {", "if false {"),

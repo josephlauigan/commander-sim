@@ -48,7 +48,7 @@ impl Sandbox {
         s.write("clone/data/decks.json", r#"{"mine":[],"pool":[]}"#);
         std::fs::copy(repo().join("data/knowledge/roles.toml"), s.p("out/roles.toml")).unwrap();
         s.stub("git", "exit 97"); // fail closed: no network or destructive real git calls
-        for name in ["curl", "fuser", "ss", "systemctl", "notify-send"] {
+        for name in ["curl", "ss", "systemctl", "notify-send"] {
             s.stub(name, "printf '%s\\n' \"$0 $*\" >> \"$TEST_ROOT/calls\"; exit 97");
         }
         s.stub("fake-cardgen", "exit 97");
@@ -81,6 +81,7 @@ impl Sandbox {
             ("KNOWLEDGE_REPO", "clone"),
             ("KNOWLEDGE_CARDGEN", "bin/fake-cardgen"),
             ("CARGO_TARGET_DIR", "target"),
+            ("KNOWLEDGE_PROC_ROOT", "proc"),
             ("TEST_ROOT", ""),
         ] {
             e.insert(k.into(), self.p(p).display().to_string());
@@ -90,6 +91,8 @@ impl Sandbox {
             ("KNOWLEDGE_SKIP_LLM", "1"),
             ("KNOWLEDGE_NO_SCOPE", "1"),
             ("KNOWLEDGE_DATE", "2026-11-22"),
+            // inside the night window, whatever the clock says
+            ("KNOWLEDGE_NOW_HOUR", "3"),
         ] {
             e.insert(k.into(), v.into());
         }
@@ -631,6 +634,25 @@ fn defect_unset_home_dry_run_is_handled_without_unbound_variable() {
     assert!(!String::from_utf8_lossy(&o.stderr).contains("unbound variable"), "{}", String::from_utf8_lossy(&o.stderr));
 }
 
+/// a fake /proc: desktop-like holders of the `gpu` file that use no video memory ("free"), one that holds 21 GiB
+/// ("busy"), or one whose fdinfo has no `drm-resident-vram0` ("unknown")
+fn gpu_tree(s: &Sandbox, kind: &str) {
+    let gpu = s.p("gpu");
+    let _ = std::fs::remove_dir_all(s.p("proc"));
+    let holders: Vec<(&str, String)> = match kind {
+        "busy" => vec![("30/3", "drm-client-id:\t1\ndrm-resident-vram0:\t21982932 KiB\n".into())],
+        "unknown" => vec![("30/3", "drm-client-id:\t1\n".into())],
+        _ => (0..3).map(|i| ("30/3", format!("drm-client-id:\t{i}\ndrm-resident-vram0:\t0 KiB\n"))).collect(),
+    };
+    for (i, (_, text)) in holders.iter().enumerate() {
+        let (pid, fd) = (30 + i, 3 + i);
+        std::fs::create_dir_all(s.p(&format!("proc/{pid}/fd"))).unwrap();
+        std::fs::create_dir_all(s.p(&format!("proc/{pid}/fdinfo"))).unwrap();
+        std::os::unix::fs::symlink(&gpu, s.p(&format!("proc/{pid}/fd/{fd}"))).unwrap();
+        s.write(&format!("proc/{pid}/fdinfo/{fd}"), text);
+    }
+}
+
 fn llm_stubs(s: &Sandbox) {
     s.fixture();
     s.write("gpu", "");
@@ -651,7 +673,7 @@ case "$*" in
 esac
 "#,
     );
-    s.stub("fuser", "exit 1");
+    gpu_tree(s, "free");
     s.stub("ss", "exit 0");
     s.stub(
         "systemctl",
@@ -729,10 +751,11 @@ exit 0
 fn defect_failed_gpu_probe_does_not_authorize_server_start() {
     let s = Sandbox::new();
     llm_stubs(&s);
-    s.stub("fuser", "exit 127");
+    // a holder of the render node whose fdinfo does not report video memory: the state cannot be established
+    gpu_tree(&s, "unknown");
     let decision =
         successful(s.shell("source \"$1\"; llm_decide").env("KNOWLEDGE_GPU_DEVICE", s.p("gpu")).output().unwrap());
-    assert_ne!(decision.trim(), "start", "a missing/broken fuser cannot establish that the GPU is free");
+    assert_ne!(decision.trim(), "start", "an unreadable GPU state cannot establish that the GPU is free");
 }
 
 #[test]

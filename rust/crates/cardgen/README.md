@@ -406,7 +406,7 @@ previous report where it was. With `--out PATH` it writes only that file (the we
 are the names the report looks at); `--roles-before FILE` the role table from before this run's role stage; `--llm-log
 FILE` the end of which is quoted.
 
-Sections, in this order: **Action needed** (for JD's decks only: a card that became banned or not legal, a Game Changer
+Sections, in this order: **Action needed** (for JD's decks only: every deck card that is not Commander-legal now, every run ("became X (was Y)" when the comparison holds the change, else "is X": a ban that was already there, a skipped sync, a card that joined the deck), a Game Changer
 added or removed with the deck's new Game Changer count against `decks::gc_rules` for each tier the deck lists in
 `data/my_decks.toml`, a deck card the catalog does not know, Oracle errata against `data/scryfall_cache.json`, which means
 the engine's model may be stale, and any failed stage) · **Run** (bulk `updated_at` old to new, card counts, the stage table)

@@ -267,7 +267,9 @@ fn a_skipped_or_failed_sync_shows_no_comparison_and_failures_lead_the_action_lis
     assert!(section(&t, "Run").contains("Comparison: none, the bulk file did not change this run"), "{t}");
     assert!(section(&t, "New cards").contains("No new-card list this run"), "{t}");
     assert!(section(&t, "Run").contains("| llm | skip | 0 | GPU busy |"), "{t}");
-    assert!(!section(&t, "Action needed").contains("Dark Tutor"), "no diff, no ban: {t}");
+    // no diff, but a deck card that is banned now is listed anyway, as a state and not as a transition
+    let a = section(&t, "Action needed");
+    assert!(a.contains("**Dark Tutor** is banned.") && !a.contains("became"), "{a}");
     let fail = e.write("fail.tsv", "bulk-sync\tfail\t5\tno network\nroles\tfail\t1\tcardgen exited 1\nbogus line\n");
     let t = e.text(&["--stages", &fail]);
     let a = section(&t, "Action needed");
@@ -405,4 +407,42 @@ fn markup_in_names_notes_and_keys_is_escaped_and_flattened() {
     assert!(t.contains("| llm | fail | 1 | note \\| with \\#\\# and \\`ticks\\` \\[x\\](y)\\\\n |"), "{t}");
     // a backtick or bar in a deck key cannot end its code span
     assert!(t.contains("- `k'z|` (R)"), "{t}");
+}
+
+/// the old catalog with one card's commander legality changed
+fn prev_with(e: &Env, name: &str, legal: &str) {
+    let mut v: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(fixture("old_oracle.json")).unwrap()).unwrap();
+    for c in v["cards"].as_array_mut().unwrap() {
+        if c["name"] == name {
+            c["legalities"]["commander"] = legal.into();
+        }
+    }
+    e.write("data/knowledge/oracle.prev.json", &v.to_string());
+}
+
+#[test]
+fn a_deck_card_that_is_not_legal_leads_action_needed_every_run_not_only_when_it_changed() {
+    let e = Env::new();
+    // (a) banned in the previous sync as well as now (the report of the week it happened was lost): no transition
+    prev_with(&e, "Dark Tutor", "banned");
+    let a = section(&e.text(&[]), "Action needed").to_string();
+    assert!(a.contains("- Deck `kx`: **Dark Tutor** is banned."), "{a}");
+    assert!(!a.contains("Dark Tutor** became"), "{a}");
+    // (b) a bulk-skip run (previous catalog equal to the current one, no comparison at all)
+    e.copy("new_oracle.json", "data/knowledge/oracle.prev.json");
+    let skip = e.write("skip.tsv", "bulk-sync\tskip\t1\tup to date\n");
+    let t = e.text(&["--stages", &skip]);
+    assert!(section(&t, "Action needed").contains("- Deck `kx`: **Dark Tutor** is banned."), "{t}");
+    // (c) a deck that gains a card that is banned already
+    e.copy("old_oracle.json", "data/knowledge/oracle.prev.json");
+    let decks =
+        std::fs::read_to_string(fixture("decks.json")).unwrap().replace("\"Red Burn\"", "\"Red Burn\", \"Fresh Ban\"");
+    e.write("data/decks.json", &decks);
+    let a = section(&e.text(&[]), "Action needed").to_string();
+    assert!(a.contains("- Deck `kz`: **Fresh Ban** is banned."), "{a}");
+    // a transition is still told as one, and only once
+    let a = section(&Env::new().text(&[]), "Action needed").to_string();
+    assert_eq!(a.matches("Dark Tutor").count(), 1, "{a}");
+    assert!(a.contains("**Dark Tutor** became banned (was legal)."), "{a}");
 }

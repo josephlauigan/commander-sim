@@ -1,5 +1,5 @@
 //! `scripts/knowledge-weekly.sh` without the network, a GPU or systemd: a local bulk file stands in for Scryfall, the
-//! built `cardgen` is used as is, the LLM stage is skipped or driven through stubs of `curl`, `fuser`, `ss` and
+//! built `cardgen` is used as is, the LLM stage is skipped or driven through stubs of `curl`, `ss` and
 //! `systemctl` placed first in PATH. The decision logic (use a running server, skip on another model or a busy GPU,
 //! start and stop only what the job started) is tested as the script's own functions.
 
@@ -51,6 +51,20 @@ impl Sandbox {
         self.root.join(rel)
     }
 
+    /// the pid a stub wrote into a file of the sandbox (waits for it)
+    fn read_pid(&self, rel: &str) -> String {
+        let t = std::time::Instant::now();
+        loop {
+            if let Ok(text) = std::fs::read_to_string(self.p(rel)) {
+                if !text.trim().is_empty() {
+                    return text.trim().to_string();
+                }
+            }
+            assert!(t.elapsed().as_secs() < 30, "{rel} was never written");
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+    }
+
     fn out(&self, rel: &str) -> PathBuf {
         self.root.join("out").join(rel)
     }
@@ -76,6 +90,9 @@ impl Sandbox {
         e.insert("KNOWLEDGE_NO_SCOPE".into(), "1".into());
         e.insert("KNOWLEDGE_SKIP_LLM".into(), "1".into());
         e.insert("KNOWLEDGE_DATE".into(), "2026-11-22".into());
+        // a hermetic clock (inside the night window) and a fake /proc (nobody uses the GPU)
+        e.insert("KNOWLEDGE_NOW_HOUR".into(), "3".into());
+        e.insert("KNOWLEDGE_PROC_ROOT".into(), s(self.p("proc")));
         e.insert("CARDGEN_KNOWLEDGE_DIR".into(), String::new());
         e.insert("CARGO_TARGET_DIR".into(), s(self.p("target")));
         e
@@ -122,6 +139,32 @@ impl Drop for Sandbox {
     }
 }
 
+/// A fake /proc tree under `proc/` of the sandbox: each holder is `("PID/FD", fdinfo text)` and its descriptor
+/// points at `node`; a decoy process holds some other file. The old tree is replaced.
+fn fake_proc(sb: &Sandbox, node: &Path, holders: &[(&str, &str)]) {
+    let root = sb.p("proc");
+    let _ = std::fs::remove_dir_all(&root);
+    let mut all: Vec<(&str, &str, PathBuf)> = holders.iter().map(|(n, t)| (*n, *t, node.to_path_buf())).collect();
+    all.push(("9/1", "drm-client-id:\t999\ndrm-resident-vram0:\t90 GiB\n", sb.p("not-the-gpu")));
+    for (name, text, target) in all {
+        let (pid, fd) = name.split_once('/').unwrap();
+        std::fs::create_dir_all(root.join(pid).join("fd")).unwrap();
+        std::fs::create_dir_all(root.join(pid).join("fdinfo")).unwrap();
+        std::os::unix::fs::symlink(&target, root.join(pid).join("fd").join(fd)).unwrap();
+        if !text.is_empty() {
+            std::fs::write(root.join(pid).join("fdinfo").join(fd), text).unwrap();
+        }
+    }
+}
+
+/// fdinfo text of a DRM client with `vram` as the `drm-resident-vram0` value (`None`: the field is missing)
+fn info(client: u32, vram: Option<&str>) -> String {
+    match vram {
+        Some(v) => format!("drm-driver:\txe\ndrm-client-id:\t{client}\ndrm-resident-vram0:\t{v}\n"),
+        None => format!("drm-driver:\txe\ndrm-client-id:\t{client}\n"),
+    }
+}
+
 fn git_status(root: &Path) -> Option<String> {
     let o = Command::new("git").arg("-C").arg(root).args(["status", "--porcelain"]).output().ok()?;
     o.status.success().then(|| String::from_utf8_lossy(&o.stdout).into_owned())
@@ -155,7 +198,6 @@ fn dry_run_prints_every_stage_and_writes_and_calls_nothing() {
     // a stub that would record any call: the dry run must make none
     sb.stub("systemctl", &format!("echo systemctl \"$@\" >> {}/calls", sb.root.display()));
     sb.stub("curl", &format!("echo curl \"$@\" >> {}/calls; exit 7", sb.root.display()));
-    sb.stub("fuser", &format!("echo fuser \"$@\" >> {}/calls; exit 1", sb.root.display()));
     sb.with_stubs_first(&mut env);
     let before = (listing(&sb.root), git_status(&repo_root()));
     let text = sb.ok(&["--dry-run"], &env);
@@ -174,7 +216,7 @@ fn dry_run_prints_every_stage_and_writes_and_calls_nothing() {
         "{text}"
     );
     assert_eq!(before, (listing(&sb.root), git_status(&repo_root())), "nothing written");
-    assert!(!sb.p("calls").exists(), "no curl, fuser or systemctl call");
+    assert!(!sb.p("calls").exists(), "no curl or systemctl call");
     assert!(!sb.p("cache").exists(), "no state directory either");
     // one stage only
     let text = sb.ok(&["--dry-run", "--only", "roles"], &env);
@@ -394,7 +436,7 @@ fn an_interrupted_run_leaves_the_previous_outputs_intact_and_the_next_run_comple
 
 // ------------------------------------------------------------------------------------------------ the LLM decisions
 
-/// the script's own `llm_decide` with stubs of curl, ss, fuser and systemctl first in PATH
+/// the script's own `llm_decide` with stubs of curl, ss and systemctl first in PATH and a fake /proc
 struct Probe {
     sb: Sandbox,
 }
@@ -406,14 +448,21 @@ impl Probe {
         Probe { sb }
     }
 
-    /// curl answers with `models` (or fails when empty); ss prints a listener when `held`; fuser says busy when `busy`;
-    /// `unit` is whether systemctl knows the unit
-    fn decide(&self, models: &str, held: bool, busy: bool, unit: bool, device: bool) -> String {
+    /// curl answers with `models` (or fails when empty); ss prints a listener when `held`; `gpu` is how the fake /proc
+    /// shows the card ("free": three holders with no video memory, "busy": one holding 21 GiB, "unknown": a holder
+    /// whose fdinfo has no `drm-resident-vram0`); `unit` is whether systemctl knows the unit
+    fn decide(&self, models: &str, held: bool, gpu: &str, unit: bool, device: bool) -> String {
         let sb = &self.sb;
         let curl = if models.is_empty() { "exit 7".to_string() } else { format!("echo '{models}'") };
         sb.stub("curl", &curl);
         sb.stub("ss", if held { "echo 'LISTEN 0 512 127.0.0.1:8080 0.0.0.0:*'" } else { "exit 0" });
-        sb.stub("fuser", if busy { "exit 0" } else { "exit 1" });
+        let (a, b, c, d) = (info(1, Some("0")), info(2, Some("0 KiB")), info(3, Some("0")), info(4, Some("21 GiB")));
+        let none = info(5, None);
+        match gpu {
+            "free" => fake_proc(sb, &sb.p("gpu"), &[("10/3", &a), ("11/4", &b), ("12/5", &c)]),
+            "busy" => fake_proc(sb, &sb.p("gpu"), &[("10/3", &a), ("11/4", &d)]),
+            _ => fake_proc(sb, &sb.p("gpu"), &[("10/3", &a), ("11/4", &none)]),
+        }
         sb.stub(
             "systemctl",
             &format!(
@@ -449,27 +498,28 @@ const MODEL_CODER: &str = r#"{"object":"list","data":[{"id":"Qwen3-Coder-30B-A3B
 fn a_running_27b_server_is_used_another_model_is_not() {
     let p = Probe::new();
     assert_eq!(
-        p.decide(MODEL_27B, true, true, true, true),
+        p.decide(MODEL_27B, true, "busy", true, true),
         "use",
         "in use even though the GPU is busy: it is ours to share"
     );
-    assert_eq!(p.decide(MODEL_CODER, true, false, true, true), "skip: other model on the port");
-    assert_eq!(p.decide(MODEL_27B, false, false, false, false), "use", "answering is enough");
+    assert_eq!(p.decide(MODEL_CODER, true, "free", true, true), "skip: other model on the port");
+    assert_eq!(p.decide(MODEL_27B, false, "free", false, false), "use", "answering is enough");
 }
 
 #[test]
 fn a_held_port_a_busy_gpu_a_missing_device_and_a_missing_unit_each_skip_with_their_reason() {
     let p = Probe::new();
     assert!(
-        p.decide("", true, false, true, true).starts_with("skip: port 8080 is held but /v1/models does not answer")
+        p.decide("", true, "free", true, true).starts_with("skip: port 8080 is held but /v1/models does not answer")
     );
-    assert_eq!(p.decide("", false, true, true, true), "skip: GPU busy");
+    assert_eq!(p.decide("", false, "busy", true, true), "skip: GPU busy");
+    assert!(p.decide("", false, "unknown", true, true).starts_with("skip: GPU state unknown"));
     assert!(
-        p.decide("", false, false, true, false).starts_with("skip: GPU device ")
-            && p.decide("", false, false, true, false).ends_with("not found")
+        p.decide("", false, "free", true, false).starts_with("skip: GPU device ")
+            && p.decide("", false, "free", true, false).ends_with("not found")
     );
-    assert!(p.decide("", false, false, false, true).contains("llama-27b.service is not installed"));
-    assert_eq!(p.decide("", false, false, true, true), "start");
+    assert!(p.decide("", false, "free", false, true).contains("llama-27b.service is not installed"));
+    assert_eq!(p.decide("", false, "free", true, true), "start");
 }
 
 /// the whole LLM stage against stubs: a fake cardgen (dry run counts, the run appends pending rows), a curl that
@@ -512,7 +562,8 @@ impl LlmRun {
                 grammar,
                 dry,
                 format!("echo \"cardgen $*\" >> {root}/cardgen.calls"),
-                "if [ -n \"$FAKE_SLEEP\" ]; then exec sleep \"$FAKE_SLEEP\"; fi".into(),
+                "if [ -n \"$FAKE_SLEEP\" ]; then echo $$ > \"$TEST_ROOT/cardgen.pid\"; exec sleep \"$FAKE_SLEEP\"; fi"
+                    .into(),
                 "[ -n \"$FAKE_FAIL\" ] && { echo 'boom: roles --llm failed' >&2; exit 1; }".into(),
                 "printf '{}\\n{}\\n{}\\n' >> \"$CARDGEN_KNOWLEDGE_DIR/llm_roles.pending.jsonl\"".into(),
                 "echo 'classified 3 cards'".into(),
@@ -532,7 +583,7 @@ impl LlmRun {
             .join("\n"),
         );
         sb.stub("ss", "exit 0");
-        sb.stub("fuser", "[ -n \"$FAKE_GPU_BUSY\" ] && exit 0; exit 1");
+        fake_proc(&sb, &sb.p("gpu"), &[("10/3", &info(1, Some("0 KiB")))]);
         sb.stub(
             "systemctl",
             &[
@@ -604,8 +655,8 @@ fn a_server_that_is_already_running_is_used_and_never_started_or_stopped() {
 
 #[test]
 fn a_busy_gpu_or_another_model_skips_the_stage_without_starting_anything() {
-    let mut r = LlmRun::new(5);
-    r.env.insert("FAKE_GPU_BUSY".into(), "1".into());
+    let r = LlmRun::new(5);
+    fake_proc(&r.sb, &r.sb.p("gpu"), &[("10/3", &info(1, Some("21 GiB")))]);
     let (status, note) = r.stage();
     assert_eq!((status.as_str(), note.as_str()), ("skip", "GPU busy"));
     assert!(!r.calls().contains(" start "), "{}", r.calls());
@@ -687,9 +738,22 @@ fn a_job_killed_while_it_owns_the_server_stops_it() {
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
     assert!(r.sb.p("server-up").exists(), "the job started the unit");
+    let cardgen_pid = r.sb.read_pid("cardgen.pid");
     assert!(Command::new("kill").args(["-s", "TERM", "--", &format!("-{}", child.id())]).status().unwrap().success());
-    let _ = child.wait();
-    std::thread::sleep(std::time::Duration::from_millis(500));
+    // bounded: a stage that ignores the TERM must fail this test, not hang it
+    let t = std::time::Instant::now();
+    while child.try_wait().unwrap().is_none() && t.elapsed().as_secs() < 20 {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    let exited = child.try_wait().unwrap().is_some();
+    if !exited {
+        let _ = Command::new("kill").args(["-s", "KILL", "--", &format!("-{}", child.id())]).status();
+        let _ = Command::new("kill").args(["-s", "KILL", &cardgen_pid]).status();
+        let _ = child.wait();
+    }
+    assert!(exited, "the TERM sent to the script reached the running stage and ended the job");
+    // the program the stage ran (behind `timeout`) was reached too, not left running as an orphan
+    assert!(!Path::new(&format!("/proc/{cardgen_pid}")).exists(), "cardgen {cardgen_pid} is still running");
     assert!(!r.sb.p("server-up").exists(), "stopped on the way out: {}", r.calls());
     assert!(!r.sb.p("cache/owns-llama-27b").exists(), "the ownership marker is gone");
 }
@@ -898,4 +962,168 @@ fn cleanup_stops_only_the_invocation_the_jobs_own_marker_names_and_a_second_job_
     assert!(text.contains("another run is active"), "{text}");
     assert_eq!(stops(), 1, "{}", r.calls());
     assert!(marker.exists() && sb.p("server-up").exists());
+}
+
+// ------------------------------------------------------------------------------------------------ round 3
+
+/// `gpu_state` of the script on a fake /proc: the sandbox's `gpu` file is the render node
+fn gpu_state(sb: &Sandbox, holders: &[(&str, String)], extra: &[(&str, &str)]) -> String {
+    std::fs::write(sb.p("gpu"), "").unwrap();
+    let h: Vec<(&str, &str)> = holders.iter().map(|(n, t)| (*n, t.as_str())).collect();
+    fake_proc(sb, &sb.p("gpu"), &h);
+    let mut env = sb.env();
+    env.insert("KNOWLEDGE_GPU_DEVICE".into(), sb.p("gpu").display().to_string());
+    for (k, v) in extra {
+        env.insert((*k).into(), (*v).into());
+    }
+    let o = Command::new("bash")
+        .arg("-c")
+        .arg(format!("source {}; gpu_state", script().display()))
+        .envs(&env)
+        .output()
+        .unwrap();
+    assert!(o.status.success(), "{}", String::from_utf8_lossy(&o.stderr));
+    String::from_utf8_lossy(&o.stdout).trim().to_string()
+}
+
+#[test]
+fn the_gpu_is_busy_only_when_other_processes_hold_a_gigabyte_of_video_memory() {
+    let sb = Sandbox::new();
+    // the desktop session's clients hold the node open and use no memory: free
+    let idle = [("10/3", info(1, Some("0"))), ("11/4", info(2, Some("92 KiB"))), ("12/5", info(3, Some("0 KiB")))];
+    assert_eq!(gpu_state(&sb, &idle, &[]), "free");
+    // nothing holds it at all
+    assert_eq!(gpu_state(&sb, &[], &[]), "free");
+    // a server holding 21 GiB
+    let server = [("10/3", info(1, Some("0"))), ("20/3", info(7, Some("21982932 KiB")))];
+    assert_eq!(gpu_state(&sb, &server, &[]), "busy");
+    // a holder that does not report video memory, or whose fdinfo cannot be read: unknown (fail closed)
+    assert_eq!(gpu_state(&sb, &[("10/3", info(1, Some("0"))), ("11/4", info(2, None))], &[]), "unknown");
+    assert_eq!(gpu_state(&sb, &[("10/3", info(1, Some("0"))), ("11/4", String::new())], &[]), "unknown");
+    assert_eq!(gpu_state(&sb, &[("10/3", info(1, Some("lots")))], &[]), "unknown");
+    // ... unless what is known already says busy
+    assert_eq!(gpu_state(&sb, &[("10/3", info(1, Some("2 GiB"))), ("11/4", info(2, None))], &[]), "busy");
+    // one client with two descriptors counts once: 600 MiB, not 1200
+    let twice = [("10/3", info(1, Some("600 MiB"))), ("10/4", info(1, Some("600 MiB")))];
+    assert_eq!(gpu_state(&sb, &twice, &[]), "free");
+    let two = [("10/3", info(1, Some("600 MiB"))), ("11/4", info(2, Some("600 MiB")))];
+    assert_eq!(gpu_state(&sb, &two, &[]), "busy");
+    // units, and the threshold itself (at or above is busy)
+    for (v, want) in [
+        ("1023 MiB", "free"),
+        ("1024 MiB", "busy"),
+        ("1 GiB", "busy"),
+        ("1048575 KiB", "free"),
+        ("1048576 KiB", "busy"),
+        ("1073741823", "free"),
+        ("1073741824", "busy"),
+    ] {
+        assert_eq!(gpu_state(&sb, &[("10/3", info(1, Some(v)))], &[]), want, "{v}");
+    }
+    // the threshold is configurable; a bad one is unknown
+    let two_gib = [("10/3", info(1, Some("2 GiB")))];
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "4096")]), "free");
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "100")]), "busy");
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "lots")]), "unknown");
+}
+
+#[test]
+fn a_holder_of_the_cards_sibling_node_counts_as_well() {
+    let sb = Sandbox::new();
+    let dev = sb.p("dev");
+    std::fs::create_dir_all(&dev).unwrap();
+    std::fs::write(sb.p("renderD1"), "").unwrap();
+    std::fs::write(sb.p("card1"), "").unwrap();
+    std::os::unix::fs::symlink(sb.p("renderD1"), dev.join("pci-0000:04:00.0-render")).unwrap();
+    std::os::unix::fs::symlink(sb.p("card1"), dev.join("pci-0000:04:00.0-card")).unwrap();
+    fake_proc(&sb, &sb.p("card1"), &[("10/3", &info(1, Some("2 GiB")))]);
+    let mut env = sb.env();
+    env.insert("KNOWLEDGE_GPU_DEVICE".into(), dev.join("pci-0000:04:00.0-render").display().to_string());
+    let run = |env: &BTreeMap<String, String>| {
+        let o = Command::new("bash")
+            .arg("-c")
+            .arg(format!("source {}; gpu_state", script().display()))
+            .envs(env)
+            .output()
+            .unwrap();
+        String::from_utf8_lossy(&o.stdout).trim().to_string()
+    };
+    assert_eq!(run(&env), "busy");
+    // and a holder of the render node resolved through the by-path link
+    fake_proc(&sb, &sb.p("renderD1"), &[("10/3", &info(1, Some("2 GiB")))]);
+    assert_eq!(run(&env), "busy");
+    fake_proc(&sb, &sb.p("renderD1"), &[("10/3", &info(1, Some("2 MiB")))]);
+    assert_eq!(run(&env), "free");
+}
+
+#[test]
+fn the_llm_stage_runs_only_inside_the_night_window_and_the_rest_of_the_job_still_runs() {
+    let mut r = LlmRun::new(5);
+    // the afternoon: skipped, nothing about a server is asked
+    r.env.insert("KNOWLEDGE_NOW_HOUR".into(), "14".into());
+    let (status, note) = r.stage();
+    assert_eq!(status, "skip");
+    assert!(note.starts_with("outside the night window (KNOWLEDGE_LLM_HOURS=0-7, local hour 14)"), "{note}");
+    assert!(r.calls().is_empty() && !r.sb.p("cardgen.calls").exists(), "{}", r.calls());
+    // the edges: 00:00 is inside, 07:00 is outside
+    for (hour, want) in [("0", "ok"), ("6", "ok"), ("7", "skip"), ("23", "skip")] {
+        let r = LlmRun::new(5);
+        let mut env = r.env.clone();
+        env.insert("KNOWLEDGE_NOW_HOUR".into(), hour.into());
+        r.sb.ok(&["--stage", "4"], &env);
+        assert_eq!(r.sb.stages("2026-11-22")[0].1, want, "hour {hour}");
+    }
+    // a configured window, wrapping past midnight, and a bad one
+    for (hours, hour, want) in
+        [("22-6", "23", "ok"), ("22-6", "12", "skip"), ("14-15", "14", "ok"), ("x-y", "3", "skip")]
+    {
+        let r = LlmRun::new(5);
+        let mut env = r.env.clone();
+        env.insert("KNOWLEDGE_NOW_HOUR".into(), hour.into());
+        env.insert("KNOWLEDGE_LLM_HOURS".into(), hours.into());
+        r.sb.ok(&["--stage", "4"], &env);
+        let stages = r.sb.stages("2026-11-22");
+        assert_eq!(stages[0].1, want, "{hours} at {hour}: {stages:?}");
+    }
+    // a whole run in the afternoon: only the LLM stage is skipped, and the report says why
+    let sb = Sandbox::new();
+    let mut env = sb.env();
+    env.remove("KNOWLEDGE_SKIP_LLM");
+    env.insert("KNOWLEDGE_NOW_HOUR".into(), "14".into());
+    sb.ok(&[], &env);
+    let names: Vec<(String, String)> = sb.stages("2026-11-22").into_iter().map(|s| (s.0, s.1)).collect();
+    let want: Vec<(String, String)> =
+        [("fetch-build", "ok"), ("bulk-sync", "ok"), ("roles", "ok"), ("llm", "skip"), ("map-digest", "ok")]
+            .iter()
+            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .collect();
+    assert_eq!(names, want);
+    assert!(
+        sb.read("reports/2026-11-22.md").contains("| llm | skip | 0 | outside the night window"),
+        "{}",
+        sb.read("reports/2026-11-22.md")
+    );
+}
+
+#[test]
+fn a_busy_cargo_lock_is_a_named_failure_not_an_endless_wait() {
+    let sb = Sandbox::new();
+    let mut env = sb.env();
+    env.remove("KNOWLEDGE_CARDGEN");
+    env.insert("KNOWLEDGE_REPO".into(), sb.p("repo").display().to_string());
+    env.insert("KNOWLEDGE_CARGO_LOCK".into(), sb.p("heavy.lock").display().to_string());
+    env.insert("KNOWLEDGE_CARGO_LOCK_WAIT".into(), "1".into());
+    env.insert("CARGO_TARGET_DIR".into(), sb.p("target").display().to_string());
+    std::fs::create_dir_all(sb.p("repo/rust")).unwrap();
+    std::fs::create_dir_all(sb.p("repo/data")).unwrap();
+    let mut holder = Command::new("flock").arg(sb.p("heavy.lock")).args(["sleep", "30"]).spawn().unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    let t = std::time::Instant::now();
+    sb.ok(&["--stage", "1"], &env);
+    let _ = holder.kill();
+    let _ = holder.wait();
+    assert!(t.elapsed().as_secs() < 20);
+    let stages = sb.stages("2026-11-22");
+    assert_eq!((stages[0].0.as_str(), stages[0].1.as_str()), ("fetch-build", "fail"), "{stages:?}");
+    assert!(stages[0].2.starts_with("heavy lock busy"), "{stages:?}");
 }

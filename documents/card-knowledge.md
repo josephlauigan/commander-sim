@@ -199,23 +199,39 @@ hidden temp file in the target directory, and a kill during that copy leaves it 
 `CARDGEN_KNOWLEDGE_DIR`, never to the clone. Everything written there is gitignored: `oracle.json`, `oracle.prev.json`,
 `sync.lock`, `roles.json`, `map.md`, `digests/`, `reports/`, `llm_roles.pending.jsonl`. The tracked role files
 (`roles.toml`, `roles_overrides.toml`, `llm_roles.jsonl`) are only read from there, so they must be checked out in the
-main checkout: until the knowledge branch is merged and checked out there, set `KNOWLEDGE_OUT` to a checkout that has them
-(for example the `knowledge-base` worktree's `data/knowledge`), and `KNOWLEDGE_REF` to the branch that has `cardgen
-weekly-report` (for example `origin/knowledge-base`), because `origin/main` does not have this code yet. Logs of the last 12
-runs are in `~/.cache/commander-sim-knowledge/runs/DATE/`.
+main checkout. **Where each part comes from at run time:** the script itself, the unit files and the tracked role files come
+from the main checkout's working tree (so a main checkout on an old commit runs an old script), while the code that is
+built (`cardgen`), `data/decks.json`, the engine cache and FINDINGS come from `origin/main` in the clone. Install the job
+only after the knowledge branches are merged into main and the main checkout is on main: `ExecStart`, `ExecStopPost` and
+`systemctl --user link` all point at the main checkout, which has neither the units nor the script before that. Logs of the
+last 12 runs are in `~/.cache/commander-sim-knowledge/runs/DATE/`.
+
+**Publication is atomic per file and per stage, not per run.** A stage's files are renamed into place one at a time after
+the stage succeeded, so a SIGKILL during publication can leave a mix of new and previous files, each one whole (a TERM is
+deferred by bash until the `mv` in progress finishes, then the publication completes). If stage 3 fails after stage 2
+published a new catalog, `roles.json` is stale for it: readers get "roles.json: stale ... run `cardgen roles --rules`", stage 5
+fails too and the previous digests stay, until the next good run. Both failures are in the report's Action needed.
 
 **The LLM stage and the GPU.** The production model is the dense Qwen3.6-27B-Q5_K_M behind the user unit
 `scripts/systemd/llama-27b.service` (tracked, not enabled; the coder `llama-server` service is not touched). The job:
 if a server already answers on port 8080, it uses it only if its model id contains `Qwen3.6-27B` and never stops it (any
-other model: skip, "other model on the port"); if the port is held but silent, skip; if something holds the B70's render
-node open (`fuser` on `/dev/dri/by-path/pci-0000:04:00.0-render`, override `KNOWLEDGE_GPU_DEVICE`), skip, "GPU busy"; if the
-unit is not installed, skip with the link command; otherwise it starts the unit (with a runtime limit, in case the job is
-killed), waits up to 5 minutes for the model, sends a smoke prompt, runs the stage for at most 90 minutes (the rest carries
-over to next week; every batch is flushed to the pending file as it finishes), and stops the unit only because it started
-it. The details that make "only because it started it" hold:
+other model: skip, "other model on the port"); if the port is held but silent, skip; if other processes hold 1 GiB or more of
+the B70's video memory (below), skip, "GPU busy"; if the unit is not installed, skip with the link command; otherwise it
+starts the unit, waits up to 5 minutes for the model, sends a smoke prompt, runs the stage for at most 90 minutes (the rest
+carries over to next week; the finished batches are published at the end of the stage), and stops the unit only because it
+started it. The details that make "only because it started it" hold:
 
-- `fuser` must say the render node is free (exit 1). A missing `fuser`, or an exit other than 0 and 1, is "GPU state
-  unknown" and skips the stage (fail closed). `fuser` also exits 1 on its own fatal errors, which cannot be told apart.
+- **The night window.** The stage runs only when the local hour is inside `KNOWLEDGE_LLM_HOURS` (default `0-7`: 00:00 up to
+  07:00; `22-6` wraps past midnight). Outside it the stage is skipped ("outside the night window") and the rest of the job
+  still runs, so a catch-up run after a missed Sunday 04:00 (`Persistent=true`: it runs at wake, in the daytime) leaves the GPU
+  to JD. The report says so in the stage table. The window gates the start of the stage, not its end.
+- **The GPU check is about video memory, not about an open file.** The desktop session and every client of the card hold the
+  render node open with no memory, so `fuser` would call the card busy all day. `gpu_state` sums `drm-resident-vram0` from
+  `/proc/PID/fdinfo` of every file descriptor that points at the render node (or its `-card` sibling), each DRM client
+  once (`drm-client-id`), units KiB, MiB and GiB (none: bytes). At or above `KNOWLEDGE_GPU_BUSY_MIB` (default 1024) it is
+  busy. Unknown, and the stage skips (fail closed): a matching descriptor whose fdinfo cannot be read or has no
+  `drm-resident-vram0`. Free: nothing matches, or the sum is below the threshold. Only processes whose descriptors this
+  user can read are seen.
 - Right before `systemctl --user start`, the job asks again: if a server answers or `is-active` says active or
   activating, the unit is somebody else's, is used if it becomes ready, and is never stopped.
 - Right after a start it caused, the job writes the ownership marker `~/.cache/commander-sim-knowledge/owns-llama-27b` (run
@@ -223,16 +239,18 @@ it. The details that make "only because it started it" hold:
   invocation, then removes the marker. This happens on exit and on TERM, INT and HUP (a TERM sent to the script alone is
   forwarded to the running stage, which is reaped first), and from the service's `ExecStopPost=` through
   `knowledge-weekly.sh --cleanup`, which runs after the job ended however it ended, a SIGKILL included.
-- `llama-27b.service` has `RuntimeMaxSec=6000` (100 minutes: the 90-minute budget plus the 5-minute load), so a server that
-  is somehow left behind ends itself. Raise it together with `KNOWLEDGE_LLM_BUDGET_SECS` or `KNOWLEDGE_LLM_READY_SECS`.
+- `llama-27b.service` has `RuntimeMaxSec=7200` (the worst case is 300 s to load, 180 s smoke prompt, 5400 s budget and 60 s
+  kill-after, about 5950 s), so a server that is somehow left behind ends itself. Raise it together with
+  `KNOWLEDGE_LLM_BUDGET_SECS` or `KNOWLEDGE_LLM_READY_SECS`. The stage's `timeout` runs in the stage's own process group, so
+  a TERM to the script reaches `cardgen` too.
 - **Residual window (a known limit):** another actor that starts the unit in the milliseconds between the final
   `is-active` check and `systemctl start` makes the job believe it started it, and it would stop that server at the end.
   systemd has no "start only if inactive" call, so the window cannot be closed from a script.
 
 A start, readiness or smoke failure is a `fail` in the report; the skips are not.
 
-**The report** (`cardgen weekly-report`, in the cardgen README): Action needed (for JD's decks only: a card that became
-banned or not legal; a Game Changer added or removed, with the deck's new count against the rule of each tier it lists,
+**The report** (`cardgen weekly-report`, in the cardgen README): Action needed (for JD's decks only: every deck card that is not
+Commander-legal now, every run ("became X (was Y)" when this run's comparison holds the change, else "is X"); a Game Changer added or removed, with the deck's new count against the rule of each tier it lists,
 `decks::gc_rules`: t0-t1 none, t2 one or two, t3 exactly three, t4-t5 unrestricted, which is the pool decks' rule and is
 shown as information for JD's decks; a deck card the catalog does not know; Oracle errata against
 `data/scryfall_cache.json`, meaning the engine's model may be stale: the Oracle text is compared as the role classifier
@@ -247,7 +265,8 @@ the script also calls `notify-send`, if it exists.
 refreshing the cache with errata, llama.cpp or model updates, merging pending LLM rows (`roles --merge --pending`, in a
 reviewed session, then `llm_roles.jsonl` is edited by hand), installing or enabling the timer.
 
-**Install (JD, by hand; nothing here runs them):**
+**Install (JD, by hand; nothing here runs them), only after the knowledge branches are merged into main and the main checkout
+is on main:**
 
 ```
 chmod +x ~/projects/commander-sim/scripts/knowledge-weekly.sh        # already executable in git
@@ -259,14 +278,27 @@ systemctl --user list-timers knowledge-weekly                          # next ru
 journalctl --user -u knowledge-weekly                                  # what a run printed
 ```
 
+**First run: supervise it, on a weekday.** Do not wait for Sunday. Start `systemctl --user start knowledge-weekly.service` and
+watch `journalctl --user -fu knowledge-weekly`. That run clones over ssh, downloads the crates, builds `cardgen` in release
+(minutes, behind the heavy lock `/tmp/cargo-heavy.lock`, which it waits for at most an hour), downloads about 160 MB of bulk
+data and reports "first run" with the deck cards that are not legal now. In the daytime the LLM stage is skipped by the night
+window; to see it work, run during the window or set `KNOWLEDGE_LLM_HOURS=0-24` once and watch the GPU decision. Then check:
+`reports/DATE.md` has the six stage rows; `git status --porcelain` of the main checkout is unchanged; there is no
+`~/.cache/commander-sim-knowledge/owns-llama-27b` marker; `llama-27b` is inactive (if the job started it); the llm note
+says the GPU decision. Merging the branch deletes the tracked `sync.lock` in the main checkout; the next `bulk-sync`
+rebuilds it from `oracle.json`. A catch-up run at wake time uses the CPU and disk at low priority but not the GPU.
+No long manual runs on `llama-27b` while the job may start it: `systemctl --user stop llama-27b` ends the job's server (its
+rows are kept).
+
 A manual run: `scripts/knowledge-weekly.sh --dry-run` (prints what each stage would do; writes nothing), or `systemctl --user
 start knowledge-weekly.service` for a real one, or `scripts/knowledge-weekly.sh --stage 2` for one stage. To remove it:
 `systemctl --user disable --now knowledge-weekly.timer`.
 
 **Checks** (no network, GPU or systemd changes): `tests/weekly.rs` (the report), `tests/weekly_sync.rs` (the untracked lock,
 `--updated-at`), `tests/weekly_script.rs` (a full offline run on a fixture bulk file, a failed stage, no binary, a failed
-fetch, two runs at once, an interrupted run, and the LLM decisions against stubs of `curl`, `ss`, `fuser` and `systemctl`:
-server already running, another model, GPU busy, quiet week, smoke failure, spent budget, a killed job), and
+fetch, a busy cargo lock, two runs at once, an interrupted run, the night window on a stubbed clock, `gpu_state` on fake
+`/proc` trees, and the LLM decisions against stubs of `curl`, `ss` and `systemctl`: server already running, another model,
+GPU busy, quiet week, smoke failure, spent budget, a killed job), and
 `systemd-analyze --user verify scripts/systemd/*`.
 
 ## Roles: the rule stage (phase 3)

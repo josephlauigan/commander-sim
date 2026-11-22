@@ -35,8 +35,11 @@
 # NEVER AUTOMATED: commits, pushes, PRs, writes to any tracked file, `cardgen export`, sims, swap or cut proposals,
 # llama.cpp or model updates, merging pending LLM rows into llm_roles.jsonl, installing or enabling the timer.
 #
-# The llama-27b unit: started only when nothing answers on the port, the GPU is free (fuser says so; a missing or
-# failing fuser means "unknown" and skips) and the unit is inactive right before the start. Ownership is a marker
+# The LLM stage runs only inside the night window ($KNOWLEDGE_LLM_HOURS, default 0-7: 00:00 to 07:00 local; outside it
+# the stage is skipped and the rest of the job still runs, so a catch-up after a missed Sunday 04:00 leaves the GPU to JD).
+# The llama-27b unit: started only when nothing answers on the port, the GPU is free (other processes hold under
+# $KNOWLEDGE_GPU_BUSY_MIB, default 1024 MiB, of its video memory; see gpu_state; an unreadable answer means "unknown" and
+# skips) and the unit is inactive right before the start. Ownership is a marker
 # file ($KNOWLEDGE_CACHE/owns-llama-27b: run id and the unit's InvocationID), written right after a start this run
 # caused. The job stops the unit only if that marker exists (on exit, on TERM/INT/HUP, and from the service's
 # ExecStopPost through `--cleanup`, which also covers a killed job); an already-active unit is never stopped. Known
@@ -51,12 +54,12 @@
 #
 # Environment (all optional): KNOWLEDGE_MAIN, KNOWLEDGE_OUT, KNOWLEDGE_CACHE, KNOWLEDGE_REPO, KNOWLEDGE_REPO_URL,
 # KNOWLEDGE_REF, KNOWLEDGE_GPU_DEVICE, KNOWLEDGE_LLM_URL, KNOWLEDGE_LLM_UNIT, KNOWLEDGE_LLM_BUDGET_SECS,
-# KNOWLEDGE_LLM_READY_SECS, KNOWLEDGE_SKIP_LLM=1, KNOWLEDGE_KEEP_REPORTS; for tests: KNOWLEDGE_SKIP_FETCH=1,
-# KNOWLEDGE_CARDGEN (a prebuilt binary), KNOWLEDGE_BULK_FILE + KNOWLEDGE_BULK_UPDATED_AT (a local bulk file instead of
+# KNOWLEDGE_LLM_READY_SECS, KNOWLEDGE_LLM_HOURS, KNOWLEDGE_GPU_BUSY_MIB, KNOWLEDGE_SKIP_LLM=1, KNOWLEDGE_KEEP_REPORTS; for tests: KNOWLEDGE_SKIP_FETCH=1,
+# KNOWLEDGE_CARDGEN (a prebuilt binary), KNOWLEDGE_NOW_HOUR (the clock for the night window), KNOWLEDGE_PROC_ROOT, KNOWLEDGE_BULK_FILE + KNOWLEDGE_BULK_UPDATED_AT (a local bulk file instead of
 # Scryfall), KNOWLEDGE_BULK_MIN, KNOWLEDGE_NO_SCOPE=1 (no systemd-run), KNOWLEDGE_DATE. Without HOME, the places derived
 # from it (KNOWLEDGE_MAIN, KNOWLEDGE_OUT, KNOWLEDGE_CACHE, KNOWLEDGE_REPO) must be given.
 #
-# needs: bash, git, cargo, flock, jq, curl, systemd-run, fuser, ss, timeout. Optional: notify-send.
+# needs: bash, git, cargo, flock, jq, curl, systemd-run, ss, timeout. Optional: notify-send.
 set -euo pipefail
 
 # ------------------------------------------------------------------------------------------------ configuration
@@ -310,7 +313,8 @@ publish_map_digest() {
 }
 
 # ------------------------------------------------------------------------------------------------ LLM decisions
-# Plain functions over curl, ss, fuser and systemctl, so a test can put stubs of them first in PATH.
+# Plain functions over curl, ss, systemctl and /proc, so a test can put stubs of them first in PATH and a fake /proc tree
+# in $KNOWLEDGE_PROC_ROOT.
 
 # the model ids the server on the port reports, one per line; nothing if it does not answer
 llm_models() {
@@ -322,20 +326,79 @@ llm_port_held() {
   ss -ltnH "sport = :$LLM_PORT" 2>/dev/null | grep -q .
 }
 
-# whether something has the render node open: busy, free, or unknown (no fuser, or it failed in a way that is neither
-# "some process holds it" (0) nor "none does" (1)); only a known "free" lets the job start the server
+# Whether other processes are using the B70: busy, free, or unknown. The render node is held open by the desktop session
+# and by every client of the card even when it uses no memory, so "open" says nothing; what counts is the video memory
+# the open file descriptors hold. The sum of `drm-resident-vram0` over the fdinfo of every file descriptor that points at
+# the render node (or its -card sibling), each DRM client once (`drm-client-id`), is compared with
+# $KNOWLEDGE_GPU_BUSY_MIB (default 1024 MiB): at or above it the GPU is busy. Free: nothing matches, or the sum is below
+# it. Unknown (the stage skips): a matching descriptor's fdinfo cannot be read or has no `drm-resident-vram0`. Units
+# KiB, MiB and GiB; no unit means bytes. $KNOWLEDGE_PROC_ROOT (default /proc) lets a test supply a fake tree. Only
+# processes whose descriptors this user may read are seen (a single-user machine: all of them).
 gpu_state() {
-  local rc=0
-  command -v fuser >/dev/null 2>&1 || {
+  local proc="${KNOWLEDGE_PROC_ROOT:-/proc}" limit="${KNOWLEDGE_GPU_BUSY_MIB:-1024}" fd link info text id val unit
+  local -a targets=()
+  local -A seen=()
+  local total_kib=0 unknown=0 node
+  [[ $limit =~ ^[0-9]+$ ]] || {
     echo unknown
     return 0
   }
-  fuser -s "$GPU_DEVICE" >/dev/null 2>&1 || rc=$?
-  case $rc in
-  0) echo busy ;;
-  1) echo free ;;
-  *) echo unknown ;;
-  esac
+  node="$(readlink -f -- "$GPU_DEVICE" 2>/dev/null)" || {
+    echo unknown
+    return 0
+  }
+  targets+=("$node")
+  if [[ $GPU_DEVICE == *-render ]] && [[ -e ${GPU_DEVICE%-render}-card ]]; then
+    targets+=("$(readlink -f -- "${GPU_DEVICE%-render}-card" 2>/dev/null || true)")
+  fi
+  for fd in "$proc"/[0-9]*/fd/*; do
+    link="$(readlink -- "$fd" 2>/dev/null)" || continue
+    [[ $link == "${targets[0]}" || (${#targets[@]} -gt 1 && $link == "${targets[1]}") ]] || continue
+    info="${fd%/fd/*}/fdinfo/${fd##*/}"
+    text="$(cat -- "$info" 2>/dev/null)" || {
+      unknown=1
+      continue
+    }
+    id="$(sed -n 's/^drm-client-id:[[:space:]]*//p' <<<"$text" | head -n 1)"
+    val="$(sed -n 's/^drm-resident-vram0:[[:space:]]*//p' <<<"$text" | head -n 1)"
+    if [[ ! $val =~ ^([0-9]+)[[:space:]]*(KiB|MiB|GiB)?$ ]]; then
+      unknown=1
+      continue
+    fi
+    # one client once, however many descriptors it holds (no id: this descriptor alone)
+    [[ -n $id ]] || id="fd:$fd"
+    [[ -z ${seen[$id]:-} ]] || continue
+    seen[$id]=1
+    unit="${BASH_REMATCH[2]}"
+    case $unit in
+    KiB) total_kib=$((total_kib + BASH_REMATCH[1])) ;;
+    MiB) total_kib=$((total_kib + BASH_REMATCH[1] * 1024)) ;;
+    GiB) total_kib=$((total_kib + BASH_REMATCH[1] * 1048576)) ;;
+    *) total_kib=$((total_kib + BASH_REMATCH[1] / 1024)) ;;
+    esac
+  done
+  if ((total_kib >= limit * 1024)); then
+    echo busy
+  elif ((unknown)); then
+    echo unknown
+  else
+    echo free
+  fi
+}
+
+# whether the LLM stage may start now: the local hour must be inside $KNOWLEDGE_LLM_HOURS (START-END, default 0-7,
+# that is 00:00 up to but not including 07:00; START greater than END wraps past midnight). The window gates the start
+# of the stage, not its end. $KNOWLEDGE_NOW_HOUR replaces the clock (tests).
+llm_in_window() {
+  local hours="${KNOWLEDGE_LLM_HOURS:-0-7}" hour="${KNOWLEDGE_NOW_HOUR:-}" a b
+  [[ -n $hour ]] || hour="$(date +%-H)"
+  [[ $hour =~ ^[0-9]{1,2}$ ]] || return 2
+  [[ $hours =~ ^([0-9]{1,2})-([0-9]{1,2})$ ]] || return 2
+  a=$((10#${BASH_REMATCH[1]}))
+  b=$((10#${BASH_REMATCH[2]}))
+  hour=$((10#$hour))
+  ((a <= 24 && b <= 24 && hour <= 23)) || return 2
+  if ((a <= b)); then ((hour >= a && hour < b)); else ((hour >= a || hour < b)); fi
 }
 
 llm_unit_installed() {
@@ -362,7 +425,7 @@ llm_decide() {
   if [[ $state == busy ]]; then
     echo "skip: GPU busy"
   elif [[ $state != free ]]; then
-    echo "skip: GPU state unknown (fuser missing or failed on $GPU_DEVICE)"
+    echo "skip: GPU state unknown (a descriptor on $GPU_DEVICE could not be read, or reports no video memory)"
   elif ! llm_unit_installed; then
     echo "skip: $LLM_UNIT.service is not installed (systemctl --user link scripts/systemd/$LLM_UNIT.service)"
   else
@@ -475,7 +538,12 @@ stage_fetch_build() {
   fi
   local extra=()
   read -ra extra <<<"${KNOWLEDGE_CARGO_ARGS:-}"
-  if ! (cd "$REPO/rust" && flock "$CARGO_LOCK" "${SCOPE[@]}" cargo build --release -p cardgen "${extra[@]}"); then
+  local built=0
+  (cd "$REPO/rust" && flock -w "${KNOWLEDGE_CARGO_LOCK_WAIT:-3600}" -E 200 "$CARGO_LOCK" "${SCOPE[@]}" cargo build --release -p cardgen "${extra[@]}") || built=$?
+  if ((built == 200)); then
+    note "heavy lock busy: $CARGO_LOCK was not free within ${KNOWLEDGE_CARGO_LOCK_WAIT:-3600}s; the previous binary stays in use"
+    return 1
+  elif ((built != 0)); then
     note "cargo build failed (see fetch-build.log); the previous binary stays in use"
     return 1
   fi
@@ -561,7 +629,8 @@ stage_llm() {
   if ((DRY)); then
     echo "  skipped if KNOWLEDGE_SKIP_LLM=1 or every routed card is cached (roles --llm --dry-run counts them)"
     echo "  else decide: a Qwen3.6-27B server answering on $LLM_URL is used and never stopped; another model on the port"
-    echo "  or a GPU ($GPU_DEVICE) held by a process, or in an unknown state, skips the stage; otherwise start"
+    echo "  or a GPU ($GPU_DEVICE) whose video memory other processes hold at or above ${KNOWLEDGE_GPU_BUSY_MIB:-1024} MiB, or in an"
+    echo "  unknown state, skips the stage; the stage runs only in the night window (hours ${KNOWLEDGE_LLM_HOURS:-0-7}); otherwise start"
     echo "  $LLM_UNIT.service (inactive right before the start; ownership marker; stopped afterwards only because this job"
     echo "  started it), wait up to ${LLM_READY}s, smoke prompt, then"
     echo "  ${LLM_ARGS[*]} for at most ${LLM_BUDGET}s in staging; the new rows of llm_roles.pending.jsonl are renamed"
@@ -570,6 +639,16 @@ stage_llm() {
   fi
   if [[ $SKIP_LLM == 1 ]]; then
     note "KNOWLEDGE_SKIP_LLM=1"
+    return 10
+  fi
+  # the GPU is JD's during the day: a catch-up run after a missed Sunday 04:00 skips this stage, the rest still runs
+  local in_window=0
+  llm_in_window || in_window=$?
+  if ((in_window == 2)); then
+    note "KNOWLEDGE_LLM_HOURS=${KNOWLEDGE_LLM_HOURS:-0-7} is not START-END hours (0-23): skipped to be safe"
+    return 10
+  elif ((in_window != 0)); then
+    note "outside the night window (KNOWLEDGE_LLM_HOURS=${KNOWLEDGE_LLM_HOURS:-0-7}, local hour ${KNOWLEDGE_NOW_HOUR:-$(date +%-H)})"
     return 10
   fi
   need_cardgen || return $?
@@ -631,7 +710,7 @@ stage_llm() {
   }
   local before after rc=0
   before="$(rows_in "$OUT/llm_roles.pending.jsonl")"
-  timeout --kill-after=60 "$LLM_BUDGET" "${SCOPE[@]}" env CARDGEN_KNOWLEDGE_DIR="$s" "$CARDGEN" --root "$REPO" "${LLM_ARGS[@]}" || rc=$?
+  timeout --foreground --kill-after=60 "$LLM_BUDGET" "${SCOPE[@]}" env CARDGEN_KNOWLEDGE_DIR="$s" "$CARDGEN" --root "$REPO" "${LLM_ARGS[@]}" || rc=$?
   after="$(rows_in "$s/llm_roles.pending.jsonl")"
   if ((rc == 124)); then
     note "budget of ${LLM_BUDGET}s used up; pending rows $before -> $after, the rest carries over (${todo:-?} were to do)"

@@ -315,7 +315,8 @@ fn gc_rule_text(count: usize, tiers: &[String]) -> String {
         })
         .collect();
     format!(
-        "{count} Game Changers now ({}; the rule is decks::gc_rules for the tiers in data/my_decks.toml)",
+        "{count} Game Changers now ({}; the pool decks' rule at the tiers this deck is simulated against; \
+         JD's own decks have no recorded rule)",
         rules.join("; ")
     )
 }
@@ -488,15 +489,30 @@ fn action_items(inp: &Inputs, d: Option<&Diff>, views: &[DeckView]) -> Vec<Strin
     for v in views.iter().filter(|v| !v.missing.is_empty()) {
         action.push(format!("Deck `{}`: not found in the catalog: {}", code(v.key), capped(&v.missing, 10)));
     }
-    if let Some(d) = d {
-        for v in views {
+    // every deck card that is not Commander-legal now, every run: "became X (was Y)" when this run's diff holds the
+    // transition, else "is X" (a ban that was already in the previous sync, a bulk file that did not change, a card
+    // that joined the deck, a report that was lost after the catalog was published)
+    for v in views {
+        let mut listed: BTreeSet<&str> = BTreeSet::new();
+        if let Some(d) = d {
             let ids: BTreeSet<&str> = v.cards.iter().map(|c| c.raw.oracle_id.as_str()).collect();
             for (p, c) in d.legality.iter().filter(|(_, c)| ids.contains(c.oracle_id.as_str())) {
                 if is_legal(p) && !is_legal(c) {
                     let (now, was) = (legality(c).replace('_', " "), legality(p).replace('_', " "));
                     action.push(format!("Deck `{}`: **{}** became {now} (was {was}).", code(v.key), md(&c.name)));
+                    listed.insert(c.oracle_id.as_str());
                 }
             }
+        }
+        for c in v.cards.iter().map(|c| &c.raw).filter(|c| !is_legal(c) && !listed.contains(c.oracle_id.as_str())) {
+            let now = legality(c).replace('_', " ");
+            let since = if matches!(inp.prev, Prev::Ok(_)) { "" } else { " (no previous sync to say since when)" };
+            action.push(format!("Deck `{}`: **{}** is {now}{since}.", code(v.key), md(&c.name)));
+        }
+    }
+    if let Some(d) = d {
+        for v in views {
+            let ids: BTreeSet<&str> = v.cards.iter().map(|c| c.raw.oracle_id.as_str()).collect();
             let changes: Vec<String> = d
                 .gc
                 .iter()
@@ -512,18 +528,6 @@ fn action_items(inp: &Inputs, d: Option<&Diff>, views: &[DeckView]) -> Vec<Strin
                     code(v.key),
                     changes.join(", "),
                     gc_rule_text(count, v.tiers)
-                ));
-            }
-        }
-    } else if matches!(inp.prev, Prev::Missing) {
-        // no previous sync to compare: still say which deck cards are not legal now
-        for v in views {
-            for c in v.cards.iter().map(|c| &c.raw).filter(|c| !is_legal(c)) {
-                let now = legality(c).replace('_', " ");
-                action.push(format!(
-                    "Deck `{}`: **{}** is {now} (no previous sync to say since when).",
-                    code(v.key),
-                    md(&c.name)
                 ));
             }
         }
