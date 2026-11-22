@@ -151,8 +151,8 @@ fn sheoldred_t3() {
     play("sheoldred", "t3", 1);
 }
 #[test]
-fn cloud_t1() {
-    play("cloud", "t1", 1);
+fn urdragon_t5() {
+    play("urdragon", "t5", 1);
 }
 #[test]
 fn yshtola_t3() {

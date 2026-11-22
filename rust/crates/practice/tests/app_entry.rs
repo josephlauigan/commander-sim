@@ -50,7 +50,8 @@ fn json_of(p: &Path) -> Value {
 fn test_first_launch_copies_then_the_same_stamp_does_not() {
     let (b, app) = (bundle("b1", "one"), temp("a1"));
     assert!(sync_data(&b, &app).unwrap());
-    for f in ["cards.json", "decks.json", "my_decks.toml", "scryfall_cache.json", "bundle.json", "printings/cloud.txt"]
+    for f in
+        ["cards.json", "decks.json", "my_decks.toml", "scryfall_cache.json", "bundle.json", "printings/yoshimaru.txt"]
     {
         assert!(app.join("data").join(f).exists(), "{f}");
     }
@@ -72,7 +73,7 @@ fn test_a_new_stamp_replaces_files_keeps_images_and_merges_the_index_and_never_t
     fs::create_dir_all(app.join("saves")).unwrap();
     fs::write(app.join("saves/autosave.json"), "{}").unwrap();
     fs::write(app.join("data/cards.json"), "stale").unwrap();
-    fs::write(app.join("data/printings/cloud.txt"), "stale").unwrap();
+    fs::write(app.join("data/printings/yoshimaru.txt"), "stale").unwrap();
     // the new build brings an image and an index entry (and one the iPad already has)
     fs::create_dir_all(b.join("data/images")).unwrap();
     fs::write(b.join("data/images/bundled.jpg"), "b").unwrap();
@@ -81,7 +82,7 @@ fn test_a_new_stamp_replaces_files_keeps_images_and_merges_the_index_and_never_t
     fs::write(b.join("data/bundle.json"), r#"{"commit":"two"}"#).unwrap();
     assert!(sync_data(&b, &app).unwrap());
     assert_ne!(fs::read_to_string(app.join("data/cards.json")).unwrap(), "stale");
-    assert_ne!(fs::read_to_string(app.join("data/printings/cloud.txt")).unwrap(), "stale");
+    assert_ne!(fs::read_to_string(app.join("data/printings/yoshimaru.txt")).unwrap(), "stale");
     assert_eq!(fs::read_to_string(images.join("downloaded.jpg")).unwrap(), "d"); // images are kept
     assert_eq!(fs::read_to_string(images.join("bundled.jpg")).unwrap(), "b");
     assert_eq!(json_of(&images.join("index.json")), json!({"old": "downloaded.jpg", "new": "bundled.jpg"}));
@@ -103,7 +104,7 @@ fn test_the_started_app_serves_the_page_and_the_catalog() {
     let o = c.get("/api/options").json();
     assert_eq!((o["app"].clone(), o["lan"].clone()), (json!(true), json!(false)));
     let cat = o.clone(); // the options carry the catalog
-    assert_eq!(cat["decks"].as_array().unwrap().len(), 6); // six active decks
+    assert_eq!(cat["decks"].as_array().unwrap().len(), 5); // five active decks
     assert!(cat["decks"][0]["name"].as_str().is_some_and(|n| !n.is_empty()));
     assert!(stop_app());
     assert!(!stop_app());
@@ -117,7 +118,7 @@ fn test_an_autosaved_game_is_there_to_continue_after_the_app_is_closed_and_reope
     let addr = |p: u16| format!("127.0.0.1:{p}");
     let mut c = Client::new(&addr(start_app(&b, &app, 0).unwrap()));
     assert!(c.get("/api/saves").json()["autosave"].is_null());
-    assert_eq!(c.new_game("cloud", "t2", 4).status, 200);
+    assert_eq!(c.new_game("yoshimaru", "t2", 4).status, 200);
     let mull = wait_for(&mut c, 0, is_request);
     c.answer(mull["id"].as_u64().unwrap(), json!("keep"));
     wait_for(&mut c, mull["id"].as_u64().unwrap(), is_request);
@@ -125,7 +126,7 @@ fn test_an_autosaved_game_is_there_to_continue_after_the_app_is_closed_and_reope
     assert!(app.join("saves/autosave.json").exists());
     let mut c = Client::new(&addr(start_app(&b, &app, 0).unwrap())); // reopened
     let auto = c.get("/api/saves").json()["autosave"].clone();
-    assert_eq!((auto["deck"].as_str(), auto["seed"].as_u64()), (Some("cloud"), Some(4)));
+    assert_eq!((auto["deck"].as_str(), auto["seed"].as_u64()), (Some("yoshimaru"), Some(4)));
     assert_eq!(c.post("/api/load", json!({"name": "autosave.json", "images": false})).status, 200);
     wait_for(&mut c, 0, is_request); // Continue: back at a decision
     c.quit();

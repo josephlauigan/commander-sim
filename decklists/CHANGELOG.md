@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` (and of the retired ones, now in `de
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Sheoldred, Thanos, Ur-Dragon, Yoshimaru/Tymna, Y'shtola (Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
+JD's decks: Sheoldred, Thanos, Ur-Dragon, Yoshimaru/Tymna, Y'shtola (Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
@@ -13,7 +13,7 @@ On 2026-11-13 a new Ur-Dragon deck (key `urdragon`) was added and the Thanos key
 Aragorn was retired as a deck (its key stays in the simulator until the engine work).
 On 2026-11-14 a new Yoshimaru and Tymna blink deck was written (registered in the simulator as key `yoshimaru`, t4-t5, on 2026-11-21) and the Tymna/Thrasios Doomsday list was retired;
 on 2026-11-14 its guide and the Aragorn guide moved to `decklists/pool/retired/`, and the `thrasios` key kept playing the retired list until it left the simulator on 2026-11-21
-(the `aragorn` key left on 2026-11-15). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them.
+(the `aragorn` key left on 2026-11-15). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them. Cloud was retired as a deck on 2026-11-21: its Equipment package went into the Yoshimaru/Tymna deck, its guide and findings moved to the retired folders, and the `cloud` key left the simulator the same day.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
@@ -41,10 +41,11 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
-Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
+Deck key `cloud`, `decklists/pool/retired/cloud-midgar-equipment.md`. Tiers t1-t3 (retired 2026-11-21).
 
 ### Changes
 
+- **2026-11-21.** Retired (JD): the deck is dismantled and its Equipment package moved to the Yoshimaru/Tymna deck (`decklists/JD/yoshimaru-tymna-blink.md`). The guide moved to `decklists/pool/retired/` with a "Retired" banner and the findings to `audit/retired/cloud/`. The key left `data/my_decks.toml`, the simulator and practice mode; the card code stays and `cloud` remains a testkit seat (`testkit::retired_decks`).
 - **2026-11-21.** Out: Judgment of Alexander. In: a Plains (27 Plains). JD's physical list (11/21), not simulated: the sleeved deck plays no Judgment of Alexander and a 27th Plains, so the list now matches it. Lands 33 -> 34, instants 7 -> 6. The guide's Judgment advice (hold up {2}{W} against a lethal-looking attack; the fog row, matchup and mistake text) now points to Galadriel's Dismissal, kicked ({2}{W}{W}), the card that phases out an attacking team.
 - **2026-11-21.** Out: Thought Vessel. In: Wayfarer's Bauble. JD's choice (11/21), not simulated: a {1} artifact that ramps a basic Plains for {2} and a sacrifice takes the slot of a {2} rock (Thought Vessel's no maximum hand size rarely matters with a hand of five or six). Opus advised against it: mana is not the lever in this deck (packages M, M-lite and the AI ramp fix were all neutral or negative) and Bauble costs more tempo than a rock.
 - **2026-11-20.** Out: nothing. In: Minas Tirith. JD's choice, not simulated. Minas Tirith makes {W}, enters untapped while you control a legendary creature (12 in the list, Cloud among them) and draws a card after an attack with two or more creatures; it replaces a basic Plains.

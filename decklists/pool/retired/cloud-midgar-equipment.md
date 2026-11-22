@@ -1,5 +1,10 @@
 # Cloud, Midgar Mercenary — Mono-White Equipment
 
+**Retired 2026-11-21 (JD).** The deck is dismantled: its Equipment package moved to the Yoshimaru and Tymna blink deck,
+`decklists/JD/yoshimaru-tymna-blink.md`. This guide moved here from `decklists/JD/` on 2026-11-21. The `cloud` key left the
+simulator and practice catalog the same day and stays only as a testkit seat of its card code (`testkit::retired_decks`), seated with this guide's Import list, so that list is
+frozen: the tests read it (`include_str!`), and editing or moving this file changes or breaks them. Findings: `audit/retired/cloud/FINDINGS.md`.
+
 A mono-white Equipment deck. **Cloud, Midgar Mercenary** costs {W}{W} and finds an Equipment when he enters; with
 Equipment on him, every Equipment trigger happens twice. The deck wins by hanging Swords and big Equipment on Cloud
 (or on a backup carrier) and hitting. It is weak to board wipes and to artifact removal, and it needs Cloud, or

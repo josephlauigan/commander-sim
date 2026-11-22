@@ -269,11 +269,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
-    ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
-    (
-        "cloud: Mithril Coat",
-        "the probe's table has no legendary creature you control: no legal target (with two, the person picks: practice_gaps_c mithril_coat_attaches_to_the_legendary_creature_you_pick)",
-    ),
     (
         "yoshimaru: Mithril Coat",
         "the probe's table has no legendary creature you control: no legal target (with two, the person picks: practice_gaps_c mithril_coat_attaches_to_the_legendary_creature_you_pick)",

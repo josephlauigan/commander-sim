@@ -1,4 +1,4 @@
-//! Card code for the white cards of the cloud deck (decklists/JD/cloud-midgar-equipment.md), and face-down (morph, disguise) machinery.
+//! Card code for the white cards of the cloud deck (decklists/pool/retired/cloud-midgar-equipment.md), and face-down (morph, disguise) machinery.
 //! Filled in by the white-rest agent (rust/agents/archive/white-rest.md).
 //!
 //! - **Face down** (morph, disguise): **Exalted Angel**, **Forum Familiar**, **Unyielding Gatekeeper**, **Exit

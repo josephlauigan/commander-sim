@@ -19,7 +19,7 @@ pub fn engine() -> Arc<Engine> {
 }
 
 pub fn opts(ai: &str) -> Options {
-    let mut o = Options::new(engine(), "cloud", "t1");
+    let mut o = Options::new(engine(), "yoshimaru", "t1");
     o.seed = Some(4242);
     o.ai = ai.into();
     o.views = true;

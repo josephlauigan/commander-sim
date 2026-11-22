@@ -102,21 +102,21 @@ fn a_card_without_scryfall_data_is_an_error_offline() {
 fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let p = scratch("update");
     let inp = Inputs::load(&p).unwrap();
-    let cloud = inp.my.iter().find(|d| d.key == "cloud").unwrap().clone();
-    let path = cardgen::decks::deck_path(&p, &cloud);
+    let deck = inp.my.iter().find(|d| d.key == "yoshimaru").unwrap().clone();
+    let path = cardgen::decks::deck_path(&p, &deck);
     let mut list = cardgen::decks::load(&path).unwrap();
     let out = list.iter().position(|c| c == "Arcane Signet").unwrap();
     list[out] = "Prismatic Lens".to_string();
     let text = list.join("\n");
     // dry run: reports, writes nothing
     let before = std::fs::read_to_string(&path).unwrap();
-    let o = run(&p, "cloud", &text, &Options { dry: true, log: None, offline: true }).unwrap();
+    let o = run(&p, "yoshimaru", &text, &Options { dry: true, log: None, offline: true }).unwrap();
     assert!(o.ok);
     assert!(o.text.contains("1 out, 1 in"), "{}", o.text);
     assert!(o.text.contains("out: Arcane Signet") && o.text.contains("in:  Prismatic Lens"), "{}", o.text);
     assert_eq!(std::fs::read_to_string(&path).unwrap(), before);
     // for real, with a log line
-    let o = run(&p, "cloud", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
+    let o = run(&p, "yoshimaru", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
     assert!(o.ok, "{}", o.text);
     let after = std::fs::read_to_string(&path).unwrap();
     assert!(after.contains("1 Prismatic Lens\n") && !after.contains("1 Arcane Signet\n"));
@@ -137,8 +137,9 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let fixture = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
     assert!(fixture.contains("\"Prismatic Lens\""));
     // a bad list stops before any file is touched
-    let o = run(&p, "cloud", &format!("{text}\n1 Prismatic Lens"), &Options { dry: false, log: None, offline: true })
-        .unwrap();
+    let o =
+        run(&p, "yoshimaru", &format!("{text}\n1 Prismatic Lens"), &Options { dry: false, log: None, offline: true })
+            .unwrap();
     assert!(!o.ok);
     assert!(
         o.text.contains("101 cards, expected 100") && o.text.contains("not singleton: Prismatic Lens"),

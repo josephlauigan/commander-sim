@@ -15,7 +15,7 @@ use sim_core::state::{Game, Step};
 /// seat 0 is `deck` at its main phase on round 3, with these lands on the battlefield and exactly this hand
 fn game_with(deck: &str, lands: &[&str], hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =

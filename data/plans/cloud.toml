@@ -1,8 +1,9 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
 # policy (ai/plans.rs `config`). JD's Cloud, Midgar Mercenary deck (mono-W Equipment voltron, key `cloud`, tiers
-# t1-t3). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `cloud::cloud_prio` (the prio rules,
+# t1-t3; retired 2026-11-21: the guide is decklists/pool/retired/cloud-midgar-equipment.md, the key is out of the simulator and
+# kept only as a test seat, and this plan stays because the card and plan tests seat the deck with it). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `cloud::cloud_prio` (the prio rules,
 # rescaled under 90), `cloud::tutor_pick` / `cloud_pick` (the line and the engines: the Swords first, then Champion's
-# Helm, Kaldra, Mask, the Hammer), `cloud::keep_hand` (the mulligan). 2026-11-01 (audit/cloud/plan-file-2026-11-01.md):
+# Helm, Kaldra, Mask, the Hammer), `cloud::keep_hand` (the mulligan). 2026-11-01 (audit/retired/cloud/plan-file-2026-11-01.md):
 # the Equipment goes on Cloud (`[equip]`: was `holder_bonus`, `equip_utility_bonus`, `wants_move` and the Helm and
 # Sword of Feast and Famine equips of `cloud_special`), and Cloud stays home while nothing real is on him
 # (`[[stay_home]]`: was `keep_cloud_home`). 2026-11-02 (Ghave breakup): Champion's Helm and Sword of Kaldra left the
@@ -15,6 +16,7 @@
 # (`cloud_protect`, `white_protect`, `cloud_wipe_response`, wipe modes); the per-piece equip extras, `must_attack`,
 # `strands_equipment`, Akroma's Will timing and `search_bonus` (the look-ahead's, in ai/search.rs).
 deck = "cloud"
+retired = true
 default = "plan"
 # the Equipment the tutors want once a Sword is in hand or out
 engines = ["Mask of Memory", "Colossus Hammer"]

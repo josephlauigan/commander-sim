@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 42); // six decks of yours x seven tiers (thrasios retired as a key 2026-11-21)
+    assert_eq!(played, 35); // five decks of yours x seven tiers (thrasios and cloud retired as keys 2026-11-21)
 }
 
 #[test]

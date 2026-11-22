@@ -4,6 +4,10 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+**Retired 2026-11-21 (JD); key out of the simulator the same day.** The deck is dismantled and its Equipment package moved to the
+Yoshimaru/Tymna deck. The list is in `decklists/pool/retired/cloud-midgar-equipment.md` and this file is history only; the
+`cloud` entry of `data/my_decks.toml` (tiers t1-t3) was removed 2026-11-21.
+
 ## 2026-11-21: Judgment of Alexander => a 27th Plains (JD's physical list, not simulated)
 JD's sleeved deck plays 27 Plains and no Judgment of Alexander, so the simulator list now matches it (lands 33 -> 34).
 The cut is JD's, not a measured choice. Judgment ({2}{W} instant: prevent all damage that would be dealt to you by opponents'
