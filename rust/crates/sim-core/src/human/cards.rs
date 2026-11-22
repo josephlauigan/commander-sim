@@ -2701,19 +2701,10 @@ fn theorist_plus(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 }
 
 /// -2: the person picks up to one artifact or creature of each opponent (targets are chosen before the loyalty is paid)
-fn theorist_minus2(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+fn theorist_minus2(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
     let mut targets = vec![];
     for q in g.opps(p).collect::<Vec<_>>() {
-        let cands: Vec<PermId> = g
-            .player(q)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&x| {
-                (g.is_creature(x) || crate::engine::values::is_artifact_perm(g, x))
-                    && !crate::engine::values::untargetable(g, x)
-            })
-            .collect();
+        let cands = crate::impls::common::theorist_cands(g, p, m, q);
         if cands.is_empty() {
             continue;
         }
@@ -2724,8 +2715,10 @@ fn theorist_minus2(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
         }
     }
     go(move |g| {
+        let cols = crate::engine::values::colors_of(g, m);
         for &t in &targets {
-            if g.perm(t).on_bf && !g.perm(t).phased {
+            // only a target that is still legal as the ability resolves (CR 608.2b)
+            if crate::impls::common::theorist_legal(g, p, cols, t) {
                 crate::engine::removal::apply_removal(g, Some(p), t, "bounce", None)?;
             }
         }
@@ -2737,8 +2730,8 @@ fn theorist_minus6(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
     go(move |g| {
         crate::engine::zones::draw(g, p, 3, false)?;
         let x = crate::engine::values::hand_count(g, p) as i32;
-        for m in g.player(p).perms.clone() {
-            if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
+        for m in crate::impls::common::theorist_creatures(g, p) {
+            if g.perm(m).on_bf {
                 crate::engine::repl::put_counters(g, p, m, x);
             }
         }

@@ -2840,26 +2840,42 @@ static ELSPETH: [WalkerAb; 3] = [
 const THEORIST: &str = "The Theorist, Jace Beleren";
 
 /// At the beginning of each opponent's draw step, the Theorist's controller draws a card (each Theorist triggers once).
-/// Called by the draw step (engine/turn.rs) for the active player p, before p's own draw (so it happens even when
-/// that draw is skipped); the draw is an ordinary one for the controller (Sheoldred, Notion Thief, Narset ...).
+/// Called by the draw step (engine/turn.rs) for the active player p, after p's own draw and the state-based actions that
+/// follow it; not at all when p's draw step is skipped (Necropotence, Solitary Confinement), though a replaced draw (a
+/// dredge, Uba Mask) is still a draw step. The trigger goes through the trigger window, and its draw is an ordinary one
+/// for the controller (Sheoldred, Notion Thief, Narset ...). A Theorist that has lost its abilities does not trigger.
 pub fn theorist_draws(g: &mut Game, p: PlayerId) -> Res {
     let ts: Vec<(PlayerId, PermId)> = g
         .players
         .iter()
         .filter(|q| q.alive && q.id != p)
         .flat_map(|q| q.perms.iter().map(move |&m| (q.id, m)))
-        .filter(|&(_, m)| g.perm(m).on_bf && !g.perm(m).phased && &*g.perm(m).name == THEORIST)
+        .filter(|&(_, m)| theorist_active(g, m))
         .collect();
+    let mut drew = false;
     for (q, m) in ts {
         if g.over || !g.player(p).alive {
             break;
         }
-        if g.player(q).alive && g.perm(m).on_bf && g.player(q).perms.contains(&m) && !g.perm(m).phased {
+        if g.player(q).alive && g.player(q).perms.contains(&m) && theorist_active(g, m) {
+            if !trigger_window(g, q, Some(m), "draw a card", Some(2.0))? {
+                continue; // the trigger was countered
+            }
             crate::glog!(g, "    {}: {} draws a card", THEORIST, player_name(g, q));
             draw(g, q, 1, false)?;
+            drew = true;
         }
     }
+    if drew {
+        check_state(g)?; // a controller with an empty library loses now, as after any draw
+    }
     Ok(())
+}
+
+/// a Theorist on the battlefield, phased in, with its abilities
+fn theorist_active(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.on_bf && !x.phased && !x.neutered && &*x.name == THEORIST
 }
 
 fn theorist_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
@@ -2868,30 +2884,48 @@ fn theorist_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     Ok(())
 }
 
+/// the artifacts and creatures of opponent q (lands included: an artifact land lives in `lands`, not `perms`) that
+/// p's Theorist (`src`, a blue source) may target: not phased out, no shroud, no hexproof, no protection from blue, no
+/// hexproof from blue
+pub fn theorist_cands(g: &Game, p: PlayerId, src: PermId, q: PlayerId) -> Vec<PermId> {
+    let cols = crate::engine::values::colors_of(g, src);
+    let pl = g.player(q);
+    pl.perms
+        .iter()
+        .chain(pl.lands.iter().filter(|l| !pl.perms.contains(l)))
+        .copied()
+        .filter(|&m| theorist_legal(g, p, cols, m))
+        .collect()
+}
+
+/// may a blue-ish source (colours `cols`) of p's target the artifact or creature m now
+pub fn theorist_legal(g: &Game, p: PlayerId, cols: Colors, m: PermId) -> bool {
+    (g.is_creature(m) || crate::engine::values::is_artifact_perm(g, m))
+        && super::vondam_elspeth::may_target(g, p, m)
+        && !protected_from(g, m, cols)
+        && !super::tymna_cards::hexproof_from(g, m, cols)
+}
+
 /// -2: for each opponent, the artifact or creature that player controls worth the most (up to one, if it is worth a
 /// bounce at all)
-fn theorist_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+fn theorist_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     g.opps(p)
         .filter_map(|q| {
-            let cs: Vec<PermId> = g
-                .player(q)
-                .perms
-                .iter()
-                .copied()
-                .filter(|&m| (g.is_creature(m) || crate::engine::values::is_artifact_perm(g, m)) && !untargetable(g, m))
-                .collect();
+            let cs = theorist_cands(g, p, src, q);
             max_by(&cs, |m| pval(g, m)).filter(|&m| pval(g, m) >= 2.0)
         })
         .collect()
 }
 
-fn theorist_bounce_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
-    let big: Vec<f64> = theorist_targets(g, p).into_iter().map(|m| pval(g, m)).filter(|&v| v >= 4.0).collect();
+fn theorist_bounce_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    let big: Vec<f64> = theorist_targets(g, p, src).into_iter().map(|m| pval(g, m)).filter(|&v| v >= 4.0).collect();
     (!big.is_empty()).then(|| big.iter().map(|v| v - 2.0).psum())
 }
 
-fn theorist_bounce(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    for t in theorist_targets(g, p) {
+/// kept as the table's `eff`; the AI never reaches it (`theorist_options` swaps in `theorist_go`, which commits the
+/// targets on activation)
+fn theorist_bounce(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    for t in theorist_targets(g, p, src) {
         if g.perm(t).on_bf {
             apply_removal(g, Some(p), t, "bounce", None)?;
         }
@@ -2899,9 +2933,47 @@ fn theorist_bounce(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     Ok(())
 }
 
+/// the AI's -2, index 1 of `THEORIST_AB`: the targets are chosen now, on activation (CR 602.2b), before the loyalty is
+/// paid and the ability can be responded to. As it resolves only the committed targets that are still legal are
+/// bounced (CR 608.2b); it never switches to another one.
+fn theorist_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
+    let ts = theorist_targets(g, p, src);
+    walker_pay_run(g, src, p, i as usize, ts.first().copied(), &mut |g| {
+        let cols = crate::engine::values::colors_of(g, src);
+        for &t in &ts {
+            if theorist_legal(g, p, cols, t) {
+                apply_removal(g, Some(p), t, "bounce", None)?;
+            }
+        }
+        Ok(())
+    })
+}
+
+/// the framework's options, with the -2's action swapped for `theorist_go` (the same `arg`, so it is still ability 1)
+fn theorist_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut out = walker_options(g, src, p, post)?;
+    for o in &mut out {
+        if let Some(Action::Ability { f, arg: 1, .. }) = &mut o.act {
+            *f = theorist_go;
+        }
+    }
+    Ok(out)
+}
+
+/// the creatures p controls on the battlefield, phased in, creature lands (animated lands live in `lands`) included
+pub fn theorist_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let pl = g.player(p);
+    pl.perms
+        .iter()
+        .chain(pl.lands.iter().filter(|l| !pl.perms.contains(l)))
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m))
+        .collect()
+}
+
 /// -6: draw three, then X +1/+1 counters on each creature you control, X = the cards in your hand
 fn theorist_ult_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
-    let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
+    let n = theorist_creatures(g, p).len();
     (n >= 2).then(|| 4.0 + n.min(6) as f64)
 }
 
@@ -2909,8 +2981,8 @@ fn theorist_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     draw(g, p, 3, false)?;
     let x = crate::engine::values::hand_count(g, p) as i32;
     crate::glog!(g, "    {}: {} puts {} +1/+1 counters on each creature", THEORIST, player_name(g, p), x);
-    for m in g.player(p).perms.clone() {
-        if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
+    for m in theorist_creatures(g, p) {
+        if g.perm(m).on_bf {
             repl::put_counters(g, p, m, x);
         }
     }
@@ -3763,6 +3835,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // planeswalkers
     walker(r, db, "Elspeth, Sun's Champion", &ELSPETH)?;
     walker(r, db, THEORIST, &THEORIST_AB)?;
+    r.card(db, THEORIST)?.options = Some(theorist_options);
     walker(r, db, "Teferi, Hero of Dominaria", &TEFERI)?;
     walker(r, db, "Liliana, Death's Majesty", &LILIANA)?;
     walker(r, db, "Narset, Parter of Veils", &NARSET)?;

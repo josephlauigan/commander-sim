@@ -1331,8 +1331,10 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
             lose_life(g, p, 1, Some(p), "other", Some(true))?;
         }
     }
-    crate::impls::common::theorist_draws(g, p)?; // The Theorist, Jace Beleren: its controller draws on an opponent's draw step
     crate::impls::sheoldred::howling_mines(g, p)?; // Howling Mine: an additional card at the beginning of the draw step
+    // Necropotence and Solitary Confinement skip the whole step (no beginning-of-draw-step trigger); a dredge only
+    // replaces the draw, so the step still happens
+    let skipped = has(g, p, Tag::Necro) || cardcode::skip_draw(g, p);
     if has(g, p, Tag::Necro) {
         // Necropotence: skip your draw step
     } else if loam_dredge(g, p)? || cardcode::dakmor_dredge(g, p)? || cardcode::skip_draw(g, p) {
@@ -1349,6 +1351,14 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     check_state(g)?;
     if g.over || !g.player(p).alive {
         return Ok(());
+    }
+    if !skipped {
+        // The Theorist, Jace Beleren: its controller draws on an opponent's draw step; the trigger resolves after the
+        // active player's draw and the state-based actions that follow it
+        crate::impls::common::theorist_draws(g, p)?;
+        if g.over || !g.player(p).alive {
+            return Ok(());
+        }
     }
     step_priority(g, "draw", None, &[])?;
     if g.over || !g.player(p).alive {

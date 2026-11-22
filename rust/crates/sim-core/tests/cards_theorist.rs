@@ -112,14 +112,14 @@ fn the_draw_is_a_normal_draw_sheoldred_punishes_it() {
 }
 
 #[test]
-fn it_triggers_even_when_the_active_player_skips_their_draw_and_an_empty_library_loses_without_a_crash() {
+fn no_trigger_when_the_active_player_skips_the_step_and_an_empty_library_loses_without_a_crash() {
     let mut g = tbl();
     perm(&mut g, P0, THEORIST);
-    perm(&mut g, P1, "Necropotence"); // skip your draw step
+    perm(&mut g, P1, "Necropotence"); // skip your draw step: no beginning-of-draw-step trigger either
     g.active = Some(P1);
     let (mine, theirs) = (hand_len(&g, P0), hand_len(&g, P1));
     turn::step_start(&mut g, P1).unwrap();
-    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (mine + 1, theirs), "the trigger is at the start of the step");
+    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (mine, theirs), "the step is skipped, so nothing triggers");
     // an empty library: the controller has drawn from an empty library and loses at the next state check
     let mut g = tbl();
     perm(&mut g, P0, THEORIST);
