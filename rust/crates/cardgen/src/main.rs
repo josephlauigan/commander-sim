@@ -18,7 +18,13 @@ const USAGE: &str = "usage:
                                                 parses a local bulk file (no network); the directory can also be
                                                 set with CARDGEN_KNOWLEDGE_DIR
   cardgen roles --rules [--data-dir DIR]        classify the catalog and write roles.json (offline)
-  cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
+  cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--batch 10] [--dry-run] [--endpoint URL] [--model ID]
+                       [--pending] [--data-dir DIR]
+                                                classify routed cards through the local LLM server (llama.cpp,
+                                                http://127.0.0.1:8080/v1) into llm_roles.jsonl; needs `llama up`
+  cardgen roles --merge [--model ID] [--data-dir DIR]
+                                                rules + LLM cache + overrides -> roles.json, reports/ (offline)
+  cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
   cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
   cardgen roles --show NAME | --stats | --lint [--data-dir DIR]
   cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']

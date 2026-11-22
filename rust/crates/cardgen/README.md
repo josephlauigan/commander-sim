@@ -272,7 +272,9 @@ src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, b
 
 ```
 cardgen roles --rules [--data-dir DIR]
-cardgen roles --validate [--gold PATH] [--json] [--data-dir DIR]
+cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--batch 10] [--dry-run] [--endpoint URL] [--model ID] [--pending]
+cardgen roles --merge [--model ID] [--data-dir DIR]
+cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
 cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
 cardgen roles --stats [--data-dir DIR]
 cardgen roles --lint [--data-dir DIR]
@@ -283,16 +285,18 @@ cardgen find --role ramp --role sac-outlet --json
 `roles --rules` reads the catalog without network access and atomically writes `roles.json` beside `oracle.json`.
 Stickers and Attractions remain searchable in Oracle but are omitted from the role table and audit samples.
 `--stats` reports their skipped count; routing denominators include only deck cards.
-The JSON envelope has `meta: {taxonomy, rules_fnv, oracle_fnv, count, table_fnv}` and `cards` sorted by Oracle id.
+The JSON envelope has `meta: {taxonomy, rules_fnv, oracle_fnv, count, prompt_fnv, model, table_fnv}` and `cards` sorted by Oracle id
+(`prompt_fnv` and `model` are empty in a rules-only table and filled by `roles --merge`).
 The hashes are FNV-1a-64: taxonomy text; compiled rule and line-extraction source plus override content; and
 `sync.lock`'s Oracle checksum. Fixture catalogs without a lock fall back to canonical bulk hashing, independent
 of input order and JSON whitespace.
 The table is byte-deterministic. Each assignment has up to four ordered `roles`,
-`primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`, plus a `route` list of explicit reasons.
+`primary` (the first role, or `""`), per-role `evidence` (`source`: `Rule`, `Override` or `Llm`; rule id; `certain`; `face`; `line`), and `needs_llm`, plus a `route` list of
+explicit reasons and, in a merged table, `llm_failed`.
 Evidence uses zero-based indices into `Card::lines()`; `face: null` means the card's top-level Oracle text.
 `line` is the global line index without face separator lines. `--show` prints the original supporting lines.
 
-The 26 definitions, sources and future LLM evidence guards live in `data/knowledge/roles.toml` (version 1).
+The 26 definitions, sources and LLM evidence guards live in `data/knowledge/roles.toml` (version 1).
 Roles describe main or repeatable functions, with the conventions in `roles_gold.toml` taking precedence over
 keyword matching. Reminder text is stripped, self names become `~`, land backs of MDFCs add no roles, prepare cards
 use their spell face plus their creature face's own abilities, and expensive planeswalker ultimates add no roles. Basic land types confer their intrinsic
@@ -340,8 +344,9 @@ role assignments, including the rules-final subset, for a manual precision/recal
 
 Hand overrides in `data/knowledge/roles_overrides.toml` replace the entire role set, including certain rules;
 the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides intentionally do not improve validation:
-`roles --validate` scores the rules-only map (the library function scores whichever map it is given).
-An override's evidence has source `override`, its note in `rule`, and no face or line, since it need not have a
+`roles --validate` scores the rules-only map (the library function scores whichever map it is given); `--stage merged`
+leaves override cards out for the same reason.
+An override's evidence has source `Override`, its note in `rule`, and no face or line, since it need not have a
 regex justification. No initial overrides are installed.
 
 `find` attaches `roles.json` for a role filter or to enrich JSON when the table is valid. A plain search remains
@@ -384,3 +389,85 @@ The recall-only engine-tag mapping is value-aware:
 | other `prot` values | protection | Protective engine effect. |
 
 The complete translation and unmapped reasons appear in every validation report.
+
+### The LLM stage (local model)
+
+`roles --llm` asks the local llama.cpp server (OpenAI-compatible API, default `http://127.0.0.1:8080/v1`, `--endpoint`
+to change it) for the roles of the cards the rules routed, `roles --merge` combines rules, cached answers and
+overrides, and `roles --validate --stage merged` scores the result. Everything an agent needs to run it:
+
+```
+llama up            # start the server (a systemd user service); the model is Qwen3-Coder-30B-A3B, 32K context
+llama ready         # wait until it answers
+cardgen roles --llm --only-routed [--limit N] [--batch 10]     # classify; resumable, writes llm_roles.jsonl
+cardgen roles --merge                                           # writes roles.json and reports/
+cardgen roles --validate --stage merged
+llama down          # free the VRAM
+```
+
+The server must already be up: `--llm` reads the model id from `GET /v1/models` first and exits non-zero with
+`LLM unreachable` (touching no file) if it cannot. `--dry-run` counts candidates, cache hits and batches without a chat
+request (it still reads the model id unless `--model ID` is given). Candidates are the Commander-legal deck cards the
+overrides do not fix, optionally narrowed by `--only-routed` (the cards the rules routed), `--ids FILE` (Oracle ids or
+exact names, one per line, `#` comments) and `--limit N` (at most N cards sent, taken after the cache is consulted).
+Without `--only-routed` the rules-decided cards are sent too, which is the shadow audit: they never change, but every
+difference is logged. `--pending` writes `llm_roles.pending.jsonl` (untracked) instead of the tracked cache, for the
+scheduled job.
+
+**The prompt.** The system prompt is `Taxonomy::prompt_text()` (the shared rules once, then each role's one-line
+`definition` and role-specific `clauses`, then each cross-role convention once with the roles it concerns; no card is
+named), the fixed answer rules and one worked example of six cards (a rider on a removal spell, a cost-side counter,
+a "would draw" replacement, a permanent steal, a one-turn Fog and a body with no role; none is in a gold set). The user
+message is ten cards (`--batch`), each `[id] type line` and its numbered lines from `roles::prompt_lines` (the same
+normalised text the rules and guards read: reminder text stripped, `~` for the card name, MDFC land backs,
+planeswalker ultimates and over-long lines left out, original line numbers kept). The model is never shown the rule
+roles. Every request has `temperature` 0, `seed` 1, `cache_prompt` true and a grammar-constrained `json_schema`:
+role names are an `enum` of the 26 ids, `cards` has `minItems` = `maxItems` = the batch size, ids are two characters
+(`a0`, `a1`, ...), properties are written in the order id, roles, primary, evidence. The system prompt is about 3.2k
+tokens by the chars / 4 estimate, so a batch of ten stays far below the 32K context.
+
+**Validation and retries.** An answer is accepted only if its ids are exactly the batch's, every role is in the
+vocabulary (at most four, none repeated), `primary` is one of the roles (or null when there are none), every role cites a
+line that was shown, and every role passes its `roles.toml` guard regex on the cited line's text. Otherwise the same
+batch is sent once more; if that fails too, each card is sent alone (itself retried once). A card that fails alone twice
+is reported in `reports/llm-failed.txt` and gets `llm_failed` in the merged table; its rule roles stand. Three transport
+failures in a row (the server died) stop the run after saving the finished batches. `reports/llm-run.json` holds the run's
+counts (classified, failed, retries, chat requests).
+
+**The cache.** `llm_roles.jsonl` (tracked, one JSON row per line, sorted by key) is the only input that cannot be
+regenerated. A row is `{key, name, roles, primary, evidence, model, taxonomy, prompt}`; the key is the FNV-1a-64 of the
+card's normalised text (type line and numbered lines), the prompt fingerprint and the model id. The prompt fingerprint
+(`prompt_fnv`) covers everything the model is told: the definitions, clauses, conventions, answer rules and examples.
+It is never keyed on `rules_fnv`: editing the classifier, a guard, `keep_rule` or the overrides leaves every row valid,
+while a changed definition, a changed prompt or another model id makes the old rows unreachable (they stay in the file;
+writes are append-merge by key, atomic through a temp file and rename, and deterministic). A rerun with everything
+cached makes no chat request (it prints the count; the one `GET /v1/models` is how a changed model is noticed).
+`llm_roles.pending.jsonl` is read after the tracked file, so a pending row wins on the same key.
+
+**The merge policy** (`llm::merge`, a pure function):
+
+- an override is used exactly;
+- rule-`certain` roles are always kept;
+- a card the rules decided (`needs_llm == false`) keeps its rule roles; the LLM never changes it;
+- a routed card with a valid answer ends with the certain roles, plus every LLM role whose guard passes on the line it
+  cited, plus each non-certain rule role the LLM also proposed or whose role has `keep_rule = true` in `roles.toml`
+  (default false). Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
+  rule roles by prominence; at most four (a certain role is never the one cut). A card with no rule roles simply takes
+  its guarded LLM roles. A role found by both stages keeps the rule's evidence; an LLM-only role has source `Llm`;
+- a routed card with no valid answer (failed, or not run yet) keeps its rule roles with `llm_failed` set; `needs_llm`
+  stays true.
+
+Every veto (a non-certain rule role the LLM did not confirm), guard drop, certain role the LLM omitted, overflow and
+(for rules-decided cards) shadow difference is written to `reports/roles-disagreements.txt` with the rule and LLM role
+sets, grouped by route reason; `reports/merge.json` has the counts. `roles --merge` is deterministic (byte-identical
+reruns) and writes `roles.json` with `meta.prompt_fnv` and `meta.model`; `find --role`, `roles --show` and
+`Index::attach_roles` work on it (LLM evidence is checked again there: a real, readable line and a passing guard). With
+several models cached for the current prompt, `--merge` needs `--model ID`.
+
+**Validation.** `roles --validate --stage rules` (the default) is unchanged. `--stage merged` scores the saved merged
+table, leaving out override cards, and adds per-role and micro precision, recall and F1, the routed-subset F1 for the
+rules alone against the merged table (merged below rules fails the stage), the rules-final figures, primary accuracy and
+the LLM numbers from the last run and merge (classified, failed, retries, disagreements by route reason).
+
+Tests (`tests/roles_llm.rs`) run against a fake local server (a `TcpListener` with canned `/v1/models` and
+`/v1/chat/completions` replies); no test touches a real model or the network.

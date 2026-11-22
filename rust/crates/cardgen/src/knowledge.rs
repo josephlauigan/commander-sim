@@ -6,6 +6,7 @@
 //! The command is read-only. See documents/card-knowledge.md.
 
 use crate::data::Project;
+use crate::roles::Source;
 use fancy_regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -400,6 +401,8 @@ pub struct Index {
     pub sync_fnv: Option<String>,
     pub taxonomy_fnv: String,
     pub rules_fnv: String,
+    /// the text of roles.toml the guards of LLM evidence are checked against (see `attach_roles`)
+    taxonomy_src: String,
     /// lower-case full name -> every card with it (15 names are shared by two or more cards)
     names: HashMap<String, Vec<u32>>,
     /// lower-case face name (when different from the full name) -> every card with such a face
@@ -460,18 +463,17 @@ impl Index {
             Some(hash) => hash.clone(),
             None => crate::roles::oracle_fingerprint(path)?,
         };
+        let taxonomy_bytes = std::fs::read(path.with_file_name("roles.toml"))
+            .unwrap_or_else(|_| include_bytes!("../../../../data/knowledge/roles.toml").to_vec());
         let mut idx = Index {
             cards: oracle.cards.into_iter().map(Card::new).collect(),
             bulk_updated_at: oracle.meta.bulk_updated_at,
             oracle_fnv,
             sync_fnv,
-            rules_fnv: crate::roles::rules_hash(
-                &std::fs::read(path.with_file_name("roles_overrides.toml")).unwrap_or_default(),
-            ),
-            taxonomy_fnv: crate::roles::fingerprint(
-                &std::fs::read(path.with_file_name("roles.toml"))
-                    .unwrap_or_else(|_| include_bytes!("../../../../data/knowledge/roles.toml").to_vec()),
-            ),
+            // the same file `roles --rules` reads (one resolver: `roles::overrides_path`)
+            rules_fnv: crate::roles::rules_hash(&std::fs::read(crate::roles::overrides_path(path)).unwrap_or_default()),
+            taxonomy_fnv: crate::roles::fingerprint(&taxonomy_bytes),
+            taxonomy_src: String::from_utf8_lossy(&taxonomy_bytes).into_owned(),
             names: HashMap::new(),
             faces: HashMap::new(),
             ids: HashMap::new(),
@@ -500,6 +502,7 @@ impl Index {
             return Err("roles.json: catalog count differs; run `cardgen roles --rules`".into());
         }
         let mut rows = Vec::with_capacity(self.cards.len());
+        let mut taxonomy: Option<crate::roles::Taxonomy> = None;
         for c in &self.cards {
             if !crate::roles::is_deck_card(c) {
                 if map.contains_key(&c.raw.oracle_id) {
@@ -522,13 +525,33 @@ impl Index {
             for role in &a.roles {
                 crate::roles::check_role(role)?;
                 let e = a.evidence.get(role).ok_or_else(bad)?;
-                if e.source == "rule" {
-                    let (face, _) = e.line.and_then(|i| lines.get(i)).ok_or_else(bad)?;
-                    if *face != e.face || !crate::roles::RULES.iter().any(|r| r.id == e.rule && r.role == role) {
-                        return Err(bad());
+                match e.source {
+                    Source::Rule => {
+                        let (face, _) = e.line.and_then(|i| lines.get(i)).ok_or_else(bad)?;
+                        if *face != e.face || !crate::roles::RULES.iter().any(|r| r.id == e.rule && r.role == role) {
+                            return Err(bad());
+                        }
                     }
-                } else if e.source != "override" || e.certain || e.line.is_some() || e.face.is_some() {
-                    return Err(bad());
+                    Source::Override => {
+                        if e.certain || e.line.is_some() || e.face.is_some() {
+                            return Err(bad());
+                        }
+                    }
+                    // LLM evidence must cite a real, readable line whose text passes the role's guard.
+                    Source::Llm => {
+                        let line = e.line.ok_or_else(bad)?;
+                        let (face, _) = lines.get(line).ok_or_else(bad)?;
+                        if *face != e.face || e.certain || e.rule != "llm" || crate::roles::skipped(c, line) {
+                            return Err(bad());
+                        }
+                        if taxonomy.is_none() {
+                            taxonomy = Some(crate::roles::Taxonomy::parse(&self.taxonomy_src)?);
+                        }
+                        let guard = taxonomy.as_ref().expect("parsed above").guard(role);
+                        if !guard.is_match(&crate::roles::line_text(c, line)).unwrap_or(false) {
+                            return Err(bad());
+                        }
+                    }
                 }
             }
             rows.push(a.clone());

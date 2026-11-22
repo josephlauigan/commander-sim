@@ -37,7 +37,7 @@ back to the main checkout's). Generated data is gitignored except what cannot be
 | `oracle.json` | no | Every catalog card as a slim record, from Scryfall's Oracle Cards bulk file (a gzip file of JSON Lines, read with `flate2`) |
 | `oracle.prev.json` | no | The previous sync, for the weekly diff |
 | `sync.lock` | yes | Which bulk file the tracked caches correspond to: `bulk_updated_at`, `count` and `fnv1a64` (FNV-1a-64 of the `cards` array text) |
-| `roles.toml` | yes | Role taxonomy: ids, one-line definitions (used verbatim in the LLM prompt), guard regexes |
+| `roles.toml` | yes | Role taxonomy: the shared rules block, cross-role conventions, and per role an id, a one-line definition, role-specific clauses and a guard regex (the prompt text is built from all but the guard), `keep_rule` |
 | `roles_overrides.toml` | yes | Hand role sets, highest precedence |
 | `roles_gold.toml` | yes | About 150 hand-labelled cards, the precision standard |
 | `llm_roles.jsonl` | yes | Local-LLM classification cache: the only non-reproducible input |
@@ -151,7 +151,7 @@ from deterministic rules over its Oracle lines, with the evidence line for each 
 less than sure of, and every roleless card with a substantive line, routes to the LLM stage; a card the rules decide
 alone keeps its rule roles. `roles --validate`, `--lint`, `--audit`, `--show` and `--stats` measure and inspect it, and
 `find --role R` filters by role. The written standard is the header of `data/knowledge/roles_gold.toml`: the 26 role
-definitions, 21 conventions and clauses C1-C13, every one ruled on by JD.
+definitions, 21 conventions and clauses C1-C18, every one ruled on by JD.
 
 How it was measured, honestly:
 
@@ -174,6 +174,11 @@ Named limits of the rule stage (each is covered by a check or a later phase, non
 - Only 4 of 246 gold assignments are `certain`, so the LLM stage may veto most rule roles on routed cards.
 - Roles are about what a card does, not whether it is good in a deck. The sim and JD decide that.
 
+The local-LLM stage (phase 3L) is described in `rust/crates/cardgen/README.md` ("The LLM stage"): the prompt budget
+(about 3.2k tokens for the system prompt), the validation and retry ladder, the cache keyed on the card text, the
+prompt fingerprint and the model id (never the rules fingerprint), the merge policy and its disagreement reports. The
+coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --validate --stage merged`, `llama down`).
+
 ## Limits
 
 - Role tags will miss or mislabel some cards. The recall and precision numbers are reported, not assumed.
@@ -191,7 +196,7 @@ Named limits of the rule stage (each is covered by a check or a later phase, non
 | 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
 | 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
 | 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
-| 3L Roles, local LLM stage | `knowledge-llm` | not started |
+| 3L Roles, local LLM stage | `knowledge-llm` | built (client, cache, merge policy, validation stage, fake-server tests); real pilots not run |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
 | 4 Status, decks and findings join | `knowledge-status` | not started |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | not started |

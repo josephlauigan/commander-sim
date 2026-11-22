@@ -145,7 +145,7 @@ fn override_wins_even_over_certain_and_invalid_overrides_are_errors() {
     let map = roles::generate(&i, "[[card]]\nname='Counterspell'\nroles=['draw']\nnote='test override'\n").unwrap();
     let a = &map[&card(&i, "Counterspell").raw.oracle_id];
     assert_eq!(a.roles, ["draw"]);
-    assert_eq!(a.evidence["draw"].source, "override");
+    assert_eq!(a.evidence["draw"].source, roles::Source::Override);
     assert!(!a.needs_llm);
     for text in [
         "[[card]]\nname='Counterspell'\nroles=['bad']\nnote='test'",
@@ -817,11 +817,17 @@ fn metadata_rejects_stale_taxonomy_rules_oracle_count_and_optional_find_omits_ro
     let e = Env::new();
     e.command(&["--rules"]).unwrap();
     let path = e.0.join("data/knowledge/roles.json");
-    let good = std::fs::read_to_string(&path).unwrap();
+    let good = roles::load(&path).unwrap();
     for field in ["taxonomy", "rules_fnv", "oracle_fnv", "count"] {
-        let mut doc: Value = serde_json::from_str(&good).unwrap();
-        doc["meta"][field] = if field == "count" { json!(0) } else { json!("stale") };
-        std::fs::write(&path, doc.to_string()).unwrap();
+        // rewritten through `bytes`, so the table hash stays right and only the one stale field differs
+        let mut stale = good.clone();
+        match field {
+            "taxonomy" => stale.meta.taxonomy = "stale".into(),
+            "rules_fnv" => stale.meta.rules_fnv = "stale".into(),
+            "oracle_fnv" => stale.meta.oracle_fnv = "stale".into(),
+            _ => stale.meta.count = 0,
+        }
+        std::fs::write(&path, roles::bytes(&stale).unwrap()).unwrap();
         let map = roles::load(&path).unwrap();
         assert!(index().attach_roles(&map).unwrap_err().contains("cardgen roles --rules"));
         assert!(e.find(&["--role", "draw"]).is_err());

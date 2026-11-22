@@ -41,33 +41,112 @@ pub fn check_role(id: &str) -> Result<(), String> {
     if IDS.contains(&id) { Ok(()) } else { Err(format!("unknown role '{id}'; valid roles: {}", IDS.join(", "))) }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug)]
 pub struct Taxonomy {
     pub version: u32,
+    /// the rules that apply to every role, stated once in the prompt
+    pub shared: String,
+    /// conventions that span several roles, stated once in the prompt
+    pub clause: Vec<Clause>,
     pub role: Vec<Role>,
+    guards: Vec<Regex>,
 }
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Clause {
+    pub id: String,
+    pub roles: Vec<String>,
+    pub text: String,
+}
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Role {
     pub id: String,
+    /// one line, no card names: the model has no internet
     pub definition: String,
+    /// role-specific clauses (the cross-role ones are in `Taxonomy::clause`)
+    #[serde(default)]
+    pub clauses: Vec<String>,
     pub src: String,
     pub guard: String,
+    /// keep this role's rule-found, non-certain hits on a routed card the LLM omitted them from (default false)
+    #[serde(default)]
+    pub keep_rule: bool,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TaxonomyFile {
+    version: u32,
+    shared: String,
+    #[serde(default)]
+    clause: Vec<Clause>,
+    role: Vec<Role>,
 }
 impl Taxonomy {
     pub fn parse(s: &str) -> Result<Self, String> {
-        let t: Self = toml::from_str(s).map_err(|e| format!("roles.toml: {e}"))?;
+        let t: TaxonomyFile = toml::from_str(s).map_err(|e| format!("roles.toml: {e}"))?;
         if t.version != 1 || t.role.len() != IDS.len() {
             return Err("roles.toml: expected version 1 and exactly 26 roles".into());
         }
+        if t.shared.trim().is_empty() {
+            return Err("roles.toml: the shared rules block is empty".into());
+        }
         let mut seen = BTreeSet::new();
+        let mut guards = Vec::with_capacity(t.role.len());
         for r in &t.role {
             check_role(&r.id)?;
-            if !seen.insert(&r.id) || r.definition.is_empty() || r.src != role_src(&r.id) {
-                return Err(format!("roles.toml: invalid definition, source or repeated role {}", r.id));
+            if !seen.insert(&r.id)
+                || r.definition.trim().is_empty()
+                || r.definition.contains('\n')
+                || r.src != role_src(&r.id)
+            {
+                return Err(format!(
+                    "roles.toml: invalid definition (one line needed), source or repeated role {}",
+                    r.id
+                ));
             }
-            Regex::new(&r.guard).map_err(|e| format!("guard {}: {e}", r.id))?;
+            guards.push(Regex::new(&r.guard).map_err(|e| format!("guard {}: {e}", r.id))?);
         }
-        Ok(t)
+        let mut clause_ids = BTreeSet::new();
+        for c in &t.clause {
+            if !clause_ids.insert(&c.id) || c.text.trim().is_empty() || c.roles.is_empty() {
+                return Err(format!("roles.toml: invalid or repeated clause {}", c.id));
+            }
+            for r in &c.roles {
+                check_role(r)?;
+            }
+        }
+        Ok(Self { version: t.version, shared: t.shared, clause: t.clause, role: t.role, guards })
+    }
+    /// The compiled guard of a role: the textual check an LLM-proposed role must pass on its cited line.
+    pub fn guard(&self, role: &str) -> &Regex {
+        let i = self.role.iter().position(|r| r.id == role).unwrap_or_else(|| panic!("unknown role {role}"));
+        &self.guards[i]
+    }
+    pub fn keep_rule(&self, role: &str) -> bool {
+        self.role.iter().any(|r| r.id == role && r.keep_rule)
+    }
+    /// The taxonomy as prompt text: the shared rules once, each role's one-line definition and its own clauses, then
+    /// each cross-role clause once with the roles it concerns. Meaning-bearing text only: guards, sources and
+    /// `keep_rule` are not shown to the model.
+    pub fn prompt_text(&self) -> String {
+        let mut out = format!("GENERAL RULES\n{}\n\nROLES (use these ids exactly)\n", self.shared.trim());
+        for r in &self.role {
+            let _ = write!(out, "- {}: {}", r.id, r.definition.trim());
+            for c in &r.clauses {
+                let _ = write!(out, " {}", c.trim());
+            }
+            out.push('\n');
+        }
+        out.push_str("\nCONVENTIONS THAT SPAN SEVERAL ROLES\n");
+        for c in &self.clause {
+            let _ = writeln!(out, "- ({}) {}", c.roles.join(", "), c.text.trim());
+        }
+        out
+    }
+    /// The fingerprint of the prompt-visible taxonomy.
+    pub fn hash(&self) -> String {
+        fingerprint(self.prompt_text().as_bytes())
     }
 }
 /// Source category and unconditional routing share one policy. Removal additionally routes when it is
@@ -88,10 +167,17 @@ pub fn role_src(id: &str) -> &'static str {
     ROLE_POLICY.iter().find(|(role, _, _)| *role == id).map_or("rules", |(_, source, _)| *source)
 }
 
+/// Where a role came from: the deterministic rules, a hand override or the local LLM (guarded).
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Source {
+    Rule,
+    Override,
+    Llm,
+}
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Evidence {
-    pub source: String,
+    pub source: Source,
     pub certain: bool,
     pub rule: String,
     /// Zero-based index into Card::lines(); face is redundant, checked on attach. Overrides may lack evidence.
@@ -107,6 +193,12 @@ pub struct Assignment {
     pub needs_llm: bool,
     #[serde(default)]
     pub route: Vec<RouteReason>,
+    /// the LLM stage had no valid answer for this routed card, so the rule roles stand (`needs_llm` stays true)
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub llm_failed: bool,
+}
+fn is_false(b: &bool) -> bool {
+    !*b
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -126,6 +218,12 @@ pub struct RoleMeta {
     pub rules_fnv: String,
     pub oracle_fnv: String,
     pub count: usize,
+    /// fingerprint of the LLM prompt the merged table was built with; empty for a rules-only table
+    #[serde(default)]
+    pub prompt_fnv: String,
+    /// the model whose cached answers were merged (empty when none, or for a rules-only table)
+    #[serde(default)]
+    pub model: String,
     /// FNV of every byte after the metadata object; lets a metadata-only reader detect a damaged table.
     pub table_fnv: String,
 }
@@ -737,6 +835,59 @@ pub fn normalize(card: &Card, line: &str) -> String {
 // Well above the catalog maximum (645 bytes); bound malformed/future input before backtracking.
 const MAX_LINE_BYTES: usize = 2048;
 
+/// Why a line is never read by the classifier or shown to the LLM.
+enum Skip {
+    /// the land back of an MDFC adds no function
+    LandBack,
+    /// longer than `MAX_LINE_BYTES`
+    TooLong,
+}
+fn skip_unread(card: &Card, face: Option<usize>, original: &str) -> Option<Skip> {
+    let typ = face
+        .and_then(|i| card.raw.card_faces.as_ref()?.get(i))
+        .map_or(card.raw.type_line.as_str(), |f| f.type_line.as_str());
+    // MDFC land backs do not add functions; prepare bodies' own abilities do.
+    if card.raw.layout == "modal_dfc" && face.is_some_and(|i| i > 0) && typ.contains("Land") {
+        return Some(Skip::LandBack);
+    }
+    (original.len() > MAX_LINE_BYTES).then_some(Skip::TooLong)
+}
+/// A planeswalker minus ability costing at least the starting loyalty (`s` is the lower-case normalised line).
+fn is_ultimate(card: &Card, face: Option<usize>, s: &str) -> bool {
+    let f = face.and_then(|i| card.raw.card_faces.as_ref()?.get(i));
+    let loyalty = f.and_then(|f| f.loyalty.as_deref()).or(card.raw.loyalty.as_deref());
+    s.strip_prefix(['−', '-'])
+        .and_then(|s| s.split_once(':'))
+        .and_then(|(c, _)| c.parse::<u32>().ok())
+        .is_some_and(|cost| loyalty.and_then(|l| l.parse::<u32>().ok()).is_some_and(|l| cost >= l))
+}
+/// Whether line `i` of `Card::lines()` is one the classifier skips (MDFC land backs, planeswalker ultimates, over-long
+/// lines); the LLM stage may not cite such a line either. An index out of range counts as skipped.
+pub fn skipped(card: &Card, i: usize) -> bool {
+    let lines = card.lines();
+    let Some(&(face, original)) = lines.get(i) else { return true };
+    skip_unread(card, face, original).is_some() || is_ultimate(card, face, &normalize(card, original).to_lowercase())
+}
+/// The normalised text of line `i`: reminder text stripped, `~` for the card's name; exactly what the rules and the
+/// guards read (empty when `i` is out of range).
+pub fn line_text(card: &Card, i: usize) -> String {
+    card.lines().get(i).map_or_else(String::new, |(_, line)| normalize(card, line))
+}
+/// The lines the LLM is shown: every non-skipped line with text left after normalising, with its original index.
+pub fn prompt_lines(card: &Card) -> Vec<(usize, String)> {
+    card.lines()
+        .iter()
+        .enumerate()
+        .filter_map(|(i, &(face, original))| {
+            if skip_unread(card, face, original).is_some() {
+                return None;
+            }
+            let text = normalize(card, original);
+            (!text.is_empty() && !is_ultimate(card, face, &text.to_lowercase())).then_some((i, text))
+        })
+        .collect()
+}
+
 /// A colon is an activation separator only outside a quoted granted/token ability.
 fn activation_cost(s: &str) -> Option<(&str, &str)> {
     let colon = s.find(':')?;
@@ -1183,15 +1334,14 @@ impl Classifier {
             let f = face.and_then(|i| card.raw.card_faces.as_ref()?.get(i));
             let typ = f.map_or(card.raw.type_line.as_str(), |f| &f.type_line);
             let land = typ.contains("Land");
-            // MDFC land backs do not add functions; prepare bodies' own abilities do.
-            if card.raw.layout == "modal_dfc" && face.is_some_and(|i| i > 0) && land {
-                continue;
+            match skip_unread(card, face, original) {
+                Some(Skip::TooLong) => {
+                    route.insert(RouteReason::RegexError);
+                    continue;
+                }
+                Some(Skip::LandBack) => continue,
+                None => {}
             }
-            if original.len() > MAX_LINE_BYTES {
-                route.insert(RouteReason::RegexError);
-                continue;
-            }
-            let loyalty = f.and_then(|f| f.loyalty.as_deref()).or(card.raw.loyalty.as_deref());
             let text = normalize(card, original);
             let s = text.to_lowercase();
             if !s.starts_with('•') {
@@ -1203,12 +1353,8 @@ impl Classifier {
             } else {
                 s.clone()
             };
-            if let Some(cost) =
-                s.strip_prefix(['−', '-']).and_then(|s| s.split_once(':')).and_then(|(c, _)| c.parse::<u32>().ok())
-            {
-                if loyalty.and_then(|l| l.parse::<u32>().ok()).is_some_and(|l| cost >= l) {
-                    continue;
-                }
+            if is_ultimate(card, face, &s) {
+                continue;
             }
             substantive |= !s.is_empty() && !plain_line(&s, typ);
             // Basic land types confer mana abilities even when their only Oracle line is parenthesized reminder text.
@@ -1275,7 +1421,7 @@ impl Classifier {
                         certain |= safe_hit(template, &s);
                     }
                 }
-                let e = Evidence { source: "rule".into(), certain, rule: r.id.into(), face, line: Some(line) };
+                let e = Evidence { source: Source::Rule, certain, rule: r.id.into(), face, line: Some(line) };
                 match found.get_mut(r.role) {
                     Some((p, old)) => {
                         if e.certain && !old.certain || e.certain == old.certain && priority < *p {
@@ -1341,6 +1487,7 @@ impl Classifier {
             evidence: ranked.into_iter().map(|(r, (_, e))| (r.into(), e)).collect(),
             needs_llm,
             route: route.into_iter().collect(),
+            llm_failed: false,
         })
     }
 }
@@ -2030,29 +2177,26 @@ struct Overrides {
     #[serde(default)]
     card: Vec<Override>,
 }
-pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
-    if index.sync_fnv.as_ref().is_some_and(|hash| *hash != index.oracle_fnv) {
-        return Err(
-            "Oracle fingerprint differs from sync.lock; run `cardgen bulk-sync`, then `cardgen roles --rules`".into()
-        );
+/// The one place that says where the hand overrides live: beside `oracle.json`. Both `roles --rules` and
+/// `Index::load` (for the staleness fingerprint) read this file, so they always agree.
+pub fn overrides_path(oracle: &Path) -> PathBuf {
+    oracle.with_file_name("roles_overrides.toml")
+}
+/// The overrides text beside `oracle.json`; a missing file is an empty one.
+pub fn read_overrides(oracle: &Path) -> Result<String, String> {
+    let path = overrides_path(oracle);
+    match std::fs::read_to_string(&path) {
+        Ok(t) => Ok(t),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(String::new()),
+        Err(e) => Err(format!("{}: {e}", path.display())),
     }
-    let classifier = Classifier::new()?;
-    let mut result = RoleMap {
-        meta: RoleMeta {
-            taxonomy: index.taxonomy_fnv.clone(),
-            rules_fnv: rules_hash(overrides.as_bytes()),
-            oracle_fnv: index.oracle_fnv.clone(),
-            count: index.cards.iter().filter(|c| is_deck_card(c)).count(),
-            table_fnv: String::new(), // filled in by bytes()
-        },
-        cards: BTreeMap::new(),
-    };
-    for c in index.cards.iter().filter(|c| is_deck_card(c)) {
-        result.insert(c.raw.oracle_id.clone(), classifier.classify(c)?);
-    }
-    let overrides: Overrides = toml::from_str(overrides).map_err(|e| format!("roles_overrides.toml: {e}"))?;
-    let mut seen = BTreeSet::new();
-    for o in overrides.card {
+}
+
+/// The hand overrides as assignments by Oracle id (source `Override`, no line evidence). Each must name one deck card.
+pub fn overrides(index: &Index, text: &str) -> Result<BTreeMap<String, Assignment>, String> {
+    let parsed: Overrides = toml::from_str(text).map_err(|e| format!("roles_overrides.toml: {e}"))?;
+    let mut out = BTreeMap::new();
+    for o in parsed.card {
         if o.note.trim().is_empty()
             || o.roles.len() > 4
             || o.roles.iter().collect::<BTreeSet<_>>().len() != o.roles.len()
@@ -2066,11 +2210,12 @@ pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
         if ids.len() != 1 {
             return Err(format!("override '{}' resolves to {} cards; use an unambiguous full name", o.name, ids.len()));
         }
-        let id = &index.cards[ids[0] as usize].raw.oracle_id;
-        if !result.contains_key(id) {
+        let card = &index.cards[ids[0] as usize];
+        if !is_deck_card(card) {
             return Err(format!("override '{}' is not a deck card", o.name));
         }
-        if !seen.insert(id) {
+        let id = card.raw.oracle_id.clone();
+        if out.contains_key(&id) {
             return Err(format!("duplicate override for {}", o.name));
         }
         let evidence = o
@@ -2079,34 +2224,59 @@ pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
             .map(|r| {
                 (
                     r.clone(),
-                    Evidence {
-                        source: "override".into(),
-                        certain: false,
-                        rule: o.note.clone(),
-                        face: None,
-                        line: None,
-                    },
+                    Evidence { source: Source::Override, certain: false, rule: o.note.clone(), face: None, line: None },
                 )
             })
             .collect();
-        result.insert(
-            id.clone(),
+        out.insert(
+            id,
             Assignment {
                 primary: o.roles.first().cloned().unwrap_or_default(),
                 roles: o.roles,
                 evidence,
                 needs_llm: false,
                 route: vec![],
+                llm_failed: false,
             },
         );
     }
+    Ok(out)
+}
+
+pub fn generate(index: &Index, overrides_text: &str) -> Result<RoleMap, String> {
+    if index.sync_fnv.as_ref().is_some_and(|hash| *hash != index.oracle_fnv) {
+        return Err(
+            "Oracle fingerprint differs from sync.lock; run `cardgen bulk-sync`, then `cardgen roles --rules`".into()
+        );
+    }
+    let classifier = Classifier::new()?;
+    let mut result = RoleMap {
+        meta: RoleMeta {
+            taxonomy: index.taxonomy_fnv.clone(),
+            rules_fnv: rules_hash(overrides_text.as_bytes()),
+            oracle_fnv: index.oracle_fnv.clone(),
+            count: index.cards.iter().filter(|c| is_deck_card(c)).count(),
+            prompt_fnv: String::new(),
+            model: String::new(),
+            table_fnv: String::new(), // filled in by bytes()
+        },
+        cards: BTreeMap::new(),
+    };
+    for c in index.cards.iter().filter(|c| is_deck_card(c)) {
+        result.insert(c.raw.oracle_id.clone(), classifier.classify(c)?);
+    }
+    result.cards.extend(overrides(index, overrides_text)?);
     Ok(result)
 }
 
+/// Read a table, refusing one whose card bytes do not match `meta.table_fnv` (a hand edit or a truncated write).
 pub fn load(path: &Path) -> Result<RoleMap, String> {
-    let f = std::fs::File::open(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
-    serde_json::from_reader(std::io::BufReader::new(f))
-        .map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))
+    let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
+    let (meta, end) = parse_meta(&bytes)?;
+    if fingerprint(&bytes[end..]) != meta.table_fnv {
+        return Err(format!("{}: damaged card table; run `cardgen roles --rules`", path.display()));
+    }
+    serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))
 }
 pub fn bytes(map: &RoleMap) -> Result<Vec<u8>, String> {
     // The hash covers the bytes after the metadata object, so it is written over a fixed-width placeholder.
@@ -2135,6 +2305,15 @@ struct Options {
     n: Option<usize>,
     rule: Option<String>,
     certain: bool,
+    limit: Option<usize>,
+    ids: Option<PathBuf>,
+    only_routed: bool,
+    batch: Option<usize>,
+    dry_run: bool,
+    endpoint: Option<String>,
+    model: Option<String>,
+    pending: bool,
+    stage: Option<String>,
 }
 fn options(args: &[String]) -> Result<Options, String> {
     let mut o = Options::default();
@@ -2143,11 +2322,13 @@ fn options(args: &[String]) -> Result<Options, String> {
         let a = args[i].as_str();
         i += 1;
         match a {
-            "--rules" | "--validate" | "--stats" | "--show" | "--audit" | "--lint" => {
+            "--rules" | "--validate" | "--stats" | "--show" | "--audit" | "--lint" | "--llm" | "--merge" => {
                 if !o.mode.is_empty() {
-                    return Err(
-                        "roles: choose exactly one of --rules, --validate, --stats, --show NAME, --audit".into()
-                    );
+                    return Err(concat!(
+                        "roles: choose exactly one of --rules, --llm, --merge, --validate, --stats, --show NAME, ",
+                        "--audit, --lint"
+                    )
+                    .into());
                 }
                 o.mode = a.into();
                 if a == "--show" {
@@ -2166,6 +2347,24 @@ fn options(args: &[String]) -> Result<Options, String> {
                 }
                 i += 1;
             }
+            "--only-routed" if !o.only_routed => o.only_routed = true,
+            "--dry-run" if !o.dry_run => o.dry_run = true,
+            "--pending" if !o.pending => o.pending = true,
+            "--limit" | "--batch" | "--ids" | "--endpoint" | "--model" | "--stage" => {
+                let v = args.get(i).filter(|s| !s.starts_with("--")).ok_or_else(|| format!("{a} needs a value"))?;
+                let number = || v.parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("invalid {a} '{v}'"));
+                let repeated = || format!("{a} given twice");
+                match a {
+                    "--limit" if o.limit.is_none() => o.limit = Some(number()?),
+                    "--batch" if o.batch.is_none() => o.batch = Some(number()?),
+                    "--ids" if o.ids.is_none() => o.ids = Some(PathBuf::from(v)),
+                    "--endpoint" if o.endpoint.is_none() => o.endpoint = Some(v.clone()),
+                    "--model" if o.model.is_none() => o.model = Some(v.clone()),
+                    "--stage" if o.stage.is_none() => o.stage = Some(v.clone()),
+                    _ => return Err(repeated()),
+                }
+                i += 1;
+            }
             "--certain" if !o.certain => o.certain = true,
             "--json" if !o.json => o.json = true,
             "--data-dir" | "--gold" => {
@@ -2180,13 +2379,31 @@ fn options(args: &[String]) -> Result<Options, String> {
             _ => return Err(format!("unknown roles argument '{a}'")),
         }
     }
+    let llm_flag = o.limit.is_some()
+        || o.ids.is_some()
+        || o.only_routed
+        || o.batch.is_some()
+        || o.dry_run
+        || o.endpoint.is_some()
+        || o.pending;
+    if llm_flag && o.mode != "--llm"
+        || o.model.is_some() && !["--llm", "--merge"].contains(&o.mode.as_str())
+        || o.stage.as_ref().is_some_and(|s| o.mode != "--validate" || !["rules", "merged"].contains(&s.as_str()))
+    {
+        return Err(concat!(
+            "roles: --llm takes [--limit N] [--ids FILE] [--only-routed] [--batch N] [--dry-run] [--endpoint URL] ",
+            "[--model ID] [--pending]; --merge takes [--model ID]; --validate takes [--stage rules|merged]"
+        )
+        .into());
+    }
     if o.mode.is_empty()
         || o.gold.is_some() && o.mode != "--validate"
         || o.json && o.mode != "--validate"
         || (o.seed.is_some() || o.n.is_some() || o.rule.is_some() || o.certain) && o.mode != "--audit"
     {
         return Err(concat!(
-            "roles: choose --rules, --show NAME, --stats, --validate [--gold PATH] [--json], ",
+            "roles: choose --rules, --llm, --merge, --show NAME, --stats, --lint, ",
+            "--validate [--gold PATH] [--json] [--stage rules|merged], ",
             "or --audit [--seed N] [--n N] [--rule ID] [--certain]"
         )
         .into());
@@ -2405,8 +2622,9 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         return Ok((audit(&index, &gold, o.seed.unwrap_or(0), o.n.unwrap_or(80), o.rule.as_deref(), o.certain)?, true));
     }
     let path = dir.join("roles.json");
+    let oracle = dir.join("oracle.json");
     if o.mode == "--rules" {
-        let map = generate(&index, &read(&project.data("knowledge/roles_overrides.toml"))?)?;
+        let map = generate(&index, &read_overrides(&oracle)?)?;
         let data = bytes(&map)?;
         let tmp = dir.join(format!("roles.{}.tmp", std::process::id()));
         std::fs::write(&tmp, data).map_err(|e| format!("{}: {e}", tmp.display()))?;
@@ -2417,13 +2635,51 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         let s = stats(&index, &map);
         return Ok((format!("wrote {} ({} cards)\n{}", path.display(), map.len(), s.text()), true));
     }
+    if o.mode == "--llm" {
+        let opts = crate::llm::LlmOptions {
+            limit: o.limit,
+            ids: o.ids,
+            only_routed: o.only_routed,
+            batch: o.batch.unwrap_or(crate::llm::DEFAULT_BATCH),
+            dry_run: o.dry_run,
+            endpoint: o.endpoint.unwrap_or_else(|| crate::llm::DEFAULT_ENDPOINT.into()),
+            model: o.model,
+            pending: o.pending,
+        };
+        // The rules are generated only after the server has answered, so an unreachable one fails at once.
+        let rules = || {
+            let text = read_overrides(&oracle)?;
+            Ok((generate(&index, &text)?, overrides(&index, &text)?.into_keys().collect()))
+        };
+        return crate::llm::run(&index, &taxonomy, &rules, &dir, &opts).map(|text| (text, true));
+    }
+    if o.mode == "--merge" {
+        let text = read_overrides(&oracle)?;
+        let mut rules = generate(&index, "")?;
+        rules.meta.rules_fnv = rules_hash(text.as_bytes());
+        let ovr = overrides(&index, &text)?;
+        return crate::llm::run_merge(&index, &taxonomy, &rules, &ovr, &dir, o.model.as_deref())
+            .map(|text| (text, true));
+    }
     let map = load(&path)?;
     index.attach_roles(&map)?;
     if o.mode == "--validate" {
         let gold = o.gold.unwrap_or_else(|| project.data("knowledge/roles_gold.toml"));
         // The rules stage is scored without hand overrides: a manual role set can never improve rule validation.
         let rules = generate(&index, "")?;
-        let report = validate(project, &index, &rules, &read(&gold)?, &taxonomy)?;
+        let stage = o.stage.as_deref().unwrap_or("rules");
+        let (scored, excluded) = if stage == "merged" {
+            if map.meta.prompt_fnv.is_empty() {
+                return Err("roles.json is a rules-only table; run `cardgen roles --merge` first".into());
+            }
+            // Override cards are left out of the merged score, so an override never improves validation either.
+            let excluded: BTreeSet<String> = overrides(&index, &read_overrides(&oracle)?)?.into_keys().collect();
+            (&map, excluded)
+        } else {
+            (&rules, BTreeSet::new())
+        };
+        let ctx = Scoring { scored, excluded: &excluded, stage, llm: Some(crate::llm::read_stats(&dir)) };
+        let report = validate_with(project, &index, &rules, &ctx, &read(&gold)?, &taxonomy)?;
         let passed = report.passed;
         return Ok((
             if o.json { format!("{}\n", serde_json::to_string_pretty(&report).unwrap()) } else { report.text() },
@@ -2447,11 +2703,12 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         let a = &map[&c.raw.oracle_id];
         let _ = writeln!(
             out,
-            "{}\nroles: {}\nprimary: {}\nneeds_llm: {}",
+            "{}\nroles: {}\nprimary: {}\nneeds_llm: {}{}",
             c.raw.name,
             a.roles.join(", "),
             a.primary,
-            a.needs_llm
+            a.needs_llm,
+            if a.llm_failed { " llm_failed=true" } else { "" }
         );
         let _ = writeln!(out, "route: {:?}", a.route);
         let lines = c.lines();
@@ -2459,7 +2716,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
             let e = &a.evidence[r];
             let _ = writeln!(
                 out,
-                "  {r}: {} {} certain={} face={:?} line={:?}",
+                "  {r}: {:?} {} certain={} face={:?} line={:?}",
                 e.source, e.rule, e.certain, e.face, e.line
             );
             if let Some((_, text)) = e.line.and_then(|i| lines.get(i)) {
@@ -2644,6 +2901,10 @@ impl Score {
     pub fn recall(&self) -> f64 {
         ratio(self.tp, self.tp + self.missed)
     }
+    pub fn f1(&self) -> f64 {
+        let (p, r) = (self.precision(), self.recall());
+        if p + r == 0.0 { 0.0 } else { 2.0 * p * r / (p + r) }
+    }
     fn add(&mut self, s: &Self) {
         self.tp += s.tp;
         self.fp += s.fp;
@@ -2661,6 +2922,8 @@ pub struct TagTranslation {
 #[derive(Serialize)]
 pub struct Validation {
     pub passed: bool,
+    /// `rules` (the deterministic stage alone) or `merged` (rules, LLM cache and overrides through the merge policy)
+    pub stage: String,
     pub hand: BTreeMap<String, Score>,
     pub hand_micro: Score,
     pub gold_all: BTreeMap<String, Score>,
@@ -2673,6 +2936,11 @@ pub struct Validation {
     pub certain_micro: Score,
     pub rules_final_micro: Score,
     pub rules_final_cards: usize,
+    /// gold cards the rules routed to the LLM: the rules' score and the scored stage's score on them
+    pub routed_cards: usize,
+    pub routed_rules_micro: Score,
+    pub routed_scored_micro: Score,
+    pub llm: Option<crate::llm::LlmStats>,
     pub not_roles: Vec<String>,
     pub certain_not_roles: Vec<String>,
     pub failures: Vec<String>,
@@ -2695,6 +2963,14 @@ struct GoldCard {
     not_roles: Vec<String>,
 }
 
+/// What a validation scores: the map itself, the override cards to leave out, the stage's name and the LLM numbers.
+pub struct Scoring<'a> {
+    pub scored: &'a RoleMap,
+    pub excluded: &'a BTreeSet<String>,
+    pub stage: &'a str,
+    pub llm: Option<crate::llm::LlmStats>,
+}
+/// Score the rule stage's own map (no overrides, no LLM).
 pub fn validate(
     project: &Project,
     index: &Index,
@@ -2702,8 +2978,30 @@ pub fn validate(
     gold: &str,
     taxonomy: &Taxonomy,
 ) -> Result<Validation, String> {
+    let none = BTreeSet::new();
+    validate_with(
+        project,
+        index,
+        rules,
+        &Scoring { scored: rules, excluded: &none, stage: "rules", llm: None },
+        gold,
+        taxonomy,
+    )
+}
+/// Score `ctx.scored` against the hand tags and the gold set. `rules` is the rule stage's map, used for the routed
+/// comparison and for routing, which the gates below do not read from the scored map.
+pub fn validate_with(
+    project: &Project,
+    index: &Index,
+    rules: &RoleMap,
+    ctx: &Scoring,
+    gold: &str,
+    taxonomy: &Taxonomy,
+) -> Result<Validation, String> {
+    let scored = ctx.scored;
     let mut v = Validation {
         passed: true,
+        stage: ctx.stage.to_string(),
         hand: BTreeMap::new(),
         hand_micro: Score::default(),
         gold_all: BTreeMap::new(),
@@ -2716,13 +3014,17 @@ pub fn validate(
         certain_micro: Score::default(),
         rules_final_micro: Score::default(),
         rules_final_cards: 0,
+        routed_cards: 0,
+        routed_rules_micro: Score::default(),
+        routed_scored_micro: Score::default(),
+        llm: ctx.llm.clone(),
         not_roles: vec![],
         certain_not_roles: vec![],
         failures: vec![],
         hand_misses: vec![],
         gold_differences: vec![],
         tag_mapping: BTreeMap::new(),
-        routing: stats(index, rules),
+        routing: stats(index, scored),
     };
     for (_, tag, _) in sim_core::tag::TAGS {
         let (roles, reason) = tag_roles(tag, &serde_json::Value::Null);
@@ -2754,7 +3056,11 @@ pub fn validate(
         }
         let name = c["name"].as_str().ok_or("engine card missing name")?;
         let tags = c["tags"].as_object().ok_or("engine card missing tags")?;
-        for &i in index.lookup(name).iter().filter(|i| names.contains(i)) {
+        for &i in index
+            .lookup(name)
+            .iter()
+            .filter(|i| names.contains(i) && !ctx.excluded.contains(&index.cards[**i as usize].raw.oracle_id))
+        {
             for (tag, value) in tags {
                 for &role in tag_roles(tag, value).0 {
                     pairs.insert((i, role));
@@ -2768,7 +3074,7 @@ pub fn validate(
     for (i, role) in pairs {
         let c = &index.cards[i as usize];
         let score = v.hand.entry(role.into()).or_default();
-        if rules[&c.raw.oracle_id].roles.iter().any(|r| r == role) {
+        if scored[&c.raw.oracle_id].roles.iter().any(|r| r == role) {
             score.tp += 1;
         } else {
             score.missed += 1;
@@ -2803,7 +3109,12 @@ pub fn validate(
         if !is_deck_card(&index.cards[i as usize]) {
             return Err(format!("gold card is not a deck card: {}", g.name));
         }
-        let a = &rules[&index.cards[i as usize].raw.oracle_id];
+        if ctx.excluded.contains(&g.oracle_id) {
+            continue;
+        }
+        let a = &scored[&index.cards[i as usize].raw.oracle_id];
+        let routed = rules[&index.cards[i as usize].raw.oracle_id].needs_llm;
+        v.routed_cards += usize::from(routed);
         v.primary_total += 1;
         v.primary_correct += usize::from(a.primary == g.primary);
         v.rules_final_cards += usize::from(!a.needs_llm);
@@ -2818,6 +3129,17 @@ pub fn validate(
                     (false, true) => score.fp += 1,
                     (true, false) => score.missed += 1,
                     _ => {}
+                }
+            }
+            if routed {
+                let by_rules = rules[&index.cards[i as usize].raw.oracle_id].roles.iter().any(|r| r == role);
+                for (score, got) in [(&mut v.routed_rules_micro, by_rules), (&mut v.routed_scored_micro, predicted)] {
+                    match (expected, got) {
+                        (true, true) => score.tp += 1,
+                        (false, true) => score.fp += 1,
+                        (true, false) => score.missed += 1,
+                        _ => {}
+                    }
                 }
             }
             if !a.needs_llm {
@@ -2876,6 +3198,9 @@ pub fn validate(
     if !v.certain_not_roles.is_empty() {
         v.failures.push("certain not_roles violations".into());
     }
+    if ctx.stage == "merged" && v.routed_scored_micro.f1() < v.routed_rules_micro.f1() {
+        v.failures.push("merged F1 on the routed gold cards is below the rules alone".into());
+    }
     v.passed = v.failures.is_empty();
     Ok(v)
 }
@@ -2884,21 +3209,23 @@ impl Validation {
         let row = |out: &mut String, r: &str, s: &Score| {
             let _ = writeln!(
                 out,
-                "  {r:<16} {:>4} {:>4} {:>4}   {:.4}   {:.4}",
+                "  {r:<16} {:>4} {:>4} {:>4}   {:.4}   {:.4}   {:.4}",
                 s.tp,
                 s.fp,
                 s.missed,
                 s.precision(),
-                s.recall()
+                s.recall(),
+                s.f1()
             );
         };
-        let mut out = "HAND-TAG RECALL (tags are not exhaustive; precision is not measured)\n".to_string();
+        let mut out = format!("STAGE: {}\n", self.stage);
+        out.push_str("HAND-TAG RECALL (tags are not exhaustive; precision is not measured)\n");
         out.push_str("  role               tp miss   recall\n");
         for (r, s) in self.hand.iter().map(|(r, s)| (r.as_str(), s)).chain([("micro", &self.hand_micro)]) {
             let _ = writeln!(out, "  {r:<16} {:>4} {:>4}   {:.4}", s.tp, s.missed, s.recall());
         }
         for (title, scores) in [("GOLD ALL RULES", &self.gold_all), ("GOLD CERTAIN ONLY", &self.gold_certain)] {
-            let _ = writeln!(out, "{title}\n  role               tp   fp miss   precision recall");
+            let _ = writeln!(out, "{title}\n  role               tp   fp miss   precision recall      f1");
             for (r, s) in scores {
                 row(&mut out, r, s);
             }
@@ -2917,6 +3244,9 @@ impl Validation {
         row(&mut out, "certain micro", &self.certain_micro);
         let _ = writeln!(out, "RULES-FINAL SUBSET ({} cards; all roles)", self.rules_final_cards);
         row(&mut out, "final micro", &self.rules_final_micro);
+        let _ = writeln!(out, "ROUTED GOLD CARDS ({} cards the rules sent to the LLM; all roles)", self.routed_cards);
+        row(&mut out, "rules alone", &self.routed_rules_micro);
+        row(&mut out, &format!("{} stage", self.stage), &self.routed_scored_micro);
         let _ = writeln!(
             out,
             "not_roles violations: {} all, {} certain",
@@ -2934,6 +3264,37 @@ impl Validation {
             }
         }
         out.push_str(&self.routing.text());
+        if let Some(llm) = &self.llm {
+            out.push_str("LLM STAGE\n");
+            match &llm.run {
+                Some(r) => {
+                    let _ = writeln!(
+                        out,
+                        "  last run: model {}, {} classified, {} failed, {} batch retries, {} per-card retries, \
+                         {} chat requests",
+                        r.model, r.classified, r.failed, r.batch_retries, r.card_retries, r.chat_requests
+                    );
+                }
+                None => out.push_str("  last run: no report (reports/llm-run.json)\n"),
+            }
+            match &llm.merge {
+                Some(m) => {
+                    let _ = writeln!(
+                        out,
+                        "  last merge: {} routed cards, {} with an answer, {} without (llm_failed)",
+                        m.routed, m.with_answer, m.llm_failed
+                    );
+                    for (route, kinds) in &m.disagreements {
+                        let _ = writeln!(
+                            out,
+                            "    disagreements {route}: {}",
+                            kinds.iter().map(|(k, n)| format!("{k} {n}")).collect::<Vec<_>>().join(", ")
+                        );
+                    }
+                }
+                None => out.push_str("  last merge: no report (reports/merge.json)\n"),
+            }
+        }
         out.push_str("TAG TRANSLATION (recall only):\n");
         for (tag, t) in &self.tag_mapping {
             let _ = writeln!(

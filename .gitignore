@@ -5,6 +5,8 @@ data/images/
 data/knowledge/oracle.json
 data/knowledge/oracle.prev.json
 data/knowledge/roles.json
+data/knowledge/llm_roles.pending.jsonl
+data/knowledge/reports/
 data/knowledge/*.tmp
 data/saves/
 rust/target/

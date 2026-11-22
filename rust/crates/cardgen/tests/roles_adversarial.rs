@@ -260,8 +260,8 @@ fn problems(c: &knowledge::Card, a: &Assignment) -> Vec<String> {
         if !IDS.contains(&role.as_str()) {
             bad.push(format!("{name}: unknown role {role}"));
         }
-        if e.source != "rule" {
-            bad.push(format!("{name}: {role} has source {}", e.source));
+        if e.source != roles::Source::Rule {
+            bad.push(format!("{name}: {role} has source {:?}", e.source));
             continue;
         }
         match e.line.and_then(|i| lines.get(i)) {
@@ -1100,7 +1100,10 @@ fn override_names_resolve_folded_by_face_and_never_ambiguously() {
     {
         let text = format!("[[card]]\nname={name:?}\nroles=['wipe']\nnote='folded name'\n");
         let map = ids(&text).unwrap_or_else(|e| panic!("{name}: {e}"));
-        assert_eq!(map.values().filter(|a| a.evidence.values().any(|e| e.source == "override")).count(), 1);
+        assert_eq!(
+            map.values().filter(|a| a.evidence.values().any(|e| e.source == roles::Source::Override)).count(),
+            1
+        );
     }
     // a face name resolves to the whole card; the exact full name beats a face name of another card
     let t = "[[card]]\nname='Agadeem, the Undercrypt'\nroles=['wipe']\nnote='face name'\n";
@@ -1138,7 +1141,7 @@ fn override_replaces_everything_and_round_trips_through_the_side_table() {
     assert_eq!(altar[0]["roles"], json!([]));
     assert_eq!(altar[0]["primary"], "");
     let shown = e.command(&["--show", "Counterspell"]).unwrap().0;
-    assert!(shown.contains("needs_llm: false") && shown.contains("override"), "{shown}");
+    assert!(shown.contains("needs_llm: false") && shown.contains("Override"), "{shown}");
     // overrides never improve validation: score against the rules, not the override
     e.set_deck("Counterspell", &["Counterspell"], &[("Counterspell", json!({"ctr": "any"}))]);
     let fx = roles_fixture();
@@ -1329,7 +1332,13 @@ fn hand_edited_roles_tables_are_rejected_by_attach() {
         Box::new(move |m| {
             m.get_mut(&id6).unwrap().evidence.insert(
                 "ghost".into(),
-                Evidence { source: "rule".into(), certain: false, rule: "mana".into(), face: None, line: Some(0) },
+                Evidence {
+                    source: roles::Source::Rule,
+                    certain: false,
+                    rule: "mana".into(),
+                    face: None,
+                    line: Some(0),
+                },
             );
         }),
     ));
@@ -1384,7 +1393,7 @@ fn hand_edited_roles_tables_are_rejected_by_attach() {
         Box::new(move |m| {
             let a = m.get_mut(&id12).unwrap();
             let k = a.roles[0].clone();
-            a.evidence.get_mut(&k).unwrap().source = "llm".into();
+            a.evidence.get_mut(&k).unwrap().source = roles::Source::Llm;
         }),
     ));
     let id13 = id.clone();
@@ -1412,7 +1421,7 @@ fn hand_edited_roles_tables_are_rejected_by_attach() {
             let a = m.get_mut(&id15).unwrap();
             let k = a.roles[0].clone();
             let e = a.evidence.get_mut(&k).unwrap();
-            e.source = "override".into();
+            e.source = roles::Source::Override;
         }),
     ));
     let id16 = id.clone();
@@ -1422,7 +1431,7 @@ fn hand_edited_roles_tables_are_rejected_by_attach() {
             let a = m.get_mut(&id16).unwrap();
             let k = a.roles[0].clone();
             let e = a.evidence.get_mut(&k).unwrap();
-            e.source = "override".into();
+            e.source = roles::Source::Override;
             e.line = None;
             e.face = None;
             e.certain = true;
@@ -1438,7 +1447,13 @@ fn hand_edited_roles_tables_are_rejected_by_attach() {
     let mut m = map.clone();
     let a = m.get_mut(&id).unwrap();
     for e in a.evidence.values_mut() {
-        *e = Evidence { source: "override".into(), certain: false, rule: "by hand".into(), face: None, line: None };
+        *e = Evidence {
+            source: roles::Source::Override,
+            certain: false,
+            rule: "by hand".into(),
+            face: None,
+            line: None,
+        };
     }
     assert!(roles_fixture().attach_roles(&m).is_ok());
 }
