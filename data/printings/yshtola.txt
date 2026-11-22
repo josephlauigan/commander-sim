@@ -29,7 +29,6 @@
 1 Generous Gift (cmr) 620
 1 Go for the Throat (j25) 447
 1 Godless Shrine (rvr) 294
-1 Grand Arbiter Augustin IV (2x2) 379
 1 Hallowed Fountain (clu) 277
 1 Idyllic Tutor (thb) 24
 5 Island (trk) 320
@@ -73,7 +72,6 @@
 1 Underground River (wc98) bs362
 1 Underground Sea (cei) 286
 1 Urborg, Tomb of Yawgmoth (ltc) 375
-1 Urza's Cave (mh3) 234
 1 Vampiric Tutor (soa) 100
 1 Watery Grave (rvr) 301
 1 Y'shtola, Night's Blessed (fic) 207
