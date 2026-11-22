@@ -219,6 +219,7 @@ fn human_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, rocks: boo
             (m != src || !other)
                 && !g.perm(m).phased
                 && (g.is_creature(m) || (rocks && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))))
+                && !crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, src)) // targeted
         })
         .collect();
     if cands.is_empty() || !trigger_window(g, p, Some(src), "blink a creature", None)? {
@@ -260,7 +261,12 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
         .perms
         .iter()
         .copied()
-        .filter(|&m| (m != src || !other) && g.is_creature(m) && flicker_worth(g, p, m) > 0.0)
+        .filter(|&m| {
+            (m != src || !other)
+                && g.is_creature(m)
+                && flicker_worth(g, p, m) > 0.0
+                && !crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, src)) // targeted
+        })
         .collect();
     if cands.is_empty() && rocks {
         cands = g
@@ -276,6 +282,7 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
                     && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))
                     && !g.is_creature(m)
                     && x.orig == p
+                    && !crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, src))
             })
             .collect();
     }
@@ -1617,7 +1624,14 @@ fn resto_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
-    let ok = |g: &Game, x: PermId| g.is_creature(x) && !g.perm(x).phased && x != src && !has_type(g, x, "angel");
+    // Restoration Angel is white: a creature with protection from white is no target
+    let ok = |g: &Game, x: PermId| {
+        g.is_creature(x)
+            && !g.perm(x).phased
+            && x != src
+            && !has_type(g, x, "angel")
+            && !crate::engine::values::protected_from(g, x, crate::engine::values::colors_of(g, src))
+    };
     if !g.player(o).perms.iter().any(|&x| ok(g, x)) {
         return Ok(());
     }

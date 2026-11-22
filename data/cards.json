@@ -121099,10 +121099,11 @@
      "effects": [
       {
        "do": "search",
-       "filter": {},
+       "filter": {
+        "type": "equipment"
+       },
        "to": "hand",
-       "n": 1,
-       "tapped": false
+       "n": 1
       }
      ]
     }
@@ -121114,7 +121115,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,
@@ -122292,7 +122293,11 @@
       },
       {
        "do": "opp_token",
-       "pow": 1
+       "pow": 1,
+       "types": [
+        "human"
+       ],
+       "color": "W"
       }
      ]
     }
@@ -122304,7 +122309,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -147181,7 +147186,8 @@
    "generic": 2,
    "pips": "WW",
    "tags": {
-    "wipe": "destroy"
+    "wipe": "destroy",
+    "noregen": true
    },
    "pow": 0,
    "tgh": 0,

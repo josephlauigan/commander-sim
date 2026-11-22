@@ -311,8 +311,13 @@ fn zack(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = need(g, p, 1, "", "Zack Fair") {
         return Ok(Some(why));
     }
-    let tg: Vec<PermId> =
-        g.player(p).perms.iter().copied().filter(|&x| x != m && live(g, x) && g.is_creature(x)).collect();
+    let tg: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&x| x != m && live(g, x) && g.is_creature(x) && legal_target(g, p, m, x))
+        .collect();
     if tg.is_empty() {
         return Ok(Some("You control no other creature to target.".into()));
     }

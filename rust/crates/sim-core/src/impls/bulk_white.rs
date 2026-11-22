@@ -1381,7 +1381,10 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         ardenn_combat_human(g, p, src)?;
         return Ok(vec![]);
     }
-    let Some(to) = super::cloud::best_holder(g, p) else { return Ok(vec![]) };
+    // Ardenn is white: a creature with protection from white is no target
+    let Some(to) = super::cloud::best_holder_from(g, p, crate::engine::values::colors_of(g, src)) else {
+        return Ok(vec![]);
+    };
     let es = super::cloud::pullable(g, p, to);
     if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(vec![]);

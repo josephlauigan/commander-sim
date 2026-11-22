@@ -360,7 +360,11 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ct
     g.resolving += 1;
     // --- Tiers 4/5 (miirym): Wrathful Red Dragon sees each Dragon dealt the wipe's damage, dying with them or not
     let wrath = if kind == "dmg13" { crate::impls::t45_miirym::wrathful_wipe(g, 13) } else { vec![] };
+    // "They can't be regenerated" (Wrath of God: the card's `noregen` tag)
+    let prev_noregen = g.noregen;
+    g.noregen |= card.is_some_and(|c| g.db.get(c).tag(Tag::Noregen));
     let r = apply_wipe_inner(g, p, kind, card, ctx);
+    g.noregen = prev_noregen;
     g.cur_batch = prev_batch;
     g.destroyer = prev;
     let r = r.and_then(|_| crate::impls::t45_miirym::wrathful_after_wipe(g, wrath));

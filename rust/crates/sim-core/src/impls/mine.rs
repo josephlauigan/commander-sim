@@ -4461,6 +4461,8 @@ fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -
         .iter()
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).token)
+        // Ephemerate is white: a creature with protection from white is no target
+        .filter(|&m| !crate::engine::values::protected_from(g, m, g.db.get(c).colors))
         .map(|m| (blink_worth(g, p, m), m))
         .filter(|x| x.0 >= 3.0)
         .collect();
