@@ -837,26 +837,24 @@ fn a_role_page_lists_that_roles_cards_and_pages_have_no_gaps_or_overlaps() {
     assert_eq!(all.lines, total, "one page holds them all");
     assert!(all.next_offset.is_none());
     let want = names(&card_lines(&all.text));
-    // every non-deck card that has the role: the primary-role ones first, then the rest, each best first
+    // every non-deck card that has the role, in any position, as one list in EDHREC order (name ties)
     let mut seen_later = false;
-    let (mut last_primary, mut last_later) = (0u32, 0u32);
+    let mut last = (0u32, String::new());
     for n in &want {
         let i = env.index.lookup(n)[0];
         let a = env.index.roles(i).unwrap();
         assert!(a.roles.contains(&"removal".to_string()), "{n}");
+        seen_later |= a.primary != "removal";
         let rank = env.index.cards[i as usize].raw.edhrec_rank.unwrap_or(u32::MAX);
-        if a.primary == "removal" {
-            assert!(!seen_later, "a primary card after a later-role one: {n}");
-            assert!(rank >= last_primary);
-            last_primary = rank;
-        } else {
-            seen_later = true;
-            assert!(rank >= last_later);
-            last_later = rank;
-        }
+        assert!((rank, knowledge::fold(n)) >= (last.0, last.1.clone()), "{n} is out of order");
+        last = (rank, knowledge::fold(n));
         assert!(!deck.cards.contains(n));
     }
     assert!(seen_later, "the fixture has cards with removal as a later role");
+    // a later-role card sits among the primary ones, not after all of them
+    let first_later = want.iter().position(|n| env.index.roles(env.index.lookup(n)[0]).unwrap().primary != "removal");
+    let last_primary = want.iter().rposition(|n| env.index.roles(env.index.lookup(n)[0]).unwrap().primary == "removal");
+    assert!(first_later < last_primary, "the order is EDHREC, not primary first");
     assert!(blocks(&all.text).len() == 1 && blocks(&all.text)[0].0.starts_with("## B role removal: cards 1-"));
     // pages of 7 by limit
     let mut got: Vec<String> = vec![];
@@ -1522,7 +1520,7 @@ fn a_role_page_includes_cards_with_the_role_in_a_later_position_and_cites_their_
             .unwrap_or_else(|| panic!("{role}: {a:?}"));
         let want = if role == "draw" { "Draw two cards." } else { "Destroy target creature." };
         assert_eq!(field(&l, 4), want, "{l}");
-        assert!(p.text.contains("primary-") && p.text.contains("cards first, then the others"));
+        assert!(p.text.contains("every card that has") && !p.text.contains("primary-"));
     }
 }
 
@@ -1635,21 +1633,131 @@ fn flags_are_made_in_one_place_with_a_context_and_only_an_unreviewed_card_gets_a
     let ctx = digest::Context::default();
     let id = env.index.lookup("Smothering Tithe")[0];
     let c = &env.index.cards[id as usize];
-    let f = digest::flags(c, Review::Uncertain, true, &ctx);
+    let f = digest::flags(id, c, Review::Uncertain, true, &ctx);
     assert_eq!(f.first().map(String::as_str), Some("*"));
     assert!(f.contains(&"GC".to_string()) && f.last().map(String::as_str) == Some("?"), "{f:?}");
     assert!(f.iter().any(|x| x.starts_with('#')) && f.iter().any(|x| x.starts_with('$')));
-    assert!(!digest::flags(c, Review::Rules, false, &ctx).contains(&"?".to_string()));
-    assert!(!digest::flags(c, Review::Llm, false, &ctx).contains(&"?".to_string()));
+    assert!(!digest::flags(id, c, Review::Rules, false, &ctx).contains(&"?".to_string()));
+    assert!(!digest::flags(id, c, Review::Llm, false, &ctx).contains(&"?".to_string()));
     // the line prints exactly those flags, and a context changes nothing yet
     let lines = digest::Lines::new(&env.index, &env.table);
     let with = digest::Lines::with_context(&env.index, &env.table, digest::Context::default());
     assert_eq!(lines.line(id, true), with.line(id, true));
-    assert_eq!(field(&lines.line(id, true), 5), digest::flags(c, lines.review(id), true, &ctx).join(" "));
+    assert_eq!(field(&lines.line(id, true), 5), digest::flags(id, c, lines.review(id), true, &ctx).join(" "));
     // a card with nothing to say has `-`
     let mut bare = card("Test Bare", "Creature — Goblin", "", &[], "legal", None);
     bare["legalities"]["commander"] = json!("legal");
     write_catalog(&env, &[bare]);
     env.rules_only();
     assert_eq!(field(&digest::Lines::new(&env.index, &env.table).line(0, false), 5), "-");
+}
+
+// ------------------------------------------------------------------------------------------------ round 3
+
+#[test]
+fn a_keyword_is_a_whole_word_so_an_aura_or_equipment_line_is_not_keyword_only() {
+    let mut aura = card(
+        "Test Aura",
+        "Enchantment — Aura",
+        "Enchant creature\nEnchanted creature gets +1/+1 and has flying.",
+        &["W"],
+        "legal",
+        Some(1),
+    );
+    aura["keywords"] = json!(["Enchant"]);
+    let mut equip = card(
+        "Test Equip",
+        "Artifact — Equipment",
+        "Equipped creature gets +2/+2.\nEquip {2}",
+        &["W"],
+        "legal",
+        Some(2),
+    );
+    equip["keywords"] = json!(["Equip"]);
+    let mut kw =
+        card("Test Kw", "Creature — Goblin", "Flying, trample\nFlyers can't attack.", &["W"], "legal", Some(3));
+    kw["keywords"] = json!(["Flying", "Trample"]);
+    let mut env = Env::new();
+    write_catalog(&env, &[aura, equip, kw]);
+    env.rules_only();
+    let gist = |name: &str| {
+        let i = env.index.lookup(name)[0];
+        digest::gist_source(&env.index.cards[i as usize], &Assignment::default(), None)
+    };
+    assert_eq!(gist("Test Aura"), "Enchanted creature gets +1/+1 and has flying.");
+    assert_eq!(gist("Test Equip"), "Equipped creature gets +2/+2.");
+    // a real keyword line is still skipped
+    assert_eq!(gist("Test Kw"), "Flyers can't attack.");
+}
+
+#[test]
+fn section_b_leaves_out_the_cards_of_d_as_well_as_c() {
+    let env = Env::new();
+    let deck = env.deck("thanos");
+    let prev = Prev::Ids(HashSet::new());
+    let d = digest::build(&env.index, &env.table, &env.spec(Some(&deck), &prev)).unwrap();
+    let new: HashSet<String> = names(&section(&d.text, 'D')).into_iter().collect();
+    let b: HashSet<String> = names(&section(&d.text, 'B')).into_iter().collect();
+    assert_eq!(new.len(), 100);
+    assert!(b.is_disjoint(&new), "{:?}", b.intersection(&new).collect::<Vec<_>>());
+}
+
+#[test]
+fn an_injected_context_prints_m_d_k_in_the_fixed_order_with_question_mark_last_and_the_header_has_the_letters() {
+    let env = Env::new();
+    let id = env.index.lookup("Smothering Tithe")[0];
+    let c = &env.index.cards[id as usize];
+    // letters from the deck keys, in order: the first unused letter of the key, else the first unused of A to Z
+    let keys: Vec<String> = ["cloud", "sheoldred", "thanos", "thrasios", "urdragon", "yshtola", "cat", "c"]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    let letters = digest::Context::letters(&keys);
+    assert_eq!(letters.iter().map(|(c, _)| *c).collect::<String>(), "CSTHUYAB");
+    let mut ctx = digest::Context { deck_letters: letters, ..Default::default() };
+    ctx.model_status.insert(id, "F".into());
+    ctx.findings.insert(id, 3);
+    ctx.deck_bits = vec![0; env.index.cards.len()];
+    ctx.deck_bits[id as usize] = 0b101; // cloud and thanos
+    // nothing printed for a card the context says nothing about
+    let other = env.index.lookup("Counterspell")[0];
+    assert!(
+        !digest::flags(other, &env.index.cards[other as usize], Review::Rules, false, &ctx)
+            .iter()
+            .any(|f| f.starts_with("d:") || f.starts_with("m:") || f.starts_with("k:"))
+    );
+    let f = digest::flags(id, c, Review::Uncertain, true, &ctx);
+    let at = |p: &str| f.iter().position(|x| x.starts_with(p)).unwrap_or_else(|| panic!("{p} in {f:?}"));
+    assert_eq!(f[0], "*");
+    assert!(
+        at("GC") < at("#") && at("#") < at("$") && at("$") < at("m:") && at("m:") < at("d:") && at("d:") < at("k:")
+    );
+    assert_eq!(f.last().unwrap(), "?");
+    assert!(
+        f.contains(&"m:F".to_string()) && f.contains(&"d:CT".to_string()) && f.contains(&"k:3".to_string()),
+        "{f:?}"
+    );
+    // the current deck is left out of its own `d:`; a zero finding count prints nothing
+    ctx.current = Some(0b001);
+    ctx.findings.insert(id, 0);
+    let f = digest::flags(id, c, Review::Rules, true, &ctx);
+    assert!(
+        f.contains(&"d:T".to_string()) && !f.iter().any(|x| x.starts_with("k:")) && !f.contains(&"?".to_string()),
+        "{f:?}"
+    );
+    ctx.current = Some(0b101);
+    assert!(!digest::flags(id, c, Review::Rules, true, &ctx).iter().any(|x| x.starts_with("d:")));
+    // the header explains the letters; an empty context adds no line
+    let deck = env.deck("thanos");
+    let with = digest::build_with(&env.index, &env.table, &env.spec(Some(&deck), &Prev::Missing), &ctx).unwrap();
+    let legend = "# d: letters of JD's decks that also play the card: \
+                  C=cloud S=sheoldred T=thanos H=thrasios U=urdragon Y=yshtola A=cat B=c";
+    assert!(with.text.contains(legend), "{}", &with.text[..1500]);
+    assert!(!env.digest("thanos").text.contains("# d: letters"));
+    // the line itself carries the context's flags
+    let lines = digest::Lines::with_context(&env.index, &env.table, ctx.clone());
+    ctx.current = None;
+    let l = digest::Lines::with_context(&env.index, &env.table, ctx).line(id, false);
+    assert!(field(&l, 5).contains("m:F d:CT k:") || field(&l, 5).contains("m:F d:CT"), "{l}");
+    let _ = lines;
 }

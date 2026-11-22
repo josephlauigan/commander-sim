@@ -193,7 +193,8 @@ fn keyword_only(c: &Card, line: &str) -> bool {
     !kws.is_empty()
         && line.split(',').all(|part| {
             let part = part.trim().to_lowercase();
-            kws.iter().any(|k| part.starts_with(k.as_str()))
+            // a keyword is a whole word: `Enchant` is not `Enchanted creature gets...`, `Equip` is not `Equipped`
+            kws.iter().any(|k| part.strip_prefix(k.as_str()).is_some_and(|rest| !rest.starts_with(char::is_alphabetic)))
         })
 }
 
@@ -259,23 +260,59 @@ pub fn cut(s: &str, max: usize) -> String {
     cut_to(s, max, true)
 }
 
-/// What else a line can say about a card, by whoever has it. Every part is empty today; phase 4 fills them (the
-/// model status of a card by name, the decks of JD's that play it, how many `FINDINGS.md` entries name it) and
-/// [`flags`] prints them, so `find` can show the same flags.
+/// What else a line can say about a card, by whoever has it. Every part is empty today; phase 4 fills them and
+/// [`flags`] prints them (so `find` can show the same flags). Everything is resolved to card indices once, when the
+/// context is built: nothing is looked up by name at flag time.
 #[derive(Clone, Debug, Default)]
 pub struct Context {
-    /// engine model status by card name (`m:`)
-    pub model_status: HashMap<String, String>,
-    /// a mark per card index: the card is in one of JD's decks (`d:`)
-    pub deck_members: Vec<bool>,
-    /// findings that name the card, by card name (`k:`)
-    pub findings: HashMap<String, usize>,
+    /// engine model status by card index (`m:X`): only cards that have a `cards.json` record
+    pub model_status: HashMap<u32, String>,
+    /// per card index (aligned with `Index::cards`, may be shorter): a bit per JD deck that plays the card (`d:`)
+    pub deck_bits: Vec<u16>,
+    /// the letter of each deck bit, in bit order: `(C, "cloud")`; the digest header prints it
+    pub deck_letters: Vec<(char, String)>,
+    /// the deck bit that section A leaves out of its own `d:` (the digest's own deck)
+    pub current: Option<u16>,
+    /// `FINDINGS.md` entries that name the card, by card index (`k:N`, only when N > 0)
+    pub findings: HashMap<u32, usize>,
 }
 
-/// The flags of a card, in the order they are printed: `*` in the deck's list, `BAN` or `NL` when the catalog does
-/// not call it Commander-legal, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, `?` roles not reviewed yet.
-/// The one place a line's flags are made.
-pub fn flags(c: &Card, review: Review, in_deck: bool, _ctx: &Context) -> Vec<String> {
+impl Context {
+    /// The letter table for decks in the order of `decks.json` `mine`: the first letter of the key not used yet
+    /// (upper case), else the first unused of A to Z. Deterministic; at most 16 decks (one bit each).
+    pub fn letters(keys: &[String]) -> Vec<(char, String)> {
+        let mut used: Vec<char> = vec![];
+        let mut out = vec![];
+        for key in keys.iter().take(16) {
+            let pick = key
+                .chars()
+                .filter(|c| c.is_ascii_alphabetic())
+                .map(|c| c.to_ascii_uppercase())
+                .chain('A'..='Z')
+                .find(|c| !used.contains(c))
+                .unwrap_or('?');
+            used.push(pick);
+            out.push((pick, key.clone()));
+        }
+        out
+    }
+
+    /// the header line that explains the `d:` letters, when there are any
+    pub fn legend(&self) -> Option<String> {
+        if self.deck_letters.is_empty() {
+            return None;
+        }
+        let list: Vec<String> = self.deck_letters.iter().map(|(c, k)| format!("{c}={k}")).collect();
+        Some(format!("# d: letters of JD's decks that also play the card: {}", list.join(" ")))
+    }
+}
+
+/// The flags of card `i`, in the order they are printed: `*` in the deck's list, `BAN` or `NL` when the catalog does
+/// not call it Commander-legal, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, `m:X` model status, `d:XY`
+/// the JD decks (other than the current one) that play it, `k:N` findings that name it, `?` role tags not reviewed
+/// yet (always last). `m:`, `d:` and `k:` print only what the [`Context`] holds. The one place a line's flags are
+/// made.
+pub fn flags(i: u32, c: &Card, review: Review, in_deck: bool, ctx: &Context) -> Vec<String> {
     let mut flags: Vec<String> = vec![];
     if in_deck {
         flags.push("*".into());
@@ -293,6 +330,18 @@ pub fn flags(c: &Card, review: Review, in_deck: bool, _ctx: &Context) -> Vec<Str
     }
     if let Some(usd) = c.usd {
         flags.push(format!("${}", usd.round() as i64));
+    }
+    if let Some(status) = ctx.model_status.get(&i) {
+        flags.push(format!("m:{status}"));
+    }
+    let bits = ctx.deck_bits.get(i as usize).copied().unwrap_or(0) & !ctx.current.unwrap_or(0);
+    let decks: String =
+        ctx.deck_letters.iter().enumerate().filter(|(n, _)| bits & (1 << n) != 0).map(|(_, (c, _))| *c).collect();
+    if !decks.is_empty() {
+        flags.push(format!("d:{decks}"));
+    }
+    if let Some(n) = ctx.findings.get(&i).filter(|n| **n > 0) {
+        flags.push(format!("k:{n}"));
     }
     flags.extend(review.flag().map(String::from));
     flags
@@ -331,7 +380,7 @@ impl<'a> Lines<'a> {
         let a = self.index.roles(i).unwrap_or(&default);
         let cost = Some(clean(&c.cost())).filter(|s| !s.is_empty()).unwrap_or_else(|| "-".into());
         let roles = if a.roles.is_empty() { "-".to_string() } else { a.roles.join(",") };
-        let flags = flags(c, self.review(i), in_deck, &self.ctx);
+        let flags = flags(i, c, self.review(i), in_deck, &self.ctx);
         let flags = if flags.is_empty() { "-".to_string() } else { flags.join(" ") };
         let src = clean(&gist_source(c, a, role));
         let src_len = src.chars().count();
@@ -705,8 +754,9 @@ fn legend() -> Vec<String> {
         .into(),
         concat!(
             "# flags: * in the deck's list; BAN banned / NL not legal in Commander; GC Game Changer; #N EDHREC rank; ",
-            "$N price in USD; ? roles not reviewed yet (routed to the LLM, no answer: they may be incomplete or ",
-            "wrong; no ? means the rules or a hand override decided, or the LLM answered); - no flags"
+            "$N price in USD; ? the role tags are not reviewed yet (about the tags, not the card's quality: routed to ",
+            "the LLM, no answer, so they may be incomplete or wrong; no ? means the rules or a hand override decided, ",
+            "or the LLM answered); - no flags"
         )
         .into(),
     ]
@@ -727,6 +777,12 @@ fn num(n: usize) -> String {
 /// Builds the digest. `Index::search` supplies the cards (legal, in the identity, not in the deck, no meld results);
 /// Stickers and Attractions, which have no roles, are left out. See the module documentation for the sections.
 pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindError> {
+    build_with(index, table, spec, &Context::default())
+}
+
+/// [`build`] with what phase 4 adds to the flags (model status, JD's decks, findings): the lines carry them and the
+/// header explains the deck letters.
+pub fn build_with(index: &Index, table: &Table, spec: &Spec, ctx: &Context) -> Result<Digest, FindError> {
     if spec.deck.is_none() && spec.ident.is_none() {
         return usage("digest needs --deck KEY or --ident LETTERS");
     }
@@ -750,7 +806,7 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
     let q = Query { ident: spec.ident, ..Query::default() };
     let (hits, unresolved) = index.search(&q, spec.deck)?;
     let hits: Vec<u32> = hits.into_iter().filter(|&i| roles::is_deck_card(&index.cards[i as usize])).collect();
-    let lines = Lines::new(index, table);
+    let lines = Lines::with_context(index, table, ctx.clone());
     let mut head: Vec<String> = vec![format!("# digest: {}", subject(spec.deck, spec.ident))];
     head.push(format!(
         "# role table: {} (roles.json); catalog: Scryfall bulk {}; {} legal cards in the identity, not in the deck",
@@ -759,6 +815,7 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
         num(hits.len())
     ));
     head.extend(legend());
+    head.extend(ctx.legend());
     if !unresolved.is_empty() {
         let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
         let more = if unresolved.len() > 10 { ", ..." } else { "" };
@@ -847,24 +904,18 @@ fn page(
     })
 }
 
-/// `--role R`: every card that has role R, the cards whose primary role it is first, then the others, each group best
-/// first; a page of them
+/// `--role R`: every card that has role R in any position, as one list best first; a page of it
 fn role_page(l: &Lines, spec: &Spec, hits: &[u32], role: &str, mut head: Vec<String>) -> Result<Digest, FindError> {
     let index = l.index;
-    let has = |i: u32| index.roles(i).is_some_and(|a| a.roles.iter().any(|r| r == role));
-    let (primary, later): (Vec<u32>, Vec<u32>) =
-        hits.iter().copied().filter(|&i| has(i)).partition(|&i| index.roles(i).is_some_and(|a| a.primary == role));
+    let all: Vec<u32> =
+        hits.iter().copied().filter(|&i| index.roles(i).is_some_and(|a| a.roles.iter().any(|r| r == role))).collect();
     head.push(format!(
-        "# page: role {role}{}; {} cards have it as their primary role, then {} more have it as a later role",
+        "# page: role {role}{}; {} cards have it, in any position (the roles field shows where)",
         if spec.deck.is_some() { ", the deck's own cards left out" } else { "" },
-        num(primary.len()),
-        num(later.len())
+        num(all.len())
     ));
-    let all: Vec<u32> = primary.into_iter().chain(later).collect();
     let title = |range: &str, tail: &str| {
-        format!(
-            "## B role {role}: {range}, primary-{role} cards first, then the others, each best EDHREC rank first{tail}"
-        )
+        format!("## B role {role}: {range}, every card that has {role}, best EDHREC rank first, unranked last{tail}")
     };
     page(l, spec, &all, head, 'B', Some(role), &title)
 }
@@ -994,22 +1045,6 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
             .collect()
     };
     let in_c: HashSet<u32> = synergy.iter().copied().collect();
-    // B: the best-ranked cards of each primary role; E: the best-ranked cards with no role
-    let mut ranked: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
-    let mut no_role: Vec<u32> = vec![];
-    for &i in hits.iter().filter(|i| !in_c.contains(i)) {
-        match index.roles(i).filter(|a| !a.primary.is_empty()) {
-            None => no_role.push(i),
-            Some(a) => {
-                let role =
-                    roles::IDS.iter().copied().find(|r| *r == a.primary).expect("a primary role is in the taxonomy");
-                if index.cards[i as usize].raw.edhrec_rank.is_some() {
-                    ranked.entry(role).or_default().push(i);
-                }
-            }
-        }
-    }
-    let roleless_total = hits.iter().filter(|&&i| roleless(index, i)).count();
     // D: new since the previous sync, the first CAP_NEW of them
     let (new_cards, d_note): (Option<Vec<u32>>, String) = match spec.prev {
         Prev::Ids(prev) => {
@@ -1024,7 +1059,23 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
         Prev::Unreadable(why) => (None, format!("oracle.prev.json is unreadable ({why})")),
     };
     let in_d: HashSet<u32> = new_cards.iter().flatten().take(CAP_NEW).copied().collect();
-    no_role.retain(|i| !in_d.contains(i));
+    // B: the best-ranked cards of each primary role, leaving out those of C and D; E: the best-ranked cards with
+    // no role
+    let mut ranked: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
+    let mut no_role: Vec<u32> = vec![];
+    for &i in hits.iter().filter(|i| !in_c.contains(i) && !in_d.contains(i)) {
+        match index.roles(i).filter(|a| !a.primary.is_empty()) {
+            None => no_role.push(i),
+            Some(a) => {
+                let role =
+                    roles::IDS.iter().copied().find(|r| *r == a.primary).expect("a primary role is in the taxonomy");
+                if index.cards[i as usize].raw.edhrec_rank.is_some() {
+                    ranked.entry(role).or_default().push(i);
+                }
+            }
+        }
+    }
+    let roleless_total = hits.iter().filter(|&&i| roleless(index, i)).count();
 
     let a_block = Block {
         id: 'A',
@@ -1098,7 +1149,8 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
             id: 'E',
             role: None,
             header: format!(
-                "## E best-ranked cards with no role: {n} of {} (--view roleless lists them all)",
+                "## E best-ranked cards with no role (no role = no rule matched; not a judgement of the card): \
+                 {n} of {} (--view roleless lists them all)",
                 num(roleless_total)
             ),
             lines: e_lines[..n].to_vec(),
@@ -1363,7 +1415,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<Output, FindError> 
         budget_tokens: a.budget_tokens,
         prev: &prev,
     };
-    let digest = build(&index, &table, &spec)?;
+    let digest = build_with(&index, &table, &spec, &Context::default())?;
     let path = a
         .out
         .clone()

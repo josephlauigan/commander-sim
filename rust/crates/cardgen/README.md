@@ -286,7 +286,7 @@ and ends in `…`).
 | type | per face (joined with `/`, written once when the faces agree): `Lg` for a legendary face, then a letter per card type in the order A E L C P B I S (`AC` artifact creature, `LgC` legendary creature, `C/L` an MDFC with a land back, `O` other), then `—` and the subtypes (they give way first when the line is too long) |
 | roles | the card's roles, primary first; `-` for none |
 | gist | the Oracle line cited as evidence for the **primary** role (`roles::line_text`: reminder text gone, `~` the card), cut at a whole-token boundary to 110 characters (never inside `{...}`, never in an open quote; `…` marks a cut; `-` when no whole token fits). A card with no cited line (no roles, or a hand override) shows its first Oracle line that is not just keywords (`Flying, trample`), else the first line; `-` when it has no text. On a `--role R` page the gist cites R's own line. Never written text, so it cannot be a hallucination |
-| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` when the card's roles are not reviewed yet (routed to the LLM and no answer: they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `digest::flags` makes them, with a `Context` for what phase 4 adds |
+| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` (always last) when the card's role tags are not reviewed yet (about the tags, not the card's quality: routed to the LLM and no answer, so they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `digest::flags` makes them in the order `* BAN|NL GC #N $N m:X d:XY k:N ?`; a `Context` (indices resolved once: model status, a bit per JD deck with a letter table the header prints, the current deck, findings) fills `m:`, `d:` and `k:` for phase 4, and is empty today |
 
 The candidates come from `Index::search`, so the deck's identity ceiling and exclusions are the ones `find --deck`
 applies: Commander-legal cards inside the identity (`--ident` may narrow a deck's, never widen it), not in the deck, no
@@ -312,15 +312,15 @@ The size target is `--budget-tokens` (default 42,000, estimated as bytes/4, neve
 common factor to the largest that fits, and the header says so (if even that is not enough the digest is left over
 budget with a note, because A, C and D are not trimmed). A five-colour deck's digest stays under 200 KB.
 
-`--role R` lists every non-deck card that has role R in any position, the cards whose primary role it is first, then
-the others, each group best first; `--view roleless` and `--view new` list the complete candidate sets of the same
-names. They are pages: a page ends at `--limit` cards or at 30,000 tokens (`--budget-tokens` overrides that, and a budget
+`--role R` lists every non-deck card that has role R in any position as one list, best EDHREC rank first (name ties;
+the roles field shows where R sits, and the gist cites R's own line); `--view roleless` and `--view new` list the
+complete candidate sets of the same names. They are pages: a page ends at `--limit` cards or at 30,000 tokens (`--budget-tokens` overrides that, and a budget
 that cannot hold the page header and one card is an error), and the block header says `next page: --offset N` while there
 are more. `--limit` and `--offset` need `--role` or `--view`. Between them the role pages and `--view roleless` reach
 every candidate of the digest.
 
 For code: `digest::open` (catalog and role table), `digest::build(&Index, &Table, &Spec)`, `digest::Lines::{new,
-with_context, line, line_for}`, `digest::flags`, `digest::review`, `digest::deck_cards`, `digest::role_counts`,
+with_context, line, line_for}`, `digest::build_with` (a `Context`), `digest::flags`, `digest::review`, `digest::deck_cards`, `digest::role_counts`,
 `digest::commander_subtypes`, `digest::Prev::load`, and `map::build(&Index, &Table, Option<&Path>)` (JD's decks come from
 the `decks.json` beside the spellbook directory) or `map::build_with`; none of them reads argv.
 

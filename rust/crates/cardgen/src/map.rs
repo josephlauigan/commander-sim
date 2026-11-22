@@ -1,9 +1,9 @@
-//! `cardgen map`: the whole-catalog summary (layer 1 of documents/card-knowledge.md), about 8k tokens.
+//! `cardgen map`: the whole-catalog summary (layer 1 of documents/card-knowledge.md), about 3k tokens and under 32 KB.
 //!
-//! Counts of Commander-legal cards per colour identity and per role by colour, role coverage and review status,
-//! the biggest creature types, subtypes and keywords, the Game Changers and the banned cards, the combos known per
-//! deck and the commands to go further. Deterministic: no timestamps, only the bulk file's `updated_at`. It works with
-//! whichever role table is present (rules-only or merged) and never needs the LLM.
+//! Counts of Commander-legal cards per colour identity and per role by colour, role coverage and review status, the
+//! biggest creature types, subtypes and keywords, the Game Changers and the banned cards, a table of JD's decks, the
+//! combos in JD's decks and the commands to go further. Deterministic: no timestamps, only the bulk file's
+//! `updated_at`. It works with whichever role table is present (rules-only or merged) and never needs the LLM.
 
 use crate::data::Project;
 use crate::digest;

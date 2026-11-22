@@ -155,6 +155,11 @@ fn line_checks(line: &str) {
     assert!(!line.contains(['\t', '\r', '\n']), "{line:?}");
     assert!(f.iter().all(|s| !s.is_empty() && s.trim() == *s), "{line:?}");
     let flags: Vec<_> = f[5].split_whitespace().collect();
+    // `?` appears at most once and only as the last flag
+    assert!(
+        flags.iter().filter(|s| **s == "?").count() <= 1 && !flags.iter().rev().skip(1).any(|s| *s == "?"),
+        "{line}"
+    );
     assert!(
         flags == ["-"]
             || flags.iter().all(|s| *s == "*"

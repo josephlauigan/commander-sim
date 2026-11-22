@@ -42,16 +42,20 @@ const USAGE: &str = "usage:
                                                 30 (all = no limit); --count prints only the number of matches;
                                                 notes about a cut page or a filtered-out name go to stderr
   cardgen map [--out PATH] [--stdout] [--data-dir DIR]
-                                                write the whole-catalog summary (about 8k tokens) to
-                                                data/knowledge/map.md; needs oracle.json and roles.json
-  cardgen digest (--deck KEY | --ident LETTERS) [--role R [--limit N] [--offset N]] [--out PATH]
-                 [--budget-tokens N] [--stdout] [--data-dir DIR]
+                                                write the whole-catalog summary (about 3k tokens, under 32 KB) to
+                                                data/knowledge/map.md; needs oracle.json and roles.json; --stdout
+                                                also prints it
+  cardgen digest (--deck KEY | --ident LETTERS) [--role R | --view roleless|new] [--limit N] [--offset N]
+                 [--out PATH] [--budget-tokens N] [--stdout] [--data-dir DIR]
                                                 one compact line per card for a deck's colours (or any identity),
-                                                written to data/knowledge/digests/KEY.txt (a --role page to
-                                                KEY.ROLE.txt): sections A the deck's cards, B best per role, C
-                                                synergy with the commander's subtypes, D new since the previous
-                                                sync, E unranked per role; --role R lists one role's cards, paged;
-                                                --budget-tokens defaults to 50000; --stdout prints the text
+                                                always written to data/knowledge/digests/KEY.txt (a page to
+                                                KEY.ROLE.txt or KEY.VIEW.txt): sections A the deck's cards (the
+                                                commander first), B best per role, C synergy with the commander's
+                                                subtypes, D new since the previous sync, E the best-ranked cards
+                                                with no role; --role R pages through every card that has R in
+                                                any position, --view roleless|new through the complete lists;
+                                                --budget-tokens defaults to 42000 (estimated as bytes/4);
+                                                --stdout also prints the text
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
