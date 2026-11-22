@@ -814,13 +814,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("Duress", "P1 chooses the noncreature, nonland card from the revealed hand"),
     ("Grasp of Fate", "P1's target (exile until it leaves)"),
     ("Infectious Bite", "P1's targets (the creatures fight)"),
-    (
-        "Living Death",
-        "no choice: every creature card in the graveyard is exiled, every creature sacrificed, all of them returned",
-    ),
     ("Phyresis Outbreak", "-1/-1 for each poison counter on every creature the person controls: a mass effect"),
-    ("Reality Acid", "P1 enchanted Chandra; the aura leaving makes its controller sacrifice that permanent: no choice"),
-    ("Riptide Gearhulk", "P1's target (a planeswalker third from the top)"),
     ("Silent-Blade Oni", "P1 looks at the person's hand and casts a spell of P1's choice from it"),
     ("Static Prison", "P1's target (exile until it leaves)"),
     ("Teferi, Time Raveler", "-3: P1 targets the person's enchantment"),

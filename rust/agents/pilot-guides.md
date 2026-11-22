@@ -47,7 +47,6 @@ Then `## Mana` (counts that match the list) and `## Bracket and Rule 0` (keep th
 |---|---|---|---|
 | sheoldred | sheoldred-mono-black.md | t3, t4 | t3: atraxa, aurelia, korvold, marwyn, tergrid; t4: as above |
 | yshtola | yshtola-esper-drain.md | t5 | t5: as above |
-| cloud | cloud-midgar-equipment.md | t1, t2, t3 | t1: isshin, lathril, light-paws, tatyova, teysa; t2: brago, kaalia, lord-windgrace, meren, sythis; t3: as above |
 
 (The full pool keys are in `data/decks.json` `.pool[] | {key, tier}`.)
 

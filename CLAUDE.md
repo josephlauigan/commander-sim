@@ -110,7 +110,8 @@ Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola t5 (band 1); thanos t5 (new artifacts and Dragons list 11/05; no longer Scion's t6 seat);
 yoshimaru t4-t5 (Yoshimaru and Tymna blink deck, registered 11/21; it replaces thrasios); sheoldred t3-t4 (band 2;
-ghave retired 11/02); cloud t1-t3 (band 4; veyran retired 11/01); urdragon t5 (new Dragons list 11/13; the old Ur-Dragon
+ghave retired 11/02); cloud retired 11/21 (JD; its Equipment package moved into the yoshimaru deck, its list stays only as a
+test seat, its card code stays in the engine; veyran retired 11/01); urdragon t5 (new Dragons list 11/13; the old Ur-Dragon
 list retired 11/05); thrasios retired 11/21 (the Tymna/Thrasios Doomsday list stays only as a test seat, its card code
 stays in the engine); aragorn retired 11/15
 (Kefka and Sauron had been merged into it, both keys retired 11/06; its list stays only as a test seat, its card code
@@ -143,6 +144,6 @@ Before you propose a card for one of JD's decks (or test, model or buy-advise it
 1. **Commander legality**: `legalities.commander` must be `legal` (Scryfall: `data/scryfall_cache.json`, or
    `https://api.scryfall.com/cards/named?exact=<name>`). Banned or not legal: don't propose it (Primeval Titan,
    10/18).
-2. **Colour identity**: the card's `color_identity` must fit the deck's `ident` in `data/decks.json` (Cloud is mono-W).
+2. **Colour identity**: the card's `color_identity` must fit the deck's `ident` in `data/decks.json` (Yoshimaru/Tymna is W/B; Sheoldred is mono-B).
 3. **The cut is in the current list**: fetch origin/main first and check the card out is in that deck's `cards` in
    `data/decks.json`; FINDINGS files can name cards that have since left.

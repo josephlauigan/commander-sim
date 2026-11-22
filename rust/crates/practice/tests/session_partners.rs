@@ -27,7 +27,7 @@ fn the_catalog_lists_yoshimaru_with_both_commanders() {
     assert_eq!(k["ident"], "WB");
     assert_eq!(k["name"], "Yoshimaru and Tymna the Weaver"); // the deck file's two commanders
     // one commander elsewhere: no second one
-    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "cloud").unwrap();
+    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "sheoldred").unwrap();
     assert_eq!(s["commander2"], Value::Null);
     assert_eq!(s["commanders"].as_array().unwrap().len(), 1);
     // both commanders get their images fetched

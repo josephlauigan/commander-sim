@@ -16,7 +16,7 @@ use sim_core::state::Game;
 /// a game whose seat 0 is `deck`, with exactly this hand (taken from the library; the rest stays shuffled)
 fn game_with(deck: &str, hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =

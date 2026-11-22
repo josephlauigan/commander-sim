@@ -1,4 +1,4 @@
-//! The cloud deck (decklists/JD/cloud-midgar-equipment.md): mono-white Equipment around Cloud, Midgar Mercenary. Its
+//! The cloud deck (decklists/pool/retired/cloud-midgar-equipment.md): mono-white Equipment around Cloud, Midgar Mercenary. Its
 //! card code and AI plan. The brief is rust/agents/archive/cloud-core.md; the verdicts are in data/card_overrides.toml.
 //!
 //! What lives here:

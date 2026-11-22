@@ -15,7 +15,7 @@ use sim_core::state::Game;
 /// a game whose seat 0 is `deck`, with exactly this hand (taken from the library; the rest stays shuffled)
 fn game_with(deck: &str, hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -219,20 +219,35 @@ fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
     assert!(has(&h, "Line:") && has(&h, "Basalt Monolith"), "{h}");
 }
 
+/// Cloud's retired test seat (`testkit::retired_decks`: its real list and its retired plan file): the practice setup no
+/// longer offers the deck, so the seat is built the way the engine tests build theirs
+fn cloud_game_with(hand: &[&str]) -> (Game, PlayerId) {
+    let mut g = sim_core::testkit::table(&["cloud", "sheoldred", "urdragon", "thanos"]);
+    let p = PlayerId(0);
+    for n in hand {
+        let i = g
+            .player(p)
+            .library
+            .iter()
+            .position(|&c| &*g.db.get(c).name == *n)
+            .unwrap_or_else(|| panic!("cloud: no {n} in the library"));
+        let c = g.player_mut(p).library.remove(i);
+        g.player_mut(p).hand.push(c);
+    }
+    (g, p)
+}
+
 #[test]
 fn cloud_three_lands_are_kept_by_the_land_row() {
-    let (mut g, p) = game_with(
-        "cloud",
-        &[
-            "Plains",
-            "Plains",
-            "Plains",
-            "Sword of Fire and Ice",
-            "Swords to Plowshares",
-            "Stoneforge Mystic",
-            "Sol Ring",
-        ],
-    );
+    let (mut g, p) = cloud_game_with(&[
+        "Plains",
+        "Plains",
+        "Plains",
+        "Sword of Fire and Ice",
+        "Swords to Plowshares",
+        "Stoneforge Mystic",
+        "Sol Ring",
+    ]);
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     assert_eq!(h["choice"], "keep", "{h}");
@@ -244,18 +259,15 @@ fn cloud_three_lands_are_kept_by_the_land_row() {
 
 #[test]
 fn cloud_two_lands_need_a_cheap_play_and_say_what_would_have_kept_it() {
-    let (mut g, p) = game_with(
-        "cloud",
-        &[
-            "Plains",
-            "Plains",
-            "Wrath of God",
-            "Fumigate",
-            "Austere Command",
-            "Elspeth, Sun's Champion",
-            "Open the Armory",
-        ],
-    );
+    let (mut g, p) = cloud_game_with(&[
+        "Plains",
+        "Plains",
+        "Wrath of God",
+        "Fumigate",
+        "Austere Command",
+        "Elspeth, Sun's Champion",
+        "Open the Armory",
+    ]);
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     assert_eq!(h["choice"], "mulligan", "{h}");
@@ -294,8 +306,8 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["thanos", "cloud", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
-        let others = ["sheoldred", "cloud", "thanos", "yshtola"];
+    for deck in ["thanos", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
+        let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
         for seed in 0..12u64 {
@@ -332,7 +344,7 @@ fn the_verdict_is_keeps_hand_over_many_hands() {
 #[test]
 fn the_bottom_choice_says_why() {
     let (mut g, p) = game_with(
-        "cloud",
+        "yoshimaru",
         &[
             "Plains",
             "Plains",
@@ -340,7 +352,7 @@ fn the_bottom_choice_says_why() {
             "Sword of Fire and Ice",
             "Swords to Plowshares",
             "Wrath of God",
-            "Elspeth, Sun's Champion",
+            "The Wandering Emperor",
         ],
     );
     let r = req("Your opening hand (6 to keep). If you keep, you put 1 card(s) on the bottom.");
@@ -377,19 +389,19 @@ fn print_example_hints() {
             ],
         ),
         (
-            "cloud",
+            "yoshimaru",
             &[
                 "Plains",
                 "Wrath of God",
-                "Fumigate",
-                "Austere Command",
+                "Path to Exile",
+                "Solitude",
                 "Sword of Fire and Ice",
-                "Open the Armory",
+                "Mithril Coat",
                 "Stoneforge Mystic",
             ],
         ),
         (
-            "cloud",
+            "yoshimaru",
             &[
                 "Plains",
                 "Plains",

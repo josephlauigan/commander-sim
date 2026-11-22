@@ -15,13 +15,6 @@ commander = "Sheoldred, the Apocalypse"
 ident = "B"
 tiers = ["t3", "t4"]
 
-[cloud]
-file = "JD/cloud-midgar-equipment.md"
-name = "Cloud"
-commander = "Cloud, Midgar Mercenary"
-ident = "W"
-tiers = ["t1", "t2", "t3"]
-
 [thanos]
 file = "cali_commander/thanos-artifact-combo.md"
 name = "Thanos"
