@@ -508,7 +508,9 @@ impl Index {
         let claims_llm = map.values().any(|a| a.evidence.values().any(|e| e.source == Source::Llm));
         if !map.meta.prompt_fnv.is_empty() || claims_llm {
             let tax = crate::roles::Taxonomy::parse(&self.taxonomy_src)?;
-            if map.meta.prompt_fnv != crate::llm::prompt_fnv(&tax) {
+            // either prompt variant (CARDGEN_LLM_VARIANT) may have built the table
+            let known = [crate::llm::Variant::Plain, crate::llm::Variant::Think];
+            if !known.iter().any(|v| map.meta.prompt_fnv == crate::llm::prompt_fnv_v(&tax, *v)) {
                 return Err("roles.json: built under another LLM prompt; run `cardgen roles --merge`".into());
             }
             taxonomy = Some(tax);

@@ -72,13 +72,13 @@ text = "A Treasure maker is never `fixing` (it stays `tokens` and, when repeatab
 
 [[role]]
 id = "ramp"
-definition = "adds mana beyond a land drop: rocks, dorks, land ramp, rituals, cost reducers."
+definition = "adds mana beyond a land drop: mana rocks and dorks, rituals, cost reducers (even narrow ones, or life paid instead of mana), spells or enter triggers that put a land onto the battlefield, a repeatable maker of Treasure or several Treasures at once."
 clauses = [
-  "Land searches that put a land onto the battlefield from a spell or an enter trigger are ramp; a self-replacing fetch is not.",
-  "Narrow cost reducers and life paid instead of mana count; a cost reduction for the card itself only does not.",
   "Mana from sacrificing is ramp and sac-outlet, ramp first.",
   "Narrow or conditional main effects count.",
+  "A nonland permanent that adds one mana of a chosen colour is ramp.",
 ]
+no = "a land that only taps for one mana (any single mana, even of any colour); a land that sacrifices itself to fetch a land (that is `fixing`, not ramp); a mana filter (`fixing`); a cost reduction for the card itself only; one Treasure as a rider on another effect (only `tokens`)."
 src = "rules"
 guard = """\
 (?i)add|less to (?:cast|activate)|cost.*less|pay .*life rather than|search .*library|additional land|\
@@ -87,25 +87,23 @@ keep_rule = true
 
 [[role]]
 id = "fixing"
-definition = "produces 2+ colours or any colour (lands included)."
+definition = "produces two or more colours or any colour: any-colour rocks and lands, mana filters, lands or spells that search for two or more basic land types, any basic land or any land, basic landcycling."
 clauses = [
-  "Land searches reaching two or more basic types, any basic land or any land count; a search for one basic type does not.",
+  "A land that sacrifices itself to search for a land that can be of two or more colours (a fetchland) is fixing.",
   "Narrow or conditional main effects count.",
 ]
+no = "a source of ONE colour; one mana of a chosen colour (`ramp`); a search for ONE basic land type; a Treasure maker (its Treasure's any-colour mana is not the card's own)."
 src = "rules"
 guard = '(?i)add|mana of any|search .*library|landcycling|enchanted land is'
 keep_rule = true
 
 [[role]]
 id = "draw"
-definition = "net cards in hand: draw, impulse draw, wheels."
+definition = "nets cards: draws two or more cards, draws repeatedly (a trigger or an activation), draws a card for each of something, impulse draws and plays cards from the top of the library, wheels, becomes the monarch repeatably."
 clauses = [
-  "A spell's cantrip and a permanent sacrificing itself to draw one card replace themselves and are not draw.",
-  "Repeated draw or drawing two or more cards is draw; impulse draw and playing cards from the top of the library are draw.",
   "The monarch draws a card every end step: becoming the monarch repeatably is draw.",
-  "Cycling and other abilities that draw one card in place of the card itself are not draw.",
-  "A creature or other permanent that draws one fixed card when it enters or dies ('When this creature enters, draw a card') replaces itself like a cantrip and is not draw; a variable count ('draw a card for each ...'), two or more cards, a repeatable draw and an uncapped dig still are.",
 ]
+no = "drawing ONE fixed card once: a spell's cantrip, 'when this enters or dies, draw a card', a self-sacrifice or aura/equipment cantrip, cycling and any ability that draws one card in place of the card itself; scry, surveil or looking at the top card; a loot or rummage (`selection`); 'if you would draw' replacement conditions."
 src = "rules"
 guard = """\
 (?i)draw|monarch|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
@@ -114,36 +112,35 @@ keep_rule = true
 
 [[role]]
 id = "selection"
-definition = "loot/rummage, scry or surveil 2+, card filtering with no net cards."
+definition = "filters cards without netting any: loot or rummage (draw then discard), scry or surveil 2 or more, digging for a card among the top cards, a hand filter (exile any number of cards from your hand, get that many back)."
 clauses = [
-  "Scry or surveil 2+ and digging that finds a card without netting cards count; scry 1 does not.",
   "Looting or rummaging filters without net cards.",
 ]
+no = "scry 1 or surveil 1; looking at the top card without moving it; an effect that draws more than it discards (`draw`); fetching a card from the library (`tutor`)."
 src = "rules"
 guard = '(?i)scry|surveil|draw.*discard|discard.*draw|look at|reveal.*top|from among.*hand|connive|recruit|learn|blood token'
 keep_rule = false
 
 [[role]]
 id = "tutor"
-definition = "searches the library for a nonland card (a land search is ramp/fixing)."
+definition = "searches the library for a card that can be nonland (any card, a creature, an artifact...) and puts it into your hand, onto the battlefield, onto the library or into the graveyard; transmute."
 clauses = [
-  "The search must be able to reach nonland cards; a land-only search is ramp/fixing.",
+  "A search that puts the chosen card into your graveyard is a tutor AND `self-mill`.",
   "Roles never come from combo or commander context: a tutor is not a finisher for finding a combo.",
-  "'Search your library for a card named ~' (a copy of itself) is not `tutor`.",
 ]
+no = "a search for a land only (`ramp` or `fixing`); a search for a card named ~ (a copy of itself); looking at the top cards without searching (`selection`)."
 src = "rules"
 guard = '(?i)search .*library|transmute'
 keep_rule = true
 
 [[role]]
 id = "removal"
-definition = "removes, steals or neutralises one opposing permanent (destroy, exile, bounce, -X/-X, fight, edict)."
+definition = "removes, steals or neutralises ONE opposing permanent for good: destroy, exile, bounce, -X/-X, fight, an edict, a permanent steal (gain control of it), damage that can hit a creature, repeatable pinging (even 1 damage)."
 clauses = [
-  "Targeted multi-permanent destruction is removal, not wipe.",
-  "Temporary stealing, bare tapping, combat-only damage and a 1-damage enter trigger do not count; a permanent steal does.",
+  "Targeted multi-permanent destruction ('destroy target artifact, target creature, ...') is removal, not wipe.",
   "Damage that can hit creatures is removal, not also drain.",
-  "Exile and return of your own permanents is blink.",
 ]
+no = "bare tapping; a temporary steal ('until end of turn'); combat-only damage; a 1-damage enter trigger; exile and return of your own permanents (`blink`); sacrificing your own permanent as a cost."
 src = "rules+llm"
 guard = """\
 (?i)destroy|exile|return|damage|-[0-9x]+/-|fight|sacrifice|control of|control enchanted (?:creature|\
@@ -153,47 +150,39 @@ keep_rule = false
 
 [[role]]
 id = "wipe"
-definition = "removes 2+ permanents at once (each/all, or a mass -X/-X)."
-clauses = [
-  "Each/all destruction, exile, bounce or mass negative toughness counts; a static permanent mass -1/-1 counts.",
-  "Targeted multi-permanent destruction does not count (that is removal).",
-]
+definition = "removes or damages every creature or permanent at once: destroy, exile or bounce all or each, a mass -X/-X, a static mass -1/-1, damage to each creature or to each creature of one group (fliers, attackers) even for 1 damage."
+clauses = []
+no = "targeted multi-permanent destruction ('target X, target Y': that is `removal`); damage only to players; a 1-damage enter trigger at one target."
 src = "rules"
 guard = '(?i)\b(?:all|each)\b|overload|destroy the rest|creatures.*get -[0-9x]+/-[0-9x]+'
 keep_rule = true
 
 [[role]]
 id = "counter"
-definition = "counters a spell or ability."
-clauses = [
-  "'Can't be countered' is neither counter nor protection.",
-  "Ward reminder text ('counter it unless that player pays') is never counter.",
-  "Counters placed on permanents are not counter.",
-]
+definition = "counters a spell or an ability on the stack."
+clauses = []
+no = "'can't be countered' (neither counter nor protection); ward and its reminder text; putting counters on permanents (`counters`); preventing the damage of a spell (`protection`)."
 src = "rules"
 guard = '(?i)counter|exile.*spells?'
 keep_rule = true
 
 [[role]]
 id = "protection"
-definition = "protects your permanents or yourself (hexproof, shroud, indestructible, protection from, phasing, a Fog that prevents all combat damage, equipment granting hexproof)."
-clauses = [
-  "Printed keywords affecting only their own card give no protection.",
-  "Giving hexproof, shroud, indestructible or protection to other creatures counts.",
-  "Protection-only team grants are protection, not anthem.",
-  "Attack taxes are stax. 'Can't be countered' is not protection.",
-]
+definition = "protects your permanents or you: gives hexproof, shroud, indestructible, protection from or ward to OTHER permanents (a team grant of only protection keywords is protection, not anthem), phasing out, a Fog (prevent all combat damage), prevents the damage dealt by a source, equipment that grants hexproof."
+clauses = []
+no = "keywords printed on the card that affect only itself (hexproof, ward, indestructible, protection from, flying...); 'can't be countered'; an attack tax (`stax`); tapping a creature."
 src = "rules+llm"
 guard = '(?i)hexproof|shroud|indestructible|protection|phase|prevent.*damage|regenerate|ward|umbra armor'
 keep_rule = false
 
 [[role]]
 id = "stax"
-definition = "taxes or restricts opponents, symmetrically or not (a cap on spells per turn, a ban on casting or activating, a tax on an opponent's spells)."
+definition = "taxes or restricts opponents, symmetrically or not: extra costs for their spells, attacks or abilities, 'can't cast, attack, draw or search' effects, a cap on spells per turn, lands or creatures that enter tapped or don't untap, 'draw a card unless they pay'."
 clauses = [
   "Attack taxes and restrictions on players count.",
-  "Printed self keywords and bare tapping do not count.",
+  "A tax whose payoff is a card for you ('draw a card unless that player pays') is stax AND draw.",
 ]
+no = "keywords printed on the card; bare tapping; a restriction on the card itself ('this creature can't block'); making one creature unable to be blocked (`evasion`)."
 src = "llm"
 guard = """\
 (?i)can't|cannot|cost|unless.*pay|only.*(?:spell|turn)|loses all abilities|enter tapped|don't untap|\
@@ -202,126 +191,120 @@ keep_rule = false
 
 [[role]]
 id = "discard"
-definition = "makes opponents discard."
-clauses = [
-  "Only opposing discards count.",
-  "Self costs, echo, one-shot hand dumps, random self-discard and mana-plus-discard activations do not count.",
-]
+definition = "makes opponents discard: each opponent or a target opponent discards, reveal-and-discard."
+clauses = []
+no = "your own discard as a cost, echo or a loot; a one-shot hand dump; random self-discard; a mana-plus-discard activation."
 src = "rules"
 guard = '(?i)discard'
 keep_rule = true
 
 [[role]]
 id = "gy-hate"
-definition = "exiles graveyards or stops graveyard use."
+definition = "exiles graveyards or stops graveyard use: exile all or target graveyards, exile cards from graveyards, 'if a card would go to a graveyard, exile it instead', 'can't cast from graveyards'."
 clauses = [
-  "Exiling graveyards or preventing graveyard use counts.",
-  "Exiling your own card to pay a cost is not graveyard hate.",
+  "A mode that exiles all graveyards is gy-hate even on a wrath.",
 ]
+no = "exiling your own card to pay a cost (an additional cost, escape); your own flashback exiling the card; putting cards into a graveyard."
 src = "rules"
 guard = '(?i)graveyard'
 keep_rule = false
 
 [[role]]
 id = "recursion"
-definition = "returns cards from your graveyard to hand or library, puts noncreature permanent cards from your graveyard onto the battlefield, or lets you cast or play them from there."
+definition = "returns cards from your graveyard to your hand or library, puts noncreature permanent cards from your graveyard onto the battlefield, or lets you cast or play cards from your graveyard."
 clauses = [
   "Permission to cast other cards from your graveyard counts.",
-  "A card's own flashback is an alternate mode, not a recursion role by itself.",
+  "A card that can return a creature OR a noncreature permanent card ('permanent card') is both recursion and `reanimate`.",
 ]
+no = "a card's own flashback, escape or unearth; returning creature cards only to the battlefield (`reanimate` only); returning a card from exile (`blink`); putting cards into the graveyard."
 src = "rules"
 guard = '(?i)graveyard|flashback|soulshift'
 keep_rule = false
 
 [[role]]
 id = "reanimate"
-definition = "puts creatures from a graveyard onto the battlefield."
+definition = "puts creature cards from a graveyard onto the battlefield (yours or an opponent's)."
 clauses = [
   "Alternate spell faces and conditional main effects count.",
 ]
+no = "putting a noncreature permanent card onto the battlefield (`recursion` only); returning cards to a hand (`recursion`)."
 src = "rules"
 guard = '(?i)graveyard|creature.*dies.*return|creature card.*battlefield|opponent sacrifices a nontoken permanent'
 keep_rule = true
 
 [[role]]
 id = "self-mill"
-definition = "puts your own cards into your graveyard (mill, tutors that put a chosen card into the graveyard, discard outlets)."
+definition = "puts your own cards into your graveyard: mill yourself, a search or a choice that puts a chosen card into the graveyard, a free repeatable discard outlet (the only cost is discarding a card)."
 clauses = [
-  "A free repeatable discard outlet (the only cost is discarding a card) counts.",
-  "Self-sacrifice, additional costs, echo, one-shot hand dumps, random discard and mana-plus-discard activations do not.",
-  "Cards you choose to put into your graveyard (search then put it there, pick which looked-at cards) count; a pile an opponent splits does not.",
+  "Cards you choose to put into your graveyard (search then put it there, pick which looked-at cards) count.",
 ]
+no = "discarding or sacrificing as the cost of the card's own effect; echo; a one-shot hand dump; random discard; a mana-plus-discard activation; a pile an opponent splits; milling an opponent."
 src = "rules"
 guard = '(?i)mill|discard|graveyard'
 keep_rule = true
 
 [[role]]
 id = "tokens"
-definition = "creates creature or treasure/clue tokens."
+definition = "creates creature, Treasure or Clue tokens, even as a rider on another effect: investigate, amass, populate, a token copy of a creature."
 clauses = [
   "Creature, Treasure and Clue tokens count.",
-  "Manifest makes a face-down card, not a token.",
-  "Tokens made for an opponent as compensation do not describe your deck-building function.",
 ]
+no = "Food, Blood, Map, Junk and other artifact tokens; manifest (a face-down card, not a token); tokens made for an opponent as compensation."
 src = "rules"
 guard = '(?i)token|investigate|amass|populate|incubate|mobilize|afterlife|recruit'
 keep_rule = true
 
 [[role]]
 id = "anthem"
-definition = "pumps or grants keywords to your team."
+definition = "buffs or gives keywords to your WHOLE team: a team pump, a team grant of flying, double strike, trample, menace, 'can't be blocked' or another combat keyword, a +1/+1 counter on each creature you control."
 clauses = [
   "Team pumps and team grants of evasion or combat keywords count; team protection-only grants do not.",
-  "Self buffs and single-target pumps are not anthem.",
-  "A team-wide haste grant alone is not anthem: it needs a stat pump or an evasion/combat-damage keyword (flying, double strike, trample, menace, 'can't be blocked') for your whole team.",
-  "A pump or grant on 'up to N target creatures' (not your whole team) is not anthem.",
 ]
+no = "a pump or grant on this creature only, on one target or on 'up to N target creatures'; a team grant of only protection keywords (`protection`), only lifelink (`lifegain`) or only haste; doubling damage; moving Auras or Equipment."
 src = "rules"
 guard = '(?i)(?:creatures?|[a-z]+s).*?(?:gets?|gains?|have|has)|\+1/\+1 counter|(?:each )?other .*gets?'
 keep_rule = true
 
 [[role]]
 id = "sac-outlet"
-definition = "sacrifices a permanent as a cost, repeatably."
+definition = "sacrifices other permanents as a repeatable cost of an ability ('Sacrifice a creature: ...')."
 clauses = [
-  "The sacrifice must be a repeatable cost accepting other permanents.",
-  "Self-sacrifice, additional casting costs, echo and one-shot hand dumps do not count.",
   "Sacrifice for mana also counts as ramp, ramp first.",
 ]
+no = "sacrificing the card itself ('Sacrifice this: ...', 'when this attacks, sacrifice it'); an additional cost to cast a spell; echo or an upkeep sacrifice; sacrificing a Treasure, Clue or Food token."
 src = "rules"
 guard = '(?i)sacrifice.*:'
 keep_rule = true
 
 [[role]]
 id = "drain"
-definition = "opponents lose life from triggers (aristocrat-style payoffs: whenever a creature dies, each opponent loses life)."
+definition = "makes opponents lose life as the effect: each opponent loses life (a spell, a repeatable trigger or activation), aristocrat-style payoffs, repeatable damage to opponents."
 clauses = [
   "Repeatable opposing life loss, or a spell making each opponent lose life, counts.",
-  "One-shot single-player burn and life paid or lost by the caster do not count.",
-  "Damage able to hit a creature or any target is removal, not also drain.",
 ]
+no = "one-shot burn or damage to one player on a spell; damage that can hit a creature or any target (`removal`); life you pay or lose yourself; combat-damage triggers."
 src = "rules+llm"
 guard = '(?i)loses? .*life|damage'
 keep_rule = false
 
 [[role]]
 id = "lifegain"
-definition = "gains life, or pays off life gained."
+definition = "gains life as the card's purpose or on a repeatable trigger, pays off life gained ('whenever you gain life'), or has printed or static lifelink (listed last) or a repeatable lifelink grant."
 clauses = [
-  "Life gain or a payoff for gaining life must be the card's purpose or a repeatable trigger; a small rider on another spell effect does not count, and neither does life paid or lost by the caster.",
-  "Printed or static lifelink on permanents and repeatable activated lifelink grants count, listed last; one-turn lifelink from a spell or trigger is incidental.",
+  "A spell whose point includes the gain ('gain X life', 'gain life equal to the life lost') counts.",
 ]
+no = "a small life gain tacked onto a removal or other spell; life you pay or lose; one-turn lifelink from a spell or trigger."
 src = "rules"
 guard = '(?i)gain.*life|lifelink|food token|double.*life total'
 keep_rule = true
 
 [[role]]
 id = "counters"
-definition = "puts +1/+1 or other counters; proliferate."
+definition = "puts +1/+1 or other counters on creatures or other permanents, or grows itself repeatedly: backup, bolster, support, adapt, a trigger that adds a counter each time, proliferate."
 clauses = [
   "Repeatable self-counter triggers, counters placed on other permanents and proliferate count.",
-  "One-time self enters-with or renown counters and bookkeeping counters (ki, suspect, void, finality, time) do not.",
 ]
+no = "counters the card enters with once; renown; bookkeeping counters (ki, suspect, void, finality, time, fade, charge); counters on players (poison, energy, experience); counters removed as a cost; the spell-counter kind (`counter`)."
 src = "rules"
 guard = """\
 (?i)counter|proliferate|backup|bolster|support|adapt|awaken|connive|dethrone|mentor|evolve|training|amass|\
@@ -330,31 +313,31 @@ keep_rule = true
 
 [[role]]
 id = "blink"
-definition = "exiles and returns your permanents."
-clauses = [
-  "Ordinary graveyard returns are recursion or reanimate, not blink.",
-]
+definition = "exiles and returns YOUR permanents (flicker) to reuse their enter triggers or save them."
+clauses = []
+no = "ordinary graveyard returns (`recursion`, `reanimate`); exiling an opponent's permanent (`removal`)."
 src = "rules"
 guard = '(?i)exile.*(?:return|put both cards onto the battlefield)'
 keep_rule = true
 
 [[role]]
 id = "copy"
-definition = "copies spells, permanents or tokens (clones included)."
+definition = "copies spells, permanents or creatures: clones, copy a spell, a token copy of a creature (also `tokens`, copy first), casualty, conspire, replicate, storm."
 clauses = [
   "Spell, permanent and token copies count.",
-  "Being prepared (casting a copy of its own spell face) is never `copy`.",
 ]
+no = "being prepared (casting a copy of its own spell face); a card that only copies itself."
 src = "rules+llm"
 guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'
 keep_rule = false
 
 [[role]]
 id = "extra-phase"
-definition = "extra turns or extra combats."
+definition = "takes extra turns or extra combat phases."
 clauses = [
   "Extra turns and additional combats count.",
 ]
+no = "skipping or ending a turn; extra land drops; an extra draw step."
 src = "rules"
 guard = '(?i)extra (?:turn|combat)|additional (?:combat|turn|beginning phase)'
 keep_rule = true
@@ -362,20 +345,19 @@ keep_rule = true
 [[role]]
 id = "finisher"
 definition = "wins or ends the game: an alternate win or lose-the-game effect, a team pump or extra damage meant to kill from a normal board, or a bomb that ends the game if left untouched (an infect giant)."
-clauses = [
-  "A large body, a damage doubler, a tutor or one half of a combo is not a finisher by itself.",
-]
+clauses = []
+no = "a large body; a damage doubler; a tutor; one half of a combo; a keyword such as infect or trample on a small creature."
 src = "llm"
 guard = '(?i)win the game|loses the game|infect|double|damage|\+[x0-9]+/\+[x0-9]+|untap|mana|combat'
 keep_rule = false
 
 [[role]]
 id = "evasion"
-definition = "makes your attackers unblockable or hard to block, or grants double strike."
+definition = "makes your attackers unblockable or hard to block, or grants double strike: grants of flying, menace, fear, shadow, horsemanship or 'can't be blocked' to OTHER creatures (a target, your team, an equipped or enchanted creature), including 'up to two target creatures can't be blocked this turn'."
 clauses = [
-  "Printed self flying, menace, shadow, landwalk, trample and 'can't be blocked' give no role; trample alone is not evasion.",
-  "Grants to other creatures of flying, menace, fear, 'can't be blocked' or double strike count; team grants are also anthem.",
+  "Team grants are also anthem.",
 ]
+no = "flying, menace, shadow, landwalk, trample or 'can't be blocked' printed on the card itself; trample alone."
 src = "rules+llm"
 guard = '''(?i)flying|menace|fear|shadow|horsemanship|can't be blocked|double strike|intimidate'''
 keep_rule = false

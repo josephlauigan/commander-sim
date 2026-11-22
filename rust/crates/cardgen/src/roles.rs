@@ -67,6 +67,9 @@ pub struct Role {
     /// role-specific clauses (the cross-role ones are in `Taxonomy::clause`)
     #[serde(default)]
     pub clauses: Vec<String>,
+    /// what does NOT earn the role (the incidental effects a model mistakes for it); printed as the role's NO line
+    #[serde(default)]
+    pub no: String,
     pub src: String,
     pub guard: String,
     /// keep this role's rule-found, non-certain hits on a routed card the LLM omitted them from (default false)
@@ -143,9 +146,12 @@ impl Taxonomy {
     pub fn prompt_text(&self) -> String {
         let mut out = format!("GENERAL RULES\n{}\n\nROLES (use these ids exactly)\n", self.shared.trim());
         for r in &self.role {
-            let _ = write!(out, "- {}: {}", r.id, r.definition.trim());
+            let _ = write!(out, "- {}: YES: {}", r.id, r.definition.trim());
             for c in &r.clauses {
                 let _ = write!(out, " {}", c.trim());
+            }
+            if !r.no.trim().is_empty() {
+                let _ = write!(out, "\n  NO: {}", r.no.trim());
             }
             out.push('\n');
         }

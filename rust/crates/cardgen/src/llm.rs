@@ -33,29 +33,82 @@ const INTRO: &str = concat!(
     "numbered Oracle lines (the card's own name is written ~, reminder text is removed). You know nothing else ",
     "about the card and must not guess from its name or from deck context."
 );
-const ANSWER_RULES: &str = concat!(
-    "HOW TO ANSWER\n",
-    "Reply with one JSON object {\"cards\":[...]} with exactly one entry per card, in the order given: {\"id\": the ",
-    "card's id, \"roles\": [...]}. Each element of roles is {\"role\": a role id, \"line\": the number before the line ",
-    "where that effect is written}. Give at most 4 roles, most prominent first; the first is the card's primary role. ",
-    "If no role applies, roles is []. Count main or repeatable effects only: riders, costs, drawbacks, conditions that ",
-    "merely mention an effect and keywords that affect only the card itself give no role, except as GENERAL RULES ",
-    "says. Most plain bodies and minor-rider cards have no role."
-);
+/// Which prompt and schema a run uses. `Plain` answers `{"id","roles"}`; `Think` adds a short `why` sentence BEFORE the
+/// roles, so the model names the lines it considered before it commits to roles. Chosen by `CARDGEN_LLM_VARIANT`
+/// (`plain`, the default, or `think`); the two have different prompt fingerprints, so their cache rows never mix.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Variant {
+    #[default]
+    Plain,
+    Think,
+}
+impl Variant {
+    pub fn parse(v: &str) -> Result<Variant, String> {
+        match v.trim() {
+            "" | "plain" => Ok(Variant::Plain),
+            "think" => Ok(Variant::Think),
+            other => Err(format!("CARDGEN_LLM_VARIANT must be 'plain' or 'think', not '{other}'")),
+        }
+    }
+    /// The variant named by the environment (an error for an unknown name).
+    pub fn from_env() -> Result<Variant, String> {
+        Variant::parse(&std::env::var("CARDGEN_LLM_VARIANT").unwrap_or_default())
+    }
+    /// The variant the convenience functions use: the environment's, `Plain` when unset or unknown.
+    pub fn current() -> Variant {
+        Variant::from_env().unwrap_or_default()
+    }
+    pub fn name(self) -> &'static str {
+        match self {
+            Variant::Plain => "plain",
+            Variant::Think => "think",
+        }
+    }
+}
+/// Longest `why` the schema allows, in characters.
+pub const WHY_MAX: usize = 160;
+
+fn answer_rules(v: Variant) -> String {
+    let entry = match v {
+        Variant::Plain => "{\"id\": the card's id, \"roles\": [...]}".to_string(),
+        Variant::Think => format!(
+            "{{\"id\": the card's id, \"why\": one short sentence (at most {WHY_MAX} characters) naming the lines you \
+             considered and what each does, \"roles\": [...]}}"
+        ),
+    };
+    format!(
+        concat!(
+            "HOW TO ANSWER\n",
+            "Work through each card line by line: for each Oracle line decide which roles it fulfils, collect every role ",
+            "from every line, then keep at most 4, most prominent first. A card with several abilities usually has ",
+            "several roles: do not stop after the first one. Check a role's NO list before you give it. ",
+            "Reply with one JSON object {{\"cards\":[...]}} with exactly one entry per card, in the order given: {entry}. ",
+            "Each element of roles is {{\"role\": a role id, \"line\": the number before the line where that effect is ",
+            "written}}. The first role is the card's primary role. If no role applies, roles is []. Riders, costs, ",
+            "drawbacks, printed keywords and conditions that merely mention an effect give no role, except as GENERAL ",
+            "RULES says. Most plain bodies and minor-rider cards have no role."
+        ),
+        entry = entry
+    )
+}
 
 /// One worked example: a card as the model sees it and the correct answer. None of these cards is in a gold set.
 pub struct Example {
     pub name: &'static str,
+    /// the `why` sentence of the `think` variant
+    pub why: &'static str,
     pub type_line: &'static str,
     pub lines: &'static [(usize, &'static str)],
     pub roles: &'static [&'static str],
     pub evidence: &'static [(&'static str, usize)],
 }
-/// A rider on a removal spell, a cost-side counter, a "would draw" replacement, a permanent steal, a one-turn Fog,
-/// a body with no roles, and two cards with two roles each (so the format and the order conventions are seen).
-pub const EXAMPLES: [Example; 8] = [
+/// A rider on a removal spell, a cost-side counter, a "would draw" replacement, a permanent steal, a one-turn Fog, a body
+/// with no roles, two cards with two roles, one with three, and a fetchland (so the format, the order conventions and
+/// the completeness habit are all seen). The answers follow the written conventions.
+pub const EXAMPLES: [Example; 10] = [
     Example {
         name: "Chastise",
+        why: "Line 0 destroys one creature (removal); the life gain is a minor rider.",
         type_line: "Instant",
         lines: &[(0, "Destroy target attacking creature. You gain life equal to its power.")],
         roles: &["removal"],
@@ -63,6 +116,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Ancient Hydra",
+        why: "Line 1 pings any target, paying with a fade counter: repeatable damage is removal; the counter is a cost.",
         type_line: "Creature — Hydra",
         lines: &[
             (0, "Fading 5"),
@@ -73,6 +127,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Obstinate Familiar",
+        why: "Line 0 only mentions drawing as a condition and lets you skip it: no role.",
         type_line: "Creature — Lizard",
         lines: &[(0, "If you would draw a card, you may skip that draw instead.")],
         roles: &[],
@@ -80,6 +135,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Mind Control",
+        why: "Line 1 gains control of the enchanted creature for good: removal.",
         type_line: "Enchantment — Aura",
         lines: &[(0, "Enchant creature"), (1, "You control enchanted creature.")],
         roles: &["removal"],
@@ -87,6 +143,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Holy Day",
+        why: "Line 0 prevents all combat damage this turn, a Fog: protection.",
         type_line: "Instant",
         lines: &[(0, "Prevent all combat damage that would be dealt this turn.")],
         roles: &["protection"],
@@ -94,6 +151,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Kird Ape",
+        why: "Line 0 only pumps this creature: no role.",
         type_line: "Creature — Ape",
         lines: &[(0, "This creature gets +1/+2 as long as you control a Forest.")],
         roles: &[],
@@ -101,6 +159,7 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Pitiless Plunderer",
+        why: "Line 0 makes a Treasure each time a creature dies: tokens, and a repeatable Treasure maker is also ramp.",
         type_line: "Creature — Human Pirate",
         lines: &[(0, "Whenever another creature you control dies, create a Treasure token.")],
         roles: &["tokens", "ramp"],
@@ -108,10 +167,34 @@ pub const EXAMPLES: [Example; 8] = [
     },
     Example {
         name: "Cackling Counterpart",
+        why: "Line 0 makes a token copy of a creature: copy first, then tokens; flashback on line 1 is no role.",
         type_line: "Instant",
         lines: &[(0, "Create a token that's a copy of target creature you control."), (1, "Flashback {5}{U}{U}")],
         roles: &["copy", "tokens"],
         evidence: &[("copy", 0), ("tokens", 0)],
+    },
+    Example {
+        name: "Tireless Tracker",
+        why: "Line 0 investigates on every landfall: tokens and draw; line 1 grows it for each Clue sacrificed: counters.",
+        type_line: "Creature — Human Scout",
+        lines: &[
+            (0, "Landfall — Whenever a land you control enters, investigate."),
+            (1, "Whenever you sacrifice a Clue, put a +1/+1 counter on this creature."),
+        ],
+        roles: &["tokens", "draw", "counters"],
+        evidence: &[("tokens", 0), ("draw", 0), ("counters", 1)],
+    },
+    Example {
+        name: "Wooded Foothills",
+        why: "Line 0 sacrifices the land to fetch a Mountain or Forest: a fetchland is fixing, not ramp.",
+        type_line: "Land",
+        lines: &[(
+            0,
+            "{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or Forest card, put it onto the \
+             battlefield, then shuffle.",
+        )],
+        roles: &["fixing"],
+        evidence: &[("fixing", 0)],
     },
 ];
 
@@ -157,6 +240,10 @@ fn quoted(s: &str) -> String {
 /// An answer entry in the schema's property order: the card's id, then its roles most prominent first, each with the
 /// line that supports it (`evidence` pairs a role with its line; the first role is the primary).
 pub fn answer_entry(id: &str, roles: &[&str], evidence: &[(&str, usize)]) -> String {
+    answer_entry_v(Variant::Plain, id, "", roles, evidence)
+}
+/// [`answer_entry`] for a variant: `Think` writes `why` between the id and the roles.
+pub fn answer_entry_v(v: Variant, id: &str, why: &str, roles: &[&str], evidence: &[(&str, usize)]) -> String {
     let list = roles
         .iter()
         .map(|r| {
@@ -165,34 +252,50 @@ pub fn answer_entry(id: &str, roles: &[&str], evidence: &[(&str, usize)]) -> Str
         })
         .collect::<Vec<_>>()
         .join(",");
-    format!("{{\"id\":{},\"roles\":[{list}]}}", quoted(id))
+    match v {
+        Variant::Plain => format!("{{\"id\":{},\"roles\":[{list}]}}", quoted(id)),
+        Variant::Think => format!("{{\"id\":{},\"why\":{},\"roles\":[{list}]}}", quoted(id), quoted(why)),
+    }
 }
 
 /// The worked examples as a real conversation turn: the user message that lists the example cards and the assistant's
 /// answer. Sent between the system prompt and the real user message, so the static prefix still caches.
 pub fn example_turn() -> (String, String) {
+    example_turn_v(Variant::current())
+}
+pub fn example_turn_v(v: Variant) -> (String, String) {
     let lines: Vec<Vec<(usize, String)>> =
         EXAMPLES.iter().map(|e| e.lines.iter().map(|(i, t)| (*i, t.to_string())).collect()).collect();
     let cards: Vec<(String, &str, &[(usize, String)])> =
         EXAMPLES.iter().zip(&lines).enumerate().map(|(i, (e, l))| (batch_id(i), e.type_line, l.as_slice())).collect();
     let entries: Vec<String> =
-        EXAMPLES.iter().enumerate().map(|(i, e)| answer_entry(&batch_id(i), e.roles, e.evidence)).collect();
+        EXAMPLES.iter().enumerate().map(|(i, e)| answer_entry_v(v, &batch_id(i), e.why, e.roles, e.evidence)).collect();
     (user_message(&cards), format!("{{\"cards\":[{}]}}", entries.join(",")))
 }
 
 /// The system prompt: the taxonomy and the fixed answer rules. (The worked examples follow as a user/assistant turn.)
 pub fn system_prompt(t: &Taxonomy) -> String {
-    format!("{INTRO}\n\n{}\n\n{ANSWER_RULES}\n", t.prompt_text())
+    system_prompt_v(t, Variant::current())
+}
+pub fn system_prompt_v(t: &Taxonomy, v: Variant) -> String {
+    format!("{INTRO}\n\n{}\n\n{}\n", t.prompt_text(), answer_rules(v))
 }
 /// Everything that precedes the real user message: the system prompt, the example user message and its answer.
 pub fn preface_text(t: &Taxonomy) -> String {
-    let (user, answer) = example_turn();
-    format!("{}\n--- example user message ---\n{user}--- example answer ---\n{answer}\n", system_prompt(t))
+    preface_text_v(t, Variant::current())
+}
+pub fn preface_text_v(t: &Taxonomy, v: Variant) -> String {
+    let (user, answer) = example_turn_v(v);
+    format!("{}\n--- example user message ---\n{user}--- example answer ---\n{answer}\n", system_prompt_v(t, v))
 }
 /// The prompt fingerprint that, with the model id and the card text, keys the cache: any change to what the model is
-/// told (definitions, clauses, answer rules, examples) invalidates; guards and `keep_rule` are not part of it.
+/// told (definitions, clauses, answer rules, examples, the variant) invalidates; guards, `keep_rule` and `llm_add` are
+/// not part of it.
 pub fn prompt_fnv(t: &Taxonomy) -> String {
-    roles::fingerprint(preface_text(t).as_bytes())
+    prompt_fnv_v(t, Variant::current())
+}
+pub fn prompt_fnv_v(t: &Taxonomy, v: Variant) -> String {
+    roles::fingerprint(preface_text_v(t, v).as_bytes())
 }
 /// Rough token count used for budgeting: characters / 4.
 pub fn estimate_tokens(s: &str) -> usize {
@@ -204,22 +307,35 @@ pub fn estimate_tokens(s: &str) -> usize {
 /// allows optional keys in declared order cannot block a legal answer; `id` is an enum of the batch's ids. If a server
 /// rejects `minimum` (HTTP 400), drop `,"minimum":0` below: the validator refuses a negative line anyway.
 pub fn response_schema_text(t: &Taxonomy, n: usize) -> String {
+    response_schema_text_v(t, n, Variant::current())
+}
+/// [`response_schema_text`] for a variant: `Think` adds a required `why` string (at most [`WHY_MAX`] characters)
+/// between `id` and `roles`, so the grammar makes the model write it first.
+pub fn response_schema_text_v(t: &Taxonomy, n: usize, v: Variant) -> String {
     let names = t.role.iter().map(|r| quoted(&r.id)).collect::<Vec<_>>().join(",");
     let ids = (0..n).map(|i| quoted(&batch_id(i))).collect::<Vec<_>>().join(",");
+    let (why, required) = match v {
+        Variant::Plain => (String::new(), "[\"id\",\"roles\"]"),
+        Variant::Think => {
+            (format!("\"why\":{{\"type\":\"string\",\"maxLength\":{WHY_MAX}}},"), "[\"id\",\"why\",\"roles\"]")
+        }
+    };
     format!(
         concat!(
             "{{\"type\":\"object\",\"properties\":{{\"cards\":{{\"type\":\"array\",\"minItems\":{n},\"maxItems\":{n},",
-            "\"items\":{{\"type\":\"object\",\"properties\":{{\"id\":{{\"enum\":[{ids}]}},",
+            "\"items\":{{\"type\":\"object\",\"properties\":{{\"id\":{{\"enum\":[{ids}]}},{why}",
             "\"roles\":{{\"type\":\"array\",\"maxItems\":{max},\"items\":{{\"type\":\"object\",\"properties\":{{",
             "\"role\":{{\"enum\":[{names}]}},\"line\":{{\"type\":\"integer\",\"minimum\":0}}}},",
             "\"required\":[\"role\",\"line\"],\"additionalProperties\":false}}}}}},",
-            "\"required\":[\"id\",\"roles\"],\"additionalProperties\":false}}}}}},",
+            "\"required\":{required},\"additionalProperties\":false}}}}}},",
             "\"required\":[\"cards\"],\"additionalProperties\":false}}"
         ),
         n = n,
         max = MAX_ROLES,
         names = names,
         ids = ids,
+        why = why,
+        required = required,
     )
 }
 /// The same schema as a value (key order not preserved), for inspection.
@@ -235,6 +351,9 @@ pub struct LlmCard {
     pub roles: Vec<String>,
     pub primary: Option<String>,
     pub evidence: BTreeMap<String, usize>,
+    /// the model's one-sentence reasoning (`think` variant only)
+    #[serde(default)]
+    pub why: Option<String>,
 }
 
 /// Check a model reply against the batch it answers, card by card. `cards` are the batch ids with the numbered lines
@@ -247,6 +366,15 @@ pub fn validate_output(
     content: &str,
     cards: &[(String, &[(usize, String)])],
     taxonomy: &Taxonomy,
+) -> Result<Vec<Result<LlmCard, String>>, String> {
+    validate_output_v(content, cards, taxonomy, Variant::current())
+}
+/// [`validate_output`] for a variant: in `Think` every entry must carry a `why` string of at most [`WHY_MAX`] characters.
+pub fn validate_output_v(
+    content: &str,
+    cards: &[(String, &[(usize, String)])],
+    taxonomy: &Taxonomy,
+    variant: Variant,
 ) -> Result<Vec<Result<LlmCard, String>>, String> {
     let _ = taxonomy;
     let doc: Value = serde_json::from_str(content).map_err(|e| format!("not JSON: {e}"))?;
@@ -261,14 +389,24 @@ pub fn validate_output(
         .iter()
         .map(|(id, lines)| match by_id.get(id.as_str()).map(Vec::as_slice) {
             None | Some([]) => Err(format!("{id}: missing id")),
-            Some([e]) => check_card(id, e, lines),
+            Some([e]) => check_card(id, e, lines, variant),
             Some(_) => Err(format!("{id}: repeated id")),
         })
         .collect())
 }
 
-fn check_card(id: &str, e: &Value, lines: &[(usize, String)]) -> Result<LlmCard, String> {
+fn check_card(id: &str, e: &Value, lines: &[(usize, String)], variant: Variant) -> Result<LlmCard, String> {
     let bad = |what: &str| format!("{id}: {what}");
+    let why = match variant {
+        Variant::Plain => None,
+        Variant::Think => {
+            let w = e.get("why").and_then(Value::as_str).ok_or_else(|| bad("no why sentence"))?;
+            if w.chars().count() > WHY_MAX {
+                return Err(bad("why is longer than the limit"));
+            }
+            Some(w.to_string())
+        }
+    };
     let items = e.get("roles").and_then(Value::as_array).ok_or_else(|| bad("roles is not an array"))?;
     if items.len() > MAX_ROLES {
         return Err(bad("more than 4 roles"));
@@ -292,7 +430,7 @@ fn check_card(id: &str, e: &Value, lines: &[(usize, String)]) -> Result<LlmCard,
         roles.push(role.to_string());
         evidence.insert(role.to_string(), n);
     }
-    Ok(LlmCard { primary: roles.first().cloned(), roles, evidence })
+    Ok(LlmCard { primary: roles.first().cloned(), roles, evidence, why })
 }
 
 // ------------------------------------------------------------------------------------------------------- the cache
@@ -328,10 +466,18 @@ pub struct Row {
     pub model: String,
     pub taxonomy: String,
     pub prompt: String,
+    /// the model's one-sentence reasoning (`think` variant rows only)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub why: Option<String>,
 }
 impl Row {
     pub fn card(&self) -> LlmCard {
-        LlmCard { roles: self.roles.clone(), primary: self.primary.clone(), evidence: self.evidence.clone() }
+        LlmCard {
+            roles: self.roles.clone(),
+            primary: self.primary.clone(),
+            evidence: self.evidence.clone(),
+            why: self.why.clone(),
+        }
     }
 }
 
@@ -489,7 +635,12 @@ impl Client {
 /// The request body of one chat call (text, so the schema keeps its property order): the system prompt, the worked
 /// example as a user/assistant turn, then the real user message.
 pub fn chat_body(model: &str, system: &str, user: &str, schema: &str, n: usize) -> String {
-    let (example_user, example_answer) = example_turn();
+    chat_body_v(model, system, user, schema, n, Variant::current())
+}
+pub fn chat_body_v(model: &str, system: &str, user: &str, schema: &str, n: usize, v: Variant) -> String {
+    let (example_user, example_answer) = example_turn_v(v);
+    // a `why` sentence is about 40 tokens more per card
+    let per_card = if v == Variant::Think { 210 } else { 160 };
     format!(
         concat!(
             "{{\"model\":{},\"messages\":[{{\"role\":\"system\",\"content\":{}}},",
@@ -503,7 +654,7 @@ pub fn chat_body(model: &str, system: &str, user: &str, schema: &str, n: usize) 
         quoted(&example_user),
         quoted(&example_answer),
         quoted(user),
-        160 * n + 64,
+        per_card * n + 64,
         schema
     )
 }
@@ -697,6 +848,9 @@ pub struct MergeStats {
     /// routed cards that are not Commander-legal: never sent, never flagged
     #[serde(default)]
     pub not_legal: usize,
+    /// per role switched off with `llm_add = false`: how many LLM proposals (on routed cards) the merge dropped for it
+    #[serde(default)]
+    pub llm_add_dropped: BTreeMap<String, usize>,
     /// route label -> disagreement kind -> count
     pub disagreements: BTreeMap<String, BTreeMap<String, usize>>,
 }
@@ -828,8 +982,9 @@ pub fn run(
         None => client.model()?,
     };
     let (rules, fixed) = rules()?;
-    let prompt = prompt_fnv(taxonomy);
-    let system = system_prompt(taxonomy);
+    let variant = Variant::from_env()?;
+    let prompt = prompt_fnv_v(taxonomy, variant);
+    let system = system_prompt_v(taxonomy, variant);
     let tax_hash = taxonomy.hash();
     let known = load_cache(dir)?;
     let wanted = opts.ids.as_deref().map(|p| read_ids(index, p)).transpose()?;
@@ -884,7 +1039,7 @@ pub fn run(
             stats.cached,
             todo.len(),
             opts.batch,
-            estimate_tokens(&preface_text(taxonomy)),
+            estimate_tokens(&preface_text_v(taxonomy, variant)),
         ));
     }
     let target = if opts.pending { pending_path(dir) } else { cache_path(dir) };
@@ -911,12 +1066,13 @@ pub fn run(
             .collect();
         let checked: Vec<(String, &[(usize, String)])> =
             items.iter().zip(&ids).map(|(t, id)| (id.clone(), t.lines.as_slice())).collect();
-        let body = chat_body(
+        let body = chat_body_v(
             &model,
             &system,
             &user_message_cards(&shown),
-            &response_schema_text(taxonomy, items.len()),
+            &response_schema_text_v(taxonomy, items.len(), variant),
             items.len(),
+            variant,
         );
         stats.chat_requests += 1;
         let reply = client.chat(&body);
@@ -925,7 +1081,7 @@ pub fn run(
             Err(Fail::Transport(_)) => transport.set(transport.get() + 1),
             _ => transport.set(0),
         }
-        validate_output(&reply?, &checked, taxonomy).map_err(Fail::Invalid)
+        validate_output_v(&reply?, &checked, taxonomy, variant).map_err(Fail::Invalid)
     };
     let down = || transport.get() >= MAX_TRANSPORT_FAILURES;
 
@@ -992,6 +1148,7 @@ pub fn run(
                             model: model.clone(),
                             taxonomy: tax_hash.clone(),
                             prompt: prompt.clone(),
+                            why: c.why,
                         },
                     );
                 }
@@ -1037,8 +1194,9 @@ pub fn run(
         ));
     }
     let summary = format!(
-        "LLM stage: model {model}; {} candidate cards, {} cached, {} classified, {} failed \
+        "LLM stage: model {model} (prompt variant {}); {} candidate cards, {} cached, {} classified, {} failed \
          ({} batch retries, {} per-card retries); {} chat requests (plus 1 model query)\nwrote {}\n",
+        variant.name(),
         stats.candidates,
         stats.cached,
         stats.classified,
@@ -1132,6 +1290,11 @@ pub fn merge_table(
                 stats.not_run += usize::from(llm.is_none() && !failed.contains(id));
             }
         }
+        if rule.needs_llm && !overrides.contains_key(id) {
+            for r in llm.iter().flat_map(|l| &l.roles).filter(|r| !taxonomy.llm_add(r)) {
+                *stats.llm_add_dropped.entry(r.clone()).or_default() += 1;
+            }
+        }
         let (mut a, mut dis) = merge(rule, llm.as_ref(), overrides.get(id), &env);
         // only Commander-legal cards are ever sent, so only they can be waiting for an answer
         a.llm_failed &= legal;
@@ -1194,6 +1357,9 @@ pub fn disagreement_report(all: &[Disagreement], stats: &MergeStats) -> String {
          yet); {} routed cards are not legal (never sent)",
         stats.routed, stats.with_answer, stats.llm_failed, stats.failed, stats.not_run, stats.not_legal
     );
+    for (r, n) in &stats.llm_add_dropped {
+        let _ = writeln!(out, "LLM proposals dropped because llm_add = false for {r}: {n}");
+    }
     let _ = writeln!(out, "\nBY ROUTE REASON");
     for (route, kinds) in &stats.disagreements {
         let _ = writeln!(
@@ -1244,6 +1410,7 @@ pub fn run_merge(
     model: Option<&str>,
     pending: bool,
 ) -> Result<String, String> {
+    let variant = Variant::from_env()?;
     let cache = load_cache_with(dir, pending)?;
     let (merged, report, stats) = merge_table(index, taxonomy, rules, overrides, &cache, model, &failed_ids(dir))?;
     write_atomic(&dir.join("roles.json"), &roles::bytes(&merged)?)?;
@@ -1254,11 +1421,16 @@ pub fn run_merge(
         format!("{}\n", serde_json::to_string_pretty(&stats).unwrap()).as_bytes(),
     )?;
     let total: usize = stats.disagreements.values().flat_map(|k| k.values()).sum();
+    let mut dropped = String::new();
+    for (r, n) in &stats.llm_add_dropped {
+        let _ = write!(dropped, "\nllm_add = false for {r}: {n} LLM proposals dropped");
+    }
     Ok(format!(
-        "merged {} cards (model '{}'): {} routed legal cards, {} with an LLM answer, {} without ({} failed, {} not run); \
-         {} routed cards not legal; {total} disagreements (reports/roles-disagreements.txt)\nwrote {}\n",
+        "merged {} cards (model '{}', prompt variant {}): {} routed legal cards, {} with an LLM answer, {} without ({} failed, {} not run); \
+         {} routed cards not legal; {total} disagreements (reports/roles-disagreements.txt){dropped}\nwrote {}\n",
         merged.len(),
         merged.meta.model,
+        variant.name(),
         stats.routed,
         stats.with_answer,
         stats.llm_failed,

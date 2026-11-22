@@ -440,6 +440,7 @@ impl Env {
     /// A cache row for a card with the current prompt and the given model.
     fn row(&self, name: &str, model: &str, roles: &[&str], evidence: &[(&str, usize)]) -> Row {
         Row {
+            why: None,
             key: self.key_of(name, model),
             name: name.to_string(),
             roles: roles.iter().map(|r| r.to_string()).collect(),
@@ -1360,10 +1361,16 @@ fn what_changes_the_cache_key_and_what_does_not() {
         assert_ne!(text, original, "{from}");
         std::fs::write(e.dir().join("roles.toml"), text).unwrap();
     };
-    with("definition = \"makes opponents discard.\"", "definition = \"makes opponents discard. \"");
+    with(
+        "definition = \"makes opponents discard: each opponent or a target opponent discards, reveal-and-discard.\"",
+        "definition = \"makes opponents discard: each opponent or a target opponent discards, reveal-and-discard. \"",
+    );
     rerun("trailing space in a definition", 0);
     // every prompt-visible part invalidates all five cards (one batch, one request)
-    with("definition = \"makes opponents discard.\"", "definition = \"makes  opponents discard.\"");
+    with(
+        "definition = \"makes opponents discard: each opponent or a target opponent discards, reveal-and-discard.\"",
+        "definition = \"makes  opponents discard: each opponent or a target opponent discards, reveal-and-discard.\"",
+    );
     rerun("a doubled space in a definition", 1);
     with("Planeswalker ultimates have been removed", "Planeswalker ultimates were removed");
     rerun("the shared block", 1);
@@ -1959,7 +1966,7 @@ fn random_llm(rng: &mut Rng, rule: &Assignment, hostile: bool) -> LlmCard {
             evidence.insert(r.clone(), line);
         }
     }
-    LlmCard { roles, primary, evidence }
+    LlmCard { roles, primary, evidence, why: None }
 }
 /// A deterministic stand-in for the guard check and for `keep_rule`: lines 0 to 5 exist, a third of the
 /// (role, line) pairs fail their guard, and a role's face is `None` on even lines.
@@ -2192,6 +2199,7 @@ fn merge_edge_cases_by_hand() {
         }
     };
     let said = |roles: &[&str]| LlmCard {
+        why: None,
         roles: roles.iter().map(|r| r.to_string()).collect(),
         primary: roles.first().map(|r| r.to_string()),
         evidence: roles.iter().map(|r| (r.to_string(), 0)).collect(),
@@ -2262,6 +2270,7 @@ fn check_merged(
         }
         assert!(a.needs_llm && a.route == rule.route, "{ctx}");
         let empty = Row {
+            why: None,
             key: String::new(),
             name: String::new(),
             roles: vec![],
@@ -2801,7 +2810,7 @@ fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
     let parsed: Value = serde_json::from_str(&answer_line).unwrap();
     let entries = parsed["cards"].as_array().unwrap();
     assert_eq!(entries.len(), llm::EXAMPLES.len());
-    assert_eq!(llm::EXAMPLES.len(), 8);
+    assert_eq!(llm::EXAMPLES.len(), 10);
     // keys in the schema's order, ids a0.., roles as {role, line} pairs, `[]` when empty
     for (i, (e, ex)) in entries.iter().zip(llm::EXAMPLES.iter()).enumerate() {
         assert_eq!(e["id"], llm::batch_id(i).as_str());
@@ -2826,9 +2835,11 @@ fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
     // two examples carry two roles each, so the format and the order conventions (copy first, tokens and ramp) are seen
     let two: Vec<Vec<&str>> = llm::EXAMPLES.iter().filter(|e| e.roles.len() == 2).map(|e| e.roles.to_vec()).collect();
     assert_eq!(two, [vec!["tokens", "ramp"], vec!["copy", "tokens"]]);
-    // the example user message says "8 cards" and numbers them like a real batch does
+    // one example has three roles: the model must not stop after the first
+    assert!(llm::EXAMPLES.iter().any(|e| e.roles == ["tokens", "draw", "counters"]));
+    // the example user message says "10 cards" and numbers them like a real batch does
     assert!(
-        example_user.starts_with("Classify these 8 cards.\n[a0] Instant\n0: Destroy target attacking creature."),
+        example_user.starts_with("Classify these 10 cards.\n[a0] Instant\n0: Destroy target attacking creature."),
         "{example_user}"
     );
     // the examples stay one-line answers: no markdown, no prose around the JSON, no card names
@@ -2927,8 +2938,11 @@ fn the_merged_table_records_its_prompt_model_and_hashes_and_a_hand_edit_is_refus
     // a stale table: a changed definition changes the taxonomy hash, so the old merged table no longer attaches
     std::fs::write(&path, &good).unwrap();
     let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
-    std::fs::write(e.dir().join("roles.toml"), toml.replacen("counters a spell or ability.", "counters a spell.", 1))
-        .unwrap();
+    std::fs::write(
+        e.dir().join("roles.toml"),
+        toml.replacen("counters a spell or an ability on the stack.", "counters a spell.", 1),
+    )
+    .unwrap();
     let mut stale = e.index();
     let err = stale.attach_roles(&roles::load(&path).unwrap()).unwrap_err();
     assert!(err.contains("stale"), "{err}");

@@ -549,7 +549,11 @@ fn taxonomy_and_model_changes_invalidate_the_cache_but_guards_overrides_and_rule
     let out = e.llm(&fake, &[]).unwrap();
     assert_eq!(fake.chats(), 1, "guards, keep_rule and overrides leave the cache warm: {out}");
     // a definition edit changes what the model is told: every row is stale
-    let edited = tweaked.replacen("counters a spell or ability.", "counters a spell or an activated ability.", 1);
+    let edited = tweaked.replacen(
+        "counters a spell or an ability on the stack.",
+        "counters a spell or an activated ability.",
+        1,
+    );
     assert_ne!(edited, tweaked);
     std::fs::write(e.dir().join("roles.toml"), &edited).unwrap();
     e.llm(&fake, &[]).unwrap();
@@ -718,6 +722,7 @@ fn rule(roles: &[(&str, bool)], needs_llm: bool, route: &[RouteReason]) -> Assig
 }
 fn said(roles: &[&str]) -> LlmCard {
     LlmCard {
+        why: None,
         roles: roles.iter().map(|r| r.to_string()).collect(),
         primary: roles.first().map(|r| r.to_string()),
         evidence: roles.iter().enumerate().map(|(i, r)| (r.to_string(), i)).collect(),
@@ -1005,7 +1010,7 @@ fn taxonomy_prompt_text_hash_and_guards() {
     }
     // hash: stable, tied to the prompt-visible text, blind to guards and keep_rule
     assert_eq!(t.hash(), Taxonomy::parse(TAXONOMY).unwrap().hash());
-    let edited = TAXONOMY.replacen("counters a spell or ability.", "counters a spell.", 1);
+    let edited = TAXONOMY.replacen("counters a spell or an ability on the stack.", "counters a spell.", 1);
     assert_ne!(edited, TAXONOMY);
     assert_ne!(Taxonomy::parse(&edited).unwrap().hash(), t.hash());
     let guard = TAXONOMY.replacen("(?i)counter|exile.*spells?", "(?i)counter|exile.*spells? ", 1);
@@ -1017,7 +1022,7 @@ fn taxonomy_prompt_text_hash_and_guards() {
     // malformed taxonomies are errors
     assert!(
         Taxonomy::parse(&TAXONOMY.replacen(
-            "definition = \"makes opponents discard.\"",
+            "definition = \"makes opponents discard: each opponent or a target opponent discards, reveal-and-discard.\"",
             "definition = \"makes opponents\\ndiscard.\"",
             1
         ))
@@ -1080,7 +1085,23 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
         println!("  {:<12} {}", r.id, r.definition.len() + r.clauses.iter().map(|c| c.len() + 1).sum::<usize>());
     }
     assert!(llm::estimate_tokens(&preface) < 5000, "system prompt and example turn stay under 5k tokens");
-    assert!(taxonomy_chars < 13_967, "deduplicated: the old definitions were 13,967 chars, now {taxonomy_chars}");
+    assert!(taxonomy_chars < 17_000, "the YES/NO taxonomy is {taxonomy_chars} chars");
+    for v in [llm::Variant::Plain, llm::Variant::Think] {
+        let (eu, ea) = llm::example_turn_v(v);
+        let example_tokens = llm::estimate_tokens(&eu) + llm::estimate_tokens(&ea);
+        let sys = llm::system_prompt_v(&t, v);
+        println!(
+            "VARIANT {}: system {} chars = {} tokens; example turn {} chars = {} tokens; system + example {} tokens",
+            v.name(),
+            sys.chars().count(),
+            llm::estimate_tokens(&sys),
+            eu.chars().count() + ea.chars().count(),
+            example_tokens,
+            llm::estimate_tokens(&llm::preface_text_v(&t, v)),
+        );
+        assert!(example_tokens < 2500, "{v:?}: the example turn is {example_tokens} tokens");
+        assert!(llm::estimate_tokens(&llm::preface_text_v(&t, v)) < 5000, "{v:?}");
+    }
     // every worked example is a valid answer under the very validation the real answers face
     let lines: Vec<Vec<(usize, String)>> =
         llm::EXAMPLES.iter().map(|e| e.lines.iter().map(|(i, t)| (*i, t.to_string())).collect()).collect();
@@ -1088,7 +1109,7 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
     let cards: Vec<(String, &[(usize, String)])> =
         lines.iter().enumerate().map(|(i, l)| (llm::batch_id(i), l.as_slice())).collect();
     let parsed = llm::validate_output(&content, &cards, &t).unwrap();
-    assert!(parsed.len() == 8 && parsed.iter().all(|r| r.is_ok()), "{parsed:?}");
+    assert!(parsed.len() == 10 && parsed.iter().all(|r| r.is_ok()), "{parsed:?}");
     // the guards pass on every cited example line, so the examples never show a role the guard would drop
     for (ex, got) in llm::EXAMPLES.iter().zip(&parsed) {
         for (r, n) in &got.as_ref().unwrap().evidence {
@@ -1152,14 +1173,17 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
             .collect();
         let user = llm::user_message_cards(&shown);
         println!("=== SAMPLE USER MESSAGE ===\n{user}");
-        let body = llm::chat_body(
-            "Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf",
-            &system,
-            &user,
-            &llm::response_schema_text(&t, shown.len()),
-            shown.len(),
-        );
-        println!("=== FULL REQUEST BODY ({} chars) ===\n{body}", body.len());
+        for v in [llm::Variant::Plain, llm::Variant::Think] {
+            let body = llm::chat_body_v(
+                "Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf",
+                &llm::system_prompt_v(&t, v),
+                &user,
+                &llm::response_schema_text_v(&t, shown.len(), v),
+                shown.len(),
+                v,
+            );
+            println!("=== FULL REQUEST BODY, variant {} ({} chars) ===\n{body}", v.name(), body.len());
+        }
     }
     assert_eq!(
         (llm::batch_id(0), llm::batch_id(9), llm::batch_id(10), llm::batch_id(25)),
@@ -1423,4 +1447,175 @@ fn the_taxonomy_for_llm_and_merge_comes_from_the_bytes_the_index_checks_guards_a
     // an unreadable roles.toml beside the catalog is an error for the LLM commands, not a silent fallback
     std::fs::write(e.dir().join("roles.toml"), "version = 1\n").unwrap();
     assert!(e.command(&["--merge"]).is_err());
+}
+
+// ------------------------------------------------------------------------------------------------ prompt round 1
+
+#[test]
+fn every_role_has_a_yes_line_and_a_no_line_and_the_procedure_is_in_the_answer_rules() {
+    let t = Taxonomy::parse(TAXONOMY).unwrap();
+    let text = t.prompt_text();
+    for r in &t.role {
+        assert!(!r.no.trim().is_empty(), "{} has no NO line", r.id);
+        let at = text.find(&format!("\n- {}: YES: ", r.id)).unwrap_or_else(|| panic!("{} YES", r.id));
+        let line_end = text[at + 1..].find("\n- ").map_or(text.len(), |n| at + 1 + n);
+        assert!(text[at..line_end].contains("\n  NO: "), "{}: NO follows YES", r.id);
+    }
+    // the incidental-effect exclusions the pilot showed the model breaking are said in the NO lines
+    for (role, needle) in [
+        ("protection", "keywords printed on the card"),
+        ("anthem", "this creature only"),
+        ("ramp", "taps for one mana"),
+        ("draw", "cycling"),
+        ("draw", "scry"),
+        ("sac-outlet", "the card itself"),
+        ("removal", "temporary steal"),
+        ("fixing", "fetchland"),
+        ("selection", "scry 1"),
+    ] {
+        let r = t.role.iter().find(|r| r.id == role).unwrap();
+        assert!(
+            r.no.contains(needle) || r.definition.contains(needle) || r.clauses.iter().any(|c| c.contains(needle)),
+            "{role}: {needle}"
+        );
+    }
+    for v in [llm::Variant::Plain, llm::Variant::Think] {
+        let system = llm::system_prompt_v(&t, v);
+        assert!(system.contains("Work through each card line by line"), "{v:?}");
+        assert!(system.contains("do not stop after the first one"), "{v:?}");
+    }
+}
+
+#[test]
+fn the_think_variant_has_its_own_schema_answer_validation_prompt_and_fingerprint() {
+    let t = Taxonomy::parse(TAXONOMY).unwrap();
+    let (plain, think) = (llm::Variant::Plain, llm::Variant::Think);
+    // the switch: plain by default, think by name, anything else is an error
+    assert_eq!(llm::Variant::parse("").unwrap(), plain);
+    assert_eq!(llm::Variant::parse("plain").unwrap(), plain);
+    assert_eq!(llm::Variant::parse("think").unwrap(), think);
+    assert!(llm::Variant::parse("Think").is_err() && llm::Variant::parse("deep").is_err());
+    // different prompts and fingerprints, so cache rows never mix
+    assert_ne!(llm::prompt_fnv_v(&t, plain), llm::prompt_fnv_v(&t, think));
+    assert_ne!(llm::system_prompt_v(&t, plain), llm::system_prompt_v(&t, think));
+    assert!(llm::system_prompt_v(&t, think).contains("\"why\": one short sentence (at most 160 characters)"));
+    assert!(!llm::system_prompt_v(&t, plain).contains("why"));
+    // the schema: `why` between id and roles, required, at most 160 characters; plain is unchanged
+    let text = llm::response_schema_text_v(&t, 3, think);
+    let at = |k: &str| text.find(&format!("\"{k}\":{{")).unwrap();
+    assert!(at("id") < at("why") && at("why") < at("roles"), "{text}");
+    let schema: Value = serde_json::from_str(&text).unwrap();
+    let item = &schema["properties"]["cards"]["items"];
+    assert_eq!(item["required"], json!(["id", "why", "roles"]));
+    assert_eq!(item["properties"]["why"], json!({"type": "string", "maxLength": 160}));
+    assert!(!llm::response_schema_text_v(&t, 3, plain).contains("why"));
+    // the example answer carries a why for every example, in that order, and validates under think
+    let (user, answer) = llm::example_turn_v(think);
+    assert!(user.starts_with("Classify these 10 cards."));
+    assert!(answer.starts_with("{\"cards\":[{\"id\":\"a0\",\"why\":\"Line 0 destroys one creature"), "{answer}");
+    let lines: Vec<Vec<(usize, String)>> =
+        llm::EXAMPLES.iter().map(|e| e.lines.iter().map(|(i, t)| (*i, t.to_string())).collect()).collect();
+    let cards: Vec<(String, &[(usize, String)])> =
+        lines.iter().enumerate().map(|(i, l)| (llm::batch_id(i), l.as_slice())).collect();
+    let got = llm::validate_output_v(&answer, &cards, &t, think).unwrap();
+    assert!(got.iter().all(|r| r.is_ok()), "{got:?}");
+    assert!(got.iter().all(|r| r.as_ref().unwrap().why.as_deref().is_some_and(|w| w.chars().count() <= llm::WHY_MAX)));
+    for e in &llm::EXAMPLES {
+        assert!(e.why.chars().count() <= llm::WHY_MAX && !e.why.is_empty(), "{}", e.name);
+    }
+    // plain answers (no why) are refused under think, and why too long or not a string is a structural fault
+    let (_, plain_answer) = llm::example_turn_v(plain);
+    let refused = llm::validate_output_v(&plain_answer, &cards, &t, think).unwrap();
+    assert!(refused.iter().all(|r| r.is_err()));
+    let mut v: Value = serde_json::from_str(&answer).unwrap();
+    v["cards"][0]["why"] = json!("x".repeat(161));
+    v["cards"][1]["why"] = json!(7);
+    let mixed = llm::validate_output_v(&v.to_string(), &cards, &t, think).unwrap();
+    assert!(mixed[0].is_err() && mixed[1].is_err() && mixed[2].is_ok());
+    // plain ignores a why it did not ask for
+    assert!(llm::validate_output_v(&answer, &cards, &t, plain).unwrap().iter().all(|r| r.is_ok()));
+    // the request body has the think schema and the larger token limit
+    let body = llm::chat_body_v("m", "sys", "usr", &text, 3, think);
+    let parsed: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(parsed["max_tokens"], 210 * 3 + 64);
+    assert_eq!(parsed["messages"][2]["content"], answer.as_str());
+}
+
+#[test]
+fn a_think_run_caches_its_why_under_its_own_fingerprint_and_plain_rows_stay_apart() {
+    let e = Env::new();
+    let fake = Fake::start(Box::new(|_, body| {
+        // answers carry a why when the request's schema asks for one
+        let items = parse_batch(body);
+        let think = body["response_format"]["json_schema"]["schema"].to_string().contains("\"why\"");
+        let mut v = valid(&items);
+        if think {
+            for c in v["cards"].as_array_mut().unwrap() {
+                let id = c["id"].clone();
+                let roles = c["roles"].clone();
+                *c = json!({"id": id, "why": "Line 0 decides it.", "roles": roles});
+            }
+        }
+        Reply::Content(v.to_string())
+    }));
+    e.llm(&fake, &[]).unwrap();
+    assert!(e.rows().iter().all(|r| r.why.is_none()));
+    // the same cache under the think variant is cold, asks again and stores the why (a child process: the switch is
+    // an environment variable, and the other tests of this process must not see it)
+    let cardgen = |variant: &str, args: &[&str]| {
+        std::process::Command::new(env!("CARGO_BIN_EXE_cardgen"))
+            .env_remove("CARDGEN_KNOWLEDGE_DIR")
+            .env("CARDGEN_LLM_VARIANT", variant)
+            .arg("--root")
+            .arg(&e.0)
+            .arg("roles")
+            .args(args)
+            .arg("--data-dir")
+            .arg(e.dir())
+            .output()
+            .unwrap()
+    };
+    let ids = e.dir().join("ids.txt");
+    let run = cardgen("think", &["--llm", "--ids", ids.to_str().unwrap(), "--endpoint", &fake.url]);
+    let out = String::from_utf8_lossy(&run.stdout).to_string();
+    assert!(run.status.success(), "{}", String::from_utf8_lossy(&run.stderr));
+    assert!(out.contains("prompt variant think") && out.contains("5 classified"), "{out}");
+    assert_eq!(fake.chats(), 2);
+    let rows = e.rows();
+    assert_eq!(rows.len(), 10, "both variants' rows live side by side");
+    assert_eq!(rows.iter().filter(|r| r.why.as_deref() == Some("Line 0 decides it.")).count(), 5);
+    let merged = cardgen("think", &["--merge"]);
+    assert!(String::from_utf8_lossy(&merged.stdout).contains("prompt variant think"));
+    // the merged table carries the think prompt, and attaches whichever variant is set
+    let map = roles::load(&e.dir().join("roles.json")).unwrap();
+    assert_eq!(map.meta.prompt_fnv, llm::prompt_fnv_v(&Taxonomy::parse(TAXONOMY).unwrap(), llm::Variant::Think));
+    e.index().attach_roles(&map).unwrap();
+    // a bad variant name is an error before anything happens
+    let bad = cardgen("deep", &["--llm", "--ids", ids.to_str().unwrap(), "--endpoint", &fake.url]);
+    assert!(!bad.status.success() && String::from_utf8_lossy(&bad.stderr).contains("CARDGEN_LLM_VARIANT"));
+    assert_eq!(fake.chats(), 2);
+}
+
+#[test]
+fn the_merge_says_per_role_how_many_proposals_llm_add_false_dropped() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    let (out, _) = e.command(&["--merge"]).unwrap();
+    assert!(!out.contains("llm_add = false"), "{out}");
+    let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
+    let off = toml.replacen(
+        "keep_rule = false\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = false\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
+        1,
+    );
+    assert_ne!(toml, off);
+    std::fs::write(e.dir().join("roles.toml"), off).unwrap();
+    let (out, _) = e.command(&["--merge"]).unwrap();
+    assert!(out.contains("llm_add = false for selection: 1 LLM proposals dropped"), "{out}");
+    let report = std::fs::read_to_string(e.dir().join("reports/roles-disagreements.txt")).unwrap();
+    assert!(report.contains("LLM proposals dropped because llm_add = false for selection: 1"), "{report}");
+    let stats: llm::MergeStats =
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap();
+    assert_eq!(stats.llm_add_dropped.get("selection"), Some(&1));
 }
