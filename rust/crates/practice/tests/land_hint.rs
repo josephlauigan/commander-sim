@@ -15,7 +15,7 @@ use sim_core::state::{Game, Step};
 /// seat 0 is `deck` at its main phase on round 3, with these lands on the battlefield and exactly this hand
 fn game_with(deck: &str, lands: &[&str], hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -122,13 +122,13 @@ fn no_land_once_the_land_drop_is_used() {
 }
 
 #[test]
-fn thrasios_plays_the_land_its_win_line_needs_and_says_so() {
+fn kraum_plays_the_land_its_win_line_needs_and_says_so() {
     // Underground Sea and Scrubland out; Thassa's Oracle ({U}{U}) and Demonic Consultation ({B}) in hand. By points
-    // Bayou wins (green is new); only Otawara gives the second blue, so the planner plays it: the line goes off now
+    // Badlands wins (red is new); only Otawara gives the second blue, so the planner plays it: the line goes off now
     let (mut g, p) = game_with(
-        "thrasios",
+        "kraum-tymna-blue-breach-midrange",
         &["Underground Sea", "Scrubland"],
-        &["Bayou", "Otawara, Soaring City", "Thassa's Oracle", "Demonic Consultation"],
+        &["Badlands", "Otawara, Soaring City", "Thassa's Oracle", "Demonic Consultation"],
     );
     let before = snapshot(&g, p);
     let h = hint(&mut g, p);
@@ -137,5 +137,5 @@ fn thrasios_plays_the_land_its_win_line_needs_and_says_so() {
     let d = detail(&h);
     let why = d.iter().find(|l| l.starts_with("Why:")).unwrap_or_else(|| panic!("{h}"));
     assert!(why.contains("the plan") && why.contains("this turn"), "{why}");
-    assert!(d.iter().any(|l| l.starts_with("(By points alone the pick would be Bayou")), "{h}");
+    assert!(d.iter().any(|l| l.starts_with("(By points alone the pick would be Badlands")), "{h}");
 }

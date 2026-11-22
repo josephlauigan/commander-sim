@@ -153,6 +153,29 @@ fn retired_decks() -> Vec<RawDeck> {
             "WURG",
             include_str!("../../../../decklists/pool/retired/aragorn-uniter.md"),
         ),
+        // JD's Tymna/Thrasios Doomsday deck, retired 2026-11-14 (Yoshimaru/Tymna took its seat) and out of the simulator
+        // 2026-11-21: the tests of its card code (impls/doomsday.rs, tymna_*.rs) still seat it with its real list, two
+        // commanders included, and the Tier 6 plan (data/plans/thrasios.toml) still keys on "thrasios"
+        RawDeck {
+            commander2: Some("Thrasios, Triton Hero".into()),
+            ..listed(
+                "thrasios",
+                "Tymna/Thrasios",
+                "Tymna the Weaver",
+                "WUBG",
+                include_str!("../../../../decklists/pool/retired/tymna-thrasios-doomsday.md"),
+            )
+        },
+        // JD's Cloud, Midgar Mercenary deck, retired 2026-11-21 (its Equipment package moved to the Yoshimaru/Tymna deck)
+        // and out of the simulator the same day: the tests of its card code (impls/cloud.rs, bulk_white.rs) still seat it
+        // with its real list, and the deck AI keys on "cloud" (its plan file, data/plans/cloud.toml, stays with `retired = true`)
+        listed(
+            "cloud",
+            "Cloud",
+            "Cloud, Midgar Mercenary",
+            "W",
+            include_str!("../../../../decklists/pool/retired/cloud-midgar-equipment.md"),
+        ),
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
         listed(

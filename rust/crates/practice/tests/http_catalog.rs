@@ -19,14 +19,11 @@ fn test_your_decks() {
     let o = s.client().get("/api/options").json();
     let d: std::collections::BTreeMap<&str, &serde_json::Value> =
         o["decks"].as_array().unwrap().iter().map(|x| (x["key"].as_str().unwrap(), x)).collect();
-    assert_eq!(
-        d.keys().copied().collect::<Vec<_>>(),
-        ["cloud", "sheoldred", "thanos", "thrasios", "urdragon", "yshtola"]
-    );
+    assert_eq!(d.keys().copied().collect::<Vec<_>>(), ["sheoldred", "thanos", "urdragon", "yoshimaru", "yshtola"]);
     assert_eq!(d["sheoldred"]["name"], "Sheoldred, the Apocalypse"); // the deck file's commander line
     assert_eq!(d["sheoldred"]["commander"], "Sheoldred, the Apocalypse"); // the card the engine (and image) uses
     assert_eq!(d["sheoldred"]["bracket"], 4);
-    assert_eq!(d["cloud"]["bracket"], 3);
+    assert_eq!(d["yoshimaru"]["bracket"], 4);
     assert!(d["yshtola"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only Y'shtola, Seph FS above 3
     for x in d.values() {
         for k in ["key", "commander", "name", "bracket", "game_changers", "win_rates"] {

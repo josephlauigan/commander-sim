@@ -264,6 +264,7 @@ Mask of Law and Grace | Etb | S
 Massacre Girl | Etb | T
 Matterbending Mage | Etb | T
 Mentor of the Meek | Etb | T
+Mentor of the Meek | TokensEnter | T | | enter_queues: queues its real Etb triggers once per token
 Merciless Executioner | Etb | T
 Metallic Mimic | Etb | S
 Miirym, Sentinel Wyrm | Etb | T

@@ -2502,6 +2502,12 @@ dsl = []
 status = "Full"
 note = "+2 fateseal, 0 Brainstorm, -1 bounce, -12 exile a library (the hand becomes the library)"
 
+["The Theorist, Jace Beleren"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "an opponent's draw step: its controller draws a card (each copy, through the trigger window, after the active player's own draw; not when Necropotence or Solitary Confinement skips the step, and not once the Theorist has lost its abilities; engine/turn.rs calls impls/common.rs theorist_draws); +1 a 1/1 blue Illusion, -2 up to one artifact or creature of each opponent to its owner's hand, -6 draw three then X +1/+1 counters on each creature (X = cards in hand)"
+
 ["Jackdaw Savior"]
 tags = "pow=3 tgh=1 fly"
 dsl = []
@@ -10366,3 +10372,21 @@ note = "enters: search for a legendary creature card, into your hand, shuffle (a
 paths_ok = "compiled: the creature face's enters trigger (destroy target artifact or enchantment an opponent controls); card code: the land face only (land_cols makes {W}, land_etb marks it LandFace as it enters (under Blood Moon cardcode::land_etb marks it instead), hand_options plays it as a land), which no compiled ability covers (impls/yoshimaru_cards.rs)"
 status = "Full"
 note = "creature: enters, destroy target artifact or enchantment an opponent controls (compiled; a person chooses the target); land face Witch-Blessed Meadow: only a land (DataKey::LandFace, set as it enters: no printed creature type, no creature types, colourless, and the creature face's enters trigger does not fire; a later animation or a copy that adds creature still makes it a creature), pay 3 life or enters tapped (not asked and not paid with Spelunking out, where it enters untapped either way, and under Blood Moon, which takes the ability away; Blood Moon does not change the face: a Meadow that enters under it, or an Astral Dragon copy of one, is still the colourless land face, a Mountain that taps for {R}; not payable while the player's life can't change), {T}: {W}, played from hand through the land hook options (impls/yoshimaru_cards.rs: the AI only when short of lands as for Shatterskull Smashing; a person any time they could play a land, and answers the pay-3-life question). Astral Dragon copies the land face as land creatures (the copy skips the pay-3-or-tapped replacement). Limits shared with every modal land: the land face can be played only from the hand (not from exile or the graveyard with a play permission), and with Spelunking out the controller's other legal order (tapped, no payment) is not offered"
+
+["Steelshaper's Gift"]
+dsl = [{ type = "spell", effects = [{ do = "search", filter = { type = "equipment" }, to = "hand", n = 1 }] }] # the compiled search had an empty filter (any card); "an Equipment card"
+status = "Full"
+note = "searches the library for an Equipment card (a subtype filter, not any card: the compiled search had an empty filter), reveals it and puts it into the hand; the AI takes the highest-value Equipment (the planner's choice first), a person picks among the Equipment cards; no Equipment in the library: nothing found"
+
+["Stroke of Midnight"]
+dsl = [{ type = "spell", effects = [{ do = "destroy", what = { sel = "target", filter = { type = "nonland" }, upto = false } }, { do = "opp_token", pow = 1, types = ["human"], color = "W" }] }] # "Its controller creates a 1/1 white Human creature token" (the compiled token was a plain 1/1 of no colour or type)
+status = "Full"
+note = "destroys target nonland permanent (indestructible: it survives); its controller creates a 1/1 white Human creature token either way (the token goes to the permanent's controller, also when the target is ours)"
+
+["Wrath of God"]
+add_tags = ["noregen"] # "They can't be regenerated" (engine/removal.rs apply_wipe sets the engine's noregen for the card's wipe)
+
+["Secure the Scene"]
+dsl = [{ type = "spell", effects = [{ do = "exile", what = { sel = "target", filter = { type = "nonland" }, upto = false } }, { do = "opp_token", pow = 1, types = ["soldier"], color = "W" }] }] # "Its controller creates a 1/1 white Soldier creature token" (the compiled token was a plain 1/1 of no colour or type)
+status = "Full"
+note = "exiles target nonland permanent; its controller creates a 1/1 white Soldier creature token (the token goes to the permanent's controller, also when the target is ours)"

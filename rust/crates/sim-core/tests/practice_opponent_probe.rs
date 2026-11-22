@@ -624,13 +624,15 @@ fn every_opponent_effect_asks_the_person() {
     let cache = json("scryfall_cache.json");
     let decks = json("decks.json");
     let db = db();
-    let tiers: BTreeSet<String> = decks["mine"]
+    let mut tiers: BTreeSet<String> = decks["mine"]
         .as_array()
         .unwrap()
         .iter()
         .flat_map(|d| d["tiers"].as_array().unwrap().iter().map(|t| t.as_str().unwrap().to_string()))
         .collect();
-    // card -> the pool decks (of the tiers JD's decks face) that play it
+    // practice offers every tier t0-t6 as opponents, whatever tiers JD's decks are simulated against
+    tiers.insert("t6".to_string());
+    // card -> the pool decks (of the tiers JD's decks face, and t6) that play it
     let mut where_: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut ndecks = 0;
     for d in decks["pool"].as_array().unwrap() {
@@ -812,13 +814,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("Duress", "P1 chooses the noncreature, nonland card from the revealed hand"),
     ("Grasp of Fate", "P1's target (exile until it leaves)"),
     ("Infectious Bite", "P1's targets (the creatures fight)"),
-    (
-        "Living Death",
-        "no choice: every creature card in the graveyard is exiled, every creature sacrificed, all of them returned",
-    ),
     ("Phyresis Outbreak", "-1/-1 for each poison counter on every creature the person controls: a mass effect"),
-    ("Reality Acid", "P1 enchanted Chandra; the aura leaving makes its controller sacrifice that permanent: no choice"),
-    ("Riptide Gearhulk", "P1's target (a planeswalker third from the top)"),
     ("Silent-Blade Oni", "P1 looks at the person's hand and casts a spell of P1's choice from it"),
     ("Static Prison", "P1's target (exile until it leaves)"),
     ("Teferi, Time Raveler", "-3: P1 targets the person's enchantment"),

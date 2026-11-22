@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 6] = ["yshtola", "sheoldred", "cloud", "thrasios", "thanos", "urdragon"];
+pub const MY_DECKS: [&str; 5] = ["yshtola", "sheoldred", "thanos", "urdragon", "yoshimaru"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -35,11 +35,17 @@ fn my_deck_files(data: &Path) -> Vec<(String, String)> {
 }
 
 /// the commander as the deck file names it: `**Commander (1).** Name (anything)`; a Partner deck names both,
-/// `**Commanders (2).** Name, Name2` (shown as "Name and Name2", the short names when it is long)
+/// `**Commanders (2).** Name, Name2` or `Name; Name2` when a name has a comma (shown as "Name and Name2", the short names when it is long)
 pub fn display_name(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some(rest) = line.strip_prefix("**Commanders (2).**") {
             let s = rest.trim();
+            // a first name with a comma of its own ("Yoshimaru, Ever Faithful; Tymna the Weaver") is set off by ";"
+            if let Some((a, b)) = s.split_once("; ")
+                && !a.is_empty()
+            {
+                return Some(format!("{} and {}", short_name(a), short_name(b)));
+            }
             if let Some((a, b)) = s.split_once(", ")
                 && !a.is_empty()
             {
@@ -107,7 +113,6 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
         let key = match cells[0].to_lowercase().as_str() {
             "y'shtola" | "yshtola" => "yshtola",
             "sheoldred" => "sheoldred",
-            "cloud" => "cloud",
             _ => continue,
         };
         if cells.len() < 6 {
@@ -353,10 +358,10 @@ mod tests {
 
     #[test]
     fn results_table() {
-        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Cloud | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
-                 | Cloud | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
+        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Sheoldred | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
+                 | Sheoldred | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
         let r = win_rates(t);
-        assert_eq!(r["cloud"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
+        assert_eq!(r["sheoldred"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
         assert!(!r.contains_key("alela") && !r.contains_key("najeela"));
     }
 }

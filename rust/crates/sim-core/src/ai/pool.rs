@@ -1377,6 +1377,24 @@ fn protect_cands(
         if !crate::impls::t45_winota::lena_saves(g, name, src, m) {
             continue; // --- Tiers 4/5 (winota): Lena saves only creatures with less power than hers
         }
+        // a protector that targets m (Giver of Runes, Eerie Interlude, Ephemerate ...) is a source of its colours: a
+        // creature with protection from them (a white Giver, a creature wearing Sword of Hearth and Home) is no target
+        // (Deflecting Swat, Siren Stormtamer and Not of This World target the removal spell or ability, not the creature)
+        const TARGETS_THE_SPELL: [&str; 3] = ["Deflecting Swat", "Siren Stormtamer", "Not of This World"];
+        if (scope == Scope::One || name == "Eerie Interlude") && !TARGETS_THE_SPELL.contains(&name) && {
+            let cols = match src {
+                Some(s) => crate::engine::values::colors_of(g, s),
+                None => g
+                    .player(owner)
+                    .hand
+                    .iter()
+                    .find(|&&c| &*g.db.get(c).name == name)
+                    .map_or(crate::cards::Colors::NONE, |&c| g.db.get(c).colors),
+            };
+            crate::engine::values::protected_from(g, m, cols)
+        } {
+            continue;
+        }
         // cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
         let rank = match wh {
             Where::BfTap | Where::BfSelfDiscard => 0,

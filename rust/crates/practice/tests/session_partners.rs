@@ -1,4 +1,4 @@
-//! A person playing the Partner deck `thrasios` (Tymna the Weaver + Thrasios, Triton Hero): the setup list shows both
+//! A person playing the Partner deck `yoshimaru` (Yoshimaru, Ever Faithful + Tymna the Weaver): the setup list shows both
 //! commanders, the view gives both zones and taxes, and the commanders are cast from the command zone with
 //! `{"do": "cast", "zone": "cmd", "cmd": i}`.
 
@@ -13,26 +13,26 @@ use std::time::Duration;
 const LIMIT: Duration = Duration::from_secs(120);
 
 #[test]
-fn the_catalog_lists_thrasios_with_both_commanders() {
+fn the_catalog_lists_yoshimaru_with_both_commanders() {
     let data = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data");
     let cat = practice::catalog::catalog(&data).unwrap();
     let keys: Vec<&str> = cat["decks"].as_array().unwrap().iter().map(|d| d["key"].as_str().unwrap()).collect();
-    assert!(keys.contains(&"thrasios"), "{keys:?}");
-    let k = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "thrasios").unwrap();
-    assert_eq!(k["commanders"], json!(["Tymna the Weaver", "Thrasios, Triton Hero"]));
+    assert!(keys.contains(&"yoshimaru") && !keys.contains(&"thrasios"), "{keys:?}");
+    let k = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "yoshimaru").unwrap();
+    assert_eq!(k["commanders"], json!(["Yoshimaru, Ever Faithful", "Tymna the Weaver"]));
     assert_eq!(
         (k["commander"].as_str(), k["commander2"].as_str()),
-        (Some("Tymna the Weaver"), Some("Thrasios, Triton Hero"))
+        (Some("Yoshimaru, Ever Faithful"), Some("Tymna the Weaver"))
     );
-    assert_eq!(k["ident"], "WUBG");
-    assert_eq!(k["name"], "Tymna the Weaver and Thrasios"); // the deck file's two commanders
+    assert_eq!(k["ident"], "WB");
+    assert_eq!(k["name"], "Yoshimaru and Tymna the Weaver"); // the deck file's two commanders
     // one commander elsewhere: no second one
-    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "cloud").unwrap();
+    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "sheoldred").unwrap();
     assert_eq!(s["commander2"], Value::Null);
     assert_eq!(s["commanders"].as_array().unwrap().len(), 1);
     // both commanders get their images fetched
     let names = practice::catalog::commanders(&cat);
-    assert!(names.contains(&"Tymna the Weaver".to_string()) && names.contains(&"Thrasios, Triton Hero".to_string()));
+    assert!(names.contains(&"Yoshimaru, Ever Faithful".to_string()) && names.contains(&"Tymna the Weaver".to_string()));
 }
 
 #[test]
@@ -51,7 +51,7 @@ fn me(req: &Value) -> Option<&Value> {
 /// One game of that policy with this seed: the casts of the person's commanders from the log, and the taxes at the end
 fn play(seed: u64) -> (Vec<String>, u64, u64) {
     let mut o = opts("adaptive");
-    o.deck = "thrasios".into();
+    o.deck = "yoshimaru".into();
     o.tier = "t3".into();
     o.seed = Some(seed);
     o.max_rounds = 14;
@@ -67,8 +67,8 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
         let m = me(req)?;
         if !seen_first_view.get() {
             // the view has both commanders, both in the zone, no tax yet
-            assert_eq!(m["commander"], "Tymna the Weaver");
-            assert_eq!(m["commander2"], "Thrasios, Triton Hero");
+            assert_eq!(m["commander"], "Yoshimaru, Ever Faithful");
+            assert_eq!(m["commander2"], "Tymna the Weaver");
             assert!(m["commander_in_zone"] == true && m["commander2_in_zone"] == true);
             assert_eq!((m["tax"].as_u64(), m["tax2"].as_u64()), (Some(0), Some(0)));
             seen_first_view.set(true);
@@ -82,7 +82,7 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
         // lands and spells only in your own main phases: a land asked for in an opponent's turn is refused (not
         // sorcery timing), and which seat goes first would then decide whether the person ever played one
         let view = &req["data"]["view"];
-        if view["active"] != "thrasios" || !matches!(view["step"].as_str(), Some("main1" | "main2")) {
+        if view["active"] != "yoshimaru" || !matches!(view["step"].as_str(), Some("main1" | "main2")) {
             return Some(json!({"do": "pass"}));
         }
         let in_zone = |k: &str| m[k] == true;
@@ -93,15 +93,15 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
             return Some(json!({"do": "land", "card": i}));
         }
         if in_zone("commander_in_zone") || in_zone("commander2_in_zone") {
-            // tap the source that makes the most colours still missing for a commander in the zone (WB for Tymna,
-            // UG for Thrasios), so the games don't depend on which lands the list runs or in what order they come
+            // tap the source that makes the most colours still missing for a commander in the zone (W for Yoshimaru,
+            // WB for Tymna), so the games don't depend on which lands the list runs or in what order they come
             let pool = m["mana_pool"].as_str().unwrap_or("");
             let mut want = String::new();
             if in_zone("commander_in_zone") {
-                want += "WB";
+                want += "W";
             }
             if in_zone("commander2_in_zone") {
-                want += "UG";
+                want += "WB";
             }
             let fills = |s: &Value| {
                 let cols = s["colours"].as_str().unwrap_or("");
@@ -114,13 +114,13 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
         }
         let pool = m["mana_pool"].as_str().unwrap_or("").chars().count() as u64;
         if !tried.get() && pool > 0 {
-            let (t1, t2) = (3 + m["tax"].as_u64().unwrap(), 2 + m["tax2"].as_u64().unwrap());
+            let (t1, t2) = (1 + m["tax"].as_u64().unwrap(), 3 + m["tax2"].as_u64().unwrap());
             let has = |cs: &str| cs.chars().all(|c| m["mana_pool"].as_str().unwrap_or("").contains(c));
-            if in_zone("commander2_in_zone") && pool >= t2 && has("UG") {
+            if in_zone("commander2_in_zone") && pool >= t2 && has("WB") {
                 tried.set(true);
                 return Some(json!({"do": "cast", "zone": "cmd", "cmd": 1}));
             }
-            if in_zone("commander_in_zone") && pool >= t1 && has("WB") {
+            if in_zone("commander_in_zone") && pool >= t1 && has("W") {
                 tried.set(true);
                 return Some(json!({"do": "cast", "zone": "cmd", "cmd": 0}));
             }
@@ -133,7 +133,9 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
     let cast: Vec<String> = evs
         .iter()
         .filter_map(|e| e["text"].as_str())
-        .filter(|t| t.contains("Tymna/Thrasios casts Tymna the Weaver") || t.contains("Tymna/Thrasios casts Thrasios"))
+        .filter(|t| {
+            t.contains("Yoshimaru/Tymna casts Yoshimaru") || t.contains("Yoshimaru/Tymna casts Tymna the Weaver")
+        })
         .map(String::from)
         .collect();
     s.close(Duration::from_secs(10));
@@ -141,20 +143,19 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
 }
 
 #[test]
-fn a_person_on_thrasios_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
-    let (mut tymna_recast, mut thrasios_seen) = (false, false);
+fn a_person_on_yoshimaru_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
+    let (mut yoshimaru_recast, mut tymna_seen) = (false, false);
     for seed in 1..=48 {
-        // --- t3 lines: 24 seeds had no Tymna recast once the Tier 3 lines changed those games
         let (cast, tax, tax2) = play(seed);
-        let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Tymna/Thrasios casts {n}"))).count() as u64;
+        let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Yoshimaru/Tymna casts {n}"))).count() as u64;
         // every cast raised that commander's own tax, and only its own
-        assert_eq!(tax, 2 * of("Tymna the Weaver"), "seed {seed}: {cast:?}");
-        assert_eq!(tax2, 2 * of("Thrasios"), "seed {seed}: {cast:?}");
-        tymna_recast |= of("Tymna the Weaver") >= 2;
-        thrasios_seen |= of("Thrasios") >= 1;
+        assert_eq!(tax, 2 * of("Yoshimaru"), "seed {seed}: {cast:?}");
+        assert_eq!(tax2, 2 * of("Tymna the Weaver"), "seed {seed}: {cast:?}");
+        yoshimaru_recast |= of("Yoshimaru") >= 2;
+        tymna_seen |= of("Tymna the Weaver") >= 1;
     }
-    assert!(tymna_recast, "no game recast Tymna");
-    assert!(thrasios_seen, "no game cast Thrasios");
+    assert!(yoshimaru_recast, "no game recast Yoshimaru");
+    assert!(tymna_seen, "no game cast Tymna");
 }
 
 #[test]
@@ -169,4 +170,13 @@ fn the_list_of_playable_decks_is_every_deck_of_decks_json() {
     let mut cat = practice::catalog::MY_DECKS.to_vec();
     cat.sort();
     assert_eq!(cat, mine);
+}
+
+#[test]
+fn the_yoshimaru_guide_line_names_both_commanders() {
+    // two commanders separated by a semicolon, a comma inside the first one's name
+    assert_eq!(
+        practice::catalog::display_name("x\n**Commanders (2).** Yoshimaru, Ever Faithful; Tymna the Weaver\n").unwrap(),
+        "Yoshimaru and Tymna the Weaver"
+    );
 }

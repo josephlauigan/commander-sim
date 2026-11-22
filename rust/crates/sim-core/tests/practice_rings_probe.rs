@@ -29,10 +29,9 @@ use std::sync::{Arc, Mutex};
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
-/// the decks with Rings of Brighthearth (karn, thrasios) or Peter Parker's Camera (sauron) first, then the rest: a card
+/// the decks with Rings of Brighthearth (karn, thanos) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
-const DECKS: &[&str] =
-    &["karn", "thrasios", "alela", "cloud", "galadriel", "sheoldred", "thanos", "urdragon", "yshtola"];
+const DECKS: &[&str] = &["karn", "alela", "cloud", "galadriel", "sheoldred", "thanos", "urdragon", "yshtola"];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -431,10 +430,6 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
 /// set the position up. An entry that is now offered (or no longer found) fails the test: take it off the list.
 const EXCEPTIONS: &[(&str, &str)] = &[
     (
-        "thrasios: Basalt Monolith #0",
-        "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
-    ),
-    (
         "thanos: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
@@ -444,7 +439,6 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
     ),
     ("sheoldred: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
-    ("thrasios: Lion's Eye Diamond #0", "a mana ability (rule 605): Rings does not copy it"),
 ];
 
 /// both boards: a key is bad if either board shows it unanswered, offered if either board offers it
@@ -516,11 +510,11 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
     );
 }
 
-/// the karn and thrasios decks (the ones with Rings of Brighthearth) are swept by the test above; this one says so
+/// the karn and thanos decks (the ones with Rings of Brighthearth) are swept by the test above; this one says so
 /// outright, so removing them from `DECKS` fails
 #[test]
 fn the_sweep_covers_the_decks_with_rings() {
-    assert!(DECKS.contains(&"karn") && DECKS.contains(&"thrasios"));
+    assert!(DECKS.contains(&"karn") && DECKS.contains(&"thanos"));
 }
 
 /// (scan) the permanents of the owned decks whose abilities reach a person through the AI's `options` hook (no person

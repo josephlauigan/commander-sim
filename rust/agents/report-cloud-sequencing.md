@@ -5,7 +5,7 @@ Answer: the AI holds them. Part is the look-ahead search, which gives a mana roc
 
 ## Method
 240 traced games (seeds 0-239), `--deck cloud --pool t1 --profile loose`, the five M-package swaps
-(`audit/cloud/packages/m-mana.swaps`). A temporary, uncommitted one-line log of Cloud's hand and mana at the start of
+(`audit/retired/cloud/packages/m-mana.swaps`). A temporary, uncommitted one-line log of Cloud's hand and mana at the start of
 each main phase (engine/turn.rs `step_main1`) gave the turn each card first appeared in hand. Reverted; the tree is
 clean. A "wait turn" = a turn the card sat in hand while Cloud had mana >= its cost (land already played).
 Scripts and traces: the session scratchpad (not committed).

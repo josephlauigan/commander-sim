@@ -2,8 +2,10 @@
 
 The deck's living list of strengths and weaknesses and what was tested.
 
-**List:** `decklists/JD/tymna-thrasios-doomsday.md`, the Doomsday rebuild of 2026-11-05 (cEDH; the Thanos turbo core under
-Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (`data/my_decks.toml`). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
+**Retired 2026-11-14; key out of the simulator 2026-11-21.** The list is in `decklists/pool/retired/tymna-thrasios-doomsday.md` and this file is history only.
+
+**List:** `decklists/pool/retired/tymna-thrasios-doomsday.md`, the Doomsday rebuild of 2026-11-05 (cEDH; the Thanos turbo core under
+Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (the retired key's `data/my_decks.toml` entry, removed 2026-11-21). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
 its first sim is the baseline below. The findings of the previous list (t5, Basalt
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
@@ -16,7 +18,7 @@ Why: the 11-08 baseline read "one tutor away 61%, ready 42%" with tutors held at
   that searches nothing is no tutor (`combos::tutor_for_piece`; tests in `tests/tutor_measure.rs`). The re-run
   (10,000 games) is identical in play: **34.5%** (33.6-35.5), 3,454 wins, 4,305 combo tries, as on 11-08.
   **Corrected: one tutor away 56% of games (median round 5), ready 42% (round 6): 44% of games never get within one
-  tutor.** Raw: `audit/thrasios/2026-11-08-tutor-measure/baseline.txt`.
+  tutor.** Raw: `audit/retired/thrasios/2026-11-08-tutor-measure/baseline.txt`.
 - **Held tutors are mostly correct passes.** By kind (main-phase pass decisions): instant or to the top 1,817, sorcery to
   hand 402. Games each was held in: Vampiric 331, Mystical 191, Worldly 153, Eladamri's Call 72, Beseech 66, Diabolic
   Intent 60, Grim 50, Imperial Seal 48 (of 10,000). An instant tutor is kept for the end-of-turn window by design
@@ -45,12 +47,12 @@ every colour) and #308 (one source of several mana paid any colour: Lotus Petal,
 bugs that let ritual and combo lines pay colours they couldn't. Every Thrasios number before them may be inflated.
 - **Baseline, current (S2) list, 10,000 games: 34.5%** (33.6-35.5). The 11-07 baseline (old list, before the fixes) was
   35.1% (34.2-36.0): -0.6, inside the noise. Plan online 80.7% of games; wins: Oracle + Consultation/Pact 78%,
-  Power Artifact/Rings + Monolith 17%; 42.3% of hands mulliganed. Raw: `audit/thrasios/2026-11-08-remeasure/baseline.txt`.
+  Power Artifact/Rings + Monolith 17%; 42.3% of hands mulliganed. Raw: `audit/retired/thrasios/2026-11-08-remeasure/baseline.txt`.
 - **S2 rechecked (5,000 games, paired; run as the reverse swap, Watery Grave => Savannah and Swamp => Breeding Pool):**
   S2 list 34.4%, old list 35.6%, so **S2 is -1.2** (noise ±1.6): no clear effect, now leaning the other way. Before the
   fixes it read +1.6 (±1.6). The two runs average about +0.2: S2 makes no measurable difference. With S2, the plan comes
   online a little more often (80.0% vs 78.9%) and by turn 4 (59.7% vs 58.5%), both inside the noise; mana on turn 8 is
-  6.55 vs 6.32. Raw: `audit/thrasios/2026-11-08-remeasure/s2-reverse.txt`.
+  6.55 vs 6.32. Raw: `audit/retired/thrasios/2026-11-08-remeasure/s2-reverse.txt`.
 - **Why S2 didn't help:** its point was to fix Doomsday's missing {B}{B}{B}, and it didn't. In the 10,000-game baseline,
   "no {B}{B}{B} (with the enabler)" is still 43% of the main-phase decisions where Doomsday is in hand (42% on 11-06,
   before S2). Doomsday was chosen 139 times in 10,000 games (153 on 11-07). The deck rarely has three black sources at
@@ -70,7 +72,7 @@ Why so small: the Consultation / Pact line wins first (77% of wins) and needs on
 times in 10,000 games (baseline below), so even fixing every missing {B}{B}{B} moves little. The swap report doesn't count Doomsday's
 reasons, so whether "no {B}{B}{B}" fell isn't measured here (an `--analyze` run of the S2 list would show it).
 **S2 adopted by JD (2026-11-07):** Savannah and Breeding Pool out, Watery Grave and Swamp in. Raw:
-`audit/thrasios/2026-11-07-black-mana/`.
+`audit/retired/thrasios/2026-11-07-black-mana/`.
 
 ## Baseline 2026-11-07 (main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000; list unchanged)
 **35.1%** (34.2-36.0) at t6, against 33.9% (31.9-36.0) in Baseline B (2,000 games): +1.2, inside the noise. The list didn't
@@ -93,7 +95,7 @@ win rate 33.9% -> 33.8% (noise). Why so little: one Cabal Ritual is rarely the m
 mana base: black comes from five duals (Underground Sea, Godless Shrine, Scrubland, Bayou, Overgrown Tomb), Command Tower,
 Mana Confluence, the fetches, the five-colour rocks and Birds, and two rituals; Cavern of Souls' coloured mana is for
 creature spells only, and Gemstone Caverns makes colour only with its luck counter. Three black sources at once is hard
-in four colours on turns 2-4. A list question for JD. Raw: `audit/thrasios/2026-11-06-doomsday-cabal.txt`.
+in four colours on turns 2-4. A list question for JD. Raw: `audit/retired/thrasios/2026-11-06-doomsday-cabal.txt`.
 
 ## 2026-11-06: why Doomsday is rarely cast (trace-only counters, branch doomsday-why; t6, look-ahead, 2,000 games, seed 500000)
 The run is identical to Baseline B apart from the new lines (the counters change nothing). Doomsday was in hand at a
@@ -103,7 +105,7 @@ enabler 38%** (end step only); **no {B}{B}{B} 10% / 42%**; no winning pile 0% / 
 under 2% each. Tutors: on 3,685 own turns with a tutor in hand and Doomsday in the library, Doomsday is on the wish list
 98% of the time, but a tutor would fetch Thassa's Oracle 71%, Demonic Consultation 12%, Doomsday 5%. Why so few: the
 Consultation / Pact line is the deck's first line and wins first; Doomsday is the backup, and its main-phase cast often
-lacks {B}{B}{B}. Raw: `audit/thrasios/2026-11-06-doomsday-why.txt`.
+lacks {B}{B}{B}. Raw: `audit/retired/thrasios/2026-11-06-doomsday-why.txt`.
 
 
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)

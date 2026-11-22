@@ -15,22 +15,6 @@ commander = "Sheoldred, the Apocalypse"
 ident = "B"
 tiers = ["t3", "t4"]
 
-[cloud]
-file = "JD/cloud-midgar-equipment.md"
-name = "Cloud"
-commander = "Cloud, Midgar Mercenary"
-ident = "W"
-tiers = ["t1", "t2", "t3"]
-
-# Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
-[thrasios]
-file = "pool/retired/tymna-thrasios-doomsday.md"
-name = "Tymna/Thrasios"
-commander = "Tymna the Weaver"
-commander2 = "Thrasios, Triton Hero"
-ident = "WUBG"
-tiers = ["t6"]
-
 [thanos]
 file = "cali_commander/thanos-artifact-combo.md"
 name = "Thanos"
@@ -44,3 +28,12 @@ name = "Ur-Dragon"
 commander = "The Ur-Dragon"
 ident = "WUBRG"
 tiers = ["t5"]
+
+# Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
+[yoshimaru]
+file = "JD/yoshimaru-tymna-blink.md"
+name = "Yoshimaru/Tymna"
+commander = "Yoshimaru, Ever Faithful"
+commander2 = "Tymna the Weaver"
+ident = "WB"
+tiers = ["t4", "t5"]

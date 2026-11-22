@@ -127,5 +127,6 @@ Will of the Mardu | [fixture] Extra opposing Elesh body changes AI choices or th
 Windfall | [fixture] Extra opposing Elesh body changes AI choices or their bookkeeping; live versus inert same-body control is identical, so no suppression of this card was observed.
 Winds of Abandon | [fixture] Extra opposing Elesh body changes AI choices or their bookkeeping; live versus inert same-body control is identical, so no suppression of this card was observed.
 Wolverine Riders | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another Elf you control enters, you gain life equal to its toughness.
+Yoshimaru, Ever Faithful | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another legendary permanent you control enters, put a +1/+1 counter on Yoshimaru, Ever Faithful.
 Youthful Valkyrie | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever another Angel you control enters, put a +1/+1 counter on this creature.
 Zendikar's Roil | [fixture] No land enters after this permanent is installed; its landfall guard is not exercised.

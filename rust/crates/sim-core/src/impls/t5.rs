@@ -553,6 +553,7 @@ fn felidar(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
                 && g.perm(x).cd.is_some()
                 && blink_value(g, o, x) > 0
                 && !["Felidar Guardian", "Restoration Angel"].contains(&cname(g, x))
+                && !crate::engine::values::protected_from(g, x, crate::engine::values::colors_of(g, src)) // white: pro-white is no target
         })
         .collect();
     if cands.is_empty() || !trigger_window(g, o, Some(src), "blink a permanent", None)? {

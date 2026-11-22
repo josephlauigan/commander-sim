@@ -4,6 +4,38 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+**Retired 2026-11-21 (JD); key out of the simulator the same day.** The deck is dismantled and its Equipment package moved to the
+Yoshimaru/Tymna deck. The list is in `decklists/pool/retired/cloud-midgar-equipment.md` and this file is history only; the
+`cloud` entry of `data/my_decks.toml` (tiers t1-t3) was removed 2026-11-21.
+
+## 2026-11-21: Judgment of Alexander => a 27th Plains (JD's physical list, not simulated)
+JD's sleeved deck plays 27 Plains and no Judgment of Alexander, so the simulator list now matches it (lands 33 -> 34).
+The cut is JD's, not a measured choice. Judgment ({2}{W} instant: prevent all damage that would be dealt to you by opponents'
+sources this turn, and each commander creature you control deals damage equal to its power to each creature whose damage was prevented) was
+the deck's fog against Isshin, Aurelia, Marwyn with Craterhoof and Kaalia. What the earlier runs say about it: over Stand
+Up for Yourself it was +1.0 on average over t1-t3, inside noise (2026-11-04 below); it was cast in only 17-34% of the
+games it was drawn, at round 9-12, because the AI never casts it in the main phase (the 11/04 breakdown), and in 26.9 / 31.4 / 17.7%
+of the games drawn at t1 / t2 / t3 in the 11/07 analyze run (it is among the cards that sit in hand). So the simulator undervalued it,
+and removing it costs the sim little either way. What it costs in real games: the deck's only damage-prevention fog;
+Galadriel's Dismissal, kicked ({2}{W}{W}, phases out an attacking team), the Package D taxes and the wipes remain. The
+guide's advice that named Judgment now names the kicked Dismissal. Not measured. The engine's Judgment code stays (it is
+card code in `impls/cloud.rs`, and `tests/cards_cloud_gaps.rs` covers it).
+
+## 2026-11-21: Thought Vessel => Wayfarer's Bauble (JD's choice, not simulated)
+Wayfarer's Bauble ({1} artifact; {2}, {T}, sacrifice: a basic land onto the battlefield tapped; model status Full) takes
+Thought Vessel's slot. Why: JD's pick, a cheaper piece of ramp. It counts as an artifact for Puresteel Paladin's
+metalcraft only until it is sacrificed (Thought Vessel counted for as long as it stayed, so that is no gain); it does not
+trigger Sram (Aura, Equipment or Vehicle spells only).
+What it costs: Thought Vessel is a mana rock that taps for {C} from the turn after it lands; Bauble pays {1} and then {2}
+and a turn for a tapped basic, so it competes with Cloud's turn-2 {W}{W}, and it leaves the board. Thought Vessel's no
+maximum hand size matters little: the hand sits at about 5-6 cards after turn 4 (weakness 1). An Opus consult advised
+against the swap: mana is not the lever here (the M, M-lite and AI ramp-fix rows below were neutral or negative: "cutting
+mana rocks or bodies costs more than the new cards give", weakness 4). If JD wanted it anyway, Opus named Thought Vessel as
+the cut (rock for rock; the 10/19 Mind Stone test, below, cut it for a different rock at -0.7 on average, noise) and not Galadriel's Dismissal or Judgment of Alexander, whose cast rates are an AI gap that would
+flatter the swap in a paired run. Not measured. The plan file's `keep2` list drops Thought Vessel (Bauble is not a
+two-land-hand keep), and no plan row names the Bauble. To check in the next analyze run: the Bauble's cast and stuck-in-hand
+numbers (the breakdown counts casts only, so cracks need a trace).
+
 ## 2026-11-20: Plains => Minas Tirith (JD's choice, not simulated)
 Minas Tirith (legendary land; model status Full) takes one of the 27 Plains (26 now). It makes {W}, enters tapped
 unless you control a legendary creature, and `{1}{W}, {T}`: draw a card, only after you attacked with two or more

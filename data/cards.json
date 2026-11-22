@@ -109412,7 +109412,11 @@
       },
       {
        "do": "opp_token",
-       "pow": 1
+       "pow": 1,
+       "types": [
+        "soldier"
+       ],
+       "color": "W"
       }
      ]
     }
@@ -109424,7 +109428,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -121099,10 +121103,11 @@
      "effects": [
       {
        "do": "search",
-       "filter": {},
+       "filter": {
+        "type": "equipment"
+       },
        "to": "hand",
-       "n": 1,
-       "tapped": false
+       "n": 1
       }
      ]
     }
@@ -121114,7 +121119,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,
@@ -122292,7 +122297,11 @@
       },
       {
        "do": "opp_token",
-       "pow": 1
+       "pow": 1,
+       "types": [
+        "human"
+       ],
+       "color": "W"
       }
      ]
     }
@@ -122304,7 +122313,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -125187,7 +125196,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "manual",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -130641,6 +130650,45 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "The Theorist, Jace Beleren",
+   "types": "P",
+   "generic": 2,
+   "pips": "UU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": "3",
+   "kws": [],
+   "subtypes": [
+    "jace"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "xcount": 0,
@@ -147142,7 +147190,8 @@
    "generic": 2,
    "pips": "WW",
    "tags": {
-    "wipe": "destroy"
+    "wipe": "destroy",
+    "noregen": true
    },
    "pow": 0,
    "tgh": 0,

@@ -664,31 +664,35 @@ mod tests {
     #[test]
     fn only_the_decks_own_tiers_are_played() {
         let sim = sim();
-        // cloud is t1-t3, sheoldred t3-t4, thrasios t6
-        let p = check_args(&sim, &args("--mulligan-oracle cloud,sheoldred --vs-tier")).unwrap();
-        assert_eq!(p[0].1, ["t1", "t2", "t3"]);
+        // yoshimaru is t4-t5, sheoldred t3-t4
+        let p = check_args(&sim, &args("--mulligan-oracle yoshimaru,sheoldred --vs-tier")).unwrap();
+        assert_eq!(p[0].1, ["t4", "t5"]);
         assert_eq!(p[1].1, ["t3", "t4"]);
-        assert_eq!(check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --pool t2")).unwrap()[0].1, ["t2"]);
+        assert_eq!(check_args(&sim, &args("--mulligan-oracle yoshimaru --vs-tier --pool t4")).unwrap()[0].1, ["t4"]);
         // a tier outside the deck's own is refused, as `--deck X --pool tN` is
-        let e = check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --pool t5")).unwrap_err();
-        assert!(e.contains("only simulated against") && e.contains("t1, t2, t3"), "{e}");
+        let e = check_args(&sim, &args("--mulligan-oracle yoshimaru --vs-tier --pool t2")).unwrap_err();
+        assert!(e.contains("only simulated against") && e.contains("t4, t5"), "{e}");
         assert!(
-            check_args(&sim, &args("--mulligan-oracle sheoldred,cloud --vs-tier --pool t4")).is_err(),
-            "cloud has no t4"
+            check_args(&sim, &args("--mulligan-oracle sheoldred,yoshimaru --vs-tier --pool t3")).is_err(),
+            "yoshimaru has no t3"
         );
         // no --any-tier, no conservative profile, your decks only
         assert!(
-            check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --any-tier")).unwrap_err().contains("--any-tier")
+            check_args(&sim, &args("--mulligan-oracle yoshimaru --vs-tier --any-tier"))
+                .unwrap_err()
+                .contains("--any-tier")
         );
-        assert!(check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --profiles loose,conservative")).is_err());
+        assert!(
+            check_args(&sim, &args("--mulligan-oracle yoshimaru --vs-tier --profiles loose,conservative")).is_err()
+        );
         assert!(check_args(&sim, &args("--mulligan-oracle t6 --vs-tier")).is_err());
         assert!(check_args(&sim, &args("--mulligan-oracle kinnan --vs-tier")).is_err());
         // the defaults
-        let a = args("--mulligan-oracle cloud --vs-tier");
+        let a = args("--mulligan-oracle yoshimaru --vs-tier");
         assert_eq!((a.hands, a.playouts, a.ai.as_str(), a.recheck), (100, 40, "adaptive", 0));
-        assert_eq!(args("--mulligan-oracle cloud --vs-tier --hands 7 --recheck 3 --out x.csv").hands, 7);
-        assert_eq!(args("--mulligan-oracle cloud --hands 5").hands, 5);
-        assert_eq!(args("--mulligan-oracle cloud").hands, 1000);
+        assert_eq!(args("--mulligan-oracle yoshimaru --vs-tier --hands 7 --recheck 3 --out x.csv").hands, 7);
+        assert_eq!(args("--mulligan-oracle yoshimaru --hands 5").hands, 5);
+        assert_eq!(args("--mulligan-oracle yoshimaru").hands, 1000);
     }
 
     /// both arms of a playout have the same table, the same opponents' libraries and hands; the deck's own seat is
@@ -697,7 +701,7 @@ mod tests {
     fn the_arms_are_paired() {
         let sim = sim();
         let e = &sim.engine;
-        for key in ["cloud", "thrasios"] {
+        for key in ["yoshimaru", "sheoldred"] {
             let tier = &deck_tiers(&sim, key)[0];
             let ctx = TierCtx::new(&sim, key, tier, "loose", 2, false).unwrap();
             for seed in 500000..500006u64 {
@@ -749,7 +753,7 @@ mod tests {
     fn a_small_run_is_deterministic_and_the_csv_has_its_columns() {
         let sim = sim();
         let tiers = vec!["t1".to_string(), "t2".to_string()];
-        let rs = run_deck(&sim, "cloud", &tiers, "loose", 2, 2, 500000).unwrap();
+        let rs = run_deck(&sim, "yoshimaru", &tiers, "loose", 2, 2, 500000).unwrap();
         assert!(rs.len() >= 4 && rs.iter().all(|r| r.tries <= 1 && tiers.contains(&r.tier)));
         assert_eq!(rs.iter().filter(|r| r.tries == 0).count(), 4, "two hands x two tiers");
         for r in &rs {
@@ -761,17 +765,17 @@ mod tests {
             assert_eq!(r.cards.len(), 7);
             assert!((r.diff - (r.mull_wr - r.keep_wr)).abs() < 1e-9);
         }
-        let again = run_deck(&sim, "cloud", &tiers, "loose", 2, 2, 500000).unwrap();
+        let again = run_deck(&sim, "yoshimaru", &tiers, "loose", 2, 2, 500000).unwrap();
         assert_eq!(rs, again, "the same seed gives the same report");
-        let text = render(&sim, "cloud", &tiers, &rs, 2, 2, "adaptive", 500000, 0.0);
+        let text = render(&sim, "yoshimaru", &tiers, &rs, 2, 2, "adaptive", 500000, 0.0);
         assert!(
             text.contains("mulligan oracle vs t1") && text.contains("vs t2") && text.contains("over t1, t2"),
             "{text}"
         );
         assert!(text.contains("Worst disagreements, the rule KEEPS") && text.contains("Win rate by hand"));
-        assert!(text.contains("SUMMARY cloud over t1, t2"));
+        assert!(text.contains("SUMMARY yoshimaru over t1, t2"));
         // the CSV
-        let csv = csv_header() + &csv_rows("cloud", &rs);
+        let csv = csv_header() + &csv_rows("yoshimaru", &rs);
         let mut lines = csv.lines();
         let head: Vec<&str> = lines.next().unwrap().split(',').collect();
         assert_eq!(head, CSV_COLUMNS);
@@ -789,7 +793,7 @@ mod tests {
             }
             cells.push(cur);
             assert_eq!(cells.len(), CSV_COLUMNS.len(), "{line}");
-            assert_eq!((cells[0].as_str(), cells[1].as_str()), ("cloud", r.tier.as_str()));
+            assert_eq!((cells[0].as_str(), cells[1].as_str()), ("yoshimaru", r.tier.as_str()));
             assert_eq!((cells[2].parse::<u64>().unwrap(), cells[3].parse::<i64>().unwrap()), (r.seed, r.tries));
             assert_eq!(cells[4], if r.rule_keeps { "keep" } else { "mulligan" });
             assert_eq!(cells[10].split(" | ").count(), 7);
@@ -805,22 +809,23 @@ mod tests {
         let ctx = crate::poolmode::Ctx { sim: &sim, verbose: false };
         let opp = sim.pool_keys("t2");
         let run = || {
-            let t = ctx.run("cloud", None, &opp, "loose", 6, 500000);
+            let t = ctx.run("yoshimaru", None, &opp, "loose", 6, 500000);
             let mut by: Vec<(u64, bool)> = t.by_seed.iter().map(|(k, v)| (*k, *v)).collect();
             by.sort();
             (t.n, t.win, t.win_turns, t.loss_turns, by)
         };
         let before = run();
-        let gf = crate::goldfish::run_deck(&sim, "cloud", "loose", 4, 500000).unwrap();
-        let _ = run_deck(&sim, "cloud", &["t2".to_string()], "loose", 2, 2, 500000).unwrap();
+        let gf = crate::goldfish::run_deck(&sim, "yoshimaru", "loose", 4, 500000).unwrap();
+        let _ = run_deck(&sim, "yoshimaru", &["t2".to_string()], "loose", 2, 2, 500000).unwrap();
         assert_eq!(before, run());
-        assert_eq!(gf, crate::goldfish::run_deck(&sim, "cloud", "loose", 4, 500000).unwrap());
+        assert_eq!(gf, crate::goldfish::run_deck(&sim, "yoshimaru", "loose", 4, 500000).unwrap());
     }
 
     #[test]
     fn hand_features_count_what_the_hand_holds() {
         let sim = sim();
-        let ctx = TierCtx::new(&sim, "thrasios", "t6", "loose", 2, false).unwrap();
+        // a Tier 6 pool deck: the oracle's effective mana (`eff`) is set for Tier 6 players only
+        let ctx = TierCtx::new(&sim, "kraum-tymna-blue-breach-midrange", "t6", "loose", 2, false).unwrap();
         for seed in 500000..500020u64 {
             for th in ctx.tries(seed) {
                 let f = hand_features(&sim.engine.db, &sim.engine.registry, &ctx.settings, &ctx.seat, &th.hand);

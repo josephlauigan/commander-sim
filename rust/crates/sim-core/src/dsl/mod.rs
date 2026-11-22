@@ -327,6 +327,7 @@ pub fn card_matches(g: &Game, c: CardId, f: Option<&Filter>) -> bool {
         Some("creature") => d.creature,
         Some("land") => d.land && (f.basic != Some(true) || zones::BASIC_LANDS.contains(&&*d.name)),
         Some("artifact") => ty(Types::ARTIFACT),
+        Some("equipment") => d.has_subtype("equipment"), // Steelshaper's Gift: "an Equipment card"
         Some("enchantment") => ty(Types::ENCHANTMENT),
         Some("instant_or_sorcery") => d.instant || d.sorcery,
         Some("noncreature") => !d.creature && !d.land,
@@ -1296,7 +1297,13 @@ fn run(
         "opp_token" => {
             if let Some(q) = ctx.target_owner.filter(|&q| g.player(q).alive) {
                 let pw = num(g, p, e.pow.as_ref().or(Some(&Num::Int(3))), ctx, src);
-                zones::make_tokens(g, q, Tokens::new(1, pw))?;
+                // a token spec of its own when the effect names one ("a 1/1 white Human", Stroke of Midnight)
+                let spec = Tokens {
+                    types: e.types.iter().flatten().map(|t| intern(t)).collect(),
+                    color: e.color.as_deref().map(Colors::from_letters),
+                    ..Tokens::new(1, pw)
+                };
+                zones::make_tokens(g, q, spec)?;
             }
         }
         "opp_treasure" => {
