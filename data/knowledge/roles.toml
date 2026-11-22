@@ -1,6 +1,7 @@
 # Role taxonomy v1. The LLM prompt is built from `shared`, each role's `definition` and `clauses`, and the cross-role `clause`s;
 # nothing in a definition names a card (the model has no internet). Guards apply to the cited Oracle line.
-# `keep_rule = true` keeps a rule-found, non-certain role of that kind on a routed card the LLM omitted (default false).
+# `keep_rule = true` keeps a rule-found, non-certain role of that kind on a routed card the LLM omitted (default false); JD's
+# split (2026-11-21): true for the 16 roles the rules own, false for the 10 judgement roles the LLM may veto.
 version = 1
 shared = """Label a card with a role only for a MAIN or REPEATABLE effect: what the card is for. An incidental rider, a cost, a drawback or a keyword that affects only the card itself gives no role, and zero roles is allowed. Give at most four roles, most prominent first. Judge the Oracle text alone, never combo, commander or deck context. A land gets roles only beyond tapping for one mana. The land back of an MDFC adds nothing. A prepare card gets the roles of its spell face and of its creature face's own abilities. A planeswalker ability costing at least the starting loyalty (an ultimate) gives no role."""
 
@@ -82,6 +83,7 @@ src = "rules"
 guard = """\
 (?i)add|less to (?:cast|activate)|cost.*less|pay .*life rather than|search .*library|additional land|\
 untap.*lands?|land creature token|affinity|return.*land cards?.*battlefield|treasure"""
+keep_rule = true
 
 [[role]]
 id = "fixing"
@@ -92,6 +94,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)add|mana of any|search .*library|landcycling|enchanted land is'
+keep_rule = true
 
 [[role]]
 id = "draw"
@@ -100,11 +103,13 @@ clauses = [
   "A spell's cantrip and a permanent sacrificing itself to draw one card replace themselves and are not draw.",
   "Repeated draw or drawing two or more cards is draw; impulse draw and playing cards from the top of the library are draw.",
   "The monarch draws a card every end step: becoming the monarch repeatably is draw.",
+  "A creature or other permanent that draws one fixed card when it enters or dies ('When this creature enters, draw a card') replaces itself like a cantrip and is not draw; a variable count ('draw a card for each ...'), two or more cards, a repeatable draw and an uncapped dig still are.",
 ]
 src = "rules"
 guard = """\
 (?i)draw|monarch|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
 junk token|may (?:play|cast) (?:it|that card|those cards|one of those cards)"""
+keep_rule = true
 
 [[role]]
 id = "selection"
@@ -115,6 +120,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)scry|surveil|draw.*discard|discard.*draw|look at|reveal.*top|from among.*hand|connive|recruit|learn|blood token'
+keep_rule = false
 
 [[role]]
 id = "tutor"
@@ -126,6 +132,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)search .*library|transmute'
+keep_rule = true
 
 [[role]]
 id = "removal"
@@ -141,6 +148,7 @@ guard = """\
 (?i)destroy|exile|return|damage|-[0-9x]+/-|fight|sacrifice|control of|control enchanted (?:creature|\
 permanent)|annihilator|put (?:up to [a-z]+ )?target.*library|shuffles.*library|at the beginning.*tap|enchanted.*(?:tap|untap|\
 attack|loses)|it gets -|target permanent.*untap|tap.*target.*(?:creature|permanent|land|artifact|enchantment)"""
+keep_rule = false
 
 [[role]]
 id = "wipe"
@@ -151,6 +159,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)\b(?:all|each)\b|overload|destroy the rest|creatures.*get -[0-9x]+/-[0-9x]+'
+keep_rule = true
 
 [[role]]
 id = "counter"
@@ -162,6 +171,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)counter|exile.*spells?'
+keep_rule = true
 
 [[role]]
 id = "protection"
@@ -174,6 +184,7 @@ clauses = [
 ]
 src = "rules+llm"
 guard = '(?i)hexproof|shroud|indestructible|protection|phase|prevent.*damage|regenerate|ward|umbra armor'
+keep_rule = false
 
 [[role]]
 id = "stax"
@@ -186,6 +197,7 @@ src = "llm"
 guard = """\
 (?i)can't|cannot|cost|unless.*pay|only.*(?:spell|turn)|loses all abilities|enter tapped|don't untap|\
 lands are Mountains|shuffle their library|instead.*sacrifices.*land"""
+keep_rule = false
 
 [[role]]
 id = "discard"
@@ -196,6 +208,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)discard'
+keep_rule = true
 
 [[role]]
 id = "gy-hate"
@@ -206,6 +219,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)graveyard'
+keep_rule = false
 
 [[role]]
 id = "recursion"
@@ -216,6 +230,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)graveyard|flashback|soulshift'
+keep_rule = false
 
 [[role]]
 id = "reanimate"
@@ -225,6 +240,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)graveyard|creature.*dies.*return|creature card.*battlefield|opponent sacrifices a nontoken permanent'
+keep_rule = true
 
 [[role]]
 id = "self-mill"
@@ -236,6 +252,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)mill|discard|graveyard'
+keep_rule = true
 
 [[role]]
 id = "tokens"
@@ -247,6 +264,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)token|investigate|amass|populate|incubate|mobilize|afterlife|recruit'
+keep_rule = true
 
 [[role]]
 id = "anthem"
@@ -259,6 +277,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)(?:creatures?|[a-z]+s).*?(?:gets?|gains?|have|has)|\+1/\+1 counter|(?:each )?other .*gets?'
+keep_rule = true
 
 [[role]]
 id = "sac-outlet"
@@ -270,6 +289,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)sacrifice.*:'
+keep_rule = true
 
 [[role]]
 id = "drain"
@@ -281,6 +301,7 @@ clauses = [
 ]
 src = "rules+llm"
 guard = '(?i)loses? .*life|damage'
+keep_rule = false
 
 [[role]]
 id = "lifegain"
@@ -291,6 +312,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)gain.*life|lifelink|food token|double.*life total'
+keep_rule = true
 
 [[role]]
 id = "counters"
@@ -303,6 +325,7 @@ src = "rules"
 guard = """\
 (?i)counter|proliferate|backup|bolster|support|adapt|awaken|connive|dethrone|mentor|evolve|training|amass|\
 map token"""
+keep_rule = true
 
 [[role]]
 id = "blink"
@@ -312,6 +335,7 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)exile.*(?:return|put both cards onto the battlefield)'
+keep_rule = true
 
 [[role]]
 id = "copy"
@@ -322,6 +346,7 @@ clauses = [
 ]
 src = "rules+llm"
 guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'
+keep_rule = false
 
 [[role]]
 id = "extra-phase"
@@ -331,16 +356,17 @@ clauses = [
 ]
 src = "rules"
 guard = '(?i)extra (?:turn|combat)|additional (?:combat|turn|beginning phase)'
+keep_rule = true
 
 [[role]]
 id = "finisher"
-definition = "ends or wins the game when resolved or untouched: alt-win, mass pump-and-attack, infinite enabler, overwhelming bomb."
+definition = "wins or ends the game: an alternate win or lose-the-game effect, a team pump or extra damage meant to kill from a normal board, or a bomb that ends the game if left untouched (an infect giant)."
 clauses = [
-  "Use only what is in the Oracle text: no commander-deck or combo context.",
-  "A tutor for a combo, or one half of an unstated combo, is not a finisher.",
+  "A large body, a damage doubler, a tutor or one half of a combo is not a finisher by itself.",
 ]
 src = "llm"
 guard = '(?i)win the game|loses the game|infect|double|damage|\+[x0-9]+/\+[x0-9]+|untap|mana|combat'
+keep_rule = false
 
 [[role]]
 id = "evasion"
@@ -351,3 +377,4 @@ clauses = [
 ]
 src = "rules+llm"
 guard = '''(?i)flying|menace|fear|shadow|horsemanship|can't be blocked|double strike|intimidate'''
+keep_rule = false

@@ -1146,6 +1146,13 @@ fn treasure_mana_only(card: &Card) -> bool {
     texts.iter().any(|t| creates(t, "treasure")) && !texts.iter().any(|t| grammar!(r"\badd\b", t))
 }
 
+/// C16: a card whose only mana is "one mana of the chosen color" produces one colour at a time, whatever
+/// `produced_mana` lists; that is no sign of a missed fixing role.
+fn chosen_colour_only(card: &Card) -> bool {
+    let text = card.text.to_lowercase();
+    text.contains("chosen color") && !grammar!(r"\badd \{[wubrg]\}", &text)
+}
+
 /// Equal draws/discards are filtering, including third-person and conditional two-sentence loot.
 fn loot(s: &str) -> bool {
     let s = s.replace("draws ", "draw ").replace("discards ", "discard ");
@@ -1178,18 +1185,27 @@ fn loot(s: &str) -> bool {
 const SELF_DEATH_DRAW: &str = concat!(
     r"(?:when|if) (?:enchanted creature|equipped creature|this [a-z]+|~) ",
     r"(?:dies|is put into a graveyard from the battlefield)[^.]*draw (?:a|one) card",
+    r"\b(?![^.]*(?:for each|equal to|that many))",
+);
+// C19: a creature or other permanent that draws one FIXED card when it enters or dies replaces itself like a
+// cantrip. A variable count ("a card for each ..."), two or more cards and a repeatable trigger are not matched.
+const FIXED_ETB_DRAW: &str = concat!(
+    r"^(?:when|if) (?:this [a-z]+|~) (?:enters|dies)(?: or (?:enters|dies))?, (?:if [^,.]*, )?",
+    r"(?:you )?(?:may )?draw (?:a|one) card\b(?![^.]*(?:for each|equal to|that many))",
 );
 // C15: an aura or equipment that draws one card once, when it enters, is a cantrip like a spell's.
 const ATTACHMENT_CANTRIP: &str = concat!(
     r"^(?:when|if) (?:this (?:aura|equipment)|~) enters, draw (?:a|one) card",
     r"(?: at the beginning of the next turn.s upkeep)?\.?$",
 );
-/// C10 and C15: a permanent drawing one card when it or its host dies, or an aura/equipment cantrip on entering,
-/// replaces itself and is not `draw`.
+/// C10, C15 and C19: a permanent drawing one fixed card when it or its host dies, when it enters, or an
+/// aura/equipment cantrip on entering, replaces itself and is not `draw`.
 fn self_replacing_draw(typ: &str, full: &str) -> bool {
     let attachment = has(typ, &["Aura", "Equipment"]);
-    (attachment || !has(typ, &["Instant", "Sorcery"])) && grammar!(SELF_DEATH_DRAW, full)
+    let spell = has(typ, &["Instant", "Sorcery"]);
+    (attachment || !spell) && grammar!(SELF_DEATH_DRAW, full)
         || attachment && grammar!(ATTACHMENT_CANTRIP, full)
+        || !spell && grammar!(FIXED_ETB_DRAW, full)
 }
 
 /// A land ability that adds exactly one mana, whatever the options: a filter or painland tap, not net ramp.
@@ -1247,6 +1263,8 @@ fn plain_line(s: &str, typ: &str) -> bool {
                 sentence,
             )
             || spell && sentence == "draw a card"
+            // C19: a permanent's fixed one-card enter or death draw is a cantrip, no deck-building function
+            || !spell && grammar!(FIXED_ETB_DRAW, sentence)
     })
 }
 
@@ -1469,6 +1487,7 @@ impl Classifier {
                     mana.iter().filter(|m| ["W", "U", "B", "R", "G"].contains(&m.as_str())).count() >= 2
                 })
                 && !treasure_mana_only(card)
+                && !chosen_colour_only(card)
         {
             route.insert(RouteReason::NoRole);
         }
@@ -1669,7 +1688,10 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 return c.text.to_lowercase().contains("damage")
                     || has(&c.text.to_lowercase(), &["destroy", "exile", "return"]);
             }
-            if has(s, &["damage to each opponent", "damage to each player", "return all other permanent cards"])
+            // C14: "1 damage to each opponent and each creature they control" still sweeps the creatures.
+            let sweeps_creatures = grammar!(r"\beach (?:other )?creature", s);
+            if has(s, &["damage to each opponent", "damage to each player"]) && !sweeps_creatures
+                || s.contains("return all other permanent cards")
                 || has(
                     s,
                     &[

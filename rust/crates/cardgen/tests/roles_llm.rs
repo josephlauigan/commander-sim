@@ -496,11 +496,8 @@ fn taxonomy_and_model_changes_invalidate_the_cache_but_guards_overrides_and_rule
     let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
     let tweaked = toml.replacen("guard = '(?i)counter|exile.*spells?'", "guard = '(?i)counter|exile.*spells?|x'", 1);
     assert_ne!(toml, tweaked);
-    let tweaked = tweaked.replacen(
-        "src = \"rules\"\nguard = '(?i)discard'",
-        "src = \"rules\"\nguard = '(?i)discard'\nkeep_rule = true",
-        1,
-    );
+    let tweaked =
+        tweaked.replacen("guard = '(?i)discard'\nkeep_rule = true", "guard = '(?i)discard'\nkeep_rule = false", 1);
     std::fs::write(e.dir().join("roles.toml"), &tweaked).unwrap();
     std::fs::write(
         e.dir().join("roles_overrides.toml"),
@@ -929,8 +926,30 @@ fn taxonomy_prompt_text_hash_and_guards() {
         assert_eq!(text.matches(&format!("\n- {id}: ")).count(), 1, "{id} appears once as a role line");
         assert!(t.guard(id).is_match("anything").is_ok());
     }
-    assert!(t.role.iter().all(|r| !r.keep_rule), "no role keeps rule hits by default");
-    assert!(!t.keep_rule("removal"));
+    // JD's split: the 16 roles the rules own keep their hits on a routed card, the 10 judgement roles may be vetoed
+    let kept: Vec<&str> = t.role.iter().filter(|r| r.keep_rule).map(|r| r.id.as_str()).collect();
+    assert_eq!(
+        kept,
+        [
+            "ramp",
+            "fixing",
+            "draw",
+            "tutor",
+            "wipe",
+            "counter",
+            "discard",
+            "reanimate",
+            "self-mill",
+            "tokens",
+            "anthem",
+            "sac-outlet",
+            "lifegain",
+            "counters",
+            "blink",
+            "extra-phase"
+        ]
+    );
+    assert!(!t.keep_rule("removal") && t.keep_rule("tutor"));
     // the boilerplate that used to be repeated in every definition is said once
     assert_eq!(text.matches("MDFC").count(), 1, "{text}");
     assert_eq!(text.matches("planeswalker ability costing").count(), 1);
@@ -944,13 +963,10 @@ fn taxonomy_prompt_text_hash_and_guards() {
     assert_ne!(Taxonomy::parse(&edited).unwrap().hash(), t.hash());
     let guard = TAXONOMY.replacen("(?i)counter|exile.*spells?", "(?i)counter|exile.*spells? ", 1);
     assert_eq!(Taxonomy::parse(&guard).unwrap().hash(), t.hash());
-    let keep = TAXONOMY.replacen(
-        "src = \"rules\"\nguard = '(?i)discard'",
-        "src = \"rules\"\nguard = '(?i)discard'\nkeep_rule = true",
-        1,
-    );
+    let keep =
+        TAXONOMY.replacen("guard = '(?i)discard'\nkeep_rule = true", "guard = '(?i)discard'\nkeep_rule = false", 1);
     let kept = Taxonomy::parse(&keep).unwrap();
-    assert!(kept.keep_rule("discard") && kept.hash() == t.hash());
+    assert!(!kept.keep_rule("discard") && kept.hash() == t.hash());
     // malformed taxonomies are errors
     assert!(
         Taxonomy::parse(&TAXONOMY.replacen(

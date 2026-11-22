@@ -309,7 +309,7 @@ Ward granted to other permanents is protection; a lifelink-only team grant is li
 Treasure and Clue tokens count; other artifact tokens are judged by their abilities. Repeatable Clue makers also
 give draw. Repeatable or multi-Treasure makers also give ramp; a single Treasure rider gives tokens alone.
 Mana filters with equal mana cost/output are fixing, not ramp. Haste alone and limited target pumps are not
-anthem. Self-replacing death draws are not draw; monarch is draw. Self-name searches are not tutor, and opponent
+anthem. Self-replacing death draws, aura/equipment cantrips and a permanent's one fixed-card enter or death draw (C19) are not draw; monarch is draw. Self-name searches are not tutor, and opponent
 compensation tokens are excluded while their removal effect still counts.
 A creature token copy gives copy and tokens, copy first. Team +1/+1 counter placement is counters and anthem; player counters are excluded, but proliferate
 counts. Amass gives tokens, plus counters when repeatable. Returning noncreature permanents from your graveyard

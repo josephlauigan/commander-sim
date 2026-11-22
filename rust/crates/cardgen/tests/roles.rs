@@ -1055,6 +1055,61 @@ fn partial_sweeps_cantrips_and_chosen_colour_mana_general_shapes() {
 }
 
 #[test]
+fn approved_c19_fixed_enter_draws_are_not_draw_and_the_round_two_gaps_are_closed() {
+    let i = rulings_index();
+    for (name, yes, no) in [
+        // C19: one fixed card on entering is a cantrip; a variable count still is draw.
+        ("Elvish Visionary", vec![], vec!["draw"]),
+        ("Karn, Gilded Guardian", vec!["draw"], vec![]),
+        // C14 with a player clause: the creatures of the group are still swept.
+        ("Goblin Chainwhirler", vec!["wipe"], vec![]),
+    ] {
+        let a = classify(&i, name);
+        for role in yes {
+            assert!(a.roles.iter().any(|r| r == role), "{name}: missing {role}: {a:?}");
+        }
+        for role in no {
+            assert!(!a.roles.iter().any(|r| r == role), "{name}: unexpected {role}: {a:?}");
+        }
+    }
+    // the cantrip body is not an unread function: no NoRole route for a plain creature with it
+    assert!(!classify(&i, "Elvish Visionary").needs_llm);
+    // more shapes: dies and enters-or-dies, a conditional draw; not two cards, not repeatable, not a variable count
+    for (text, draw) in [
+        ("When this creature dies, draw a card.", false),
+        ("When this creature enters or dies, you may draw a card.", false),
+        ("When this creature enters, if you control a Forest, draw a card.", false),
+        ("When this creature enters, draw two cards.", true),
+        ("When this creature enters, draw a card for each creature you control.", true),
+        ("When this creature dies, draw a card for each creature you control.", true),
+        ("Whenever this creature enters or attacks, draw a card.", true),
+        ("Whenever this creature attacks, draw a card.", true),
+    ] {
+        let a = round5_synthetic("Creature — Human", text, &[]);
+        assert_eq!(a.roles.contains(&"draw".into()), draw, "{text}: {a:?}");
+    }
+    // a spell's draw is untouched by the permanent rule
+    let a = round5_synthetic("Sorcery", "Draw two cards.", &[]);
+    assert!(a.roles.contains(&"draw".into()), "{a:?}");
+    // the chosen-colour shape is excused from the WUBRG route (Throne still routes through its rejected fixing hit)
+    let a = round5_synthetic(
+        "Artifact",
+        "As this artifact enters, choose a color.\n{T}: Add one mana of the chosen color.",
+        &["W", "U", "B", "R", "G"],
+    );
+    assert!(a.roles.contains(&"ramp".into()) && !a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    let throne = classify(&i, "Throne of Eldraine");
+    assert!(
+        !throne.roles.contains(&"fixing".into()) && throne.route.contains(&roles::RouteReason::RejectedHit),
+        "{throne:?}"
+    );
+    // a real second colour on the card still routes
+    let a =
+        round5_synthetic("Land", "{T}: Add {G}.\n{T}: Add one mana of the chosen color.", &["W", "U", "B", "R", "G"]);
+    assert!(a.roles.contains(&"fixing".into()), "{a:?}");
+}
+
+#[test]
 fn treasure_pair_is_not_a_same_line_route() {
     let a = round5_synthetic("Enchantment", "Whenever an opponent draws a card, create a Treasure token.", &[]);
     assert!(a.roles.contains(&"tokens".into()) && a.roles.contains(&"ramp".into()), "{a:?}");

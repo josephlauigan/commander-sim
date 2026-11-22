@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": 1,
-    "count": 46
+    "count": 48
   },
   "cards": [
     {
@@ -1327,6 +1327,64 @@
       "released_at": "2026-05-18",
       "set": "plst",
       "rarity": "rare",
+      "reserved": false
+    },
+    {
+      "name": "Coiling Oracle",
+      "mana_cost": "{G}{U}",
+      "cmc": 2.0,
+      "type_line": "Creature — Snake Elf Druid",
+      "oracle_text": "When this creature enters, reveal the top card of your library. If it's a land card, put it onto the battlefield. Otherwise, put that card into your hand.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "69fd4ddf-9ed8-4c56-bef3-9944daf05e4f",
+      "edhrec_rank": 1418,
+      "usd": "0.31",
+      "released_at": "2024-01-12",
+      "set": "rvr",
+      "rarity": "common",
+      "reserved": false
+    },
+    {
+      "name": "Elvish Visionary",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Elf Shaman",
+      "oracle_text": "When this creature enters, draw a card.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "c6a3a882-a127-4590-93d7-679ef4313efe",
+      "edhrec_rank": 2353,
+      "usd": "0.26",
+      "released_at": "2026-08-14",
+      "set": "hoc",
+      "rarity": "common",
       "reserved": false
     }
   ]
