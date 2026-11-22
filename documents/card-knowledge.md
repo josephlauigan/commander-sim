@@ -17,8 +17,8 @@ alone, and it never skips the sim.
 
 | Layer | What the agent holds | Size | Command |
 |---|---|---|---|
-| 1. Catalog map | Whole catalog summarised: counts by colour identity, role, creature type, keyword; bans and Game Changers; known combos | about 8k tokens | `cardgen map` |
-| 2. Deck digest | Every Commander-legal, in-identity card that clears a per-role cap, one line each, with roles, a rules-text gist, popularity and flags | about 50k tokens per deck | `cardgen digest --deck X` |
+| 1. Catalog map | Whole catalog summarised: counts by colour identity, role, creature type, keyword; bans and Game Changers; known combos | about 3k tokens | `cardgen map` |
+| 2. Deck digest | Every Commander-legal, in-identity card that clears a per-role cap, one line each, with roles, a rules-text gist, popularity and flags | about 40k tokens per deck | `cardgen digest --deck X` |
 | 3. Card detail | Full Oracle text, roles and their evidence, engine model status, which decks use it, `FINDINGS.md` hits | per card | `cardgen find --name N --full` |
 | 4. The sim | Paired swap-test evidence | per test | `commander-sim --swap` (existing) |
 
@@ -31,19 +31,20 @@ gets layer 3 before it is proposed.
 
 The working steps are the section "Card recommendations: use the card knowledge base" in `CLAUDE.md` and `AGENTS.md`
 (the same text in both). In short: read the map, read the deck's digest (header first), query `find` for what the digest
-trimmed, read `find --name NAME --full` before proposing a card, run the three swap checks and a `--swap` test, and
+trimmed, read `find --name NAME --full` before proposing a card, run the swap checks and put a `--swap` test in the plan JD approves, and
 say which digest and data date the answer used.
 
 | Command | What it gives | Writes |
 |---|---|---|
-| `cardgen bulk-sync` | the catalog (`data/knowledge/oracle.json`) | the catalog and `sync.lock` |
-| `cardgen roles --rules` / `--merge` | the role table (`roles.json`), rules and merged with the LLM answers | `roles.json` |
-| `cardgen map` | the whole-catalog summary (`map.md`) | `map.md` |
-| `cardgen digest --deck KEY` | one line per candidate card (`digests/KEY.txt`) | the digest file |
+| `cardgen bulk-sync` | the catalog (`data/knowledge/oracle.json`) | `oracle.json`, `oracle.prev.json` and the tracked `sync.lock` |
+| `cardgen roles --rules` / `--merge` | the role table (`roles.json`), rules and merged with the LLM answers | `roles.json` beside the catalog it read (in a worktree without its own catalog, the main checkout's) |
+| `cardgen map` | the whole-catalog summary (`map.md`) | `map.md` (also with `--stdout`) |
+| `cardgen digest --deck KEY` | one line per candidate card (`digests/KEY.txt`) | the digest file (also with `--stdout`) |
 | `cardgen find ...` | any slice of the catalog, with engine status, deck usage and FINDINGS hits | nothing |
 
 Keeping it fresh is manual today (`bulk-sync`, then `roles --rules`, then `roles --merge` when LLM answers exist); a
-weekly job is planned. A recommendation session never regenerates tracked data; JD approves that first.
+weekly job is planned. A recommendation session never runs `bulk-sync`, `roles` or `export`; a refresh is its own step that JD approves.
+`map` and `digest` write only their gitignored views.
 
 ## Where the data lives
 
