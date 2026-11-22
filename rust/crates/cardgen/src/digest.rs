@@ -260,8 +260,8 @@ pub fn cut(s: &str, max: usize) -> String {
     cut_to(s, max, true)
 }
 
-/// What else a line can say about a card, by whoever has it. Every part is empty today; phase 4 fills them and
-/// [`flags`] prints them (so `find` can show the same flags). Everything is resolved to card indices once, when the
+/// What else a line can say about a card, by whoever has it: `crate::facts::Facts::context` fills it (empty by
+/// default) and [`flags`] prints it. Everything is resolved to card indices once, when the
 /// context is built: nothing is looked up by name at flag time.
 #[derive(Clone, Debug, Default)]
 pub struct Context {
@@ -304,6 +304,22 @@ impl Context {
         }
         let list: Vec<String> = self.deck_letters.iter().map(|(c, k)| format!("{c}={k}")).collect();
         Some(format!("# d: letters of JD's decks that also play the card: {}", list.join(" ")))
+    }
+
+    /// the header line that explains `m:` and `k:`, when the context holds any status or finding
+    pub fn model_legend(&self) -> Option<String> {
+        if self.model_status.is_empty() && self.findings.is_empty() {
+            return None;
+        }
+        Some(
+            concat!(
+                "# m: the simulator's model status of the card, shown only when it has a record (no m: = it cannot ",
+                "evaluate the card): F full (hand-verified), f full-auto (compiled from Oracle text), A approximate, ",
+                "P partial (some text ignored), U unmodeled; a card below F goes to JD before it is proposed. ",
+                "k:N = lines of JD's audit/*/FINDINGS.md that name the card"
+            )
+            .to_string(),
+        )
     }
 }
 
@@ -556,7 +572,7 @@ fn ident_label(bits: u8) -> String {
 }
 
 /// the card of a name: the Commander-legal one when several share it (all of them when none is legal)
-fn resolve(index: &Index, name: &str) -> Vec<u32> {
+pub fn resolve(index: &Index, name: &str) -> Vec<u32> {
     let found = index.lookup(name);
     let legal: Vec<u32> = found.iter().copied().filter(|&i| index.cards[i as usize].legal == Legal::Legal).collect();
     if legal.is_empty() { found.to_vec() } else { legal }
@@ -781,7 +797,7 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
 }
 
 /// [`build`] with what phase 4 adds to the flags (model status, JD's decks, findings): the lines carry them and the
-/// header explains the deck letters.
+/// header explains the `m:`, `k:` and deck letters.
 pub fn build_with(index: &Index, table: &Table, spec: &Spec, ctx: &Context) -> Result<Digest, FindError> {
     if spec.deck.is_none() && spec.ident.is_none() {
         return usage("digest needs --deck KEY or --ident LETTERS");
@@ -815,6 +831,7 @@ pub fn build_with(index: &Index, table: &Table, spec: &Spec, ctx: &Context) -> R
         num(hits.len())
     ));
     head.extend(legend());
+    head.extend(ctx.model_legend());
     head.extend(ctx.legend());
     if !unresolved.is_empty() {
         let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
@@ -1415,7 +1432,10 @@ pub fn command(project: &Project, args: &[String]) -> Result<Output, FindError> 
         budget_tokens: a.budget_tokens,
         prev: &prev,
     };
-    let digest = build_with(&index, &table, &spec, &Context::default())?;
+    // phase 4: the engine status of each card, JD's decks that play it and the FINDINGS lines that name it
+    let facts = crate::facts::Facts::load(project, &index, true, true).map_err(FindError::Failed)?;
+    let ctx = facts.context(deck.as_ref().map(|d| d.key.as_str()));
+    let digest = build_with(&index, &table, &spec, &ctx)?;
     let path = a
         .out
         .clone()

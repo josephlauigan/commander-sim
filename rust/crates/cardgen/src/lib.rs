@@ -13,6 +13,7 @@ pub mod digest;
 pub mod dsl;
 pub mod dsl_parse;
 pub mod export;
+pub mod facts;
 pub mod json;
 pub mod knowledge;
 pub mod llm;

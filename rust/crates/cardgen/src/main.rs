@@ -29,6 +29,7 @@ const USAGE: &str = "usage:
   cardgen roles --show NAME | --stats | --lint [--data-dir DIR]
   cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
                [--type WORD]... [--text REGEX]... [--role R]... [--gc] [--deck KEY] [--meld]
+               [--status LIST] [--in-deck KEY] [--not-in-deck KEY]
                [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
                                                 search the whole Commander catalog (data/knowledge/oracle.json, see
                                                 bulk-sync); filters combine with AND. --name is exact (also a face
@@ -41,6 +42,11 @@ const USAGE: &str = "usage:
                                                 --meld unless --name is given; --sort defaults to edhrec, --limit to
                                                 30 (all = no limit); --count prints only the number of matches;
                                                 notes about a cut page or a filtered-out name go to stderr
+                                                --json rows and --full also show the engine model status, the decks
+                                                of mine that play the card and the FINDINGS.md lines that name it;
+                                                --status LIST (full, full-auto, approximate, partial, unmodeled,
+                                                none = no engine record) and --in-deck / --not-in-deck KEY filter
+                                                on them
   cardgen map [--out PATH] [--stdout] [--data-dir DIR]
                                                 write the whole-catalog summary (about 3k tokens, under 32 KB) to
                                                 data/knowledge/map.md; needs oracle.json and roles.json; --stdout

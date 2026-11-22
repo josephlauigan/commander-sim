@@ -7,6 +7,7 @@
 
 use crate::data::Project;
 use crate::digest;
+use crate::facts::Facts;
 use crate::knowledge::{self, Card, Deck, Index, Legal};
 use crate::roles::{self, IDS};
 use std::collections::BTreeMap;
@@ -214,6 +215,18 @@ pub fn build_with(
     spellbook_dir: Option<&Path>,
     decks: &[MineDeck],
 ) -> Result<String, String> {
+    build_with_facts(index, table, spellbook_dir, decks, None)
+}
+
+/// [`build_with`] with the phase 4 facts (engine model status, findings): adds the engine coverage section and the
+/// model columns of JD's decks table. Without them the map has neither.
+pub fn build_with_facts(
+    index: &Index,
+    table: &digest::Table,
+    spellbook_dir: Option<&Path>,
+    decks: &[MineDeck],
+    facts: Option<&Facts>,
+) -> Result<String, String> {
     if index.roles(0).is_none() {
         return Err("the catalog has no role table attached; run `cardgen roles --rules`".into());
     }
@@ -343,6 +356,42 @@ pub fn build_with(
         num(unreviewed)
     );
 
+    // engine model coverage
+    if let Some(f) = facts {
+        let mut by: BTreeMap<&str, usize> = BTreeMap::new();
+        let mut none = 0;
+        for (i, _) in &cover {
+            match f.status_of(*i) {
+                Some((s, _)) => {
+                    let known = crate::audit::STATUSES.iter().find(|k| **k == s).copied().unwrap_or("other");
+                    *by.entry(known).or_default() += 1;
+                }
+                None => none += 1,
+            }
+        }
+        let _ = writeln!(w, "\n## Engine model coverage (can the simulator evaluate the card)\n");
+        if !f.engine.present {
+            let _ = writeln!(w, "No engine data in this project (data/carddb.txt): no card has a status.");
+        } else {
+            let n = |k: &str| num(by.get(k).copied().unwrap_or(0));
+            let _ = writeln!(w, "| status | cards |\n|---|---|");
+            for k in crate::audit::STATUSES {
+                let _ = writeln!(w, "| {k} | {} |", n(k));
+            }
+            if by.contains_key("other") {
+                let _ = writeln!(w, "| other | {} |", n("other"));
+            }
+            let _ = writeln!(w, "| no record | {} |", num(none));
+            let _ = writeln!(
+                w,
+                "\nFrom `cardgen audit` over the cards that have a record in data/cards.json (digest flag `m:`, `find \
+                 --json` key `status`); a card with no record has no status, never Full: the sim cannot evaluate it \
+                 (`find --status none`). Full is hand-verified, Full-auto is compiled from Oracle text. \
+                 `find --status full,full-auto` is the set safe to propose; a card below Full goes to JD first."
+            );
+        }
+    }
+
     // types and keywords
     let counts = |keep: &dyn Fn(&Card) -> bool| -> Vec<(String, usize)> {
         let mut m: BTreeMap<String, usize> = BTreeMap::new();
@@ -396,8 +445,10 @@ pub fn build_with(
     } else {
         let _ = writeln!(
             w,
-            "| key | commander | identity | tiers | list cards not Commander-legal | cards with each role |\n\
-             |---|---|---|---|---|---|"
+            "| key | commander | identity | tiers | list cards not Commander-legal | cards with each role |{}\n\
+             |---|---|---|---|---|---|{}",
+            if facts.is_some() { " Partial | Unmodeled | FINDINGS mentions |" } else { "" },
+            if facts.is_some() { "---|---|---|" } else { "" }
         );
         for d in decks {
             let own = digest::deck_cards(index, &d.deck);
@@ -413,9 +464,18 @@ pub fn build_with(
             };
             let roles_cell =
                 digest::role_counts(index, &own).iter().map(|(r, n)| format!("{r} {n}")).collect::<Vec<_>>().join(", ");
+            let model_cells = match facts {
+                None => String::new(),
+                Some(f) => {
+                    let count =
+                        |status: &str| own.iter().filter(|&&i| f.status_of(i).is_some_and(|s| s.0 == status)).count();
+                    let mentions: usize = own.iter().map(|&i| f.findings_of(i).len()).sum();
+                    format!(" {} | {} | {mentions} |", count("Partial"), count("Unmodeled"))
+                }
+            };
             let _ = writeln!(
                 w,
-                "| {} | {commander} | {} | {} | {} | {roles_cell} |",
+                "| {} | {commander} | {} | {} | {} | {roles_cell} |{model_cells}",
                 d.deck.key,
                 d.deck.ident,
                 d.tiers.join(" "),
@@ -531,7 +591,8 @@ pub fn command(project: &Project, args: &[String]) -> Result<(Output, bool), Str
     let spell = project.data("spellbook");
     let decks_path = project.data("decks.json");
     let decks = if decks_path.is_file() { load_mine(&decks_path)? } else { vec![] };
-    let text = build_with(&index, &table, spell.is_dir().then_some(spell.as_path()), &decks)?;
+    let facts = Facts::load(project, &index, true, true)?;
+    let text = build_with_facts(&index, &table, spell.is_dir().then_some(spell.as_path()), &decks, Some(&facts))?;
     let path = out_path.unwrap_or_else(|| digest::out_dir(project, data_dir.as_deref()).join("map.md"));
     digest::write_file(&path, &text)?;
     Ok((Output { text, path }, stdout))

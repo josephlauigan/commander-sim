@@ -6,6 +6,7 @@
 //! The command is read-only. See documents/card-knowledge.md.
 
 use crate::data::Project;
+use crate::facts::{Facts, status_selected};
 use crate::roles::Source;
 use fancy_regex::Regex;
 use serde::{Deserialize, Serialize};
@@ -188,6 +189,27 @@ pub fn fold_raw(s: &str) -> String {
                     out.extend(d.to_lowercase());
                 }
             }
+        }
+    }
+    out
+}
+
+/// [`fold_raw`] without the lower-casing (and without its backtick rule, so markdown code spans survive): accents and
+/// combining marks dropped, every other apostrophe variant a plain `'`,
+/// `Æ`/`Œ`/`ß` spelled out (`Ae`, `Oe`, `ss`), the case kept. The spelling a case-sensitive text search compares by
+/// (`Anduril` in a note finds `Andúril`; `Sol Ring` never finds `sol ring`).
+pub fn fold_case(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '\u{2019}' | '\u{2018}' | '\u{2bc}' | '\u{b4}' => out.push('\''),
+            '\u{a789}' => out.push(':'),
+            'Æ' => out.push_str("Ae"),
+            'æ' => out.push_str("ae"),
+            'Œ' => out.push_str("Oe"),
+            'œ' => out.push_str("oe"),
+            'ß' => out.push_str("ss"),
+            c => out.extend(std::iter::once(c).nfkd().filter(|d| !is_combining(*d))),
         }
     }
     out
@@ -719,6 +741,11 @@ pub struct Query {
     pub roles: Vec<String>,
     pub gc: bool,
     pub deck: Option<String>,
+    /// `--status LIST`: the engine model statuses to keep, lower-case, `none` = no engine record
+    pub status: Option<Vec<String>>,
+    /// `--in-deck KEY` / `--not-in-deck KEY`: a deck of `mine` that plays the card / does not
+    pub in_deck: Option<String>,
+    pub not_in_deck: Option<String>,
     pub sort: Sort,
     pub limit: usize,
     pub offset: usize,
@@ -773,6 +800,9 @@ impl Default for Query {
             roles: vec![],
             gc: false,
             deck: None,
+            status: None,
+            in_deck: None,
+            not_in_deck: None,
             sort: Sort::Edhrec,
             limit: usize::MAX,
             offset: 0,
@@ -800,7 +830,8 @@ impl Query {
                 "--full" => q.full = true,
                 "--meld" => q.meld = true,
                 "--name" | "--name-contains" | "--ident" | "--legal" | "--cmc" | "--type" | "--text" | "--deck"
-                | "--sort" | "--limit" | "--offset" | "--data-dir" | "--role" => {
+                | "--sort" | "--limit" | "--offset" | "--data-dir" | "--role" | "--status" | "--in-deck"
+                | "--not-in-deck" => {
                     let Some(v) = args.get(i) else { return usage(format!("{a} needs a value")) };
                     if v.starts_with("--") {
                         return usage(format!("{a} needs a value (got '{v}')"));
@@ -850,6 +881,9 @@ impl Query {
                             q.roles.push(v.clone());
                         }
                         "--deck" => q.deck = Some(v.clone()),
+                        "--status" => q.status = Some(crate::facts::parse_status_list(v).map_err(FindError::Usage)?),
+                        "--in-deck" => q.in_deck = Some(v.clone()),
+                        "--not-in-deck" => q.not_in_deck = Some(v.clone()),
                         "--sort" => {
                             q.sort = match v.as_str() {
                                 "edhrec" => Sort::Edhrec,
@@ -1090,6 +1124,24 @@ struct OutCard<'a> {
     roles: Option<&'a [String]>,
     #[serde(skip_serializing_if = "Option::is_none")]
     primary: Option<&'a str>,
+    /// the keys of the decks of `mine` that play the card (always present, possibly empty)
+    decks: Vec<&'a str>,
+    /// the lines of the decks' `FINDINGS.md` files that mention the card (always present, possibly empty)
+    findings: Vec<OutFinding<'a>>,
+    /// the engine's model status (`cardgen audit`'s words): only when the card has an engine record
+    #[serde(skip_serializing_if = "Option::is_none")]
+    status: Option<&'a str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    status_note: Option<&'a str>,
+}
+
+/// One `FINDINGS.md` line in a JSON row.
+#[derive(Serialize)]
+struct OutFinding<'a> {
+    file: &'a str,
+    line: usize,
+    heading: &'a str,
+    text: &'a str,
 }
 
 fn out_card(c: &Card) -> OutCard<'_> {
@@ -1133,18 +1185,35 @@ fn out_card(c: &Card) -> OutCard<'_> {
         meld_parts: r.meld_parts.as_deref(),
         roles: None,
         primary: None,
+        decks: vec![],
+        findings: vec![],
+        status: None,
+        status_note: None,
     }
 }
 
 /// a bare array, one object per line
-fn json_array(cards: &[&Card], index: &Index) -> String {
+fn json_array(cards: &[&Card], index: &Index, facts: &Facts) -> String {
     let rows: Vec<String> = cards
         .iter()
         .map(|c| {
             let mut row = out_card(c);
-            if let Some(a) = index.by_oracle_id(&c.raw.oracle_id).and_then(|i| index.roles(i)) {
+            let id = index.by_oracle_id(&c.raw.oracle_id);
+            if let Some(a) = id.and_then(|i| index.roles(i)) {
                 row.roles = Some(&a.roles);
                 row.primary = Some(&a.primary);
+            }
+            if let Some(i) = id {
+                row.decks = facts.decks_of(i);
+                row.findings = facts
+                    .findings_of(i)
+                    .iter()
+                    .map(|f| OutFinding { file: &f.file, line: f.line, heading: &f.heading, text: &f.text })
+                    .collect();
+                if let Some((s, n)) = facts.status_of(i) {
+                    row.status = Some(s);
+                    row.status_note = Some(n);
+                }
             }
             serde_json::to_string(&row).expect("a card serialises")
         })
@@ -1193,7 +1262,7 @@ fn table(cards: &[&Card]) -> String {
     out
 }
 
-fn readable(c: &Card) -> String {
+fn readable(c: &Card, i: Option<u32>, facts: &Facts) -> String {
     let r = &c.raw;
     let mut s = String::new();
     let _ = writeln!(s, "{}  {}  (cmc {})", r.name, dash(&c.cost()), c.cmc);
@@ -1248,6 +1317,31 @@ fn readable(c: &Card) -> String {
         r.released_at,
         if r.reserved { "yes" } else { "no" }
     );
+    if let Some(i) = i {
+        match facts.status_of(i) {
+            Some((st, note)) => {
+                let _ = writeln!(
+                    s,
+                    "engine status: {st}{}",
+                    if note.is_empty() { String::new() } else { format!(" ({note})") }
+                );
+            }
+            None => {
+                let _ = writeln!(s, "engine status: none (no record in data/cards.json: the sim cannot evaluate it)");
+            }
+        }
+        let decks = facts.decks_of(i);
+        let _ = writeln!(s, "decks: {}", if decks.is_empty() { "none".to_string() } else { decks.join(", ") });
+        let found = facts.findings_of(i);
+        if found.is_empty() {
+            let _ = writeln!(s, "findings: none");
+        } else {
+            let _ = writeln!(s, "findings ({}):", found.len());
+            for f in found {
+                let _ = writeln!(s, "  {}:{}  [{}]  {}", f.file, f.line, dash(&f.heading), f.text);
+            }
+        }
+    }
     s
 }
 
@@ -1296,8 +1390,36 @@ pub fn find(project: &Project, args: &[String]) -> Result<String, FindError> {
 }
 
 /// every reason a card that `--name` found is not in the result
-fn why_filtered(c: &Card, i: u32, q: &Query, ident: Option<u8>, exclude: &[bool], deck: Option<&Deck>) -> Vec<String> {
+fn why_filtered(
+    c: &Card,
+    i: u32,
+    q: &Query,
+    ident: Option<u8>,
+    exclude: &[bool],
+    deck: Option<&Deck>,
+    facts: Option<&Facts>,
+) -> Vec<String> {
     let mut why = vec![];
+    if let Some(f) = facts {
+        if let Some(list) = &q.status
+            && !status_selected(list, f.status_of(i).map(|s| s.0))
+        {
+            why.push(format!("engine status {}", f.status_of(i).map_or("none", |s| s.0).to_lowercase()));
+        }
+        let bits = f.deck_bits.get(i as usize).copied().unwrap_or(0);
+        if let Some(k) = &q.in_deck
+            && let Ok(bit) = f.deck_bit(k)
+            && bits & bit == 0
+        {
+            why.push(format!("not in deck {k}"));
+        }
+        if let Some(k) = &q.not_in_deck
+            && let Ok(bit) = f.deck_bit(k)
+            && bits & bit != 0
+        {
+            why.push(format!("in deck {k} (--not-in-deck)"));
+        }
+    }
     if !Index::legal_ok(c, q) {
         why.push(format!("legality {}", c.legal.as_str()));
     }
@@ -1385,6 +1507,29 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         role_note = Some(format!("(roles unavailable: {})", error.lines().next().unwrap_or("invalid table")));
     }
     let (hits, unresolved) = index.search(&q, deck.as_ref())?;
+    // phase 4: the engine, deck and findings facts, loaded only when the output or a filter needs them
+    let need_engine = q.json || q.full || q.status.is_some();
+    let need_decks = q.json || q.full || q.in_deck.is_some() || q.not_in_deck.is_some();
+    let facts = if need_engine || need_decks {
+        Some(Facts::load(project, &index, need_engine, need_decks).map_err(FindError::Failed)?)
+    } else {
+        None
+    };
+    let hits = match &facts {
+        Some(f) => {
+            let in_bit = q.in_deck.as_deref().map(|k| f.deck_bit(k)).transpose()?;
+            let not_bit = q.not_in_deck.as_deref().map(|k| f.deck_bit(k)).transpose()?;
+            hits.into_iter()
+                .filter(|&i| {
+                    let bits = f.deck_bits.get(i as usize).copied().unwrap_or(0);
+                    q.status.as_ref().is_none_or(|l| status_selected(l, f.status_of(i).map(|s| s.0)))
+                        && in_bit.is_none_or(|b| bits & b != 0)
+                        && not_bit.is_none_or(|b| bits & b == 0)
+                })
+                .collect()
+        }
+        None => hits,
+    };
     if let (Some(d), false) = (&deck, unresolved.is_empty()) {
         let shown: Vec<&str> = unresolved.iter().take(10).map(String::as_str).collect();
         let more = if unresolved.len() > 10 { ", ..." } else { "" };
@@ -1410,7 +1555,7 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         let exclude = exclude();
         let mut why: Vec<String> = vec![];
         for &i in found {
-            for w in why_filtered(&index.cards[i as usize], i, &q, ident, &exclude, deck.as_ref()) {
+            for w in why_filtered(&index.cards[i as usize], i, &q, ident, &exclude, deck.as_ref(), facts.as_ref()) {
                 if !why.contains(&w) {
                     why.push(w);
                 }
@@ -1430,7 +1575,8 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr, role_note });
     }
     let total = hits.len();
-    let shown: Vec<&Card> = hits.iter().skip(q.offset).take(q.limit).map(|i| &index.cards[*i as usize]).collect();
+    let shown_ids: Vec<u32> = hits.iter().copied().skip(q.offset).take(q.limit).collect();
+    let shown: Vec<&Card> = shown_ids.iter().map(|i| &index.cards[*i as usize]).collect();
     let end = q.offset.saturating_add(shown.len());
     if !shown.is_empty() && end < total {
         notes.push(format!("(showing {}-{end} of {total}; --offset {end} or --limit all)", q.offset + 1));
@@ -1446,11 +1592,12 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         }
     }
     let out = if q.json {
-        json_array(&shown, &index)
+        json_array(&shown, &index, facts.as_ref().expect("facts are loaded for JSON"))
     } else if shown.is_empty() {
         (if total == 0 { "no matches\n" } else { "no matches in this page\n" }).to_string()
     } else if q.full {
-        shown.iter().map(|c| readable(c)).collect::<Vec<_>>().join("\n")
+        let f = facts.as_ref().expect("facts are loaded for --full");
+        shown.iter().zip(&shown_ids).map(|(c, i)| readable(c, Some(*i), f)).collect::<Vec<_>>().join("\n")
     } else {
         table(&shown)
     };

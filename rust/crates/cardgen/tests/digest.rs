@@ -5,6 +5,7 @@
 
 use cardgen::data::Project;
 use cardgen::digest::{self, Digest, Prev, Review, Spec, Table};
+use cardgen::facts::Facts;
 use cardgen::knowledge::{self, FindError, Index, Legal};
 use cardgen::llm;
 use cardgen::map;
@@ -1760,4 +1761,176 @@ fn an_injected_context_prints_m_d_k_in_the_fixed_order_with_question_mark_last_a
     let l = digest::Lines::with_context(&env.index, &env.table, ctx).line(id, false);
     assert!(field(&l, 5).contains("m:F d:CT k:") || field(&l, 5).contains("m:F d:CT"), "{l}");
     let _ = lines;
+}
+
+// ------------------------------------------------------------------------------------------------ phase 4 facts
+
+/// the flag tokens of a line in the one order `flags` prints them
+fn flag_rank(f: &str) -> usize {
+    match f {
+        "*" => 0,
+        "BAN" | "NL" => 1,
+        "GC" => 2,
+        "?" => 8,
+        _ if f.starts_with('#') => 3,
+        _ if f.starts_with('$') => 4,
+        _ if f.starts_with("m:") => 5,
+        _ if f.starts_with("d:") => 6,
+        _ if f.starts_with("k:") => 7,
+        _ => panic!("unknown flag {f}"),
+    }
+}
+
+/// the fixture project's facts: audit files for two decks and an engine status for five cards
+fn facts_env() -> (Env, Facts) {
+    let env = Env::new();
+    for (key, text) in [
+        (
+            "thanos",
+            "# Thanos findings\n## Swaps\nCounterspell stays; Demonic Tutor too.\nLightning Bolt is not in this deck.\n\
+             `Island` and **Cyclonic Rift** here.\n",
+        ),
+        ("dragons", "# Dragons\nLightning Bolt and Mogg Fanatic. Counterspell is blue.\n"),
+    ] {
+        std::fs::create_dir_all(env.root.join("audit").join(key)).unwrap();
+        std::fs::write(env.root.join("audit").join(key).join("FINDINGS.md"), text).unwrap();
+    }
+    let mut facts = Facts::decks_and_findings(&env.project(), &env.index).unwrap();
+    for (name, status) in [
+        ("Counterspell", "Full"),
+        ("Demonic Tutor", "Full-auto"),
+        ("Cyclonic Rift", "Approximate"),
+        ("Smothering Tithe", "Partial"),
+        ("Lightning Bolt", "Unmodeled"),
+    ] {
+        facts.engine.status.insert(env.index.lookup(name)[0], (status.to_string(), format!("{status} note")));
+    }
+    facts.engine.present = true;
+    (env, facts)
+}
+
+#[test]
+fn a_digest_built_from_facts_prints_m_d_k_in_the_fixed_order_with_a_header_and_question_mark_last() {
+    let (env, facts) = facts_env();
+    let ctx = facts.context(Some("thanos"));
+    let deck = env.deck("thanos");
+    let d = digest::build_with(&env.index, &env.table, &env.spec(Some(&deck), &Prev::Missing), &ctx).unwrap();
+    assert!(d.text.contains("# d: letters of JD's decks that also play the card: D=dragons T=thanos U=duo"));
+    assert!(
+        d.text.contains("# m: the simulator's model status") && d.text.contains("F full (hand-verified), f full-auto")
+    );
+    assert!(d.text.contains("k:N = lines of JD's audit/*/FINDINGS.md that name the card"));
+    let mut seen = (false, false, false);
+    for l in card_lines(&d.text) {
+        assert_eq!(l.split('|').count(), 6, "{l}");
+        assert!(l.chars().count() <= 160, "{l}");
+        let flags = field(&l, 5);
+        let toks: Vec<&str> = flags.split(' ').collect();
+        let ranks: Vec<usize> = toks.iter().filter(|t| **t != "-").map(|t| flag_rank(t)).collect();
+        assert!(ranks.windows(2).all(|w| w[0] < w[1]), "flags out of order: {l}");
+        if toks.contains(&"?") {
+            assert_eq!(toks.last(), Some(&"?"), "{l}");
+        }
+        let name = field(&l, 0);
+        let m = toks.iter().find(|t| t.starts_with("m:")).map(|t| t.to_string());
+        match name.as_str() {
+            "Counterspell" => {
+                // in section A of the thanos digest: its own deck is left out of `d:`, no other deck plays it
+                assert_eq!(m.as_deref(), Some("m:F"), "{l}");
+                assert!(toks.contains(&"*") && !toks.iter().any(|t| t.starts_with("d:")), "{l}");
+                assert!(toks.contains(&"k:2"), "{l}");
+                seen.0 = true;
+            }
+            "Lightning Bolt" => {
+                // a candidate here (not in thanos): the dragons and duo decks play it
+                assert_eq!(m.as_deref(), Some("m:U"), "{l}");
+                assert!(toks.contains(&"d:DU") && !toks.contains(&"*"), "{l}");
+                assert!(toks.contains(&"k:2"), "{l}");
+                seen.1 = true;
+            }
+            "Island" => {
+                assert!(m.is_none() && !toks.iter().any(|t| t.starts_with("d:")), "{l}");
+                seen.2 = true;
+            }
+            _ => {}
+        }
+        // no card without an engine record carries an m: flag
+        if !["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe", "Lightning Bolt"]
+            .contains(&name.as_str())
+        {
+            assert!(m.is_none(), "{l}");
+        }
+    }
+    assert_eq!(seen, (true, true, true), "the cards were not all listed");
+    // another deck's digest leaves out its own letter, and two runs are identical
+    let dragons = env.deck("dragons");
+    let own = facts.context(Some("dragons"));
+    let a = digest::build_with(&env.index, &env.table, &env.spec(Some(&dragons), &Prev::Missing), &own).unwrap();
+    for l in section(&a.text, 'A') {
+        assert!(!field(&l, 5).split(' ').any(|t| t.starts_with("d:") && t.contains('D')), "{l}");
+    }
+    let b = digest::build_with(&env.index, &env.table, &env.spec(Some(&dragons), &Prev::Missing), &own).unwrap();
+    assert_eq!(a.text, b.text);
+}
+
+#[test]
+fn a_line_with_every_flag_still_fits_in_160_characters_by_shrinking_the_gist() {
+    let (env, mut facts) = facts_env();
+    for name in [LONG_NAME, LONG141, "Smothering Tithe"] {
+        let id = env.index.lookup(name)[0];
+        facts.engine.status.insert(id, ("Full-auto".into(), String::new()));
+        facts.deck_bits[id as usize] = 0b111;
+        facts.findings.insert(id, vec![]);
+    }
+    let ctx = {
+        let mut c = facts.context(None);
+        for name in [LONG_NAME, LONG141, "Smothering Tithe"] {
+            c.findings.insert(env.index.lookup(name)[0], 12);
+        }
+        c
+    };
+    let lines = digest::Lines::with_context(&env.index, &env.table, ctx);
+    for name in [LONG_NAME, LONG141, "Smothering Tithe"] {
+        let id = env.index.lookup(name)[0];
+        let l = lines.line(id, true);
+        assert_eq!(l.split('|').count(), 6, "{l}");
+        assert!(l.chars().count() <= 160, "{} chars: {l}", l.chars().count());
+        assert!(field(&l, 5).contains("m:f d:DTU k:12"), "{l}");
+    }
+}
+
+#[test]
+fn the_map_gets_an_engine_coverage_section_and_model_columns_and_stays_deterministic() {
+    let (env, facts) = facts_env();
+    let spell = env.root.join("data/spellbook");
+    let decks = map::load_mine(&env.project().data("decks.json")).unwrap();
+    let a = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&facts)).unwrap();
+    let b = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&facts)).unwrap();
+    assert_eq!(a, b);
+    assert!(a.len() < 32 * 1024);
+    let section: String =
+        a.split("## Engine model coverage").nth(1).unwrap().split("\n## ").next().unwrap().to_string();
+    for row in ["| Full | 1 |", "| Full-auto | 1 |", "| Approximate | 1 |", "| Partial | 1 |", "| Unmodeled | 1 |"] {
+        assert!(section.contains(row), "{row} in {section}");
+    }
+    let covered =
+        a.split("cover ").nth(1).unwrap().split(' ').next().unwrap().replace(',', "").parse::<usize>().unwrap();
+    assert!(section.contains(&format!("| no record | {} |", covered - 5)), "{section}");
+    // JD's decks table: per-deck Partial and Unmodeled counts and the findings mentions of the deck's cards
+    assert!(a.contains("| Partial | Unmodeled | FINDINGS mentions |"));
+    let row = a.lines().find(|l| l.starts_with("| thanos |")).unwrap();
+    let cells: Vec<&str> = row.trim_matches('|').split('|').map(str::trim).collect();
+    let n = cells.len();
+    // thanos plays Counterspell, Demonic Tutor, Cyclonic Rift, Smothering Tithe: one Partial, no Unmodeled
+    assert_eq!((cells[n - 3], cells[n - 2]), ("1", "0"), "{row}");
+    let mentions: usize = cells[n - 1].parse().unwrap();
+    assert!(mentions >= 4, "{row}");
+    // without facts the map has neither
+    let plain = map::build_with(&env.index, &env.table, Some(&spell), &decks).unwrap();
+    assert!(!plain.contains("Engine model coverage") && !plain.contains("FINDINGS mentions"));
+    // a project with no engine data says so instead of printing zeros
+    let mut none = facts.clone();
+    none.engine = Default::default();
+    let c = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&none)).unwrap();
+    assert!(c.contains("No engine data in this project"));
 }
