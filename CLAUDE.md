@@ -148,11 +148,31 @@ Before you propose a card for one of JD's decks (or test, model or buy-advise it
 3. **The cut is in the current list**: fetch origin/main first and check the card out is in that deck's `cards` in
    `data/decks.json`; FINDINGS files can name cards that have since left.
 
+## Recommend packages, not loose cards
+
+(JD, 2026-11-22.) Decks run their strategy through packages: cards that do one job together (an engine with its
+payoffs, enablers and tutors; a combo with its protection; an answer suite; a mana-base change). Recommend at that level.
+
+1. Start from the deck's plan (its guide in `decklists/`, its `data/plans` file, FINDINGS, `decklists/CHANGELOG.md`) and
+   name its packages before naming any card.
+2. A proposal is a package: its goal; each card in with its job and where it comes from (another deck, spare cards,
+   buy); each card out with the job lost and why it was chosen (evidence, proxy or not owned, a weaker sub-plan); the
+   `Out=>In` pairs; the change in roles, curve, lands and colour sources, Game Changers and any count or invariant the
+   plan relies on.
+3. A single swap stands alone only slot-for-slot: same job (role family), mana value at most one higher, land for
+   land, and no count the plan relies on changes. Say so for that pair. Any other pairing belongs to a package or plan
+   change, proposed as one, with what the deck loses.
+4. Choose cuts by job first, then by evidence or ownership: cut proxy or not-owned cards first, an owned card only for a
+   true upgrade (JD, 11-06; standing rule since 11-22). Read `data/ownership.toml` when it exists and the deck is
+   marked confirmed there; otherwise ask JD which cards are proxies or not owned.
+5. Every card gets the swap checks; all below-Full cards go to JD in one list; the package runs as one paired test (all
+   pairs together, the deck's own tiers, explain on) in the plan JD approves. Details: `documents/card-knowledge.md`.
+
 ## Card recommendations: use the card knowledge base
 
 When JD asks what to swap, cut, buy or adopt, or what a deck should be doing, work from the catalog tools, not from
 memory (approach, data and limits: `documents/card-knowledge.md`). This adds to the rules above and overrides none
-of them (approval, swap checks, tiers, explain, FINDINGS). Steps 1-4 are read-only investigation: `map` and `digest`
+of them (approval, swap checks, packages, tiers, explain, FINDINGS). Steps 1-4 are read-only investigation: `map` and `digest`
 also rewrite their own gitignored view file (even with `--stdout`), and nothing else is written.
 
 1. **Map**: `cardgen map --stdout` (about 3k tokens): what exists, role and colour counts, JD's decks.
