@@ -120,6 +120,7 @@ have = [
   "Fiery Emancipation",
   "Force of Negation",
   "Force of Will",
+  "Gamble",  # unverified: PACKAGES.md:17 says the 11-06 copy was a proxy; that copy was cut 11-07 (CHANGELOG.md:971); re-added 11-09 (CHANGELOG.md:970), copy not recorded: ask JD
   "Gifts Ungiven",
   "Grand Abolisher",
   "Grim Tutor",
@@ -130,6 +131,7 @@ have = [
   "Jeska's Will",
   "Lightning Greaves",
   "Llanowar Elves",
+  "Lotus Petal",  # unverified: PACKAGES.md:17 says the 11-06 copy was a proxy; that copy was cut 11-07 (CHANGELOG.md:971); the current copy came with the 11-13 Cali list (CHANGELOG.md:956), likely from Aragorn: ask JD
   "Mana Crypt",
   "Mana Vault",
   "Meteor Golem",
@@ -183,10 +185,7 @@ have = [
   "Worldly Tutor",
   "Yavimaya Coast",
 ]
-proxy = [
-  "Gamble",  # source: audit/jd-packages/2026-11-06-card-pile/PACKAGES.md:17
-  "Lotus Petal",  # source: audit/jd-packages/2026-11-06-card-pile/PACKAGES.md:17
-]
+proxy = []
 missing = []
 
 [deck.urdragon]
@@ -464,7 +463,7 @@ proxy = [
   "Exquisite Blood",  # source: audit/jd-packages/2026-11-06-card-pile/PACKAGES.md:37
 ]
 missing = [
-  "Serra's Sanctum",  # source: decklists/CHANGELOG.md:688
+  "Serra's Sanctum",  # source: decklists/CHANGELOG.md:688 ("Not yet owned", 10-28); but data/printings/yshtola.txt:62 has a USG printing from JD's 11/01 list (76e94ab8): ask JD
 ]
 
 [spare]

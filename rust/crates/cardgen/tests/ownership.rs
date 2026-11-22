@@ -424,9 +424,16 @@ fn the_real_ownership_file_passes_against_the_real_decks() {
     let opts = Options { file: None, data_dir: Some(dir.clone()), strict: false };
     let r = ownership::check(&Project::new(repo()), &opts).unwrap();
     let _ = std::fs::remove_dir_all(&dir);
-    assert!(r.ok(), "data/ownership.toml does not match data/decks.json (edit it with the deck):\n{}", r.text());
+    assert!(
+        r.ok(),
+        "data/ownership.toml does not match data/decks.json: a deck list changed. In [deck.KEY], add each card reported \
+         'not in the ownership file' under the status JD gives (have/proxy/missing; ask JD, don't assume have), and \
+         remove each card reported 'not in the deck list' (move it to [spare] if JD keeps it). See \
+         rust/crates/cardgen/README.md, Ownership.\n{}",
+        r.text()
+    );
     assert!(Path::new(&repo()).join("data/ownership.toml").is_file());
-    // every deck of mine has a section and none is confirmed by the seed; the seed has no spare cards
+    // every deck of mine has a section
     assert!(r.decks.iter().all(|d| d.listed), "{}", r.text());
     assert!(!r.decks.is_empty());
 }

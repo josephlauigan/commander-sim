@@ -81,14 +81,19 @@ the new cards are modeled and where the file's prose still mentions cards that l
 cardgen export
 ```
 
+For one of your decks, also update `data/ownership.toml`: in `[deck.KEY]` add each new card under the status JD gives
+(`have`, `proxy` or `missing`; ask JD, do not assume `have`), remove each card that left (move it to `[spare]` if JD
+keeps it), then run `cardgen ownership --check`.
+
 `cardgen validate` runs the same checks over every pool deck (36 in seven tiers).
 
 ## Rebuild
 
 `cardgen export` writes both files (`--out DIR` writes elsewhere). The output is deterministic: the same inputs give
 the same bytes. After any change to a data file, a deck list or the cache, re-export and commit the JSON. The test
-`export_matches_committed_files` fails when `data/*.json` is stale, and `deck_guard_fixture_is_current` when the deck
-guard fixture is.
+`export_matches_committed_files` fails when `data/*.json` is stale, `deck_guard_fixture_is_current` when the deck
+guard fixture is, and `the_real_ownership_file_passes_against_the_real_decks` when `data/ownership.toml` no longer
+matches the lists of JD's decks.
 
 ## Audit
 

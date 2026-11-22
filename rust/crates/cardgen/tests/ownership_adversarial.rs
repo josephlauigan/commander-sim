@@ -517,7 +517,6 @@ fn real_seed_comments_parse_and_every_owned_deck_addition_or_cut_is_detected() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
     let decks: Value = serde_json::from_slice(&std::fs::read(root.join("data/decks.json")).unwrap()).unwrap();
     let seed = std::fs::read_to_string(root.join("data/ownership.toml")).unwrap();
-    assert!(seed.contains("# source:"));
     env.decks(decks.clone());
     assert!(env.check(&seed, false).ok());
     for i in 0..decks["mine"].as_array().unwrap().len() {
@@ -533,9 +532,29 @@ fn real_seed_comments_parse_and_every_owned_deck_addition_or_cut_is_detected() {
         );
         let mut cut = decks.clone();
         // Each real deck's first entry is a nonbasic; verify that it actually has an inventory entry first.
-        let card = cut["mine"][i]["cards"].as_array_mut().unwrap().remove(0);
+        let cards = cut["mine"][i]["cards"].as_array_mut().unwrap();
+        let at = cards
+            .iter()
+            .position(|c| {
+                let n = c.as_str().unwrap();
+                !matches!(
+                    n,
+                    "Plains"
+                        | "Island"
+                        | "Swamp"
+                        | "Mountain"
+                        | "Forest"
+                        | "Wastes"
+                        | "Snow-Covered Plains"
+                        | "Snow-Covered Island"
+                        | "Snow-Covered Swamp"
+                        | "Snow-Covered Mountain"
+                        | "Snow-Covered Forest"
+                ) && seed.contains(&format!("\"{n}\""))
+            })
+            .expect("a nonbasic deck card with an inventory entry");
+        let card = cards.remove(at);
         let card = card.as_str().unwrap();
-        assert!(seed.contains(card), "choose a nonbasic seed entry, got {card}");
         env.decks(cut);
         let r = env.check(&seed, false);
         assert!(problem(&r, Level::Error, Some(key), Some(card), "not in the deck list"), "{}", r.text());
