@@ -3,7 +3,7 @@ version = 1
 
 [[role]]
 id = "ramp"
-definition = """A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Adds mana beyond a land drop: rocks, dorks, land ramp, rituals, cost reducers. Lands get roles only beyond tapping for one mana. Land searches onto the battlefield from spells or enter triggers are ramp; self-replacing fetches are not. Narrow cost reducers and life paid instead of mana count; self-only cost reduction does not. Sacrifice-for-mana is ramp and sac-outlet, ramp first. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+definition = """A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Adds mana beyond a land drop: rocks, dorks, land ramp, rituals, cost reducers. Lands get roles only beyond tapping for one mana. Land searches onto the battlefield from spells or enter triggers are ramp; self-replacing fetches are not. Narrow cost reducers and life paid instead of mana count; self-only cost reduction does not. Sacrifice-for-mana is ramp and sac-outlet, ramp first. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A mana filter (an activation whose mana cost equals the mana it adds, e.g. '{1}, {T}: Add one mana of any color') is `fixing`, not `ramp`: ramp needs net mana beyond a land drop."""
 src = "rules"
 guard = """\
 (?i)add|less to (?:cast|activate)|cost.*less|pay .*life rather than|search .*library|additional land|\
@@ -11,7 +11,7 @@ untap.*lands?|land creature token|affinity|return.*land cards?.*battlefield|trea
 
 [[role]]
 id = "fixing"
-definition = """produces 2+ colours or any colour (lands included). Land searches reaching two or more basic types, any basic land or any land count; searches for one basic type do not. An MDFC land face adds nothing. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+definition = """produces 2+ colours or any colour (lands included). Land searches reaching two or more basic types, any basic land or any land count; searches for one basic type do not. An MDFC land face adds nothing. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A mana filter (an activation whose mana cost equals the mana it adds, e.g. '{1}, {T}: Add one mana of any color') is `fixing`, not `ramp`: ramp needs net mana beyond a land drop."""
 src = "rules"
 guard = '(?i)add|mana of any|search .*library|landcycling|enchanted land is'
 
@@ -24,10 +24,10 @@ draw. Impulse draw and playing from the library top are draw. Main or repeatable
 roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land \
 backs add nothing; prepare cards use their spell face and their creature face's own abilities. Food, Blood, Map, Junk and other non-Treasure, non-Clue \
 artifact tokens are not `tokens`: judge their ability on its own. A repeatable Clue maker is tokens AND draw; \
-one Clue from a spell or an enter trigger is tokens only."""
+one Clue from a spell or an enter trigger is tokens only. A self-replacing aura or equipment ('When enchanted creature dies, draw a card', 'when this dies, draw') replaces itself like a cantrip and is not `draw` (convention 3). The monarch draws a card every end step: becoming the monarch repeatably is `draw`."""
 src = "rules"
 guard = """\
-(?i)draw|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
+(?i)draw|monarch|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
 junk token|may (?:play|cast) (?:it|that card|those cards|one of those cards)"""
 
 [[role]]
@@ -38,17 +38,17 @@ guard = '(?i)scry|surveil|draw.*discard|discard.*draw|look at|reveal.*top|from a
 
 [[role]]
 id = "tutor"
-definition = """searches the library for a nonland card (a land search is ramp/fixing). Searches must reach nonland cards. Land-only searches are ramp/fixing. Roles never come from combo or commander context; a tutor is not a finisher for finding a combo. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+definition = """searches the library for a nonland card (a land search is ramp/fixing). Searches must reach nonland cards. Land-only searches are ramp/fixing. Roles never come from combo or commander context; a tutor is not a finisher for finding a combo. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. 'Search your library for a card named ~' (a copy of itself) is not `tutor`."""
 src = "rules"
 guard = '(?i)search .*library|transmute'
 
 [[role]]
 id = "removal"
-definition = """removes, steals or neutralises one opposing permanent (destroy, exile, bounce, -X/-X, fight, edict). Targeted multi-permanent destruction is removal, not wipe. Temporary stealing, bare tapping, combat-only damage and a 1-damage enter trigger do not count. Damage that can hit creatures is removal, not also drain. Exile and return of your own permanents is blink. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+definition = """removes, steals or neutralises one opposing permanent (destroy, exile, bounce, -X/-X, fight, edict). Targeted multi-permanent destruction is removal, not wipe. Temporary stealing, bare tapping, combat-only damage and a 1-damage enter trigger do not count. Damage that can hit creatures is removal, not also drain. Exile and return of your own permanents is blink. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. Tokens given to an opponent as compensation (Mercy Killing) are not `tokens`; the edict or destroy part is still `removal`."""
 src = "rules+llm"
 guard = """\
 (?i)destroy|exile|return|damage|-[0-9x]+/-|fight|sacrifice|control of|control enchanted (?:creature|\
-permanent)|annihilator|put target.*library|shuffles.*library|at the beginning.*tap|enchanted.*(?:tap|untap|\
+permanent)|annihilator|put (?:up to [a-z]+ )?target.*library|shuffles.*library|at the beginning.*tap|enchanted.*(?:tap|untap|\
 attack|loses)|it gets -|target permanent.*untap|tap.*target.*(?:creature|permanent|land|artifact|enchantment)"""
 
 [[role]]
@@ -137,7 +137,7 @@ card, not a token. Tokens made as opponent compensation do not describe your dec
 repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least \
 starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Food, Blood, Map, Junk and other non-Treasure, non-Clue artifact \
 tokens are not `tokens`: judge their ability on its own. A repeatable Clue maker is tokens AND draw; one Clue \
-from a spell or an enter trigger is tokens only."""
+from a spell or an enter trigger is tokens only. Tokens given to an opponent as compensation (Mercy Killing) are not `tokens`; the edict or destroy part is still `removal`."""
 src = "rules"
 guard = '(?i)token|investigate|amass|populate|incubate|mobilize|afterlife|recruit'
 
@@ -151,7 +151,7 @@ role. MDFC land backs add nothing; prepare cards use their spell face and their 
 protection. A team-wide lifelink-only grant is lifegain, not anthem (anthem needs a stat pump or evasion/combat \
 keyword grant). A +1/+1 counter on each creature you control is counters and anthem. Counters on players \
 (poison, energy, experience, rad) are not `counters`; proliferate is. Amass is tokens, and also counters when \
-repeatable."""
+repeatable. A team-wide haste grant alone is not `anthem`: anthem needs a stat pump or an evasion/combat-damage keyword (flying, double strike, trample, menace, 'can't be blocked') for your whole team. A pump or grant on 'up to N target creatures' (not your whole team) is not `anthem`."""
 src = "rules"
 guard = '(?i)(?:creatures?|[a-z]+s).*?(?:gets?|gains?|have|has)|\+1/\+1 counter|(?:each )?other .*gets?'
 

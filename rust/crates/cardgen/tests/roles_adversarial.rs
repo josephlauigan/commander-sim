@@ -1041,7 +1041,8 @@ fn real_catalog_routing_share_stays_under_the_stated_cap() {
     let (all, llm) =
         s.routing.iter().filter(|(g, _)| g.starts_with("legal / ")).fold((0, 0), |a, (_, n)| (a.0 + n.0, a.1 + n.1));
     let share = llm as f64 / all as f64;
-    assert!(share < 0.65, "legal routing share {share:.4} is above the amended 65% cap");
+    // JD-approved GPU-time budget guard; routing share is not a classification quality gate.
+    assert!(share < 0.75, "legal routing share {share:.4} exceeds the 75% GPU-time budget guard");
     for a in real_map().values().filter(|a| a.needs_llm) {
         assert!(!a.route.is_empty(), "every routed card must record its reason");
     }

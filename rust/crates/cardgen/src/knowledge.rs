@@ -399,6 +399,7 @@ pub struct Index {
     pub oracle_fnv: String,
     pub sync_fnv: Option<String>,
     pub taxonomy_fnv: String,
+    pub rules_fnv: String,
     /// lower-case full name -> every card with it (15 names are shared by two or more cards)
     names: HashMap<String, Vec<u32>>,
     /// lower-case face name (when different from the full name) -> every card with such a face
@@ -454,11 +455,19 @@ impl Index {
             }
         }
         drop(ids);
+        let sync_fnv = crate::bulk::read_lock(&path.with_file_name("sync.lock")).map(|lock| lock.fnv1a64);
+        let oracle_fnv = match &sync_fnv {
+            Some(hash) => hash.clone(),
+            None => crate::roles::oracle_fingerprint(path)?,
+        };
         let mut idx = Index {
             cards: oracle.cards.into_iter().map(Card::new).collect(),
             bulk_updated_at: oracle.meta.bulk_updated_at,
-            oracle_fnv: crate::roles::oracle_fingerprint(path)?,
-            sync_fnv: crate::bulk::read_lock(&path.with_file_name("sync.lock")).map(|lock| lock.fnv1a64),
+            oracle_fnv,
+            sync_fnv,
+            rules_fnv: crate::roles::rules_hash(
+                &std::fs::read(path.with_file_name("roles_overrides.toml")).unwrap_or_default(),
+            ),
             taxonomy_fnv: crate::roles::fingerprint(
                 &std::fs::read(path.with_file_name("roles.toml"))
                     .unwrap_or_else(|_| include_bytes!("../../../../data/knowledge/roles.toml").to_vec()),
@@ -1329,7 +1338,7 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
             }
             role_note = Some(format!("(roles unavailable: {})", error.lines().next().unwrap_or("invalid table")));
         }
-    } else if let Err(error) = crate::roles::load(&role_file).and_then(|roles| roles.check_meta(&index)) {
+    } else if let Err(error) = crate::roles::check_file(&role_file, &index) {
         role_note = Some(format!("(roles unavailable: {})", error.lines().next().unwrap_or("invalid table")));
     }
     let (hits, unresolved) = index.search(&q, deck.as_ref())?;

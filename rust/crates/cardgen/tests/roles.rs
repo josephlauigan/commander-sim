@@ -380,7 +380,7 @@ fn audited_catalog_patterns_and_real_decoys() {
         ("Mirror of Life Trapping", &["blink"]),
         ("Decree of Pain", &["draw", "wipe"]),
         ("Orzhov Racketeers", &["discard", "tokens"]),
-        ("Fearless Swashbuckler", &["anthem", "draw"]),
+        ("Fearless Swashbuckler", &["draw"]), // C8: haste alone is not anthem.
         ("Aether Barrier", &["stax"]),
         ("Land Equilibrium", &["stax"]),
         ("Insatiable Frugivore", &["anthem", "evasion"]),
@@ -670,14 +670,14 @@ fn round_three_precision_audit_regressions() {
         ("The Lord of Pain", &["drain", "stax"]),
         ("Grisly Transformation", &["draw", "evasion"]),
         ("Golgari Charm", &["protection", "removal", "wipe"]),
-        ("Bitter Reunion", &["anthem", "draw"]),
+        ("Bitter Reunion", &["draw"]), // C8: haste alone is not anthem.
         ("Dog Umbra", &["protection", "removal"]),
         ("Meletis Charlatan", &["copy"]),
         ("Chrome Steed", &[]),
         ("Gods' Eye, Gate to the Reikai", &["tokens"]),
         ("Abyssal Nightstalker", &["discard"]),
         ("Acclaimed Contender", &["selection"]),
-        ("Keldon Strike Team", &["anthem", "tokens"]),
+        ("Keldon Strike Team", &["tokens"]), // C8: haste alone is not anthem.
         ("Grismold, the Dreadsower", &["counters", "tokens"]),
         ("Cybernetica Datasmith", &["draw", "tokens"]),
         ("Adéwalé, Breaker of Chains", &["recursion", "selection"]),
@@ -833,4 +833,194 @@ fn metadata_rejects_stale_taxonomy_rules_oracle_count_and_optional_find_omits_ro
     }
     let (out, passed) = e.command(&["--lint"]).unwrap();
     assert!(!passed && out.contains("UNDOCUMENTED")); // a small fixture cannot satisfy catalog coverage
+}
+
+fn round5_synthetic(typ: &str, text: &str, mana: &[&str]) -> Assignment {
+    let e = Env::new();
+    let path = e.0.join("data/knowledge/oracle.json");
+    std::fs::write(
+        &path,
+        json!({
+            "meta": {"schema": knowledge::SCHEMA, "count": 1},
+            "cards": [{"name": "Specimen", "oracle_id": "synthetic", "type_line": typ,
+                "oracle_text": text, "produced_mana": mana}]
+        })
+        .to_string(),
+    )
+    .unwrap();
+    let i = Index::load(&path).unwrap();
+    Classifier::new().unwrap().classify(&i.cards[0]).unwrap()
+}
+
+#[test]
+fn roleless_anthem_hits_cannot_excuse_an_unread_team_effect() {
+    // Unnatural Growth's Oracle line: a real function absent from the accepted roles.
+    let a = round5_synthetic(
+        "Enchantment",
+        concat!(
+            "At the beginning of each combat, double the power and toughness of each creature ",
+            "you control until end of turn."
+        ),
+        &[],
+    );
+    assert!(a.roles.is_empty() && a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+}
+
+#[test]
+fn variable_mana_is_not_excused_as_a_one_mana_land() {
+    // Gaea's Cradle.
+    let a = round5_synthetic("Land", "{T}: Add {G} for each creature you control.", &["G"]);
+    assert!(a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    assert!(a.route.contains(&roles::RouteReason::RejectedHit), "{a:?}");
+}
+
+#[test]
+fn rejected_loot_needs_an_accepted_selection_role() {
+    // Credit Voucher.
+    let a = round5_synthetic(
+        "Artifact",
+        concat!(
+            "{2}, {T}, Sacrifice this artifact: Shuffle any number of cards from your hand into your library, ",
+            "then draw that many cards."
+        ),
+        &[],
+    );
+    assert!(a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    assert!(a.route.contains(&roles::RouteReason::RejectedHit), "{a:?}");
+}
+
+#[test]
+fn ignore_prefixes_do_not_read_later_sentences() {
+    // Cabal Therapy, then Plumb the Forbidden (only their first Oracle lines).
+    let a = round5_synthetic(
+        "Sorcery",
+        concat!("Choose a nonland card name. Target player reveals their hand and discards all cards with that name."),
+        &[],
+    );
+    assert!(a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    assert!(a.route.contains(&roles::RouteReason::UnknownLine), "{a:?}");
+    let a = round5_synthetic(
+        "Instant",
+        concat!(
+            "As an additional cost to cast this spell, you may sacrifice one or more creatures. ",
+            "When you do, copy this spell for each creature sacrificed this way."
+        ),
+        &[],
+    );
+    assert!(a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    assert!(a.route.contains(&roles::RouteReason::UnknownLine), "{a:?}");
+}
+
+#[test]
+fn two_produced_colors_require_fixing_or_review() {
+    // Two independently ordinary tap abilities must still be checked together.
+    let a = round5_synthetic("Land", "{T}: Add {G}.\n{T}: Add {W}.", &["G", "W"]);
+    assert!(a.route.contains(&roles::RouteReason::NoRole), "{a:?}");
+    for text in ["Flying, vigilance", "Ward {2}", "Equip {3}", "{T}: Add {C}."] {
+        let a = round5_synthetic("Land", text, &[]);
+        assert!(!a.route.contains(&roles::RouteReason::NoRole), "{text}: {a:?}");
+    }
+}
+
+#[test]
+fn approved_c7_through_c13_and_general_audit_vocabulary() {
+    let i = rulings_index();
+    for (name, yes, no) in [
+        ("Viridian Acolyte", vec!["fixing"], vec!["ramp"]),
+        ("Chromatic Star", vec!["fixing"], vec!["ramp", "draw"]),
+        ("Chasm Guide", vec![], vec!["anthem"]),
+        ("Rally the Monastery", vec!["tokens", "removal"], vec!["anthem"]),
+        ("Infernal Scarring", vec![], vec!["draw"]),
+        ("Llanowar Sentinel", vec![], vec!["tutor"]),
+        ("Mercy Killing", vec!["removal"], vec!["tokens"]),
+        ("Court of Cunning", vec!["draw"], vec![]),
+        ("Salt Vampire", vec!["lifegain"], vec!["draw"]),
+        ("Animist's Might", vec!["removal"], vec!["anthem", "ramp"]),
+        ("Thud", vec!["removal"], vec!["drain"]),
+        ("Riptide Gearhulk", vec!["removal"], vec![]),
+        ("Desynchronization", vec!["wipe"], vec![]),
+        ("Quirion Elves", vec!["ramp", "fixing"], vec![]),
+        ("Thriving Grove", vec!["fixing"], vec!["ramp"]),
+        ("Cosmic Rebirth", vec!["recursion", "reanimate"], vec![]),
+        ("Practiced Scrollsmith", vec!["recursion"], vec![]),
+        ("Ugin's Binding", vec!["removal", "wipe"], vec!["recursion"]),
+        ("Aerial Assault", vec!["removal"], vec!["evasion"]),
+    ] {
+        let a = classify(&i, name);
+        for role in yes {
+            assert!(a.roles.iter().any(|r| r == role), "{name}: missing {role}: {a:?}");
+        }
+        for role in no {
+            assert!(!a.roles.iter().any(|r| r == role), "{name}: unexpected {role}: {a:?}");
+        }
+    }
+}
+
+#[test]
+fn treasure_pair_is_not_a_same_line_route() {
+    let a = round5_synthetic("Enchantment", "Whenever an opponent draws a card, create a Treasure token.", &[]);
+    assert!(a.roles.contains(&"tokens".into()) && a.roles.contains(&"ramp".into()), "{a:?}");
+    assert!(!a.route.contains(&roles::RouteReason::SameLine), "{a:?}");
+}
+
+#[test]
+fn metadata_only_reader_and_override_fingerprint_invalidation() {
+    let e = Env::new();
+    e.command(&["--rules"]).unwrap();
+    let path = e.0.join("data/knowledge/roles.json");
+    let map = roles::load(&path).unwrap();
+    assert_eq!(roles::load_meta(&path).unwrap(), map.meta);
+    let prefix = format!("{{\"meta\":{},\"cards\":invalid table", serde_json::to_string(&map.meta).unwrap());
+    std::fs::write(&path, prefix).unwrap();
+    assert_eq!(roles::load_meta(&path).unwrap(), map.meta); // intentionally never reads the table
+    assert!(roles::load(&path).is_err());
+    std::fs::write(
+        e.0.join("data/knowledge/roles_overrides.toml"),
+        "[[card]]\nname='Counterspell'\nroles=[]\nnote='changed'\n",
+    )
+    .unwrap();
+    let changed = Index::load(&e.0.join("data/knowledge/oracle.json")).unwrap();
+    assert!(map.check_meta(&changed).is_err());
+    assert_ne!(roles::rules_hash(b""), roles::rules_hash(b"[[card]]\nname='Counterspell'\nroles=[]\nnote='changed'\n"));
+    assert_eq!(roles::rules_hash(b""), roles::rules_hash(b"# comment\n\n")); // comments carry no content
+}
+
+#[test]
+fn validation_scores_the_supplied_assignments() {
+    let e = Env::new();
+    let i = Index::load(&e.0.join("data/knowledge/oracle.json")).unwrap();
+    let mut map = roles::generate(&i, "").unwrap();
+    let id = &card(&i, "Counterspell").raw.oracle_id;
+    let gold = format!("[[card]]\nname='Counterspell'\noracle_id='{id}'\nroles=['counter']\nprimary='counter'\n");
+    let taxonomy = Taxonomy::parse(TAXONOMY).unwrap();
+    let before = roles::validate(&e.project(), &i, &map, &gold, &taxonomy).unwrap();
+    assert_eq!(before.gold_micro.tp, 1);
+    map.get_mut(id).unwrap().roles.clear();
+    map.get_mut(id).unwrap().primary.clear();
+    map.get_mut(id).unwrap().evidence.clear();
+    let after = roles::validate(&e.project(), &i, &map, &gold, &taxonomy).unwrap();
+    assert_eq!(after.gold_micro.tp, 0);
+    assert_eq!(after.gold_micro.missed, 1);
+    assert_eq!(after.hand_micro.missed, 1);
+}
+
+#[test]
+fn copy_never_cites_a_prepare_becomes_prepared_line() {
+    let mut doc: Value = serde_json::from_str(include_str!("fixtures/roles_oracle.json")).unwrap();
+    let record = doc["cards"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|c| c["name"] == "Emeritus of Conflict // Lightning Bolt")
+        .unwrap();
+    record["card_faces"][1]["oracle_text"] = json!("Copy target instant or sorcery spell.");
+    let e = Env::new();
+    let path = e.0.join("data/knowledge/oracle.json");
+    std::fs::write(&path, doc.to_string()).unwrap();
+    let i = Index::load(&path).unwrap();
+    let c = card(&i, "Emeritus of Conflict // Lightning Bolt");
+    let a = Classifier::new().unwrap().classify(c).unwrap();
+    let evidence = &a.evidence["copy"];
+    assert_eq!(evidence.face, Some(1));
+    assert!(!c.lines()[evidence.line.unwrap()].1.contains("becomes prepared"));
 }

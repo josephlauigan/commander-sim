@@ -283,9 +283,10 @@ cardgen find --role ramp --role sac-outlet --json
 `roles --rules` reads the catalog without network access and atomically writes `roles.json` beside `oracle.json`.
 Stickers and Attractions remain searchable in Oracle but are omitted from the role table and audit samples.
 `--stats` reports their skipped count; routing denominators include only deck cards.
-The JSON envelope has `meta: {taxonomy, rules_fnv, oracle_fnv, count}` and `cards` sorted by Oracle id.
-The hashes are FNV-1a-64: taxonomy text, compiled rule source, and the canonical bulk card array (the checksum in
-`sync.lock`). An available sync lock must agree. Input order and JSON whitespace do not affect the Oracle hash.
+The JSON envelope has `meta: {taxonomy, rules_fnv, oracle_fnv, count, table_fnv}` and `cards` sorted by Oracle id.
+The hashes are FNV-1a-64: taxonomy text; compiled rule and line-extraction source plus override content; and
+`sync.lock`'s Oracle checksum. Fixture catalogs without a lock fall back to canonical bulk hashing, independent
+of input order and JSON whitespace.
 The table is byte-deterministic. Each assignment has up to four ordered `roles`,
 `primary` (the first role, or `""`), per-role `evidence` (`source`, rule id, `certain`, `face`, `line`), and `needs_llm`, plus a `route` list of explicit reasons.
 Evidence uses zero-based indices into `Card::lines()`; `face: null` means the card's top-level Oracle text.
@@ -303,6 +304,9 @@ role yields to an independent function.
 Ward granted to other permanents is protection; a lifelink-only team grant is lifegain, not anthem. Creature,
 Treasure and Clue tokens count; other artifact tokens are judged by their abilities. Repeatable Clue makers also
 give draw. Repeatable or multi-Treasure makers also give ramp; a single Treasure rider gives tokens alone.
+Mana filters with equal mana cost/output are fixing, not ramp. Haste alone and limited target pumps are not
+anthem. Self-replacing death draws are not draw; monarch is draw. Self-name searches are not tutor, and opponent
+compensation tokens are excluded while their removal effect still counts.
 A creature token copy gives copy and tokens, copy first. Team +1/+1 counter placement is counters and anthem; player counters are excluded, but proliferate
 counts. Amass gives tokens, plus counters when repeatable. Returning noncreature permanents from your graveyard
 to the battlefield is recursion; unrestricted permanent returns also give reanimate, which requires creatures.
@@ -315,8 +319,10 @@ draw two/three/four, and printed standalone lifelink. A certain role does not ex
 routing. This command never calls an LLM. Rejected rule hits route unless a named `INCIDENTAL` convention in
 `roles.rs` explains the rejection (cantrips/loot, costs, self keywords, zone alternatives, compensation, bookkeeping
 or small riders). Two accepted roles on the same Oracle line also route, except subsets of ramp/fixing/sac-outlet
-and the Clue tokens/draw pair. `ROLE_POLICY` defines role sources and risky-role routing in one place.
-`route` records UnknownLine, RejectedHit, SameLine, RiskyRole, Overflow or RegexError. Statistics report overlapping
+the Clue tokens/draw pair and the C6 Treasure tokens/ramp pair. `ROLE_POLICY` defines role sources and risky-role routing in one place.
+Roleless cards with any line beyond pure keywords/keyword costs or one-mana taps route as NoRole. Two or more
+produced WUBRG colors without fixing also route as NoRole. Boilerplate is matched per sentence.
+`route` records UnknownLine, NoRole, RejectedHit, SameLine, RiskyRole, Overflow or RegexError. Statistics report overlapping
 legal counts and an exclusive partition in that order. Regex input is bounded to 2048 bytes per line, with a raised
 backtracking limit; a remaining regex error or oversized line routes instead of aborting classification.
 Costs and initial trigger conditions are separated from effects; sentences are judged independently while linked
@@ -333,19 +339,22 @@ same evidence). If fewer than N qualify, every qualifying card is shown. The foo
 role assignments, including the rules-final subset, for a manual precision/recall audit.
 
 Hand overrides in `data/knowledge/roles_overrides.toml` replace the entire role set, including certain rules;
-the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides intentionally do not improve validation.
+the file documents the `[[card]]`, `name`, `roles`, `note` format. Overrides intentionally do not improve validation:
+`roles --validate` scores the rules-only map (the library function scores whichever map it is given).
 An override's evidence has source `override`, its note in `rule`, and no face or line, since it need not have a
 regex justification. No initial overrides are installed.
 
 `find` attaches `roles.json` for a role filter or to enrich JSON when the table is valid. A plain search remains
-available with missing, damaged or stale role data: it emits one stderr note and omits role fields. Repeatable `--role R` filters combine
+available with missing, damaged or stale role data. Plain text/count searches read the leading `meta` object and check `meta.table_fnv` (a hash of the card table
+bytes) without parsing the table, and emit a repair note if metadata is missing, stale or the table is damaged. JSON enrichment and
+role filters validate the complete table. Optional enrichment emits one stderr note on failure and omits role fields. Repeatable `--role R` filters combine
 with AND. An unknown id is a usage error listing all 26 ids; a missing roles file names `cardgen roles --rules`.
 JSON rows gain `roles` and `primary` only when the side table is attached. The Oracle catalog and `Card` remain
 immutable; programs use `Index::attach_roles`, `Index::roles` and `Query.roles`. Missing ids, invalid evidence or
 role sets, taxonomy/rule/Oracle hashes and deck-card count mismatches are errors for required role searches;
 regenerate with `cardgen roles --rules` after sync or rule/taxonomy changes.
 
-Validation reclassifies without overrides and reports per-role and micro recall against the engine's manual/pool
+Validation scores the rules-only assignments and reports per-role and micro recall against the engine's manual/pool
 cards in owned decks, per-role precision and recall against independent gold labels (all and certain separately),
 forbidden-role violations, primary accuracy, overall all-role and src=rules micro scores, exact missed/unexpected
 pairs, and routing by legality, layout and cause. Every engine tag is
@@ -355,7 +364,7 @@ JSON validation uses integer `tp`, `fp`, `missed` counts; precision is `tp/(tp+f
 a zero denominator is 1. Text output includes those ratios. Nonzero exit means an acceptance threshold failed:
 hand recall 0.95 (0.85 for roles with at least ten pairs), gold micro precision 0.90 and recall 0.85 for the 19 rules
 roles, certain precision 0.95 across every role, and zero certain forbidden-role violations. The rules-final subset
-(`needs_llm == false`, reclassified without overrides) additionally requires precision 0.93 and recall 0.85 across
+(`needs_llm == false`, rules only) additionally requires precision 0.93 and recall 0.85 across
 **all** roles, including those normally supplemented by the LLM. Its card count and integer micro counts are in
 both reports. Other roles outside that subset are reported without precision/recall gates. Routing counts are
 reported, not hidden by a threshold.

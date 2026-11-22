@@ -112,6 +112,7 @@ pub struct Assignment {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RouteReason {
     UnknownLine,
+    NoRole,
     RejectedHit,
     SameLine,
     RiskyRole,
@@ -125,6 +126,8 @@ pub struct RoleMeta {
     pub rules_fnv: String,
     pub oracle_fnv: String,
     pub count: usize,
+    /// FNV of every byte after the metadata object; lets a metadata-only reader detect a damaged table.
+    pub table_fnv: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -147,8 +150,18 @@ impl std::ops::DerefMut for RoleMap {
 pub fn fingerprint(bytes: &[u8]) -> String {
     format!("{:016x}", crate::bulk::fnv1a64(bytes))
 }
-fn rules_hash() -> String {
-    fingerprint(include_bytes!("roles.rs"))
+pub fn rules_hash(overrides: &[u8]) -> String {
+    // Include line extraction/normalization ownership as well as runtime override content. Comments and blank
+    // lines in the overrides file carry no content, so they do not change the hash.
+    let mut bytes = include_bytes!("roles.rs").to_vec();
+    bytes.extend_from_slice(include_bytes!("knowledge.rs"));
+    for line in
+        String::from_utf8_lossy(overrides).lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#'))
+    {
+        bytes.extend_from_slice(line.as_bytes());
+        bytes.push(b'\n');
+    }
+    fingerprint(&bytes)
 }
 
 /// Canonical bulk rendering gives the same FNV as sync.lock, independent of input order/JSON whitespace.
@@ -205,13 +218,12 @@ pub fn oracle_fingerprint(path: &Path) -> Result<String, String> {
     Ok(format!("{:016x}", crate::bulk::render(&meta, records).1))
 }
 
-impl RoleMap {
-    pub fn check_meta(&self, index: &Index) -> Result<(), String> {
-        if self.meta.taxonomy != index.taxonomy_fnv
-            || self.meta.rules_fnv != rules_hash()
-            || self.meta.oracle_fnv != index.oracle_fnv
-            || self.meta.count != self.len()
-            || index.sync_fnv.as_ref().is_some_and(|hash| *hash != self.meta.oracle_fnv)
+impl RoleMeta {
+    pub fn check(&self, index: &Index) -> Result<(), String> {
+        if self.taxonomy != index.taxonomy_fnv
+            || self.rules_fnv != index.rules_fnv
+            || self.oracle_fnv != index.oracle_fnv
+            || self.count != index.cards.iter().filter(|c| is_deck_card(c)).count()
         {
             return Err(
                 "roles.json: stale taxonomy, rules, Oracle fingerprint or count; run `cardgen roles --rules`".into()
@@ -219,6 +231,76 @@ impl RoleMap {
         }
         Ok(())
     }
+}
+impl RoleMap {
+    pub fn check_meta(&self, index: &Index) -> Result<(), String> {
+        self.meta.check(index)?;
+        if self.meta.count != self.len() {
+            return Err("roles.json: stale count; run `cardgen roles --rules`".into());
+        }
+        Ok(())
+    }
+}
+
+/// Parse the leading metadata object emitted by bytes(); returns it with the offset where the card table begins.
+fn parse_meta(bytes: &[u8]) -> Result<(RoleMeta, usize), String> {
+    let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
+    for (at, &byte) in bytes.iter().enumerate() {
+        if quoted {
+            if escaped {
+                escaped = false;
+            } else if byte == b'\\' {
+                escaped = true;
+            } else if byte == b'"' {
+                quoted = false;
+            }
+            continue;
+        }
+        match byte {
+            b'"' => quoted = true,
+            b'{' => depth += 1,
+            b'}' if depth == 2 => {
+                let mut prefix = bytes[..=at].to_vec();
+                prefix.push(b'}');
+                #[derive(Deserialize)]
+                #[serde(deny_unknown_fields)]
+                struct Header {
+                    meta: RoleMeta,
+                }
+                return serde_json::from_slice::<Header>(&prefix)
+                    .map(|header| (header.meta, at + 1))
+                    .map_err(|e| format!("roles.json metadata: {e}; run `cardgen roles --rules`"));
+            }
+            b'}' => depth = depth.saturating_sub(1),
+            _ => {}
+        }
+    }
+    Err("roles.json: missing leading metadata; run `cardgen roles --rules`".into())
+}
+
+/// Read only the leading metadata object, bounded independently of the card table.
+pub fn load_meta(path: &Path) -> Result<RoleMeta, String> {
+    use std::io::Read;
+    let file =
+        std::fs::File::open(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
+    let mut prefix = Vec::new();
+    std::io::BufReader::new(file)
+        .take(65536)
+        .read_to_end(&mut prefix)
+        .map_err(|e| format!("roles.json: {e}; run `cardgen roles --rules`"))?;
+    parse_meta(&prefix).map(|(meta, _)| meta)
+}
+
+/// Staleness and damage check for optional consumers: the metadata is compared with the catalog and the card table
+/// bytes with `meta.table_fnv`, so truncation or edits are noticed without parsing the table.
+pub fn check_file(path: &Path, index: &Index) -> Result<(), String> {
+    let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
+    let (meta, end) = parse_meta(&bytes)?;
+    meta.check(index)?;
+    if fingerprint(&bytes[end..]) != meta.table_fnv {
+        return Err("roles.json: damaged card table; run `cardgen roles --rules`".into());
+    }
+    Ok(())
 }
 
 // Shared grammatical vocabularies. Quantities are not an ad-hoc subset of number words.
@@ -229,7 +311,8 @@ const NUMBER: &str = concat!(
 );
 const SUBJECT: &str = concat!(
     r"(?:each other player|each opponent|target opponent|an opponent|opponents?|target player|",
-    r"defending player|that opponent|that player|its controller|their controller|each player|players|they)",
+    r"defending player|that opponent|that player|its controller|their controller|each player|players|they|",
+    r"(?:target|that) creature.s controller)",
 );
 const TEAM: &str = concat!(
     r"(?:(?:each (?:other )?[^.,:]+|[^.,:]+s|other [a-z]+) you control|other creatures|creatures with [a-z]+|",
@@ -237,7 +320,7 @@ const TEAM: &str = concat!(
 );
 // Compile each fixed semantic expression once, without a shared mutable cache.
 macro_rules! grammar {
-    ($pattern:literal, $text:expr $(,)?) => {{
+    ($pattern:expr, $text:expr $(,)?) => {{
         static RE: std::sync::OnceLock<Regex> = std::sync::OnceLock::new();
         RE.get_or_init(|| regex($pattern).expect("fixed grammar")).is_match($text).unwrap_or(false)
     }};
@@ -314,11 +397,15 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"(?:destroy|exile|return) (?:another |up to NUMBER (?:other )?|NUMBER (?:other )?)?target|",
             r"return (?:~|this creature) and another target|",
-            r"(?:destroy|exile) (?:it|that (?:creature|permanent))|put target[^.]*owner.s library|",
-            r"SUBJECT (?:sacrifices|exiles) NUMBER|you control enchanted (?:creature|permanent)|",
+            r"(?:destroy|exile) (?:it|that (?:creature|permanent))|put (?:up to NUMBER )?target[^.]*owner.s library|",
+            r"SUBJECT (?:sacrifices|exiles) NUMBER|target creature.s controller sacrifices it|",
+            r"you control enchanted (?:creature|permanent)|",
             r"put (?:a|one) -1/-1 counter on (?:up to one )?target|",
             r"target.*(?:gets? -[0-9x]+/-[1-9x][0-9]*|sacrifices? (?:a|an|one)|fights)|",
-            r"deals? [^.]*damage (?:to (?:any target|target (?!player)[^.]*?(?:creature|artifact|planeswalker)|",
+            concat!(
+                r"deals? [^.]*damage (?:equal to [^.]*? )?(?:to (?:any target|a creature an opponent co",
+                r"ntrols|target (?!player)[^.]*?(?:creature|artifact|planeswalker)|",
+            ),
             r"each of up to [a-z]+ target creatures)|divided)|",
             r"gain control of|exchange control of target|owner of target .*shuffles|",
             r"enchanted .*?(?:can't attack|doesn't untap|loses all|sacrifice this creature)|",
@@ -353,7 +440,7 @@ pub const RULES: &[Rule] = &[
     Rule {
         role: "draw",
         pattern: concat!(
-            r"\bdraws?\b|(?:play|cast|plot) .*?(?:top of your library|exiled)|(?:put|",
+            r"\bdraws?\b|you become the monarch|(?:play|cast|plot) .*?(?:top of your library|exiled)|(?:put|",
             r"return).*?(?:into|to) your hand|graveyard.*?(?:into your hand|has escape)|\bcascade\b|",
             r"may (?:play|cast) (?:it|that card|those cards|one of those cards)|",
             r"\binvestigate\b|create[^.]*\b(?:clue|junk) tokens?",
@@ -395,14 +482,15 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"(?:return|put)[^.]*?(?:from|in) (?:your|their|a) graveyard[^.]*?(?:hand|library)|",
             r"shuffle your graveyard into your library|",
-            r"\b(?:cast|play)\b[^.]*?(?:from|in) your graveyard|",
+            r"\b(?:cast|play)\b[^.,]*?from your graveyard|",
             r"your graveyard[^.]*?(?:\bcast\b|\bplay\b|gains flashback|has escape|into your hand)|\bsoulshift\b|",
             r"in your graveyard.*?otherwise, put it into your hand|",
             r"(?:this card|~) is in your graveyard.*?return (?:this card|~) to your hand|",
             r"choose target [^.]*card in your graveyard.*?return it to your hand|",
             r"(?:return|put)[^.]*graveyard[^.]*battlefield|graveyard[^.]*shuffle [^.]*into your library|",
-            r"graveyard[^.]*put it into your library|permanent card in your graveyard[^.]*battlefield|",
-            r"return all [^.]*cards in graveyards[^.]*hands",
+            r"graveyard[^.]*put it into your library|permanent card in your graveyard.*?battlefield|",
+            r"return all [^.]*cards in graveyards[^.]*hands|",
+            r"exile[^.]*card from your graveyard.*?you may cast that card",
         ),
         negative: r"",
         id: "graveyard-reuse",
@@ -411,6 +499,7 @@ pub const RULES: &[Rule] = &[
         role: "reanimate",
         pattern: concat!(
             r"(?:return|put).*?(?:graveyard|creature card).*?battlefield|",
+            r"(?:creature|permanent) card in your graveyard.*?put it onto the battlefield|",
             r"return from your graveyard to the battlefield|",
             r"graveyard.*?creature.*?put.*?battlefield|",
             r"creature[^.]*dies, return it to the battlefield|",
@@ -697,6 +786,58 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
         {
             Some("self-only keyword/buff")
         }
+        "anthem"
+            if effect.split(". ").all(|sentence| {
+                grammar!(
+                    concat!(
+                        r"^(?:(?:up to NUMBER )?target creatures?(?: you control)?|(?:enchanted|equipped) creature|",
+                        r"that creature|(?:all|each) creatures?) |^(?:other )?creatures you control (?:have|gain) ",
+                        r"haste(?: until end of turn)?\.?$|^(?:you|each opponent|target (?:player|opponent)) "
+                    ),
+                    sentence,
+                )
+            }) =>
+        {
+            Some("single-subject, haste-only, symmetric or non-creature effect")
+        }
+        "ramp" | "fixing" if typ.contains("Land") && single_mana_ability(full) => Some("land tapping for one mana"),
+        "draw" if (has(typ, &["Aura", "Equipment"]) || !spell) && grammar!(SELF_DEATH_DRAW, full) => {
+            Some("self-replacing death draw")
+        }
+        "draw" if grammar!(r"^search your library for (?:a|up to [a-z]+) basic land cards?", effect) => {
+            Some("land search to hand")
+        }
+        "removal" if grammar!(r"^(?:when|whenever) this aura enters, tap enchanted creature\.?$", full) => {
+            Some("bare tapping")
+        }
+        "removal"
+            if grammar!(
+                concat!(
+                    r"^if (?:~|this [a-z]+) would be put into (?:a|your|its owner's) graveyard from anywhere, ",
+                    r"exile it instead\.?$"
+                ),
+                full
+            ) =>
+        {
+            Some("self graveyard replacement")
+        }
+        "recursion"
+            if grammar!(
+                concat!(
+                    r"^when this (?:aura|equipment) is put into a graveyard from the battlefield, return it ",
+                    r"to its owner's hand\.?$"
+                ),
+                full
+            ) =>
+        {
+            Some("self-returning aura")
+        }
+        "stax" if accepted.contains("ramp") && grammar!(r"cost (?:\{[^}]+\})+ less to cast", effect) => {
+            Some("cost reducer")
+        }
+        "gy-hate" if grammar!(r"^(?:as an additional cost to cast this spell, exile |escape—[^,]*, exile )", full) => {
+            Some("graveyard exile as a cost")
+        }
         "lifegain" if full.contains("token") && full.contains("lifelink") => Some("token's printed lifelink"),
         "lifegain" if full.contains("token") && full.contains("\"when this") => Some("token death life rider"),
         "recursion" | "reanimate"
@@ -724,11 +865,6 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
                 && !has(effect, &["on target", "on each", "instead"]) =>
         {
             Some("one-time self counter")
-        }
-        "anthem"
-            if !grammar!(r"TEAM[^.]*? (?:gets?|gains?|have|has) ", effect) && !effect.contains("counter on each") =>
-        {
-            Some("condition/self/single-target buff")
         }
         "removal" | "wipe"
             if has(effect, &["graveyard", "your hand"])
@@ -772,34 +908,27 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
         "selection" if full.contains("look at the top card") && !has(effect, &["put", "shuffle"]) => {
             Some("inspection without filtering")
         }
-        "fixing"
-            if full.contains("add")
-                && !has(
-                    full,
-                    &[
-                        "any color",
-                        "any one color",
-                        "any combination of colors",
-                        "different colors",
-                        "each color",
-                        "any type",
-                    ],
-                ) =>
-        {
-            Some("single-colour mana")
+        "fixing" if grammar!(r"^\{t\}: add \{[wubrgc]\}\.$", full) => Some("one-colour tap mana"),
+        "fixing" if accepted.contains("ramp") && grammar!(r"^add (\{[wubrgc]\})(?:\1)*\.$", effect) => {
+            Some("accepted ramp with one repeated mana symbol")
         }
         "fixing" if full.contains("search your library") => Some("non-fixing library search"),
         "tutor" if has(full, &["land card", "plains", "island", "swamp", "mountain", "forest"]) => {
             Some("land-only search")
         }
-        "ramp" if typ.contains("Land") || full.starts_with("this spell costs") => Some("land/self-only mana"),
+        "ramp" if typ.contains("Land") && grammar!(r"^\{t\}: add \{[wubrgc]\}\.$", full) => Some("one-mana land tap"),
+        "ramp" if mana_filter(full) && accepted.contains("fixing") => Some("net-zero mana filter"),
         "draw"
             if (full.contains("search your library") || full.contains("graveyard"))
                 && accepted.iter().any(|r| ["tutor", "recursion", "reanimate", "self-mill"].contains(r)) =>
         {
             Some("zone/search role")
         }
-        "draw" if loot(full) || (spell || self_cost) && full.contains("draw a card") => Some("loot/cantrip"),
+        "draw"
+            if loot(full) && accepted.contains("selection") || (spell || self_cost) && full.contains("draw a card") =>
+        {
+            Some("loot/cantrip")
+        }
         "draw" if full.contains("would draw") => Some("replacement condition"),
         "draw" if !effect.contains("draw") && full.contains("draw") => Some("trigger condition"),
         "draw" if creates(full, "clue") || full.contains("investigate") => Some("single Clue"),
@@ -877,6 +1006,127 @@ fn loot(s: &str) -> bool {
     amount(draw).zip(amount(discard)).is_some_and(|(draw, discard)| draw == discard)
 }
 
+const SELF_DEATH_DRAW: &str = concat!(
+    r"(?:when|if) (?:enchanted creature|equipped creature|this [a-z]+|~) ",
+    r"(?:dies|is put into a graveyard from the battlefield)[^.]*draw (?:a|one) card",
+);
+
+/// A land ability that adds exactly one mana, whatever the options: a filter or painland tap, not net ramp.
+fn single_mana_ability(s: &str) -> bool {
+    activation_cost(s).is_some_and(|(_, effect)| {
+        grammar!(
+            concat!(
+                r"^add (?:one mana of (?:any (?:one )?color|the chosen color|any type)|\{[wubrgc]\}",
+                r"(?:(?:, | or |, or )",
+                r"\{[wubrgc]\})*(?: or one mana of the chosen color)?)\.(?: this land (?:deals [0-9]+ damage to you|",
+                r"doesn't untap during your next untap step)\.)?$"
+            ),
+            effect.trim(),
+        )
+    })
+}
+
+fn pure_keyword_line(s: &str) -> bool {
+    s.split(", ").all(|keyword| {
+        grammar!(
+            concat!(
+                r"^(?:flying|first strike|double strike|deathtouch|defender|flash|haste|hexproof|indest",
+                r"ructible|lifelink|menace|reach|shroud|trample|vigilance|fear|shadow|infect|wither|hor",
+                r"semanship|(?:plains|island|swamp|mountain|forest)walk|(?:ward|equip|crew|saddle|kicke",
+                r"r|multikicker|flashback|cycling|echo|morph|megamorph|disguise|foretell|plot|escape|ev",
+                r"oke|buyback|bestow|disturb|mutate|fortify|suspend|madness|aftermath|embalm|eternalize",
+                r"|unearth|reinforce|transmute|level up) (?:\{[^}]+\}|[0-9]+|—pay [0-9]+ life)+|enchant",
+                r" [a-z ]+|protection from [a-z ]+|(?:renown|modular|graft|fading|vanishing|toxic) [0-9",
+                r"]+|convoke|delve|rebound|soulbond|daybound|nightbound|sunburst|[a-z]*cycling (?:\{[^}]+\})+|",
+                r"cumulative upkeep (?:\{[^}]+\})+|affinity for [a-z ]+|suspend [0-9]+—(?:\{[^}]+\})+)\.?$",
+            ),
+            keyword,
+        )
+    })
+}
+
+/// A line made only of keywords, one-mana taps or static boilerplate that carries no deck-building function.
+/// Each sentence must match a positive pattern; a missing word never excuses it.
+fn plain_line(s: &str, typ: &str) -> bool {
+    let spell = has(typ, &["Instant", "Sorcery"]);
+    s.split(". ").all(|sentence| {
+        let sentence = sentence.trim_end_matches('.');
+        pure_keyword_line(sentence)
+            || grammar!(r"^\{t\}: add \{[wubrgc]\}$", sentence)
+            || grammar!(
+                concat!(
+                    r"^(?:(?:enchanted|equipped) creature gets [+-][0-9x]+/[+-][0-9x]+|(?:this|~) (?:creature |land |",
+                    r"artifact )?enters tapped|as (?:this [a-z]+|~) enters, choose a colou?r|partner|companion — .*|",
+                    r"(?:scry|surveil) 1|(?:this creature|~|this spell) (?:can't (?:block|be countered|be blocked",
+                    r"(?: by [^.]*)?|attack(?: unless [^.]*)?)|attacks each (?:combat|turn) if able|can block ",
+                    r"(?:only [^.]*|an additional creature each combat))|(?:\{[^}]+\}(?:, )?)+: (?:this creature",
+                    r"|~) (?:gains [a-z ]+ until end of turn|can't be blocked this turn))$",
+                ),
+                sentence,
+            )
+            || spell && sentence == "draw a card"
+    })
+}
+
+/// Mana amounts are additive symbols or explicit quantities, never inferred from missing words.
+fn mana_amount(s: &str) -> Option<u32> {
+    if grammar!(r"^(?:\{[0-9wubrgc]+\})+$", s.trim()) {
+        return s
+            .trim()
+            .split('{')
+            .skip(1)
+            .try_fold(0u32, |n, part| n.checked_add(part.trim_end_matches('}').parse::<u32>().unwrap_or(1)));
+    }
+    if !grammar!(
+        concat!(
+            r"^(?:one|two|three|[0-9]+) mana(?: of (?:any (?:one )?color|any type|the chosen color)",
+            r"| in any combination of colors)?$"
+        ),
+        s,
+    ) {
+        return None;
+    }
+    let amount = s.split_whitespace().next()?;
+    match amount {
+        "one" => Some(1),
+        "two" => Some(2),
+        "three" => Some(3),
+        _ => amount.parse().ok(),
+    }
+}
+fn mana_filter(s: &str) -> bool {
+    let Some((cost, effect)) = activation_cost(s) else { return false };
+    let mana_cost = cost.split(',').next().unwrap_or("").trim();
+    let Some(added) = effect.trim().strip_prefix("add ") else { return false };
+    let added = added.trim_end_matches('.').split(". ").next().unwrap_or("");
+    mana_amount(mana_cost).zip(mana_amount(added)).is_some_and(|(cost, added)| cost > 0 && cost == added)
+}
+fn draws_for_you(s: &str) -> bool {
+    // A third-person subject persists through coordinated verbs ("that player exiles ..., then draws").
+    s.split(". ").any(|sentence| {
+        if !grammar!(r"\bdraws? (?:NUMBER|an additional|cards|that)\b", sentence) {
+            return false;
+        }
+        if grammar!(r"you (?:may )?draw\b|(?:each player|target player)(?! other than you) (?:may )?draws?\b", sentence)
+            || grammar!(r"(?:each player|target player)(?! other than you)[^.]*\bdraws?\b", sentence)
+        {
+            return true;
+        }
+        grammar!(r"(?:^|[,;:] |then |and )(?:• )?(?:you (?:may )?)?draw\b", sentence)
+            && !grammar!(r"SUBJECT[^.]*\bdraws?\b", sentence)
+    })
+}
+fn keyword_grant(s: &str) -> bool {
+    grammar!(
+        concat!(
+            r"(?:gains?|has|have) (?:(?!\b(?:for each|with)\b).)*?(?:flying|menace|fear|shadow|hors",
+            r"emanship|double strike|intimidate|hexproof|shroud|indestructible|protection from|ward",
+            r")",
+        ),
+        s,
+    ) || s.contains("can't be blocked")
+}
+
 pub struct Classifier {
     rules: Vec<(Regex, Regex)>,
     ignore: Vec<Regex>,
@@ -895,6 +1145,7 @@ impl Classifier {
         let lines = card.lines();
         let mut found: BTreeMap<&str, (usize, Evidence)> = BTreeMap::new();
         let mut route = BTreeSet::new();
+        let mut substantive = false;
         let mut modal_repeat = false;
         let mut modal_face = None;
         for (line, &(face, original)) in lines.iter().enumerate() {
@@ -928,6 +1179,7 @@ impl Classifier {
                     continue;
                 }
             }
+            substantive |= !s.is_empty() && !plain_line(&s, typ);
             // Basic land types confer mana abilities even when their only Oracle line is parenthesized reminder text.
             let basic_colors =
                 ["Plains", "Island", "Swamp", "Mountain", "Forest"].iter().filter(|t| typ.contains(**t)).count();
@@ -1005,7 +1257,7 @@ impl Classifier {
                     }
                 }
             }
-            let ignored = self.ignore.iter().any(|p| safe_hit(p, &s));
+            let ignored = s.split(". ").all(|sentence| self.ignore.iter().any(|p| safe_hit(p, sentence)));
             if regex_error {
                 route.insert(RouteReason::RegexError);
             }
@@ -1018,6 +1270,7 @@ impl Classifier {
             if accepted.len() > 1
                 && !accepted.iter().all(|r| ["ramp", "fixing", "sac-outlet"].contains(r))
                 && accepted != BTreeSet::from(["tokens", "draw"])
+                && !(accepted == BTreeSet::from(["tokens", "ramp"]) && creates(&s, "treasure"))
             {
                 route.insert(RouteReason::SameLine);
             }
@@ -1033,6 +1286,14 @@ impl Classifier {
         }
         ranked.truncate(4);
         let roles: Vec<String> = ranked.iter().map(|(r, _)| r.to_string()).collect();
+        if roles.is_empty() && substantive
+            || !roles.iter().any(|r| r == "fixing")
+                && card.raw.produced_mana.as_ref().is_some_and(|mana| {
+                    mana.iter().filter(|m| ["W", "U", "B", "R", "G"].contains(&m.as_str())).count() >= 2
+                })
+        {
+            route.insert(RouteReason::NoRole);
+        }
         let ambiguous = ranked.iter().any(|(r, (_, e))| {
             let s = normalize(card, lines[e.line.unwrap()].1).to_lowercase();
             ROLE_POLICY.iter().any(|(role, _, always)| role == r && *always)
@@ -1131,6 +1392,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 && (!s.contains("get +") || s.contains("trample"))
         }
         "ramp" => {
+            if mana_filter(full) {
+                return false;
+            }
             if creates(s, "treasure") {
                 return repeat || !grammar!(r"create (?:a|one|1) treasure token\b", s);
             }
@@ -1158,7 +1422,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
             !has(s, &["its controller", "that player adds", "opponent adds"])
         }
         "fixing" => {
-            if intrinsic {
+            if intrinsic || mana_filter(full) {
                 return true;
             }
             if s.contains("enchanted land is") {
@@ -1184,6 +1448,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                             "different colors",
                             "each color",
                             "any type",
+                            "chosen color",
                         ],
                     ) || ['w', 'u', 'b', 'r', 'g']
                         .iter()
@@ -1196,8 +1461,10 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 return true;
             }
             let q = s.split("search your library").nth(1).unwrap_or("").split([',', '.']).next().unwrap_or("");
-            !has(q, &["land card", "land cards", "plains", "island", "swamp", "mountain", "forest"])
-                || q.contains("nonland")
+            !q.contains("card named ~")
+                && !q.contains("cards named ~")
+                && !has(q, &["land card", "land cards", "plains", "island", "swamp", "mountain", "forest"])
+                || q.contains("nonland") && !q.contains("named ~")
         }
         "counter" => !has(full, &["whenever this creature becomes the target", "whenever ~ becomes the target"]),
         "wipe" => {
@@ -1208,6 +1475,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                         &[
                             "return all creatures",
                             "return all nonland",
+                            "return each nonland",
                             "return all permanents",
                             "sacrifices all creatures",
                         ],
@@ -1288,6 +1556,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                         "fights",
                         "fight each other",
                         "damage to",
+                        "deals damage",
                         "each opponent",
                         "-1/-1 counter",
                         "gain control of",
@@ -1307,7 +1576,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
         }
         "blink" => !s.contains("owner's hand") && !s.contains("your hand"),
         "protection" => {
-            (grant
+            (grant && keyword_grant(s)
                 || s.contains("phase")
                 || has(
                     s,
@@ -1325,6 +1594,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 && !s.contains("loses all other abilities")
         }
         "draw" => {
+            if s.contains("you become the monarch") {
+                return true;
+            }
             if !s.contains("draw") && (s.contains("investigate") || creates(s, "clue") || creates(s, "junk")) {
                 return repeat && !self_sac && !spell;
             }
@@ -1332,6 +1604,11 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 return true;
             }
             if s.contains("draw") {
+                if !(draws_for_you(s) || grammar!(r"each player.s[^.]*that player draws?", full))
+                    || (has(typ, &["Aura", "Equipment"]) || !spell) && grammar!(SELF_DEATH_DRAW, full)
+                {
+                    return false;
+                }
                 if has(s, &["whenever an opponent draws", "whenever you draw"])
                     && !has(s, &["you may draw", "you draw", ": draw", ", draw"])
                 {
@@ -1487,7 +1764,8 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
         }
         "copy" => s.contains("create") || !s.contains("a copy of ~") && !s.contains("copy of this"),
         "tokens" => {
-            if has(s, &["its controller creates", "that player creates", "opponent creates", "they create"])
+            if (has(s, &["its controller creates", "that player creates", "opponent creates", "they create"])
+                || grammar!(r"(?:target|that) creature.s controller[^.]*creates?", s))
                 && !has(s, &["you create", "each player creates", "another target player creates"])
             {
                 return false;
@@ -1503,6 +1781,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                         || has(s.split("copy").nth(1).unwrap_or(""), &["creature", "permanent"]))
         }
         "anthem" => {
+            if grammar!(r"up to NUMBER target creatures", s) {
+                return false;
+            }
             if s.contains("+1/+1 counter on each creature") {
                 return has(s, &["each creature you control", "each creature target player controls"]);
             }
@@ -1549,7 +1830,6 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                         "first strike",
                         "deathtouch",
                         "fear",
-                        "haste",
                     ],
                 )
         }
@@ -1686,7 +1966,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 ) || repeat)
         }
         "extra-phase" => true,
-        "evasion" => (grant || s.starts_with("all ")) && !s.contains("can't attack"),
+        "evasion" => (grant || s.starts_with("all ")) && keyword_grant(s) && !s.contains("can't attack"),
         "stax" => {
             !(s.contains("cost") && s.contains("less"))
                 && !s.contains("this spell")
@@ -1722,9 +2002,10 @@ pub fn generate(index: &Index, overrides: &str) -> Result<RoleMap, String> {
     let mut result = RoleMap {
         meta: RoleMeta {
             taxonomy: index.taxonomy_fnv.clone(),
-            rules_fnv: rules_hash(),
+            rules_fnv: rules_hash(overrides.as_bytes()),
             oracle_fnv: index.oracle_fnv.clone(),
             count: index.cards.iter().filter(|c| is_deck_card(c)).count(),
+            table_fnv: String::new(), // filled in by bytes()
         },
         cards: BTreeMap::new(),
     };
@@ -1790,8 +2071,15 @@ pub fn load(path: &Path) -> Result<RoleMap, String> {
         .map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))
 }
 pub fn bytes(map: &RoleMap) -> Result<Vec<u8>, String> {
-    let mut out = serde_json::to_vec_pretty(map).map_err(|e| e.to_string())?;
+    // The hash covers the bytes after the metadata object, so it is written over a fixed-width placeholder.
+    let mut marked = map.clone();
+    marked.meta.table_fnv = "0".repeat(16);
+    let mut out = serde_json::to_vec_pretty(&marked).map_err(|e| e.to_string())?;
     out.push(b'\n');
+    let (_, end) = parse_meta(&out)?;
+    let hash = fingerprint(&out[end..]);
+    let at = out[..end].windows(16).rposition(|w| w == b"0000000000000000").ok_or("meta placeholder")?;
+    out[at..at + 16].copy_from_slice(hash.as_bytes());
     Ok(out)
 }
 fn read(path: &Path) -> Result<String, String> {
@@ -1942,6 +2230,13 @@ pub fn audit(
 /// Rare alternatives are frozen here with semantic reasons; new sparse alternatives fail lint.
 const EXCEPTIONS: &[(&str, &str)] = &[
     (
+        r"target creature.s controller sacrifices it",
+        concat!(
+            "C12 requires a controlled object's edict to remain removal when compensation tokens are rejected; ",
+            "ordinary player edicts require a quantity and cannot resolve this targeted pronoun."
+        ),
+    ),
+    (
         r"double all damage that sources you control",
         "Frozen whole-team damage multiplier; narrow finisher hint always routed.",
     ),
@@ -1970,6 +2265,13 @@ const EXCEPTIONS: &[(&str, &str)] = &[
     ),
     (r"graveyard[^.]*put it into your library", "Frozen pronoun library recursion; source must be checked."),
     (r"return all [^.]*cards in graveyards[^.]*hands", "Frozen symmetric graveyard-to-hand recursion; not a wipe."),
+    (
+        r"(?:creature|permanent) card in your graveyard.*?put it onto the battlefield",
+        concat!(
+            "C4 requires the chosen card's type and source across sentences to distinguish recursion ",
+            "from reanimation; pronoun-only destinations cannot establish either."
+        ),
+    ),
     (r"return from your graveyard to the battlefield", "Frozen destination-first reanimation object ordering."),
     (
         r"opponent sacrifices a nontoken permanent[^.]*put that card onto the battlefield",
@@ -2077,7 +2379,9 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
     index.attach_roles(&map)?;
     if o.mode == "--validate" {
         let gold = o.gold.unwrap_or_else(|| project.data("knowledge/roles_gold.toml"));
-        let report = validate(project, &index, &map, &read(&gold)?, &taxonomy)?;
+        // The rules stage is scored without hand overrides: a manual role set can never improve rule validation.
+        let rules = generate(&index, "")?;
+        let report = validate(project, &index, &rules, &read(&gold)?, &taxonomy)?;
         let passed = report.passed;
         return Ok((
             if o.json { format!("{}\n", serde_json::to_string_pretty(&report).unwrap()) } else { report.text() },
@@ -2140,6 +2444,7 @@ pub struct Stats {
 pub fn stats(index: &Index, map: &RoleMap) -> Stats {
     let causes = [
         RouteReason::UnknownLine,
+        RouteReason::NoRole,
         RouteReason::RejectedHit,
         RouteReason::SameLine,
         RouteReason::RiskyRole,
@@ -2351,12 +2656,10 @@ struct GoldCard {
 pub fn validate(
     project: &Project,
     index: &Index,
-    _saved: &RoleMap,
+    rules: &RoleMap,
     gold: &str,
     taxonomy: &Taxonomy,
 ) -> Result<Validation, String> {
-    // Reclassify without overrides: a manual role set can never improve rule validation scores.
-    let rules = generate(index, "")?;
     let mut v = Validation {
         passed: true,
         hand: BTreeMap::new(),
@@ -2377,7 +2680,7 @@ pub fn validate(
         hand_misses: vec![],
         gold_differences: vec![],
         tag_mapping: BTreeMap::new(),
-        routing: stats(index, &rules),
+        routing: stats(index, rules),
     };
     for (_, tag, _) in sim_core::tag::TAGS {
         let (roles, reason) = tag_roles(tag, &serde_json::Value::Null);
