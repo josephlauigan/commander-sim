@@ -1381,7 +1381,10 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         ardenn_combat_human(g, p, src)?;
         return Ok(vec![]);
     }
-    let Some(to) = super::cloud::best_holder(g, p) else { return Ok(vec![]) };
+    // Ardenn is white: a creature with protection from white is no target
+    let Some(to) = super::cloud::best_holder_from(g, p, crate::engine::values::colors_of(g, src)) else {
+        return Ok(vec![]);
+    };
     let es = super::cloud::pullable(g, p, to);
     if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(vec![]);
@@ -1396,7 +1399,15 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 /// player". They pick the creature, then the Equipment one at a time (Auras stay put, as for the AI)
 fn ardenn_combat_human(g: &mut Game, p: PlayerId, src: Src) -> Res {
     use crate::human::{Target, choices, legal};
-    let holders: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    // Ardenn is white: a creature with protection from white is no target
+    let cols = crate::engine::values::colors_of(g, src);
+    let holders: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !crate::engine::values::protected_from(g, m, cols))
+        .collect();
     if holders.is_empty() || super::cloud::my_equipment(g, p).is_empty() {
         return Ok(());
     }

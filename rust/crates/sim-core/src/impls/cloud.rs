@@ -21,7 +21,7 @@ use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, may_window, may_window_card, trigger_window};
-use crate::engine::values::{epow, etgh, has_type, pval};
+use crate::engine::values::{colors_of, epow, etgh, has_type, protected_from, pval};
 use crate::engine::zones::{Enter, Tokens, draw, enter, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Sacrificed, Src};
@@ -176,8 +176,24 @@ pub fn best_holder(g: &Game, p: PlayerId) -> Option<PermId> {
     max_by(&cs, |m| holder_score(g, m))
 }
 
+/// `best_holder` for a targeted ability of a source of these colours (Kor Outfitter, Ardenn: white): a creature with
+/// protection from them is no target. Equip abilities come from colourless Equipment and use `best_holder`.
+pub fn best_holder_from(g: &Game, p: PlayerId, source: crate::cards::Colors) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk && !protected_from(g, m, source))
+        .collect();
+    max_by(&cs, |m| holder_score(g, m))
+}
+
 fn metalcraft(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count() >= 3
+    // three or more artifacts: the Treasure, Food, Clue and Blood tokens (counters on the player) are artifacts too
+    let pl = g.player(p);
+    let tokens = (pl.treasures + pl.foods + pl.clues + pl.bloods) as usize;
+    pl.perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count() + tokens >= 3
 }
 
 /// the equip cost of Equipment e (printed `base`) onto creature m, with the cards that change it; {0} for the first
@@ -508,12 +524,13 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if crate::human::is_human(g, o) {
         return crate::human::cloud::outfitter(g, src); // the person chooses the Equipment and the creature
     }
-    let Some(to) = best_holder(g, o) else { return Ok(()) };
+    let cols = colors_of(g, src); // Kor Outfitter is white: protection from white stops its target
+    let Some(to) = best_holder_from(g, o, cols) else { return Ok(()) };
     if best_pull(g, o, to).is_none() || !may_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(());
     }
     // targets are chosen again as it resolves: the same choice, if still legal
-    if let Some(to) = best_holder(g, o)
+    if let Some(to) = best_holder_from(g, o, cols)
         && let Some(e) = best_pull(g, o, to)
     {
         attach(g, e, to);
@@ -855,13 +872,30 @@ fn zack_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
 /// on that creature and attach an Equipment that was attached to Zack to that creature. No AI path activates it
 /// since the hand AI's deletion (`cloud_protect` did); the rules are tested in `tests/cards_cloud.rs`.
 pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Res<bool> {
+    zack_sacrifice_with(g, src, p, target, None)
+}
+
+/// `zack_sacrifice` with the Equipment that moves chosen by a person (`None`: the AI's, the most valuable one)
+pub fn zack_sacrifice_with(g: &mut Game, src: PermId, p: PlayerId, target: i64, pick: Option<PermId>) -> Res<bool> {
     let t = PermId(target as u32);
-    if !live(g, src) || !live(g, t) || t == src || owner(g, t) != p || !can_pay(g, p, 1, "", false) {
+    let cols = colors_of(g, src); // Zack Fair is white: a creature with protection from white is no target
+    if !live(g, src)
+        || !live(g, t)
+        || t == src
+        || owner(g, t) != p
+        || protected_from(g, t, cols)
+        || !can_pay(g, p, 1, "", false)
+    {
         return Ok(false);
     }
     pay(g, p, 1, "", false)?;
     let counters = g.perm(src).plus.max(0);
-    let worn = equipment_on(g, src);
+    // "attach an Equipment that was attached to Zack Fair": one, the most valuable
+    let all = equipment_on(g, src);
+    let worn: Vec<PermId> = match pick.filter(|e| all.contains(e)) {
+        Some(e) => vec![e],
+        None => max_by(&all, |e| pval(g, e)).into_iter().collect(),
+    };
     crate::engine::zones::die(g, src, intern("sac"))?; // Zack is sacrificed as a cost: it happens first
     crate::engine::stack::ability_run_w(
         g,
@@ -886,7 +920,7 @@ pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Re
                     t = x;
                 }
             }
-            if live(g, t) {
+            if live(g, t) && !protected_from(g, t, cols) {
                 super::partials::eot_kw(g, t, "indestructible");
                 repl::put_plus(g, t, counters);
                 for &e in &worn {

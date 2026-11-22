@@ -4461,6 +4461,8 @@ fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -
         .iter()
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).token)
+        // Ephemerate is white: a creature with protection from white is no target
+        .filter(|&m| !crate::engine::values::protected_from(g, m, g.db.get(c).colors))
         .map(|m| (blink_worth(g, p, m), m))
         .filter(|x| x.0 >= 3.0)
         .collect();
@@ -4493,6 +4495,10 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
     }
     let (gn, pips, zone) = if from_hand { (1, "W", "hand") } else { (3, "U", "gy") };
     if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, zone) || !can_pay_spell(g, p, c, gn, pips, false) {
+        return Ok(false);
+    }
+    // the spell is white (from either zone): a creature with protection from white is no target
+    if crate::engine::values::protected_from(g, m, g.db.get(c).colors) {
         return Ok(false);
     }
     if from_hand {
@@ -4544,6 +4550,8 @@ fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<boo
         .iter()
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).token)
+        // Momentary Blink is white: a creature with protection from white is no target
+        .filter(|&m| !crate::engine::values::protected_from(g, m, g.db.get(c).colors))
         .map(|m| (blink_worth(g, p, m), m))
         .filter(|x| x.0 >= 3.0)
         .collect();

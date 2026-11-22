@@ -1888,7 +1888,7 @@ fn court(g: &mut Game, src: Src, p: PlayerId) -> Res {
         .copied()
         .filter(|&c| {
             let d = g.db.get(c);
-            (d.perm || d.creature) && !d.land && d.cmc <= 3
+            (d.perm || d.creature || d.land) && d.cmc <= 3 // a land card is a permanent card (mana value 0)
         })
         .collect();
     if cs.is_empty() || !trigger_window(g, o, Some(src), "return a permanent card", None)? {
@@ -1901,12 +1901,22 @@ fn court(g: &mut Game, src: Src, p: PlayerId) -> Res {
     } else {
         None
     };
-    let c = picked.unwrap_or_else(|| max_by(&cs, |c| card_worth(g, o, c, false)).unwrap());
+    // the AI prefers a nonland card; a land card is the pick only when nothing else qualifies
+    let c = picked.unwrap_or_else(|| {
+        let nonland: Vec<CardId> = cs.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+        let pool = if nonland.is_empty() { &cs } else { &nonland };
+        max_by(pool, |c| card_worth(g, o, c, false)).unwrap()
+    });
     if !remove_card(&mut g.player_mut(o).gy, c) {
         return Ok(());
     }
     if g.monarch == Some(o) {
-        enter(g, o, c, Enter::default())?;
+        if g.db.get(c).land {
+            // the real land-entry path: shock-land choice, enters tapped, enters ability, landfall
+            super::yoshimaru_p7::land_enters(g, o, c)?;
+        } else {
+            enter(g, o, c, Enter::default())?;
+        }
         crate::glog!(g, "    Court of Ardenvale returns {} to the battlefield", cname(g, c));
     } else {
         g.player_mut(o).hand.push(c);
