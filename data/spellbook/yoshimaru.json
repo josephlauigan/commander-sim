@@ -1,13 +1,13 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-21",
+  "fetched": "2026-11-22",
   "deck": "yoshimaru",
   "commanders": [
     "Yoshimaru, Ever Faithful",
     "Tymna the Weaver"
   ],
-  "request_sha256": "1c03b78292cee17fa86f5e666fa646c25e1706546d96c9eed1e6cbf3b0e600d8",
+  "request_sha256": "085f4ef2d46190d361ab8c6ed7d6800a7e6dfc18de89cc1a74f944e4d68160d9",
   "identity": "WB",
   "included": [
     {
@@ -36,7 +36,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 127988
+      "popularity": 128055
     },
     {
       "id": "1090-2781",
@@ -60,7 +60,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 56394
+      "popularity": 56446
     },
     {
       "id": "1274-3693",
@@ -88,7 +88,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 53744
+      "popularity": 53781
     },
     {
       "id": "2919-3693",
@@ -117,7 +117,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 13017
+      "popularity": 13039
     }
   ],
   "included_by_changing_commanders": [],
@@ -148,7 +148,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152476,
+      "popularity": 152553,
       "missing": [
         "Sanguine Bond"
       ]
@@ -179,7 +179,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 97442,
+      "popularity": 97486,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -210,7 +210,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 77131,
+      "popularity": 77160,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -241,7 +241,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62190,
+      "popularity": 62206,
       "missing": [
         "Marauding Blight-Priest"
       ]
@@ -271,40 +271,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57599,
+      "popularity": 57622,
       "missing": [
         "Aetherflux Reservoir"
-      ]
-    },
-    {
-      "id": "1561-2498",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Peer into the Abyss",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw for target opponent",
-        "Near-infinite lifeloss for target opponent",
-        "Target opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent has a library size that is at least half their life total.",
-      "mana": "{4}{B}{B}{B}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 52402,
-      "missing": [
-        "Peer into the Abyss"
       ]
     },
     {
@@ -334,7 +303,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 47035,
+      "popularity": 47069,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -365,7 +334,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28784,
+      "popularity": 28789,
       "missing": [
         "Starscape Cleric"
       ]
@@ -402,7 +371,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 21311,
+      "popularity": 21328,
       "missing": [
         "Preston, the Vanisher"
       ]
@@ -432,7 +401,7 @@
       "mana": "{5}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 18177,
+      "popularity": 18190,
       "missing": [
         "Beacon of Immortality"
       ]
@@ -468,7 +437,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 17564,
+      "popularity": 17571,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -497,7 +466,7 @@
       "mana": "{4}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 17185,
+      "popularity": 17193,
       "missing": [
         "Blood Tribute"
       ]
@@ -533,7 +502,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 16929,
+      "popularity": 16939,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -564,7 +533,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14957,
+      "popularity": 14962,
       "missing": [
         "Cliffhaven Vampire"
       ]
@@ -594,7 +563,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 13828,
+      "popularity": 13835,
       "missing": [
         "Revival // Revenge"
       ]
@@ -625,7 +594,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12395,
+      "popularity": 12393,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -652,7 +621,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12244,
+      "popularity": 12243,
       "missing": [
         "Mikaeus, the Unhallowed"
       ]
@@ -683,7 +652,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11690,
+      "popularity": 11693,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -710,7 +679,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 10030,
+      "popularity": 10042,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -739,7 +708,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9902,
+      "popularity": 9910,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -770,7 +739,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9771,
+      "popularity": 9784,
       "missing": [
         "Cleric Class"
       ]
@@ -797,7 +766,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9376,
+      "popularity": 9388,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -828,7 +797,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8350,
+      "popularity": 8353,
       "missing": [
         "Epicure of Blood"
       ]
@@ -857,7 +826,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8167,
+      "popularity": 8172,
       "missing": [
         "Ad Nauseam"
       ]
@@ -886,7 +855,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7857,
+      "popularity": 7851,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -915,7 +884,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7673,
+      "popularity": 7683,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -946,71 +915,9 @@
       "mana": "{1}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6347,
+      "popularity": 6351,
       "missing": [
         "Triskelion"
-      ]
-    },
-    {
-      "id": "2498-8192",
-      "cards": [
-        {
-          "name": "Niv-Mizzet, Ghost Counsel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain triggers",
-        "Near-infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 5804,
-      "missing": [
-        "Niv-Mizzet, Ghost Counsel"
-      ]
-    },
-    {
-      "id": "679-2498",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lich's Mastery",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5668,
-      "missing": [
-        "Lich's Mastery"
       ]
     },
     {
@@ -1039,7 +946,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5387,
+      "popularity": 5399,
       "missing": [
         "South Wind Avatar"
       ]
@@ -1066,7 +973,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 4570,
+      "popularity": 4578,
       "missing": [
         "Wispweaver Angel"
       ]
@@ -1097,7 +1004,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2459,
+      "popularity": 2462,
       "missing": [
         "Light of Promise"
       ]
@@ -1129,7 +1036,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2093,
+      "popularity": 2094,
       "missing": [
         "Triskelion"
       ]
@@ -1166,7 +1073,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2043,
+      "popularity": 2045,
       "missing": [
         "Serra Avatar"
       ]
@@ -1196,7 +1103,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1895,
+      "popularity": 1899,
       "missing": [
         "Requiem Monolith"
       ]
@@ -1318,7 +1225,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1438,
+      "popularity": 1442,
       "missing": [
         "Spellbinder"
       ]
@@ -1349,9 +1256,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1386,
+      "popularity": 1389,
       "missing": [
         "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "1069-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Puresteel Paladin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control an Equipment.\nYou control at least three artifacts.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1362,
+      "missing": [
+        "Crackdown Construct"
       ]
     },
     {
@@ -1410,7 +1346,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1115,
+      "popularity": 1112,
       "missing": [
         "Sunbond"
       ]
@@ -1440,41 +1376,6 @@
       "popularity": 1090,
       "missing": [
         "Meticulous Excavation"
-      ]
-    },
-    {
-      "id": "782-2580-5141",
-      "cards": [
-        {
-          "name": "Lethal Vapors",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Grand Abolisher",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Skip all your future turns, causing your opponents to eventually draw from an empty library and lose the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{B}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 955,
-      "missing": [
-        "Lethal Vapors"
       ]
     },
     {
@@ -1509,6 +1410,33 @@
       ]
     },
     {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 776,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
       "id": "2677-3862",
       "cards": [
         {
@@ -1540,33 +1468,6 @@
       ]
     },
     {
-      "id": "70-5141",
-      "cards": [
-        {
-          "name": "Balancing Act",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 774,
-      "missing": [
-        "Balancing Act"
-      ]
-    },
-    {
       "id": "678-3693",
       "cards": [
         {
@@ -1588,7 +1489,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 648,
+      "popularity": 647,
       "missing": [
         "Enduring Renewal"
       ]
@@ -1631,35 +1532,6 @@
       ]
     },
     {
-      "id": "202-2498",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lich",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 428,
-      "missing": [
-        "Lich"
-      ]
-    },
-    {
       "id": "2763-2781",
       "cards": [
         {
@@ -1681,38 +1553,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 369,
+      "popularity": 368,
       "missing": [
         "Kaya, Intangible Slayer"
-      ]
-    },
-    {
-      "id": "2498-4126",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Nefarious Lich",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 344,
-      "missing": [
-        "Nefarious Lich"
       ]
     },
     {
@@ -1737,7 +1580,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 330,
+      "popularity": 329,
       "missing": [
         "Essence Reliquary"
       ]
@@ -1931,68 +1774,6 @@
       "popularity": 35,
       "missing": [
         "Obelisk of Undoing"
-      ]
-    },
-    {
-      "id": "2498-7844",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Yawgmoth's Bargain",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
-      "missing": [
-        "Yawgmoth's Bargain"
-      ]
-    },
-    {
-      "id": "2498-4322",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Griselbrand",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 8.",
-      "mana": "",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
-      "missing": [
-        "Griselbrand"
       ]
     }
   ]

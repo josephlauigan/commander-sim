@@ -10,10 +10,22 @@
 # only after Yoshimaru is out: a priority gap here, not a gate), Chrome Mox's imprint choice, the end-step plays of the
 # flash creatures, the Archangel of Thune + Walking Ballista and Restoration Angel + Felidar Guardian lines (not in the
 # combo catalogue), and the guide's hold rules for blink spells and sweeper answers.
+# Equipment package (the Equipment, its carriers and enablers; the guide's "The Equipment package"): the rows below are
+# COPIED from data/plans/cloud.toml's tuned rules (the same cards and values, Cloud's commander row aside), not measured on
+# this list, so they are provisional. Deliberately left out: Cloud's `[equip] holder = "commander"` (it would put the
+# Swords on Yoshimaru or Tymna; the guide wants fliers and Tymna only with Swiftfoot Boots, because +power turns off
+# Delney's doubling for her), the choice of carrier for Sting and Sword of Hearth and Home (protection from white:
+# never on Walking Ballista), Flawless Maneuver in response to our own Wrath of God, never returning Walking Ballista
+# with Court of Ardenvale, and blinking the Equipment instead of the carrier: the generic policy decides all of these,
+# so a weak result may be the AI and not the list.
 deck = "yoshimaru"
 default = "plan"
 # card engines the tutors want once no line wants a card
 engines = ["Delney, Streetwise Lookout", "Elas il-Kor, Sadistic Pilgrim", "Elesh Norn, Mother of Machines", "The One Ring"]
+
+# the Equipment in the list: what `hand:equipment` / `bf:equipment` count
+[sets]
+equipment = ["Buster Sword", "Mithril Coat", "Sting, the Glinting Dagger", "Swiftfoot Boots", "Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
 
 # Yoshimaru costs {W}: cast him from turn 1, ahead of Tymna. Fallback only: both commanders match a [[prio]] rule
 # below, and the rule's priority wins before this block is read.
@@ -55,6 +67,61 @@ else = 60
 [[prio]]
 cards = ["Delney, Streetwise Lookout"]
 value = 84
+
+# Equipment package, copied from Cloud's rules: the Swords first, the enablers once there is Equipment to work, Boots and
+# Zack Fair for the commanders, Court of Ardenvale once the mana is there
+[[prio]]
+cards = ["Sword of Fire and Ice"]
+value = 80
+
+[[prio]]
+cards = ["Sword of Feast and Famine"]
+value = 78
+
+[[prio]]
+cards = ["Sword of Hearth and Home"]
+value = 76
+
+[[prio]]
+cards = ["Puresteel Paladin"]
+when = ["hand:equipment>=1"]
+value = 81
+else = 57
+
+[[prio]]
+cards = ["Ardenn, Intrepid Archaeologist"]
+when = ["hand:equipment+bf:equipment>=1"]
+value = 72
+else = 54
+
+[[prio]]
+cards = ["Kor Outfitter"]
+when = ["hand:equipment+bf:equipment>=1"]
+value = 66
+else = 46
+
+[[prio]]
+cards = ["Swiftfoot Boots"]
+when = ["commander-out"]
+value = 74
+
+[[prio]]
+cards = ["Swiftfoot Boots"]
+when = ["opp-removal-up>=1"]
+value = 70
+else = 50
+
+[[prio]]
+cards = ["Zack Fair"]
+when = ["commander-out"]
+value = 66
+else = 54
+
+[[prio]]
+cards = ["Court of Ardenvale"]
+when = ["lands>=6"]
+value = 64
+else = 50
 
 # the protection cards are kept for the commanders and the engine, not cast proactively
 [[hold]]
