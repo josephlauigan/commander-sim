@@ -15,6 +15,19 @@ Warhound and Ash Barrens fetch or copy (26 left). The Kor Haven for a Plains tes
 does not predict this one. Not measured. To check in the first run: how often it enters tapped, how often the draw is
 used, and the games where the swap changes the turn-2 Cloud.
 
+## 2026-11-21: Judgment of Alexander => a 27th Plains (JD's physical list, not simulated)
+JD's sleeved deck plays 27 Plains and no Judgment of Alexander, so the simulator list now matches it (lands 33 -> 34).
+The cut is JD's, not a measured choice. Judgment ({2}{W} instant: prevent all damage from opponents' sources this turn,
+and each commander creature you control deals damage equal to its power to each creature whose damage was prevented) was
+the deck's fog against Isshin, Aurelia, Marwyn with Craterhoof and Kaalia. What the earlier runs say about it: over Stand
+Up for Yourself it was +1.0 on average over t1-t3, inside noise (2026-11-04 below); it was cast in only 17-34% of the
+games it was drawn, at round 9-12, because the AI never casts it in the main phase (the 11/04 breakdown), and in 27% of the
+games drawn in the 11/07 analyze run, which lists it among the cards that sit in hand. So the simulator undervalued it,
+and removing it costs the sim little either way. What it costs in real games: the deck's only damage-prevention fog;
+Galadriel's Dismissal, kicked ({2}{W}{W}, phases out an attacking team), the Package D taxes and the wipes remain. The
+guide's advice that named Judgment now names the kicked Dismissal. Not measured. The engine's Judgment code stays (it is
+card code in `impls/cloud.rs`, and `tests/cards_cloud_gaps.rs` covers it).
+
 ## 2026-11-21: Thought Vessel => Wayfarer's Bauble (JD's choice, not simulated)
 Wayfarer's Bauble ({1} artifact; {2}, {T}, sacrifice: a basic land onto the battlefield tapped; model status Full) takes
 Thought Vessel's slot. Why: JD's pick, a cheaper piece of ramp. It counts as an artifact for Puresteel Paladin's

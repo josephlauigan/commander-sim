@@ -1,25 +1,28 @@
+1 Absorb (dmr) 186
 1 Adarkar Wastes (dmu) 377
 1 Anguished Unmaking (pip) 209
 1 Arcane Signet (lcc) 104
 1 Arrest (mmq) 4
 1 Austere Command (spg) 160
-1 Bound in Silence (tsr) 10
+1 Borne Upon a Wind (sld) 2228
+1 Brainstorm (trc) 434
 1 Cabal Coffers (mh2) 325
 1 Cast Away Doubt (fra) 51
 1 Caves of Koilos (dmu) 378
-1 Champion's Helm (cmm) 654
+1 Chrome Mox (2xm) 240
 1 Coalition Relic (fut) 161
 1 Command Tower (sld) 1697
-1 Conjurer's Closet (inr) 321
 1 Consecrated Sphinx (sld) 1657
 1 Counterspell (wc00) tvdl61b
+1 Dark Ritual (msc) 793
 1 Debt to the Deathless (rvr) 364
+1 Demonic Consultation (ice) 121
 1 Demonic Tutor (sta) 90
 1 Diabolic Tutor (sld) 1592
-1 Displacer Kitten (clb) 63
-1 Dovin's Veto (p30a) 27
+1 Disdainful Stroke (soa) 147
+1 Doomsday (sld) 1115
 1 Esper Sentinel (mh2) 328
-1 Expedition Map (fdn) 724
+1 Expedition Map (2xm) 359
 1 Exquisite Blood (lcc) 195
 1 Exsanguinate (cmm) 638
 1 Farewell (neo) 436
@@ -29,15 +32,15 @@
 1 Generous Gift (cmr) 620
 1 Go for the Throat (j25) 447
 1 Godless Shrine (rvr) 294
+1 Grand Abolisher (cmm) 625
 1 Hallowed Fountain (clu) 277
-1 Idyllic Tutor (thb) 24
 5 Island (trk) 320
 1 Loran of the Third Path (fca) 24
 1 Marauding Blight-Priest (znr) 112
 1 Marsh Flats (mh2) 476
 1 Mindbreak Trap (mar) 11
 1 Mistrise Village (tdm) 397
-1 Mystic Remora (dmr) 420
+1 Mox Diamond (sth) 138
 1 Mystical Tutor (dmr) 421
 1 Necropotence (wot) 74
 1 Notion Thief (spg) 36
@@ -48,31 +51,33 @@
 1 Polluted Bonds (wot) 75
 1 Polluted Delta (mh3) 356
 1 Prayer of Binding (dmu) 28
+1 Preordain (soa) 86
 1 Profane Tutor (mh2) 401
 1 Propaganda (tmp) 80
 1 Read the Bones (cmm) 182
-1 Restoration Angel (2x2) 421
 1 Rhystic Study (pcy) 45
 1 Ringsight (ltr) 220
 1 Sanguine Bond (tsr) 330
 1 Scrubland (cei) 282
 1 Serra's Sanctum (usg) 325
 1 Sheoldred, the Apocalypse (dmu) 107
+1 Silence (m14) 35
 1 Skyclave Apparition (soc) 173
 1 Smothering Tithe (2x2) 423
-1 Sol Ring (sld) 2093
+1 Sol Ring (fic) 357
 1 Sphere of Safety (sld) 588
 8 Swamp (trk) 321
-1 Teferi's Protection (sta) 74
-1 Teleportation Circle (afr) 39
-1 Tezzeret's Gambit (plst) NPH-47
-1 Torment of Hailfire (sld) 9992
+1 Teferi, Time Raveler (rvr) 232
+1 Thassa's Oracle (thb) 73
+1 The Theorist, Jace Beleren (fra) 363
 1 Toxic Deluge (mh3) 412
 1 Tundra (ced) 285
 1 Underground River (wc98) bs362
 1 Underground Sea (cei) 286
 1 Urborg, Tomb of Yawgmoth (ltc) 375
+1 Valley Floodcaller (blb) 79
 1 Vampiric Tutor (soa) 100
+1 Voice of Victory (tdm) 33
 1 Watery Grave (rvr) 301
 1 Y'shtola, Night's Blessed (fic) 207
 1 Your Fate Ends Here (fra) 24
