@@ -13,6 +13,8 @@ fn repo() -> PathBuf {
 }
 fn capped(program: impl AsRef<std::ffi::OsStr>) -> Command {
     let mut c = Command::new("systemd-run");
+    // Pass shell code literally: systemd-run expansion turns $$ into $, corrupting signal targets.
+    c.arg("--expand-environment=no");
     c.args(["--user", "--scope", "-q", "-p", "MemoryMax=24G", "-p", "MemorySwapMax=0"]).arg(program);
     c
 }
