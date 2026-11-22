@@ -386,3 +386,23 @@ fn a_deck_card_may_be_spelled_either_way_and_a_synthetic_pool_deck_is_not_checke
     assert!(a.contains("**Dark Tutor** became banned"), "{a}");
     assert!(!a.contains("`pp`"), "{a}");
 }
+
+#[test]
+fn markup_in_names_notes_and_keys_is_escaped_and_flattened() {
+    let e = Env::new();
+    let nasty = "Bolt # 1 | [click](https://example.invalid) *x* `y`\\n\\n## Forged";
+    let oracle = std::fs::read_to_string(fixture("new_oracle.json")).unwrap().replace("Fresh Bolt", nasty);
+    e.write("data/knowledge/oracle.json", &oracle);
+    let decks = std::fs::read_to_string(fixture("decks.json")).unwrap().replace("\"kz\"", "\"k`z|\"");
+    e.write("data/decks.json", &decks);
+    let stages = e.write("stages.tsv", "llm\tfail\t1\tnote | with ## and `ticks` [x](y)\\n\n");
+    let t = e.text(&["--commit", "abc | `d` # e", "--stages", &stages]);
+    // escaped, on one line, and no new section
+    let name = "Bolt \\# 1 \\| \\[click\\](https://example.invalid) \\*x\\* \\`y\\` \\#\\# Forged";
+    assert!(t.contains(name), "{t}");
+    assert!(!t.contains("\n## Forged") && t.matches("\n## ").count() == 5, "{t}");
+    assert!(t.contains("- Repository: abc \\| \\`d\\` \\# e"), "{t}");
+    assert!(t.contains("| llm | fail | 1 | note \\| with \\#\\# and \\`ticks\\` \\[x\\](y)\\\\n |"), "{t}");
+    // a backtick or bar in a deck key cannot end its code span
+    assert!(t.contains("- `k'z|` (R)"), "{t}");
+}
