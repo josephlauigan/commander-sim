@@ -210,7 +210,7 @@ How the flags mislead if read carelessly:
 - `BAN` or `NL` (section A can show them): not Commander-legal; never propose the card; tell JD.
 - An error naming `bulk-sync`, `roles` or `export` (no catalog, no or stale role table, engine status unavailable):
   stop and report it. Do not run them in a recommendation: in a worktree they can write the main checkout's data,
-  and `bulk-sync` rewrites the tracked `sync.lock`.
+  and `bulk-sync` replaces the shared catalog the weekly job maintains (`oracle.json`, `oracle.prev.json`, `sync.lock`).
 
 ## Implementation expectations
 
