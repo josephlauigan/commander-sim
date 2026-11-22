@@ -515,10 +515,7 @@ fn metalcraft_needs_three_artifacts_we_control_to_make_equip_free() {
     assert_eq!(cloud::equip_cost(&g, P0, sword, t, 2), 0, "three artifacts: equip {{0}}");
     // the equip option the AI offers costs nothing
     let free = sim_core::dsl::equip_options(&g, P0);
-    assert!(
-        !free.is_empty() && free.iter().all(|o| matches!(o.act, Some(Action::Equip { n: 0, .. }))),
-        "{free:?}"
-    );
+    assert!(!free.is_empty() && free.iter().all(|o| matches!(o.act, Some(Action::Equip { n: 0, .. }))), "{free:?}");
 }
 
 #[test]
@@ -1789,7 +1786,11 @@ fn heliods_lifelink_ability_cannot_target_the_carrier_with_protection_from_white
     let h = perm(&mut g, P0, "Heliod, Sun-Crowned");
     let c = pro_white_carrier(&mut g, "Serra Angel");
     let o = options_of(&mut g, h, P0);
-    assert!(!o.iter().any(|x| x.label.contains("lifelink")), "no target: {:?}", o.iter().map(|x| &x.label).collect::<Vec<_>>());
+    assert!(
+        !o.iter().any(|x| x.label.contains("lifelink")),
+        "no target: {:?}",
+        o.iter().map(|x| &x.label).collect::<Vec<_>>()
+    );
     assert!(!sim_core::impls::t4::heliod_grant_legal(&g, P0, h, c));
     colourless_equip_still_targets(&mut g, c);
 }
@@ -1804,7 +1805,10 @@ fn giver_of_runes_cannot_target_the_carrier_with_protection_from_white() {
     perm(&mut g, P0, "Giver of Runes");
     g.active = Some(P1);
     let s = spell(&g);
-    assert!(sim_core::ai::protect_response(&mut g, P0, m, "exile", Some(P1), Some(s)).unwrap(), "control: Giver saves it");
+    assert!(
+        sim_core::ai::protect_response(&mut g, P0, m, "exile", Some(P1), Some(s)).unwrap(),
+        "control: Giver saves it"
+    );
     let mut g = tbl();
     let giver = perm(&mut g, P0, "Giver of Runes");
     let m = pro_white_carrier(&mut g, "Grave Titan");
@@ -1891,7 +1895,9 @@ fn protectors_that_target_the_spell_still_save_a_carrier_with_protection_from_re
     // ("{U}, Sacrifice: Counter target spell or ability that targets you or a creature you control") and Deflecting
     // Swat ("change the target of target spell or ability with a single target") target the removal, not the creature.
     let spell = |g: &Game| card(g, "Swords to Plowshares");
-    for (protector, land, in_hand_card) in [("Siren Stormtamer", "Island", false), ("Deflecting Swat", "Mountain", true)] {
+    for (protector, land, in_hand_card) in
+        [("Siren Stormtamer", "Island", false), ("Deflecting Swat", "Mountain", true)]
+    {
         let mut g = tbl();
         lands(&mut g, P0, land, 3, false);
         let m = perm(&mut g, P0, "Grave Titan");
@@ -1996,6 +2002,185 @@ fn steelshapers_gift_a_person_picks_among_the_equipment_cards_only() {
     assert_eq!(hand_len(&g, P0), n + 1);
     assert!(!in_hand(&g, P0, SOHH) && !in_hand(&g, P0, "Sol Ring"));
     let offered: Vec<String> = h.asked().into_iter().flat_map(|r| r.choices.clone()).collect();
-    assert!(!offered.iter().any(|c| c.contains("Sol Ring") || c.contains("Brainstorm") || c.contains("Plains")), "{offered:?}");
+    assert!(
+        !offered.iter().any(|c| c.contains("Sol Ring") || c.contains("Brainstorm") || c.contains("Plains")),
+        "{offered:?}"
+    );
     assert!(offered.iter().any(|c| c.contains(SOHH)), "{offered:?}");
+}
+
+// =================================================================================================================
+// 14. Round 3: Momentary Blink, practice-mode targets, Secure the Scene, Zack Fair's choice of Equipment
+// =================================================================================================================
+/// a person at P0 who takes `action` at the first priority, answers a question whose prompt contains the first word of
+/// a rule with the choice containing the second (else the first choice) and passes at every other priority
+fn person_does(g: &mut Game, action: Value, rules: &[(&str, &str)]) -> Arc<ScriptHuman> {
+    let rules: Vec<(String, String)> = rules.iter().map(|(p, c)| (p.to_string(), c.to_string())).collect();
+    let first = Mutex::new(Some(action));
+    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+        if &*r.kind == "priority" {
+            return Answer::Action(first.lock().unwrap().take().unwrap_or_else(|| json!({"do": "pass"})));
+        }
+        for (p, c) in &rules {
+            if r.prompt.contains(p.as_str())
+                && let Some(k) = r.choices.iter().position(|x| x.contains(c.as_str()))
+            {
+                return Answer::Pick(k);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+fn offered(h: &ScriptHuman, prompt: &str) -> Vec<String> {
+    h.asked().into_iter().filter(|r| r.prompt.contains(prompt)).flat_map(|r| r.choices.clone()).collect()
+}
+
+#[test]
+fn momentary_blink_is_not_offered_on_the_carrier_with_protection_from_white() {
+    // Momentary Blink: "Exile target creature you control, then return it to the battlefield under its owner's
+    // control." It is white (from the hand or by flashback).
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let s = perm(&mut g, P0, SFM);
+    let c = hand(&mut g, P0, &["Momentary Blink"])[0];
+    let f = g.registry.get(c).unwrap().hand_options.expect("Momentary Blink has a hand option");
+    let o = f(&mut g, c, P0, Some(false)).unwrap();
+    assert!(o.iter().any(|x| x.label.contains("Momentary Blink")), "control: offered on a plain Stoneforge Mystic");
+    let sword = perm(&mut g, P0, SOHH);
+    wear(&mut g, sword, s);
+    let o = f(&mut g, c, P0, Some(false)).unwrap();
+    assert!(
+        !o.iter().any(|x| x.label.contains("Momentary Blink")),
+        "{:?}",
+        o.iter().map(|x| &x.label).collect::<Vec<_>>()
+    );
+    // and a direct cast (protection or value path) is refused, nothing paid
+    assert!(!sim_core::impls::mine::momentary_blink_cast(&mut g, P0, s, "protection").unwrap());
+    assert!(in_hand(&g, P0, "Momentary Blink") && g.perm(s).on_bf);
+    colourless_equip_still_targets(&mut g, s);
+}
+
+#[test]
+fn ephemerate_for_a_person_does_not_offer_the_carrier_with_protection_from_white() {
+    let mut g = tbl();
+    g.player_mut(P0).hand.clear();
+    let c = perm(&mut g, P0, "Kor Duelist");
+    let t = pro_white_carrier(&mut g, TYMNA);
+    hand(&mut g, P0, &["Ephemerate"]);
+    pool(&mut g, P0, &[('W', 1)]);
+    let h = person_does(&mut g, json!({"do": "cast", "card": 0}), &[]);
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    let o = offered(&h, "Ephemerate: exile and return which creature?");
+    assert!(!o.is_empty() && o.iter().any(|x| x.contains("Kor Duelist")), "{o:?}");
+    assert!(!o.iter().any(|x| x.contains("Tymna")), "the carrier is no target: {o:?}");
+    assert!(g.perm(t).on_bf && c != t);
+}
+
+#[test]
+fn kor_outfitter_for_a_person_does_not_offer_the_carrier_with_protection_from_white() {
+    let mut g = tbl();
+    let t = pro_white_carrier(&mut g, TYMNA);
+    perm(&mut g, P0, "Serra Angel");
+    perm(&mut g, P0, BOOTS);
+    let h = person_rules(&mut g, &[]);
+    perm(&mut g, P0, OUTFITTER);
+    let o = offered(&h, "Kor Outfitter: attach it to which creature");
+    assert!(o.iter().any(|x| x.contains("Serra Angel")), "{o:?}");
+    assert!(!o.iter().any(|x| x.contains("Tymna")), "{o:?}");
+    colourless_equip_still_targets(&mut g, t);
+}
+
+#[test]
+fn ardenn_for_a_person_does_not_offer_the_carrier_with_protection_from_white() {
+    let mut g = tbl();
+    let t = pro_white_carrier(&mut g, TYMNA);
+    perm(&mut g, P0, "Serra Angel");
+    perm(&mut g, P0, BOOTS);
+    perm(&mut g, P0, ARDENN);
+    let h = person_rules(&mut g, &[]);
+    fire(&mut g, Event::CombatStart, P0);
+    let o = offered(&h, "Ardenn (beginning of combat): attach Equipment you control to which creature?");
+    assert!(o.iter().any(|x| x.contains("Serra Angel")), "{o:?}");
+    assert!(!o.iter().any(|x| x.contains("Tymna")), "{o:?}");
+    colourless_equip_still_targets(&mut g, t);
+}
+
+#[test]
+fn secure_the_scene_gives_the_controller_a_white_soldier() {
+    // "Exile target nonland permanent. Its controller creates a 1/1 white Soldier creature token."
+    let mut g = tbl();
+    let a = perm(&mut g, P1, "Serra Angel");
+    assert!(cast_on(&mut g, P0, "Secure the Scene", a));
+    assert!(!g.perm(a).on_bf);
+    let toks = tokens_of(&g, P1);
+    assert_eq!(toks.len(), 1);
+    let tok = toks[0];
+    assert_eq!(colors_of(&g, tok), Colors::from_letters("W"), "white");
+    assert!(has_type(&g, tok, "soldier"), "Soldier");
+    assert_eq!((epow(&g, tok), etgh(&g, tok)), (1, 1));
+    assert!(tokens_of(&g, P0).is_empty());
+}
+
+#[test]
+fn beast_within_and_cavalier_of_dawn_tokens_are_unchanged() {
+    // Beast Within: "Its controller creates a 3/3 green Beast creature token" (the engine's plain token: no type or
+    // colour of its own); the override for Stroke and Secure the Scene changes only those cards
+    let mut g = tbl();
+    let a = perm(&mut g, P1, "Serra Angel");
+    assert!(cast_on(&mut g, P0, "Beast Within", a));
+    let toks = tokens_of(&g, P1);
+    assert_eq!(toks.len(), 1);
+    assert_eq!((epow(&g, toks[0]), etgh(&g, toks[0])), (3, 3));
+    assert!(!has_type(&g, toks[0], "soldier") && !has_type(&g, toks[0], "human"));
+}
+
+fn zack_table() -> (Game, PermId, PermId, PermId, PermId) {
+    let mut g = tbl();
+    g.player_mut(P0).hand.clear();
+    let z = perm(&mut g, P0, ZACK);
+    let (a, b) = (perm(&mut g, P0, SOFI), perm(&mut g, P0, BUSTER));
+    wear(&mut g, a, z);
+    wear(&mut g, b, z);
+    let t = perm(&mut g, P0, TYMNA);
+    pool(&mut g, P0, &[('C', 1)]);
+    (g, z, a, b, t)
+}
+
+#[test]
+fn zack_fair_for_a_person_with_two_equipment_asks_which_one_moves() {
+    let (mut g, z, a, b, t) = zack_table();
+    let (lesser, other) =
+        if sim_core::engine::values::pval(&g, a) <= sim_core::engine::values::pval(&g, b) { (a, b) } else { (b, a) };
+    let name = g.perm(lesser).name.to_string();
+    let i = g.player(P0).perms.iter().position(|&x| x == z).unwrap();
+    let h = person_does(
+        &mut g,
+        json!({"do": "use", "perm": i}),
+        &[("Zack Fair: which creature", "Tymna"), ("attach which Equipment", &name)],
+    );
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    let o = offered(&h, "Zack Fair: attach which Equipment");
+    assert_eq!(o.len(), 2, "both Equipment are offered: {o:?}");
+    assert!(!g.perm(z).on_bf, "sacrificed");
+    assert_eq!(g.perm(lesser).attached, Some(t), "the one the person chose moved");
+    assert_ne!(g.perm(other).attached, Some(t), "and only that one");
+}
+
+#[test]
+fn zack_fair_for_a_person_with_one_equipment_asks_nothing() {
+    let mut g = tbl();
+    g.player_mut(P0).hand.clear();
+    let z = perm(&mut g, P0, ZACK);
+    let a = perm(&mut g, P0, SOFI);
+    wear(&mut g, a, z);
+    let t = perm(&mut g, P0, TYMNA);
+    pool(&mut g, P0, &[('C', 1)]);
+    let i = g.player(P0).perms.iter().position(|&x| x == z).unwrap();
+    let h = person_does(&mut g, json!({"do": "use", "perm": i}), &[("Zack Fair: which creature", "Tymna")]);
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(offered(&h, "attach which Equipment").is_empty());
+    assert_eq!(g.perm(a).attached, Some(t));
 }

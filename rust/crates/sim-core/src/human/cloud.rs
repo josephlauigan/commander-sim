@@ -326,8 +326,15 @@ fn zack(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     else {
         return Ok(None);
     };
+    // "attach an Equipment that was attached to Zack Fair": with more than one, the person picks which
+    let worn = crate::impls::cloud::equipment_on(g, m);
+    let mut chosen = None;
+    if worn.len() > 1 {
+        chosen =
+            cards::pick_perm(g, p, "target", "Zack Fair: attach which Equipment to the new creature?", &worn, None)?;
+    }
     crate::glog!(g, "  {} sacrifices Zack Fair", g.player(p).name);
-    if !crate::impls::cloud::zack_sacrifice(g, m, p, t.0 as i64)? {
+    if !crate::impls::cloud::zack_sacrifice_with(g, m, p, t.0 as i64, chosen)? {
         return Ok(Some("Can't activate Zack Fair.".into()));
     }
     crate::engine::life::check_state(g)?;
@@ -485,7 +492,14 @@ fn dismissal(g: &mut Game, _p: PlayerId, ctx: &crate::state::Ctx) {
 pub fn outfitter(g: &mut Game, src: PermId) -> Res {
     let o = g.perm(src).owner;
     let eq = crate::impls::cloud::my_equipment(g, o);
-    let cre: Vec<PermId> = g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    // Kor Outfitter is white: a creature with protection from white is no target
+    let cre: Vec<PermId> = g
+        .player(o)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && legal_target(g, o, src, m))
+        .collect();
     if eq.is_empty() || cre.is_empty() {
         return Ok(());
     }

@@ -90,8 +90,14 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// cards.ephemerate_rebound: your upkeep: cast Ephemerate from exile for free, on a creature you choose; not cast, it
 /// stays in exile
 pub fn ephemerate_rebound(g: &mut Game, p: PlayerId, c: CardId) -> Res {
-    let cre: Vec<PermId> =
-        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
+    let cols = g.db.get(c).colors; // white: protection from white stops the target
+    let cre: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !crate::engine::values::protected_from(g, m, cols))
+        .collect();
     if cre.is_empty() {
         return Ok(());
     }
@@ -1391,7 +1397,10 @@ fn ephemerate(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     if let Some(why) = legal::check_cast(g, p, c, "hand") {
         return Ok(Some(why));
     }
-    let cre = my_creatures(g, p);
+    // Ephemerate is white: a creature with protection from white is no target
+    let cols = g.db.get(c).colors;
+    let cre: Vec<PermId> =
+        my_creatures(g, p).into_iter().filter(|&m| !crate::engine::values::protected_from(g, m, cols)).collect();
     if cre.is_empty() {
         return Ok(Some("Ephemerate needs a creature you control to target.".into()));
     }

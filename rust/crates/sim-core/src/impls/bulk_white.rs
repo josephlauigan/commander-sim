@@ -1399,7 +1399,15 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 /// player". They pick the creature, then the Equipment one at a time (Auras stay put, as for the AI)
 fn ardenn_combat_human(g: &mut Game, p: PlayerId, src: Src) -> Res {
     use crate::human::{Target, choices, legal};
-    let holders: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    // Ardenn is white: a creature with protection from white is no target
+    let cols = crate::engine::values::colors_of(g, src);
+    let holders: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !crate::engine::values::protected_from(g, m, cols))
+        .collect();
     if holders.is_empty() || super::cloud::my_equipment(g, p).is_empty() {
         return Ok(());
     }

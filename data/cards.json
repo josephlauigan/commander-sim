@@ -109412,7 +109412,11 @@
       },
       {
        "do": "opp_token",
-       "pow": 1
+       "pow": 1,
+       "types": [
+        "soldier"
+       ],
+       "color": "W"
       }
      ]
     }
@@ -109424,7 +109428,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

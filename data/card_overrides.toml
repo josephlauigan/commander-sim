@@ -10385,3 +10385,8 @@ note = "destroys target nonland permanent (indestructible: it survives); its con
 
 ["Wrath of God"]
 add_tags = ["noregen"] # "They can't be regenerated" (engine/removal.rs apply_wipe sets the engine's noregen for the card's wipe)
+
+["Secure the Scene"]
+dsl = [{ type = "spell", effects = [{ do = "exile", what = { sel = "target", filter = { type = "nonland" }, upto = false } }, { do = "opp_token", pow = 1, types = ["soldier"], color = "W" }] }] # "Its controller creates a 1/1 white Soldier creature token" (the compiled token was a plain 1/1 of no colour or type)
+status = "Full"
+note = "exiles target nonland permanent; its controller creates a 1/1 white Soldier creature token (the token goes to the permanent's controller, also when the target is ours)"

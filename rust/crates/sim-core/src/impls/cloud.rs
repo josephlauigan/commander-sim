@@ -872,6 +872,11 @@ fn zack_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
 /// on that creature and attach an Equipment that was attached to Zack to that creature. No AI path activates it
 /// since the hand AI's deletion (`cloud_protect` did); the rules are tested in `tests/cards_cloud.rs`.
 pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Res<bool> {
+    zack_sacrifice_with(g, src, p, target, None)
+}
+
+/// `zack_sacrifice` with the Equipment that moves chosen by a person (`None`: the AI's, the most valuable one)
+pub fn zack_sacrifice_with(g: &mut Game, src: PermId, p: PlayerId, target: i64, pick: Option<PermId>) -> Res<bool> {
     let t = PermId(target as u32);
     let cols = colors_of(g, src); // Zack Fair is white: a creature with protection from white is no target
     if !live(g, src)
@@ -886,7 +891,11 @@ pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Re
     pay(g, p, 1, "", false)?;
     let counters = g.perm(src).plus.max(0);
     // "attach an Equipment that was attached to Zack Fair": one, the most valuable
-    let worn: Vec<PermId> = max_by(&equipment_on(g, src), |e| pval(g, e)).into_iter().collect();
+    let all = equipment_on(g, src);
+    let worn: Vec<PermId> = match pick.filter(|e| all.contains(e)) {
+        Some(e) => vec![e],
+        None => max_by(&all, |e| pval(g, e)).into_iter().collect(),
+    };
     crate::engine::zones::die(g, src, intern("sac"))?; // Zack is sacrificed as a cost: it happens first
     crate::engine::stack::ability_run_w(
         g,
