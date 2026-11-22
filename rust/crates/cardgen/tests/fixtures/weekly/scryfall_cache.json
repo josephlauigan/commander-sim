@@ -1,0 +1,176 @@
+{
+ "black lord": {
+  "cmc": 1.0,
+  "color_identity": [
+   "B"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Black Lord",
+  "oracle_text": "Other Zombies get +1/+1.",
+  "type_line": "Legendary Creature - Zombie"
+ },
+ "dark tutor": {
+  "cmc": 1.0,
+  "color_identity": [
+   "B"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Dark Tutor",
+  "oracle_text": "Search your library for a card.",
+  "type_line": "Artifact"
+ },
+ "glass knife": {
+  "cmc": 1.0,
+  "color_identity": [],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Glass Knife",
+  "oracle_text": "Equipped creature gets +1/+0.",
+  "type_line": "Artifact"
+ },
+ "gone gift": {
+  "cmc": 1.0,
+  "color_identity": [
+   "W"
+  ],
+  "game_changer": true,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Gone Gift",
+  "oracle_text": "Draw cards.",
+  "type_line": "Artifact"
+ },
+ "old bear": {
+  "cmc": 1.0,
+  "color_identity": [
+   "B"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}{G}",
+  "name": "Old Bear",
+  "oracle_text": "Old text of the bear.",
+  "type_line": "Creature - Bear"
+ },
+ "red burn": {
+  "cmc": 1.0,
+  "color_identity": [
+   "R"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Red Burn",
+  "oracle_text": "Deal 3 damage.",
+  "type_line": "Artifact"
+ },
+ "red lord": {
+  "cmc": 1.0,
+  "color_identity": [
+   "R"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Red Lord",
+  "oracle_text": "Haste.",
+  "type_line": "Legendary Creature - Goblin"
+ },
+ "sky counter": {
+  "cmc": 1.0,
+  "color_identity": [
+   "U"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Sky Counter",
+  "oracle_text": "Counter target spell.",
+  "type_line": "Artifact"
+ },
+ "sky lord": {
+  "cmc": 1.0,
+  "color_identity": [
+   "U"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Sky Lord",
+  "oracle_text": "Flying.",
+  "type_line": "Legendary Creature - Bird"
+ },
+ "unban me": {
+  "cmc": 1.0,
+  "color_identity": [
+   "W"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "banned"
+  },
+  "mana_cost": "{1}",
+  "name": "Unban Me",
+  "oracle_text": "Gain 10 life.",
+  "type_line": "Artifact"
+ },
+ "wide change": {
+  "cmc": 1.0,
+  "color_identity": [
+   "W"
+  ],
+  "game_changer": false,
+  "keywords": [],
+  "layout": "normal",
+  "legalities": {
+   "commander": "legal"
+  },
+  "mana_cost": "{1}",
+  "name": "Wide Change",
+  "oracle_text": "At the beginning of your upkeep, you gain 3 life and then draw a card if you control a creature.",
+  "type_line": "Artifact"
+ }
+}

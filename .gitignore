@@ -4,12 +4,14 @@ data/images/
 # generated card knowledge (the tracked files in data/knowledge/ stay tracked)
 data/knowledge/oracle.json
 data/knowledge/oracle.prev.json
+data/knowledge/sync.lock
 data/knowledge/roles.json
 data/knowledge/llm_roles.pending.jsonl
 data/knowledge/reports/
 data/knowledge/map.md
 data/knowledge/digests/
 data/knowledge/*.tmp
+data/knowledge/*.lock
 data/saves/
 rust/target/
 commander_sim/rust_sim.so

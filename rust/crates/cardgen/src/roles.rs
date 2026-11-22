@@ -2393,7 +2393,6 @@ struct Options {
     endpoint: Option<String>,
     model: Option<String>,
     pending: bool,
-    no_pending: bool,
     stage: Option<String>,
     routes: Vec<RouteReason>,
     no_think: bool,
@@ -2435,7 +2434,6 @@ fn options(args: &[String]) -> Result<Options, String> {
             "--only-routed" if !o.only_routed => o.only_routed = true,
             "--dry-run" if !o.dry_run => o.dry_run = true,
             "--pending" if !o.pending => o.pending = true,
-            "--no-pending" if !o.no_pending => o.no_pending = true,
             "--no-think" if !o.no_think => o.no_think = true,
             "--include-not-legal" if !o.include_not_legal => o.include_not_legal = true,
             "--legal-only" if !o.legal_only => o.legal_only = true,
@@ -2479,7 +2477,6 @@ fn options(args: &[String]) -> Result<Options, String> {
         || o.batch.is_some()
         || o.dry_run
         || o.endpoint.is_some()
-        || o.pending
         || !o.routes.is_empty()
         || o.include_not_legal
         || o.legal_only;
@@ -2489,13 +2486,13 @@ fn options(args: &[String]) -> Result<Options, String> {
     if llm_flag && o.mode != "--llm"
         || o.no_think && !["--llm", "--merge"].contains(&o.mode.as_str())
         || o.model.is_some() && !["--llm", "--merge"].contains(&o.mode.as_str())
-        || o.no_pending && o.mode != "--merge"
+        || o.pending && !["--llm", "--merge"].contains(&o.mode.as_str())
         || o.stage.as_ref().is_some_and(|s| o.mode != "--validate" || !["rules", "merged"].contains(&s.as_str()))
     {
         return Err(concat!(
             "roles: --llm takes [--limit N] [--ids FILE] [--only-routed] [--routes A,B] [--legal-only | --include-not-legal] ",
             "[--batch N] [--dry-run] [--endpoint URL] [--model ID] [--pending] [--no-think]; --merge takes ",
-            "[--model ID] [--no-pending] [--no-think]; --validate takes [--stage rules|merged]"
+            "[--model ID] [--pending] [--no-think]; --validate takes [--stage rules|merged]"
         )
         .into());
     }
@@ -2768,17 +2765,8 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         let mut rules = generate(&index, "")?;
         rules.meta.rules_fnv = rules_hash(text.as_bytes());
         let ovr = overrides(&index, &text)?;
-        return crate::llm::run_merge(
-            &index,
-            &taxonomy,
-            &rules,
-            &ovr,
-            &dir,
-            o.model.as_deref(),
-            !o.no_pending,
-            o.no_think,
-        )
-        .map(|text| (text, true));
+        return crate::llm::run_merge(&index, &taxonomy, &rules, &ovr, &dir, o.model.as_deref(), o.pending, o.no_think)
+            .map(|text| (text, true));
     }
     let map = load(&path)?;
     index.attach_roles(&map)?;

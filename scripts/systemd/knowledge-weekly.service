@@ -1,0 +1,22 @@
+# Weekly refresh of the card knowledge base. Run by knowledge-weekly.timer; see documents/card-knowledge.md ("Weekly job").
+# Install by hand (nothing installs it):
+#   systemctl --user link ~/projects/commander-sim/scripts/systemd/knowledge-weekly.service
+# ExecStart assumes the repository is at ~/projects/commander-sim; edit it here if it is elsewhere, then run
+# `systemctl --user daemon-reload` (a linked unit is read from this file). Type=exec, not oneshot: systemd ignores
+# RuntimeMaxSec for oneshot.
+[Unit]
+Description=Weekly refresh of the card knowledge base (catalog, roles, map, digests, report)
+Documentation=file://%h/projects/commander-sim/documents/card-knowledge.md
+
+[Service]
+Type=exec
+# cargo is installed by rustup under ~/.cargo/bin, which the user manager's PATH may not include
+Environment=PATH=%h/.cargo/bin:/usr/local/bin:/usr/bin:/bin
+WorkingDirectory=%h
+ExecStart=%h/projects/commander-sim/scripts/knowledge-weekly.sh
+RuntimeMaxSec=4h
+MemoryMax=24G
+MemorySwapMax=0
+Nice=10
+# the disk is idle-priority; the GPU is not affected by this (the LLM stage checks it itself)
+IOSchedulingClass=idle

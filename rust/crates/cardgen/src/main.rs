@@ -11,19 +11,22 @@ const USAGE: &str = "usage:
   cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
                                                 replace a deck's list (KEY: your deck key, a pool deck key, or a path)
-  cardgen bulk-sync [--from-file PATH] [--data-dir DIR] [--min-count N]
+  cardgen bulk-sync [--from-file PATH [--updated-at STAMP]] [--data-dir DIR] [--min-count N]
                                                 download Scryfall's Oracle Cards bulk file and write
-                                                data/knowledge/oracle.json (+ oracle.prev.json, sync.lock); prints
-                                                \"up to date\" when the bulk file has not changed. --from-file
-                                                parses a local bulk file (no network); the directory can also be
-                                                set with CARDGEN_KNOWLEDGE_DIR
+                                                data/knowledge/oracle.json (+ oracle.prev.json, sync.lock, which
+                                                is untracked); prints \"up to date\" when the bulk file has not
+                                                changed. --from-file parses a local bulk file (no network, no
+                                                up-to-date check); with --updated-at the file stands in for the
+                                                remote at that bulk date (up-to-date check, no network); the
+                                                directory can also be set with CARDGEN_KNOWLEDGE_DIR
   cardgen roles --rules [--data-dir DIR]        classify the catalog and write roles.json (offline)
   cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--batch 10] [--dry-run] [--endpoint URL] [--model ID]
                        [--pending] [--data-dir DIR]
                                                 classify routed cards through the local LLM server (llama.cpp,
                                                 http://127.0.0.1:8080/v1) into llm_roles.jsonl; needs `llama up`
-  cardgen roles --merge [--model ID] [--no-pending] [--data-dir DIR]
-                                                rules + LLM cache + overrides -> roles.json, reports/ (offline)
+  cardgen roles --merge [--model ID] [--pending] [--data-dir DIR]
+                                                rules + LLM cache + overrides -> roles.json, reports/ (offline;
+                                                --pending also reads llm_roles.pending.jsonl)
   cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
   cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
   cardgen roles --show NAME | --stats | --lint [--data-dir DIR]
@@ -47,6 +50,12 @@ const USAGE: &str = "usage:
                                                 --status LIST (full, full-auto, approximate, partial, unmodeled,
                                                 none = no engine record) and --in-deck / --not-in-deck KEY filter
                                                 on them
+  cardgen weekly-report [--date YYYY-MM-DD] [--commit TEXT] [--stages FILE] [--roles-before FILE] [--llm-log FILE]
+                        [--out PATH] [--keep N] [--stdout] [--data-dir DIR]
+                                                the weekly job's report (reports/DATE.md): action needed for the decks
+                                                in data/decks.json, the run, new cards, ban and Game Changer changes
+                                                (oracle.prev.json against oracle.json), role changes; offline,
+                                                writes only the report
   cardgen map [--out PATH] [--stdout] [--data-dir DIR]
                                                 write the whole-catalog summary (about 3k tokens, under 32 KB) to
                                                 data/knowledge/map.md; needs oracle.json and roles.json; --stdout
@@ -124,6 +133,7 @@ fn run(args: &[String]) -> Result<(), String> {
         "find" => find(&project, &args),
         "map" => map(&project, &args),
         "digest" => digest(&project, &args),
+        "weekly-report" => weekly_report(&project, &args),
         "roles" => {
             let (out, passed) = cardgen::roles::command(&project, &args)?;
             print!("{out}");
@@ -314,6 +324,10 @@ fn digest(project: &Project, args: &[String]) -> Result<(), String> {
 fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     use cardgen::bulk;
     let from_file = opt(args, "--from-file")?.map(PathBuf::from);
+    let updated_at = opt(args, "--updated-at")?;
+    if updated_at.is_some() && from_file.is_none() {
+        return Err("--updated-at needs --from-file".into());
+    }
     let (dir, explicit_dir) = match opt(args, "--data-dir")? {
         Some(d) => (PathBuf::from(d), true),
         None => match std::env::var_os("CARDGEN_KNOWLEDGE_DIR") {
@@ -328,14 +342,30 @@ fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     if !args.is_empty() {
         return Err(USAGE.into());
     }
-    if from_file.is_some() && !explicit_dir {
+    if from_file.is_some() && updated_at.is_none() && !explicit_dir {
         eprintln!(
             "warning: --from-file writes bulk_updated_at=from-file into {}/sync.lock; pass --data-dir for a scratch \
              directory",
             dir.display()
         );
     }
-    let opts = bulk::Options { dir, from_file, min_count, synced: bulk::now_utc() };
-    print!("{}", bulk::run(&opts, &mut bulk::Http)?.text);
+    let synced = bulk::now_utc();
+    let out = match (from_file, updated_at) {
+        (Some(path), Some(updated_at)) => {
+            let opts = bulk::Options { dir, from_file: None, min_count, synced };
+            bulk::run(&opts, &mut bulk::LocalRemote { updated_at, path })?
+        }
+        (from_file, _) => bulk::run(&bulk::Options { dir, from_file, min_count, synced }, &mut bulk::Http)?,
+    };
+    print!("{}", out.text);
+    Ok(())
+}
+
+fn weekly_report(project: &Project, args: &[String]) -> Result<(), String> {
+    let o = cardgen::weekly::command(project, args)?;
+    if o.stdout {
+        print_text(&o.text)?;
+    }
+    println!("{}", o.summary());
     Ok(())
 }

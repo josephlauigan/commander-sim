@@ -1,5 +1,5 @@
 //! `cardgen bulk-sync`: Scryfall's "Oracle Cards" bulk file (one record per Oracle card) slimmed into the generated,
-//! gitignored `data/knowledge/oracle.json`, plus `oracle.prev.json` (the previous sync) and the tracked `sync.lock`.
+//! gitignored `data/knowledge/oracle.json`, plus `oracle.prev.json` (the previous sync) and the untracked `sync.lock`.
 //! See `documents/card-knowledge.md`.
 //!
 //! The bulk file is about 160 MB (25 MB as the gzip JSON Lines file Scryfall serves), so it is streamed to a file (the
@@ -449,6 +449,24 @@ impl Remote for Http {
     }
 }
 
+/// A local file standing in for Scryfall's bulk entry (`bulk-sync --from-file PATH --updated-at STAMP`): the
+/// up-to-date check, the lock and `oracle.prev.json` behave as for a download, with no network. Used by the weekly
+/// job's offline smoke test and by fixtures.
+pub struct LocalRemote {
+    pub updated_at: String,
+    pub path: PathBuf,
+}
+
+impl Remote for LocalRemote {
+    fn latest(&mut self) -> Result<Entry, String> {
+        Ok(Entry { updated_at: self.updated_at.clone(), download_uri: format!("file:{}", self.path.display()) })
+    }
+
+    fn download(&mut self, _uri: &str, dest: &Path) -> Result<(), String> {
+        std::fs::copy(&self.path, dest).map(|_| ()).map_err(|e| format!("{}: {e}", self.path.display()))
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Options {
     /// the knowledge directory (`data/knowledge`)
@@ -469,15 +487,48 @@ pub struct Outcome {
     pub up_to_date: bool,
 }
 
-/// `oracle.json` is current when its meta, `sync.lock` and the remote agree on `updated_at`, the lock's count is the
-/// meta's, and the lock's hash is the one recomputed from the file; anything else (missing, corrupt, stale) re-syncs
+/// `oracle.json` is current when its meta and the remote agree on `updated_at` and `sync.lock` agrees with the file
+/// (the lock's count is the meta's, its hash the one recomputed from `oracle.json`); a lock that is present but
+/// disagrees or is unreadable re-syncs. `sync.lock` is untracked and may be absent (a new checkout, or the merge that
+/// untracked it deleted it): then the file itself must be whole (its `cards` array parses and has `meta.count`
+/// records) and the lock is written again from it, so the previous sync in `oracle.prev.json` is never replaced by a
+/// copy of the current one.
 fn current_count(dir: &Path, remote_updated_at: &str) -> Option<usize> {
     let oracle = dir.join("oracle.json");
+    let lock_path = dir.join("sync.lock");
     let meta = read_meta(&oracle)?;
-    let lock = read_lock(&dir.join("sync.lock"))?;
-    let hash = format!("{:016x}", hash_of_file(&oracle).ok()?);
-    let agree = lock.bulk_updated_at == meta.bulk_updated_at && lock.count == meta.count && lock.fnv1a64 == hash;
-    (agree && is_up_to_date(Some(&meta.bulk_updated_at), remote_updated_at)).then_some(meta.count)
+    if !is_up_to_date(Some(&meta.bulk_updated_at), remote_updated_at) {
+        return None;
+    }
+    let hash = hash_of_file(&oracle).ok()?;
+    match read_lock(&lock_path) {
+        Some(lock) => (lock.bulk_updated_at == meta.bulk_updated_at
+            && lock.count == meta.count
+            && lock.fnv1a64 == format!("{hash:016x}"))
+        .then_some(meta.count),
+        None if lock_path.symlink_metadata().is_ok() => None,
+        None => {
+            if cards_in(&oracle)? != meta.count {
+                return None;
+            }
+            // best effort: a lock that cannot be written only means the next run checks the file again
+            let tmp = dir.join(format!("sync.{}.lock.tmp", temp_token()));
+            if std::fs::write(&tmp, lock_text(&meta, hash)).is_ok() && std::fs::rename(&tmp, &lock_path).is_err() {
+                let _ = std::fs::remove_file(&tmp);
+            }
+            Some(meta.count)
+        }
+    }
+}
+
+/// the number of records in the `cards` array of an `oracle.json`; None if the file does not parse
+fn cards_in(path: &Path) -> Option<usize> {
+    #[derive(serde::Deserialize)]
+    struct Count {
+        cards: Vec<serde::de::IgnoredAny>,
+    }
+    let f = std::fs::File::open(path).ok()?;
+    serde_json::from_reader::<_, Count>(BufReader::with_capacity(1 << 20, f)).ok().map(|c| c.cards.len())
 }
 
 /// a name for this invocation's temp files (process id and a counter, so two runs never share one)

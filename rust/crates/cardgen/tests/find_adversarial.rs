@@ -637,7 +637,7 @@ fn worktree_fallback_and_local_precedence_without_commits() {
     fs::create_dir_all(wt.join("data/knowledge")).unwrap();
     fs::write(wt.join(".git"), format!("gitdir: {}\n", linked.display())).unwrap();
     fs::write(linked.join("gitdir"), wt.join(".git").display().to_string()).unwrap();
-    fs::write(wt.join("data/knowledge/sync.lock"), "tracked marker").unwrap();
+    fs::write(wt.join("data/knowledge/roles.toml"), "tracked marker").unwrap();
     let run = || {
         let mut c = binary();
         c.arg("--root").arg(&wt).args(["find", "--name", "Main catalog", "--count"]);

@@ -674,7 +674,8 @@ fn limit_only_routed_dry_run_batch_size_and_pending_file() {
     assert_eq!(e.rows().len(), 3, "the tracked file is untouched");
     let pending = llm::read_rows(&e.dir().join("llm_roles.pending.jsonl")).unwrap();
     assert_eq!(pending.len(), 2);
-    assert_eq!(llm::load_cache(&e.dir()).unwrap().len(), 5);
+    assert_eq!(llm::load_cache(&e.dir()).unwrap().len(), 3, "the plain loader is the tracked cache only");
+    assert_eq!(llm::load_cache_with(&e.dir(), true).unwrap().len(), 5);
     // --only-routed drops the card the rules decided alone
     let i = e.index();
     let rules = roles::generate(&i, "").unwrap();
@@ -1375,7 +1376,7 @@ fn llm_add_false_switches_the_llm_off_for_a_role_without_touching_the_cache() {
 }
 
 #[test]
-fn no_pending_leaves_the_scheduled_jobs_rows_out_of_a_merge() {
+fn a_merge_reads_the_scheduled_jobs_pending_rows_only_when_asked() {
     plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
@@ -1385,10 +1386,11 @@ fn no_pending_leaves_the_scheduled_jobs_rows_out_of_a_merge() {
         e.command(args).unwrap();
         serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap()
     };
-    assert!(stats(&["--merge"]).with_answer > 0);
-    // with no tracked rows there is no model to merge, and nothing is answered
-    assert_eq!(stats(&["--merge", "--no-pending"]).with_answer, 0);
-    assert!(e.command(&["--rules", "--no-pending"]).is_err(), "--no-pending belongs to --merge");
+    // unreviewed rows stay out of a merge unless it is asked for them; with no tracked rows nothing is answered
+    assert_eq!(stats(&["--merge"]).with_answer, 0);
+    assert!(stats(&["--merge", "--pending"]).with_answer > 0);
+    assert!(e.command(&["--rules", "--pending"]).is_err(), "--pending belongs to --llm and --merge");
+    assert!(e.command(&["--merge", "--no-pending"]).is_err(), "--no-pending is gone: pending is off by default");
 }
 
 #[test]

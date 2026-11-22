@@ -544,11 +544,12 @@ pub fn write_atomic(path: &Path, data: &[u8]) -> Result<(), String> {
     Ok(())
 }
 
-/// The tracked cache with the scheduled job's pending rows read after it (a pending row wins on the same key).
+/// The tracked cache only: the scheduled job's pending rows are unreviewed and are read only when asked for
+/// ([`load_cache_with`], `roles --merge --pending`).
 pub fn load_cache(dir: &Path) -> Result<BTreeMap<String, Row>, String> {
-    load_cache_with(dir, true)
+    load_cache_with(dir, false)
 }
-/// The tracked cache, and the pending file after it unless `pending` is false (`roles --merge --no-pending`).
+/// The tracked cache, and the pending file after it when `pending` is true (a pending row wins on the same key).
 pub fn load_cache_with(dir: &Path, pending: bool) -> Result<BTreeMap<String, Row>, String> {
     let mut rows = read_rows(&cache_path(dir))?;
     if pending {
@@ -1037,7 +1038,7 @@ pub fn run(
     let prompt = prompt_fnv_opts(taxonomy, variant, opts.no_think);
     let system = system_prompt_v(taxonomy, variant);
     let tax_hash = taxonomy.hash();
-    let known = load_cache(dir)?;
+    let known = load_cache_with(dir, opts.pending)?;
     let wanted = opts.ids.as_deref().map(|p| read_ids(index, p)).transpose()?;
     let mut stats = RunStats {
         model: model.clone(),

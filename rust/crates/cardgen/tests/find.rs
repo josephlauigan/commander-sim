@@ -788,13 +788,36 @@ fn git(dir: &Path, args: &[&str]) {
     assert!(out.status.success(), "git {args:?}: {}", String::from_utf8_lossy(&out.stderr));
 }
 
-/// a worktree has `data/knowledge/` (the tracked sync.lock) but no oracle.json: it falls back to the main checkout's
+/// `sync.lock` is untracked, so nothing may rely on `data/knowledge/` existing in a checkout: a worktree whose
+/// directory is missing altogether falls back to the main checkout's catalog too
+#[test]
+fn a_worktree_with_no_knowledge_directory_at_all_falls_back_to_the_main_checkout() {
+    let e = Env::new();
+    let main = e.0.join("main3");
+    std::fs::create_dir_all(main.join("data")).unwrap();
+    std::fs::copy(fixture("find_decks.json"), main.join("data/decks.json")).unwrap();
+    git(&main, &["init", "-q"]);
+    git(&main, &["add", "-A"]);
+    git(&main, &["commit", "-q", "-m", "x"]);
+    std::fs::create_dir_all(main.join("data/knowledge")).unwrap();
+    std::fs::copy(fixture("find_oracle.json"), main.join("data/knowledge/oracle.json")).unwrap();
+    let wt = e.0.join("wt3");
+    git(&main, &["worktree", "add", "-q", wt.to_str().unwrap()]);
+    assert!(!wt.join("data/knowledge").exists(), "a checkout of a tree without knowledge files has no directory");
+    let out = bin().arg("--root").arg(&wt).args(["find", "--name", "Sol Ring", "--json"]).output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    assert_eq!(serde_json::from_slice::<Value>(&out.stdout).unwrap().as_array().unwrap().len(), 1);
+    // reading created nothing in the worktree
+    assert!(!wt.join("data/knowledge").exists());
+}
+
+/// a worktree has `data/knowledge/` (the tracked role files) but no oracle.json: it falls back to the main checkout's
 #[test]
 fn a_worktree_falls_back_to_the_main_checkouts_catalog() {
     let e = Env::new();
     let main = e.0.join("main");
     std::fs::create_dir_all(main.join("data/knowledge")).unwrap();
-    std::fs::write(main.join("data/knowledge/sync.lock"), "schema=1\n").unwrap();
+    std::fs::write(main.join("data/knowledge/roles.toml"), "version = 1\n").unwrap();
     std::fs::copy(fixture("find_decks.json"), main.join("data/decks.json")).unwrap();
     git(&main, &["init", "-q"]);
     git(&main, &["add", "-A"]);
@@ -806,7 +829,7 @@ fn a_worktree_falls_back_to_the_main_checkouts_catalog() {
     std::fs::copy(fixture("find_oracle.json"), main.join("data/knowledge/oracle.json")).unwrap();
     let wt = e.0.join("wt");
     git(&main, &["worktree", "add", "-q", wt.to_str().unwrap()]);
-    assert!(wt.join("data/knowledge/sync.lock").is_file() && !wt.join("data/knowledge/oracle.json").exists());
+    assert!(wt.join("data/knowledge/roles.toml").is_file() && !wt.join("data/knowledge/oracle.json").exists());
     for root in [&wt, &main] {
         let out = bin().arg("--root").arg(root).args(["find", "--name", "Sol Ring", "--json"]).output().unwrap();
         assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
@@ -1333,7 +1356,7 @@ fn git_environment_does_not_redirect_the_worktree_fallback() {
     let e = Env::new();
     let main = e.0.join("m2");
     std::fs::create_dir_all(main.join("data/knowledge")).unwrap();
-    std::fs::write(main.join("data/knowledge/sync.lock"), "schema=1\n").unwrap();
+    std::fs::write(main.join("data/knowledge/roles.toml"), "version = 1\n").unwrap();
     git(&main, &["init", "-q"]);
     git(&main, &["add", "-A"]);
     git(&main, &["commit", "-q", "-m", "x"]);

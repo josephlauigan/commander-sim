@@ -1,0 +1,63 @@
+{
+ "version": 1,
+ "mine": [
+  {
+   "key": "kx",
+   "name": "KX",
+   "commander": "Black Lord",
+   "ident": "B",
+   "tiers": [
+    "t3",
+    "t4"
+   ],
+   "cards": [
+    "Dark Tutor",
+    "Glass Knife",
+    "Old Bear",
+    "Missing Thing",
+    "Black Lord"
+   ]
+  },
+  {
+   "key": "ky",
+   "name": "KY",
+   "commander": "Sky Lord",
+   "ident": "WU",
+   "tiers": [
+    "t1"
+   ],
+   "cards": [
+    "Sky Counter",
+    "Unban Me",
+    "Gone Gift",
+    "Sky Lord",
+    "Wide Change"
+   ]
+  },
+  {
+   "key": "kz",
+   "name": "KZ",
+   "commander": "Red Lord",
+   "ident": "R",
+   "tiers": [
+    "t5"
+   ],
+   "cards": [
+    "Red Burn",
+    "Red Lord"
+   ]
+  }
+ ],
+ "pool": [
+  {
+   "key": "pp",
+   "name": "PP",
+   "commander": "Black Lord",
+   "ident": "B",
+   "tier": "t3",
+   "cards": [
+    "Fresh Ban"
+   ]
+  }
+ ]
+}

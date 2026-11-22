@@ -1245,10 +1245,11 @@ fn a_damaged_cache_file_is_an_error_naming_the_line_and_no_command_touches_any_f
         assert_eq!(srv.chats(), chats, "{name}: a damaged cache stops the run before any chat request");
         assert_eq!(before, e.files(), "{name}: no file changed by a failing command");
     }
-    // the same for the pending file, which the loader reads second
+    // the same for the pending file, which a merge reads only with --pending, after the tracked one
     std::fs::write(e.cache(), &good).unwrap();
     std::fs::write(e.dir().join("llm_roles.pending.jsonl"), "{oops\n").unwrap();
-    let err = e.cmd(&["--merge"]).unwrap_err();
+    e.cmd(&["--merge"]).expect("a merge leaves the pending file alone");
+    let err = e.cmd(&["--merge", "--pending"]).unwrap_err();
     assert!(err.contains("llm_roles.pending.jsonl") && err.contains("line 1"), "{err}");
 }
 
@@ -1302,12 +1303,16 @@ fn of_two_rows_with_one_key_the_later_wins_and_a_pending_row_beats_the_tracked_o
     let shot = assignment_of(&e.index(), &map, "Skywhaler's Shot");
     // add-only merge (keep_rule everywhere): the rules' removal stays beside the later row's selection
     assert_eq!(shot.roles, ["selection", "removal"], "the later duplicate wins: {shot:?}");
-    // pending beats tracked on the same key
+    // pending beats tracked on the same key, when a merge is asked to read it
     e.write_rows("llm_roles.jsonl", &[later]);
     e.write_rows("llm_roles.pending.jsonl", &[tracked]);
     let map = e.merged();
     let shot = assignment_of(&e.index(), &map, "Skywhaler's Shot");
-    assert_eq!(shot.roles, ["removal"], "the pending row wins: {shot:?}");
+    assert_eq!(shot.roles, ["selection", "removal"], "a plain merge ignores the pending row: {shot:?}");
+    e.cmd(&["--merge", "--pending"]).unwrap();
+    let map = roles::load(&e.dir().join("roles.json")).unwrap();
+    let shot = assignment_of(&e.index(), &map, "Skywhaler's Shot");
+    assert_eq!(shot.roles, ["removal"], "the pending row wins with --pending: {shot:?}");
     // and a card with a pending row counts as cached for `--llm --pending`
     let srv = Srv::start(good5());
     let out = e.llm(&srv, &["--pending", "--model", "m1", "--dry-run"]).unwrap();
@@ -1877,7 +1882,6 @@ fn conflicting_modes_repeated_flags_and_unknown_flags_are_all_usage_errors_that_
         vec!["--llm", "--validate"],
         vec!["--llm", "--stats"],
         vec!["--merge", "--limit", "3"],
-        vec!["--merge", "--pending"],
         vec!["--merge", "--dry-run"],
         vec!["--merge", "--only-routed"],
         vec!["--merge", "--endpoint", url],

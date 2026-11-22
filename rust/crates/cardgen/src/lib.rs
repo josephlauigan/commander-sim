@@ -25,3 +25,4 @@ pub mod roles;
 pub mod scryfall;
 pub mod sources;
 pub mod update_deck;
+pub mod weekly;

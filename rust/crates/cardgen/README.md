@@ -133,9 +133,10 @@ only an `https://` URI is downloaded) and writes, in `data/knowledge/` (override
 - `oracle.prev.json` (generated, gitignored): the previous sync. It is a hard link (a copy if linking fails) made
   before the new file replaces `oracle.json`, so it is the generation just before the current one; it is gone after a
   rolled-back sync, and the next successful sync makes it again.
-- `sync.lock` (tracked): `schema=1`, `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of
-  `oracle.json`'s `cards` array (from its `[` to its `]`). A lock without the current `schema=` line is invalid and
-  causes a normal re-sync.
+- `sync.lock` (generated, gitignored since the weekly job: a tracked file would be rewritten by every new bulk file):
+  `schema=1`, `bulk_updated_at`, `count` and `fnv1a64`, the FNV-1a-64 (hex) of the text of `oracle.json`'s `cards`
+  array (from its `[` to its `]`). A lock without the current `schema=` line is invalid and causes a normal re-sync.
+  The bulk `updated_at` also lives in `oracle.json`'s `meta`, so the lock is a cross-check, not the only record.
 
 Dropped: layouts `token`, `double_faced_token`, `emblem`, `art_series`, `scheme`, `planar`, `vanguard` and
 `front_card` (memorabilia cards: type "Card", all `not_legal`, and 13 of them repeat a real card's name); a card whose
@@ -148,7 +149,10 @@ summary prints kept and dropped per layout, and the drops by layout, type and du
 
 `up to date` (and no download) needs all of these to agree: the bulk file's `updated_at`, `oracle.json`'s meta, and
 `sync.lock` (`bulk_updated_at` and `count`), and the lock's hash must equal the one recomputed from `oracle.json`. A
-missing, corrupt or stale file means a normal re-sync, never a crash or a silent "up to date". Otherwise it streams the
+corrupt or stale file, or a lock that is present but disagrees, means a normal re-sync, never a crash or a silent "up to
+date". The lock itself may be absent (a new checkout; the merge that untracked it deletes it): then `oracle.json` is
+trusted only if its `cards` array parses and has `meta.count` records, and the lock is written again from it, so the
+previous sync in `oracle.prev.json` is not replaced by a copy of the current one. Otherwise it streams the
 file to a temp file (a dedicated ureq agent: 60 s read timeout, no total cap), decompresses and parses it one card at a
 time (flate2; a JSON array or JSON Lines, plain or gzip, told by the bytes), refuses fewer than 25,000 cards
 (`--min-count N` lowers this for fixtures), and writes `oracle.json` and `sync.lock` as staged temp files
@@ -157,8 +161,11 @@ place. If the lock cannot be put in place the new oracle is rolled back (the err
 restored). An existing read-only `sync.lock` is refused before anything is touched. Any failure leaves `oracle.json`
 byte-identical (unless the rollback itself fails, which the error says). `--from-file PATH` parses a local bulk file (either format) instead (no network, no up-to-date check;
 `bulk_updated_at` is recorded as `from-file`, so it overwrites the lock: it warns on stderr when no `--data-dir` or
-`CARDGEN_KNOWLEDGE_DIR` is given, and `--data-dir` points a scratch run elsewhere). `tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
-uses the network.
+`CARDGEN_KNOWLEDGE_DIR` is given, and `--data-dir` points a scratch run elsewhere). `--from-file PATH --updated-at
+STAMP` lets the local file stand in for Scryfall's bulk entry at that date (`bulk::LocalRemote`): the up-to-date check,
+the lock and `oracle.prev.json` behave as for a download, with no network (the weekly job's offline smoke test).
+`tests/bulk_sync.rs` runs on a 51-card fixture (`tests/fixtures/bulk_fixture.json`) and never
+uses the network; `tests/weekly_sync.rs` covers the untracked lock and `--updated-at`.
 
 ## Find (search the whole catalog)
 
@@ -278,8 +285,9 @@ The digest's `k:N` is the number of `findings` of a card. The engine is built on
 - `(1 meld result(s) are hidden; add --meld)` when nothing matched and a meld result would have.
 
 The knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else `<repo>/data/knowledge`; when the default has
-no `oracle.json` (a worktree has the directory, because `sync.lock` is tracked, but not the generated file) it falls
-back to the main checkout's (`<git-common-dir>/../data/knowledge`). A missing catalog is an error that names
+no `oracle.json` (a worktree usually has the directory, because the role files in it are tracked, but never the
+generated file; the code does not need the directory to exist, since `sync.lock` is untracked) it falls back to the
+main checkout's (`<git-common-dir>/../data/knowledge`). A missing catalog is an error that names
 `cardgen bulk-sync`. A `--data-dir` or `CARDGEN_KNOWLEDGE_DIR` without an `oracle.json` is an error too, with no fallback.
 An unknown flag, a flag without its value or a non-numeric number prints
 the usage text and exits non-zero.
@@ -379,6 +387,37 @@ with_context, line, line_for}`, `digest::build_with` (a `Context`), `digest::fla
 `digest::commander_subtypes`, `digest::Prev::load`, and `map::build(&Index, &Table, Option<&Path>)` (JD's decks come from
 the `decks.json` beside the spellbook directory) or `map::build_with` / `map::build_with_facts` (the engine coverage section and the model columns of JD's decks table need the facts); `facts::Facts::{load, decks_and_findings, context, status_of, decks_of, findings_of, deck_bit}` (phase 4: `Facts::load(project, &index, engine, decks)` builds the engine only when asked) and `knowledge::fold_case`; none of them reads argv.
 
+## Weekly report (the weekly job)
+
+```
+cardgen weekly-report [--date YYYY-MM-DD] [--commit TEXT] [--stages FILE] [--roles-before FILE] [--llm-log FILE]
+                      [--out PATH] [--keep N] [--stdout] [--data-dir DIR]
+```
+
+Written by `scripts/knowledge-weekly.sh` (see `documents/card-knowledge.md`, "The weekly job"), but usable by hand. It reads
+`oracle.prev.json` and `oracle.json` (the knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else the
+catalog `find` would read), `data/decks.json` (`mine` only), `data/scryfall_cache.json` (the engine's cache) and
+`roles.json`, and writes `reports/DATE.md` (an earlier report of the same date becomes `DATE.N.md`; the newest `--keep`,
+default 12, dated reports stay and nothing else in `reports/` is touched). Offline; the one file it writes is the report.
+`--stages FILE` is the script's stage record, `name<TAB>ok|skip|fail<TAB>seconds<TAB>note` per line (`bulk-sync` and `llm`
+are the names the report looks at); `--roles-before FILE` the role table from before this run's role stage; `--llm-log
+FILE` the end of which is quoted.
+
+Sections, in this order: **Action needed** (for JD's decks only: a card that became banned or not legal, a Game Changer
+added or removed with the deck's new Game Changer count against `decks::gc_rules` for each tier the deck lists in
+`data/my_decks.toml`, a deck card the catalog does not know, Oracle errata against `data/scryfall_cache.json`, which means
+the engine's model may be stale, and any failed stage) · **Run** (bulk `updated_at` old to new, card counts, the stage table)
+· **New cards** (by `oracle_id` diff: per set, then the new Commander-legal cards inside each deck's identity with their
+roles) · **Bans/unbans and Game Changer changes** (catalog-wide, and new cards that arrive banned or as Game Changers) ·
+**Role changes and LLM stats** (cards whose roles changed, rows in `llm_roles.jsonl` and `llm_roles.pending.jsonl`, the last
+merge's counts). When the sync was skipped or failed, there is no previous sync (the first run) or it cannot be read, the
+comparison sections say so instead of listing anything. The command fails only on a bad argument, an unreadable `--stages`
+file or a report it cannot write: a missing, empty or malformed input is a line in the report (an unreadable catalog is the
+first action item). The output is deterministic. `tests/weekly.rs` covers it on a tiny synthetic catalog
+(`tests/fixtures/weekly/`: a new card, a ban, an unban, a Game Changer added and removed, an errata, a deck of `mine`
+affected and one not, an empty `mine`, a missing and a malformed `oracle.prev.json`); `tests/weekly_script.rs` runs the
+script offline.
+
 ## Equivalence
 
 `cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
@@ -395,6 +434,7 @@ src/sources.rs     the build order above              src/cardinfo.rs  Phyrexian
 src/export.rs      cards.json / decks.json            src/scryfall.rs  the cache and the client
 src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/audit.rs
 src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.json)
+src/weekly.rs      weekly-report (the weekly job's report from oracle.prev.json, oracle.json, decks, the cache)
 src/knowledge.rs   the in-memory card index and `find` (queries oracle.json)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```
@@ -405,7 +445,7 @@ src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, b
 cardgen roles --rules [--data-dir DIR]
 cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--routes NoRole,UnknownLine] [--include-not-legal] [--batch 10]
                      [--dry-run] [--endpoint URL] [--model ID] [--pending] [--no-think]
-cardgen roles --merge [--model ID] [--no-pending] [--no-think] [--data-dir DIR]
+cardgen roles --merge [--model ID] [--pending] [--no-think] [--data-dir DIR]
 cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
 cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
 cardgen roles --stats [--data-dir DIR]
@@ -589,7 +629,9 @@ It is never keyed on `rules_fnv`: editing the classifier, a guard, `keep_rule` o
 while a changed definition, a changed prompt or another model id makes the old rows unreachable (they stay in the file;
 writes are append-merge by key, atomic through a temp file and rename, and deterministic). A rerun with everything
 cached makes no chat request (it prints the count; the one `GET /v1/models` is how a changed model is noticed).
-`llm_roles.pending.jsonl` is read after the tracked file, so a pending row wins on the same key.
+`llm_roles.pending.jsonl` (untracked: the weekly job's unreviewed rows) is read after the tracked file when asked
+(`roles --llm --pending` counts its rows as cached, `roles --merge --pending` merges them), so a pending row wins on
+the same key; a plain `roles --merge` and `roles --validate --stage merged` read the tracked cache only.
 
 **The merge policy** (`llm::merge`, a pure function):
 
@@ -614,7 +656,8 @@ sets, grouped by route reason; `reports/merge.json` has the counts. `roles --mer
 reruns) and writes `roles.json` with `meta.prompt_fnv` and `meta.model`; `find --role`, `roles --show` and
 `Index::attach_roles` work on it (LLM evidence is checked again there: a real, readable line and a passing guard). With
 several models cached for the current prompt, `--merge` needs `--model ID`, and a model with no rows for the current
-prompt is an error. `--no-pending` leaves `llm_roles.pending.jsonl` out. The table's hash covers `meta.prompt_fnv` and
+prompt is an error. `--pending` also merges the rows in `llm_roles.pending.jsonl`; without it they stay out, so an
+unreviewed weekly run never reaches `roles.json`. The table's hash covers `meta.prompt_fnv` and
 `meta.model` too, and `attach_roles` refuses a table built under another prompt.
 
 **Validation.** `roles --validate --stage rules` (the default) is unchanged. `--stage merged` scores the saved merged

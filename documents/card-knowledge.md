@@ -36,14 +36,15 @@ say which digest and data date the answer used.
 
 | Command | What it gives | Writes |
 |---|---|---|
-| `cardgen bulk-sync` | the catalog (`data/knowledge/oracle.json`) | `oracle.json`, `oracle.prev.json` and the tracked `sync.lock` |
+| `cardgen bulk-sync` | the catalog (`data/knowledge/oracle.json`) | `oracle.json`, `oracle.prev.json` and the untracked `sync.lock` |
 | `cardgen roles --rules` / `--merge` | the role table (`roles.json`), rules and merged with the LLM answers | `roles.json` beside the catalog it read (in a worktree without its own catalog, the main checkout's) |
 | `cardgen map` | the whole-catalog summary (`map.md`) | `map.md` (also with `--stdout`) |
 | `cardgen digest --deck KEY` | one line per candidate card (`digests/KEY.txt`) | the digest file (also with `--stdout`) |
 | `cardgen find ...` | any slice of the catalog, with engine status, deck usage and FINDINGS hits | nothing |
 
-Keeping it fresh is manual today (`bulk-sync`, then `roles --rules`, then `roles --merge` when LLM answers exist); a
-weekly job is planned. A recommendation session never runs `bulk-sync`, `roles` or `export`; a refresh is its own step that JD approves.
+Keeping it fresh is the weekly job ([The weekly job](#the-weekly-job-phase-6): `bulk-sync`, `roles --rules`, `roles
+--merge`, the LLM stage, `map`, `digest`, a report), which JD installs by hand; by hand it is the same commands. A recommendation
+session never runs `bulk-sync`, `roles` or `export`; a refresh is its own step that JD approves.
 `map` and `digest` write only their gitignored views.
 
 ## Where the data lives
@@ -55,12 +56,12 @@ back to the main checkout's). Generated data is gitignored except what cannot be
 |---|---|---|
 | `oracle.json` | no | Every catalog card as a slim record, from Scryfall's Oracle Cards bulk file (a gzip file of JSON Lines, read with `flate2`) |
 | `oracle.prev.json` | no | The previous sync, for the weekly diff |
-| `sync.lock` | yes | Which bulk file the tracked caches correspond to: `bulk_updated_at`, `count` and `fnv1a64` (FNV-1a-64 of the `cards` array text) |
+| `sync.lock` | no | Which bulk file `oracle.json` was built from: `bulk_updated_at`, `count` and `fnv1a64` (FNV-1a-64 of the `cards` array text). A cross-check: the bulk `updated_at` is also in `oracle.json`'s meta, and a missing lock is rebuilt from the file |
 | `roles.toml` | yes | Role taxonomy: the shared rules block, cross-role conventions, and per role an id, a one-line definition, role-specific clauses and a guard regex (the prompt text is built from all but the guard), `keep_rule` |
 | `roles_overrides.toml` | yes | Hand role sets, highest precedence |
 | `roles_gold.toml` | yes | About 150 hand-labelled cards, the precision standard |
 | `llm_roles.jsonl` | yes | Local-LLM classification cache: the only non-reproducible input |
-| `llm_roles.pending.jsonl` | no | Rows from the scheduled job not yet reviewed |
+| `llm_roles.pending.jsonl` | no | Rows from the scheduled job not yet reviewed; `roles --merge` ignores them unless given `--pending` |
 | `roles.json` | no | Merged roles per card |
 | `map.md`, `digests/`, `reports/` | no | Generated views and weekly reports |
 
@@ -109,9 +110,10 @@ card text, the taxonomy version, the prompt version and the model id, so reruns 
 
 **Weekly job.** A systemd user timer (a cron equivalent that survives missed runs and tracks units in git) runs a
 script that builds from a separate clone of origin/main, syncs the bulk file only if `updated_at` changed, refreshes
-roles, runs the LLM stage, regenerates the map and digests, and writes a report. It starts `llama-server` only if it
-was not already running and the GPU is free, and stops it only if it started it. It never commits, pushes, edits a
-tracked file, runs a sim, proposes a swap or merges pending LLM rows. JD installs the timer by hand.
+roles, runs the LLM stage, regenerates the map and digests, and writes a report. It starts the dense Qwen3.6-27B server
+only if none answers on port 8080 and the GPU is free, and stops it only if it started it. It never commits, pushes, edits a
+tracked file, runs a sim, proposes a swap or merges pending LLM rows. JD installs the timer by hand. Details:
+[The weekly job](#the-weekly-job-phase-6).
 
 ## Acceptance
 
@@ -125,7 +127,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 | 3b | `map.md` under 32 KB; the five-colour digest under 200 KB; every digest line has six fields and at most 160 characters; two runs byte-identical |
 | 4 | `find` shows model status, deck usage and `FINDINGS.md` hits; a card not in `cards.json` never shows `Full`; status agrees with `cardgen audit` on 20 sampled cards |
 | 5 | `CLAUDE.md` and `AGENTS.md` carry the same workflow section; this document is linked from `cards.md` |
-| 6 | The three failure scenarios (server already running, GPU busy, no network) leave the working tree and previous outputs untouched; a run with nothing new exits 0 |
+| 6 | The three failure scenarios (server already running, GPU busy, no network) leave the working tree and previous outputs untouched; a run with nothing new exits 0 and says there are no new cards; a ban injected into `oracle.prev.json` for a card in JD's decks leads the report's Action needed |
 
 ## Catalog facts that shape the later phases
 
@@ -155,12 +157,87 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
 - **`find --json` is a contract.** One row shape, `oracle_text` is the joined text, keys are only added, never
   renamed or removed, and consumers ignore unknown keys. A cut page, a named card removed by the filters and
   unresolved deck names are reported as notes (stderr for JSON), never silently.
-- **Worktrees.** `data/knowledge/` exists in every checkout because `sync.lock` is tracked, so a worktree falls back
-  to the main checkout's store when `oracle.json` is missing, not when the directory is.
-- **Open for phase 6.** Every new bulk file rewrites the tracked `sync.lock`, which conflicts with a weekly job that
-  must not edit tracked files. The recommendation is to untrack `sync.lock` and keep the bulk `updated_at` in
-  `oracle.json` and the weekly report; JD decides when phase 6 is planned. Two concurrent `bulk-sync` runs can still
-  pair one run's oracle with the other's lock; it heals on the next run, and phase 6 adds a lock around the job.
+- **Worktrees.** A worktree falls back to the main checkout's store when its own `oracle.json` is missing, whether or
+  not its `data/knowledge/` directory exists (it usually does, for the tracked role files; nothing relies on it).
+- **`sync.lock` is untracked** (JD, 2026-11-22): every new bulk file rewrote it, which conflicts with a weekly job that
+  must not edit tracked files. The bulk `updated_at` is in `oracle.json`'s meta and in the weekly report. A missing lock
+  is rebuilt from a whole `oracle.json`, so the merge that untracks it (it deletes the file) costs nothing. Two concurrent
+  `bulk-sync` runs can still pair one run's oracle with the other's lock; it heals on the next run, and the weekly job
+  holds a lock of its own.
+
+## The weekly job (phase 6)
+
+`scripts/knowledge-weekly.sh`, run by the systemd **user** timer `scripts/systemd/knowledge-weekly.timer` (Sunday 04:00,
+`Persistent=true` so a missed run happens at the next start, a small random delay) through
+`scripts/systemd/knowledge-weekly.service` (`RuntimeMaxSec=4h`, `MemoryMax=24G`, `Nice=10`, idle disk priority). Nothing
+installs it: JD does (below). JD's decisions of 2026-11-22: Sunday 04:00, the LLM stage on the dense Qwen3.6-27B (thinking
+off), `sync.lock` untracked.
+
+**Stages.** Each is recorded `ok`, `skip` or `fail` with its time and a reason, in the report. One failing never deletes
+the previous outputs (`cardgen` writes a temp file and renames it) and never stops the report.
+
+| # | Stage | What it does |
+|---|---|---|
+| 1 | `fetch-build` | fetches into a separate clone (`~/.cache/commander-sim-knowledge/repo`), resets it to `$KNOWLEDGE_REF` (default `origin/main`), builds `cardgen` there under the memory cap; the clone is `--root`, so decks, the engine cache and FINDINGS come from it. A failed fetch or build keeps the previous build in use |
+| 2 | `bulk-sync` | the Oracle Cards bulk file, only if its `updated_at` changed (else `skip`, "up to date"); fewer than 25,000 cards is refused; the previous catalog stays as `oracle.prev.json` |
+| 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out), so `roles.json` keeps the reviewed LLM roles; the table from before the run goes to the report |
+| 4 | `llm` | cards the rules could not read (route `NoRole` or `UnknownLine`) that miss the cache: `roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending` with `CARDGEN_LLM_VARIANT=think`, new rows to `llm_roles.pending.jsonl` only. A dry run first counts the cards to do; none means `skip` and the GPU is not woken |
+| 5 | `map-digest` | `map.md` and one digest per deck of `mine` |
+| 6 | `report` | `reports/YYYY-MM-DD.md` (the newest 12 stay) by `cardgen weekly-report`; if `cardgen` cannot run, a short report is written by the script, and the exit code is non-zero only if no report could be written |
+
+**Where things go.** Output goes to the main checkout's `data/knowledge/` (override `KNOWLEDGE_OUT`), through
+`CARDGEN_KNOWLEDGE_DIR`, never to the clone. Everything written there is gitignored: `oracle.json`, `oracle.prev.json`,
+`sync.lock`, `roles.json`, `map.md`, `digests/`, `reports/`, `llm_roles.pending.jsonl`. The tracked role files
+(`roles.toml`, `roles_overrides.toml`, `llm_roles.jsonl`) are only read from there, so they must be checked out in the
+main checkout: until the knowledge branch is merged and checked out there, set `KNOWLEDGE_OUT` to a checkout that has them
+(for example the `knowledge-base` worktree's `data/knowledge`), and `KNOWLEDGE_REF` to the branch that has `cardgen
+weekly-report` (for example `origin/knowledge-base`), because `origin/main` does not have this code yet. Logs of the last 12
+runs are in `~/.cache/commander-sim-knowledge/runs/DATE/`.
+
+**The LLM stage and the GPU.** The production model is the dense Qwen3.6-27B-Q5_K_M behind the user unit
+`scripts/systemd/llama-27b.service` (tracked, not enabled; the coder `llama-server` service is not touched). The job:
+if a server already answers on port 8080, it uses it only if its model id contains `Qwen3.6-27B` and never stops it (any
+other model: skip, "other model on the port"); if the port is held but silent, skip; if something holds the B70's render
+node open (`fuser` on `/dev/dri/by-path/pci-0000:04:00.0-render`, override `KNOWLEDGE_GPU_DEVICE`), skip, "GPU busy"; if the
+unit is not installed, skip with the link command; otherwise it starts the unit (with a runtime limit, in case the job is
+killed), waits up to 5 minutes for the model, sends a smoke prompt, runs the stage for at most 90 minutes (the rest carries
+over to next week; every batch is flushed to the pending file as it finishes), and stops the unit only because it started
+it (an `EXIT` and `TERM` trap, so a killed job stops its own server too). A start, readiness or smoke failure is a `fail` in
+the report; the skips are not.
+
+**The report** (`cardgen weekly-report`, in the cardgen README): Action needed (for JD's decks only: a card that became
+banned or not legal; a Game Changer added or removed, with the deck's new count against the rule of each tier it lists,
+`decks::gc_rules`: t0-t1 none, t2 one or two, t3 exactly three, t4-t5 unrestricted, which is the pool decks' rule and is
+shown as information for JD's decks; a deck card the catalog does not know; Oracle errata against
+`data/scryfall_cache.json`, meaning the engine's model may be stale; any failed stage) · Run · New cards (by set, then inside
+each of JD's identities with their roles) · Bans/unbans and Game Changer changes · Role changes and LLM stats. On a failure
+the script also calls `notify-send`, if it exists.
+
+**Never automated:** commits, pushes, PRs, writes to any tracked file, `cardgen export`, sims, swap or cut proposals,
+refreshing the cache with errata, llama.cpp or model updates, merging pending LLM rows (`roles --merge --pending`, in a
+reviewed session, then `llm_roles.jsonl` is edited by hand), installing or enabling the timer.
+
+**Install (JD, by hand; nothing here runs them):**
+
+```
+chmod +x ~/projects/commander-sim/scripts/knowledge-weekly.sh        # already executable in git
+systemctl --user link ~/projects/commander-sim/scripts/systemd/llama-27b.service
+systemctl --user link ~/projects/commander-sim/scripts/systemd/knowledge-weekly.service
+systemctl --user link ~/projects/commander-sim/scripts/systemd/knowledge-weekly.timer
+systemctl --user enable --now knowledge-weekly.timer
+systemctl --user list-timers knowledge-weekly                          # next run
+journalctl --user -u knowledge-weekly                                  # what a run printed
+```
+
+A manual run: `scripts/knowledge-weekly.sh --dry-run` (prints what each stage would do; writes nothing), or `systemctl --user
+start knowledge-weekly.service` for a real one, or `scripts/knowledge-weekly.sh --stage 2` for one stage. To remove it:
+`systemctl --user disable --now knowledge-weekly.timer`.
+
+**Checks** (no network, GPU or systemd changes): `tests/weekly.rs` (the report), `tests/weekly_sync.rs` (the untracked lock,
+`--updated-at`), `tests/weekly_script.rs` (a full offline run on a fixture bulk file, a failed stage, no binary, a failed
+fetch, two runs at once, an interrupted run, and the LLM decisions against stubs of `curl`, `ss`, `fuser` and `systemctl`:
+server already running, another model, GPU busy, quiet week, smoke failure, spent budget, a killed job), and
+`systemd-analyze --user verify scripts/systemd/*`.
 
 ## Roles: the rule stage (phase 3)
 
@@ -219,7 +296,7 @@ coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --valida
 | 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
 | 4 Status, decks and findings join | `knowledge-status` | done, merged into `knowledge-base` (adversarial tests, Opus review; no-record cards print `m:N`, Full-auto counts as below Full) |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | section written and Opus-reviewed, merged into `knowledge-base`; JD signs off the wording before the final PR; linked from `cards.md` |
-| 6 Weekly timer and report | `knowledge-weekly` | not started |
+| 6 Weekly timer and report | `knowledge-weekly` | code, units, tests and this section written; the timer is JD's to install (`sync.lock` untracked, `--pending` merge default, 27B decisions of 2026-11-22) |
 
 Branching: `knowledge-base` is the integration branch off origin/main. Each phase is built on its own branch
 (`knowledge-<phase>`), and merged into `knowledge-base` only after its review chain passes: built by Sonnet,
