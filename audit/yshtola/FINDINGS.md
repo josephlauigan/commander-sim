@@ -52,6 +52,35 @@ Arcane Signet and Coalition Relic: a card named in a plan group gets that group'
 let the AI cast them with nothing to pay. `data/printings/yshtola.txt`
 loses the Talisman lines and has no printings yet for the Moxen (JD's to supply).
 
+## 2026-11-21: Grand Arbiter Augustin IV => The Theorist, Jace Beleren; Urza's Cave => Expedition Map (JD's choice, not simulated)
+Two swaps, both JD's, no sim run (JD asked for none). **The Theorist, Jace Beleren** ({2}{U}{U} planeswalker, loyalty 3;
+commander-legal, mono-blue, not a Game Changer) takes Augustin's slot. Why: Augustin is a creature, so it never triggered
+her; the Theorist is a noncreature spell of mana value 4 (it does), counts two blue devotion for Oracle (Augustin one), and
+draws a card in each opponent's draw step (about three extra cards a round at a four-player table, each one a draw for
+Sheoldred). An Opus consult picked Augustin from JD's pool of eligible cuts; the runner-up was Coalition Relic, which would
+have removed a blue source. What it costs: Augustin's discount for white and blue spells and its {1} tax on the opponents'
+spells (a small slowdown for the Kinnan and Urza combos); the Game Changer count goes 16 -> 15. Risks (Opus): the draw is
+mandatory, so a stalled Doomsday pile loses its top card in every opponent's draw step while the Theorist is out; Yawgmoth's
+Orcish Bowmasters pings on every extra draw; Narset (Urza, Zur) lets only one draw a turn; opponents attack planeswalkers in
+the sim; the list now has four {U}{U} spells besides Force of Will against 15 blue sources. **Expedition Map** ({1}; {2},
+{T}, sacrifice: a land card into your hand) takes Urza's Cave's slot (lands 37 -> 36). Opus called this close to a sidegrade:
+the Cave already fetched a land, the Map was in the list 11/04-11/14 with no clear effect (Coffers package above), and its
+win rate when cast was 34.9% in the 11/07 analysis (bottom ten); JD wanted it anyway, and chose the Cave over Caves of
+Koilos (which would have cost a white and a black source). Not measured: no list with either card has run.
+
+**Model (new engine code).** The Theorist was Unmodeled and is now Full in the card data: the draw trigger is
+`impls/common.rs theorist_draws`, called by the draw step (`engine/turn.rs`) after the active player's own draw and the
+state-based actions, through the trigger window, and not at all when the step is skipped (Necropotence); the abilities are
+a walker (AI and practice mode). An adversarial review (Sol, 44 tests in `tests/theorist_adversarial.rs`) found 11 defects;
+eight were in the card's code and were fixed (a skipped step still triggered, the draw came before the active player's,
+no response window, no check for lost abilities, no protection-from-blue check on the -2, the AI chose -2 targets during
+resolution, artifact lands and creature lands were ignored). The other three are engine-wide limits that every walker or
+multi-target ability shares, **accepted by JD on 2026-11-21** as named limits (tests kept `#[ignore = "ENGINE LIMIT: ..."]`): unpaid ward counters only the
+warded target, not the whole -2; the loyalty once-per-turn stamp does not reset on consecutive extra turns and practice
+mode ignores Oath of Teferi; the walker options have no `neutered` check. To check in the first run: the Theorist's cast
+and stuck-in-hand numbers, how often it survives to a second activation, and the Map's cracks (the breakdown counts casts
+only, so cracks need a trace). The baseline for any run is a fresh one on this build.
+
 ## 2026-11-15: Urborg Syphon-Mage => Mindbreak Trap (JD's choice, not simulated)
 Mindbreak Trap ({2}{U}{U} instant, model status Full: `t6_counters.rs` `mindbreak_free`; not a Game Changer) takes
 Urborg Syphon-Mage's slot. Why: it is free once any opponent has cast three spells this turn, it exiles any number of

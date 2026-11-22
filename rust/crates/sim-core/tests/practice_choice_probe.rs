@@ -262,10 +262,6 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    (
-        "yshtola: Urza's Cave",
-        "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)",
-    ),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     (
         "urdragon: Maelstrom of the Spirit Dragon",

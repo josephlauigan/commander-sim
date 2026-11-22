@@ -2502,6 +2502,12 @@ dsl = []
 status = "Full"
 note = "+2 fateseal, 0 Brainstorm, -1 bounce, -12 exile a library (the hand becomes the library)"
 
+["The Theorist, Jace Beleren"]
+tags = "leg"
+dsl = []
+status = "Full"
+note = "an opponent's draw step: its controller draws a card (each copy, through the trigger window, after the active player's own draw; not when Necropotence or Solitary Confinement skips the step, and not once the Theorist has lost its abilities; engine/turn.rs calls impls/common.rs theorist_draws); +1 a 1/1 blue Illusion, -2 up to one artifact or creature of each opponent to its owner's hand, -6 draw three then X +1/+1 counters on each creature (X = cards in hand)"
+
 ["Jackdaw Savior"]
 tags = "pow=3 tgh=1 fly"
 dsl = []
