@@ -37,9 +37,18 @@ const OUTFITTER: &str = "Kor Outfitter";
 const ZACK: &str = "Zack Fair";
 const BAUBLE: &str = "Wayfarer's Bauble";
 
+/// The Yoshimaru list now runs Equipment, so a Stoneforge Mystic, Cloud or Steelshaper's Gift entering in a test would search a
+/// real Equipment card out of the library into the hand. These tests build their own boards and hands (`hand` conjures a
+/// card the library lacks), so P0 starts with no Equipment in its library, as if the list had none.
+fn no_library_equipment(g: &mut Game, p: PlayerId) {
+    let db = g.db.clone();
+    g.player_mut(p).library.retain(|&c| !db.get(c).has_subtype("equipment"));
+}
+
 /// P0 is the Yoshimaru/Tymna seat; P1 and P2 are other decks. P0's turn, first main phase.
 fn tbl() -> Game {
     let mut g = table(&["yoshimaru", "seph", "sauron"]);
+    no_library_equipment(&mut g, P0);
     g.active = Some(P0);
     g
 }
@@ -47,6 +56,7 @@ fn tbl() -> Game {
 /// two seats, so that "any target" has one opponent
 fn tbl2() -> Game {
     let mut g = table(&["yoshimaru", "seph"]);
+    no_library_equipment(&mut g, P0);
     g.active = Some(P0);
     g
 }
@@ -455,6 +465,7 @@ fn puresteel_draws_for_forge_anews_return_from_the_graveyard() {
     // Forge Anew: "When this enchantment enters, return target Equipment card from your graveyard to the battlefield."
     let mut g = paladin_table();
     gy_add(&mut g, P0, &[BUSTER]);
+    sim_core::testkit::take(&mut g, P0, FORGE); // the list runs Forge Anew: `perm` would take it from the library, a card we do not count
     let lib = lib_len(&g, P0);
     perm(&mut g, P0, FORGE);
     assert!(on(&g, P0, BUSTER).is_some(), "returned");
@@ -488,6 +499,7 @@ fn moving_equipment_never_draws_a_card() {
     let a = perm(&mut g, P0, TYMNA);
     let b = perm(&mut g, P0, "Kor Duelist");
     let z = perm(&mut g, P0, ZACK);
+    sim_core::testkit::take(&mut g, P0, ARDENN); // the list runs Ardenn: `perm` would take it from the library, a card we do not count
     let lib = lib_len(&g, P0);
     assert!(sim_core::dsl::equip(&mut g, P0, sword, a, 2).unwrap(), "equip");
     assert_eq!(g.perm(sword).attached, Some(a));
