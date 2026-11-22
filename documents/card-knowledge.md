@@ -103,7 +103,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 | 1 | `bulk-sync` yields 25,000 to 40,000 cards, none a token, and every card in `data/scryfall_cache.json` present; a second run reports "up to date" and downloads nothing; `slim_bulk` agrees with `slim` on the 15 cache fields; a corrupt `--from-file` exits non-zero and leaves `oracle.json` byte-identical; peak memory under 2 GB |
 | 2 | `find` returns the right cards for each filter and never an off-identity or already-in-deck card under `--deck`; back-face names resolve; a bad regex exits non-zero; a full scan under 1 s |
 | 3 | `roles --rules` is byte-deterministic; hand-tag recall at least 0.95; gold precision at least 0.90 and recall at least 0.85; the LLM stage beats rules alone on the gold cards it handles or stays off for that role; bait cards get no guarded role; schema-valid after retries at least 99% |
-| 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
+| 3b | `map.md` under 32 KB; the five-colour digest under 200 KB; every digest line has six fields and at most 160 characters; two runs byte-identical |
 | 4 | `find` shows model status, deck usage and `FINDINGS.md` hits; a card not in `cards.json` never shows `Full`; status agrees with `cardgen audit` on 20 sampled cards |
 | 5 | `CLAUDE.md` and `AGENTS.md` carry the same workflow section; this document is linked from `cards.md` |
 | 6 | The three failure scenarios (server already running, GPU busy, no network) leave the working tree and previous outputs untouched; a run with nothing new exits 0 |
@@ -197,7 +197,7 @@ coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --valida
 | 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
 | 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
 | 3L Roles, local LLM stage | `knowledge-llm` | built and measured against the real model (dense Qwen3.6-27B); the targeted production run over 12,520 cards started 2026-11-21 and its results are to be merged |
-| 3b `map` and `digest` | `knowledge-digest` | built; awaiting review |
+| 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
 | 4 Status, decks and findings join | `knowledge-status` | not started |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | not started |
 | 6 Weekly timer and report | `knowledge-weekly` | not started |
