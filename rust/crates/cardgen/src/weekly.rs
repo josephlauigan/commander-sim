@@ -9,9 +9,9 @@
 use crate::data::Project;
 use crate::decks::gc_rules;
 use crate::digest;
-use crate::knowledge::{self, Raw, fold};
+use crate::knowledge::{self, Card, Index, Raw, fold};
 use crate::map::{self, MineDeck};
-use serde::Deserialize;
+use crate::roles;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
@@ -32,78 +32,38 @@ pub const LLM_STAGE: &str = "llm";
 
 // ------------------------------------------------------------------------------------------------ inputs
 
-#[derive(Deserialize, Default)]
-#[serde(default)]
-struct RawMeta {
-    schema: i64,
-    bulk_updated_at: String,
-    count: usize,
-}
-
-#[derive(Deserialize)]
-struct Catalog {
-    meta: RawMeta,
-    cards: Vec<Raw>,
-}
-
-/// a catalog read from an `oracle.json` (typed, lenient about unknown fields), with lookups by id and folded name
+/// A catalog read with the loader `find` uses ([`Index::load`]), so a name means the same card here as everywhere
+/// else: an exact full name beats a face name, and the Commander-legal card of a shared name wins.
 pub struct Cat {
     pub updated_at: String,
-    pub cards: Vec<Raw>,
-    by_id: HashMap<String, usize>,
-    by_name: HashMap<String, usize>,
+    idx: Index,
 }
 
 impl Cat {
-    pub fn new(updated_at: String, cards: Vec<Raw>) -> Cat {
-        let by_id = cards
-            .iter()
-            .enumerate()
-            .filter(|(_, c)| !c.oracle_id.is_empty())
-            .map(|(i, c)| (c.oracle_id.clone(), i))
-            .collect();
-        let mut by_name: HashMap<String, usize> = HashMap::new();
-        // full names first: an exact full name beats another card's face name; between equals the first card wins
-        for (i, c) in cards.iter().enumerate() {
-            by_name.entry(fold(&c.name)).or_insert(i);
-        }
-        for (i, c) in cards.iter().enumerate() {
-            for f in c.card_faces.iter().flatten() {
-                by_name.entry(fold(&f.name)).or_insert(i);
-            }
-        }
-        Cat { updated_at, cards, by_id, by_name }
+    pub fn load(path: &Path) -> Result<Cat, String> {
+        let idx = Index::load(path)?;
+        Ok(Cat { updated_at: idx.bulk_updated_at.clone(), idx })
     }
 
-    pub fn load(path: &Path) -> Result<Cat, String> {
-        let f = std::fs::File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-        let c: Catalog = serde_json::from_reader(std::io::BufReader::with_capacity(1 << 20, f))
-            .map_err(|e| format!("{}: cannot read it ({e})", path.display()))?;
-        if c.meta.schema != knowledge::SCHEMA {
-            return Err(format!(
-                "{}: meta.schema is {}, expected {}",
-                path.display(),
-                c.meta.schema,
-                knowledge::SCHEMA
-            ));
-        }
-        if c.meta.count != 0 && c.meta.count != c.cards.len() {
-            return Err(format!(
-                "{}: meta.count is {} but the file holds {} cards",
-                path.display(),
-                c.meta.count,
-                c.cards.len()
-            ));
-        }
-        Ok(Cat::new(c.meta.bulk_updated_at, c.cards))
+    pub fn len(&self) -> usize {
+        self.idx.cards.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.idx.cards.is_empty()
+    }
+
+    pub fn cards(&self) -> impl Iterator<Item = &Raw> {
+        self.idx.cards.iter().map(|c| &c.raw)
     }
 
     fn id(&self, id: &str) -> Option<&Raw> {
-        self.by_id.get(id).map(|&i| &self.cards[i])
+        self.idx.by_oracle_id(id).map(|i| &self.idx.cards[i as usize].raw)
     }
 
-    fn name(&self, name: &str) -> Option<&Raw> {
-        self.by_name.get(&fold(name)).map(|&i| &self.cards[i])
+    /// the cards a deck's name stands for ([`digest::resolve`], the policy of `find` and the digests)
+    fn resolve(&self, name: &str) -> Vec<&Card> {
+        digest::resolve(&self.idx, name).into_iter().map(|i| &self.idx.cards[i as usize]).collect()
     }
 }
 
@@ -176,7 +136,7 @@ pub struct Inputs {
     pub prev: Prev,
     pub decks: Result<Vec<MineDeck>, String>,
     /// the engine's name-keyed cache (`data/scryfall_cache.json`)
-    pub cache: Result<Cat, String>,
+    pub cache: Result<HashMap<String, Card>, String>,
     /// oracle_id -> roles, now and before this run's role stage
     pub roles: Result<RoleTable, String>,
     pub roles_before: Option<Result<RoleTable, String>>,
@@ -205,12 +165,17 @@ fn read_roles(path: &Path) -> Result<RoleTable, String> {
         .collect())
 }
 
-/// the engine's cache as a catalog of its own (looked up by folded name)
-fn read_cache(path: &Path) -> Result<Cat, String> {
+/// the engine's cache by folded name
+fn read_cache(path: &Path) -> Result<HashMap<String, Card>, String> {
     let text = std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let map: BTreeMap<String, Raw> =
         serde_json::from_str(&text).map_err(|e| format!("{}: cannot read it ({e})", path.display()))?;
-    Ok(Cat::new(String::new(), map.into_values().collect()))
+    let mut out = HashMap::new();
+    for (key, raw) in map {
+        let card = Card::new(raw);
+        out.insert(fold(&key), card);
+    }
+    Ok(out)
 }
 
 fn count_rows(path: &Path) -> usize {
@@ -246,13 +211,53 @@ fn short(s: &str, n: usize) -> String {
     if one.chars().count() <= n { one } else { format!("{}...", one.chars().take(n).collect::<String>()) }
 }
 
+/// Data-derived text for the report: one line (every whitespace run, newline included, becomes one space) with the
+/// characters that make Markdown structure escaped, so a card name, key, set or note can never start a heading, a
+/// list, a link, a table cell or a code span of its own.
+fn md(s: &str) -> String {
+    md_keep(s).trim().to_string()
+}
+
+/// [`md`] without trimming: the pieces of one line keep their edge spaces
+fn md_keep(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut space = false;
+    for c in s.chars() {
+        if c.is_whitespace() {
+            space = true;
+            continue;
+        }
+        if c.is_control() {
+            continue;
+        }
+        if space {
+            out.push(' ');
+            space = false;
+        }
+        if matches!(c, '\\' | '`' | '[' | ']' | '|' | '#' | '<' | '>' | '*') {
+            out.push('\\');
+        }
+        out.push(c);
+    }
+    if space {
+        out.push(' ');
+    }
+    out
+}
+
+/// text for inside a backtick span: one line, no backtick
+fn code(s: &str) -> String {
+    s.split_whitespace().collect::<Vec<_>>().join(" ").replace('`', "'")
+}
+
 /// a deck of `mine` with its cards resolved against the current catalog
 struct DeckView<'a> {
     key: &'a str,
     ident: &'a str,
     tiers: &'a [String],
     /// the resolved cards, once each
-    cards: Vec<&'a Raw>,
+    cards: Vec<&'a Card>,
+    /// escaped for the report
     missing: Vec<String>,
 }
 
@@ -268,19 +273,19 @@ fn deck_views<'a>(decks: &'a [MineDeck], cat: &'a Cat) -> Vec<DeckView<'a>> {
                 .chain([d.deck.commander.as_str()])
                 .chain(d.deck.commander2.as_deref())
                 .filter(|n| !n.is_empty());
-            let (mut cards, mut missing): (Vec<&Raw>, Vec<String>) = (vec![], vec![]);
+            let (mut cards, mut missing): (Vec<&Card>, Vec<String>) = (vec![], vec![]);
             let mut seen: BTreeSet<&str> = BTreeSet::new();
             for n in names {
-                match cat.name(n) {
-                    Some(c) => {
-                        if seen.insert(c.oracle_id.as_str()) {
-                            cards.push(c);
-                        }
+                let found = cat.resolve(n);
+                if found.is_empty() {
+                    let n = md(n);
+                    if !missing.contains(&n) {
+                        missing.push(n);
                     }
-                    None => {
-                        if !missing.iter().any(|m| m == n) {
-                            missing.push(n.to_string());
-                        }
+                }
+                for c in found {
+                    if seen.insert(c.raw.oracle_id.as_str()) {
+                        cards.push(c);
                     }
                 }
             }
@@ -315,40 +320,46 @@ fn gc_rule_text(count: usize, tiers: &[String]) -> String {
     )
 }
 
-/// the fields of a card the engine's cache and the catalog both hold, in a comparable form
-fn oracle_fields(c: &Raw) -> Vec<(&'static str, String)> {
+/// The Oracle text of a card as the classifier reads it ([`roles::normalize`]): reminder text stripped, the card's own
+/// name written `~`, whitespace collapsed. Two printings that differ only in those are the same Oracle text.
+fn oracle_text(c: &Card) -> String {
+    let lines: Vec<String> = c.lines().iter().map(|(_, l)| roles::normalize(c, l)).collect();
+    lines
+        .iter()
+        .map(|l| l.split_whitespace().collect::<Vec<_>>().join(" "))
+        .filter(|l| !l.is_empty())
+        .collect::<Vec<_>>()
+        .join(" / ")
+}
+
+/// the fields of a card the engine's cache and the catalog both hold, in a comparable form (whitespace collapsed)
+fn oracle_fields(c: &Card) -> Vec<(&'static str, String)> {
+    let r = &c.raw;
     let g = |o: &Option<String>| o.clone().unwrap_or_default();
-    let faces: Vec<String> = c
+    let faces: Vec<String> = r
         .card_faces
         .iter()
         .flatten()
         .map(|x| {
-            [
-                &x.name,
-                &g(&x.mana_cost),
-                &x.type_line,
-                &g(&x.oracle_text),
-                &g(&x.power),
-                &g(&x.toughness),
-                &g(&x.loyalty),
-            ]
-            .iter()
-            .map(|s| s.as_str())
-            .collect::<Vec<_>>()
-            .join("|")
+            [&x.name, &g(&x.mana_cost), &x.type_line, &g(&x.power), &g(&x.toughness), &g(&x.loyalty)]
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<_>>()
+                .join("|")
         })
         .collect();
+    let flat = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");
     vec![
-        ("mana_cost", g(&c.mana_cost)),
-        ("cmc", format!("{}", c.cmc)),
-        ("type_line", c.type_line.clone()),
-        ("oracle_text", g(&c.oracle_text)),
-        ("power", g(&c.power)),
-        ("toughness", g(&c.toughness)),
-        ("loyalty", g(&c.loyalty)),
-        ("color_identity", c.color_identity.join("")),
-        ("keywords", c.keywords.join(",")),
-        ("card_faces", faces.join("\n")),
+        ("mana_cost", flat(&g(&r.mana_cost))),
+        ("cmc", format!("{}", r.cmc)),
+        ("type_line", flat(&r.type_line)),
+        ("oracle_text", oracle_text(c)),
+        ("power", g(&r.power)),
+        ("toughness", g(&r.toughness)),
+        ("loyalty", g(&r.loyalty)),
+        ("color_identity", r.color_identity.join("")),
+        ("keywords", r.keywords.join(",")),
+        ("card_faces", flat(&faces.join("\n"))),
     ]
 }
 
@@ -371,11 +382,19 @@ fn change(a: &str, b: &str) -> String {
     let before = &a[start.saturating_sub(CTX)..start];
     let after = &a[a.len() - end..a.len() - end + end.min(CTX)];
     let dots = |cut: bool| if cut { "..." } else { "" };
-    format!("{}{}[{old} -> {new}]{}{}", dots(start > CTX), text(before), text(after), dots(end > CTX))
+    format!(
+        "{}{}[{} -> {}]{}{}",
+        dots(start > CTX),
+        md_keep(&text(before)),
+        md(&old),
+        md(&new),
+        md_keep(&text(after)),
+        dots(end > CTX)
+    )
 }
 
 /// the fields in which the cache differs from the catalog, with the change
-fn errata(cache: &Raw, now: &Raw) -> Vec<String> {
+fn errata(cache: &Card, now: &Card) -> Vec<String> {
     let (a, b) = (oracle_fields(cache), oracle_fields(now));
     a.iter()
         .zip(&b)
@@ -400,7 +419,7 @@ struct Diff<'a> {
 
 fn diff<'a>(prev: &'a Cat, now: &'a Cat) -> Diff<'a> {
     let mut d = Diff::default();
-    for c in &now.cards {
+    for c in now.cards() {
         match prev.id(&c.oracle_id) {
             None => d.new.push(c),
             Some(p) => {
@@ -413,7 +432,7 @@ fn diff<'a>(prev: &'a Cat, now: &'a Cat) -> Diff<'a> {
             }
         }
     }
-    d.removed = prev.cards.iter().filter(|p| now.id(&p.oracle_id).is_none()).collect();
+    d.removed = prev.cards().filter(|p| now.id(&p.oracle_id).is_none()).collect();
     let key = |c: &Raw| (c.name.clone(), c.oracle_id.clone());
     d.new.sort_by_key(|c| key(c));
     d.removed.sort_by_key(|c| key(c));
@@ -445,66 +464,76 @@ fn action_items(inp: &Inputs, d: Option<&Diff>, views: &[DeckView]) -> Vec<Strin
     let mut action: Vec<String> = vec![];
     for s in inp.stages.iter().filter(|s| s.status == Status::Fail) {
         let why = if s.note.is_empty() { "no reason recorded" } else { &s.note };
-        action.push(format!("Stage `{}` failed: {why}", s.name));
+        action.push(format!("Stage `{}` failed: {}", code(&s.name), md(why)));
     }
     for p in &inp.stage_problems {
-        action.push(format!("A line of the stage file could not be read: `{p}`"));
+        action.push(format!("A line of the stage file could not be read: `{}`", code(p)));
     }
     if let Err(e) = &inp.new {
-        action.push(format!("The catalog cannot be read: {e}"));
+        action.push(format!("The catalog cannot be read: {}", md(e)));
     }
     if let Prev::Bad(e) = &inp.prev {
-        action.push(format!("The previous sync cannot be read, so no changes were compared: {e}"));
+        action.push(format!("The previous sync cannot be read, so no changes were compared: {}", md(e)));
     }
     match &inp.decks {
-        Err(e) => action.push(format!("JD's decks cannot be read, so no deck was checked: {e}")),
+        Err(e) => action.push(format!("JD's decks cannot be read, so no deck was checked: {}", md(e))),
         Ok(decks) if decks.is_empty() && inp.new.is_ok() => {
             action.push("`mine` in data/decks.json is empty, so no deck was checked.".into())
         }
         Ok(_) => {}
     }
     if let Err(e) = &inp.cache {
-        action.push(format!("The engine's card cache cannot be read, so no errata were checked: {e}"));
+        action.push(format!("The engine's card cache cannot be read, so no errata were checked: {}", md(e)));
     }
     for v in views.iter().filter(|v| !v.missing.is_empty()) {
-        action.push(format!("Deck `{}`: not found in the catalog: {}", v.key, capped(&v.missing, 10)));
+        action.push(format!("Deck `{}`: not found in the catalog: {}", code(v.key), capped(&v.missing, 10)));
     }
     if let Some(d) = d {
         for v in views {
-            let ids: BTreeSet<&str> = v.cards.iter().map(|c| c.oracle_id.as_str()).collect();
+            let ids: BTreeSet<&str> = v.cards.iter().map(|c| c.raw.oracle_id.as_str()).collect();
             for (p, c) in d.legality.iter().filter(|(_, c)| ids.contains(c.oracle_id.as_str())) {
                 if is_legal(p) && !is_legal(c) {
                     let (now, was) = (legality(c).replace('_', " "), legality(p).replace('_', " "));
-                    action.push(format!("Deck `{}`: **{}** became {now} (was {was}).", v.key, c.name));
+                    action.push(format!("Deck `{}`: **{}** became {now} (was {was}).", code(v.key), md(&c.name)));
                 }
             }
-            let changes: Vec<String> =
-                d.gc.iter()
-                    .filter(|(_, c)| ids.contains(c.oracle_id.as_str()))
-                    .map(|(_, c)| {
-                        format!("{} {} the Game Changer list", c.name, if c.game_changer { "joined" } else { "left" })
-                    })
-                    .collect();
+            let changes: Vec<String> = d
+                .gc
+                .iter()
+                .filter(|(_, c)| ids.contains(c.oracle_id.as_str()))
+                .map(|(_, c)| {
+                    format!("{} {} the Game Changer list", md(&c.name), if c.game_changer { "joined" } else { "left" })
+                })
+                .collect();
             if !changes.is_empty() {
-                let count = v.cards.iter().filter(|c| c.game_changer).count();
-                action.push(format!("Deck `{}`: {}; {}.", v.key, changes.join(", "), gc_rule_text(count, v.tiers)));
+                let count = v.cards.iter().filter(|c| c.raw.game_changer).count();
+                action.push(format!(
+                    "Deck `{}`: {}; {}.",
+                    code(v.key),
+                    changes.join(", "),
+                    gc_rule_text(count, v.tiers)
+                ));
             }
         }
     } else if matches!(inp.prev, Prev::Missing) {
         // no previous sync to compare: still say which deck cards are not legal now
         for v in views {
-            for c in v.cards.iter().filter(|c| !is_legal(c)) {
+            for c in v.cards.iter().map(|c| &c.raw).filter(|c| !is_legal(c)) {
                 let now = legality(c).replace('_', " ");
-                action.push(format!("Deck `{}`: **{}** is {now} (no previous sync to say since when).", v.key, c.name));
+                action.push(format!(
+                    "Deck `{}`: **{}** is {now} (no previous sync to say since when).",
+                    code(v.key),
+                    md(&c.name)
+                ));
             }
         }
     }
     if let (Ok(cache), Ok(_)) = (&inp.cache, &inp.new) {
         for v in views {
-            let stale: Vec<(&Raw, Vec<String>)> = v
+            let stale: Vec<(&Card, Vec<String>)> = v
                 .cards
                 .iter()
-                .filter_map(|c| cache.name(&c.name).map(|k| (*c, errata(k, c))))
+                .filter_map(|c| cache.get(&fold(&c.raw.name)).map(|k| (*c, errata(k, c))))
                 .filter(|(_, e)| !e.is_empty())
                 .collect();
             if stale.is_empty() {
@@ -513,11 +542,11 @@ fn action_items(inp: &Inputs, d: Option<&Diff>, views: &[DeckView]) -> Vec<Strin
             action.push(format!(
                 "Deck `{}`: {} card(s) differ from data/scryfall_cache.json (Oracle errata; the engine's model may be \
                  stale):",
-                v.key,
+                code(v.key),
                 stale.len()
             ));
             for (c, e) in stale.iter().take(LIST_CAP) {
-                action.push(format!("  - {}: {}", c.name, e.join("; ")));
+                action.push(format!("  - {}: {}", md(&c.raw.name), e.join("; ")));
             }
             if stale.len() > LIST_CAP {
                 action.push(format!("  - ({} more)", stale.len() - LIST_CAP));
@@ -530,39 +559,40 @@ fn action_items(inp: &Inputs, d: Option<&Diff>, views: &[DeckView]) -> Vec<Strin
 fn section_run(o: &mut String, inp: &Inputs, reason: &Option<String>) {
     o.push_str("\n## Run\n\n");
     let _ = writeln!(o, "- Date: {}", inp.date);
-    let _ = writeln!(o, "- Repository: {}", if inp.commit.is_empty() { "not recorded" } else { &inp.commit });
+    let commit = if inp.commit.is_empty() { "not recorded".to_string() } else { md(&inp.commit) };
+    let _ = writeln!(o, "- Repository: {commit}");
     match (&inp.new, &inp.prev) {
         (Ok(now), prev) => {
-            let legal = now.cards.iter().filter(|c| is_legal(c)).count();
+            let legal = now.cards().filter(|c| is_legal(c)).count();
             match prev {
                 Prev::Ok(p) if p.updated_at != now.updated_at => {
-                    let _ = writeln!(o, "- Bulk file updated_at: {} -> {}", p.updated_at, now.updated_at);
+                    let _ = writeln!(o, "- Bulk file updated_at: {} -> {}", md(&p.updated_at), md(&now.updated_at));
                 }
                 _ => {
-                    let _ = writeln!(o, "- Bulk file updated_at: {} (unchanged, or no previous sync)", now.updated_at);
+                    let _ =
+                        writeln!(o, "- Bulk file updated_at: {} (unchanged, or no previous sync)", md(&now.updated_at));
                 }
             }
             match prev {
                 Prev::Ok(p) => {
-                    let _ =
-                        writeln!(o, "- Cards: {} -> {} ({legal} Commander-legal now)", p.cards.len(), now.cards.len());
+                    let _ = writeln!(o, "- Cards: {} -> {} ({legal} Commander-legal now)", p.len(), now.len());
                 }
                 _ => {
-                    let _ = writeln!(o, "- Cards: {} ({legal} Commander-legal)", now.cards.len());
+                    let _ = writeln!(o, "- Cards: {} ({legal} Commander-legal)", now.len());
                 }
             }
         }
         (Err(_), _) => o.push_str("- Catalog: not readable\n"),
     }
     if let Some(r) = reason {
-        let _ = writeln!(o, "- Comparison: none, {r}");
+        let _ = writeln!(o, "- Comparison: none, {}", md(r));
     }
     if inp.stages.is_empty() {
         o.push_str("- Stages: none recorded (this report was not written by the weekly script)\n");
     } else {
         o.push_str("\n| Stage | Status | Seconds | Note |\n|---|---|---|---|\n");
         for s in &inp.stages {
-            let _ = writeln!(o, "| {} | {} | {} | {} |", s.name, s.status.as_str(), s.secs, s.note.replace('|', "/"));
+            let _ = writeln!(o, "| {} | {} | {} | {} |", md(&s.name), s.status.as_str(), s.secs, md(&s.note));
         }
     }
 }
@@ -570,7 +600,7 @@ fn section_run(o: &mut String, inp: &Inputs, reason: &Option<String>) {
 fn section_new(o: &mut String, inp: &Inputs, d: Option<&Diff>, views: &[DeckView], reason: &Option<String>) {
     o.push_str("\n## New cards\n\n");
     let Some(d) = d else {
-        let _ = writeln!(o, "No new-card list this run: {}.", reason.as_deref().unwrap_or("no comparison"));
+        let _ = writeln!(o, "No new-card list this run: {}.", md(reason.as_deref().unwrap_or("no comparison")));
         return;
     };
     let legal_new = d.new.iter().filter(|c| is_legal(c)).count();
@@ -589,11 +619,11 @@ fn section_new(o: &mut String, inp: &Inputs, d: Option<&Diff>, views: &[DeckView
     for (set, cards) in order.iter().take(SETS_SHOWN) {
         let mut legal: Vec<&Raw> = cards.iter().copied().filter(|c| is_legal(c)).collect();
         legal.sort_by(by_rank);
-        let names: Vec<String> = legal.iter().map(|c| c.name.clone()).collect();
+        let names: Vec<String> = legal.iter().map(|c| md(&c.name)).collect();
         let _ = writeln!(
             o,
             "- **{}**: {} new, {} Commander-legal{}{}",
-            if set.is_empty() { "(no set)" } else { set },
+            if set.is_empty() { "(no set)".to_string() } else { md(set) },
             cards.len(),
             legal.len(),
             if names.is_empty() { "" } else { ": " },
@@ -605,7 +635,7 @@ fn section_new(o: &mut String, inp: &Inputs, d: Option<&Diff>, views: &[DeckView
         let _ = writeln!(o, "- ({} more sets, {rest} cards)", order.len() - SETS_SHOWN);
     }
     if !d.removed.is_empty() {
-        let names: Vec<String> = d.removed.iter().map(|c| c.name.clone()).collect();
+        let names: Vec<String> = d.removed.iter().map(|c| md(&c.name)).collect();
         let _ = writeln!(o, "\nGone from the catalog: {}", capped(&names, 15));
     }
     o.push_str("\n### New Commander-legal cards inside each of JD's identities\n\n");
@@ -618,26 +648,26 @@ fn section_new(o: &mut String, inp: &Inputs, d: Option<&Diff>, views: &[DeckView
         let rows: Vec<String> = inside
             .iter()
             .map(|c| match inp.roles.as_ref().ok().and_then(|r| r.get(&c.oracle_id)) {
-                Some(roles) if !roles.is_empty() => format!("{} [{}]", c.name, roles.join(", ")),
-                _ => c.name.clone(),
+                Some(roles) if !roles.is_empty() => format!("{} [{}]", md(&c.name), md(&roles.join(", "))),
+                _ => md(&c.name),
             })
             .collect();
-        let ident = if v.ident.is_empty() { "colourless" } else { v.ident };
+        let ident = if v.ident.is_empty() { "colourless".to_string() } else { md(v.ident) };
         let sep = if rows.is_empty() { "" } else { ": " };
-        let _ = writeln!(o, "- `{}` ({ident}): {} new{sep}{}", v.key, rows.len(), capped(&rows, LIST_CAP));
+        let _ = writeln!(o, "- `{}` ({ident}): {} new{sep}{}", code(v.key), rows.len(), capped(&rows, LIST_CAP));
     }
     if let Err(e) = &inp.roles {
-        let _ = writeln!(o, "\nRoles are not shown: {}", short(e, 160));
+        let _ = writeln!(o, "\nRoles are not shown: {}", md(&short(e, 160)));
     }
 }
 
 fn section_bans(o: &mut String, d: Option<&Diff>, reason: &Option<String>) {
     o.push_str("\n## Bans/unbans and Game Changer changes\n\n");
     let Some(d) = d else {
-        let _ = writeln!(o, "No comparison this run: {}.", reason.as_deref().unwrap_or("no comparison"));
+        let _ = writeln!(o, "No comparison this run: {}.", md(reason.as_deref().unwrap_or("no comparison")));
         return;
     };
-    let line = |p: &Raw, c: &Raw| format!("{} ({} -> {})", c.name, legality(p), legality(c));
+    let line = |p: &Raw, c: &Raw| format!("{} ({} -> {})", md(&c.name), md(legality(p)), md(legality(c)));
     let of = |f: &dyn Fn(&Raw, &Raw) -> bool| -> Vec<String> {
         d.legality.iter().filter(|(p, c)| f(p, c)).map(|(p, c)| line(p, c)).collect()
     };
@@ -645,13 +675,13 @@ fn section_bans(o: &mut String, d: Option<&Diff>, reason: &Option<String>) {
     let unbanned = of(&|p, _| legality(p) == "banned");
     let other = of(&|p, c| legality(p) != "banned" && legality(c) != "banned");
     let gc = |on: bool| -> Vec<String> {
-        d.gc.iter().filter(|(_, c)| c.game_changer == on).map(|(_, c)| c.name.clone()).collect()
+        d.gc.iter().filter(|(_, c)| c.game_changer == on).map(|(_, c)| md(&c.name)).collect()
     };
     let arrive: Vec<String> = d
         .new
         .iter()
         .filter(|c| legality(c) == "banned" || c.game_changer)
-        .map(|c| format!("{} ({}{})", c.name, legality(c), if c.game_changer { ", Game Changer" } else { "" }))
+        .map(|c| format!("{} ({}{})", md(&c.name), md(legality(c)), if c.game_changer { ", Game Changer" } else { "" }))
         .collect();
     for (label, rows) in [
         ("Banned", banned),
@@ -681,13 +711,16 @@ fn section_roles(o: &mut String, inp: &Inputs, views: &[DeckView]) {
                 changed.len()
             );
             let deck_ids: BTreeSet<&str> =
-                views.iter().flat_map(|v| v.cards.iter().map(|c| c.oracle_id.as_str())).collect();
+                views.iter().flat_map(|v| v.cards.iter().map(|c| c.raw.oracle_id.as_str())).collect();
             // cards in JD's decks first
             let mut rows: Vec<(bool, String)> = changed
                 .iter()
                 .map(|(id, b, r)| {
                     let name = cat.id(id).map(|c| c.name.as_str()).unwrap_or(id.as_str());
-                    (!deck_ids.contains(id.as_str()), format!("{name}: [{}] -> [{}]", b.join(", "), r.join(", ")))
+                    (
+                        !deck_ids.contains(id.as_str()),
+                        format!("{}: [{}] -> [{}]", md(name), md(&b.join(", ")), md(&r.join(", "))),
+                    )
                 })
                 .collect();
             rows.sort();
@@ -700,13 +733,13 @@ fn section_roles(o: &mut String, inp: &Inputs, views: &[DeckView]) {
             }
         }
         (Err(e), _, _) => {
-            let _ = writeln!(o, "- Role table not readable: {}", short(e, 160));
+            let _ = writeln!(o, "- Role table not readable: {}", md(&short(e, 160)));
         }
         (_, Some(Err(e)), _) => {
             let _ = writeln!(
                 o,
                 "- The role table from before this run is not readable, no role changes listed: {}",
-                short(e, 160)
+                md(&short(e, 160))
             );
         }
         (_, None, _) => o.push_str("- No role table from before this run, so no role changes are listed.\n"),
@@ -718,7 +751,7 @@ fn section_roles(o: &mut String, inp: &Inputs, views: &[DeckView]) {
         inp.llm_rows.0, inp.llm_rows.1
     );
     if let Some(s) = stage(&inp.stages, LLM_STAGE) {
-        let note = if s.note.is_empty() { String::new() } else { format!(": {}", s.note) };
+        let note = if s.note.is_empty() { String::new() } else { format!(": {}", md(&s.note)) };
         let _ = writeln!(o, "- LLM stage this run: {} ({}s){note}", s.status.as_str(), s.secs);
     }
     if let Some(m) = &inp.merge {
@@ -741,7 +774,7 @@ fn section_roles(o: &mut String, inp: &Inputs, views: &[DeckView]) {
         if !lines.is_empty() {
             o.push_str("\nEnd of this run's LLM log:\n\n```\n");
             for l in &lines[lines.len().saturating_sub(12)..] {
-                let _ = writeln!(o, "{}", short(l, 200));
+                let _ = writeln!(o, "{}", short(l, 200).replace("```", "'''"));
             }
             o.push_str("```\n");
         }
@@ -806,29 +839,81 @@ impl Output {
     }
 }
 
+/// `YYYY-MM-DD` and a day that exists
 fn is_date(s: &str) -> bool {
     let b = s.as_bytes();
-    b.len() == 10 && b.iter().enumerate().all(|(i, c)| if i == 4 || i == 7 { *c == b'-' } else { c.is_ascii_digit() })
+    b.len() == 10
+        && b.iter().enumerate().all(|(i, c)| if i == 4 || i == 7 { *c == b'-' } else { c.is_ascii_digit() })
+        && chrono::NaiveDate::parse_from_str(s, "%Y-%m-%d").is_ok()
 }
 
-/// `YYYY-MM-DD.md` or `YYYY-MM-DD.N.md` (an earlier report of the same day, kept when a rerun replaced it)
-fn is_report_name(n: &str) -> bool {
-    let Some(stem) = n.strip_suffix(".md") else { return false };
-    let Some(date) = stem.get(..10) else { return false };
+/// The (date, sequence) of a dated report name: `YYYY-MM-DD.md` is the newest report of its day (sequence `u64::MAX`),
+/// `YYYY-MM-DD.N.md` an earlier one that a later run replaced (the higher N, the later it was replaced). Sorting by
+/// this key is chronological, with N compared as a number.
+fn report_key(n: &str) -> Option<(String, u64)> {
+    let stem = n.strip_suffix(".md")?;
+    let date = stem.get(..10)?;
     let rest = &stem[10..];
-    is_date(date)
-        && (rest.is_empty()
-            || rest.strip_prefix('.').is_some_and(|r| !r.is_empty() && r.bytes().all(|b| b.is_ascii_digit())))
+    if !is_date(date) {
+        return None;
+    }
+    if rest.is_empty() {
+        return Some((date.to_string(), u64::MAX));
+    }
+    let seq = rest.strip_prefix('.').filter(|r| !r.is_empty() && r.bytes().all(|b| b.is_ascii_digit()))?;
+    Some((date.to_string(), seq.parse().ok().filter(|n| *n < u64::MAX)?))
 }
 
 /// Deletes the oldest dated reports so that `keep` stay; returns how many it removed. Other files are never touched.
 pub fn prune(reports: &Path, keep: usize) -> usize {
     let Ok(rd) = std::fs::read_dir(reports) else { return 0 };
-    let mut names: Vec<String> =
-        rd.filter_map(|e| e.ok()?.file_name().into_string().ok()).filter(|n| is_report_name(n)).collect();
-    names.sort();
-    let extra = names.len().saturating_sub(keep);
-    names.iter().take(extra).filter(|n| std::fs::remove_file(reports.join(n)).is_ok()).count()
+    let mut keyed: Vec<((String, u64), String)> = rd
+        .filter_map(|e| e.ok()?.file_name().into_string().ok())
+        .filter_map(|n| report_key(&n).map(|k| (k, n)))
+        .collect();
+    keyed.sort();
+    let extra = keyed.len().saturating_sub(keep);
+    keyed.iter().take(extra).filter(|(_, n)| std::fs::remove_file(reports.join(n)).is_ok()).count()
+}
+
+/// The sequence number the next archive of `date` takes: one above the highest there is.
+fn next_archive_seq(reports: &Path, date: &str) -> u64 {
+    let Ok(rd) = std::fs::read_dir(reports) else { return 1 };
+    rd.filter_map(|e| e.ok()?.file_name().into_string().ok())
+        .filter_map(|n| report_key(&n))
+        .filter(|(d, seq)| d == date && *seq != u64::MAX)
+        .map(|(_, seq)| seq + 1)
+        .max()
+        .unwrap_or(1)
+}
+
+/// Publishes the report of `date` into `reports`: the whole text is written to a temporary file first; only then is
+/// the report already there (if any) kept as `DATE.N.md` (a hard link, so `DATE.md` is never absent) and the new one
+/// renamed over `DATE.md`. A write that fails leaves the previous report exactly where it was.
+fn publish(reports: &Path, date: &str, text: &str) -> Result<PathBuf, String> {
+    use std::io::Write;
+    std::fs::create_dir_all(reports).map_err(|e| format!("{}: {e}", reports.display()))?;
+    let path = reports.join(format!("{date}.md"));
+    let tmp = reports.join(format!(".{date}.md.{}.tmp", std::process::id()));
+    let written = std::fs::File::create(&tmp)
+        .and_then(|mut f| f.write_all(text.as_bytes()).and_then(|_| f.flush()))
+        .map_err(|e| format!("{}: {e}", tmp.display()));
+    if let Err(e) = written {
+        let _ = std::fs::remove_file(&tmp);
+        return Err(e);
+    }
+    if path.exists() {
+        let archive = reports.join(format!("{date}.{}.md", next_archive_seq(reports, date)));
+        if let Err(e) = std::fs::hard_link(&path, &archive).or_else(|_| std::fs::copy(&path, &archive).map(|_| ())) {
+            let _ = std::fs::remove_file(&tmp);
+            return Err(format!("{}: {e}", archive.display()));
+        }
+    }
+    std::fs::rename(&tmp, &path).map_err(|e| {
+        let _ = std::fs::remove_file(&tmp);
+        format!("{}: {e}", path.display())
+    })?;
+    Ok(path)
 }
 
 /// Parsed `weekly-report` arguments.
@@ -917,9 +1002,10 @@ pub fn gather(project: &Project, dir: &Path, a: &Args) -> Result<Inputs, String>
     })
 }
 
-/// `cardgen weekly-report`: writes the report (default `<knowledge>/reports/<date>.md`; an earlier report of the same
-/// date becomes `<date>.N.md`) and keeps the newest `--keep` dated reports. Fails only if an argument is wrong, the
-/// stage file named cannot be read, or the report cannot be written.
+/// `cardgen weekly-report`: writes the report (default `<knowledge>/reports/<date>.md`, published whole or not at
+/// all; an earlier report of the same date becomes `<date>.N.md`) and keeps the newest `--keep` dated reports. With
+/// `--out` it only writes that file. Fails only if an argument is wrong, the stage file named cannot be read, or the
+/// report cannot be written.
 pub fn command(project: &Project, args: &[String]) -> Result<Output, String> {
     let a = parse_args(args)?;
     let dir = knowledge::knowledge_dir(project, a.data_dir.as_deref())
@@ -931,16 +1017,15 @@ pub fn command(project: &Project, args: &[String]) -> Result<Output, String> {
         .and_then(|s| s.split("\n## ").next())
         .map_or(0, |s| s.lines().filter(|l| l.starts_with("- ")).count());
     let reports = dir.join("reports");
-    let (path, default_name) = match &a.out {
-        Some(p) => (p.clone(), false),
-        None => (reports.join(format!("{}.md", a.date)), true),
+    let (path, pruned) = match &a.out {
+        Some(p) => {
+            digest::write_file(p, &text)?;
+            (p.clone(), 0)
+        }
+        None => {
+            let path = publish(&reports, &a.date, &text)?;
+            (path, prune(&reports, a.keep))
+        }
     };
-    if default_name && path.exists() {
-        let free =
-            (1..).map(|n| reports.join(format!("{}.{n}.md", a.date))).find(|p| !p.exists()).expect("a free name");
-        std::fs::rename(&path, &free).map_err(|e| format!("{}: {e}", path.display()))?;
-    }
-    digest::write_file(&path, &text)?;
-    let pruned = if default_name { prune(&reports, a.keep) } else { 0 };
     Ok(Output { text, path, stdout: a.stdout, action_items, pruned })
 }

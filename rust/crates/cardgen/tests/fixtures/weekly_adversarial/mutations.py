@@ -1,8 +1,11 @@
 """Mutate only a disposable scratch copy; never execute network or service commands.
 
-The original weekly_script integration test uses std alone, so rustc can compile it
-against a scratch script without rebuilding the workspace. Each test launch is capped.
-The final mutation rebuilds cardgen offline against a scratch llm.rs.
+usage: python3 -I mutations.py REPO SCRATCH      (SCRATCH must not exist)
+
+The scratch copy gets its own cargo target directory, so the repository's build is never touched. Each mutation
+edits the scratch copy of scripts/knowledge-weekly.sh (or, for the last ones, src/llm.rs), runs the weekly test
+suites (weekly_script and weekly_adversarial, every test launch under the memory cap) and prints whether some test
+caught it (a non-zero exit) or not.
 """
 import os
 import pathlib
@@ -25,54 +28,71 @@ for f in ['Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'rustfmt.toml']:
     shutil.copy2(repo / 'rust' / f, scratch / 'rust' / f)
 for c in ['sim-core', 'practice', 'sim-cli']:
     (scratch / 'rust/crates' / c).symlink_to(repo / 'rust/crates' / c, target_is_directory=True)
-binary = repo / 'rust/target/release/cardgen'
-environment = dict(os.environ, CARGO_MANIFEST_DIR=str(manifest), CARGO_BIN_EXE_cardgen=str(binary))
 result_dir = scratch / 'results'
 result_dir.mkdir()
-test = scratch / 'weekly-script-tests'
-subprocess.run(cap + ['rustc', '--edition=2024', '--test', str(manifest / 'tests/weekly_script.rs'), '-o', str(test)],
-               check=True, env=environment)
+env = dict(os.environ, CARGO_TARGET_DIR=str(scratch / 'target'))
+tests = ['--test', 'weekly_script', '--test', 'weekly_adversarial', '--test', 'weekly', '--test', 'weekly_sync']
+cargo_test = cap + ['cargo', 'test', '--release', '--offline', '-p', 'cardgen'] + tests
+
+
+def run(name):
+    with (result_dir / f'{name}.log').open('w') as out:
+        return subprocess.run(cargo_test, cwd=scratch / 'rust', env=env, stdout=out, stderr=subprocess.STDOUT).returncode
+
+
+baseline = run('baseline')
+print(f'baseline: exit {baseline}', flush=True)
+assert baseline == 0, 'the unmutated scratch copy must pass'
+
 script = scratch / 'scripts/knowledge-weekly.sh'
 original = script.read_text()
-with (result_dir / 'baseline.log').open('w') as out:
-    subprocess.run(cap + [str(test)], stdout=out, stderr=subprocess.STDOUT, check=True)
-mutations = [
-    ('remove-traps', lambda s: s.replace('trap llm_stop_if_started EXIT', ': # removed stage trap')
-     .replace('trap cleanup EXIT', ': # removed parent trap')),
-    ('remove-atomic-rename', lambda s: s.replace('mv -f "$tmp" "$path"', 'cp "$tmp" "$path"')),
-    ('drop-updated-at-skip', lambda s: s.replace('    return 10\n  fi\n  note "$(grep -m1',
-                                               '    return 0\n  fi\n  note "$(grep -m1')),
+script_mutations = [
+    # the traps that stop a server this job started
+    ('remove-traps', lambda s: s.replace("trap 'llm_release own' EXIT", ': # removed stage trap').replace('trap cleanup EXIT', ': # removed parent trap')),
+    # a stage writes into the published directory instead of staging
+    ('map-digest-without-staging', lambda s: s.replace('s="$(stage_dir map-digest)"', 's="$OUT"')),
+    ('roles-without-staging', lambda s: s.replace('s="$(stage_dir roles)"', 's="$OUT"')),
+    # publish a stage's outputs although it failed
+    ('publish-roles-despite-failure', lambda s: s.replace('roles) if ((rc == 0)); then publish_roles', 'roles) if ((rc >= 0)); then publish_roles')),
+    ('publish-map-despite-failure', lambda s: s.replace('map-digest) if ((rc == 0)); then publish_map_digest', 'map-digest) if ((rc >= 0)); then publish_map_digest')),
+    ('drop-updated-at-skip', lambda s: s.replace('    return 10\n  fi\n  produced "$s/oracle.json"', '    return 0\n  fi\n  produced "$s/oracle.json"')),
     ('count-sanity-one', lambda s: s.replace('KNOWLEDGE_BULK_MIN:-25000', 'KNOWLEDGE_BULK_MIN:-1')),
     ('merge-includes-pending', lambda s: s.replace('cg roles --merge --no-think', 'cg roles --merge --pending --no-think')),
+    ('llm-call-without-mode', lambda s: s.replace('LLM_ARGS=(roles --llm --routes', 'LLM_ARGS=(roles --routes')),
+    ('gpu-unknown-is-free', lambda s: s.replace('  *) echo unknown ;;', '  *) echo free ;;')),
+    ('no-report-retention', lambda s: s.replace('  prune_reports\n}', '  :\n}')),
+    ('claim-before-reprobe', lambda s: s.replace('  if [[ -n "$(llm_models)" ]]; then return 20; fi\n', '')),
+    ('no-exec-stop-post-cleanup', lambda s: s.replace('    llm_release\n    exit 0\n  fi\n\n  if ((DRY))', '    exit 0\n  fi\n\n  if ((DRY))')),
 ]
-for name, mutate in mutations:
+for name, mutate in script_mutations:
     changed = mutate(original)
     assert changed != original, name
     script.write_text(changed)
-    with (result_dir / f'{name}.log').open('w') as out:
-        r = subprocess.run(cap + [str(test)], stdout=out, stderr=subprocess.STDOUT)
-    print(f'{name}: existing weekly_script suite exit {r.returncode}', flush=True)
+    code = run(name)
+    print(f'{name}: {"CAUGHT" if code != 0 else "MISSED"} (exit {code})', flush=True)
 script.write_text(original)
 
-# A genuine Rust mutation of the tracked-only loader. Original weekly_script tests
-# still use the mutant cardgen binary for all their offline runs.
-llm = manifest / 'src/llm.rs'
-text = llm.read_text()
-changed = text.replace('load_cache_with(dir, false)', 'load_cache_with(dir, true)')
-assert changed != text
-llm.write_text(changed)
-target = repo / 'rust/target'
-build_env = dict(os.environ, CARGO_TARGET_DIR=str(target))
-with (result_dir / 'pending-rust-build.log').open('w') as out:
-    subprocess.run(cap + ['cargo', 'build', '--release', '--offline', '-p', 'cardgen'],
-                   cwd=scratch / 'rust', env=build_env, stdout=out, stderr=subprocess.STDOUT, check=True)
-# Save the mutant executable separately before the normal worktree rebuilds it.
-mutant_binary = scratch / 'cardgen-mutant'
-shutil.copy2(target / 'release/cardgen', mutant_binary)
-environment['CARGO_BIN_EXE_cardgen'] = str(mutant_binary)
-subprocess.run(cap + ['rustc', '--edition=2024', '--test', str(manifest / 'tests/weekly_script.rs'), '-o', str(test)],
-               check=True, env=environment)
-with (result_dir / 'pending-rust-filter.log').open('w') as out:
-    r = subprocess.run(cap + [str(test)], stdout=out, stderr=subprocess.STDOUT)
-print(f'pending-rust-filter: existing weekly_script suite exit {r.returncode}', flush=True)
+unit = scratch / 'scripts/systemd/knowledge-weekly.service'
+unit_original = unit.read_text()
+unit.write_text(unit_original.replace('ExecStopPost=', '#ExecStopPost='))
+code = run('unit-without-exec-stop-post')
+print(f'unit-without-exec-stop-post: {"CAUGHT" if code != 0 else "MISSED"} (exit {code})', flush=True)
+unit.write_text(unit_original)
+
+# genuine Rust mutations (the scratch cardgen is rebuilt)
+rust_mutations = [
+    ('src/llm.rs', 'pending-loaded-by-default', 'load_cache_with(dir, false)', 'load_cache_with(dir, true)'),
+    ('src/weekly.rs', 'retention-sorts-by-name', 'keyed.sort();', 'keyed.sort_by(|a, b| a.1.cmp(&b.1));'),
+    ('src/weekly.rs', 'first-name-wins', 'digest::resolve(&self.idx, name)', 'self.idx.lookup(name).to_vec()'),
+    ('src/weekly.rs', 'impossible-dates-accepted', '&& chrono::NaiveDate::parse_from_str(s, "%Y-%m-%d").is_ok()', ''),
+    ('src/weekly.rs', 'markdown-not-escaped', "if matches!(c, '\\\\' | '`' | '[' | ']' | '|' | '#' | '<' | '>' | '*') {", "if false {"),
+]
+for rel, name, old, new in rust_mutations:
+    path = manifest / rel
+    text = path.read_text()
+    assert old in text, name
+    path.write_text(text.replace(old, new, 1))
+    code = run(name)
+    print(f'{name}: {"CAUGHT" if code != 0 else "MISSED"} (exit {code})', flush=True)
+    path.write_text(text)
 print(f'Detailed logs: {result_dir}', flush=True)

@@ -169,12 +169,22 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
 
 `scripts/knowledge-weekly.sh`, run by the systemd **user** timer `scripts/systemd/knowledge-weekly.timer` (Sunday 04:00,
 `Persistent=true` so a missed run happens at the next start, a small random delay) through
-`scripts/systemd/knowledge-weekly.service` (`RuntimeMaxSec=4h`, `MemoryMax=24G`, `Nice=10`, idle disk priority). Nothing
+`scripts/systemd/knowledge-weekly.service` (`RuntimeMaxSec=4h`, `MemoryMax=24G`, `Nice=10`, idle disk priority, `ExecStopPost=` for the server cleanup). Nothing
 installs it: JD does (below). JD's decisions of 2026-11-22: Sunday 04:00, the LLM stage on the dense Qwen3.6-27B (thinking
 off), `sync.lock` untracked.
 
-**Stages.** Each is recorded `ok`, `skip` or `fail` with its time and a reason, in the report. One failing never deletes
-the previous outputs (`cardgen` writes a temp file and renames it) and never stops the report.
+**Stages.** Each is recorded `ok`, `skip` or `fail` with its time and a reason, in the report. One failing never changes
+the published files and never stops the report.
+
+**Staging.** Stages 2 to 6 never write into the published directory while they work. Each builds its outputs in a per-run
+staging directory (`~/.cache/commander-sim-knowledge/staging/RUNID/STAGE`, with the catalog and the tracked role files
+linked in, `CARDGEN_KNOWLEDGE_DIR` pointing at it) and the script renames them into `data/knowledge/` only after the
+whole stage succeeded: the bulk file with its previous copy and lock, the rules and the merge together, the map with
+every digest, the report. A failed or killed stage leaves the published directory byte-identical with no temp files in
+it, and the next run deletes abandoned staging directories. The LLM stage publishes the rows it finished at the end of
+the stage, also after a spent budget or a failure, so they carry over. Known limit: a rename needs the staging and the
+published directory on one filesystem (both default places are under `$HOME`); otherwise the file is first copied to a
+hidden temp file in the target directory, and a kill during that copy leaves it there.
 
 | # | Stage | What it does |
 |---|---|---|
@@ -183,7 +193,7 @@ the previous outputs (`cardgen` writes a temp file and renames it) and never sto
 | 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out), so `roles.json` keeps the reviewed LLM roles; the table from before the run goes to the report |
 | 4 | `llm` | cards the rules could not read (route `NoRole` or `UnknownLine`) that miss the cache: `roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending` with `CARDGEN_LLM_VARIANT=think`, new rows to `llm_roles.pending.jsonl` only. A dry run first counts the cards to do; none means `skip` and the GPU is not woken |
 | 5 | `map-digest` | `map.md` and one digest per deck of `mine` |
-| 6 | `report` | `reports/YYYY-MM-DD.md` (the newest 12 stay) by `cardgen weekly-report`; if `cardgen` cannot run, a short report is written by the script, and the exit code is non-zero only if no report could be written |
+| 6 | `report` | `reports/YYYY-MM-DD.md` by `cardgen weekly-report`, built whole in staging and then renamed into place; an earlier report of the day stays as `DATE.N.md` (N counts up, compared as a number) and the newest 12 stay; if `cardgen` cannot run, a short report goes through the same publication. If the state directory is unusable (read-only, full) the failure is still reported. The exit code is non-zero only if no report could be written |
 
 **Where things go.** Output goes to the main checkout's `data/knowledge/` (override `KNOWLEDGE_OUT`), through
 `CARDGEN_KNOWLEDGE_DIR`, never to the clone. Everything written there is gitignored: `oracle.json`, `oracle.prev.json`,
@@ -202,14 +212,34 @@ node open (`fuser` on `/dev/dri/by-path/pci-0000:04:00.0-render`, override `KNOW
 unit is not installed, skip with the link command; otherwise it starts the unit (with a runtime limit, in case the job is
 killed), waits up to 5 minutes for the model, sends a smoke prompt, runs the stage for at most 90 minutes (the rest carries
 over to next week; every batch is flushed to the pending file as it finishes), and stops the unit only because it started
-it (an `EXIT` and `TERM` trap, so a killed job stops its own server too). A start, readiness or smoke failure is a `fail` in
-the report; the skips are not.
+it. The details that make "only because it started it" hold:
+
+- `fuser` must say the render node is free (exit 1). A missing `fuser`, or an exit other than 0 and 1, is "GPU state
+  unknown" and skips the stage (fail closed). `fuser` also exits 1 on its own fatal errors, which cannot be told apart.
+- Right before `systemctl --user start`, the job asks again: if a server answers or `is-active` says active or
+  activating, the unit is somebody else's, is used if it becomes ready, and is never stopped.
+- Right after a start it caused, the job writes the ownership marker `~/.cache/commander-sim-knowledge/owns-llama-27b` (run
+  id and the unit's `InvocationID`). It stops the unit only if that marker exists, and only if the unit still has that
+  invocation, then removes the marker. This happens on exit and on TERM, INT and HUP (a TERM sent to the script alone is
+  forwarded to the running stage, which is reaped first), and from the service's `ExecStopPost=` through
+  `knowledge-weekly.sh --cleanup`, which runs after the job ended however it ended, a SIGKILL included.
+- `llama-27b.service` has `RuntimeMaxSec=6000` (100 minutes: the 90-minute budget plus the 5-minute load), so a server that
+  is somehow left behind ends itself. Raise it together with `KNOWLEDGE_LLM_BUDGET_SECS` or `KNOWLEDGE_LLM_READY_SECS`.
+- **Residual window (a known limit):** another actor that starts the unit in the milliseconds between the final
+  `is-active` check and `systemctl start` makes the job believe it started it, and it would stop that server at the end.
+  systemd has no "start only if inactive" call, so the window cannot be closed from a script.
+
+A start, readiness or smoke failure is a `fail` in the report; the skips are not.
 
 **The report** (`cardgen weekly-report`, in the cardgen README): Action needed (for JD's decks only: a card that became
 banned or not legal; a Game Changer added or removed, with the deck's new count against the rule of each tier it lists,
 `decks::gc_rules`: t0-t1 none, t2 one or two, t3 exactly three, t4-t5 unrestricted, which is the pool decks' rule and is
 shown as information for JD's decks; a deck card the catalog does not know; Oracle errata against
-`data/scryfall_cache.json`, meaning the engine's model may be stale; any failed stage) · Run · New cards (by set, then inside
+`data/scryfall_cache.json`, meaning the engine's model may be stale: the Oracle text is compared as the role classifier
+reads it (reminder text stripped, the card's own name as `~`, whitespace collapsed), so those alone are no erratum, and
+the other fields are compared with whitespace collapsed; any failed stage). A deck's card names are resolved as `find`
+resolves them (an exact full name before a face name, the Commander-legal card of a shared name). Names, keys, sets and
+notes in the report are flattened to one line and Markdown-escaped, so no card name can make a heading, link or table cell · Run · New cards (by set, then inside
 each of JD's identities with their roles) · Bans/unbans and Game Changer changes · Role changes and LLM stats. On a failure
 the script also calls `notify-send`, if it exists.
 

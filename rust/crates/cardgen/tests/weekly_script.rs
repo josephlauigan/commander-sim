@@ -3,6 +3,9 @@
 //! `systemctl` placed first in PATH. The decision logic (use a running server, skip on another model or a busy GPU,
 //! start and stop only what the job started) is tested as the script's own functions.
 
+use cardgen::knowledge::Index;
+use cardgen::llm::{self, Row, Variant};
+use cardgen::roles::{self, Taxonomy};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output, Stdio};
@@ -480,9 +483,25 @@ impl LlmRun {
     fn new(todo: u32) -> LlmRun {
         let sb = Sandbox::new();
         let root = sb.root.display().to_string();
-        std::fs::write(sb.out("oracle.json"), "{}").unwrap();
+        // a real catalog, so the real cardgen can judge the arguments the script passes
+        std::fs::copy(manifest().join("tests/fixtures/roles_oracle.json"), sb.out("oracle.json")).unwrap();
         std::fs::create_dir_all(sb.p("repo/data")).unwrap();
         std::fs::write(sb.p("gpu"), "").unwrap();
+        // The fake accepts a `roles` call only if the REAL cardgen accepts the same arguments (as a dry run, which
+        // makes no request): the grammar is the real one, the behaviour (counts, rows, sleeping, failing) is scripted.
+        let real = env!("CARGO_BIN_EXE_cardgen");
+        let grammar = [
+            "case \" $* \" in *' roles '*)".to_string(),
+            "  chk=(\"$@\")".to_string(),
+            "  case \" $* \" in *' --dry-run '*) ;; *) chk+=(--dry-run);; esac".to_string(),
+            "  case \" $* \" in *' --model '*) ;; *) chk+=(--model Qwen3.6-27B-Q5_K_M.gguf);; esac".to_string(),
+            format!(
+                "  {real} \"${{chk[@]}}\" >/dev/null 2>\"$TEST_ROOT/grammar.err\" \\
+                 || {{ cat \"$TEST_ROOT/grammar.err\" >&2; exit 2; }};;"
+            ),
+            "esac".to_string(),
+        ]
+        .join("\n");
         let dry = format!(
             "case \" $* \" in *' --dry-run '*) echo 'DRY RUN: model m; 9 candidate cards selected, 4 cached, \
              {todo} to classify in 1 batches'; exit 0;; esac"
@@ -490,6 +509,7 @@ impl LlmRun {
         sb.stub(
             "fake-cardgen",
             &[
+                grammar,
                 dry,
                 format!("echo \"cardgen $*\" >> {root}/cardgen.calls"),
                 "if [ -n \"$FAKE_SLEEP\" ]; then exec sleep \"$FAKE_SLEEP\"; fi".into(),
@@ -528,6 +548,7 @@ impl LlmRun {
         let mut env = sb.env();
         env.remove("KNOWLEDGE_SKIP_LLM");
         env.insert("KNOWLEDGE_CARDGEN".into(), sb.p("bin/fake-cardgen").display().to_string());
+        env.insert("TEST_ROOT".into(), root.clone());
         env.insert("KNOWLEDGE_REPO".into(), sb.p("repo").display().to_string());
         env.insert("KNOWLEDGE_GPU_DEVICE".into(), sb.p("gpu").display().to_string());
         env.insert("KNOWLEDGE_LLM_POLL_SECS".into(), "1".into());
@@ -559,13 +580,14 @@ fn the_stage_starts_the_unit_when_the_gpu_is_free_and_stops_it_afterwards_and_wr
     let (start, stop) =
         (calls.find("systemctl --user start llama-27b.service"), calls.find("systemctl --user stop llama-27b.service"));
     assert!(start.is_some() && stop.is_some() && start < stop, "{calls}");
-    assert!(calls.contains("set-property --runtime llama-27b.service RuntimeMaxSec="), "{calls}");
+    // the ownership is looked up after the start and again before the stop; nothing sets a runtime property any more
+    assert!(calls.contains("show -p InvocationID") && !calls.contains("set-property"), "{calls}");
     assert!(!r.sb.p("server-up").exists(), "the unit was stopped again");
-    assert!(!r.sb.p("cache/llm-started").exists());
+    assert!(!r.sb.p("cache/owns-llama-27b").exists(), "the ownership marker is gone");
     assert!(r.sb.out("llm_roles.pending.jsonl").is_file());
     assert!(!r.sb.out("llm_roles.jsonl").exists(), "the tracked cache is never written");
     let args = std::fs::read_to_string(r.sb.p("cardgen.calls")).unwrap();
-    let want = "roles --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending";
+    let want = "roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending";
     assert!(args.contains(want) && args.contains("--endpoint http://127.0.0.1:8080/v1"), "{args}");
 }
 
@@ -669,5 +691,211 @@ fn a_job_killed_while_it_owns_the_server_stops_it() {
     let _ = child.wait();
     std::thread::sleep(std::time::Duration::from_millis(500));
     assert!(!r.sb.p("server-up").exists(), "stopped on the way out: {}", r.calls());
-    assert!(!r.sb.p("cache/llm-started").exists());
+    assert!(!r.sb.p("cache/owns-llama-27b").exists(), "the ownership marker is gone");
+}
+
+// ------------------------------------------------------------------------------------------------ round 2
+
+/// the catalog of `roles_oracle.json` in the sandbox's output directory, with the real role files
+fn real_catalog(sb: &Sandbox) {
+    std::fs::copy(manifest().join("tests/fixtures/roles_oracle.json"), sb.out("oracle.json")).unwrap();
+}
+
+/// a cache row for one card: the current think/no-think prompt and the dense model the weekly job names
+fn row(index: &Index, taxonomy: &Taxonomy, name: &str, role: &str) -> String {
+    let card = &index.cards[index.lookup(name)[0] as usize];
+    let prompt = llm::prompt_fnv_opts(taxonomy, Variant::Think, true);
+    let model = "Qwen3.6-27B-Q5_K_M.gguf";
+    let row = Row {
+        key: llm::cache_key(&llm::card_text(card), &prompt, model),
+        name: name.to_string(),
+        roles: vec![role.to_string()],
+        primary: Some(role.to_string()),
+        evidence: BTreeMap::from([(role.to_string(), 0)]),
+        model: model.to_string(),
+        taxonomy: taxonomy.hash(),
+        prompt,
+        why: None,
+    };
+    format!("{}\n", serde_json::to_string(&row).unwrap())
+}
+
+#[test]
+fn the_roles_stage_merges_a_populated_tracked_cache_and_never_the_pending_rows() {
+    let sb = Sandbox::new();
+    real_catalog(&sb);
+    let mut env = sb.env();
+    env.insert("CARDGEN_LLM_VARIANT".into(), "think".into());
+    let index = Index::load(&sb.out("oracle.json")).unwrap();
+    let taxonomy = Taxonomy::parse(&std::fs::read_to_string(sb.out("roles.toml")).unwrap()).unwrap();
+    // two cards the rules route to the LLM: one answered in the tracked cache, the other only in the pending file
+    let rules = roles::generate(&index, "").unwrap();
+    let routed: Vec<&str> = index
+        .cards
+        .iter()
+        .filter(|c| c.legal == cardgen::knowledge::Legal::Legal && rules[&c.raw.oracle_id].needs_llm)
+        .map(|c| c.raw.name.as_str())
+        .take(2)
+        .collect();
+    assert_eq!(routed.len(), 2);
+    std::fs::write(sb.out("llm_roles.jsonl"), row(&index, &taxonomy, routed[0], "removal")).unwrap();
+    std::fs::write(sb.out("llm_roles.pending.jsonl"), row(&index, &taxonomy, routed[1], "removal")).unwrap();
+    let text = sb.ok(&["--stage", "3"], &env);
+    let stages = sb.stages("2026-11-22");
+    assert_eq!(stages[0], ("roles".into(), "ok".into(), "rules and the tracked LLM cache merged".into()), "{text}");
+    let table = roles::load(&sb.out("roles.json")).unwrap();
+    assert!(!table.meta.prompt_fnv.is_empty() && table.meta.model == "Qwen3.6-27B-Q5_K_M.gguf", "{:?}", table.meta);
+    let merge: serde_json::Value = serde_json::from_str(&sb.read("reports/merge.json")).unwrap();
+    assert_eq!(merge["with_answer"], 1, "only the tracked row is an answer; the pending one stays out: {merge}");
+    assert!(std::fs::read_to_string(sb.out("llm_roles.pending.jsonl")).unwrap().contains(routed[1]), "pending kept");
+}
+
+#[test]
+fn the_default_count_floor_refuses_a_small_bulk_file_and_the_catalog_stays() {
+    let sb = Sandbox::new();
+    let mut env = sb.env();
+    env.remove("KNOWLEDGE_BULK_MIN");
+    sb.ok(&["--stage", "2"], &sb.env());
+    let before = (sb.read("oracle.json"), sb.read("sync.lock"));
+    env.insert("KNOWLEDGE_BULK_UPDATED_AT".into(), BULK_AT2.into());
+    sb.ok(&["--stage", "2"], &env);
+    let stages = sb.stages("2026-11-22");
+    assert_eq!((stages[0].0.as_str(), stages[0].1.as_str()), ("bulk-sync", "fail"), "{stages:?}");
+    assert!(stages[0].2.contains("minimum 25000"), "{stages:?}");
+    assert_eq!((sb.read("oracle.json"), sb.read("sync.lock")), before);
+    assert!(!sb.out("oracle.prev.json").exists());
+}
+
+#[test]
+fn an_interruption_after_the_roles_writer_has_written_leaves_the_published_directory_untouched() {
+    let sb = Sandbox::new();
+    let env = sb.env();
+    sb.ok(&[], &env);
+    let before: Vec<(String, Vec<u8>)> = listing(&sb.p("out"))
+        .into_iter()
+        .map(|f| {
+            let bytes = std::fs::read(sb.out(&f)).unwrap();
+            (f, bytes)
+        })
+        .collect();
+    // the real cardgen writes roles.json (into the staging directory), then the process hangs before the stage ends
+    let real = env!("CARGO_BIN_EXE_cardgen");
+    sb.stub(
+        "after-writer",
+        &format!(
+            "{real} \"$@\" || exit $?; case \" $* \" in \\
+             *' --rules '*) touch \"$TEST_ROOT/written\"; exec sleep 60;; esac"
+        ),
+    );
+    let mut slow = env.clone();
+    slow.insert("KNOWLEDGE_CARDGEN".into(), sb.p("bin/after-writer").display().to_string());
+    slow.insert("TEST_ROOT".into(), sb.root.display().to_string());
+    let mut child = Command::new("setsid")
+        .arg("bash")
+        .arg(script())
+        .envs(&slow)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let t = std::time::Instant::now();
+    while !sb.p("written").exists() && t.elapsed().as_secs() < 60 {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    assert!(sb.p("written").exists(), "the roles writer ran");
+    let staged: Vec<String> = listing(&sb.p("cache/staging"));
+    assert!(staged.iter().any(|f| f.ends_with("roles/roles.json")), "roles.json was written, in staging: {staged:?}");
+    assert!(Command::new("kill").args(["-s", "KILL", "--", &format!("-{}", child.id())]).status().unwrap().success());
+    let _ = child.wait();
+    let after: Vec<(String, Vec<u8>)> = listing(&sb.p("out"))
+        .into_iter()
+        .map(|f| {
+            let bytes = std::fs::read(sb.out(&f)).unwrap();
+            (f, bytes)
+        })
+        .collect();
+    assert_eq!(before, after, "byte-identical, and no *.tmp in it");
+    // the next run removes the abandoned staging directory
+    sb.ok(&[], &env);
+    assert!(listing(&sb.p("cache/staging")).is_empty(), "{:?}", listing(&sb.p("cache/staging")));
+}
+
+#[test]
+fn the_report_is_published_whole_the_earlier_one_of_the_day_is_kept_and_twelve_stay() {
+    let sb = Sandbox::new();
+    let env = sb.env();
+    sb.ok(&[], &env);
+    let first = sb.read("reports/2026-11-22.md");
+    let mut again = env.clone();
+    again.insert("KNOWLEDGE_BULK_UPDATED_AT".into(), BULK_AT2.into());
+    sb.ok(&[], &again);
+    assert_eq!(sb.read("reports/2026-11-22.1.md"), first, "the earlier report of the day is DATE.1.md");
+    assert_ne!(sb.read("reports/2026-11-22.md"), first);
+    // ten more runs of the day: archives are numbered upward, numerically, and the newest twelve stay
+    for _ in 0..12 {
+        sb.ok(&["--stage", "6"], &env);
+    }
+    let mut names: Vec<String> = listing(&sb.p("out/reports")).into_iter().filter(|f| f.ends_with(".md")).collect();
+    names.sort();
+    assert_eq!(names.len(), 12, "{names:?}");
+    assert!(
+        names.contains(&"2026-11-22.md".to_string()) && names.contains(&"2026-11-22.13.md".to_string()),
+        "{names:?}"
+    );
+    assert!(
+        !names.contains(&"2026-11-22.1.md".to_string()) && !names.contains(&"2026-11-22.2.md".to_string()),
+        "{names:?}"
+    );
+    // an old report of another day goes first
+    assert!(listing(&sb.p("out/reports")).iter().all(|f| !f.starts_with(".")));
+}
+
+#[test]
+fn cleanup_stops_only_the_invocation_the_jobs_own_marker_names_and_a_second_job_never_does() {
+    let r = LlmRun::new(5);
+    let sb = &r.sb;
+    let root = sb.root.display().to_string();
+    // `show` reports the unit's current invocation from a file the test controls
+    sb.stub(
+        "systemctl",
+        &[
+            format!("echo \"systemctl $*\" >> {root}/calls"),
+            "case \"$2\" in".to_string(),
+            format!(" show) cat {root}/invocation 2>/dev/null;;"),
+            format!(" stop) rm -f {root}/server-up;;"),
+            "esac".to_string(),
+        ]
+        .join("\n"),
+    );
+    std::fs::create_dir_all(sb.p("cache")).unwrap();
+    let marker = sb.p("cache/owns-llama-27b");
+    let stops = || r.calls().matches(" stop ").count();
+    // no marker: nothing is stopped, whoever started the unit
+    std::fs::write(sb.p("server-up"), "").unwrap();
+    sb.ok(&["--cleanup"], &r.env);
+    assert_eq!(stops(), 0, "{}", r.calls());
+    // the marker names the running invocation: stopped, marker removed
+    std::fs::write(sb.p("invocation"), "abc\n").unwrap();
+    std::fs::write(&marker, "run=2026-11-20-1\ninvocation=abc\n").unwrap();
+    sb.ok(&["--cleanup"], &r.env);
+    assert_eq!(stops(), 1, "{}", r.calls());
+    assert!(!marker.exists() && !sb.p("server-up").exists());
+    // the marker names an older invocation: the newer one is left running
+    std::fs::write(sb.p("server-up"), "").unwrap();
+    std::fs::write(sb.p("invocation"), "def\n").unwrap();
+    std::fs::write(&marker, "run=2026-11-20-1\ninvocation=abc\n").unwrap();
+    sb.ok(&["--cleanup"], &r.env);
+    assert_eq!(stops(), 1, "{}", r.calls());
+    assert!(!marker.exists() && sb.p("server-up").exists());
+    // a second job that finds the lock taken exits without touching the first job's marker or server
+    std::fs::write(&marker, "run=2026-11-22-4242\ninvocation=def\n").unwrap();
+    let mut holder = Command::new("flock").arg(sb.p("cache/lock")).args(["sleep", "30"]).spawn().unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    let text = sb.ok(&[], &r.env);
+    let _ = holder.kill();
+    let _ = holder.wait();
+    assert!(text.contains("another run is active"), "{text}");
+    assert_eq!(stops(), 1, "{}", r.calls());
+    assert!(marker.exists() && sb.p("server-up").exists());
 }

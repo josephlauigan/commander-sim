@@ -398,7 +398,10 @@ Written by `scripts/knowledge-weekly.sh` (see `documents/card-knowledge.md`, "Th
 `oracle.prev.json` and `oracle.json` (the knowledge directory is `--data-dir`, else `CARDGEN_KNOWLEDGE_DIR`, else the
 catalog `find` would read), `data/decks.json` (`mine` only), `data/scryfall_cache.json` (the engine's cache) and
 `roles.json`, and writes `reports/DATE.md` (an earlier report of the same date becomes `DATE.N.md`; the newest `--keep`,
-default 12, dated reports stay and nothing else in `reports/` is touched). Offline; the one file it writes is the report.
+default 12, dated reports stay and nothing else in `reports/` is touched). Offline; the one file it writes is the report: the text is written whole to a temporary file first, the report
+of the same date already there is kept as `DATE.N.md` (a hard link, N counting up, ordered as a number; retention sorts by
+date, then N, with `DATE.md` the newest), and only then is `DATE.md` renamed into place, so a failed write leaves the
+previous report where it was. With `--out PATH` it writes only that file (the weekly script publishes it itself).
 `--stages FILE` is the script's stage record, `name<TAB>ok|skip|fail<TAB>seconds<TAB>note` per line (`bulk-sync` and `llm`
 are the names the report looks at); `--roles-before FILE` the role table from before this run's role stage; `--llm-log
 FILE` the end of which is quoted.
@@ -411,7 +414,10 @@ the engine's model may be stale, and any failed stage) · **Run** (bulk `updated
 roles) · **Bans/unbans and Game Changer changes** (catalog-wide, and new cards that arrive banned or as Game Changers) ·
 **Role changes and LLM stats** (cards whose roles changed, rows in `llm_roles.jsonl` and `llm_roles.pending.jsonl`, the last
 merge's counts). When the sync was skipped or failed, there is no previous sync (the first run) or it cannot be read, the
-comparison sections say so instead of listing anything. The command fails only on a bad argument, an unreadable `--stages`
+comparison sections say so instead of listing anything. The catalog is read with the loader `find` uses and a deck's card names are resolved the way `find` and the digests do. The
+Oracle text of the engine's cache is compared with the catalog's as `roles` reads it (reminder text stripped, the card's
+own name as `~`, whitespace collapsed), the other fields with whitespace collapsed. Every name, key, set and note is
+flattened to one line and Markdown-escaped. `--date` must be a real calendar day. The command fails only on a bad argument, an unreadable `--stages`
 file or a report it cannot write: a missing, empty or malformed input is a line in the report (an unreadable catalog is the
 first action item). The output is deterministic. `tests/weekly.rs` covers it on a tiny synthetic catalog
 (`tests/fixtures/weekly/`: a new card, a ban, an unban, a Game Changer added and removed, an errata, a deck of `mine`

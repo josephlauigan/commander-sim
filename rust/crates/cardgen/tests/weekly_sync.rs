@@ -99,11 +99,12 @@ fn without_a_lock_a_damaged_catalog_is_synced_again_not_trusted() {
     assert_eq!(t.read("oracle.json"), whole);
     // a catalog whose meta.count lies is not whole either
     std::fs::remove_file(t.join("sync.lock")).unwrap();
-    let lying = whole.replacen("\"count\": 41", "\"count\": 99", 1);
-    if lying != whole {
-        std::fs::write(t.join("oracle.json"), &lying).unwrap();
-        assert!(!sync(&t.0, "2026-11-14T10:00:00.000+00:00").up_to_date);
-    }
+    let count = bulk::read_meta(&t.join("oracle.json")).unwrap().count;
+    let lying = whole.replacen(&format!("\"count\": {count}"), &format!("\"count\": {}", count + 1), 1);
+    assert_ne!(lying, whole, "the damage must actually be applied");
+    std::fs::write(t.join("oracle.json"), &lying).unwrap();
+    assert!(!sync(&t.0, "2026-11-14T10:00:00.000+00:00").up_to_date);
+    assert_eq!(t.read("oracle.json"), whole, "re-synced from the bulk file");
 }
 
 #[test]

@@ -267,7 +267,7 @@ pub struct Card {
 }
 
 impl Card {
-    fn new(raw: Raw) -> Card {
+    pub fn new(raw: Raw) -> Card {
         let mut ident = 0u8;
         for c in &raw.color_identity {
             if let Some(i) = COLORS.iter().position(|k| c.chars().next() == Some(*k)) {

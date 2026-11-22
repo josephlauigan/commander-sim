@@ -13,3 +13,6 @@ ExecStart=%h/llama.cpp/build-sycl/bin/llama-server \
   -m %h/llama/llama-b10775/models/Qwen3.6-27B-Q5_K_M.gguf \
   -ngl 99 -c 32768 --jinja \
   --host 127.0.0.1 --port 8080
+# a backstop for a server nobody stopped (the weekly job's budget is 90 minutes plus a 5-minute load): the unit ends itself
+# after 100 minutes. Raise it if KNOWLEDGE_LLM_BUDGET_SECS or KNOWLEDGE_LLM_READY_SECS is raised past that.
+RuntimeMaxSec=6000
