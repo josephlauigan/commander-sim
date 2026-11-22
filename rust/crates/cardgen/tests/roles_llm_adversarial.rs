@@ -1365,7 +1365,7 @@ fn what_changes_the_cache_key_and_what_does_not() {
     // every prompt-visible part invalidates all five cards (one batch, one request)
     with("definition = \"makes opponents discard.\"", "definition = \"makes  opponents discard.\"");
     rerun("a doubled space in a definition", 1);
-    with("A planeswalker ability costing", "A planeswalker ability that costs");
+    with("Planeswalker ultimates have been removed", "Planeswalker ultimates were removed");
     rerun("the shared block", 1);
     with("roles = [\"copy\", \"tokens\"]", "roles = [\"tokens\", \"copy\"]");
     rerun("the role list label of a convention", 1);
@@ -2502,8 +2502,13 @@ fn the_user_message_holds_only_the_batch_cards_text_in_prompt_lines_form() {
         for r in roles::RULES.iter().filter(|r| r.id.len() > 8) {
             assert!(!user.contains(r.id), "rule id {} in the user message", r.id);
         }
-        assert_eq!(bodies[n]["messages"].as_array().unwrap().len(), 2);
-        assert_eq!(bodies[n]["messages"][0]["content"], llm::system_prompt(&taxonomy()));
+        // system prompt, the worked example as a user/assistant turn, then the real user message
+        let messages = bodies[n]["messages"].as_array().unwrap();
+        let roles_of: Vec<&str> = messages.iter().map(|m| m["role"].as_str().unwrap()).collect();
+        assert_eq!(roles_of, ["system", "user", "assistant", "user"]);
+        assert_eq!(messages[0]["content"], llm::system_prompt(&taxonomy()));
+        let (example_user, example_answer) = llm::example_turn();
+        assert_eq!((&messages[1]["content"], &messages[2]["content"]), (&json!(example_user), &json!(example_answer)));
     }
     // a card's own name is `~` in what the model reads
     let bolt = roles::prompt_lines(card_of(&index, "Lightning Bolt"));
@@ -2780,7 +2785,7 @@ fn the_json_schema_is_well_formed_has_no_repeated_keys_and_accepts_exactly_the_s
         .map(|(i, e)| llm::answer_entry(&llm::batch_id(i), e.roles, e.evidence))
         .collect();
     let answer: Value = serde_json::from_str(&format!("{{\"cards\":[{}]}}", entries.join(","))).unwrap();
-    schema_accepts(&llm::response_schema(&tax, 6), &answer, "$").unwrap();
+    schema_accepts(&llm::response_schema(&tax, llm::EXAMPLES.len()), &answer, "$").unwrap();
     let _ = lines;
 }
 
@@ -2788,13 +2793,13 @@ fn the_json_schema_is_well_formed_has_no_repeated_keys_and_accepts_exactly_the_s
 fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
     let tax = taxonomy();
     let system = llm::system_prompt(&tax);
-    let at = system.find("WORKED EXAMPLE").unwrap();
-    let example = &system[at..];
-    let answer_line = example.lines().last().unwrap_or("");
-    let answer_line = if answer_line.is_empty() { example.trim_end().lines().last().unwrap() } else { answer_line };
-    let parsed: Value = serde_json::from_str(answer_line).unwrap();
+    // the examples are a real user/assistant turn pair, no longer text inside the system prompt
+    assert!(!system.contains("WORKED EXAMPLE") && !system.contains("Classify these"));
+    let (example_user, answer_line) = llm::example_turn();
+    let parsed: Value = serde_json::from_str(&answer_line).unwrap();
     let entries = parsed["cards"].as_array().unwrap();
     assert_eq!(entries.len(), llm::EXAMPLES.len());
+    assert_eq!(llm::EXAMPLES.len(), 8);
     // keys in the schema's order, ids a0.., roles as {role, line} pairs, `[]` when empty
     for (i, (e, ex)) in entries.iter().zip(llm::EXAMPLES.iter()).enumerate() {
         assert_eq!(e["id"], llm::batch_id(i).as_str());
@@ -2816,15 +2821,19 @@ fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
         let at = answer_line.find(&format!("{{\"id\":\"{}\"", llm::batch_id(i))).unwrap();
         assert!(answer_line[at..].find("\"roles\"").unwrap() < 20);
     }
-    // the example user message above it says "6 cards" and numbers them like a real batch does
+    // two examples carry two roles each, so the format and the order conventions (copy first, tokens and ramp) are seen
+    let two: Vec<Vec<&str>> = llm::EXAMPLES.iter().filter(|e| e.roles.len() == 2).map(|e| e.roles.to_vec()).collect();
+    assert_eq!(two, [vec!["tokens", "ramp"], vec!["copy", "tokens"]]);
+    // the example user message says "8 cards" and numbers them like a real batch does
     assert!(
-        example.contains("Classify these 6 cards.\n[a0] Instant\n0: Destroy target attacking creature."),
-        "{example}"
+        example_user.starts_with("Classify these 8 cards.\n[a0] Instant\n0: Destroy target attacking creature."),
+        "{example_user}"
     );
     // the examples stay one-line answers: no markdown, no prose around the JSON, no card names
-    assert!(!example.contains("```"));
+    assert!(!answer_line.contains("```") && !answer_line.contains('\n'));
     for ex in &llm::EXAMPLES {
         assert!(!system.contains(ex.name), "the example card name {} is in the prompt", ex.name);
+        assert!(!example_user.contains(ex.name) && !answer_line.contains(ex.name), "{}", ex.name);
     }
     // the examples include both a card with a role and cards without one, a cost-side line and a rider
     let empties = entries.iter().filter(|e| e["roles"].as_array().unwrap().is_empty()).count();

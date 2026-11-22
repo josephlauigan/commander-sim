@@ -3,7 +3,7 @@
 # `keep_rule = true` keeps a rule-found, non-certain role of that kind on a routed card the LLM omitted (default false); JD's
 # split (2026-11-21): true for the 16 roles the rules own, false for the 10 judgement roles the LLM may veto.
 version = 1
-shared = """Label a card with a role only for a MAIN or REPEATABLE effect: what the card is for. An incidental rider, a cost, a drawback or a keyword that affects only the card itself gives no role, and zero roles is allowed. Give at most four roles, most prominent first. Judge the Oracle text alone, never combo, commander or deck context. A land gets roles only beyond tapping for one mana. The land back of an MDFC adds nothing. A prepare card gets the roles of its spell face and of its creature face's own abilities. A planeswalker ability costing at least the starting loyalty (an ultimate) gives no role."""
+shared = """Label a card with a role only for a MAIN or REPEATABLE effect: what the card is for. An incidental rider, a cost, a drawback or a keyword that affects only the card itself gives no role, with three exceptions: any Creature, Treasure or Clue token the card makes is `tokens` even as a rider; printed lifelink is `lifegain`, listed last; and an alternate mode that is a real function of the card counts although it is used once (channel, landcycling, the spell face of a two-faced card). Zero roles is allowed. Give at most four roles, most prominent first. Judge the Oracle text alone, never combo, commander or deck context. A land gets roles only beyond tapping for one mana. A card whose type line reads 'A // B' is judged as one card; the land back of a modal double-faced card has been removed. A creature that 'becomes prepared' or 'enters prepared' can cast a copy of its second face's spell: give it the roles of that spell and of its own abilities. Planeswalker ultimates have been removed."""
 
 [[clause]]
 id = "C1"
@@ -103,6 +103,7 @@ clauses = [
   "A spell's cantrip and a permanent sacrificing itself to draw one card replace themselves and are not draw.",
   "Repeated draw or drawing two or more cards is draw; impulse draw and playing cards from the top of the library are draw.",
   "The monarch draws a card every end step: becoming the monarch repeatably is draw.",
+  "Cycling and other abilities that draw one card in place of the card itself are not draw.",
   "A creature or other permanent that draws one fixed card when it enters or dies ('When this creature enters, draw a card') replaces itself like a cantrip and is not draw; a variable count ('draw a card for each ...'), two or more cards, a repeatable draw and an uncapped dig still are.",
 ]
 src = "rules"
@@ -342,7 +343,7 @@ id = "copy"
 definition = "copies spells, permanents or tokens (clones included)."
 clauses = [
   "Spell, permanent and token copies count.",
-  "A prepare reminder saying you may cast a copy of its spell never counts.",
+  "Being prepared (casting a copy of its own spell face) is never `copy`.",
 ]
 src = "rules+llm"
 guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'

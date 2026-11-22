@@ -996,8 +996,8 @@ fn taxonomy_prompt_text_hash_and_guards() {
     );
     assert!(!t.keep_rule("removal") && t.keep_rule("tutor"));
     // the boilerplate that used to be repeated in every definition is said once
-    assert_eq!(text.matches("MDFC").count(), 1, "{text}");
-    assert_eq!(text.matches("planeswalker ability costing").count(), 1);
+    assert_eq!(text.matches("modal double-faced").count(), 1, "{text}");
+    assert_eq!(text.matches("Planeswalker ultimates have been removed").count(), 1);
     for clause in &t.clause {
         assert_eq!(text.matches(clause.text.trim()).count(), 1, "{}", clause.id);
     }
@@ -1064,31 +1064,36 @@ fn no_definition_names_a_card_because_the_model_has_no_internet() {
 fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_from_a_gold_set() {
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let system = llm::system_prompt(&t);
+    let preface = llm::preface_text(&t);
     let (chars, tokens) = (system.chars().count(), llm::estimate_tokens(&system));
     let taxonomy_chars = t.prompt_text().chars().count();
     println!(
-        "SYSTEM PROMPT: {chars} chars, about {tokens} tokens (chars/4); the taxonomy part is {taxonomy_chars} chars"
+        "SYSTEM PROMPT: {chars} chars, about {tokens} tokens (chars/4); the taxonomy part is {taxonomy_chars} chars; \
+         with the example turn {} chars, about {} tokens",
+        preface.chars().count(),
+        llm::estimate_tokens(&preface)
     );
     println!("per-role definitions (definition + role clauses), chars:");
     for r in &t.role {
         println!("  {:<12} {}", r.id, r.definition.len() + r.clauses.iter().map(|c| c.len() + 1).sum::<usize>());
     }
-    assert!(tokens < 5000, "the system prompt must stay well under 5k tokens: {tokens}");
+    assert!(llm::estimate_tokens(&preface) < 5000, "system prompt and example turn stay under 5k tokens");
     assert!(taxonomy_chars < 13_967, "deduplicated: the old definitions were 13,967 chars, now {taxonomy_chars}");
     // every worked example is a valid answer under the very validation the real answers face
     let lines: Vec<Vec<(usize, String)>> =
         llm::EXAMPLES.iter().map(|e| e.lines.iter().map(|(i, t)| (*i, t.to_string())).collect()).collect();
-    let entries: Vec<String> = llm::EXAMPLES
-        .iter()
-        .enumerate()
-        .map(|(i, e)| llm::answer_entry(&llm::batch_id(i), e.roles, e.evidence))
-        .collect();
-    let content = format!("{{\"cards\":[{}]}}", entries.join(","));
+    let (example_user, content) = llm::example_turn();
     let cards: Vec<(String, &[(usize, String)])> =
         lines.iter().enumerate().map(|(i, l)| (llm::batch_id(i), l.as_slice())).collect();
     let parsed = llm::validate_output(&content, &cards, &t).unwrap();
-    assert!(parsed.len() == 6 && parsed.iter().all(|r| r.is_ok()), "{parsed:?}");
-    assert!(system.contains("WORKED EXAMPLE") && system.contains(&content));
+    assert!(parsed.len() == 8 && parsed.iter().all(|r| r.is_ok()), "{parsed:?}");
+    // the guards pass on every cited example line, so the examples never show a role the guard would drop
+    for (ex, got) in llm::EXAMPLES.iter().zip(&parsed) {
+        for (r, n) in &got.as_ref().unwrap().evidence {
+            let text = &ex.lines.iter().find(|(i, _)| i == n).unwrap().1;
+            assert!(t.guard(r).unwrap().is_match(text).unwrap(), "{}: {r}", ex.name);
+        }
+    }
     assert!(content.starts_with("{\"cards\":[{\"id\":\"a0\",\"roles\":[{\"role\":\"removal\",\"line\":0}]}"));
     let schema = llm::response_schema_text(&t, 3);
     let at = |key: &str| schema.find(&format!("\"{key}\":{{")).unwrap();
@@ -1097,6 +1102,19 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
     let parsed: Value = serde_json::from_str(&body).unwrap();
     assert_eq!(parsed["max_tokens"], 160 * 3 + 64);
     assert!(body.contains(&schema), "the schema text goes into the body untouched");
+    // system, example user, example assistant, real user
+    let messages: Vec<(&str, &str)> = parsed["messages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| (m["role"].as_str().unwrap(), m["content"].as_str().unwrap()))
+        .collect();
+    assert_eq!(
+        messages,
+        [("system", "sys"), ("user", example_user.as_str()), ("assistant", content.as_str()), ("user", "usr")]
+    );
+    // the fingerprint covers the example turn too
+    assert_eq!(llm::prompt_fnv(&t), roles::fingerprint(llm::preface_text(&t).as_bytes()));
     // none of the example cards is in the tuning or regression gold sets
     for path in ["roles_gold.toml", "roles_gold_regression.toml"] {
         let gold = std::fs::read_to_string(
@@ -1111,24 +1129,63 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
     let bolt = [(0, "~ deals 3 damage to any target.".to_string())];
     let items: Vec<(String, &str, &[(usize, String)])> = vec![("a0".into(), "Instant", &bolt[..])];
     let sample = llm::user_message(&items);
-    println!("SAMPLE USER MESSAGE:\n{sample}");
-    if std::env::var_os("CARDGEN_PRINT_PROMPT").is_some() {
-        // a real five-card batch from the fixture catalog, as the request would carry it
-        let i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
-        let cards: Vec<_> = FIVE.iter().map(|n| &i.cards[i.lookup(n)[0] as usize]).collect();
-        let shown: Vec<(String, Vec<(usize, String)>)> =
-            cards.iter().map(|c| (c.raw.type_line.clone(), roles::prompt_lines(c))).collect();
-        let batch: Vec<(String, &str, &[(usize, String)])> =
-            shown.iter().enumerate().map(|(n, (t, l))| (llm::batch_id(n), t.as_str(), l.as_slice())).collect();
-        println!("=== SYSTEM PROMPT ===\n{system}\n=== SAMPLE BATCH (user message) ===\n{}", llm::user_message(&batch));
-    }
     assert_eq!(sample, "Classify these 1 cards.\n[a0] Instant\n0: ~ deals 3 damage to any target.\n");
+    if std::env::var_os("CARDGEN_PRINT_PROMPT").is_some() {
+        // a real batch from the fixture catalog (five cards and a two-faced one), as the request would carry it
+        let i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
+        let names: Vec<&str> = FIVE.iter().copied().chain(["Emeritus of Conflict // Lightning Bolt"]).collect();
+        let cards: Vec<_> = names.iter().map(|n| &i.cards[i.lookup(n)[0] as usize]).collect();
+        let owned: Vec<(Vec<(usize, String)>, std::collections::BTreeMap<usize, String>)> =
+            cards.iter().map(|c| (roles::prompt_lines(c), roles::prompt_headers(c))).collect();
+        let shown: Vec<llm::Shown> = cards
+            .iter()
+            .zip(&owned)
+            .enumerate()
+            .map(|(n, (c, (l, h)))| llm::Shown {
+                id: llm::batch_id(n),
+                type_line: c.raw.type_line.as_str(),
+                lines: l.as_slice(),
+                headers: h,
+            })
+            .collect();
+        let user = llm::user_message_cards(&shown);
+        println!("=== SAMPLE USER MESSAGE ===\n{user}");
+        let body = llm::chat_body(
+            "Qwen3-Coder-30B-A3B-Instruct-UD-Q4_K_XL.gguf",
+            &system,
+            &user,
+            &llm::response_schema_text(&t, shown.len()),
+            shown.len(),
+        );
+        println!("=== FULL REQUEST BODY ({} chars) ===\n{body}", body.len());
+    }
     assert_eq!(
         (llm::batch_id(0), llm::batch_id(9), llm::batch_id(10), llm::batch_id(25)),
         ("a0".into(), "a9".into(), "b0".into(), "c5".into())
     );
     let schema = llm::response_schema(&t, 3);
     assert_eq!(schema["properties"]["cards"]["minItems"], 3);
+}
+
+#[test]
+fn a_later_face_is_announced_by_an_unnumbered_header_and_the_key_text_carries_it() {
+    let i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
+    let card = |n: &str| &i.cards[i.lookup(n)[0] as usize];
+    let two = card("Emeritus of Conflict // Lightning Bolt");
+    let headers = roles::prompt_headers(two);
+    assert_eq!(headers.len(), 1, "{headers:?}");
+    let (at, header) = headers.iter().next().unwrap();
+    assert_eq!(header, "(second face: Instant)");
+    let lines = roles::prompt_lines(two);
+    assert!(lines.iter().any(|(n, _)| n == at) && *at > 0);
+    let shown = [llm::Shown { id: "a0".into(), type_line: &two.raw.type_line, lines: &lines, headers: &headers }];
+    let user = llm::user_message_cards(&shown);
+    let expect = format!("(second face: Instant)\n{at}: ");
+    assert!(user.contains(&expect), "{user}");
+    assert!(llm::card_text(two).contains(&expect), "the face header is part of what the cache key hashes");
+    // a one-faced card, and an MDFC whose land back is skipped, get no header
+    assert!(roles::prompt_headers(card("Lightning Bolt")).is_empty());
+    assert!(roles::prompt_headers(card("Agadeem's Awakening // Agadeem, the Undercrypt")).is_empty());
 }
 
 #[test]

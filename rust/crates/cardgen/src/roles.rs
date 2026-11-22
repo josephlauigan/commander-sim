@@ -884,6 +884,22 @@ pub fn skipped(card: &Card, i: usize) -> bool {
 pub fn line_text(card: &Card, i: usize) -> String {
     card.lines().get(i).map_or_else(String::new, |(_, line)| normalize(card, line))
 }
+/// The unnumbered header the LLM is shown before the first line of each later face (`(second face: Instant —
+/// Adventure)`), by the index of that line: adventure, split, prepare and transform faces would otherwise run together.
+pub fn prompt_headers(card: &Card) -> BTreeMap<usize, String> {
+    let lines = card.lines();
+    let mut out = BTreeMap::new();
+    let mut previous: Option<Option<usize>> = None;
+    for (i, _) in prompt_lines(card) {
+        let face = lines[i].0;
+        if previous.is_some_and(|p| p != face) {
+            let type_line = face.and_then(|k| card.raw.card_faces.as_ref()?.get(k)).map(|f| f.type_line.as_str());
+            out.insert(i, format!("(second face: {})", type_line.unwrap_or("")));
+        }
+        previous = Some(face);
+    }
+    out
+}
 /// The lines the LLM is shown: every non-skipped line with text left after normalising, with its original index.
 pub fn prompt_lines(card: &Card) -> Vec<(usize, String)> {
     card.lines()

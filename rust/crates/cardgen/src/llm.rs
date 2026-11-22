@@ -52,8 +52,8 @@ pub struct Example {
     pub evidence: &'static [(&'static str, usize)],
 }
 /// A rider on a removal spell, a cost-side counter, a "would draw" replacement, a permanent steal, a one-turn Fog,
-/// and a body with no roles.
-pub const EXAMPLES: [Example; 6] = [
+/// a body with no roles, and two cards with two roles each (so the format and the order conventions are seen).
+pub const EXAMPLES: [Example; 8] = [
     Example {
         name: "Chastise",
         type_line: "Instant",
@@ -99,6 +99,20 @@ pub const EXAMPLES: [Example; 6] = [
         roles: &[],
         evidence: &[],
     },
+    Example {
+        name: "Pitiless Plunderer",
+        type_line: "Creature — Human Pirate",
+        lines: &[(0, "Whenever another creature you control dies, create a Treasure token.")],
+        roles: &["tokens", "ramp"],
+        evidence: &[("tokens", 0), ("ramp", 0)],
+    },
+    Example {
+        name: "Cackling Counterpart",
+        type_line: "Instant",
+        lines: &[(0, "Create a token that's a copy of target creature you control."), (1, "Flashback {5}{U}{U}")],
+        roles: &["copy", "tokens"],
+        evidence: &[("copy", 0), ("tokens", 0)],
+    },
 ];
 
 /// Batch id of the `i`th card of a batch: a letter and a digit (`a0` ... `a9`, `b0`, ...).
@@ -106,16 +120,34 @@ pub fn batch_id(i: usize) -> String {
     format!("{}{}", (b'a' + (i / 10) as u8) as char, i % 10)
 }
 
-/// The cards of a batch as the user message shows them.
-pub fn user_message(cards: &[(String, &str, &[(usize, String)])]) -> String {
+/// One card of a batch as the model sees it.
+pub struct Shown<'a> {
+    pub id: String,
+    pub type_line: &'a str,
+    pub lines: &'a [(usize, String)],
+    /// unnumbered headers printed before the line with that index (`roles::prompt_headers`)
+    pub headers: &'a BTreeMap<usize, String>,
+}
+/// The cards of a batch as the user message shows them, with each later face announced by its header.
+pub fn user_message_cards(cards: &[Shown]) -> String {
     let mut out = format!("Classify these {} cards.\n", cards.len());
-    for (id, type_line, lines) in cards {
-        let _ = writeln!(out, "[{id}] {type_line}");
-        for (i, text) in lines.iter() {
+    for c in cards {
+        let _ = writeln!(out, "[{}] {}", c.id, c.type_line);
+        for (i, text) in c.lines {
+            if let Some(h) = c.headers.get(i) {
+                let _ = writeln!(out, "{h}");
+            }
             let _ = writeln!(out, "{i}: {text}");
         }
     }
     out
+}
+/// The cards of a batch as the user message shows them (no face headers).
+pub fn user_message(cards: &[(String, &str, &[(usize, String)])]) -> String {
+    let none = BTreeMap::new();
+    let shown: Vec<Shown> =
+        cards.iter().map(|(id, type_line, lines)| Shown { id: id.clone(), type_line, lines, headers: &none }).collect();
+    user_message_cards(&shown)
 }
 
 /// A JSON string literal.
@@ -136,24 +168,31 @@ pub fn answer_entry(id: &str, roles: &[&str], evidence: &[(&str, usize)]) -> Str
     format!("{{\"id\":{},\"roles\":[{list}]}}", quoted(id))
 }
 
-fn examples_text() -> String {
+/// The worked examples as a real conversation turn: the user message that lists the example cards and the assistant's
+/// answer. Sent between the system prompt and the real user message, so the static prefix still caches.
+pub fn example_turn() -> (String, String) {
     let lines: Vec<Vec<(usize, String)>> =
         EXAMPLES.iter().map(|e| e.lines.iter().map(|(i, t)| (*i, t.to_string())).collect()).collect();
     let cards: Vec<(String, &str, &[(usize, String)])> =
         EXAMPLES.iter().zip(&lines).enumerate().map(|(i, (e, l))| (batch_id(i), e.type_line, l.as_slice())).collect();
     let entries: Vec<String> =
         EXAMPLES.iter().enumerate().map(|(i, e)| answer_entry(&batch_id(i), e.roles, e.evidence)).collect();
-    format!("WORKED EXAMPLE\nUser:\n{}Answer:\n{{\"cards\":[{}]}}", user_message(&cards), entries.join(","))
+    (user_message(&cards), format!("{{\"cards\":[{}]}}", entries.join(",")))
 }
 
-/// The whole system prompt: the taxonomy, the fixed answer rules and the worked examples.
+/// The system prompt: the taxonomy and the fixed answer rules. (The worked examples follow as a user/assistant turn.)
 pub fn system_prompt(t: &Taxonomy) -> String {
-    format!("{INTRO}\n\n{}\n\n{ANSWER_RULES}\n\n{}\n", t.prompt_text(), examples_text())
+    format!("{INTRO}\n\n{}\n\n{ANSWER_RULES}\n", t.prompt_text())
+}
+/// Everything that precedes the real user message: the system prompt, the example user message and its answer.
+pub fn preface_text(t: &Taxonomy) -> String {
+    let (user, answer) = example_turn();
+    format!("{}\n--- example user message ---\n{user}--- example answer ---\n{answer}\n", system_prompt(t))
 }
 /// The prompt fingerprint that, with the model id and the card text, keys the cache: any change to what the model is
 /// told (definitions, clauses, answer rules, examples) invalidates; guards and `keep_rule` are not part of it.
 pub fn prompt_fnv(t: &Taxonomy) -> String {
-    roles::fingerprint(system_prompt(t).as_bytes())
+    roles::fingerprint(preface_text(t).as_bytes())
 }
 /// Rough token count used for budgeting: characters / 4.
 pub fn estimate_tokens(s: &str) -> usize {
@@ -260,11 +299,14 @@ fn check_card(id: &str, e: &Value, lines: &[(usize, String)]) -> Result<LlmCard,
 
 /// What the model is asked about a card: the type line and the numbered lines, exactly as shown to it.
 pub fn card_text(card: &Card) -> String {
-    text_of(&card.raw.type_line, &roles::prompt_lines(card))
+    text_of(&card.raw.type_line, &roles::prompt_lines(card), &roles::prompt_headers(card))
 }
-fn text_of(type_line: &str, lines: &[(usize, String)]) -> String {
+fn text_of(type_line: &str, lines: &[(usize, String)], headers: &BTreeMap<usize, String>) -> String {
     let mut s = type_line.to_string();
     for (i, text) in lines {
+        if let Some(h) = headers.get(i) {
+            let _ = write!(s, "\n{h}");
+        }
         let _ = write!(s, "\n{i}: {text}");
     }
     s
@@ -444,17 +486,22 @@ impl Client {
     }
 }
 
-/// The request body of one chat call (text, so the schema keeps its property order).
+/// The request body of one chat call (text, so the schema keeps its property order): the system prompt, the worked
+/// example as a user/assistant turn, then the real user message.
 pub fn chat_body(model: &str, system: &str, user: &str, schema: &str, n: usize) -> String {
+    let (example_user, example_answer) = example_turn();
     format!(
         concat!(
             "{{\"model\":{},\"messages\":[{{\"role\":\"system\",\"content\":{}}},",
+            "{{\"role\":\"user\",\"content\":{}}},{{\"role\":\"assistant\",\"content\":{}}},",
             "{{\"role\":\"user\",\"content\":{}}}],\"temperature\":0,\"seed\":1,\"cache_prompt\":true,",
             "\"max_tokens\":{},\"response_format\":{{\"type\":\"json_schema\",",
             "\"json_schema\":{{\"name\":\"role_labels\",\"strict\":true,\"schema\":{}}}}}}}"
         ),
         quoted(model),
         quoted(system),
+        quoted(&example_user),
+        quoted(&example_answer),
         quoted(user),
         160 * n + 64,
         schema
@@ -791,6 +838,7 @@ pub fn run(
         card: &'a Card,
         key: String,
         lines: Vec<(usize, String)>,
+        headers: BTreeMap<usize, String>,
     }
     let mut todo: Vec<Todo> = vec![];
     let mut order: Vec<&Card> = index
@@ -813,11 +861,12 @@ pub fn run(
             continue; // nothing to read or cite; the merge treats it as an empty answer
         }
         stats.candidates += 1;
-        let key = cache_key(&text_of(&card.raw.type_line, &lines), &prompt, &model);
+        let headers = roles::prompt_headers(card);
+        let key = cache_key(&text_of(&card.raw.type_line, &lines, &headers), &prompt, &model);
         if known.contains_key(&key) {
             stats.cached += 1;
         } else {
-            todo.push(Todo { card, key, lines });
+            todo.push(Todo { card, key, lines, headers });
         }
     }
     // Several catalog cards can share one normalised text (and so one key): ask once.
@@ -830,12 +879,12 @@ pub fn run(
     if opts.dry_run {
         return Ok(format!(
             "DRY RUN: model {model}; {} candidate cards, {} cached, {} to classify in {batches} batches of up to {}; \
-             system prompt about {} tokens; 0 chat requests made\n",
+             system prompt and example about {} tokens; 0 chat requests made\n",
             stats.candidates,
             stats.cached,
             todo.len(),
             opts.batch,
-            estimate_tokens(&system),
+            estimate_tokens(&preface_text(taxonomy)),
         ));
     }
     let target = if opts.pending { pending_path(dir) } else { cache_path(dir) };
@@ -850,17 +899,22 @@ pub fn run(
     let transport = std::cell::Cell::new(0usize);
     let attempt = |items: &[&Todo], stats: &mut RunStats| -> Result<Vec<Result<LlmCard, String>>, Fail> {
         let ids: Vec<String> = (0..items.len()).map(batch_id).collect();
-        let shown: Vec<(String, &str, &[(usize, String)])> = items
+        let shown: Vec<Shown> = items
             .iter()
             .zip(&ids)
-            .map(|(t, id)| (id.clone(), t.card.raw.type_line.as_str(), t.lines.as_slice()))
+            .map(|(t, id)| Shown {
+                id: id.clone(),
+                type_line: t.card.raw.type_line.as_str(),
+                lines: t.lines.as_slice(),
+                headers: &t.headers,
+            })
             .collect();
         let checked: Vec<(String, &[(usize, String)])> =
             items.iter().zip(&ids).map(|(t, id)| (id.clone(), t.lines.as_slice())).collect();
         let body = chat_body(
             &model,
             &system,
-            &user_message(&shown),
+            &user_message_cards(&shown),
             &response_schema_text(taxonomy, items.len()),
             items.len(),
         );
