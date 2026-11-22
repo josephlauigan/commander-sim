@@ -176,6 +176,37 @@ Before proposing, modeling, testing, or recommending a card swap, verify and rep
 Use `data/scryfall_cache.json` for legality and color identity when available, `data/decks.json` for current exported
 lists, and `cardgen audit` or `commander-sim --deck <key> --cards` for model status.
 
+## Card recommendations: use the card knowledge base
+
+When JD asks what to swap, cut, buy or adopt, or what a deck should be doing, work from the catalog tools, not from
+memory (approach, data and limits: `documents/card-knowledge.md`). Run from the repository root. If
+`data/knowledge/oracle.json` or `roles.json` is missing, run `cardgen bulk-sync` or `cardgen roles --rules` first;
+every other step below is read-only.
+
+1. **Map**: `cardgen map --stdout` (about 3k tokens): what exists, role and colour counts, JD's decks.
+2. **Digest**: `cardgen digest --deck KEY --stdout` (about 40k tokens). Read its header first: the flag legends and
+   the `d:` letters are per digest. `--role R` lists every card with a role; `--view roleless` and `--view new`
+   reach the rest. Absent from the digest does not mean it does not exist.
+3. **Query**: `cardgen find ...` for anything the digest trimmed (`--deck KEY` applies the colour ceiling and leaves
+   out the deck's own cards; also `--role`, `--text`, `--status`, `--in-deck`, `--not-in-deck`).
+4. **Read before proposing**: `cardgen find --name NAME --full` for every card you intend to propose: Oracle text,
+   roles with their evidence line, engine status, which of JD's decks play it, FINDINGS hits.
+5. **Check, then test**: the three checks above, then a `--swap` run (explain on, the deck's own tiers only). The
+   `--swap` explain output is the authority, not `m:`.
+6. **Say what you used**: name the digest or queries and the data date from the digest header, and mark role tags
+   that are not reviewed (`?`).
+
+How the flags mislead if read carelessly:
+- `m:N` means NO engine record: status unknown, not fine and not Unmodeled. Any card with `m:N`, or with an engine
+  status below Full (`m:f`, `m:A`, `m:P`, `m:U`; Full-auto counts as below Full) goes to JD before it is accepted.
+  Getting a status means editing data and running `cardgen export`, which JD approves first.
+- `?` means the role tags are not reviewed yet (about the tags, not the card). No role means no rule matched.
+- `k:N` counts FINDINGS lines (commander shorthand included): open `find --full` before citing one, and check
+  `data/decks.json`, because FINDINGS can name cards that have since left a list.
+- `BAN` or `NL` on a deck's own line: never propose it; tell JD.
+- "engine status unavailable ... run cardgen export": stop and report it. Do not regenerate data in a recommendation.
+- Digests are trimmed to a token budget and built from the latest bulk sync; check the date in the header.
+
 ## Implementation expectations
 
 - Fix root causes and follow existing module boundaries and naming patterns. Avoid broad refactors during focused

@@ -27,6 +27,24 @@ measured evidence. A digest line is a compressed view, so an agent working from 
 but will not catch subtle Oracle interactions until it reads the full text. Every card on a final shortlist therefore
 gets layer 3 before it is proposed.
 
+## How an agent uses it
+
+The working steps are the section "Card recommendations: use the card knowledge base" in `CLAUDE.md` and `AGENTS.md`
+(the same text in both). In short: read the map, read the deck's digest (header first), query `find` for what the digest
+trimmed, read `find --name NAME --full` before proposing a card, run the three swap checks and a `--swap` test, and
+say which digest and data date the answer used.
+
+| Command | What it gives | Writes |
+|---|---|---|
+| `cardgen bulk-sync` | the catalog (`data/knowledge/oracle.json`) | the catalog and `sync.lock` |
+| `cardgen roles --rules` / `--merge` | the role table (`roles.json`), rules and merged with the LLM answers | `roles.json` |
+| `cardgen map` | the whole-catalog summary (`map.md`) | `map.md` |
+| `cardgen digest --deck KEY` | one line per candidate card (`digests/KEY.txt`) | the digest file |
+| `cardgen find ...` | any slice of the catalog, with engine status, deck usage and FINDINGS hits | nothing |
+
+Keeping it fresh is manual today (`bulk-sync`, then `roles --rules`, then `roles --merge` when LLM answers exist); a
+weekly job is planned. A recommendation session never regenerates tracked data; JD approves that first.
+
 ## Where the data lives
 
 Everything is under `data/knowledge/` (override with `CARDGEN_KNOWLEDGE_DIR`; a worktree without the directory falls
