@@ -217,8 +217,8 @@ coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --valida
 | 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
 | 3L Roles, local LLM stage | `knowledge-llm` | built and measured against the real model (dense Qwen3.6-27B); the targeted production run over 12,520 cards started 2026-11-21 and its results are to be merged |
 | 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
-| 4 Status, decks and findings join | `knowledge-status` | not started |
-| 5 Workflow in the rule files | `knowledge-workflow-doc` | not started |
+| 4 Status, decks and findings join | `knowledge-status` | done, merged into `knowledge-base` (adversarial tests, Opus review; no-record cards print `m:N`, Full-auto counts as below Full) |
+| 5 Workflow in the rule files | `knowledge-workflow-doc` | section written and Opus-reviewed, merged into `knowledge-base`; JD signs off the wording before the final PR; linked from `cards.md` |
 | 6 Weekly timer and report | `knowledge-weekly` | not started |
 
 Branching: `knowledge-base` is the integration branch off origin/main. Each phase is built on its own branch
