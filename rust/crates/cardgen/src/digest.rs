@@ -18,7 +18,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 /// the default size of a digest, in estimated tokens
-pub const DEFAULT_BUDGET_TOKENS: usize = 50_000;
+pub const DEFAULT_BUDGET_TOKENS: usize = 42_000;
 /// the size of one `--role` page, in estimated tokens
 pub const ROLE_PAGE_TOKENS: usize = 30_000;
 /// the longest line, in characters
@@ -31,8 +31,10 @@ pub const CAP_TOP_ROLE: usize = 150;
 pub const TOP_ROLES: usize = 5;
 /// section C: the most cards listed
 pub const CAP_SYNERGY: usize = 300;
-/// section E: cards per role
-pub const CAP_UNRANKED: usize = 40;
+/// section E: the best-ranked cards that have no role
+pub const CAP_ROLELESS: usize = 60;
+/// section D: the most new cards listed (`--view new` pages through all of them)
+pub const CAP_NEW: usize = 100;
 /// a gist shorter than this is not worth a line: the subtypes give way first
 const MIN_GIST_CHARS: usize = 16;
 
@@ -394,14 +396,42 @@ impl Prev {
     }
 }
 
+/// A complete list of candidates, paged (`--view`).
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum View {
+    /// every candidate with no role
+    Roleless,
+    /// every candidate new since the previous sync
+    New,
+}
+
+impl View {
+    pub fn parse(s: &str) -> Result<View, String> {
+        match s {
+            "roleless" => Ok(View::Roleless),
+            "new" => Ok(View::New),
+            _ => Err(format!("--view takes roleless or new, got '{s}'")),
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            View::Roleless => "roleless",
+            View::New => "new",
+        }
+    }
+}
+
 /// What to digest.
 pub struct Spec<'a> {
     /// a deck of `data/decks.json`: its identity is the ceiling, its cards are section A, its commanders drive C
     pub deck: Option<&'a Deck>,
     /// an identity limit: the whole identity without a deck, a narrowing of the deck's with one
     pub ident: Option<u8>,
-    /// only this role's cards (section B for it, all of them, paged by `limit` and `offset`)
+    /// only the cards that have this role (primary first, then the others; all of them, paged by `limit` and `offset`)
     pub role: Option<&'a str>,
+    /// a complete paged list instead of the sections: the candidates with no role, or the new ones
+    pub view: Option<View>,
     pub limit: Option<usize>,
     pub offset: usize,
     /// the size limit in estimated tokens; `None` is [`DEFAULT_BUDGET_TOKENS`] (or [`ROLE_PAGE_TOKENS`] for a page)
@@ -448,23 +478,71 @@ fn ident_label(bits: u8) -> String {
     if bits == 0 { "C".into() } else { knowledge::ident_string(bits) }
 }
 
-/// the cards of a deck as indices: its list and commanders, each name once (the Commander-legal card of a shared
-/// name when there is one), sorted as `find` sorts
-fn deck_cards(index: &Index, deck: &Deck) -> Vec<u32> {
+/// the card of a name: the Commander-legal one when several share it (all of them when none is legal)
+fn resolve(index: &Index, name: &str) -> Vec<u32> {
+    let found = index.lookup(name);
+    let legal: Vec<u32> = found.iter().copied().filter(|&i| index.cards[i as usize].legal == Legal::Legal).collect();
+    if legal.is_empty() { found.to_vec() } else { legal }
+}
+
+/// the deck's commanders as card indices, in order
+pub fn commander_cards(index: &Index, deck: &Deck) -> Vec<u32> {
     let mut out: Vec<u32> = vec![];
-    let names = deck.cards.iter().chain(std::iter::once(&deck.commander)).chain(deck.commander2.iter());
-    for n in names.filter(|n| !n.trim().is_empty()) {
-        let found = index.lookup(n);
-        let legal: Vec<u32> =
-            found.iter().copied().filter(|&i| index.cards[i as usize].legal == Legal::Legal).collect();
-        for i in if legal.is_empty() { found.to_vec() } else { legal } {
+    for n in std::iter::once(&deck.commander).chain(deck.commander2.iter()).filter(|n| !n.trim().is_empty()) {
+        for i in resolve(index, n) {
             if roles::is_deck_card(&index.cards[i as usize]) && !out.contains(&i) {
                 out.push(i);
             }
         }
     }
-    index.sort(&mut out, Sort::Edhrec);
     out
+}
+
+/// the cards of a deck as indices: the commanders first, then its list, each name once (the Commander-legal card of
+/// a shared name when there is one), the list sorted as `find` sorts
+pub fn deck_cards(index: &Index, deck: &Deck) -> Vec<u32> {
+    let commanders = commander_cards(index, deck);
+    let mut rest: Vec<u32> = vec![];
+    for n in deck.cards.iter().filter(|n| !n.trim().is_empty()) {
+        for i in resolve(index, n) {
+            if roles::is_deck_card(&index.cards[i as usize]) && !commanders.contains(&i) && !rest.contains(&i) {
+                rest.push(i);
+            }
+        }
+    }
+    index.sort(&mut rest, Sort::Edhrec);
+    commanders.into_iter().chain(rest).collect()
+}
+
+/// How many of the cards have each role (in any position), the biggest first, ties in the order of the taxonomy;
+/// roles no card has are left out.
+pub fn role_counts(index: &Index, cards: &[u32]) -> Vec<(&'static str, usize)> {
+    let mut count: BTreeMap<&str, usize> = BTreeMap::new();
+    for &i in cards {
+        for r in index.roles(i).iter().flat_map(|a| a.roles.iter()) {
+            *count.entry(r.as_str()).or_default() += 1;
+        }
+    }
+    let mut v: Vec<(&'static str, usize)> =
+        roles::IDS.iter().copied().filter_map(|r| count.get(r).map(|n| (r, *n))).collect();
+    v.sort_by_key(|(_, n)| std::cmp::Reverse(*n));
+    v
+}
+
+/// the basic lands of a deck's list with how many copies it runs (a basic is one line of section A)
+pub fn basic_lands(index: &Index, deck: &Deck) -> Vec<(String, usize)> {
+    let mut count: BTreeMap<String, usize> = BTreeMap::new();
+    for n in &deck.cards {
+        if let Some(&i) = resolve(index, n).first() {
+            let c = &index.cards[i as usize];
+            if c.raw.type_line.split_whitespace().next() == Some("Basic") {
+                *count.entry(c.raw.name.clone()).or_default() += 1;
+            }
+        }
+    }
+    let mut v: Vec<(String, usize)> = count.into_iter().collect();
+    v.sort_by_key(|(_, n)| std::cmp::Reverse(*n));
+    v
 }
 
 /// the plural spellings of a subtype as Oracle text writes them (`Elf`: Elves)
@@ -507,10 +585,7 @@ pub fn commander_subtypes(index: &Index, deck: &Deck) -> Vec<String> {
     let mut found: Vec<String> = vec![];
     let names = std::iter::once(&deck.commander).chain(deck.commander2.iter());
     for n in names {
-        let cards = index.lookup(n);
-        let legal: Vec<u32> =
-            cards.iter().copied().filter(|&i| index.cards[i as usize].legal == Legal::Legal).collect();
-        for i in if legal.is_empty() { cards.to_vec() } else { legal } {
+        for i in resolve(index, n) {
             let text = plain_text(&index.cards[i as usize]);
             // a subtype is a capitalised word (the lower-case `of` of a joke card's type line is not one)
             for (sub, _) in vocab.iter().filter(|(s, _)| s.chars().next().is_some_and(char::is_uppercase)) {
@@ -601,8 +676,11 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
     }
     if let Some(role) = spec.role {
         roles::check_role(role).map_err(FindError::Usage)?;
-    } else if spec.limit.is_some() || spec.offset > 0 {
-        return usage("--limit and --offset page through one role's cards: add --role R");
+        if spec.view.is_some() {
+            return usage("--role and --view are two different pages: give one");
+        }
+    } else if spec.view.is_none() && (spec.limit.is_some() || spec.offset > 0) {
+        return usage("--limit and --offset page through one role's cards or one view: add --role R or --view V");
     }
     if spec.limit == Some(0) {
         return usage("--limit 0 shows nothing");
@@ -630,14 +708,20 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
         let more = if unresolved.len() > 10 { ", ..." } else { "" };
         head.push(format!("# deck names not in the catalog ({}): {}{more}", unresolved.len(), shown.join(", ")));
     }
-    match spec.role {
-        Some(role) => role_page(&lines, spec, &hits, role, head),
-        None => full(&lines, spec, &hits, head),
+    match (spec.role, spec.view) {
+        (Some(role), _) => role_page(&lines, spec, &hits, role, head),
+        (None, Some(view)) => view_page(&lines, spec, &hits, view, head),
+        (None, None) => full(&lines, spec, &hits, head),
     }
 }
 
-/// A page of one list of cards (`--role R`): `title` is the text after `## B role R: ` of the block header, built from
-/// the range and the tail; `role` selects the evidence line of the gists.
+/// a card whose roles list is empty (the rules found none and, in a merged table, neither did the LLM)
+fn roleless(index: &Index, i: u32) -> bool {
+    index.roles(i).is_none_or(|a| a.primary.is_empty())
+}
+
+/// A page of one list of cards: `title` makes the block header from the range and the tail; `role` selects the
+/// evidence line of the gists; `id` is the section letter of the block.
 fn page(
     l: &Lines,
     spec: &Spec,
@@ -663,7 +747,7 @@ fn page(
         shown.push(line);
     }
     let render = |shown: &[String]| -> (String, Option<usize>) {
-        let end = spec.offset + shown.len();
+        let end = spec.offset.saturating_add(shown.len());
         let next = (end < all.len()).then_some(end);
         let range = if shown.is_empty() {
             format!("no cards at offset {} (there are {})", spec.offset, num(all.len()))
@@ -707,65 +791,141 @@ fn page(
     })
 }
 
-/// `--role R`: the cards whose primary role is R, best first, a page of them
+/// `--role R`: every card that has role R, the cards whose primary role it is first, then the others, each group best
+/// first; a page of them
 fn role_page(l: &Lines, spec: &Spec, hits: &[u32], role: &str, mut head: Vec<String>) -> Result<Digest, FindError> {
     let index = l.index;
-    let all: Vec<u32> = hits.iter().copied().filter(|&i| index.roles(i).is_some_and(|a| a.primary == role)).collect();
+    let has = |i: u32| index.roles(i).is_some_and(|a| a.roles.iter().any(|r| r == role));
+    let (primary, later): (Vec<u32>, Vec<u32>) =
+        hits.iter().copied().filter(|&i| has(i)).partition(|&i| index.roles(i).is_some_and(|a| a.primary == role));
     head.push(format!(
-        "# page: role {role}{}; {} cards have it as their primary role",
+        "# page: role {role}{}; {} cards have it as their primary role, then {} more have it as a later role",
         if spec.deck.is_some() { ", the deck's own cards left out" } else { "" },
-        num(all.len())
+        num(primary.len()),
+        num(later.len())
     ));
-    let title =
-        |range: &str, tail: &str| format!("## B role {role}: {range}, best EDHREC rank first, unranked last{tail}");
+    let all: Vec<u32> = primary.into_iter().chain(later).collect();
+    let title = |range: &str, tail: &str| {
+        format!(
+            "## B role {role}: {range}, primary-{role} cards first, then the others, each best EDHREC rank first{tail}"
+        )
+    };
     page(l, spec, &all, head, 'B', Some(role), &title)
+}
+
+/// `--view roleless` or `--view new`: the complete list of such candidates, a page of it
+fn view_page(l: &Lines, spec: &Spec, hits: &[u32], view: View, mut head: Vec<String>) -> Result<Digest, FindError> {
+    let index = l.index;
+    match view {
+        View::Roleless => {
+            let all: Vec<u32> = hits.iter().copied().filter(|&i| roleless(index, i)).collect();
+            head.push(format!("# page: candidates with no role{}: {}", deck_note(spec), num(all.len())));
+            let title = |range: &str, tail: &str| {
+                format!("## E candidates with no role: {range}, best EDHREC rank first, unranked last{tail}")
+            };
+            page(l, spec, &all, head, 'E', None, &title)
+        }
+        View::New => {
+            let prev = match spec.prev {
+                Prev::Ids(ids) => ids,
+                Prev::Missing => {
+                    return Err(FindError::Failed(
+                        "--view new needs a previous sync: there is no oracle.prev.json (run cardgen bulk-sync twice)"
+                            .into(),
+                    ));
+                }
+                Prev::Unreadable(why) => {
+                    return Err(FindError::Failed(format!("--view new needs a previous sync: {why}")));
+                }
+            };
+            let all: Vec<u32> =
+                hits.iter().copied().filter(|&i| !prev.contains(&index.cards[i as usize].raw.oracle_id)).collect();
+            head.push(format!("# page: candidates new since the previous sync{}: {}", deck_note(spec), num(all.len())));
+            let title = |range: &str, tail: &str| {
+                format!("## D new since the previous sync: {range}, best EDHREC rank first, unranked last{tail}")
+            };
+            page(l, spec, &all, head, 'D', None, &title)
+        }
+    }
+}
+
+fn deck_note(spec: &Spec) -> &'static str {
+    if spec.deck.is_some() { " (the deck's own cards left out)" } else { "" }
+}
+
+/// the header line of a commander: name, cost, type line and its full Oracle text (lines joined with ` / `)
+fn commander_line(c: &Card) -> String {
+    let cost = c.cost();
+    let text = c.lines().iter().map(|(_, l)| *l).collect::<Vec<_>>().join(" / ");
+    let mut s = format!("# commander: {}", c.raw.name);
+    if !cost.is_empty() {
+        s.push_str(&format!(" {cost}"));
+    }
+    s.push_str(&format!(", {}", c.raw.type_line));
+    if !text.is_empty() {
+        s.push_str(&format!(": {text}"));
+    }
+    s
 }
 
 /// the default digest: sections A to E within the budget
 fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<Digest, FindError> {
     let index = l.index;
     let budget = spec.budget_tokens.unwrap_or(DEFAULT_BUDGET_TOKENS);
-    // A: the deck's own cards
+    // A: the deck's own cards, the commanders first
     let own = spec.deck.map(|d| deck_cards(index, d)).unwrap_or_default();
-    // a card of the list the catalog does not call Commander-legal is still the deck's own: say so
-    let illegal: Vec<&str> = own
-        .iter()
-        .map(|&i| &index.cards[i as usize])
-        .filter(|c| c.legal != Legal::Legal)
-        .map(|c| c.raw.name.as_str())
-        .collect();
-    if !illegal.is_empty() {
-        head.push(format!(
-            "# deck cards the catalog does not list as Commander-legal ({}): {}",
-            illegal.len(),
-            illegal.join(", ")
-        ));
-    }
-    // the deck's most common roles (a card counts once for each of its roles; ties in the order of the taxonomy)
-    let mut count: BTreeMap<&str, usize> = BTreeMap::new();
-    for &i in &own {
-        for r in index.roles(i).iter().flat_map(|a| a.roles.iter()) {
-            *count.entry(r.as_str()).or_default() += 1;
+    let counts = role_counts(index, &own);
+    // the deck block of the header: what the deck is and does
+    let mut block: Vec<String> = vec![];
+    if let Some(d) = spec.deck {
+        for i in commander_cards(index, d) {
+            block.push(commander_line(&index.cards[i as usize]));
+        }
+        block.push(if counts.is_empty() {
+            "# deck roles: none".to_string()
+        } else {
+            format!(
+                "# deck roles (cards that have the role, any position): {}",
+                counts.iter().map(|(r, n)| format!("{r} {n}")).collect::<Vec<_>>().join(", ")
+            )
+        });
+        let basics = basic_lands(index, d);
+        if !basics.is_empty() {
+            block.push(format!(
+                "# basic lands in the list (one line each in A): {}",
+                basics.iter().map(|(n, c)| format!("{n} x{c}")).collect::<Vec<_>>().join(", ")
+            ));
+        }
+        // a card of the list the catalog does not call Commander-legal is still the deck's own: say so
+        let illegal: Vec<&str> = own
+            .iter()
+            .map(|&i| &index.cards[i as usize])
+            .filter(|c| c.legal != Legal::Legal)
+            .map(|c| c.raw.name.as_str())
+            .collect();
+        if !illegal.is_empty() {
+            block.push(format!(
+                "# deck cards the catalog does not list as Commander-legal ({}): {}",
+                illegal.len(),
+                illegal.join(", ")
+            ));
         }
     }
-    let mut common: Vec<&str> = roles::IDS.iter().copied().filter(|r| count.contains_key(r)).collect();
-    common.sort_by_key(|r| std::cmp::Reverse(count[r]));
-    common.truncate(TOP_ROLES);
-    // the candidates by primary role: ranked ones for B, unranked ones for E
-    let mut ranked: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
-    let mut unranked: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
-    let mut roleless = 0usize;
-    for &i in hits {
-        let a = index.roles(i).filter(|a| !a.primary.is_empty());
-        let Some(a) = a else {
-            roleless += 1;
-            continue;
-        };
-        let role = roles::IDS.iter().copied().find(|r| *r == a.primary).expect("a primary role is in the taxonomy");
-        let map = if index.cards[i as usize].raw.edhrec_rank.is_some() { &mut ranked } else { &mut unranked };
-        map.entry(role).or_default().push(i);
-    }
-    // C: synergy with the commanders' subtypes
+    block.push(
+        "# absent here is not the same as does not exist: check with find or --role before saying there is no option"
+            .into(),
+    );
+    head.splice(2..2, block);
+    // the deck's most common roles get the bigger cap; fixing does not in a one-colour deck, where it is lands
+    let ident =
+        knowledge::effective_ident(&Query { ident: spec.ident, ..Query::default() }, spec.deck)?.unwrap_or(0b11111);
+    let common: Vec<&str> = counts
+        .iter()
+        .map(|(r, _)| *r)
+        .filter(|r| !(ident.count_ones() <= 1 && *r == "fixing"))
+        .take(TOP_ROLES)
+        .collect();
+    // C: synergy with the commanders' subtypes, built first so that B can leave its cards out
     let subs = spec.deck.map(|d| commander_subtypes(index, d)).unwrap_or_default();
     let forms: Vec<Vec<String>> = subs.iter().map(|s| plural_forms(s)).collect();
     let synergy: Vec<u32> = if subs.is_empty() {
@@ -778,7 +938,23 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
             .collect()
     };
     let in_c: HashSet<u32> = synergy.iter().copied().collect();
-    // D: new since the previous sync
+    // B: the best-ranked cards of each primary role; E: the best-ranked cards with no role
+    let mut ranked: BTreeMap<&str, Vec<u32>> = BTreeMap::new();
+    let mut no_role: Vec<u32> = vec![];
+    for &i in hits.iter().filter(|i| !in_c.contains(i)) {
+        match index.roles(i).filter(|a| !a.primary.is_empty()) {
+            None => no_role.push(i),
+            Some(a) => {
+                let role =
+                    roles::IDS.iter().copied().find(|r| *r == a.primary).expect("a primary role is in the taxonomy");
+                if index.cards[i as usize].raw.edhrec_rank.is_some() {
+                    ranked.entry(role).or_default().push(i);
+                }
+            }
+        }
+    }
+    let roleless_total = hits.iter().filter(|&&i| roleless(index, i)).count();
+    // D: new since the previous sync, the first CAP_NEW of them
     let (new_cards, d_note): (Option<Vec<u32>>, String) = match spec.prev {
         Prev::Ids(prev) => {
             let v: Vec<u32> = hits
@@ -791,13 +967,14 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
         Prev::Missing => (None, "no oracle.prev.json, so there is no previous sync to compare with".into()),
         Prev::Unreadable(why) => (None, format!("oracle.prev.json is unreadable ({why})")),
     };
-    let in_d: HashSet<u32> = new_cards.iter().flatten().copied().collect();
+    let in_d: HashSet<u32> = new_cards.iter().flatten().take(CAP_NEW).copied().collect();
+    no_role.retain(|i| !in_d.contains(i));
 
     let a_block = Block {
         id: 'A',
         role: None,
         header: match spec.deck {
-            Some(d) => format!("## A deck {}: its own {} cards", d.key, own.len()),
+            Some(d) => format!("## A deck {}: its own {} cards, the commander first", d.key, own.len()),
             None => "## A deck cards: none (no deck given)".into(),
         },
         lines: own.iter().map(|&i| l.line(i, true)).collect(),
@@ -828,20 +1005,17 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
     let d_block = new_cards.as_ref().map(|v| Block {
         id: 'D',
         role: None,
-        header: format!("## D new since the previous sync: {} cards (not repeated from C)", v.len()),
-        lines: render(v, usize::MAX),
+        header: format!(
+            "## D new since the previous sync: {} of {} cards, not repeated from C (--view new lists them all)",
+            v.len().min(CAP_NEW),
+            num(v.len())
+        ),
+        lines: render(v, CAP_NEW),
     });
-    let e_lines: Vec<(&str, usize, Vec<String>)> = roles::IDS
-        .iter()
-        .filter_map(|&r| {
-            let v: Vec<u32> =
-                unranked.get(r)?.iter().copied().filter(|i| !in_c.contains(i) && !in_d.contains(i)).collect();
-            (!v.is_empty()).then(|| (r, v.len(), render(&v, CAP_UNRANKED)))
-        })
-        .collect();
+    let e_lines = render(&no_role, CAP_ROLELESS);
 
     // assemble at a scale (per mille) for the caps of B and E
-    let assemble = |sb: usize, se: usize, over: bool| -> (String, Vec<Section>) {
+    let assemble = |sb: usize, over: bool| -> (String, Vec<Section>) {
         let mut blocks: Vec<Block> =
             vec![Block { id: 'A', role: None, header: a_block.header.clone(), lines: a_block.lines.clone() }];
         for (r, cap, total, ls) in &b_lines {
@@ -851,7 +1025,8 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
                     id: 'B',
                     role: Some(r.to_string()),
                     header: format!(
-                        "## B role {r}: best {n} of {} ranked cards with this primary role (--role {r} lists them all)",
+                        "## B role {r}: best {n} of {} ranked cards with this primary role, not repeated from C \
+                         (--role {r} lists them all)",
                         num(*total)
                     ),
                     lines: ls[..n].to_vec(),
@@ -862,57 +1037,51 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
         if let Some(d) = &d_block {
             blocks.push(Block { id: 'D', role: None, header: d.header.clone(), lines: d.lines.clone() });
         }
-        for (r, total, ls) in &e_lines {
-            let n = (CAP_UNRANKED * se / 1000).min(ls.len());
-            if n > 0 {
-                blocks.push(Block {
-                    id: 'E',
-                    role: Some(r.to_string()),
-                    header: format!(
-                        "## E role {r}: {n} of {} cards with no EDHREC rank and this primary role",
-                        num(*total)
-                    ),
-                    lines: ls[..n].to_vec(),
-                });
-            }
-        }
+        let n = (CAP_ROLELESS * sb / 1000).min(e_lines.len());
+        blocks.push(Block {
+            id: 'E',
+            role: None,
+            header: format!(
+                "## E best-ranked cards with no role: {n} of {} (--view roleless lists them all)",
+                num(roleless_total)
+            ),
+            lines: e_lines[..n].to_vec(),
+        });
         let secs: Vec<Section> =
             blocks.iter().map(|b| Section { id: b.id, role: b.role.clone(), lines: b.lines.len() }).collect();
         let size = |id: char| secs.iter().filter(|s| s.id == id).map(|s| s.lines).sum::<usize>();
         let b_roles = secs.iter().filter(|s| s.id == 'B').count();
         let mut h = head.clone();
         h.push(format!(
-            "# sections: A {} | B {} ({} roles) | C {} | D {} | E {}; {} cards with no role are listed only in A, C, D",
+            "# sections: A {} | B {} ({} roles) | C {} | D {} | E {} of {} candidates with no role",
             size('A'),
             size('B'),
             b_roles,
             size('C'),
             if d_block.is_some() { size('D').to_string() } else { "omitted".into() },
             size('E'),
-            num(roleless)
+            num(roleless_total)
         ));
         if d_block.is_none() {
             h.push(format!("# D omitted: {d_note}"));
         }
         let top = if common.is_empty() { "none".to_string() } else { common.join(", ") };
         h.push(format!(
-            "# B caps: {CAP_ROLE} per role, {CAP_TOP_ROLE} for the deck's most common roles ({top}); \
-             C at most {CAP_SYNERGY}; E {CAP_UNRANKED} per role (before trimming)"
+            "# caps: B {CAP_ROLE} per role, {CAP_TOP_ROLE} for the deck's most common roles ({top}); C {CAP_SYNERGY}; \
+             D {CAP_NEW}; E {CAP_ROLELESS} (before trimming)"
         ));
-        if sb < 1000 || se < 1000 || over {
+        if sb < 1000 || over {
             let mut note = format!("# budget: {} tokens (bytes/4)", num(budget));
             if sb < 1000 {
                 note.push_str(&format!(
-                    "; B caps trimmed to {} per role and {} for the most common roles",
+                    "; B caps trimmed to {} per role and {} for the most common roles, E to {}",
                     CAP_ROLE * sb / 1000,
-                    CAP_TOP_ROLE * sb / 1000
+                    CAP_TOP_ROLE * sb / 1000,
+                    CAP_ROLELESS * sb / 1000
                 ));
             }
-            if se < 1000 {
-                note.push_str(&format!("; E caps trimmed to {} per role", CAP_UNRANKED * se / 1000));
-            }
             if over {
-                note.push_str("; still over the budget: A, C and D are not capped");
+                note.push_str("; still over the budget: A, C and D are not trimmed");
             }
             h.push(note);
         }
@@ -928,27 +1097,19 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
         }
         (text, secs)
     };
-    let fits = |sb: usize, se: usize| tokens(&assemble(sb, se, false).0) <= budget;
-    // the largest scale (0..=1000) for which `ok` holds, 0 when none does
-    let largest = |ok: &dyn Fn(usize) -> bool| -> usize {
+    let fits = |sb: usize| tokens(&assemble(sb, false).0) <= budget;
+    // trim B and E together: the largest scale (0..=1000) that fits
+    let (mut sb, mut over) = (1000, false);
+    if !fits(sb) {
         let (mut lo, mut hi) = (0usize, 1000usize);
         while lo < hi {
             let mid = (lo + hi).div_ceil(2);
-            if ok(mid) { lo = mid } else { hi = mid - 1 }
+            if fits(mid) { lo = mid } else { hi = mid - 1 }
         }
-        lo
-    };
-    // trim B first, then E when B is already gone
-    let (mut sb, mut se) = (1000, 1000);
-    let mut over = false;
-    if !fits(sb, se) {
-        sb = largest(&|s| fits(s, 1000));
-        if !fits(sb, se) {
-            se = largest(&|s| fits(0, s));
-            over = !fits(0, se);
-        }
+        sb = lo;
+        over = !fits(sb);
     }
-    let (text, sections) = assemble(sb, se, over);
+    let (text, sections) = assemble(sb, over);
     Ok(Digest {
         text,
         lines: sections.iter().map(|s| s.lines).sum(),
@@ -963,8 +1124,8 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
 // ------------------------------------------------------------------------------------------------ the command
 
 pub const USAGE: &str =
-    "usage: cardgen digest (--deck KEY | --ident LETTERS) [--role R [--limit N] [--offset N]] [--out PATH]
-                      [--budget-tokens N] [--stdout] [--data-dir DIR]
+    "usage: cardgen digest (--deck KEY | --ident LETTERS) [--role R | --view roleless|new] [--limit N] [--offset N]
+                      [--out PATH] [--budget-tokens N] [--stdout] [--data-dir DIR]
   (the digest is always written to its file; --stdout also prints it, and the one-line summary goes to stderr)";
 
 /// What the command did.
@@ -1036,6 +1197,7 @@ pub struct Args {
     pub deck: Option<String>,
     pub ident: Option<u8>,
     pub role: Option<String>,
+    pub view: Option<View>,
     pub limit: Option<usize>,
     pub offset: usize,
     pub out: Option<PathBuf>,
@@ -1056,8 +1218,18 @@ impl Args {
                 a.stdout = true;
                 continue;
             }
-            if !["--deck", "--ident", "--role", "--limit", "--offset", "--out", "--budget-tokens", "--data-dir"]
-                .contains(&flag)
+            if ![
+                "--deck",
+                "--ident",
+                "--role",
+                "--view",
+                "--limit",
+                "--offset",
+                "--out",
+                "--budget-tokens",
+                "--data-dir",
+            ]
+            .contains(&flag)
             {
                 return usage(format!("unknown argument '{flag}'"));
             }
@@ -1079,6 +1251,7 @@ impl Args {
                     roles::check_role(v).map_err(FindError::Usage)?;
                     a.role = Some(v.clone());
                 }
+                "--view" => a.view = Some(View::parse(v).map_err(FindError::Usage)?),
                 "--limit" => a.limit = Some(number("--limit")?),
                 "--offset" => a.offset = number("--offset")?,
                 "--budget-tokens" => a.budget_tokens = Some(number("--budget-tokens")?),
@@ -1089,8 +1262,11 @@ impl Args {
         if a.deck.is_none() && a.ident.is_none() {
             return usage("digest needs --deck KEY or --ident LETTERS");
         }
-        if a.role.is_none() && (a.limit.is_some() || a.offset > 0) {
-            return usage("--limit and --offset page through one role's cards: add --role R");
+        if a.role.is_some() && a.view.is_some() {
+            return usage("--role and --view are two different pages: give one");
+        }
+        if a.role.is_none() && a.view.is_none() && (a.limit.is_some() || a.offset > 0) {
+            return usage("--limit and --offset page through one role's cards or one view: add --role R or --view V");
         }
         Ok(a)
     }
@@ -1102,9 +1278,9 @@ impl Args {
             (Some(d), Some(i)) => format!("{d}-{}", ident_label(i)),
             (None, i) => format!("ident-{}", ident_label(i.unwrap_or(0))),
         };
-        if let Some(r) = &self.role {
+        if let Some(page) = self.role.as_deref().or(self.view.map(View::name)) {
             s.push('.');
-            s.push_str(r);
+            s.push_str(page);
             if self.offset > 0 {
                 s.push_str(&format!(".{}", self.offset));
             }
@@ -1125,6 +1301,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<Output, FindError> 
         deck: deck.as_ref(),
         ident: a.ident,
         role: a.role.as_deref(),
+        view: a.view,
         limit: a.limit,
         offset: a.offset,
         budget_tokens: a.budget_tokens,

@@ -69,6 +69,11 @@ fn records() -> Vec<Value> {
             c["keywords"] = json!(["Flying", "Trample"]);
             c
         },
+        {
+            let mut c = card("Island", "Basic Land — Island", "({T}: Add {U}.)", &["U"], "legal", Some(7));
+            c["mana_cost"] = json!("");
+            c
+        },
         card("Test Two Roles", "Sorcery", "Draw two cards.\nDestroy target creature.", &["R"], "legal", Some(95_000)),
         card(LONG141, "Creature — Elemental", "Trample", &["G"], "not_legal", Some(1)),
         card(
@@ -90,7 +95,7 @@ fn decks() -> Value {
          "cards": ["Lightning Bolt", "Mogg Fanatic", "Thundermaw Hellkite", "Chromatic Lantern", "Goblin Bombardment",
                    "Mogg Fanatic", "Not In Catalog"]},
         {"key": "thanos", "name": "Thanos", "commander": "Thanos, the Mad Titan", "ident": "WUBRG", "tiers": ["t5"],
-         "cards": ["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe"]},
+         "cards": ["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe", "Island", "Island", "Island"]},
         {"key": "duo", "name": "Duo", "commander": "Lathliss, Dragon Queen", "commander2": "Dragonlord Dromoka",
          "ident": "WUBRG", "tiers": ["t1"], "cards": ["Lightning Bolt", "Test Banned Draw", "Test Not Legal Draw", LONG141]},
     ], "pool": []})
@@ -194,7 +199,7 @@ impl Env {
     }
 
     fn spec<'a>(&self, deck: Option<&'a knowledge::Deck>, prev: &'a Prev) -> Spec<'a> {
-        Spec { deck, ident: None, role: None, limit: None, offset: 0, budget_tokens: None, prev }
+        Spec { deck, ident: None, role: None, view: None, limit: None, offset: 0, budget_tokens: None, prev }
     }
 
     fn digest(&self, key: &str) -> Digest {
@@ -544,10 +549,11 @@ fn section_a_is_exactly_the_decks_own_cards_once_each_and_marked() {
     assert!(names(&others).iter().all(|n| !want.contains(n)), "a deck card is listed outside A");
     // the name the catalog lacks is reported
     assert!(d.text.contains("deck names not in the catalog (1): Not In Catalog"), "{}", &d.text[..800]);
-    // sorted by EDHREC rank
+    // the commander first, then sorted by EDHREC rank
+    assert_eq!(field(&a[0], 0), "Lathliss, Dragon Queen");
     let ranks: Vec<u32> =
         a.iter().map(|l| field(l, 5).split(' ').find_map(|f| f.strip_prefix('#')?.parse().ok()).unwrap()).collect();
-    assert!(ranks.windows(2).all(|w| w[0] <= w[1]), "{ranks:?}");
+    assert!(ranks[1..].windows(2).all(|w| w[0] <= w[1]), "{ranks:?}");
 }
 
 #[test]
@@ -687,7 +693,7 @@ fn section_d_is_the_set_difference_with_the_previous_sync_and_is_omitted_without
     let ranks: Vec<u32> =
         names(&d).iter().map(|n| env.index.cards[env.index.lookup(n)[0] as usize].raw.edhrec_rank.unwrap()).collect();
     assert!(ranks.windows(2).all(|w| w[0] <= w[1]), "{ranks:?}");
-    assert!(with.text.contains("## D new since the previous sync: 2 cards"));
+    assert!(with.text.contains("## D new since the previous sync: 2 of 2 cards"), "{}", with.text);
     // an unreadable previous sync is a note, not a failure
     let bad =
         digest::build(&env.index, &env.table, &env.spec(Some(&deck), &Prev::Unreadable("x: broken".into()))).unwrap();
@@ -709,20 +715,25 @@ fn section_d_is_the_set_difference_with_the_previous_sync_and_is_omitted_without
 }
 
 #[test]
-fn section_e_is_the_unranked_cards_per_role_and_a_card_in_c_or_d_is_not_repeated() {
+fn section_e_is_the_best_ranked_cards_with_no_role_and_a_card_in_c_or_d_is_not_repeated() {
     let env = Env::new();
     let d = env.digest("dragons");
     let e = section(&d.text, 'E');
     let listed = names(&e);
-    assert!(listed.contains(&"Test Unranked Draw".to_string()), "{listed:?}");
-    assert!(listed.contains(&"Test Unranked Removal".to_string()), "colourless fits every deck: {listed:?}");
+    assert!(listed.contains(&"Test Vanilla".to_string()), "{listed:?}");
+    let mut ranks = vec![];
     for l in &e {
         let i = env.index.lookup(&field(l, 0))[0];
-        assert!(env.index.cards[i as usize].raw.edhrec_rank.is_none(), "{l}");
-        assert!(!field(l, 5).contains('#'), "no rank flag on an unranked card: {l}");
+        assert!(env.index.roles(i).unwrap().primary.is_empty(), "{l} has a role");
+        ranks.push(env.index.cards[i as usize].raw.edhrec_rank.unwrap_or(u32::MAX));
     }
+    assert!(ranks.windows(2).all(|w| w[0] <= w[1]), "best ranked first: {ranks:?}");
     let c: HashSet<String> = names(&section(&d.text, 'C')).into_iter().collect();
     assert!(listed.iter().all(|n| !c.contains(n)));
+    assert!(d.text.contains("--view roleless lists them all"));
+    // B never lists a card of C, and every card with a role is somewhere a page can reach
+    let b: HashSet<String> = names(&section(&d.text, 'B')).into_iter().collect();
+    assert!(b.is_disjoint(&c), "B repeats C: {:?}", b.intersection(&c).collect::<Vec<_>>());
 }
 
 #[test]
@@ -811,12 +822,26 @@ fn a_role_page_lists_that_roles_cards_and_pages_have_no_gaps_or_overlaps() {
     assert_eq!(all.lines, total, "one page holds them all");
     assert!(all.next_offset.is_none());
     let want = names(&card_lines(&all.text));
-    // exactly the non-deck cards with this primary role, in the order of the sort
+    // every non-deck card that has the role: the primary-role ones first, then the rest, each best first
+    let mut seen_later = false;
+    let (mut last_primary, mut last_later) = (0u32, 0u32);
     for n in &want {
         let i = env.index.lookup(n)[0];
-        assert_eq!(env.index.roles(i).unwrap().primary, "removal");
+        let a = env.index.roles(i).unwrap();
+        assert!(a.roles.contains(&"removal".to_string()), "{n}");
+        let rank = env.index.cards[i as usize].raw.edhrec_rank.unwrap_or(u32::MAX);
+        if a.primary == "removal" {
+            assert!(!seen_later, "a primary card after a later-role one: {n}");
+            assert!(rank >= last_primary);
+            last_primary = rank;
+        } else {
+            seen_later = true;
+            assert!(rank >= last_later);
+            last_later = rank;
+        }
         assert!(!deck.cards.contains(n));
     }
+    assert!(seen_later, "the fixture has cards with removal as a later role");
     assert!(blocks(&all.text).len() == 1 && blocks(&all.text)[0].0.starts_with("## B role removal: cards 1-"));
     // pages of 7 by limit
     let mut got: Vec<String> = vec![];
@@ -1305,4 +1330,169 @@ fn a_role_page_budget_that_cannot_hold_the_header_and_one_card_is_an_error() {
     )
     .unwrap();
     assert!(digest::tokens(&ok.text) <= 900 && !ok.over_budget && ok.lines >= 1);
+}
+
+// ------------------------------------------------------------------------------------------------ round 2: group 2
+
+#[test]
+fn the_deck_header_has_the_commanders_text_the_role_counts_the_basics_and_the_absence_warning() {
+    let env = Env::new();
+    let d = env.digest("thanos");
+    let head: Vec<&str> = d.text.lines().take_while(|l| !l.starts_with("## ")).collect();
+    let cmd = head.iter().find(|l| l.starts_with("# commander: Thanos, the Mad Titan")).expect("a commander line");
+    assert!(
+        cmd.contains("Legendary Creature — Eternal Villain") && cmd.contains("Power-up — {C}{W}{U}{B}{R}{G}"),
+        "{cmd}"
+    );
+    assert!(cmd.contains(" / "), "the lines of the text are joined: {cmd}");
+    let roles = head.iter().find(|l| l.starts_with("# deck roles")).expect("role counts");
+    let a = section(&d.text, 'A');
+    let counter = a.iter().filter(|l| field(l, 3).split(',').any(|r| r == "counter")).count();
+    assert!(roles.contains(&format!("counter {counter}")), "{roles}");
+    assert!(head.iter().any(|l| l.contains("basic lands in the list") && l.contains("Island x3")), "{head:?}");
+    assert!(head.iter().any(|l| l.starts_with("# absent here is not the same as does not exist")));
+    // the commander is the first line of A, the basics one line each
+    assert_eq!(field(&a[0], 0), "Thanos, the Mad Titan");
+    assert_eq!(a.iter().filter(|l| l.starts_with("Island|")).count(), 1);
+    // two commanders, both first
+    let duo = section(&env.digest("duo").text, 'A');
+    assert_eq!(names(&duo)[..2].to_vec(), ["Lathliss, Dragon Queen", "Dragonlord Dromoka"]);
+    // a digest of an identity without a deck has no commander lines but still the warning
+    let ident = digest::build(&env.index, &env.table, &Spec { ident: Some(0b00011), ..env.spec(None, &Prev::Missing) })
+        .unwrap();
+    assert!(!ident.text.contains("# commander:") && ident.text.contains("# absent here is not the same"));
+    // the header block stays small
+    let block: usize = head
+        .iter()
+        .filter(|l| l.starts_with("# commander") || l.starts_with("# deck roles") || l.starts_with("# basic"))
+        .map(|l| digest::tokens(l))
+        .sum();
+    assert!(block < 300, "{block} tokens");
+}
+
+#[test]
+fn fixing_has_no_top_role_cap_in_a_one_colour_deck_but_may_in_a_many_colour_one() {
+    let env = Env::new();
+    // the red deck runs a fixing card (Chromatic Lantern), so fixing would be among its most common roles
+    let red = env.digest("dragons");
+    let line = red.text.lines().find(|l| l.starts_with("# caps:")).unwrap();
+    let common = line.split("most common roles (").nth(1).unwrap().split(')').next().unwrap();
+    assert!(!common.split(", ").any(|r| r == "fixing"), "{line}");
+    let counts = digest::role_counts(&env.index, &digest::deck_cards(&env.index, &env.deck("dragons")));
+    assert!(counts.iter().any(|(r, _)| *r == "fixing"), "{counts:?}");
+}
+
+#[test]
+fn section_d_is_capped_at_100_and_the_complete_set_is_a_paged_view() {
+    let env = Env::new();
+    let deck = env.deck("thanos");
+    // a valid previous sync that shares nothing with the catalog: every candidate is new
+    let prev = Prev::Ids(HashSet::new());
+    let d = digest::build(&env.index, &env.table, &env.spec(Some(&deck), &prev)).unwrap();
+    let new = section(&d.text, 'D');
+    assert_eq!(new.len(), 100);
+    assert!(d.text.contains(" of ") && d.text.contains("(--view new lists them all)"));
+    // the view lists all of them, in pages, without gaps or overlaps
+    let all = digest::build(
+        &env.index,
+        &env.table,
+        &Spec { view: Some(digest::View::New), limit: Some(10_000), ..env.spec(Some(&deck), &prev) },
+    )
+    .unwrap();
+    let total = all.total.unwrap();
+    assert!(total > 200);
+    let (mut got, mut offset) = (vec![], 0);
+    loop {
+        let p = digest::build(
+            &env.index,
+            &env.table,
+            &Spec { view: Some(digest::View::New), limit: Some(60), offset, ..env.spec(Some(&deck), &prev) },
+        )
+        .unwrap();
+        got.extend(names(&card_lines(&p.text)));
+        match p.next_offset {
+            Some(n) => offset = n,
+            None => break,
+        }
+    }
+    assert_eq!(got, names(&card_lines(&all.text)));
+    assert_eq!(got.len(), total);
+    // without a previous sync the view is a clear error
+    let e = digest::build(
+        &env.index,
+        &env.table,
+        &Spec { view: Some(digest::View::New), ..env.spec(Some(&deck), &Prev::Missing) },
+    );
+    assert!(matches!(e, Err(FindError::Failed(m)) if m.contains("--view new needs a previous sync")));
+}
+
+#[test]
+fn the_roleless_view_and_the_role_pages_together_reach_every_candidate() {
+    let env = Env::new();
+    let deck = env.deck("thanos");
+    let (hits, _) = env.index.search(&knowledge::Query::default(), Some(&deck)).unwrap();
+    let want: BTreeSet<String> = hits
+        .iter()
+        .filter(|&&i| roles::is_deck_card(&env.index.cards[i as usize]))
+        .map(|&i| env.index.cards[i as usize].raw.name.clone())
+        .collect();
+    let mut got: BTreeSet<String> = BTreeSet::new();
+    let mut page = |role: Option<&str>, view: Option<digest::View>| {
+        let mut offset = 0;
+        loop {
+            let p = digest::build(
+                &env.index,
+                &env.table,
+                &Spec { role, view, limit: Some(50), offset, ..env.spec(Some(&deck), &Prev::Missing) },
+            )
+            .unwrap();
+            got.extend(names(&card_lines(&p.text)));
+            match p.next_offset {
+                Some(n) => offset = n,
+                None => break,
+            }
+        }
+    };
+    for role in roles::IDS {
+        page(Some(role), None);
+    }
+    page(None, Some(digest::View::Roleless));
+    assert_eq!(got, want, "a candidate no page reaches, or a card that is not a candidate");
+    // the roleless view lists only cards with no role, best first
+    let r = digest::build(
+        &env.index,
+        &env.table,
+        &Spec { view: Some(digest::View::Roleless), ..env.spec(Some(&deck), &Prev::Missing) },
+    )
+    .unwrap();
+    for l in card_lines(&r.text) {
+        assert_eq!(field(&l, 3), "-", "{l}");
+    }
+    // --role with --view is refused, and the options parse
+    let args = |a: &[&str]| digest::Args::parse(&a.iter().map(|s| s.to_string()).collect::<Vec<_>>());
+    assert!(matches!(args(&["--deck", "x", "--role", "ramp", "--view", "new"]), Err(FindError::Usage(_))));
+    assert!(
+        matches!(args(&["--deck", "x", "--view", "bogus"]), Err(FindError::Usage(m)) if m.contains("roleless or new"))
+    );
+    assert!(args(&["--deck", "x", "--view", "roleless", "--limit", "5"]).is_ok());
+}
+
+#[test]
+fn a_role_page_includes_cards_with_the_role_in_a_later_position_and_cites_their_line() {
+    let env = Env::new();
+    let deck = env.deck("dragons");
+    let two = env.index.lookup("Test Two Roles")[0];
+    let a = env.index.roles(two).unwrap().clone();
+    for role in ["draw", "removal"] {
+        let p =
+            digest::build(&env.index, &env.table, &Spec { role: Some(role), ..env.spec(Some(&deck), &Prev::Missing) })
+                .unwrap();
+        let l = card_lines(&p.text)
+            .into_iter()
+            .find(|l| l.starts_with("Test Two Roles|"))
+            .unwrap_or_else(|| panic!("{role}: {a:?}"));
+        let want = if role == "draw" { "Draw two cards." } else { "Destroy target creature." };
+        assert_eq!(field(&l, 4), want, "{l}");
+        assert!(p.text.contains("primary-") && p.text.contains("cards first, then the others"));
+    }
 }

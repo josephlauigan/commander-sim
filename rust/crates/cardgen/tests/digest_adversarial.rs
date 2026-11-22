@@ -118,7 +118,16 @@ impl Env {
 }
 
 fn spec<'a>(deck: Option<&'a Deck>, prev: &'a Prev) -> Spec<'a> {
-    Spec { deck, ident: deck.is_none().then_some(31), role: None, limit: None, offset: 0, budget_tokens: None, prev }
+    Spec {
+        deck,
+        ident: deck.is_none().then_some(31),
+        role: None,
+        view: None,
+        limit: None,
+        offset: 0,
+        budget_tokens: None,
+        prev,
+    }
 }
 fn lines(text: &str) -> Vec<&str> {
     text.lines().filter(|s| !s.is_empty() && !s.starts_with('#')).collect()
@@ -772,6 +781,31 @@ fn defect_candidate_union_cannot_reach_roleless_cards() {
                 }
             }
         }
+        // the complete roleless view, in pages
+        let mut offset = 0;
+        let mut roleless = vec![];
+        loop {
+            let page = digest::build(
+                &idx,
+                &table,
+                &Spec { view: Some(digest::View::Roleless), offset, ..spec(Some(&deck), &Prev::Missing) },
+            )
+            .unwrap();
+            roleless.extend(names(&page.text));
+            if let Some(next) = page.next_offset {
+                offset = next;
+            } else {
+                break;
+            }
+        }
+        let want_roleless: Vec<String> = audit["candidates"][key]["roleless"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| s.as_str().unwrap().to_string())
+            .collect();
+        assert_eq!(roleless, want_roleless, "{key}: the roleless view");
+        got.extend(roleless);
         let expected: BTreeSet<String> = audit["candidates"][key]["all"]
             .as_array()
             .unwrap()

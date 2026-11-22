@@ -34,7 +34,16 @@ fn build(
     limit: Option<usize>,
     offset: usize,
 ) -> digest::Digest {
-    let spec = Spec { deck: Some(deck), ident: None, role, limit, offset, budget_tokens: None, prev: &Prev::Missing };
+    let spec = Spec {
+        deck: Some(deck),
+        ident: None,
+        role,
+        view: None,
+        limit,
+        offset,
+        budget_tokens: None,
+        prev: &Prev::Missing,
+    };
     digest::build(idx, table, &spec).unwrap()
 }
 
@@ -116,7 +125,18 @@ fn the_six_decks_of_mine_have_clean_digests_within_budget() {
 fn role_pages_of_a_real_deck_chain_without_gaps_or_overlaps() {
     let (idx, table) = open();
     let deck = knowledge::load_deck(&project(), "cloud").unwrap();
-    let all = build(&idx, &table, &deck, Some("removal"), Some(usize::MAX), 0);
+    // one page with a huge budget holds the whole role (every card that has it, primary first)
+    let spec = Spec {
+        deck: Some(&deck),
+        ident: None,
+        role: Some("removal"),
+        view: None,
+        limit: None,
+        offset: 0,
+        budget_tokens: Some(10_000_000),
+        prev: &Prev::Missing,
+    };
+    let all = digest::build(&idx, &table, &spec).unwrap();
     let total = all.total.unwrap();
     assert!(total > 500, "{total}");
     let want: Vec<&str> = lines(&all.text).iter().map(|l| l.split('|').next().unwrap()).collect();
@@ -156,6 +176,7 @@ fn an_identity_digest_without_a_deck_stays_inside_its_colours() {
         deck: None,
         ident: Some(knowledge::parse_ident("WUB").unwrap()),
         role: None,
+        view: None,
         limit: None,
         offset: 0,
         budget_tokens: None,

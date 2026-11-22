@@ -34,9 +34,12 @@ def candidates(key):
         own.update(c["oracle_id"] for c in names.get(fold(n), faces.get(fold(n), [])))
     hits = [c for c in covered if set(c["color_identity"]) <= set(d["ident"]) and c["oracle_id"] not in own]
     hits.sort(key=lambda c: (c.get("edhrec_rank", float("inf")), fold(c["name"]), c["name"]))
+    # a role page lists the cards whose primary role it is first, then the cards that have it later, each in order
     return {"all": [c["name"] for c in hits], "roles": {
         r: [c["name"] for c in hits if roles[c["oracle_id"]]["primary"] == r]
-        for r in {a["primary"] for a in roles.values()} if r}}
+        + [c["name"] for c in hits if r in roles[c["oracle_id"]]["roles"] and roles[c["oracle_id"]]["primary"] != r]
+        for r in {a["primary"] for a in roles.values()} if r},
+        "roleless": [c["name"] for c in hits if not roles[c["oracle_id"]]["roles"]]}
 
 
 grid = {}
