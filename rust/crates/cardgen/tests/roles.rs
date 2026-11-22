@@ -912,6 +912,21 @@ fn ignore_prefixes_do_not_read_later_sentences() {
 }
 
 #[test]
+fn negative_toughness_auras_are_not_boilerplate() {
+    // Dead Weight and Feebleness shaped auras: a negative toughness is real removal, a plain pump is boilerplate.
+    for text in ["Enchant creature\nEnchanted creature gets -2/-2.", "Enchant creature\nEnchanted creature gets +2/-1."]
+    {
+        let a = round5_synthetic("Enchantment — Aura", text, &[]);
+        assert!(a.route.contains(&roles::RouteReason::NoRole) || !a.roles.is_empty(), "{text}: {a:?}");
+    }
+    for text in ["Enchant creature\nEnchanted creature gets +1/+1.", "Enchant creature\nEnchanted creature gets +2/-0."]
+    {
+        let a = round5_synthetic("Enchantment — Aura", text, &[]);
+        assert!(!a.route.contains(&roles::RouteReason::NoRole), "{text}: {a:?}");
+    }
+}
+
+#[test]
 fn two_produced_colors_require_fixing_or_review() {
     // Two independently ordinary tap abilities must still be checked together.
     let a = round5_synthetic("Land", "{T}: Add {G}.\n{T}: Add {W}.", &["G", "W"]);

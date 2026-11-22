@@ -1055,8 +1055,9 @@ fn plain_line(s: &str, typ: &str) -> bool {
             || grammar!(r"^\{t\}: add \{[wubrgc]\}$", sentence)
             || grammar!(
                 concat!(
-                    r"^(?:(?:enchanted|equipped) creature gets [+-][0-9x]+/[+-][0-9x]+|(?:this|~) (?:creature |land |",
-                    r"artifact )?enters tapped|as (?:this [a-z]+|~) enters, choose a colou?r|partner|companion — .*|",
+                    r"^(?:(?:enchanted|equipped) creature gets [+-][0-9x]+/(?:\+[0-9x]+|-0)|",
+                    r"(?:this|~) (?:creature |land |artifact )?enters tapped|",
+                    r"as (?:this [a-z]+|~) enters, choose a colou?r|partner|companion — .*|",
                     r"(?:scry|surveil) 1|(?:this creature|~|this spell) (?:can't (?:block|be countered|be blocked",
                     r"(?: by [^.]*)?|attack(?: unless [^.]*)?)|attacks each (?:combat|turn) if able|can block ",
                     r"(?:only [^.]*|an additional creature each combat))|(?:\{[^}]+\}(?:, )?)+: (?:this creature",
