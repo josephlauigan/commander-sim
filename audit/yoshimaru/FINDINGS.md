@@ -41,9 +41,10 @@ a variant of Line B or A (Sorin is out); Line D's payoffs are Elas il-Kor, Haliy
 creatures; Stroke of Midnight gives the opponent a 1/1 Human; the deck's black is oversupplied (no card costs {B}{B}).
 
 ### Engine defects found by the interaction tests (fixed by the engine change that lands with this list)
-Tests of the package's card interactions (`rust/crates/sim-core/tests/cards_yoshimaru_equipment.rs`, 120 tests) found twelve engine defects; all twelve are fixed
-by the engine change, which also found three more of the same class (Giver of Runes and the AI's other protectors, Eerie Interlude, Teleportation Circle and
-the other end-step flickers). Each line: the card, what the engine did, what the Oracle text says.
+Tests of the package's card interactions (`rust/crates/sim-core/tests/cards_yoshimaru_equipment.rs`, 128 tests) found twelve engine defects; all twelve are fixed
+by the engine change, which also found and fixed more of the same class (Giver of Runes and the AI's other protectors, Eerie Interlude, Teleportation Circle and
+the other end-step flickers, Momentary Blink, the person's own Ephemerate, the practice-mode Kor Outfitter and Ardenn choices, Zack Fair's practice-mode choice of
+Equipment, Secure the Scene's token). Each line: the card, what the engine did, what the Oracle text says.
 1. Court of Ardenvale never returned a land card; a land card is a permanent card with mana value 0 (now returned through the real land-entry path).
 2. Zack Fair's sacrifice moved every Equipment attached to him; the text attaches "an Equipment" (now one, the most valuable).
 3. Zack Fair's sacrifice could target a creature with protection from white (a Sword of Hearth and Home carrier), though Zack is white.
@@ -59,9 +60,3 @@ the other end-step flickers). Each line: the card, what the engine did, what the
 Fixed through the existing `protected_from` helper at the call sites that lacked it (equip abilities are colourless and unchanged; Deflecting Swat, Siren Stormtamer and
 Not of This World target the spell, so they are exempt). `best_holder`, `zack_sacrifice`, `metalcraft` and `resto_etb` are shared with the retired Cloud card code, so
 its numbers can shift.
-
-### Still open: same defect class, NOT fixed, NOT accepted by JD (his decision pending)
-- Momentary Blink cast from hand ignores protection from white (the AI and a person's choice).
-- The practice-mode (person) paths of Kor Outfitter and Ardenn do not filter their creature choices by protection from white.
-- Zack Fair in practice mode gives the person no choice of which Equipment moves (the engine picks).
-- Secure the Scene's token is a plain 1/1; the text says a white Soldier (it shares the `opp_token` effect Stroke of Midnight now parameterises).
