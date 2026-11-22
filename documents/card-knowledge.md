@@ -368,7 +368,13 @@ discard 32, copy 27, counter 8.
 - The one-time blind-set result (rules 27 errors, merged 26) was measured on the pilot's answers. A comparison of the 92
   cards present in both the pilot and the production cache found only 90.2% identical on-role answers (84.8% on all
   roles): answers depend on the batch neighbours, so the pilot's figures do not carry over to the production rows.
-- Stability test (200 cards at batch 5 against production): `STABILITY_RESULT_PLACEHOLDER`
+- Stability test, run 2026-11-22 (200 random legal, uniquely named cards from the production cache, seed 20261122, re-asked at
+  `--batch 5` instead of 10 with the same model, prompt, role definitions and temperature 0 with a fixed seed): 148 of 200 answers
+  (74.0%) have the identical role set and 154 of 200 (77.0%) the identical primary role; all 200 were answered, none failed. The
+  target was at least 97% and the rework threshold 93%, so the prompt or the batching needs rework before any addition is
+  trusted. The differences are real flips, not noise at the margin (Reset: none became ramp; Conundrum Sphinx: selection became
+  none; Immovable Rod: stax became removal; Shineshadow Snarl: fixing became ramp). The result is for the raw role sets, before
+  the guards.
 
 **The decision.** `llm_add = false` for all 26 roles in `data/knowledge/roles.toml`; `keep_rule = true` for all 26. The
 cache is kept as an inert artefact (rows keyed on card text, prompt and model; nothing reads them for a role), and
