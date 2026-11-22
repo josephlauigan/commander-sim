@@ -22,6 +22,19 @@ const FIVE: [&str; 5] = [
     "Elspeth, Sun's Champion",
 ];
 
+/// The tests' fake models answer in the `plain` shape: select it (the default is `think`) once for the whole test
+/// process, before any test reads the variable.
+fn plain_variant() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    // SAFETY: set once, before any run of this process reads it; every test calls this first
+    ONCE.call_once(|| unsafe { std::env::set_var("CARDGEN_LLM_VARIANT", "plain") });
+}
+/// roles.toml as the scratch environments get it: the repository's, with the frozen `llm_add = false` lines taken out
+/// (the fake models propose roles of every kind; the frozen flags have their own tests).
+fn test_taxonomy() -> String {
+    TAXONOMY.replace("llm_add = false\n", "")
+}
+
 // ------------------------------------------------------------------------------------------------ the fake server
 
 enum Reply {
@@ -44,6 +57,8 @@ struct Fake {
     chats: Arc<AtomicUsize>,
     models: Arc<AtomicUsize>,
     bodies: Arc<Mutex<Vec<Value>>>,
+    /// the request bodies as the exact text that came over the wire
+    raw: Arc<Mutex<Vec<String>>>,
     stop: Arc<AtomicBool>,
     handle: Option<std::thread::JoinHandle<()>>,
 }
@@ -54,18 +69,20 @@ impl Fake {
         let model = Arc::new(Mutex::new("fake-model-1".to_string()));
         let (chats, models) = (Arc::new(AtomicUsize::new(0)), Arc::new(AtomicUsize::new(0)));
         let bodies = Arc::new(Mutex::new(vec![]));
+        let raw = Arc::new(Mutex::new(vec![]));
         let stop = Arc::new(AtomicBool::new(false));
         let (m, c, mo, b, st) = (model.clone(), chats.clone(), models.clone(), bodies.clone(), stop.clone());
+        let rw = raw.clone();
         let handle = std::thread::spawn(move || {
             for stream in listener.incoming() {
                 if st.load(Ordering::SeqCst) {
                     break;
                 }
                 let Ok(mut stream) = stream else { continue };
-                serve(&mut stream, &handler, &m, &c, &mo, &b);
+                serve(&mut stream, &handler, &m, &c, &mo, &b, &rw);
             }
         });
-        Fake { url: format!("http://{addr}/v1"), addr, model, chats, models, bodies, stop, handle: Some(handle) }
+        Fake { url: format!("http://{addr}/v1"), addr, model, chats, models, bodies, raw, stop, handle: Some(handle) }
     }
     fn chats(&self) -> usize {
         self.chats.load(Ordering::SeqCst)
@@ -93,6 +110,7 @@ fn serve(
     chats: &AtomicUsize,
     models: &AtomicUsize,
     bodies: &Mutex<Vec<Value>>,
+    raw: &Mutex<Vec<String>>,
 ) {
     let mut reader = BufReader::new(stream.try_clone().unwrap());
     let mut request = String::new();
@@ -129,6 +147,7 @@ fn serve(
         respond(stream, 200, &json!({"object": "list", "data": [{"id": id, "object": "model"}]}).to_string());
     } else if request.starts_with("POST /v1/chat/completions") {
         let n = chats.fetch_add(1, Ordering::SeqCst);
+        raw.lock().unwrap().push(String::from_utf8_lossy(&body).to_string());
         let body: Value = serde_json::from_slice(&body).unwrap_or(Value::Null);
         bodies.lock().unwrap().push(body.clone());
         let completion = |content: &str, finish: &str| {
@@ -259,13 +278,14 @@ fn good() -> Handler {
 struct Env(PathBuf);
 impl Env {
     fn new() -> Self {
+        plain_variant();
         static N: AtomicUsize = AtomicUsize::new(0);
         let root =
             std::env::temp_dir().join(format!("roles-llm-{}-{}", std::process::id(), N.fetch_add(1, Ordering::SeqCst)));
         let dir = root.join("data/knowledge");
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::copy(FIXTURE, dir.join("oracle.json")).unwrap();
-        std::fs::write(dir.join("roles.toml"), TAXONOMY).unwrap();
+        std::fs::write(dir.join("roles.toml"), test_taxonomy()).unwrap();
         std::fs::write(dir.join("roles_overrides.toml"), "").unwrap();
         std::fs::write(dir.join("ids.txt"), FIVE.join("\n")).unwrap();
         std::fs::write(
@@ -304,6 +324,14 @@ impl Env {
         self.command(&["--merge"]).unwrap();
         roles::load(&self.dir().join("roles.json")).unwrap()
     }
+    fn no_temp_files_beside_cache(&self) {
+        let tmp: Vec<_> = std::fs::read_dir(self.dir())
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().to_string())
+            .filter(|n| n.ends_with(".tmp"))
+            .collect();
+        assert!(tmp.is_empty(), "{tmp:?}");
+    }
     fn files(&self) -> BTreeMap<String, Vec<u8>> {
         let mut out = BTreeMap::new();
         fn walk(dir: &std::path::Path, base: &std::path::Path, out: &mut BTreeMap<String, Vec<u8>>) {
@@ -333,6 +361,7 @@ fn assignment_of<'a>(index: &Index, map: &'a roles::RoleMap, name: &str) -> &'a 
 
 #[test]
 fn a_valid_batch_is_requested_validated_cached_and_merged() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     let out = e.llm(&fake, &[]).unwrap();
@@ -407,6 +436,7 @@ fn a_valid_batch_is_requested_validated_cached_and_merged() {
 
 #[test]
 fn a_structurally_invalid_card_is_asked_alone_once_and_never_costs_the_batch() {
+    plain_variant();
     for class in ["ids", "vocabulary", "five roles", "repeated role", "out of range", "skipped line", "no citation"] {
         let e = Env::new();
         let fake = Fake::start(Box::new(move |n, body| {
@@ -431,6 +461,7 @@ fn a_structurally_invalid_card_is_asked_alone_once_and_never_costs_the_batch() {
 
 #[test]
 fn an_unusable_reply_document_sends_every_card_alone_once_and_a_transport_error_resends_the_batch() {
+    plain_variant();
     for class in ["malformed", "truncated", "no choices", "http 500"] {
         let e = Env::new();
         let fake = Fake::start(Box::new(move |n, body| {
@@ -462,6 +493,7 @@ fn an_unusable_reply_document_sends_every_card_alone_once_and_a_transport_error_
 
 #[test]
 fn a_guard_miss_is_soft_the_raw_answer_is_cached_and_the_merge_logs_the_drop() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(Box::new(|_, body| {
         let items = parse_batch(body);
@@ -486,6 +518,7 @@ fn a_guard_miss_is_soft_the_raw_answer_is_cached_and_the_merge_logs_the_drop() {
 
 #[test]
 fn a_card_failing_alone_is_llm_failed_and_keeps_its_rule_roles() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(Box::new(|_, body| {
         let items = parse_batch(body);
@@ -517,6 +550,7 @@ fn a_card_failing_alone_is_llm_failed_and_keeps_its_rule_roles() {
 
 #[test]
 fn a_warm_cache_makes_no_chat_requests() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -530,6 +564,7 @@ fn a_warm_cache_makes_no_chat_requests() {
 
 #[test]
 fn taxonomy_and_model_changes_invalidate_the_cache_but_guards_overrides_and_rules_do_not() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -583,6 +618,7 @@ fn taxonomy_and_model_changes_invalidate_the_cache_but_guards_overrides_and_rule
 
 #[test]
 fn an_unreachable_endpoint_exits_with_llm_unreachable_and_changes_no_file() {
+    plain_variant();
     let e = Env::new();
     let port = TcpListener::bind("127.0.0.1:0").unwrap().local_addr().unwrap().port(); // freed again at once
     let before = e.files();
@@ -603,6 +639,7 @@ fn an_unreachable_endpoint_exits_with_llm_unreachable_and_changes_no_file() {
 
 #[test]
 fn a_server_that_dies_mid_run_keeps_what_was_classified_and_stops() {
+    plain_variant();
     let e = Env::new();
     let fake =
         Fake::start(Box::new(
@@ -618,6 +655,7 @@ fn a_server_that_dies_mid_run_keeps_what_was_classified_and_stops() {
 
 #[test]
 fn limit_only_routed_dry_run_batch_size_and_pending_file() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     let out = e.llm(&fake, &["--dry-run"]).unwrap();
@@ -660,6 +698,7 @@ fn limit_only_routed_dry_run_batch_size_and_pending_file() {
 
 #[test]
 fn cards_fixed_by_an_override_are_never_sent_even_when_the_override_clears_their_roles() {
+    plain_variant();
     let e = Env::new();
     std::fs::write(
         e.dir().join("roles_overrides.toml"),
@@ -687,6 +726,7 @@ fn cards_fixed_by_an_override_are_never_sent_even_when_the_override_clears_their
 
 #[test]
 fn the_cache_file_and_the_merged_table_are_deterministic_whatever_the_batching() {
+    plain_variant();
     let (a, b) = (Env::new(), Env::new());
     let (fa, fb) = (Fake::start(good()), Fake::start(good()));
     a.llm(&fa, &["--batch", "10"]).unwrap();
@@ -746,6 +786,7 @@ fn kinds(d: &[llm::Disagreement]) -> Vec<(Kind, String)> {
 
 #[test]
 fn merge_uses_an_override_exactly() {
+    plain_variant();
     let r = rule(&[("counter", true), ("draw", false)], true, &[RouteReason::RiskyRole]);
     let mut o = rule(&[("tutor", false)], false, &[]);
     o.evidence.get_mut("tutor").unwrap().source = Source::Override;
@@ -758,6 +799,7 @@ fn merge_uses_an_override_exactly() {
 
 #[test]
 fn merge_never_lets_the_llm_change_a_card_the_rules_decided() {
+    plain_variant();
     let r = rule(&[("counter", false)], false, &[]);
     let (a, d) = run(&r, Some(&said(&["removal"])), &[], &[]);
     assert_eq!(a, r);
@@ -768,6 +810,7 @@ fn merge_never_lets_the_llm_change_a_card_the_rules_decided() {
 
 #[test]
 fn merge_vetoes_unconfirmed_rule_roles_unless_keep_rule_or_certain() {
+    plain_variant();
     let r = rule(&[("removal", false), ("draw", false)], true, &[RouteReason::RiskyRole]);
     let (a, d) = run(&r, Some(&said(&["draw"])), &[], &[]);
     assert_eq!(a.roles, ["draw"], "{a:?}");
@@ -786,6 +829,7 @@ fn merge_vetoes_unconfirmed_rule_roles_unless_keep_rule_or_certain() {
 
 #[test]
 fn merge_keeps_a_certain_role_the_llm_omitted_and_logs_it() {
+    plain_variant();
     let r = rule(&[("counter", true), ("draw", false)], true, &[RouteReason::RiskyRole]);
     let (a, d) = run(&r, Some(&said(&[])), &[], &[]);
     assert_eq!(a.roles, ["counter"], "{a:?}");
@@ -799,6 +843,7 @@ fn merge_keeps_a_certain_role_the_llm_omitted_and_logs_it() {
 
 #[test]
 fn merge_drops_an_llm_role_whose_guard_fails_and_logs_it() {
+    plain_variant();
     // no rule roles at all (NoRole): the LLM's guarded roles are all there is
     let r = rule(&[], true, &[RouteReason::NoRole]);
     let (a, d) = run(&r, Some(&said(&["draw", "wipe"])), &[], &[("wipe", 1)]);
@@ -821,6 +866,7 @@ fn merge_drops_an_llm_role_whose_guard_fails_and_logs_it() {
 
 #[test]
 fn merge_takes_guarded_llm_roles_for_a_card_with_no_rule_roles_with_llm_evidence() {
+    plain_variant();
     let r = rule(&[], true, &[RouteReason::NoRole]);
     let (a, d) = run(&r, Some(&said(&["tokens", "draw"])), &[], &[]);
     assert_eq!(a.roles, ["tokens", "draw"]);
@@ -832,6 +878,7 @@ fn merge_takes_guarded_llm_roles_for_a_card_with_no_rule_roles_with_llm_evidence
 
 #[test]
 fn merge_orders_the_llm_primary_first_then_llm_order_then_certain_then_kept_rule_roles() {
+    plain_variant();
     let r = rule(&[("counter", true), ("removal", false), ("draw", false)], true, &[RouteReason::RiskyRole]);
     let mut l = said(&["wipe", "tokens"]);
     l.primary = Some("tokens".into());
@@ -850,6 +897,7 @@ fn merge_orders_the_llm_primary_first_then_llm_order_then_certain_then_kept_rule
 
 #[test]
 fn merge_truncates_to_four_logs_the_overflow_and_never_cuts_a_certain_role() {
+    plain_variant();
     let r = rule(&[("counter", true), ("tutor", true)], true, &[RouteReason::Overflow]);
     let (a, d) = run(&r, Some(&said(&["removal", "wipe", "draw", "tokens"])), &[], &[]);
     assert_eq!(a.roles, ["removal", "wipe", "counter", "tutor"], "{a:?}");
@@ -861,6 +909,7 @@ fn merge_truncates_to_four_logs_the_overflow_and_never_cuts_a_certain_role() {
 
 #[test]
 fn merge_marks_llm_failed_when_there_is_no_answer_and_keeps_the_rule_roles() {
+    plain_variant();
     let r = rule(&[("removal", false)], true, &[RouteReason::RiskyRole]);
     let (a, d) = run(&r, None, &[], &[]);
     assert!(a.llm_failed && a.needs_llm);
@@ -875,6 +924,7 @@ fn merge_marks_llm_failed_when_there_is_no_answer_and_keeps_the_rule_roles() {
 
 #[test]
 fn line_text_and_prompt_lines_are_what_the_rules_and_guards_read() {
+    plain_variant();
     let i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
     let card = |n: &str| &i.cards[i.lookup(n)[0] as usize];
     let bolt = card("Lightning Bolt");
@@ -906,6 +956,7 @@ fn line_text_and_prompt_lines_are_what_the_rules_and_guards_read() {
 
 #[test]
 fn llm_evidence_is_attached_only_when_it_cites_a_readable_line_that_passes_the_guard() {
+    plain_variant();
     let mut i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
     let rules = roles::generate(&i, "").unwrap();
     let id = |n: &str| i.cards[i.lookup(n)[0] as usize].raw.oracle_id.clone();
@@ -948,6 +999,7 @@ fn llm_evidence_is_attached_only_when_it_cites_a_readable_line_that_passes_the_g
 
 #[test]
 fn load_verifies_the_table_hash_and_the_overrides_path_is_one_resolver() {
+    plain_variant();
     let e = Env::new();
     e.command(&["--rules"]).unwrap();
     let path = e.dir().join("roles.json");
@@ -972,36 +1024,19 @@ fn load_verifies_the_table_hash_and_the_overrides_path_is_one_resolver() {
 
 #[test]
 fn taxonomy_prompt_text_hash_and_guards() {
+    plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let text = t.prompt_text();
     for id in roles::IDS {
         assert_eq!(text.matches(&format!("\n- {id}: ")).count(), 1, "{id} appears once as a role line");
         assert!(t.guard(id).unwrap().is_match("anything").is_ok());
     }
-    // JD's split: the 16 roles the rules own keep their hits on a routed card, the 10 judgement roles may be vetoed
+    // the frozen configuration: add-only (keep_rule everywhere), the LLM off for the 8 weak roles
     let kept: Vec<&str> = t.role.iter().filter(|r| r.keep_rule).map(|r| r.id.as_str()).collect();
-    assert_eq!(
-        kept,
-        [
-            "ramp",
-            "fixing",
-            "draw",
-            "tutor",
-            "wipe",
-            "counter",
-            "discard",
-            "reanimate",
-            "self-mill",
-            "tokens",
-            "anthem",
-            "sac-outlet",
-            "lifegain",
-            "counters",
-            "blink",
-            "extra-phase"
-        ]
-    );
-    assert!(!t.keep_rule("removal") && t.keep_rule("tutor"));
+    assert_eq!(kept, roles::IDS);
+    let off: Vec<&str> = t.role.iter().filter(|r| !r.llm_add).map(|r| r.id.as_str()).collect();
+    assert_eq!(off, ["ramp", "fixing", "draw", "selection", "sac-outlet", "blink", "finisher", "evasion"]);
+    assert!(t.keep_rule("removal") && t.keep_rule("tutor") && !t.llm_add("ramp") && t.llm_add("removal"));
     // the boilerplate that used to be repeated in every definition is said once
     assert_eq!(text.matches("modal double-faced").count(), 1, "{text}");
     assert_eq!(text.matches("Planeswalker ultimates have been removed").count(), 1);
@@ -1033,6 +1068,7 @@ fn taxonomy_prompt_text_hash_and_guards() {
 
 #[test]
 fn no_definition_names_a_card_because_the_model_has_no_internet() {
+    plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let text = t.prompt_text();
     let mut names: Vec<String> = vec![];
@@ -1069,6 +1105,7 @@ fn no_definition_names_a_card_because_the_model_has_no_internet() {
 
 #[test]
 fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_from_a_gold_set() {
+    plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let system = llm::system_prompt(&t);
     let preface = llm::preface_text(&t);
@@ -1195,6 +1232,7 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
 
 #[test]
 fn a_later_face_is_announced_by_an_unnumbered_header_and_the_key_text_carries_it() {
+    plain_variant();
     let i = Index::load(&PathBuf::from(FIXTURE)).unwrap();
     let card = |n: &str| &i.cards[i.lookup(n)[0] as usize];
     let two = card("Emeritus of Conflict // Lightning Bolt");
@@ -1216,6 +1254,7 @@ fn a_later_face_is_announced_by_an_unnumbered_header_and_the_key_text_carries_it
 
 #[test]
 fn the_cache_key_is_the_card_text_the_prompt_and_the_model_and_nothing_else() {
+    plain_variant();
     let k = llm::cache_key("Instant\n0: Counter target spell.", "p1", "m1");
     assert_eq!(k.len(), 16);
     assert_eq!(k, llm::cache_key("Instant\n0: Counter target spell.", "p1", "m1"));
@@ -1232,6 +1271,7 @@ fn the_cache_key_is_the_card_text_the_prompt_and_the_model_and_nothing_else() {
 
 #[test]
 fn validate_stage_merged_scores_the_saved_merged_map_without_override_cards() {
+    plain_variant();
     let e = Env::new();
     let i = e.index();
     let id = |n: &str| i.cards[i.lookup(n)[0] as usize].raw.oracle_id.clone();
@@ -1293,10 +1333,11 @@ fn validate_stage_merged_scores_the_saved_merged_map_without_override_cards() {
 
 #[test]
 fn a_second_run_waits_for_the_lock_and_a_stale_lock_is_named() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     // a lock left behind (a crashed run): the run gives up with the file's name once its wait is over
-    std::fs::write(e.dir().join("llm_roles.lock"), "999999\n").unwrap();
+    std::fs::write(e.dir().join("llm_roles.lock"), format!("{}\n", std::process::id())).unwrap();
     // SAFETY of the env var: only this test makes a run meet an existing lock
     unsafe { std::env::set_var("CARDGEN_LLM_LOCK_WAIT_SECS", "1") };
     let err = e.llm(&fake, &[]).unwrap_err();
@@ -1310,6 +1351,7 @@ fn a_second_run_waits_for_the_lock_and_a_stale_lock_is_named() {
 
 #[test]
 fn llm_add_false_switches_the_llm_off_for_a_role_without_touching_the_cache() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -1319,8 +1361,8 @@ fn llm_add_false_switches_the_llm_off_for_a_role_without_touching_the_cache() {
     // `selection` off: the LLM may not add it (its answers stay cached and the prompt, hence the key, is unchanged)
     let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
     let off = toml.replacen(
-        "keep_rule = false\n\n[[role]]\nid = \"tutor\"",
-        "keep_rule = false\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = true\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = true\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
         1,
     );
     assert_ne!(toml, off);
@@ -1334,6 +1376,7 @@ fn llm_add_false_switches_the_llm_off_for_a_role_without_touching_the_cache() {
 
 #[test]
 fn no_pending_leaves_the_scheduled_jobs_rows_out_of_a_merge() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &["--pending"]).unwrap();
@@ -1350,6 +1393,7 @@ fn no_pending_leaves_the_scheduled_jobs_rows_out_of_a_merge() {
 
 #[test]
 fn the_model_key_is_the_file_name_a_warm_run_keeps_the_last_real_report_and_the_cache_is_probed_first() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     fake.set_model("/models/qwen/Qwen3-Coder-30B.gguf");
@@ -1375,6 +1419,7 @@ fn the_model_key_is_the_file_name_a_warm_run_keeps_the_last_real_report_and_the_
 
 #[test]
 fn only_legal_cards_are_flagged_and_the_merge_reports_failed_not_run_and_not_legal_apart() {
+    plain_variant();
     let e = Env::new();
     let path = e.dir().join("oracle.json");
     let mut doc: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
@@ -1400,6 +1445,7 @@ fn only_legal_cards_are_flagged_and_the_merge_reports_failed_not_run_and_not_leg
 
 #[test]
 fn a_damaged_cache_row_with_an_unknown_role_is_an_error_naming_file_and_line() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -1416,6 +1462,7 @@ fn a_damaged_cache_row_with_an_unknown_role_is_an_error_naming_file_and_line() {
 
 #[test]
 fn a_merged_table_is_tied_to_the_prompt_and_model_it_was_built_with() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -1441,9 +1488,10 @@ fn a_merged_table_is_tied_to_the_prompt_and_model_it_was_built_with() {
 
 #[test]
 fn the_taxonomy_for_llm_and_merge_comes_from_the_bytes_the_index_checks_guards_against() {
+    plain_variant();
     let e = Env::new();
     let i = e.index();
-    assert_eq!(i.taxonomy_text(), TAXONOMY);
+    assert_eq!(i.taxonomy_text(), test_taxonomy());
     // an unreadable roles.toml beside the catalog is an error for the LLM commands, not a silent fallback
     std::fs::write(e.dir().join("roles.toml"), "version = 1\n").unwrap();
     assert!(e.command(&["--merge"]).is_err());
@@ -1453,6 +1501,7 @@ fn the_taxonomy_for_llm_and_merge_comes_from_the_bytes_the_index_checks_guards_a
 
 #[test]
 fn every_role_has_a_yes_line_and_a_no_line_and_the_procedure_is_in_the_answer_rules() {
+    plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let text = t.prompt_text();
     for r in &t.role {
@@ -1488,10 +1537,12 @@ fn every_role_has_a_yes_line_and_a_no_line_and_the_procedure_is_in_the_answer_ru
 
 #[test]
 fn the_think_variant_has_its_own_schema_answer_validation_prompt_and_fingerprint() {
+    plain_variant();
     let t = Taxonomy::parse(TAXONOMY).unwrap();
     let (plain, think) = (llm::Variant::Plain, llm::Variant::Think);
     // the switch: plain by default, think by name, anything else is an error
-    assert_eq!(llm::Variant::parse("").unwrap(), plain);
+    assert_eq!(llm::Variant::parse("").unwrap(), think, "think is the default");
+    assert_eq!(llm::Variant::default(), think);
     assert_eq!(llm::Variant::parse("plain").unwrap(), plain);
     assert_eq!(llm::Variant::parse("think").unwrap(), think);
     assert!(llm::Variant::parse("Think").is_err() && llm::Variant::parse("deep").is_err());
@@ -1543,6 +1594,7 @@ fn the_think_variant_has_its_own_schema_answer_validation_prompt_and_fingerprint
 
 #[test]
 fn a_think_run_caches_its_why_under_its_own_fingerprint_and_plain_rows_stay_apart() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(Box::new(|_, body| {
         // answers carry a why when the request's schema asks for one
@@ -1598,6 +1650,7 @@ fn a_think_run_caches_its_why_under_its_own_fingerprint_and_plain_rows_stay_apar
 
 #[test]
 fn the_merge_says_per_role_how_many_proposals_llm_add_false_dropped() {
+    plain_variant();
     let e = Env::new();
     let fake = Fake::start(good());
     e.llm(&fake, &[]).unwrap();
@@ -1605,8 +1658,8 @@ fn the_merge_says_per_role_how_many_proposals_llm_add_false_dropped() {
     assert!(!out.contains("llm_add = false"), "{out}");
     let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
     let off = toml.replacen(
-        "keep_rule = false\n\n[[role]]\nid = \"tutor\"",
-        "keep_rule = false\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = true\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = true\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
         1,
     );
     assert_ne!(toml, off);
@@ -1618,4 +1671,182 @@ fn the_merge_says_per_role_how_many_proposals_llm_add_false_dropped() {
     let stats: llm::MergeStats =
         serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap();
     assert_eq!(stats.llm_add_dropped.get("selection"), Some(&1));
+}
+
+// ------------------------------------------------------------------------------------------- final configuration
+
+#[test]
+fn the_frozen_configuration_is_in_the_real_roles_toml_and_think_is_the_default() {
+    plain_variant();
+    let t = Taxonomy::parse(TAXONOMY).unwrap();
+    assert_eq!(t.role.iter().filter(|r| r.keep_rule).count(), 26, "add-only: the LLM never removes a rule role");
+    let off: Vec<&str> = t.role.iter().filter(|r| !r.llm_add).map(|r| r.id.as_str()).collect();
+    assert_eq!(off, ["ramp", "fixing", "draw", "selection", "sac-outlet", "blink", "finisher", "evasion"]);
+    assert!(TAXONOMY.contains("FROZEN CONFIGURATION") && TAXONOMY.contains("26 versus 27 errors"));
+    // a bare environment means `think`; `plain` selects the old prompt
+    assert_eq!(llm::Variant::default(), llm::Variant::Think);
+    assert_eq!(llm::Variant::parse("plain").unwrap(), llm::Variant::Plain);
+}
+
+fn body_of(fake: &Fake, n: usize) -> Value {
+    fake.bodies.lock().unwrap()[n].clone()
+}
+
+#[test]
+fn no_think_adds_the_template_kwarg_to_every_request_and_keeps_its_rows_apart() {
+    plain_variant();
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    assert!(body_of(&fake, 0).get("chat_template_kwargs").is_none(), "absent unless asked for");
+    let out = e.llm(&fake, &["--no-think"]).unwrap();
+    assert_eq!(fake.chats(), 2, "a no-think run does not reuse thinking rows: {out}");
+    let b = body_of(&fake, 1);
+    assert_eq!(b["chat_template_kwargs"], json!({"enable_thinking": false}));
+    let raw = fake.raw.lock().unwrap()[1].clone();
+    assert!(raw.contains("\"chat_template_kwargs\":{\"enable_thinking\":false}"), "exactly this text");
+    assert_eq!(e.rows().len(), 10, "distinct keys");
+    // recorded in the reports
+    let report: Value = serde_json::from_slice(&std::fs::read(e.dir().join("reports/llm-run.json")).unwrap()).unwrap();
+    assert_eq!(report["no_think"], true);
+    let last: Value =
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/llm-run-last.json")).unwrap()).unwrap();
+    assert_eq!(last["no_think"], true);
+    // a warm no-think run asks nothing; the fingerprints differ
+    e.llm(&fake, &["--no-think"]).unwrap();
+    assert_eq!(fake.chats(), 2);
+    let t = Taxonomy::parse(TAXONOMY).unwrap();
+    let v = llm::Variant::Plain;
+    assert_ne!(llm::prompt_fnv_opts(&t, v, true), llm::prompt_fnv_opts(&t, v, false));
+    assert_eq!(llm::prompt_fnv_opts(&t, v, false), llm::prompt_fnv_v(&t, v));
+    let with = llm::chat_body_opts("m", "s", "u", "{}", 1, v, true);
+    assert!(with.ends_with(",\"chat_template_kwargs\":{\"enable_thinking\":false}}"), "{with}");
+    assert!(!llm::chat_body_opts("m", "s", "u", "{}", 1, v, false).contains("chat_template_kwargs"));
+    // the merge needs the flag too, to find those rows; a merged table built either way attaches
+    let (only_think, _) = e.command(&["--merge"]).unwrap();
+    assert!(only_think.contains("5 with an LLM answer") || only_think.contains("with an LLM answer"), "{only_think}");
+    let e2 = Env::new();
+    let fake2 = Fake::start(good());
+    e2.llm(&fake2, &["--no-think"]).unwrap();
+    let stats = |args: &[&str]| -> llm::MergeStats {
+        e2.command(args).unwrap();
+        serde_json::from_slice(&std::fs::read(e2.dir().join("reports/merge.json")).unwrap()).unwrap()
+    };
+    assert_eq!(stats(&["--merge"]).with_answer, 0, "thinking rows are not these rows");
+    assert!(stats(&["--merge", "--no-think"]).with_answer > 0);
+    e2.index().attach_roles(&roles::load(&e2.dir().join("roles.json")).unwrap()).unwrap();
+    assert!(e2.command(&["--rules", "--no-think"]).is_err() && e2.command(&["--validate", "--no-think"]).is_err());
+}
+
+#[test]
+fn routes_legal_only_and_the_dry_run_count() {
+    plain_variant();
+    let e = Env::new();
+    let i = e.index();
+    let rules = roles::generate(&i, "").unwrap();
+    let ids: Vec<&roles::RouteReason> = roles::RouteReason::ALL.iter().collect();
+    // a reason carried by some but not all of the five cards
+    let has = |n: &str, r: &roles::RouteReason| assignment_of(&i, &rules, n).route.contains(r);
+    let (reason, count) = ids
+        .iter()
+        .map(|r| (r, FIVE.iter().filter(|n| has(n, r)).count()))
+        .find(|(_, c)| *c > 0 && *c < 5)
+        .expect("the five cards split on some route reason");
+    let fake = Fake::start(good());
+    let name = format!("{reason:?}");
+    let out = e.llm(&fake, &["--dry-run", "--routes", &name]).unwrap();
+    assert!(out.contains(&format!("{count} candidate cards selected")) && out.contains("1 batches"), "{out}");
+    // several reasons are an any-of; a bad name is a usage error listing the valid ones; --only-routed combines
+    let all: Vec<String> = roles::RouteReason::ALL.iter().map(|r| format!("{r:?}")).collect();
+    let any = e.llm(&fake, &["--dry-run", "--routes", &all.join(",")]).unwrap();
+    assert!(any.contains("candidate cards selected"), "{any}");
+    let err = e.llm(&fake, &["--dry-run", "--routes", "NoRole,Nope"]).unwrap_err();
+    assert!(err.contains("unknown route reason 'Nope'") && err.contains("UnknownLine"), "{err}");
+    assert!(e.command(&["--rules", "--routes", "NoRole"]).is_err());
+    let routed = e.llm(&fake, &["--dry-run", "--only-routed", "--routes", &name]).unwrap();
+    assert!(routed.contains(&format!("{count} candidate cards selected")), "{routed}");
+    let limited = e.llm(&fake, &["--dry-run", "--routes", &name, "--limit", "1"]).unwrap();
+    assert!(limited.contains("1 to classify in 1 batches"), "{limited}");
+    assert_eq!(fake.chats(), 0);
+    // the route filter works for a real run too: only the selected cards are sent
+    e.llm(&fake, &["--routes", &name]).unwrap();
+    let user =
+        body_of(&fake, 0)["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap().to_string();
+    assert!(user.starts_with(&format!("Classify these {count} cards.")), "{user}");
+    // legal cards only by default
+    let path = e.dir().join("oracle.json");
+    let mut doc: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    for c in doc["cards"].as_array_mut().unwrap() {
+        if c["name"] == "Skywhaler's Shot" {
+            c["legalities"]["commander"] = json!("not_legal");
+        }
+    }
+    std::fs::write(&path, doc.to_string()).unwrap();
+    let e_default = e.llm(&fake, &["--dry-run"]).unwrap();
+    assert!(e_default.contains("4 candidate cards selected"), "{e_default}");
+    assert!(e.llm(&fake, &["--dry-run", "--legal-only"]).unwrap().contains("4 candidate cards selected"));
+    assert!(e.llm(&fake, &["--dry-run", "--include-not-legal"]).unwrap().contains("5 candidate cards selected"));
+    assert!(e.llm(&fake, &["--dry-run", "--legal-only", "--include-not-legal"]).is_err());
+}
+
+#[test]
+fn a_killed_run_leaves_a_valid_cache_and_a_stale_lock_and_the_rerun_continues() {
+    plain_variant();
+    let e = Env::new();
+    // the server answers slowly, so the child is mid-run when it is killed
+    let fake = Fake::start(Box::new(|_, body| {
+        std::thread::sleep(std::time::Duration::from_millis(500));
+        Reply::Content(valid(&parse_batch(body)).to_string())
+    }));
+    let ids = e.dir().join("ids.txt");
+    let mut child = std::process::Command::new(env!("CARGO_BIN_EXE_cardgen"))
+        .env_remove("CARDGEN_KNOWLEDGE_DIR")
+        .env("CARDGEN_LLM_VARIANT", "plain")
+        .arg("--root")
+        .arg(&e.0)
+        .args(["roles", "--llm", "--batch", "2", "--endpoint", &fake.url, "--ids"])
+        .arg(&ids)
+        .arg("--data-dir")
+        .arg(e.dir())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .unwrap();
+    let started = std::time::Instant::now();
+    while e.dir().join("llm_roles.jsonl").exists().then(|| e.rows().len()).unwrap_or(0) < 2 {
+        assert!(started.elapsed() < std::time::Duration::from_secs(30), "the first batch never arrived");
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    child.kill().unwrap();
+    let output = child.wait_with_output().unwrap();
+    let progress = String::from_utf8_lossy(&output.stderr).to_string();
+    assert!(progress.contains("batch 1/3: 2 cards, ") && progress.contains(", cache rows 2"), "{progress}");
+    // the cache parses (never half written) and holds whole batches only
+    let done = e.rows().len();
+    assert!(done == 2 || done == 4, "{done}");
+    assert!(e.dir().join("llm_roles.jsonl").exists());
+    let before = fake.chats();
+    // the killed run's lock names a dead process: the rerun takes it over, skips the cached cards and asks for the rest
+    assert!(e.dir().join("llm_roles.lock").exists(), "a killed run leaves its lock");
+    let out = e.llm(&fake, &["--batch", "2"]).unwrap();
+    assert_eq!(e.rows().len(), 5, "{out}");
+    let asked = fake.chats() - before;
+    assert_eq!(asked, (5 - done).div_ceil(2), "only the missing cards are asked: {out}");
+    assert!(out.contains(&format!("{done} cached")), "{out}");
+    assert!(!e.dir().join("llm_roles.lock").exists());
+    e.no_temp_files_beside_cache();
+}
+
+#[test]
+fn a_live_lock_is_waited_for_but_a_dead_owners_lock_is_taken_over() {
+    plain_variant();
+    let e = Env::new();
+    let fake = Fake::start(good());
+    if !std::path::Path::new("/proc/self").exists() || std::path::Path::new("/proc/4194303").exists() {
+        return; // the takeover relies on /proc
+    }
+    std::fs::write(e.dir().join("llm_roles.lock"), "4194303\n").unwrap();
+    e.llm(&fake, &[]).unwrap();
+    assert_eq!(fake.chats(), 1);
+    assert!(!e.dir().join("llm_roles.lock").exists());
 }

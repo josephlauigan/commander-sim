@@ -33,20 +33,20 @@ const INTRO: &str = concat!(
     "numbered Oracle lines (the card's own name is written ~, reminder text is removed). You know nothing else ",
     "about the card and must not guess from its name or from deck context."
 );
-/// Which prompt and schema a run uses. `Plain` answers `{"id","roles"}`; `Think` adds a short `why` sentence BEFORE the
-/// roles, so the model names the lines it considered before it commits to roles. Chosen by `CARDGEN_LLM_VARIANT`
-/// (`plain`, the default, or `think`); the two have different prompt fingerprints, so their cache rows never mix.
+/// Which prompt and schema a run uses. `Think` (the default) adds a short `why` sentence BEFORE the roles, so the model
+/// names the lines it considered before it commits to roles; `Plain` answers `{"id","roles"}`. Chosen by
+/// `CARDGEN_LLM_VARIANT` (`think` or `plain`); the two have different prompt fingerprints, so their cache rows never mix.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Variant {
-    #[default]
     Plain,
+    #[default]
     Think,
 }
 impl Variant {
     pub fn parse(v: &str) -> Result<Variant, String> {
         match v.trim() {
-            "" | "plain" => Ok(Variant::Plain),
-            "think" => Ok(Variant::Think),
+            "" | "think" => Ok(Variant::Think),
+            "plain" => Ok(Variant::Plain),
             other => Err(format!("CARDGEN_LLM_VARIANT must be 'plain' or 'think', not '{other}'")),
         }
     }
@@ -295,7 +295,16 @@ pub fn prompt_fnv(t: &Taxonomy) -> String {
     prompt_fnv_v(t, Variant::current())
 }
 pub fn prompt_fnv_v(t: &Taxonomy, v: Variant) -> String {
-    roles::fingerprint(preface_text_v(t, v).as_bytes())
+    prompt_fnv_opts(t, v, false)
+}
+/// [`prompt_fnv_v`] for a run that sends `enable_thinking: false` (`--no-think`): a marker in the fingerprint keeps
+/// the rows of thinking and non-thinking runs apart.
+pub fn prompt_fnv_opts(t: &Taxonomy, v: Variant, no_think: bool) -> String {
+    let mut text = preface_text_v(t, v);
+    if no_think {
+        text.push_str("\n--- chat_template_kwargs: enable_thinking=false ---\n");
+    }
+    roles::fingerprint(text.as_bytes())
 }
 /// Rough token count used for budgeting: characters / 4.
 pub fn estimate_tokens(s: &str) -> usize {
@@ -638,7 +647,21 @@ pub fn chat_body(model: &str, system: &str, user: &str, schema: &str, n: usize) 
     chat_body_v(model, system, user, schema, n, Variant::current())
 }
 pub fn chat_body_v(model: &str, system: &str, user: &str, schema: &str, n: usize, v: Variant) -> String {
+    chat_body_opts(model, system, user, schema, n, v, false)
+}
+/// [`chat_body_v`] with `chat_template_kwargs: {"enable_thinking": false}` when `no_think` is set (a reasoning model
+/// would otherwise spend its token budget thinking and truncate).
+pub fn chat_body_opts(
+    model: &str,
+    system: &str,
+    user: &str,
+    schema: &str,
+    n: usize,
+    v: Variant,
+    no_think: bool,
+) -> String {
     let (example_user, example_answer) = example_turn_v(v);
+    let kwargs = if no_think { ",\"chat_template_kwargs\":{\"enable_thinking\":false}" } else { "" };
     // a `why` sentence is about 40 tokens more per card
     let per_card = if v == Variant::Think { 210 } else { 160 };
     format!(
@@ -647,7 +670,7 @@ pub fn chat_body_v(model: &str, system: &str, user: &str, schema: &str, n: usize
             "{{\"role\":\"user\",\"content\":{}}},{{\"role\":\"assistant\",\"content\":{}}},",
             "{{\"role\":\"user\",\"content\":{}}}],\"temperature\":0,\"seed\":1,\"cache_prompt\":true,",
             "\"max_tokens\":{},\"response_format\":{{\"type\":\"json_schema\",",
-            "\"json_schema\":{{\"name\":\"role_labels\",\"strict\":true,\"schema\":{}}}}}}}"
+            "\"json_schema\":{{\"name\":\"role_labels\",\"strict\":true,\"schema\":{}}}}}{}}}"
         ),
         quoted(model),
         quoted(system),
@@ -655,7 +678,8 @@ pub fn chat_body_v(model: &str, system: &str, user: &str, schema: &str, n: usize
         quoted(&example_answer),
         quoted(user),
         per_card * n + 64,
-        schema
+        schema,
+        kwargs
     )
 }
 
@@ -823,6 +847,12 @@ pub fn merge(
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RunStats {
     pub model: String,
+    /// the run sent `enable_thinking: false` (`--no-think`)
+    #[serde(default)]
+    pub no_think: bool,
+    /// the prompt variant (`think` or `plain`)
+    #[serde(default)]
+    pub variant: String,
     pub candidates: usize,
     pub cached: usize,
     pub classified: usize,
@@ -878,6 +908,12 @@ pub struct LlmOptions {
     pub endpoint: String,
     pub model: Option<String>,
     pub pending: bool,
+    /// only cards whose rules-stage route contains any of these reasons (empty: no such filter)
+    pub routes: Vec<RouteReason>,
+    /// send `chat_template_kwargs: {"enable_thinking": false}` with every request
+    pub no_think: bool,
+    /// also send cards that are not Commander-legal (default: legal cards only)
+    pub include_not_legal: bool,
 }
 impl Default for LlmOptions {
     fn default() -> Self {
@@ -890,6 +926,9 @@ impl Default for LlmOptions {
             endpoint: DEFAULT_ENDPOINT.into(),
             model: None,
             pending: false,
+            routes: vec![],
+            no_think: false,
+            include_not_legal: false,
         }
     }
 }
@@ -933,6 +972,10 @@ impl Lock {
                     return Ok(Lock(path));
                 }
                 Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
+                    // a run that was killed leaves its lock behind: when the pid inside is gone, take the lock over
+                    if Self::owner_is_gone(&path) && std::fs::remove_file(&path).is_ok() {
+                        continue;
+                    }
                     if std::time::Instant::now() >= deadline {
                         return Err(format!(
                             "{} exists: another `roles --llm` is writing this cache (or a crashed run left the file \
@@ -945,6 +988,14 @@ impl Lock {
                 Err(e) => return Err(format!("{}: {e}", path.display())),
             }
         }
+    }
+}
+impl Lock {
+    /// The process named in the lock file no longer exists (Linux: no `/proc/<pid>`; elsewhere assume it does).
+    fn owner_is_gone(path: &Path) -> bool {
+        let Ok(text) = std::fs::read_to_string(path) else { return false };
+        let Ok(pid) = text.trim().parse::<u32>() else { return false };
+        Path::new("/proc/self").exists() && !Path::new(&format!("/proc/{pid}")).exists()
     }
 }
 impl Drop for Lock {
@@ -983,12 +1034,17 @@ pub fn run(
     };
     let (rules, fixed) = rules()?;
     let variant = Variant::from_env()?;
-    let prompt = prompt_fnv_v(taxonomy, variant);
+    let prompt = prompt_fnv_opts(taxonomy, variant, opts.no_think);
     let system = system_prompt_v(taxonomy, variant);
     let tax_hash = taxonomy.hash();
     let known = load_cache(dir)?;
     let wanted = opts.ids.as_deref().map(|p| read_ids(index, p)).transpose()?;
-    let mut stats = RunStats { model: model.clone(), ..RunStats::default() };
+    let mut stats = RunStats {
+        model: model.clone(),
+        no_think: opts.no_think,
+        variant: variant.name().to_string(),
+        ..RunStats::default()
+    };
     struct Todo<'a> {
         card: &'a Card,
         key: String,
@@ -1002,10 +1058,13 @@ pub fn run(
         .enumerate()
         .filter(|(i, c)| {
             roles::is_deck_card(c)
-                && c.legal == Legal::Legal
+                && (opts.include_not_legal || c.legal == Legal::Legal)
                 && wanted.as_ref().is_none_or(|w| w.contains(&(*i as u32)))
                 && !fixed.contains(&c.raw.oracle_id)
-                && rules.get(&c.raw.oracle_id).is_some_and(|a| !opts.only_routed || a.needs_llm)
+                && rules.get(&c.raw.oracle_id).is_some_and(|a| {
+                    (!opts.only_routed || a.needs_llm)
+                        && (opts.routes.is_empty() || a.route.iter().any(|r| opts.routes.contains(r)))
+                })
         })
         .map(|(_, c)| c)
         .collect();
@@ -1033,8 +1092,10 @@ pub fn run(
     let batches = todo.len().div_ceil(opts.batch);
     if opts.dry_run {
         return Ok(format!(
-            "DRY RUN: model {model}; {} candidate cards, {} cached, {} to classify in {batches} batches of up to {}; \
-             system prompt and example about {} tokens; 0 chat requests made\n",
+            "DRY RUN: model {model} (prompt variant {}{}); {} candidate cards selected, {} cached, {} to classify in \
+             {batches} batches of up to {}; system prompt and example about {} tokens; 0 chat requests made\n",
+            variant.name(),
+            if opts.no_think { ", no thinking" } else { "" },
             stats.candidates,
             stats.cached,
             todo.len(),
@@ -1044,7 +1105,7 @@ pub fn run(
     }
     let target = if opts.pending { pending_path(dir) } else { cache_path(dir) };
     // Nothing is classified until the target can be read and written: the lock file is created beside it.
-    read_rows(&target)?;
+    let mut rows_now = read_rows(&target)?.len();
     let _lock = Lock::acquire(target.with_extension("lock"))?;
     let mut new_rows: BTreeMap<String, Row> = BTreeMap::new();
     let mut failed: Vec<String> = vec![];
@@ -1066,13 +1127,14 @@ pub fn run(
             .collect();
         let checked: Vec<(String, &[(usize, String)])> =
             items.iter().zip(&ids).map(|(t, id)| (id.clone(), t.lines.as_slice())).collect();
-        let body = chat_body_v(
+        let body = chat_body_opts(
             &model,
             &system,
             &user_message_cards(&shown),
             &response_schema_text_v(taxonomy, items.len(), variant),
             items.len(),
             variant,
+            opts.no_think,
         );
         stats.chat_requests += 1;
         let reply = client.chat(&body);
@@ -1085,7 +1147,8 @@ pub fn run(
     };
     let down = || transport.get() >= MAX_TRANSPORT_FAILURES;
 
-    'batches: for chunk in todo.chunks(opts.batch) {
+    'batches: for (batch_no, chunk) in todo.chunks(opts.batch).enumerate() {
+        let batch_started = std::time::Instant::now();
         let items: Vec<&Todo> = chunk.iter().collect();
         let mut results: Vec<Option<Result<LlmCard, String>>> = vec![None; items.len()];
         let mut again: Vec<(usize, String)> = vec![];
@@ -1165,7 +1228,14 @@ pub fn run(
             let mut current = read_rows(&target)?;
             current.extend(new_rows.clone());
             write_atomic(&target, &rows_bytes(&current))?;
+            rows_now = current.len();
         }
+        eprintln!(
+            "batch {}/{batches}: {} cards, {:.1} s, cache rows {rows_now}",
+            batch_no + 1,
+            chunk.len(),
+            batch_started.elapsed().as_secs_f64()
+        );
         empty_batches = if answered == 0 { empty_batches + 1 } else { 0 };
         if aborted.is_none() && empty_batches >= MAX_EMPTY_BATCHES {
             aborted = Some(format!("no valid answer for {MAX_EMPTY_BATCHES} batches in a row (last: {last_why})"));
@@ -1253,8 +1323,9 @@ pub fn merge_table(
     cache: &BTreeMap<String, Row>,
     model: Option<&str>,
     failed: &BTreeSet<String>,
+    no_think: bool,
 ) -> Result<(RoleMap, String, MergeStats), String> {
-    let prompt = prompt_fnv(taxonomy);
+    let prompt = prompt_fnv_opts(taxonomy, Variant::current(), no_think);
     let model = merge_model(cache, &prompt, model)?;
     let keep = |r: &str| taxonomy.keep_rule(r);
     let mut meta: RoleMeta = rules.meta.clone();
@@ -1409,10 +1480,12 @@ pub fn run_merge(
     dir: &Path,
     model: Option<&str>,
     pending: bool,
+    no_think: bool,
 ) -> Result<String, String> {
     let variant = Variant::from_env()?;
     let cache = load_cache_with(dir, pending)?;
-    let (merged, report, stats) = merge_table(index, taxonomy, rules, overrides, &cache, model, &failed_ids(dir))?;
+    let (merged, report, stats) =
+        merge_table(index, taxonomy, rules, overrides, &cache, model, &failed_ids(dir), no_think)?;
     write_atomic(&dir.join("roles.json"), &roles::bytes(&merged)?)?;
     let reports = reports_dir(dir);
     write_atomic(&reports.join("roles-disagreements.txt"), report.as_bytes())?;

@@ -30,7 +30,20 @@ const FIVE: [&str; 5] = [
 ];
 
 fn taxonomy() -> Taxonomy {
+    plain_variant();
     Taxonomy::parse(TAXONOMY).unwrap()
+}
+/// The tests' fake models answer in the `plain` shape: select it (the default is `think`) once for the whole test
+/// process, before any test reads the variable.
+fn plain_variant() {
+    static ONCE: std::sync::Once = std::sync::Once::new();
+    // SAFETY: set once, before any run of this process reads it; every test calls this first
+    ONCE.call_once(|| unsafe { std::env::set_var("CARDGEN_LLM_VARIANT", "plain") });
+}
+/// roles.toml as the scratch environments get it: the repository's, with the frozen `llm_add = false` lines taken out
+/// (the fake models propose roles of every kind; the frozen flags have their own tests).
+fn test_taxonomy() -> String {
+    TAXONOMY.replace("llm_add = false\n", "")
 }
 
 // ------------------------------------------------------------------------------------------------ the fake server
@@ -354,6 +367,7 @@ impl Env {
     }
     /// The fixture catalog plus extra card records, in a throw-away project with the repository's roles.toml.
     fn custom(extra: Vec<Value>) -> Self {
+        plain_variant();
         let root = std::env::temp_dir().join(format!(
             "roles-llm-adv-{}-{}",
             std::process::id(),
@@ -366,7 +380,7 @@ impl Env {
         let n = oracle["cards"].as_array().unwrap().len();
         oracle["meta"]["count"] = json!(n);
         std::fs::write(dir.join("oracle.json"), oracle.to_string()).unwrap();
-        std::fs::write(dir.join("roles.toml"), TAXONOMY).unwrap();
+        std::fs::write(dir.join("roles.toml"), test_taxonomy()).unwrap();
         std::fs::write(dir.join("roles_overrides.toml"), "").unwrap();
         std::fs::write(dir.join("ids.txt"), FIVE.join("\n")).unwrap();
         std::fs::write(
@@ -491,6 +505,7 @@ fn answering(make: fn(&[Item]) -> Wire) -> Srv {
 
 #[test]
 fn http_error_statuses_are_answers_that_fail_the_cards_not_signs_of_a_dead_server() {
+    plain_variant();
     for status in [400u16, 404, 500, 502, 503] {
         let e = Env::new();
         let srv = Srv::start(Box::new(move |_, _| Wire::Json(status, "{\"error\":\"no grammar\"}".into())));
@@ -521,6 +536,7 @@ fn http_error_statuses_are_answers_that_fail_the_cards_not_signs_of_a_dead_serve
 
 #[test]
 fn a_200_with_a_useless_body_is_an_invalid_answer_never_a_transport_failure() {
+    plain_variant();
     let cases: Vec<(&str, fn(&[Item]) -> Wire)> = vec![
         ("html", |_| Wire::Json(200, "<html><body>Bad gateway</body></html>".into())),
         ("empty body", |_| Wire::Json(200, String::new())),
@@ -568,6 +584,7 @@ fn a_200_with_a_useless_body_is_an_invalid_answer_never_a_transport_failure() {
 
 #[test]
 fn harmless_variations_of_a_valid_answer_are_accepted_in_one_request() {
+    plain_variant();
     let cases: Vec<(&str, fn(&[Item]) -> Wire)> = vec![
         ("several choices, the first valid", |i| {
             let c = |k: usize, content: String| {
@@ -615,6 +632,7 @@ fn harmless_variations_of_a_valid_answer_are_accepted_in_one_request() {
 
 #[test]
 fn chunked_slow_and_close_delimited_bodies_are_read_whole() {
+    plain_variant();
     let body = |i: &[Item]| completion(json!(valid5(i).to_string()), json!("stop"));
     let cases: Vec<(&str, fn(&[Item]) -> Wire)> = vec![
         ("chunked", |i| {
@@ -643,6 +661,7 @@ fn chunked_slow_and_close_delimited_bodies_are_read_whole() {
 
 #[test]
 fn a_body_cut_short_a_garbage_reply_and_a_huge_body_are_transport_failures_not_panics_or_hangs() {
+    plain_variant();
     let cases: Vec<(&str, fn(&[Item]) -> Wire)> = vec![
         ("body shorter than Content-Length", |_| Wire::ShortBody("{\"choices\":[{\"mess".into())),
         ("not http at all", |_| Wire::Bytes(b"\x00\x01garbage\r\n\r\n".to_vec())),
@@ -667,6 +686,7 @@ fn models_server(models: ModelsFn) -> Srv {
 }
 #[test]
 fn model_endpoint_variants() {
+    plain_variant();
     // a reply with no usable model id stops the run before any file is touched
     let bad: Vec<(&str, fn() -> Wire, &str)> = vec![
         ("no data", || Wire::Json(200, "{\"data\":[]}".into()), "names no model"),
@@ -703,6 +723,7 @@ fn model_endpoint_variants() {
 
 #[test]
 fn a_model_id_with_quotes_newlines_and_unicode_travels_intact() {
+    plain_variant();
     let weird = "org/we\"ird\\model\n\u{e9}\u{1f600}:q4";
     let e = Env::new();
     let srv = good5_srv();
@@ -724,6 +745,7 @@ fn good5_srv() -> Srv {
 
 #[test]
 fn defect_an_empty_model_id_is_accepted_as_a_model() {
+    plain_variant();
     // `GET /models` answering {"data":[{"id":""}]} must be "names no model": an empty id is also what a merge with
     // an empty cache records, so the two cannot be told apart.
     let e = Env::new();
@@ -734,6 +756,7 @@ fn defect_an_empty_model_id_is_accepted_as_a_model() {
 
 #[test]
 fn endpoint_spellings() {
+    plain_variant();
     // a path prefix, trailing slashes and the models/chat paths that are requested
     let e = Env::new();
     let srv = Srv::build(good5(), None, "/proxy/v1", 0);
@@ -913,6 +936,7 @@ fn five_batch(index: &Index) -> Vec<(String, Vec<(usize, String)>)> {
 
 #[test]
 fn validate_output_judges_every_card_alone_and_accepts_the_clean_one() {
+    plain_variant();
     let e = Env::new();
     let index = e.index();
     let tax = taxonomy();
@@ -963,6 +987,7 @@ fn index_of(owned: &[(String, Vec<(usize, String)>)], id: &str) -> usize {
 
 #[test]
 fn every_invalid_class_goes_through_the_retry_ladder_with_the_exact_request_counts() {
+    plain_variant();
     // The corruption is applied wherever the card appears, so it is bad in the batch and again when asked alone.
     type Mutate = Box<dyn Fn(&mut Value, &BTreeMap<&'static str, String>) + Send + Sync>;
     // (name, mutation, requests when bad every time, failed then, requests when bad only the first time)
@@ -1027,6 +1052,7 @@ fn every_invalid_class_goes_through_the_retry_ladder_with_the_exact_request_coun
 
 #[test]
 fn a_single_card_batch_is_asked_once_because_a_resend_would_be_byte_identical() {
+    plain_variant();
     // `--batch 1` (or a last chunk of one card): a card asked alone is not asked again alone.
     let e = Env::new();
     let srv = Srv::start(Box::new(|_, body| {
@@ -1041,6 +1067,7 @@ fn a_single_card_batch_is_asked_once_because_a_resend_would_be_byte_identical() 
 
 #[test]
 fn guard_regex_hazards_a_backtracking_guard_fails_closed_and_never_hangs_or_panics() {
+    plain_variant();
     // `fancy_regex` reports a backtrack limit as an error; the stage treats an erroring guard as a failed guard.
     let e = Env::new();
     let hazard = "'(?i)^(?=.)(?:a|aa)+b'";
@@ -1061,6 +1088,7 @@ fn guard_regex_hazards_a_backtracking_guard_fails_closed_and_never_hangs_or_pani
 
 #[test]
 fn citing_a_line_that_is_not_shown_is_refused_for_every_skipped_or_missing_line_in_the_fixture() {
+    plain_variant();
     let e = Env::new();
     let index = e.index();
     let tax = taxonomy();
@@ -1097,6 +1125,7 @@ fn citing_a_line_that_is_not_shown_is_refused_for_every_skipped_or_missing_line_
 
 #[test]
 fn a_card_whose_only_line_is_over_long_is_never_sent_and_an_over_long_line_cannot_be_cited() {
+    plain_variant();
     let long = format!("Draw a card. {}", "x".repeat(2100));
     let record = |name: &str, id: &str, text: &str| {
         let mut c: Value = serde_json::from_str(&std::fs::read_to_string(EXTRA_CARDS).unwrap()).unwrap();
@@ -1134,6 +1163,7 @@ fn a_card_whose_only_line_is_over_long_is_never_sent_and_an_over_long_line_canno
 
 #[test]
 fn citing_a_line_of_the_other_face_is_judged_on_its_text_and_the_merge_records_that_face() {
+    plain_variant();
     let e = Env::custom(serde_json::from_str::<Vec<Value>>(&std::fs::read_to_string(EXTRA_CARDS).unwrap()).unwrap());
     let index = e.index();
     let card = card_of(&index, "Adv Dual Face");
@@ -1183,6 +1213,7 @@ fn llm_all(e: &Env, srv: &Srv, extra: &[&str]) -> Result<String, String> {
 
 #[test]
 fn a_damaged_cache_file_is_an_error_naming_the_line_and_no_command_touches_any_file() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -1223,6 +1254,7 @@ fn a_damaged_cache_file_is_an_error_naming_the_line_and_no_command_touches_any_f
 
 #[test]
 fn harmless_cache_file_shapes_are_read_and_rewritten_sorted_without_duplicates() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -1259,6 +1291,7 @@ fn harmless_cache_file_shapes_are_read_and_rewritten_sorted_without_duplicates()
 
 #[test]
 fn of_two_rows_with_one_key_the_later_wins_and_a_pending_row_beats_the_tracked_one() {
+    plain_variant();
     let e = Env::new();
     let (tracked, later) = (
         e.row("Skywhaler's Shot", "m1", &["removal"], &[("removal", 0)]),
@@ -1267,7 +1300,8 @@ fn of_two_rows_with_one_key_the_later_wins_and_a_pending_row_beats_the_tracked_o
     e.write_rows("llm_roles.jsonl", &[tracked.clone(), later.clone()]);
     let map = e.merged();
     let shot = assignment_of(&e.index(), &map, "Skywhaler's Shot");
-    assert_eq!(shot.roles, ["selection"], "the later duplicate wins: {shot:?}");
+    // add-only merge (keep_rule everywhere): the rules' removal stays beside the later row's selection
+    assert_eq!(shot.roles, ["selection", "removal"], "the later duplicate wins: {shot:?}");
     // pending beats tracked on the same key
     e.write_rows("llm_roles.jsonl", &[later]);
     e.write_rows("llm_roles.pending.jsonl", &[tracked]);
@@ -1282,6 +1316,7 @@ fn of_two_rows_with_one_key_the_later_wins_and_a_pending_row_beats_the_tracked_o
 
 #[test]
 fn a_cached_row_for_a_card_whose_text_changed_is_ignored_not_misapplied() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -1312,6 +1347,7 @@ fn a_cached_row_for_a_card_whose_text_changed_is_ignored_not_misapplied() {
 
 #[test]
 fn what_changes_the_cache_key_and_what_does_not() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -1397,6 +1433,7 @@ fn what_changes_the_cache_key_and_what_does_not() {
 
 #[test]
 fn two_catalog_cards_with_one_text_share_one_request_and_one_row() {
+    plain_variant();
     let extra: Vec<Value> = serde_json::from_str(&std::fs::read_to_string(EXTRA_CARDS).unwrap()).unwrap();
     let e = Env::custom(extra);
     std::fs::write(e.dir().join("ids.txt"), "Adv Counter Twin A\nAdv Counter Twin B\n").unwrap();
@@ -1415,6 +1452,7 @@ fn two_catalog_cards_with_one_text_share_one_request_and_one_row() {
 
 #[test]
 fn a_read_only_cache_directory_is_an_error_that_leaves_no_partial_file_behind() {
+    plain_variant();
     use std::os::unix::fs::PermissionsExt;
     if std::fs::metadata("/proc/self").map(|m| std::os::unix::fs::MetadataExt::uid(&m)).unwrap_or(1) == 0 {
         return; // root ignores directory permissions
@@ -1432,6 +1470,7 @@ fn a_read_only_cache_directory_is_an_error_that_leaves_no_partial_file_behind() 
 
 #[test]
 fn a_failing_report_write_after_the_cache_write_leaves_a_complete_cache_and_no_temp_file() {
+    plain_variant();
     let e = Env::new();
     // `reports` is a file, so the report directory cannot be created
     std::fs::write(e.dir().join("reports"), "in the way").unwrap();
@@ -1458,6 +1497,7 @@ fn a_failing_report_write_after_the_cache_write_leaves_a_complete_cache_and_no_t
 
 #[test]
 fn defect_two_concurrent_runs_lose_each_others_rows() {
+    plain_variant();
     // Each run reads the cache file at the start and rewrites the whole file at the end, so the run that finishes
     // last replaces the other's rows with its own. Two runs on disjoint cards must leave all five rows.
     let e = Env::new();
@@ -1493,6 +1533,7 @@ fn defect_two_concurrent_runs_lose_each_others_rows() {
 
 #[test]
 fn defect_a_server_dying_inside_a_batch_throws_away_the_cards_already_answered_in_it() {
+    plain_variant();
     // The batch fails twice (invalid), the cards are then asked one by one: three are answered, then the server dies.
     // Those three answers cost three requests and are valid; they must be on disk.
     let e = Env::new();
@@ -1511,6 +1552,7 @@ fn defect_a_server_dying_inside_a_batch_throws_away_the_cards_already_answered_i
 
 #[test]
 fn defect_one_card_the_server_cannot_answer_at_the_head_of_a_batch_aborts_the_whole_run() {
+    plain_variant();
     // The server errors (HTTP 500) whenever one particular card is in the request, as llama.cpp can for an input it
     // cannot grammar-parse. Two batch failures plus the first per-card failure make three transport failures in a
     // row, so the run stops although four of the five cards are answerable, and every rerun stops at the same place.
@@ -1534,6 +1576,7 @@ fn defect_one_card_the_server_cannot_answer_at_the_head_of_a_batch_aborts_the_wh
 
 #[test]
 fn a_poison_card_later_in_the_batch_costs_four_requests_and_is_llm_failed_without_stopping_the_run() {
+    plain_variant();
     let e = Env::new();
     let index = e.index();
     let mut sorted: Vec<&knowledge::Card> = FIVE.iter().map(|n| card_of(&index, n)).collect();
@@ -1554,6 +1597,7 @@ fn a_poison_card_later_in_the_batch_costs_four_requests_and_is_llm_failed_withou
 
 #[test]
 fn defect_merge_panics_on_a_cached_role_outside_the_vocabulary() {
+    plain_variant();
     // A cache row is trusted at merge time except for its guard check. A hand-edited or damaged row naming a role
     // that is not in the taxonomy reaches `Taxonomy::guard`, which panics ("unknown role"). It must be an error or
     // the role must be dropped.
@@ -1573,6 +1617,7 @@ fn defect_merge_panics_on_a_cached_role_outside_the_vocabulary() {
 
 #[test]
 fn hostile_but_well_formed_cache_rows_never_break_the_merged_table() {
+    plain_variant();
     let e = Env::new();
     let all: Vec<&str> = roles::IDS.to_vec();
     let ev_all: Vec<(&str, usize)> = all.iter().map(|r| (*r, 0)).collect();
@@ -1609,6 +1654,7 @@ fn hostile_but_well_formed_cache_rows_never_break_the_merged_table() {
 
 #[test]
 fn ids_files_blank_lines_comments_crlf_duplicates_and_case() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     let index = e.index();
@@ -1630,6 +1676,7 @@ fn ids_files_blank_lines_comments_crlf_duplicates_and_case() {
 
 #[test]
 fn ids_file_problems_are_errors_before_any_chat_request() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     for (name, text) in [
@@ -1681,6 +1728,7 @@ fn ids_file_problems_are_errors_before_any_chat_request() {
 
 #[test]
 fn excluded_and_override_cards_named_in_the_ids_file_are_silently_not_candidates() {
+    plain_variant();
     let extra: Vec<Value> = serde_json::from_str(&std::fs::read_to_string(EXTRA_CARDS).unwrap()).unwrap();
     let e = Env::custom(extra);
     std::fs::write(
@@ -1707,6 +1755,7 @@ fn excluded_and_override_cards_named_in_the_ids_file_are_silently_not_candidates
 
 #[test]
 fn limit_and_batch_arguments_at_their_edges() {
+    plain_variant();
     let e = Env::new();
     let srv = pseudo_srv(1);
     for bad in ["0", "-1", "abc", "1.5", "", "18446744073709551616", "1e3", " 1"] {
@@ -1759,6 +1808,7 @@ fn limit_and_batch_arguments_at_their_edges() {
 
 #[test]
 fn dry_run_sends_nothing_writes_nothing_and_with_a_model_id_needs_no_server_at_all() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     let before = e.files();
@@ -1782,6 +1832,7 @@ fn dry_run_sends_nothing_writes_nothing_and_with_a_model_id_needs_no_server_at_a
 
 #[test]
 fn defect_the_model_flag_is_silently_ignored_outside_a_dry_run() {
+    plain_variant();
     // `--model ID` is documented for `--llm` and `--merge`. In a real run the id still comes from GET /models, so the
     // flag changes nothing: no error, no effect. It must be honoured (the id in the request and the key) or refused.
     let e = Env::new();
@@ -1799,6 +1850,7 @@ fn defect_the_model_flag_is_silently_ignored_outside_a_dry_run() {
 
 #[test]
 fn defect_merging_with_a_model_id_that_has_no_cached_rows_overwrites_roles_json_with_an_empty_merge() {
+    plain_variant();
     // A typo in `--model` is not noticed: every routed card becomes `llm_failed` and a good merged table is replaced.
     let e = Env::new();
     let srv = Srv::start(good5());
@@ -1812,6 +1864,7 @@ fn defect_merging_with_a_model_id_that_has_no_cached_rows_overwrites_roles_json_
 
 #[test]
 fn conflicting_modes_repeated_flags_and_unknown_flags_are_all_usage_errors_that_change_nothing() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -1868,6 +1921,7 @@ fn conflicting_modes_repeated_flags_and_unknown_flags_are_all_usage_errors_that_
 
 #[test]
 fn a_run_where_most_cards_fail_exits_non_zero_and_says_so_in_the_reports_too() {
+    plain_variant();
     // more than 20% of the cards asked about ending llm_failed is an error exit, so a scheduled job sees a dead model
     let e = Env::new();
     let srv = Srv::start(always(json!({"cards": []})));
@@ -1994,6 +2048,7 @@ fn do_merge(
 
 #[test]
 fn merge_invariants_hold_over_many_random_inputs() {
+    plain_variant();
     let mut rng = Rng(0xC0FFEE);
     let (mut routed_answered, mut overflows, mut vetoes, mut guard_drops, mut omitted) = (0, 0, 0, 0, 0);
     for case in 0..30_000 {
@@ -2161,6 +2216,7 @@ fn merge_invariants_hold_over_many_random_inputs() {
 
 #[test]
 fn merge_survives_hostile_llm_cards_with_core_invariants() {
+    plain_variant();
     // A damaged cache row can hold what validation never lets through. `merge` must not panic and must still emit a
     // table `attach_roles` accepts: at most four unique roles, certain roles kept, primary first, evidence aligned.
     let mut rng = Rng(0xBAD5EED);
@@ -2186,6 +2242,7 @@ fn merge_survives_hostile_llm_cards_with_core_invariants() {
 
 #[test]
 fn merge_edge_cases_by_hand() {
+    plain_variant();
     let rule = |roles: &[(&str, bool)], routed: bool| {
         let evidence: BTreeMap<String, Evidence> =
             roles.iter().map(|(r, c)| (r.to_string(), rule_evidence(*c, 0))).collect();
@@ -2324,6 +2381,7 @@ fn check_merged(
 
 #[test]
 fn the_whole_fixture_catalog_with_pseudo_random_valid_answers_keeps_every_invariant() {
+    plain_variant();
     let tax = taxonomy();
     for salt in [1u64, 2, 3] {
         for only_routed in [false, true] {
@@ -2366,6 +2424,7 @@ fn the_whole_fixture_catalog_with_pseudo_random_valid_answers_keeps_every_invari
 
 #[test]
 fn an_empty_cache_merge_is_the_rule_table_with_llm_failed_on_every_routed_card() {
+    plain_variant();
     let e = Env::new();
     let index = e.index();
     let rules = roles::generate(&index, "").unwrap();
@@ -2384,6 +2443,7 @@ fn an_empty_cache_merge_is_the_rule_table_with_llm_failed_on_every_routed_card()
 
 #[test]
 fn a_routed_card_with_nothing_to_show_the_model_keeps_its_rule_roles() {
+    plain_variant();
     // `merge_table` gives a routed card with no prompt lines an EMPTY answer, which vetoes every non-certain rule
     // role. If the rules found roles on such a card (from something other than a shown line), nothing ever asked
     // the model; the roles must stay. Checked on every fixture card, empty-cache merge, so nothing else interferes.
@@ -2407,6 +2467,7 @@ fn a_routed_card_with_nothing_to_show_the_model_keeps_its_rule_roles() {
 
 #[test]
 fn guards_edited_after_caching_turn_old_rows_into_logged_guard_drops_not_errors() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -2434,6 +2495,7 @@ fn guards_edited_after_caching_turn_old_rows_into_logged_guard_drops_not_errors(
 
 #[test]
 fn defect_merge_and_attach_read_roles_toml_from_different_places() {
+    plain_variant();
     // `roles --llm/--merge` build the prompt and check guards with <project>/data/knowledge/roles.toml, while
     // `Index::load` (staleness hash, the guards `attach_roles` applies to LLM evidence) reads the roles.toml beside
     // oracle.json. With --data-dir (or CARDGEN_KNOWLEDGE_DIR, or a worktree borrowing the main checkout's catalog)
@@ -2465,6 +2527,7 @@ fn defect_merge_and_attach_read_roles_toml_from_different_places() {
 
 #[test]
 fn the_user_message_holds_only_the_batch_cards_text_in_prompt_lines_form() {
+    plain_variant();
     let e = Env::new();
     let index = e.index();
     let twelve: Vec<&str> = FIVE
@@ -2528,6 +2591,7 @@ fn the_user_message_holds_only_the_batch_cards_text_in_prompt_lines_form() {
 
 #[test]
 fn requests_are_byte_deterministic_across_runs_environments_and_batch_boundaries() {
+    plain_variant();
     let twelve: Vec<&str> = FIVE
         .iter()
         .copied()
@@ -2715,6 +2779,7 @@ fn schema_accepts(s: &Value, v: &Value, path: &str) -> Result<(), String> {
 
 #[test]
 fn the_json_schema_is_well_formed_has_no_repeated_keys_and_accepts_exactly_the_shape_of_an_answer() {
+    plain_variant();
     let tax = taxonomy();
     for n in [1usize, 2, 6, 10, 11, 260] {
         let text = llm::response_schema_text(&tax, n);
@@ -2802,6 +2867,7 @@ fn the_json_schema_is_well_formed_has_no_repeated_keys_and_accepts_exactly_the_s
 
 #[test]
 fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
+    plain_variant();
     let tax = taxonomy();
     let system = llm::system_prompt(&tax);
     // the examples are a real user/assistant turn pair, no longer text inside the system prompt
@@ -2858,6 +2924,7 @@ fn the_worked_examples_teach_the_exact_answer_format_and_nothing_else() {
 
 #[test]
 fn the_system_prompt_stays_well_under_the_context_and_the_request_has_room_for_the_answer() {
+    plain_variant();
     let tax = taxonomy();
     let system = llm::system_prompt(&tax);
     let tokens = llm::estimate_tokens(&system);
@@ -2895,6 +2962,7 @@ fn tampered(e: &Env, edit: impl Fn(&mut roles::RoleMap, &Index)) -> Result<(), S
 
 #[test]
 fn the_merged_table_records_its_prompt_model_and_hashes_and_a_hand_edit_is_refused() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -2958,6 +3026,7 @@ fn the_merged_table_records_its_prompt_model_and_hashes_and_a_hand_edit_is_refus
 
 #[test]
 fn llm_evidence_that_lies_is_refused_by_attach_roles_even_with_a_correct_table_hash() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -3055,6 +3124,7 @@ fn llm_evidence_that_lies_is_refused_by_attach_roles_even_with_a_correct_table_h
 
 #[test]
 fn defect_hand_edited_prompt_and_model_in_the_table_metadata_are_not_noticed() {
+    plain_variant();
     // `table_fnv` covers the card table only, and `attach_roles` / `--validate --stage merged` never compare
     // `meta.prompt_fnv` or `meta.model` with anything. Editing the two metadata lines (no hash to repair) turns a
     // rules-only table into a "merged" one, and a merged table built with another prompt is still current.
@@ -3115,6 +3185,7 @@ fn score(v: &Value, key: &str) -> (usize, usize, usize) {
 
 #[test]
 fn validate_stage_merged_arithmetic_on_crafted_gold_files() {
+    plain_variant();
     // gold labels chosen against the fake model's answers (Skywhaler's Shot: removal + selection; Counterspell:
     // counter; Agadeem's: reanimate; Elspeth: tokens + wipe; Ugin's Mastery: none)
     let e = Env::new();
@@ -3180,8 +3251,8 @@ fn validate_stage_merged_arithmetic_on_crafted_gold_files() {
     }));
     let v2 = staged(&e2, &srv2, gold);
     let (rr, rm) = (score(&v2, "routed_rules_micro"), score(&v2, "routed_scored_micro"));
-    // hand-derived: the rules find Skywhaler's Shot's removal; an empty answer vetoes it (one removal missed)
-    assert_eq!((rr, rm), ((1, 0, 0), (0, 0, 1)));
+    // hand-derived: the rules find Skywhaler's Shot's removal; an empty answer vetoes nothing now (add-only merge)
+    assert_eq!((rr, rm), ((1, 0, 0), (1, 0, 0)));
     assert_eq!((routed_rules, routed_merged), ((1, 0, 0), (1, 1, 0)), "the sensible model adds only `selection`");
     assert_eq!(rm.1, 0, "an empty answer adds no false positive");
     assert!(rm.0 <= rr.0, "an empty answer cannot find more than the rules: {rm:?} vs {rr:?}");
@@ -3211,6 +3282,7 @@ fn validate_stage_merged_arithmetic_on_crafted_gold_files() {
 
 #[test]
 fn validate_stage_merged_leaves_override_cards_out_and_never_counts_them() {
+    plain_variant();
     let e = Env::new();
     let srv = Srv::start(good5());
     e.llm(&srv, &[]).unwrap();
@@ -3242,6 +3314,7 @@ const NEEDS_CATALOG: &str = "needs data/knowledge/oracle.json (run cardgen bulk-
 struct RealEnv(PathBuf);
 impl RealEnv {
     fn new() -> Self {
+        plain_variant();
         let real = Path::new(REPO).join("data/knowledge");
         assert!(real.join("oracle.json").exists(), "{NEEDS_CATALOG}");
         let root = std::env::temp_dir().join(format!(
@@ -3293,6 +3366,7 @@ fn real_gold() -> Vec<(String, String, Vec<String>, String)> {
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
 fn real_catalog_pipeline_with_2000_cards_of_pseudo_random_valid_answers_keeps_every_invariant() {
+    plain_variant();
     let started = Instant::now();
     let e = RealEnv::new();
     let tax = taxonomy();
@@ -3438,6 +3512,7 @@ fn real_catalog_pipeline_with_2000_cards_of_pseudo_random_valid_answers_keeps_ev
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
 fn real_catalog_empty_cache_merge_is_the_rule_table_and_no_routed_card_with_roles_is_silently_vetoed() {
+    plain_variant();
     let e = RealEnv::new();
     let index = Index::load(&e.dir().join("oracle.json")).unwrap();
     let ovr_text = roles::read_overrides(&e.dir().join("oracle.json")).unwrap();
@@ -3477,6 +3552,7 @@ fn real_catalog_empty_cache_merge_is_the_rule_table_and_no_routed_card_with_role
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
 fn real_catalog_the_worked_examples_are_the_real_oracle_text_and_the_worst_batch_fits_the_context() {
+    plain_variant();
     let real = Path::new(REPO).join("data/knowledge/oracle.json");
     assert!(real.exists(), "{NEEDS_CATALOG}");
     let index = Index::load(&real).unwrap();
@@ -3514,6 +3590,7 @@ fn real_catalog_the_worked_examples_are_the_real_oracle_text_and_the_worst_batch
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
 fn real_catalog_validation_accepts_a_citation_exactly_when_the_line_is_shown_and_the_guard_matches() {
+    plain_variant();
     let real = Path::new(REPO).join("data/knowledge/oracle.json");
     assert!(real.exists(), "{NEEDS_CATALOG}");
     let index = Index::load(&real).unwrap();

@@ -228,6 +228,24 @@ pub enum RouteReason {
     Overflow,
     RegexError,
 }
+impl RouteReason {
+    pub const ALL: [RouteReason; 7] = [
+        RouteReason::UnknownLine,
+        RouteReason::NoRole,
+        RouteReason::RejectedHit,
+        RouteReason::SameLine,
+        RouteReason::RiskyRole,
+        RouteReason::Overflow,
+        RouteReason::RegexError,
+    ];
+    /// The reason a name (as `Debug` prints it) stands for.
+    pub fn parse(name: &str) -> Result<RouteReason, String> {
+        Self::ALL.into_iter().find(|r| format!("{r:?}") == name).ok_or_else(|| {
+            let valid: Vec<String> = Self::ALL.iter().map(|r| format!("{r:?}")).collect();
+            format!("unknown route reason '{name}'; valid: {}", valid.join(", "))
+        })
+    }
+}
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct RoleMeta {
@@ -2377,6 +2395,10 @@ struct Options {
     pending: bool,
     no_pending: bool,
     stage: Option<String>,
+    routes: Vec<RouteReason>,
+    no_think: bool,
+    include_not_legal: bool,
+    legal_only: bool,
 }
 fn options(args: &[String]) -> Result<Options, String> {
     let mut o = Options::default();
@@ -2414,6 +2436,14 @@ fn options(args: &[String]) -> Result<Options, String> {
             "--dry-run" if !o.dry_run => o.dry_run = true,
             "--pending" if !o.pending => o.pending = true,
             "--no-pending" if !o.no_pending => o.no_pending = true,
+            "--no-think" if !o.no_think => o.no_think = true,
+            "--include-not-legal" if !o.include_not_legal => o.include_not_legal = true,
+            "--legal-only" if !o.legal_only => o.legal_only = true,
+            "--routes" if o.routes.is_empty() => {
+                let v = args.get(i).filter(|s| !s.starts_with("--")).ok_or("--routes needs a list")?;
+                o.routes = v.split(',').map(RouteReason::parse).collect::<Result<_, _>>()?;
+                i += 1;
+            }
             "--limit" | "--batch" | "--ids" | "--endpoint" | "--model" | "--stage" => {
                 let v = args.get(i).filter(|s| !s.starts_with("--")).ok_or_else(|| format!("{a} needs a value"))?;
                 let number = || v.parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("invalid {a} '{v}'"));
@@ -2449,15 +2479,23 @@ fn options(args: &[String]) -> Result<Options, String> {
         || o.batch.is_some()
         || o.dry_run
         || o.endpoint.is_some()
-        || o.pending;
+        || o.pending
+        || !o.routes.is_empty()
+        || o.include_not_legal
+        || o.legal_only;
+    if o.include_not_legal && o.legal_only {
+        return Err("roles: --legal-only (the default) and --include-not-legal exclude each other".into());
+    }
     if llm_flag && o.mode != "--llm"
+        || o.no_think && !["--llm", "--merge"].contains(&o.mode.as_str())
         || o.model.is_some() && !["--llm", "--merge"].contains(&o.mode.as_str())
         || o.no_pending && o.mode != "--merge"
         || o.stage.as_ref().is_some_and(|s| o.mode != "--validate" || !["rules", "merged"].contains(&s.as_str()))
     {
         return Err(concat!(
-            "roles: --llm takes [--limit N] [--ids FILE] [--only-routed] [--batch N] [--dry-run] [--endpoint URL] ",
-            "[--model ID] [--pending]; --merge takes [--model ID] [--no-pending]; --validate takes [--stage rules|merged]"
+            "roles: --llm takes [--limit N] [--ids FILE] [--only-routed] [--routes A,B] [--legal-only | --include-not-legal] ",
+            "[--batch N] [--dry-run] [--endpoint URL] [--model ID] [--pending] [--no-think]; --merge takes ",
+            "[--model ID] [--no-pending] [--no-think]; --validate takes [--stage rules|merged]"
         )
         .into());
     }
@@ -2714,6 +2752,9 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
             endpoint: o.endpoint.unwrap_or_else(|| crate::llm::DEFAULT_ENDPOINT.into()),
             model: o.model,
             pending: o.pending,
+            routes: o.routes,
+            no_think: o.no_think,
+            include_not_legal: o.include_not_legal,
         };
         // The rules are generated only after the server has answered, so an unreachable one fails at once.
         let rules = || {
@@ -2727,8 +2768,17 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         let mut rules = generate(&index, "")?;
         rules.meta.rules_fnv = rules_hash(text.as_bytes());
         let ovr = overrides(&index, &text)?;
-        return crate::llm::run_merge(&index, &taxonomy, &rules, &ovr, &dir, o.model.as_deref(), !o.no_pending)
-            .map(|text| (text, true));
+        return crate::llm::run_merge(
+            &index,
+            &taxonomy,
+            &rules,
+            &ovr,
+            &dir,
+            o.model.as_deref(),
+            !o.no_pending,
+            o.no_think,
+        )
+        .map(|text| (text, true));
     }
     let map = load(&path)?;
     index.attach_roles(&map)?;

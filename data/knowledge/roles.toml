@@ -1,7 +1,12 @@
 # Role taxonomy v1. The LLM prompt is built from `shared`, each role's `definition` and `clauses`, and the cross-role `clause`s;
 # nothing in a definition names a card (the model has no internet). Guards apply to the cited Oracle line.
-# `keep_rule = true` keeps a rule-found, non-certain role of that kind on a routed card the LLM omitted (default false); JD's
-# split (2026-11-21): true for the 16 roles the rules own, false for the 10 judgement roles the LLM may veto.
+# FROZEN CONFIGURATION (2026-11-22, from the pilot data). Add-only merge: `keep_rule = true` for ALL 26 roles, so the LLM
+# never removes a rule role (a rule-found, non-certain role is kept on a routed card the LLM omitted); the LLM may only
+# ADD roles, and not for the 8 roles whose LLM-alone score was too weak: `llm_add = false` for ramp, fixing, draw,
+# selection, sac-outlet, finisher, evasion, blink. Why: vetoes hurt. LLM alone on the routed gold cards scored
+# P 0.92 / R 0.78-0.80 for the roles left on, but on the blind set merged versus rules only was 26 versus 27 errors
+# (+4 true, +3 false, -4 missed), so letting the LLM veto roles does not pay. This supersedes JD's 16/10 keep split of
+# 2026-11-21 (per-role keep_rule = false is still supported by the merge, just not set).
 version = 1
 shared = """Label a card with a role only for a MAIN or REPEATABLE effect: what the card is for. An incidental rider, a cost, a drawback or a keyword that affects only the card itself gives no role, with three exceptions: any Creature, Treasure or Clue token the card makes is `tokens` even as a rider; printed lifelink is `lifegain`, listed last; and an alternate mode that is a real function of the card counts although it is used once (channel, landcycling, the spell face of a two-faced card). Zero roles is allowed. Give at most four roles, most prominent first. Judge the Oracle text alone, never combo, commander or deck context. A land gets roles only beyond tapping for one mana. A card whose type line reads 'A // B' is judged as one card; the land back of a modal double-faced card has been removed. A creature that 'becomes prepared' or 'enters prepared' can cast a copy of its second face's spell: give it the roles of that spell and of its own abilities. Planeswalker ultimates have been removed."""
 
@@ -84,6 +89,7 @@ guard = """\
 (?i)add|less to (?:cast|activate)|cost.*less|pay .*life rather than|search .*library|additional land|\
 untap.*lands?|land creature token|affinity|return.*land cards?.*battlefield|treasure"""
 keep_rule = true
+llm_add = false
 
 [[role]]
 id = "fixing"
@@ -96,6 +102,7 @@ no = "a source of ONE colour; one mana of a chosen colour (`ramp`); a search for
 src = "rules"
 guard = '(?i)add|mana of any|search .*library|landcycling|enchanted land is'
 keep_rule = true
+llm_add = false
 
 [[role]]
 id = "draw"
@@ -109,6 +116,7 @@ guard = """\
 (?i)draw|monarch|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
 junk token|may (?:play|cast) (?:it|that card|those cards|one of those cards)"""
 keep_rule = true
+llm_add = false
 
 [[role]]
 id = "selection"
@@ -119,7 +127,8 @@ clauses = [
 no = "scry 1 or surveil 1; looking at the top card without moving it; an effect that draws more than it discards (`draw`); fetching a card from the library (`tutor`)."
 src = "rules"
 guard = '(?i)scry|surveil|draw.*discard|discard.*draw|look at|reveal.*top|from among.*hand|connive|recruit|learn|blood token'
-keep_rule = false
+keep_rule = true
+llm_add = false
 
 [[role]]
 id = "tutor"
@@ -146,7 +155,7 @@ guard = """\
 (?i)destroy|exile|return|damage|-[0-9x]+/-|fight|sacrifice|control of|control enchanted (?:creature|\
 permanent)|annihilator|put (?:up to [a-z]+ )?target.*library|shuffles.*library|at the beginning.*tap|enchanted.*(?:tap|untap|\
 attack|loses)|it gets -|target permanent.*untap|tap.*target.*(?:creature|permanent|land|artifact|enchantment)"""
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "wipe"
@@ -173,7 +182,7 @@ clauses = []
 no = "keywords printed on the card that affect only itself (hexproof, ward, indestructible, protection from, flying...); 'can't be countered'; an attack tax (`stax`); tapping a creature."
 src = "rules+llm"
 guard = '(?i)hexproof|shroud|indestructible|protection|phase|prevent.*damage|regenerate|ward|umbra armor'
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "stax"
@@ -187,7 +196,7 @@ src = "llm"
 guard = """\
 (?i)can't|cannot|cost|unless.*pay|only.*(?:spell|turn)|loses all abilities|enter tapped|don't untap|\
 lands are Mountains|shuffle their library|instead.*sacrifices.*land"""
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "discard"
@@ -207,7 +216,7 @@ clauses = [
 no = "exiling your own card to pay a cost (an additional cost, escape); your own flashback exiling the card; putting cards into a graveyard."
 src = "rules"
 guard = '(?i)graveyard'
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "recursion"
@@ -219,7 +228,7 @@ clauses = [
 no = "a card's own flashback, escape or unearth; returning creature cards only to the battlefield (`reanimate` only); returning a card from exile (`blink`); putting cards into the graveyard."
 src = "rules"
 guard = '(?i)graveyard|flashback|soulshift'
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "reanimate"
@@ -275,6 +284,7 @@ no = "sacrificing the card itself ('Sacrifice this: ...', 'when this attacks, sa
 src = "rules"
 guard = '(?i)sacrifice.*:'
 keep_rule = true
+llm_add = false
 
 [[role]]
 id = "drain"
@@ -285,7 +295,7 @@ clauses = [
 no = "one-shot burn or damage to one player on a spell; damage that can hit a creature or any target (`removal`); life you pay or lose yourself; combat-damage triggers."
 src = "rules+llm"
 guard = '(?i)loses? .*life|damage'
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "lifegain"
@@ -319,6 +329,7 @@ no = "ordinary graveyard returns (`recursion`, `reanimate`); exiling an opponent
 src = "rules"
 guard = '(?i)exile.*(?:return|put both cards onto the battlefield)'
 keep_rule = true
+llm_add = false
 
 [[role]]
 id = "copy"
@@ -329,7 +340,7 @@ clauses = [
 no = "being prepared (casting a copy of its own spell face); a card that only copies itself."
 src = "rules+llm"
 guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'
-keep_rule = false
+keep_rule = true
 
 [[role]]
 id = "extra-phase"
@@ -349,7 +360,8 @@ clauses = []
 no = "a large body; a damage doubler; a tutor; one half of a combo; a keyword such as infect or trample on a small creature."
 src = "llm"
 guard = '(?i)win the game|loses the game|infect|double|damage|\+[x0-9]+/\+[x0-9]+|untap|mana|combat'
-keep_rule = false
+keep_rule = true
+llm_add = false
 
 [[role]]
 id = "evasion"
@@ -360,4 +372,5 @@ clauses = [
 no = "flying, menace, shadow, landwalk, trample or 'can't be blocked' printed on the card itself; trample alone."
 src = "rules+llm"
 guard = '''(?i)flying|menace|fear|shadow|horsemanship|can't be blocked|double strike|intimidate'''
-keep_rule = false
+keep_rule = true
+llm_add = false
