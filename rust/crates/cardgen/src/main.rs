@@ -71,6 +71,12 @@ const USAGE: &str = "usage:
                                                 any position, --view roleless|new through the complete lists;
                                                 --budget-tokens defaults to 42000 (estimated as bytes/4);
                                                 --stdout also prints the text
+  cardgen ownership --check [--file PATH] [--data-dir DIR] [--json] [--strict]
+                                                validate data/ownership.toml (JD's record of which cards of his
+                                                decks he has, plays as a proxy or is missing) against the deck
+                                                lists of data/decks.json and the catalog; prints every problem
+                                                with its deck and card, exits 1 on any ERROR; without an
+                                                oracle.json names are compared by spelling (--strict: an error)
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -134,6 +140,14 @@ fn run(args: &[String]) -> Result<(), String> {
         "map" => map(&project, &args),
         "digest" => digest(&project, &args),
         "weekly-report" => weekly_report(&project, &args),
+        "ownership" => {
+            let (out, ok) = cardgen::ownership::command(&project, &args)?;
+            print_text(&out)?;
+            if !ok {
+                std::process::exit(1);
+            }
+            Ok(())
+        }
         "roles" => {
             let (out, passed) = cardgen::roles::command(&project, &args)?;
             print!("{out}");

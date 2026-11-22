@@ -18,6 +18,7 @@ pub mod json;
 pub mod knowledge;
 pub mod llm;
 pub mod map;
+pub mod ownership;
 pub mod paths;
 pub mod py;
 pub mod re;
