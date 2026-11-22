@@ -147,6 +147,18 @@
 #      is still `removal`.
 #  C13 (draw). The monarch draws a card every end step: becoming the monarch repeatably is `draw`.
 #
+# Clauses C14-C18 (2026-11-21, JD-approved after the round-5 delta review):
+#  C14 (wipe). Damage to EACH creature, or each creature of one group (fliers only, attackers only, tapped creatures), is `wipe` even
+#      for 1 damage: it sweeps the group. A single targeted damage effect is `removal`.
+#  C15 (draw). A self-sacrifice or aura/equipment cantrip draw ('Sacrifice this: draw a card', 'when enchanted creature dies, draw a
+#      card') replaces itself and is NOT `draw` (conventions 3 and C10); a multi-use permanent or one that draws 2+ cards still is.
+#  C16 (ramp / fixing). A permanent that adds one mana of a chosen colour (Throne of Eldraine style) is `ramp`, not `fixing`: it
+#      produces one colour. `fixing` needs two or more colours or any colour (C7 filters included).
+#  C17 (selection). Scroll Rack style 'exile any number of cards from your hand face down, then draw that many cards' is `selection`
+#      (a hand filter that nets no cards), not `draw`.
+#  C18 (fixing). A Treasure maker is never `fixing` (it stays `tokens` and, when repeatable or multi, `ramp` under C6); its Treasure
+#      tokens' any-colour mana does not count for the maker's own `produced_mana`.
+#
 [[card]]
 name = "Absorbing Man and Titania"
 oracle_id = "a1afb796-1b0b-4f41-9c8f-5320c9af5989"
@@ -1815,11 +1827,11 @@ note = "'You choose a nonland card from it. That player discards that card.'"
 [[card]]
 name = "Thundermaw Hellkite"
 oracle_id = "e958144e-01bc-46ff-8f56-ddf2eb098630"
-roles = []
-primary = ""
+roles = ["wipe"]
+primary = "wipe"
 source = "deck"
-not_roles = ["wipe", "removal", "evasion"]
-note = "'deals 1 damage to each creature with flying your opponents control. Tap those creatures' is an incidental enter trigger, not a board wipe; flying and haste are printed keywords."
+not_roles = ["removal", "evasion"]
+note = "'deals 1 damage to each creature with flying your opponents control. Tap those creatures' is a partial sweeper: a mass damage effect on each creature of a group is `wipe` even for 1 damage or one subset (clause C14, JD-approved 2026-11-21; it was [] before that ruling). Flying and haste are printed keywords (no role)."
 
 [[card]]
 name = "Time Warp"
