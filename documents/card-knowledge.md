@@ -406,6 +406,107 @@ finds rows in the cache but none under the current prompt is an error (`--model 
 - Installing the weekly job (JD, by hand, after the knowledge branches are merged into main).
 - The phase status table rows below: the LLM stage is run, with additions off.
 
+## Packages and slots
+
+(JD, 2026-11-22.) The rule is in `CLAUDE.md` and `AGENTS.md` ("Recommend packages, not loose cards"). This section is
+the long form. It adds to the approval, swap-check, tier, explain and FINDINGS rules and overrides none of them. Only
+what exists today is described as existing; planned tools are marked.
+
+### What a package is
+
+A package is a sub-strategy that goes into a deck as a unit and costs the same number of cards: an engine with its
+payoffs, enablers and tutors; a combo with its protection; an answer suite; a mana-base change. In the sim a package is
+a named set of `Out=>In` pairs run together (`commander-sim --deck K --pool all --swap "A=>B" --swap "C=>D"`,
+`documents/testing-decks.md` section 3). Package runs are recorded in `audit/jd-packages/` (`2026-10-13/README.md`;
+`2026-11-06-card-pile/PACKAGES.md` and `packages.tsv`). Every package, run or not, is in the deck's
+`audit/<deck>/FINDINGS.md` and `decklists/CHANGELOG.md`. Past packages come in three kinds:
+
+- **Sub-strategy for sub-strategy**: Doomsday (Y'shtola), the Coffers drain (Sheoldred), Equipment (Yoshimaru)
+  (adopted on JD's choice, not simulated).
+- **Spare-pile slotting**: the card-pile packages of 2026-11-06, with the cuts chosen by ownership.
+- **Evidence-driven answer packages**: A1 (Aragorn, now retired: `audit/retired/aragorn/FINDINGS.md`), chosen from a
+  loss analysis; the only card-pile package with a clear gain (t4 +4.3, t5 +2.4).
+
+### Where an agent starts
+
+Before naming a card, read the deck's plan: the deck's guide (`decklists/JD/<deck>-*.md`; Thanos:
+`decklists/cali_commander/thanos-artifact-combo.md`), `data/plans/<deck>.toml` (engine plan
+config), `audit/<deck>/FINDINGS.md` (what was tested and why it helped or not), `decklists/CHANGELOG.md` and
+`audit/jd-packages/`. Write down the strategy in a paragraph and the deck's packages (name, job, members, support).
+FINDINGS can name cards that have since left a list: check `data/decks.json`.
+
+### The answer shape
+
+1. Strategy and the packages it runs.
+2. The proposed package: goal, cards in (job, source), cards out (job lost, why chosen), the `Out=>In` pairs, each
+   labelled slot or package.
+3. The footprint: roles, curve, lands, colour sources, Game Changers and the deck's invariants, before and after.
+4. The evidence plan: all pairs run together, the deck's own tiers, explain on, in the plan JD approves.
+5. Risks, and what needs JD: every below-Full card in one list, cards with no engine record, limits.
+
+### Slot rule
+
+A single swap is allowed on its own only when both cards sit in the same slot. Slot rule v2 (JD, 2026-11-22):
+
+- **Lands match lands only**, judged by colour sources: state the deck's sources of each colour before
+  and after (a floor comes with the planned census).
+- **Nonlands need role-family overlap.** Families: mana = ramp + fixing; answer = removal + wipe + counter; cards = draw +
+  selection; find = tutor; graveyard = recursion + reanimate; drain = drain + lifegain; every other role is its own
+  family.
+- **Mana value in is at most mana value out plus one** (cheaper is always fine).
+- **Type is shown, not gating.**
+- **No deck invariant may move.** Invariants are counts the plan relies on (trigger spells, Zur targets, a Game Changer
+  cap). Until the planned `[invariants]` table in `data/plans/<deck>.toml` exists (the census reads it),
+  take them from the deck's guide and plan file.
+
+Scored by a one-off script on the 14 pairs the records call same-slot or a true upgrade (labels not yet confirmed by
+JD), v1 (same primary role, same type, mana value within one)
+passed 5 and v2 passed 12. A pair that fails the rule is proposed inside a package, or as a plan change, with what the
+deck loses stated. The rule is a heuristic over coarse, rules-only roles; calibration against all 96 past pairs is
+pending and may change it. Examples from the records: Diabolic Tutor => Diabolic Intent is a slot swap (same family,
+cheaper). Grand Abolisher => Windborn Muse fails (mana value +2) and went in inside package A1. Three Visits => Spark
+Double is cross-slot, declared inside A2 as one ramp card fewer.
+
+### Ownership
+
+Standing rule (JD, 2026-11-06): take cards from proxies or cards not owned first; take an owned card only for a true
+upgrade. The record will be `data/ownership.toml` (tracked; planned, not in the repo yet), a full inventory in this format:
+
+- Each deck in `data/my_decks.toml` lists every card of its current list, commanders included, in exactly one of
+  `have`, `proxy`, `missing`. Basic lands are not listed; a basic land cut is judged by the land rule, not ownership.
+  `proxy` is a proxy standing in for the card; `missing` is JD's "Don't Have" (not owned, no proxy). Both count as not owned.
+- `[spare]` lists owned copies that are in no deck (a second copy of a card a deck plays goes here). There is no other
+  category.
+- An entry is a name or `{ card = "Name", copies = N }`; `copies` defaults to 1.
+- A deck has `confirmed = "<date>"` once JD has checked it. An unconfirmed deck is unknown: ask JD which cards are
+  proxies or not owned.
+- Cut order: `missing` or `proxy` first, then `have` (only for a true upgrade). Incoming cards: `spare`, then another
+  deck (`d:` in the digest), then buy. A card taken from another of JD's decks is a cut in that deck: name it there,
+  with its replacement, in the same proposal. After a package is adopted, propose the file edit as a diff.
+- Checks (planned: `cardgen ownership --check`): each deck's three lists equal its list in `data/decks.json`, every name
+  resolves in the catalog, no card has two statuses in a deck, a `spare` card that a deck also lists is shown for JD to confirm
+  (a second copy), not an error, and a `have` card in two decks is a warning until JD records the confirmed copies
+  (how is defined with the tool).
+
+The file is JD's record. Anything seeded from past records is not true until JD confirms the deck.
+
+### Planned tools
+
+In this order, each built on its own branch and reviewed: `cardgen ownership --check`; `cardgen census --deck KEY
+[--swap "A=>B" ...]` (the `[invariants]` table in each `data/plans/<deck>.toml` comes with it; role-family and type counts, curve, lands and rocks, colour sources and pips, Game Changers,
+invariants, model status; before, after and delta for a package); `find --like CARD [--deck KEY]` (same role family,
+mana-value ceiling, inside the identity, legal, not in the deck, by EDHREC rank); a Commander Spellbook near-miss view
+for combo packages; exact-type tags (equipment, aura, saga, vehicle, treasure, food, clue, blood). Mechanic "matters"
+and "needs" tags and an automatic package proposer are built only if JD asks after using these. Until then the agent
+works with `find --role`, `--text`, `--status`, the digest sections and the records above.
+
+### Limits of the package rule
+
+- Roles are rules-only: a primary-role error or a missing role (Growth Spiral has none) carries into any slot judgement.
+- A package is subjective. The rule defines it operationally (a stated goal and a set of paired swaps the sim can run).
+- Only instructions enforce the discipline; the answer shape makes a violation visible to JD.
+- Reading the plan costs context: the deck guide and FINDINGS, plus a digest of about 40k tokens.
+
 ## Limits
 
 - Role tags will miss or mislabel some cards. The recall and precision numbers are reported, not assumed.
