@@ -143,6 +143,37 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
   `oracle.json` and the weekly report; JD decides when phase 6 is planned. Two concurrent `bulk-sync` runs can still
   pair one run's oracle with the other's lock; it heals on the next run, and phase 6 adds a lock around the job.
 
+## Roles: the rule stage (phase 3)
+
+`cardgen roles --rules` gives every deck card (35,014 of the catalog; Stickers and Attractions are skipped) its roles
+from deterministic rules over its Oracle lines, with the evidence line for each and a `needs_llm` flag with route reasons
+(`NoRole`, `UnknownLine`, `RejectedHit`, `RiskyRole`, `SameLine`, `Overflow`, `RegexError`). Every role the rules are
+less than sure of, and every roleless card with a substantive line, routes to the LLM stage; a card the rules decide
+alone keeps its rule roles. `roles --validate`, `--lint`, `--audit`, `--show` and `--stats` measure and inspect it, and
+`find --role R` filters by role. The written standard is the header of `data/knowledge/roles_gold.toml`: the 26 role
+definitions, 21 conventions and clauses C1-C13, every one ruled on by JD.
+
+How it was measured, honestly:
+
+| Set | Cards | Used for | Result (rules stage) |
+|---|---|---|---|
+| `roles_gold.toml` | 207 | tuning | 248 of 248 role assignments right: memorised, says nothing about generalisation |
+| `roles_gold_regression.toml` | 113 | first a hidden acceptance set, scored four times and its failures fed back, so now regression only | precision 0.979, recall 0.960 |
+| independent audits | 200 + 200 random cards, two unseen seed pairs | an estimate by a second labeller | cards the rules decide alone: precision 0.955 and 0.967, recall 0.955 and 0.983 when only clear errors count; precision 0.82 to 0.83 when debatable calls count against the rules |
+| blind set 3 | 120, hidden | scored once, rules-only against rules plus LLM | not yet scored |
+
+The first held-out half scored precision 0.851 and recall 0.841 against 0.989 and 1.000 on the tuning cards it had
+been tuned on: that is the overfitting this process exists to catch.
+
+Named limits of the rule stage (each is covered by a check or a later phase, none is accepted silently):
+- The rules decide about 27% of legal cards alone. Routing is 73% of legal cards (23,773), because the rules are
+  deliberately conservative: a routed card is re-checked and a confident wrong rule is not. The first LLM run is
+  therefore about 4 to 5 hours of GPU time, paid again only when the prompt changes.
+- A card with a real role plus a second function the rules never read can still be decided by the rules alone (2 of 52
+  in one audit). The shadow audit in phase 3L re-checks a seeded sample of rules-decided cards for exactly this.
+- Only 4 of 246 gold assignments are `certain`, so the LLM stage may veto most rule roles on routed cards.
+- Roles are about what a card does, not whether it is good in a deck. The sim and JD decide that.
+
 ## Limits
 
 - Role tags will miss or mislabel some cards. The recall and precision numbers are reported, not assumed.
@@ -159,7 +190,8 @@ Found while building and reviewing phase 1, on the 2026-11-21 bulk file (39,356 
 | Approach doc | `knowledge-base` | written |
 | 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
 | 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
-| 3 Roles (rules + local LLM) | `knowledge-roles` | not started |
+| 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
+| 3L Roles, local LLM stage | `knowledge-llm` | not started |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
 | 4 Status, decks and findings join | `knowledge-status` | not started |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | not started |
