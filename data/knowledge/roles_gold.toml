@@ -159,6 +159,18 @@
 #  C18 (fixing). A Treasure maker is never `fixing` (it stays `tokens` and, when repeatable or multi, `ramp` under C6); its Treasure
 #      tokens' any-colour mana does not count for the maker's own `produced_mana`.
 #
+# Clause C19 (2026-11-21, JD-approved after the 3L design review):
+#  C19 (draw). A creature (or other permanent) that draws one fixed card when it enters or dies ('When this creature enters, draw a
+#      card') replaces itself like a cantrip and is NOT `draw` (conventions 3 and C10, C15). A variable count ('draw a card for each
+#      ...'), two or more cards, a repeatable draw and an uncapped dig still are.
+#  Finisher definition (JD-approved 2026-11-21): 'wins or ends the game: an alternate win or lose-the-game effect, a team pump or extra
+#      damage meant to kill from a normal board, or a bomb that ends the game if left untouched (an infect giant). A large body, a
+#      damage doubler, a tutor or one half of a combo is not a finisher by itself.'
+#  LLM veto split (JD-approved 2026-11-21): rule roles are KEPT on cards the LLM re-checks for the 16 roles the rules own (ramp, fixing,
+#      draw, tutor, wipe, counter, discard, reanimate, self-mill, tokens, anthem, sac-outlet, lifegain, counters, blink, extra-phase);
+#      the LLM may veto the 10 judgement roles (selection, recursion, gy-hate, finisher, stax, drain, copy, evasion, protection,
+#      removal). Frozen after the pilot comparison, before the blind score.
+#
 [[card]]
 name = "Absorbing Man and Titania"
 oracle_id = "a1afb796-1b0b-4f41-9c8f-5320c9af5989"
