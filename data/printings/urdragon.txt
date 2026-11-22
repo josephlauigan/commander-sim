@@ -1,0 +1,100 @@
+1 Ancient Copper Dragon (fca) 12
+1 Ancient Tomb (plst) TMP-315
+1 Arcane Signet (fdc) 245
+1 Arid Mesa (mh2) 436
+1 Austere Command (brc) 69
+1 Badlands (3ed) 282
+1 Bayou (3ed) 283
+1 Birds of Paradise (blc) 81
+1 Blood Crypt (rvr) 292
+1 Cavern of Souls (lci) 269
+1 Chaos Warp (fic) 291
+1 City of Brass (2x2) 403
+1 Command Tower (plst) MIC-170
+1 Crux of Fate (fic) 275
+1 Cursed Mirror (mh3) 279
+1 Cyclonic Rift (rvr) 313
+1 Decimate (sld) 140
+1 Delighted Halfling (pltr) 402s
+1 Demonic Tutor (cmm) 150
+1 Doubling Season (fdn) 428
+1 Dragon Tempest (fdc) 150
+1 Dragonlord Dromoka (2x2) 376
+1 Dragonlord Ojutai (slc) 2015
+1 Dragonlord Silumgar (2x2) 203
+1 Elvish Mystic (hoc) 205
+1 Exotic Orchard (brc) 185
+1 Fact or Fiction (cmm) 631
+1 Fierce Guardianship (cmm) 694
+1 Flooded Strand (mh3) 353
+1 Forest (mdd) 301
+1 Ganax, Astral Hunter (clb) 176
+1 Garth One-Eye (mh2) 420
+1 Glorybringer (tdc) 215
+1 Goldspan Dragon (soc) 245
+1 Hellkite Tyrant (fic) 295
+1 Klauth, Unrivaled Ancient (sld) 2499
+1 Korvold, Fae-Cursed King (sld) 2761
+1 Kura, the Boundless Sky (neo) 200
+1 Lathliss, Dragon Queen (fdc) 7
+1 Lightning Bolt (sld) 86
+1 Llanowar Elves (fdn) 227
+1 Maelstrom of the Spirit Dragon (tdm) 326
+1 Mana Vault (3ed) 263
+1 Marsh Flats (mh2) 437
+1 Miirym, Sentinel Wyrm (sld) 2500
+1 Morophon, the Boundless (m3c) 157
+1 Mox Jasper (tdm) 325
+1 Nature's Lore (fic) 311
+1 Nicol Bolas, the Ravager (sld) 1158
+1 Niv-Mizzet, the Firemind (p30a) 14
+1 Old Gnawbone (afr) 197
+1 Overgrown Tomb (trk) 289
+1 Path of Ancestry (p30a) 25
+1 Path to Exile (blc) 147
+1 Plateau (3ed) 284
+1 Polluted Delta (mh3) 356
+1 Relic of Sauron (hoc) 46
+1 Rhystic Study (j22) 114
+1 Rhythm of the Wild (pza) 12
+1 Rivaz of the Claw (dmu) 215
+1 Sacred Foundry (unf) 285
+1 Savannah (3ed) 285
+1 Scalding Tarn (mh2) 439
+1 Scion of Draco (mh2) 323
+1 Scion of the Ur-Dragon (sld) 1531
+1 Scourge of Valkas (sld) 1490
+1 Scrubland (3ed) 286
+1 Shivan Dragon (slc) 1993
+1 Smaug the Impenetrable (hoc) 9
+1 Smaug the Magnificent (hob) 110
+1 Sokenzan, Crucible of Defiance (prm) 98131
+1 Sol Ring (sld) 2683
+1 Spark Double (rvr) 421
+1 Steam Vents (trk) 298
+1 Steel Hellkite (pl24) 4
+1 Stomping Ground (clu) 281
+1 Sulfurous Springs (prm) 103478
+1 Summon: Bahamut (fin) 356
+1 Swamp (mdd) 296
+1 Swords to Plowshares (cst) 54
+1 Taiga (3ed) 287
+1 Teferi's Protection (sta) 74
+1 Terror of the Peaks (pspl) 1
+1 The One Ring (hoc) 44
+1 The Ur-Dragon (sld) 11
+1 Three Visits (msc) 181
+1 Thundermaw Hellkite (scd) 164
+1 Tiamat (afr) 298
+1 Triple Triad (fin) 340
+1 Tropical Island (3ed) 288
+1 Tundra (3ed) 289
+1 Twinflame (soc) 258
+1 Underground Sea (3ed) 290
+1 Utvara Hellkite (rvr) 431
+1 Vampiric Tutor (dmr) 108
+1 Volcanic Island (3ed) 291
+1 Windswept Heath (mh3) 360
+1 Wooded Foothills (mh3) 361
+1 Worldly Tutor (dmr) 442
+1 Young Pyromancer (2x2) 364
