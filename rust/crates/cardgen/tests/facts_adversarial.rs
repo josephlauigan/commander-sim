@@ -413,6 +413,14 @@ fn defect_missing_or_malformed_cards_json_is_ignored() {
         let rows: Vec<Value> = serde_json::from_str(&out.out).unwrap();
         assert!(rows[0].get("status").is_none() && rows[0].get("status_note").is_none(), "{what}: {}", rows[0]);
         assert!(rows[0]["decks"].is_array() && rows[0]["findings"].is_array(), "{what}");
+        assert_eq!(rows[0]["engine"], "unavailable", "{what}");
+        // round 3: --full never says there is no record when the engine facts are unavailable
+        let full = e.find(&["--full"]).unwrap().out;
+        assert!(
+            full.contains("engine status: unavailable (") && full.contains("; run cardgen export)"),
+            "{what}: {full}"
+        );
+        assert!(!full.contains("NO RECORD") && !full.contains("engine status: none"), "{what}: {full}");
         let err = out.stderr();
         assert_eq!(err.lines().count(), 1, "{what}: one stderr line, got {err:?}");
         assert!(
@@ -440,6 +448,7 @@ fn defect_missing_or_malformed_cards_json_is_ignored() {
     let out = e.find(&["--json"]).unwrap();
     let rows: Vec<Value> = serde_json::from_str(&out.out).unwrap();
     assert_eq!(rows[0]["status"], "Full", "{}", rows[0]);
+    assert_eq!(rows[0]["engine"], "record");
     assert_eq!(out.stderr(), "");
     assert_eq!(e.find(&["--status", "full", "--count"]).unwrap().out, "1\n");
 }
@@ -759,6 +768,8 @@ fn real_every_engine_record_agrees_with_audit_status_and_note_with_documented_co
         .filter_map(|r| {
             let s = r.get("status")?.as_str().unwrap();
             let note = r["status_note"].as_str().unwrap();
+            // round 3: Full-auto is worded as what it is
+            let s = if s == "Full-auto" { "Full-auto (compiled, not hand-verified)" } else { s };
             Some(format!("engine status: {s}{}", if note.is_empty() { String::new() } else { format!(" ({note})") }))
         })
         .collect();

@@ -87,6 +87,7 @@ def findings_reference():
             if line.startswith("#"):
                 heading = line[:200]
         files.append(rel)
+        cands = collections.defaultdict(list)
         for name, ids in aliases.items():
             if not name:
                 continue
@@ -102,9 +103,20 @@ def findings_reference():
                     if not any(any(m.start(g) <= pos and end <= m.end(g) for g in (1, 2)
                                    if m.start(g) >= 0) for m in spans):
                         continue
-                entry = {"file": rel, "line": n + 1, "heading": headings[n], "text": lines[n][:200]}
-                for i in ids:
-                    found[i][(files.index(rel), n)] = entry
+                cands[n].append((match.start() - starts[n], match.end() - starts[n], ids))
+        # round 3 (documented rule): at each position the longest name wins and names inside it are skipped
+        for n, matches in cands.items():
+            entry = {"file": rel, "line": n + 1, "heading": headings[n], "text": lines[n][:200]}
+            skip = 0
+            for start in sorted({m[0] for m in matches}):
+                if start < skip:
+                    continue
+                best = max(m[1] for m in matches if m[0] == start)
+                skip = best
+                for m in matches:
+                    if m[0] == start and m[1] == best:
+                        for i in m[2]:
+                            found[i][(files.index(rel), n)] = entry
     return {i: [entry for _, entry in sorted(entries.items())] for i, entries in found.items()}
 
 
@@ -139,7 +151,7 @@ elif mode == "views":
     all_lines = 0
     sizes = {}
     pattern = re.compile(r"(?:\* )?(?:(?:BAN|NL) )?(?:GC )?(?:#[0-9]+ )?(?:\$[0-9]+ )?"
-                         r"(?:m:[FfAPU] )?(?:d:[A-Z]+ )?(?:k:[1-9][0-9]* )?(?:\? )?")
+                         r"(?:m:[FfAPUN] )?(?:d:[A-Z]+ )?(?:k:[1-9][0-9]* )?(?:\? )?")
     for path in files:
         raw = path.read_bytes()
         text = raw.decode()
@@ -169,7 +181,8 @@ elif mode == "views":
             tokens = flags.split()
             m = [t[2:] for t in tokens if t.startswith("m:")]
             expected_m = {"Full": "F", "Full-auto": "f", "Approximate": "A", "Partial": "P", "Unmodeled": "U"}
-            assert m == ([expected_m[by_row[i]["status"]]] if i in recorded else []), line
+            # round 3: m:N = no engine record
+            assert m == ([expected_m[by_row[i]["status"]]] if i in recorded else ["N"]), line
             k = [int(t[2:]) for t in tokens if t.startswith("k:")]
             expected_k = len(by_row[i]["findings"])
             assert k == ([expected_k] if expected_k else []), line
@@ -190,10 +203,12 @@ elif mode == "views":
     for d in decks:
         row = next(l for l in text.splitlines() if l.startswith(f"| {d['key']} |"))
         cells = [c.strip() for c in row.split("|")[1:-1]]
-        partial, unmodeled, mentions = map(int, cells[-3:])
+        below, breakdown, norecord, mentions = cells[-4], cells[-3], int(cells[-2]), int(cells[-1])  # round 3 columns
         own = [i for i in members[d["key"]] if not set(by_id[i]["type_line"].split()) & {"Stickers", "Attraction"}]
-        assert partial == sum(by_row[i].get("status") == "Partial" for i in own), d["key"]
-        assert unmodeled == sum(by_row[i].get("status") == "Unmodeled" for i in own), d["key"]
+        counts = [sum(by_row[i].get("status") == s for i in own)
+                  for s in ("Full-auto", "Approximate", "Partial", "Unmodeled")]
+        assert int(below) == sum(counts) and breakdown == "f%d A%d P%d U%d" % tuple(counts), d["key"]
+        assert norecord == sum("status" not in by_row[i] for i in own), d["key"]
         assert mentions == sum(len(by_row[i]["findings"]) for i in own), d["key"]
     print(json.dumps({"digests": len(files), "lines": all_lines, "largest_digest": max(sizes.values()),
                       "map_bytes": len(text.encode()), "engine_coverage": actual}))

@@ -162,10 +162,8 @@ fn alpha_lines() -> Vec<(String, Vec<&'static str>)> {
         ("Anduril, Narsil Reforged shines".into(), vec!["Andúril, Narsil Reforged"]),
         ("Urza’s Saga is a land".into(), vec!["Urza's Saga"]),
         ("Lightning Bolt hits".into(), vec!["Lightning Bolt"]),
-        (
-            "Emeritus of Conflict // Lightning Bolt is a creature".into(),
-            vec!["Emeritus of Conflict // Lightning Bolt", "Lightning Bolt"],
-        ),
+        // the longest name wins: the `Lightning Bolt` inside it is not a second mention
+        ("Emeritus of Conflict // Lightning Bolt is a creature".into(), vec!["Emeritus of Conflict // Lightning Bolt"]),
         ("Delver of Secrets flips".into(), vec!["Delver of Secrets // Insectile Aberration"]),
         ("Insectile Aberration".into(), vec!["Delver of Secrets // Insectile Aberration"]),
         ("Island and Plains".into(), vec!["Island", "Plains"]),
@@ -372,6 +370,7 @@ fn every_json_row_has_decks_and_findings_arrays_and_no_status_without_an_engine_
     for r in &rows {
         assert!(r["decks"].is_array() && r["findings"].is_array(), "{r}");
         assert!(r.get("status").is_none() && r.get("status_note").is_none(), "{r}");
+        assert_eq!(r["engine"], "no-record", "{r}");
     }
     let island = rows.iter().find(|r| r["name"] == "Island").unwrap();
     assert_eq!(island["decks"], json!(["alpha", "beta", "nofile"]));
@@ -391,7 +390,7 @@ fn every_json_row_has_decks_and_findings_arrays_and_no_status_without_an_engine_
 fn full_prints_the_status_decks_and_each_finding() {
     let env = findings_env();
     let out = env.ok(&["--name", "Sol Ring", "--full"]);
-    assert!(out.contains("engine status: none"), "{out}");
+    assert!(out.contains("engine status: NO RECORD (not in data/cards.json: unknown, treat as below Full)"), "{out}");
     assert!(out.contains("decks: none"), "{out}");
     assert!(
         out.contains("findings (5):") && out.contains("audit/alpha/FINDINGS.md:7  [## Swaps]  Sol Ring's text"),
@@ -441,18 +440,23 @@ fn status_takes_a_comma_separated_list_of_known_words_and_none_means_no_engine_r
     let all = findings_catalog().len();
     // no engine data in this project: every card has no record
     assert_eq!(env.ok(&["--status", "none", "--legal", "any", "--count"]).trim(), (all).to_string());
+    assert_eq!(env.ok(&["--status", "no-record", "--legal", "any", "--count"]).trim(), (all).to_string());
+    assert_eq!(env.ok(&["--status", "No-Record,full", "--legal", "any", "--count"]).trim(), (all).to_string());
     assert_eq!(env.ok(&["--status", "NONE, full", "--legal", "any", "--count"]).trim(), (all).to_string());
     for word in ["full", "full-auto", "approximate", "partial", "unmodeled", "Full,Full-Auto", "partial,unmodeled"] {
         assert_eq!(env.ok(&["--status", word, "--legal", "any", "--count"]).trim(), "0", "{word}");
     }
     for bad in ["bogus", "", "full,,none", "full;none", "modeled"] {
         let e = usage(env.find(&["--status", bad]));
-        assert!(e.contains("--status takes") && e.contains("full-auto") && e.contains("none"), "{bad}: {e}");
+        assert!(
+            e.contains("--status takes") && e.contains("full-auto") && e.contains("no-record") && e.contains("none"),
+            "{bad}: {e}"
+        );
     }
     assert!(usage(env.find(&["--status"])).contains("needs a value"));
     assert!(usage(env.find(&["--status", "full", "--status", "none"])).contains("given twice"));
     let out = env.ok(&["--name", "Sol Ring", "--status", "full"]);
-    assert!(out.contains("engine status none"), "{out}");
+    assert!(out.contains("engine status no-record"), "{out}");
 }
 
 // ------------------------------------------------------------------------------------------------ the engine
@@ -717,4 +721,53 @@ fn a_backtick_run_closes_at_a_run_of_the_same_length_a_bom_is_skipped_and_text_k
     assert_eq!(lines, [2, 3, 4, 5], "{lines:?}");
     let sol = &facts.findings_of(index.lookup("Sol Ring")[0])[0];
     assert_eq!((sol.line, sol.heading.as_str(), sol.text.as_str()), (8, "# Top", "Sol Ring  "));
+}
+
+#[test]
+fn the_longest_name_wins_at_a_position_so_a_longer_name_does_not_also_mention_a_face() {
+    let env = Env::new(vec![
+        rec("Sheoldred, the Apocalypse", "Creature", "x", "legal"),
+        rec("Sheoldred's Edict", "Instant", "x", "legal"),
+        faces(&["Sheoldred", "The True Scriptures"], "transform"),
+        rec("Silence", "Instant", "x", "legal"),
+        rec("Bound in Silence", "Enchantment", "x", "legal"),
+    ]);
+    env.decks(json!([{"key": "alpha", "commander": "", "ident": "", "cards": []}]));
+    env.findings(
+        "alpha",
+        "Sheoldred, the Apocalypse is great\nSheoldred's Edict hits\nSheoldred alone\nBound in Silence and Silence\n",
+    );
+    let (index, facts) = env.facts();
+    let lines =
+        |name: &str| -> Vec<usize> { facts.findings_of(index.lookup(name)[0]).iter().map(|f| f.line).collect() };
+    assert_eq!(lines("Sheoldred, the Apocalypse"), [1]);
+    assert_eq!(lines("Sheoldred's Edict"), [2]);
+    assert_eq!(lines("Sheoldred // The True Scriptures"), [3], "a bare name still mentions the double-faced card");
+    assert_eq!(lines("Bound in Silence"), [4]);
+    assert_eq!(lines("Silence"), [4], "the second, separate Silence on line 4 counts once");
+}
+
+#[test]
+fn a_row_says_record_no_record_or_unavailable_and_full_says_unavailable_not_none() {
+    let (status, _) = engine();
+    let picked = picks(&status);
+    let env = engine_env(&status, &picked);
+    let find = |args: &[&str]| -> Vec<Value> {
+        let mut a: Vec<String> = args.iter().map(|s| s.to_string()).collect();
+        a.extend(["--json".into(), "--data-dir".into(), env.root.join("data/knowledge").display().to_string()]);
+        serde_json::from_str::<Value>(&knowledge::find(&Project::new(repo()), &a).unwrap())
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .clone()
+    };
+    assert_eq!(find(&["--name", "Zzz Not In The Engine"])[0]["engine"], "no-record");
+    assert_eq!(find(&["--name", &picked["Full"]])[0]["engine"], "record");
+    // Full-auto is worded as what it is
+    if let Some(n) = picked.get("Full-auto") {
+        let mut a: Vec<String> = ["--name", n, "--full", "--data-dir"].iter().map(|s| s.to_string()).collect();
+        a.push(env.root.join("data/knowledge").display().to_string());
+        let out = knowledge::find(&Project::new(repo()), &a).unwrap();
+        assert!(out.contains("engine status: Full-auto (compiled, not hand-verified)"), "{out}");
+    }
 }

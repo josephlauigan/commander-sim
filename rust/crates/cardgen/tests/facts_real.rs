@@ -247,12 +247,13 @@ fn every_deck_of_mine_has_a_digest_in_budget_with_the_flags_in_order() {
         // the letter of this deck, from the header legend
         let legend = text.lines().find(|l| l.starts_with("# d: letters")).expect("the d: legend");
         let own = legend
-            .split(": ")
-            .last()
+            .split("card: ")
+            .nth(1)
             .unwrap()
             .split(' ')
             .find_map(|p| p.split_once('=').filter(|(_, k)| *k == key).map(|(c, _)| c.to_string()))
             .unwrap();
+        assert!(legend.ends_with(&format!("(this digest: {own})")), "{legend}");
         assert!(text.lines().any(|l| l.starts_with("# m: ")));
         let mut in_a = false;
         let mut with_m = 0;
@@ -284,7 +285,7 @@ fn every_deck_of_mine_has_a_digest_in_budget_with_the_flags_in_order() {
             assert!(toks.windows(2).all(|w| rank(w[0]) < rank(w[1])), "{l}");
             for t in &toks {
                 if let Some(m) = t.strip_prefix("m:") {
-                    assert!(["F", "f", "A", "P", "U"].contains(&m), "{l}");
+                    assert!(["F", "f", "A", "P", "U", "N"].contains(&m), "{l}");
                     with_m += 1;
                 }
                 if let Some(d) = t.strip_prefix("d:") {
@@ -296,6 +297,10 @@ fn every_deck_of_mine_has_a_digest_in_budget_with_the_flags_in_order() {
                 }
             }
             assert!(!toks.contains(&"?") || toks.last() == Some(&"?"), "{l}");
+            assert!(
+                toks.iter().any(|t| t.starts_with("m:")),
+                "every line has an m: flag when the engine facts exist: {l}"
+            );
         }
         assert!(with_m > 0, "{key}: no card carries an m: flag");
         // a second run is byte-identical
@@ -323,7 +328,7 @@ fn the_map_has_the_engine_coverage_section_and_stays_small_and_deterministic() {
     for s in ["Full", "Full-auto", "Approximate", "Partial", "Unmodeled", "no record"] {
         assert!(section.contains(&format!("| {s} |")), "{s}");
     }
-    assert!(first.text.contains("| Partial | Unmodeled | FINDINGS mentions |"));
+    assert!(first.text.contains("| below Full (f/A/P/U) | f A P U | no record | FINDINGS mentions |"));
     eprintln!("map: {} bytes", first.text.len());
 }
 

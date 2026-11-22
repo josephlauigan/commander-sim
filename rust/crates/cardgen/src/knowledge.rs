@@ -1133,6 +1133,8 @@ struct OutCard<'a> {
     status: Option<&'a str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     status_note: Option<&'a str>,
+    /// `record`, `no-record` or `unavailable` (the engine facts could not be used): always present
+    engine: &'static str,
 }
 
 /// One `FINDINGS.md` line in a JSON row.
@@ -1189,6 +1191,7 @@ fn out_card(c: &Card) -> OutCard<'_> {
         findings: vec![],
         status: None,
         status_note: None,
+        engine: "no-record",
     }
 }
 
@@ -1204,6 +1207,7 @@ fn json_array(cards: &[&Card], index: &Index, facts: &Facts) -> String {
                 row.primary = Some(&a.primary);
             }
             if let Some(i) = id {
+                row.engine = facts.engine_state(i);
                 row.decks = facts.decks_of(i);
                 row.findings = facts
                     .findings_of(i)
@@ -1318,16 +1322,20 @@ fn readable(c: &Card, i: Option<u32>, facts: &Facts) -> String {
         if r.reserved { "yes" } else { "no" }
     );
     if let Some(i) = i {
-        match facts.status_of(i) {
-            Some((st, note)) => {
+        match (&facts.engine.unavailable, facts.status_of(i)) {
+            (Some(why), _) => {
+                let _ = writeln!(s, "engine status: unavailable ({why}; run cardgen export)");
+            }
+            (None, Some((st, note))) => {
                 let _ = writeln!(
                     s,
-                    "engine status: {st}{}",
+                    "engine status: {}{}",
+                    crate::facts::status_label(st),
                     if note.is_empty() { String::new() } else { format!(" ({note})") }
                 );
             }
-            None => {
-                let _ = writeln!(s, "engine status: none (no record in data/cards.json: the sim cannot evaluate it)");
+            (None, None) => {
+                let _ = writeln!(s, "engine status: NO RECORD (not in data/cards.json: unknown, treat as below Full)");
             }
         }
         let decks = facts.decks_of(i);
@@ -1407,7 +1415,7 @@ fn why_filtered(
         if let Some(list) = &q.status
             && !status_selected(list, f.status_of(i).map(|s| s.0))
         {
-            why.push(format!("engine status {}", f.status_of(i).map_or("none", |s| s.0).to_lowercase()));
+            why.push(format!("engine status {}", f.status_of(i).map_or("no-record", |s| s.0).to_lowercase()));
         }
         let bits = f.deck_bits.get(i as usize).copied().unwrap_or(0);
         if let Some(k) = &q.in_deck

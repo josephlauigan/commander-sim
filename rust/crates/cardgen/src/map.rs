@@ -369,11 +369,11 @@ pub fn build_with_facts(
                 None => none += 1,
             }
         }
-        let _ = writeln!(w, "\n## Engine model coverage (can the simulator evaluate the card)\n");
+        let _ = writeln!(w, "\n## Engine model coverage (what the simulator models)\n");
         if !f.engine.present {
             let _ = writeln!(w, "No engine data in this project (data/carddb.txt): no card has a status.");
-        } else if let Some(note) = f.engine.note() {
-            let _ = writeln!(w, "Engine status unavailable: {note}");
+        } else if let Some(why) = &f.engine.unavailable {
+            let _ = writeln!(w, "Engine status unavailable: {why}; run cardgen export.");
         } else {
             let n = |k: &str| num(by.get(k).copied().unwrap_or(0));
             let _ = writeln!(w, "| status | cards |\n|---|---|");
@@ -387,9 +387,13 @@ pub fn build_with_facts(
             let _ = writeln!(
                 w,
                 "\nFrom `cardgen audit` over the cards that have a record in data/cards.json (digest flag `m:`, `find \
-                 --json` key `status`); a card with no record has no status, never Full: the sim cannot evaluate it \
-                 (`find --status none`). Full is hand-verified, Full-auto is compiled from Oracle text. \
-                 `find --status full,full-auto` is the set safe to propose; a card below Full goes to JD first."
+                 --json` keys `status` and `engine`). The status is computed from the current data files, which is \
+                 what the next `cardgen export` will give; data/cards.json decides which cards have a record. A card \
+                 with no record has an unknown status (digest `m:N`, `find --status no-record`): treat it as below \
+                 Full. Full is hand-verified; Full-auto is compiled from Oracle text, not hand-verified. \
+                 `find --status full,full-auto` = cards the sim models with no known gap (Full-auto is compiled, not \
+                 hand-verified); every proposal still needs the three swap checks and a --swap run, and a card below \
+                 Full (Full-auto, Approximate, Partial, Unmodeled) or with no record goes to JD first."
             );
         }
     }
@@ -449,8 +453,8 @@ pub fn build_with_facts(
             w,
             "| key | commander | identity | tiers | list cards not Commander-legal | cards with each role |{}\n\
              |---|---|---|---|---|---|{}",
-            if facts.is_some() { " Partial | Unmodeled | FINDINGS mentions |" } else { "" },
-            if facts.is_some() { "---|---|---|" } else { "" }
+            if facts.is_some() { " below Full (f/A/P/U) | f A P U | no record | FINDINGS mentions |" } else { "" },
+            if facts.is_some() { "---|---|---|---|" } else { "" }
         );
         for d in decks {
             let own = digest::deck_cards(index, &d.deck);
@@ -473,9 +477,12 @@ pub fn build_with_facts(
                         |status: &str| own.iter().filter(|&&i| f.status_of(i).is_some_and(|s| s.0 == status)).count();
                     let mentions: usize = own.iter().map(|&i| f.findings_of(i).len()).sum();
                     if f.engine.present && f.engine.unavailable.is_none() {
-                        format!(" {} | {} | {mentions} |", count("Partial"), count("Unmodeled"))
+                        let (fa, a, p, u) =
+                            (count("Full-auto"), count("Approximate"), count("Partial"), count("Unmodeled"));
+                        let none = own.iter().filter(|&&i| f.status_of(i).is_none()).count();
+                        format!(" {} | f{fa} A{a} P{p} U{u} | {none} | {mentions} |", fa + a + p + u)
                     } else {
-                        format!(" - | - | {mentions} |")
+                        format!(" - | - | - | {mentions} |")
                     }
                 }
             };

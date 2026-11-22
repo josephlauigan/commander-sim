@@ -277,6 +277,8 @@ pub struct Context {
     pub findings: HashMap<u32, usize>,
     /// the note printed in the header when the engine status is unavailable (`m:` flags are then left out)
     pub engine_note: Option<String>,
+    /// the engine facts are available: a card with no engine record then prints `m:N`
+    pub engine_available: bool,
 }
 
 impl Context {
@@ -306,31 +308,38 @@ impl Context {
             return None;
         }
         let list: Vec<String> = self.deck_letters.iter().map(|(c, k)| format!("{c}={k}")).collect();
-        Some(format!("# d: letters of JD's decks that also play the card: {}", list.join(" ")))
+        let own = self
+            .current
+            .filter(|b| b.is_power_of_two())
+            .and_then(|b| self.deck_letters.get(b.trailing_zeros() as usize))
+            .map(|(c, _)| format!(" (this digest: {c})"))
+            .unwrap_or_default();
+        Some(format!("# d: letters of JD's decks that also play the card: {}{own}", list.join(" ")))
     }
 
-    /// the header line that explains `m:` and `k:`, when the context holds any status or finding
+    /// the header line that explains `m:` and `k:`, when the context holds any status, finding or engine note
     pub fn model_legend(&self) -> Option<String> {
-        if self.model_status.is_empty() && self.findings.is_empty() {
-            return None;
+        let k = "k:N = lines of JD's audit/*/FINDINGS.md that name the card";
+        if self.engine_available || !self.model_status.is_empty() {
+            return Some(format!(
+                "# m: the simulator's model status of the card: F full (hand-verified), f full-auto (compiled, not \
+                 hand-verified), A approximate, P partial (some text ignored), U unmodeled, N = NO engine record: \
+                 status unknown, treat as below Full (adding it needs a cards.json entry, cardgen export and cardgen \
+                 audit, then JD); a card below F (f A P U N) goes to JD before it is accepted. {k}"
+            ));
         }
-        Some(
-            concat!(
-                "# m: the simulator's model status of the card, shown only when it has a record (no m: = it cannot ",
-                "evaluate the card): F full (hand-verified), f full-auto (compiled from Oracle text), A approximate, ",
-                "P partial (some text ignored), U unmodeled; a card below F goes to JD before it is proposed. ",
-                "k:N = lines of JD's audit/*/FINDINGS.md that name the card"
-            )
-            .to_string(),
-        )
+        if self.engine_note.is_some() || !self.findings.is_empty() {
+            return Some(format!("# m: flags are left out: engine status unavailable. {k}"));
+        }
+        None
     }
 }
 
 /// The flags of card `i`, in the order they are printed: `*` in the deck's list, `BAN` or `NL` when the catalog does
-/// not call it Commander-legal, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, `m:X` model status, `d:XY`
-/// the JD decks (other than the current one) that play it, `k:N` findings that name it, `?` role tags not reviewed
-/// yet (always last). `m:`, `d:` and `k:` print only what the [`Context`] holds. The one place a line's flags are
-/// made.
+/// not call it Commander-legal, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, `m:X` model status (`m:N` =
+/// no engine record, printed only when the engine facts are available), `d:XY` the JD decks (other than the current
+/// one) that play it, `k:N` findings that name it, `?` role tags not reviewed yet (always last). `m:`, `d:` and `k:`
+/// print only what the [`Context`] holds. The one place a line's flags are made.
 pub fn flags(i: u32, c: &Card, review: Review, in_deck: bool, ctx: &Context) -> Vec<String> {
     let mut flags: Vec<String> = vec![];
     if in_deck {
@@ -352,6 +361,8 @@ pub fn flags(i: u32, c: &Card, review: Review, in_deck: bool, ctx: &Context) -> 
     }
     if let Some(status) = ctx.model_status.get(&i) {
         flags.push(format!("m:{status}"));
+    } else if ctx.engine_available {
+        flags.push("m:N".into());
     }
     let bits = ctx.deck_bits.get(i as usize).copied().unwrap_or(0) & !ctx.current.unwrap_or(0);
     let decks: String =

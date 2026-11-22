@@ -184,7 +184,7 @@ optional and combine with AND.
 | `--text REGEX` | fancy-regex over the Oracle text of every face, case-insensitive unless the pattern says `(?-i)`; repeatable, all must match; a bad pattern exits non-zero |
 | `--gc` | Game Changers only |
 | `--deck KEY` | a deck of `data/decks.json` (yours, then the pool; an unknown key lists the valid ones). Its `ident` is the identity ceiling: `--ident` may only narrow it (an `--ident` outside the deck's identity is a usage error, `--ident U is outside deck cloud's identity W`). Leaves out every card of the deck (its list and its commanders, matched by name and by face name) |
-| `--status LIST` | the engine's model status (see "Engine facts" below): a comma-separated list of `full`, `full-auto`, `approximate`, `partial`, `unmodeled` and `none` (no engine record), any case; an unknown word is a usage error. `--status full,full-auto` is the set safe to propose |
+| `--status LIST` | the engine's model status (see "Engine facts" below): a comma-separated list of `full`, `full-auto`, `approximate`, `partial`, `unmodeled` and `no-record` (no engine record; `none` is an alias), any case; an unknown word is a usage error. `--status full,full-auto` = cards the sim models with no known gap (Full-auto is compiled, not hand-verified); every proposal still needs the three swap checks and a `--swap` run, and a card below Full (Full-auto, Approximate, Partial, Unmodeled) or with no record goes to JD first |
 | `--in-deck KEY` / `--not-in-deck KEY` | the card is (is not) in a deck of `data/decks.json` `mine`, by the same name matching as `--deck`; an unknown key (a pool deck's too) is a usage error that lists the keys of `mine`. Each is given once |
 | `--meld` | include meld results (Brisela, Hanweir, ...), which every search except `--name` leaves out by default (an exact `--name` shows them) |
 | `--sort` | `edhrec` (default: ascending, unranked last), `name`, `cmc`, `usd` (ascending, no price last); ties by name |
@@ -223,10 +223,16 @@ the digest and the map (so they cannot disagree):
   `cardgen audit` runs (`Audit::card_status`) for every card that has a record in `data/cards.json` (the records
   `cardgen export` builds from the same inputs); a card of any deck of `mine` is audited as JD's decks play it
   (`mine = true`, as `audit --mine` does), every other card as an outside deck plays it. The keys are **absent** for a card
-  with no engine record: such a card has no status, never `Full`, and the sim cannot evaluate it (`--status none`). Engine
+  with no engine record: such a card has an unknown status, never `Full`: treat it as below Full (`--status no-record`;
+  `--full` prints `engine status: NO RECORD`). The status is computed from the current data files, which is what the next
+  `cardgen export` will give, while `data/cards.json` decides which cards have a record (see "Unavailable engine facts").
+  `--full` words `Full-auto` as `Full-auto (compiled, not hand-verified)`. Every row also has the always-present key
+  `engine`: `record`, `no-record` or `unavailable`, so a card with no record and a row printed while the export is
+  unavailable cannot be confused. Engine
   names are resolved to catalog cards once, by folded name, face name and double-faced `A // B` name; a name that several
   catalog cards share maps to the Commander-legal one; when two engine records resolve to one catalog card (`A` and
-  `A // B` of a double-faced card) the lower status wins, so a card is never shown above any of its records; engine names
+  `A // B` of a double-faced card; nine today, five with different statuses) the lower status is kept (conservative), so a
+  card is never shown above any of its records; engine names
   that match no catalog card are left out (the facts keep both lists). A project without `data/carddb.txt` has no engine records.
 - `decks`: the keys of the decks of `mine` whose list or commanders name the card (folded name or face name, basic lands
   included), in the order of `decks.json`.
@@ -237,7 +243,9 @@ the digest and the map (so they cannot disagree):
   apostrophes plain; a name of 4 characters or fewer (`Opt`) only counts inside `**...**`, inside a backtick span or on a
   `=>` swap line, so `Option` never mentions `Opt`. A name shared by several cards, and a face name that is also another
   card's full name, mention the card `--name` would pick (the legal card; the exact name beats a face name). Each line
-  is listed once per card.
+  is listed once per card. At each position the longest matching name wins and the names inside it are skipped, so
+  `Sheoldred's Edict` or `Sheoldred, the Apocalypse` does not also mention the face `Sheoldred` of a double-faced card;
+  a bare `Sheoldred` still mentions that card (commander shorthand is a known false hit of `k:`).
 
 **Unavailable engine facts.** The exported `data/cards.json` is the engine's record set, and a status exists only for
 names it contains. When `data/carddb.txt` exists but `data/cards.json` is missing, unreadable, not valid JSON, not the
@@ -318,7 +326,7 @@ coverage and review status (how many legal cards the rules decided alone, how ma
 those have an answer and how many are still unreviewed), engine model coverage (cards of the map's set by status: Full, Full-auto, Approximate, Partial, Unmodeled, and no engine record), the 15 biggest creature types (subtypes of creature-bearing
 faces only, once per card), the 40 biggest subtypes of every kind and the 15 biggest keywords, the Game Changers, the
 banned cards, a table of JD's decks (key, commander, identity, tiers, how many list cards the catalog does not call
-Commander-legal, the cards with each role, how many of its cards are Partial or Unmodeled in the engine, and how many `FINDINGS.md` lines mention its cards), the combos in JD's decks (card names, from `data/spellbook/`) and the
+Commander-legal, the cards with each role, how many of its cards are below Full in the engine (`f`/`A`/`P`/`U` counts) or have no record, and how many `FINDINGS.md` lines mention its cards), the combos in JD's decks (card names, from `data/spellbook/`) and the
 commands to go further, with a paragraph on using the digest for a swap. Every count is over the cards `find` and
 `digest` cover: Commander-legal, not a meld result, not a Sticker or Attraction. No timestamp, only the bulk file's
 `updated_at`.
@@ -333,7 +341,7 @@ and ends in `…`).
 | type | per face (joined with `/`, written once when the faces agree): `Lg` for a legendary face, then a letter per card type in the order A E L C P B I S (`AC` artifact creature, `LgC` legendary creature, `C/L` an MDFC with a land back, `O` other), then `—` and the subtypes (they give way first when the line is too long) |
 | roles | the card's roles, primary first; `-` for none |
 | gist | the Oracle line cited as evidence for the **primary** role (`roles::line_text`: reminder text gone, `~` the card), cut at a whole-token boundary to 110 characters (never inside `{...}`, never in an open quote; `…` marks a cut; `-` when no whole token fits). A card with no cited line (no roles, or a hand override) shows its first Oracle line that is not just keywords (`Flying, trample`), else the first line; `-` when it has no text. On a `--role R` page the gist cites R's own line. Never written text, so it cannot be a hallucination |
-| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` (always last) when the card's role tags are not reviewed yet (about the tags, not the card's quality: routed to the LLM and no answer, so they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `m:X` the engine model status of the card, printed only when it has an engine record (`F` Full, `f` Full-auto, `A` Approximate, `P` Partial, `U` Unmodeled; no `m:` = the sim cannot evaluate it, and a card below `F` goes to JD before it is proposed), `d:XY` the other decks of JD's `mine` that play the card (one letter per deck, assigned from the keys in `decks.json` order and printed in the header; section A leaves out the digest's own deck), `k:N` the lines of the decks' `audit/*/FINDINGS.md` that name the card (only when N > 0). `digest::flags` makes them in the order `* BAN|NL GC #N $N m:X d:XY k:N ?`; `facts::Facts::context` fills the `Context` (indices resolved once: model status, a bit per JD deck with the letter table the header prints, the current deck, findings counts). The header gains one line for the `d:` letters and one for `m:` and `k:`; the gist shrinks to keep the line within 160 characters |
+| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` (always last) when the card's role tags are not reviewed yet (about the tags, not the card's quality: routed to the LLM and no answer, so they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `m:X` the engine model status of the card, (`F` Full, `f` Full-auto (compiled, not hand-verified), `A` Approximate, `P` Partial, `U` Unmodeled, and `N` = NO engine record: status unknown, treat as below Full; adding it needs a cards.json entry, `cardgen export` and `cardgen audit`, then JD; a card below `F`, or `N`, goes to JD before it is accepted). Every line has an `m:` flag when the engine facts are available and none when they are unavailable (the header says so), `d:XY` the other decks of JD's `mine` that play the card (one letter per deck, assigned from the keys in `decks.json` order and printed in the header; section A leaves out the digest's own deck, and the header legend ends with `(this digest: X)`), `k:N` the lines of the decks' `audit/*/FINDINGS.md` that name the card (only when N > 0). `digest::flags` makes them in the order `* BAN|NL GC #N $N m:X d:XY k:N ?`; `facts::Facts::context` fills the `Context` (indices resolved once: model status, a bit per JD deck with the letter table the header prints, the current deck, findings counts). The header gains one line for the `d:` letters and one for `m:` and `k:`; the gist shrinks to keep the line within 160 characters |
 
 The candidates come from `Index::search`, so the deck's identity ceiling and exclusions are the ones `find --deck`
 applies: Commander-legal cards inside the identity (`--ident` may narrow a deck's, never widen it), not in the deck, no
@@ -369,7 +377,7 @@ every candidate of the digest.
 For code: `digest::open` (catalog and role table), `digest::build(&Index, &Table, &Spec)`, `digest::Lines::{new,
 with_context, line, line_for}`, `digest::build_with` (a `Context`), `digest::flags`, `digest::review`, `digest::deck_cards`, `digest::role_counts`,
 `digest::commander_subtypes`, `digest::Prev::load`, and `map::build(&Index, &Table, Option<&Path>)` (JD's decks come from
-the `decks.json` beside the spellbook directory) or `map::build_with` / `map::build_with_facts` (the engine coverage section and the model columns of JD's decks table need the facts); `facts::Facts::{load, decks_and_findings, context, status_of, decks_of, findings_of, deck_bit}` (phase 4: `Facts::load(project, &index, engine, decks)` builds the engine only when asked) and `knowledge::fold_case`; none of them reads argv. none of them reads argv.
+the `decks.json` beside the spellbook directory) or `map::build_with` / `map::build_with_facts` (the engine coverage section and the model columns of JD's decks table need the facts); `facts::Facts::{load, decks_and_findings, context, status_of, decks_of, findings_of, deck_bit}` (phase 4: `Facts::load(project, &index, engine, decks)` builds the engine only when asked) and `knowledge::fold_case`; none of them reads argv.
 
 ## Equivalence
 

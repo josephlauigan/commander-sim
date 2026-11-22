@@ -485,6 +485,7 @@ fn json_has_the_documented_shape() {
         // phase 4 (keys are only ever added): always present; `status` and `status_note` only with an engine record
         "decks",
         "findings",
+        "engine",
     ];
     let mut got = keys.clone();
     want.sort();

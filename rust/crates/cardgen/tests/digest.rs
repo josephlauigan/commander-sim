@@ -1815,7 +1815,12 @@ fn a_digest_built_from_facts_prints_m_d_k_in_the_fixed_order_with_a_header_and_q
     let ctx = facts.context(Some("thanos"));
     let deck = env.deck("thanos");
     let d = digest::build_with(&env.index, &env.table, &env.spec(Some(&deck), &Prev::Missing), &ctx).unwrap();
-    assert!(d.text.contains("# d: letters of JD's decks that also play the card: D=dragons T=thanos U=duo"));
+    assert!(
+        d.text
+            .contains("# d: letters of JD's decks that also play the card: D=dragons T=thanos U=duo (this digest: T)")
+    );
+    assert!(d.text.contains("N = NO engine record: status unknown, treat as below Full"));
+    assert!(d.text.contains("f full-auto (compiled, not hand-verified)"));
     assert!(
         d.text.contains("# m: the simulator's model status") && d.text.contains("F full (hand-verified), f full-auto")
     );
@@ -1849,16 +1854,17 @@ fn a_digest_built_from_facts_prints_m_d_k_in_the_fixed_order_with_a_header_and_q
                 seen.1 = true;
             }
             "Island" => {
-                assert!(m.is_none() && !toks.iter().any(|t| t.starts_with("d:")), "{l}");
+                assert_eq!(m.as_deref(), Some("m:N"), "{l}");
+                assert!(!toks.iter().any(|t| t.starts_with("d:")), "{l}");
                 seen.2 = true;
             }
             _ => {}
         }
-        // no card without an engine record carries an m: flag
+        // every other card has no engine record and says so: m:N
         if !["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe", "Lightning Bolt"]
             .contains(&name.as_str())
         {
-            assert!(m.is_none(), "{l}");
+            assert_eq!(m.as_deref(), Some("m:N"), "{l}");
         }
     }
     assert_eq!(seen, (true, true, true), "the cards were not all listed");
@@ -1916,13 +1922,14 @@ fn the_map_gets_an_engine_coverage_section_and_model_columns_and_stays_determini
     let covered =
         a.split("cover ").nth(1).unwrap().split(' ').next().unwrap().replace(',', "").parse::<usize>().unwrap();
     assert!(section.contains(&format!("| no record | {} |", covered - 5)), "{section}");
-    // JD's decks table: per-deck Partial and Unmodeled counts and the findings mentions of the deck's cards
-    assert!(a.contains("| Partial | Unmodeled | FINDINGS mentions |"));
+    // JD's decks table: below Full, the f/A/P/U breakdown, no record and the findings mentions of the deck's cards
+    assert!(a.contains("| below Full (f/A/P/U) | f A P U | no record | FINDINGS mentions |"));
     let row = a.lines().find(|l| l.starts_with("| thanos |")).unwrap();
     let cells: Vec<&str> = row.trim_matches('|').split('|').map(str::trim).collect();
     let n = cells.len();
-    // thanos plays Counterspell, Demonic Tutor, Cyclonic Rift, Smothering Tithe: one Partial, no Unmodeled
-    assert_eq!((cells[n - 3], cells[n - 2]), ("1", "0"), "{row}");
+    // thanos plays Counterspell (F), Demonic Tutor (f), Cyclonic Rift (A), Smothering Tithe (P);
+    // the commander and Island have no record
+    assert_eq!((cells[n - 4], cells[n - 3], cells[n - 2]), ("3", "f1 A1 P1 U0", "2"), "{row}");
     let mentions: usize = cells[n - 1].parse().unwrap();
     assert!(mentions >= 4, "{row}");
     // without facts the map has neither
@@ -1953,11 +1960,14 @@ fn an_unavailable_engine_export_is_one_header_line_in_the_digest_and_a_sentence_
     let m = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&facts)).unwrap();
     assert!(
         m.contains("## Engine model coverage")
-            && m.contains("Engine status unavailable: (engine status unavailable: data/cards.json is missing")
+            && m.contains("Engine status unavailable: data/cards.json is missing; run cardgen export.")
+            && !m.contains("unavailable: (engine")
     );
     assert!(!m.contains("| Full-auto |"));
     let row = m.lines().find(|l| l.starts_with("| thanos |")).unwrap();
-    assert!(row.contains("| - | - |"), "{row}");
+    assert!(row.contains("| - | - | - |"), "{row}");
+    assert!(d.text.contains("# m: flags are left out: engine status unavailable"));
+    assert!(!d.text.contains("NO engine record"), "an unavailable engine must not claim m:N");
     // an available export prints no such line
     let (env2, facts2) = facts_env();
     let ok = digest::build_with(

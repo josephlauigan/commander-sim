@@ -29,8 +29,8 @@ pub const TEXT_CHARS: usize = 200;
 /// a name this short (in characters) only counts as a mention inside bold, a code span or a `=>` swap line
 pub const SHORT_NAME: usize = 4;
 
-/// the statuses `--status` takes besides `none` (the engine's own, lower-case)
-pub const STATUS_WORDS: [&str; 6] = ["full", "full-auto", "approximate", "partial", "unmodeled", "none"];
+/// the words `--status` takes: the engine's own statuses (lower-case) and `no-record` (`none` is an alias of it)
+pub const STATUS_WORDS: [&str; 7] = ["full", "full-auto", "approximate", "partial", "unmodeled", "no-record", "none"];
 
 /// One line of a `FINDINGS.md` that mentions a card.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -43,6 +43,14 @@ pub struct Finding {
     pub heading: String,
     /// the line, cut to [`TEXT_CHARS`] characters
     pub text: String,
+}
+
+/// a status as `--full` words it: `Full-auto` says what it is not (hand-verified)
+pub fn status_label(status: &str) -> String {
+    match status {
+        "Full-auto" => "Full-auto (compiled, not hand-verified)".to_string(),
+        s => s.to_string(),
+    }
 }
 
 /// The one-letter digest code of a status: `F` Full, `f` Full-auto, `A` Approximate, `P` Partial, `U` Unmodeled.
@@ -172,6 +180,17 @@ impl Facts {
         self.findings.get(&i).map(Vec::as_slice).unwrap_or(&[])
     }
 
+    /// whether card `i` has an engine record (`record`), has none (`no-record`) or the engine facts are unavailable
+    pub fn engine_state(&self, i: u32) -> &'static str {
+        if self.engine.unavailable.is_some() {
+            "unavailable"
+        } else if self.engine.status.contains_key(&i) {
+            "record"
+        } else {
+            "no-record"
+        }
+    }
+
     /// (status, note) of card `i`, when it has an engine record
     pub fn status_of(&self, i: u32) -> Option<(&str, &str)> {
         self.engine.status.get(&i).map(|(s, n)| (s.as_str(), n.as_str()))
@@ -193,6 +212,7 @@ impl Facts {
             current: current.and_then(|k| self.keys.iter().position(|x| x == k)).map(|n| 1u64 << n),
             findings: self.findings.iter().map(|(i, v)| (*i, v.len())).collect(),
             engine_note: self.engine.note(),
+            engine_available: self.engine.present && self.engine.unavailable.is_none(),
         }
     }
 }
@@ -366,13 +386,16 @@ impl Needles {
         }
     }
 
+    /// At each word start the longest name that matches wins and the names inside it are skipped, so
+    /// `Sheoldred's Edict` does not also mention the face `Sheoldred`.
     fn scan(&self, s: &str, swap: bool, out: &mut BTreeSet<u32>) {
         let spans = spans(s);
         let mut prev_word = false;
+        let mut skip_until = 0;
         for (p, ch) in s.char_indices() {
             let starts = !prev_word;
             prev_word = word(ch);
-            if !starts {
+            if !starts || p < skip_until {
                 continue;
             }
             let rest = &s[p..];
@@ -382,6 +405,7 @@ impl Needles {
             } else {
                 None
             };
+            let mut best: Vec<&Needle> = vec![];
             for &n in token.into_iter().flatten().chain(self.odd.iter()) {
                 let nd = &self.all[n];
                 if !rest.starts_with(&nd.text) {
@@ -394,7 +418,17 @@ impl Needles {
                 if nd.short && !swap && !spans.iter().any(|&(a, b)| a <= p && end <= b) {
                     continue;
                 }
-                out.extend(&nd.cards);
+                match best.first() {
+                    Some(b) if b.text.len() > nd.text.len() => {}
+                    Some(b) if b.text.len() == nd.text.len() => best.push(nd),
+                    _ => best = vec![nd],
+                }
+            }
+            if let Some(b) = best.first() {
+                skip_until = p + b.text.len();
+                for nd in &best {
+                    out.extend(&nd.cards);
+                }
             }
         }
     }
@@ -486,7 +520,10 @@ pub fn parse_status_list(list: &str) -> Result<Vec<String>, String> {
     for w in list.split(',') {
         let w = w.trim().to_lowercase();
         if !STATUS_WORDS.contains(&w.as_str()) {
-            return Err(format!("--status takes a comma-separated list of {}, got '{}'", STATUS_WORDS.join(", "), w));
+            return Err(format!(
+                "--status takes a comma-separated list of full, full-auto, approximate, partial, unmodeled, no-record \
+                 (none is an alias of no-record), got '{w}'"
+            ));
         }
         if !out.contains(&w) {
             out.push(w);
@@ -497,6 +534,8 @@ pub fn parse_status_list(list: &str) -> Result<Vec<String>, String> {
 
 /// whether a card with this engine status (`None` = no record) is in a `--status` list
 pub fn status_selected(list: &[String], status: Option<&str>) -> bool {
-    let word = status.map_or("none".to_string(), |s| s.to_lowercase());
-    list.contains(&word)
+    match status {
+        Some(s) => list.contains(&s.to_lowercase()),
+        None => list.iter().any(|w| w == "no-record" || w == "none"),
+    }
 }
