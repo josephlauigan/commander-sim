@@ -424,6 +424,59 @@ first action item). The output is deterministic. `tests/weekly.rs` covers it on 
 affected and one not, an empty `mine`, a missing and a malformed `oracle.prev.json`); `tests/weekly_script.rs` runs the
 script offline.
 
+## Ownership (`cardgen ownership --check`)
+
+`data/ownership.toml` is JD's record of which cards of his decks he has, plays as a proxy or is missing. `--check`
+validates it against the deck lists of `data/decks.json` (`mine`) and the card catalog; it reads and writes nothing
+else.
+
+```
+cardgen ownership --check [--file PATH] [--data-dir DIR] [--json] [--strict]
+```
+
+The file (TOML, tracked; a deck without `confirmed` is unconfirmed: treat its statuses as unknown):
+
+```toml
+version = 1
+updated = "2026-11-22"
+[deck.yshtola]                       # a key of `mine` in data/decks.json
+confirmed = "2026-11-22"             # optional; absent = JD has not confirmed the deck yet
+have = ["Sol Ring", { card = "Lightning Bolt", copies = 2 }]
+proxy = []
+missing = []
+[spare]
+cards = []                           # owned cards in no deck, or a second copy of a card a deck plays
+```
+
+Only `have`, `proxy` and `missing` exist. Basic lands are never listed. Names match the catalog (case, accents,
+apostrophes and face names fold like `find --name`; the deck lists' names are compared the same way). `copies` is
+optional (default 1).
+
+Exit code 0 when there is no ERROR, 1 otherwise; every problem prints with its deck and card, then one summary line per
+deck (have, proxy and missing counts, confirmed or not) and the spare count (the sum of the copies).
+
+- **ERROR**: a deck's have + proxy + missing is not exactly its list in `decks.json` (cards missing from the file and
+  cards in the file that are not in the list, basic lands left out on both sides; the commanders count only if
+  `decks.json` has them in `cards`); a name that is not in the catalog; a card with two statuses in one deck or listed
+  twice in one status or twice in `spare`; a basic land listed; an unknown key or table, a bad `copies` (below 1 or not
+  an integer), a deck key that is not in `mine`, malformed TOML, a missing or wrong `version`, a date that is not a
+  quoted `YYYY-MM-DD`; a deck of `mine` with no section; a wrong `copies` (below).
+- **WARNING**: a deck without `confirmed` ("unconfirmed: treat as unknown"); a `have` card in two or more decks that
+  is not confirmed (below); without `oracle.json`, that name resolution was skipped.
+- **INFO** (not counted as a warning): a `spare` card that a deck list also has is a second copy, to confirm.
+
+Second copies. `[spare]` holds copies owned in no deck, including a second copy of a card a deck plays. A `have` card
+in k >= 2 decks warns until it is confirmed: every deck's entry is `{ card = "X", copies = k }` with k the number of
+decks that hold it as `have`. A `copies` that is written and differs from k is an ERROR, and on a card held in one
+deck `copies` must be 1 or absent (ERROR otherwise); `proxy` and `missing` entries take no `copies` above 1.
+
+Without a catalog (`data/knowledge/oracle.json`, from `bulk-sync`; a worktree reads the main checkout's) the names are
+compared by their folded spelling against `decks.json`, so a face name matches only a deck card that has it, and the
+run warns that resolution was skipped; `--strict` makes that an error. A catalog that is present but unreadable is an
+error. `--data-dir DIR` names the directory with `oracle.json` (a directory without one skips resolution). The test
+`the_real_ownership_file_passes_against_the_real_decks` runs this check on the real files without a catalog, so a
+deck change that leaves `data/ownership.toml` behind fails `cargo test`.
+
 ## Equivalence
 
 `cardgen export` once reproduced the old Python exporter's `data/cards.json` and `data/decks.json` byte for byte
@@ -442,6 +495,7 @@ src/decks.rs       deck files, pool, validation       src/update_deck.rs, src/au
 src/bulk.rs        bulk-sync (Scryfall Oracle Cards -> data/knowledge/oracle.json)
 src/weekly.rs      weekly-report (the weekly job's report from oracle.prev.json, oracle.json, decks, the cache)
 src/knowledge.rs   the in-memory card index and `find` (queries oracle.json)
+src/ownership.rs   ownership --check (data/ownership.toml against decks.json and the catalog)
 src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, byte-exact output)
 ```
 

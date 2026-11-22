@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "schema": 1,
+  "bulk_updated_at": "2026-11-21T00:00:00.000+00:00",
+  "download_uri": "https://example.invalid/x",
+  "synced": "2026-11-21T00:00:00Z",
+  "count": 12
+ },
+ "cards": [
+  {
+   "name": "Sol Ring",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000001",
+   "edhrec_rank": 1,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Lightning Bolt",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000002",
+   "edhrec_rank": 2,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Palantír of Orthanc",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000003",
+   "edhrec_rank": 3,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Urza's Saga",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000004",
+   "edhrec_rank": 4,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Æther Vial",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000005",
+   "edhrec_rank": 5,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Leech Collector // Bloodletting",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "transform",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000006",
+   "edhrec_rank": 6,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false,
+   "card_faces": [
+    {
+     "name": "Leech Collector",
+     "mana_cost": "{1}",
+     "type_line": "Artifact",
+     "oracle_text": "x"
+    },
+    {
+     "name": "Bloodletting",
+     "mana_cost": "{1}",
+     "type_line": "Artifact",
+     "oracle_text": "x"
+    }
+   ]
+  },
+  {
+   "name": "Barad-dûr",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000007",
+   "edhrec_rank": 7,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Island",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000008",
+   "edhrec_rank": 8,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Plains",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000009",
+   "edhrec_rank": 9,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Extra Card",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000010",
+   "edhrec_rank": 10,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Pick Your Poison",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000011",
+   "edhrec_rank": 11,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  },
+  {
+   "name": "Pick Your Poison",
+   "mana_cost": "{1}",
+   "cmc": 1.0,
+   "type_line": "Artifact",
+   "oracle_text": "x",
+   "colors": [],
+   "color_identity": [],
+   "keywords": [],
+   "layout": "normal",
+   "game_changer": false,
+   "legalities": {
+    "commander": "legal"
+   },
+   "oracle_id": "00000000-0000-0000-0000-000000000012",
+   "edhrec_rank": 12,
+   "usd": "1.00",
+   "released_at": "2020-01-01",
+   "set": "tst",
+   "rarity": "common",
+   "reserved": false
+  }
+ ]
+}
