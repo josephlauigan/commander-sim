@@ -94,7 +94,9 @@ extra-phase, finisher, evasion), defined in `roles.toml`, separate from the engi
 A card gets a role only for a main or repeatable effect, at most four, ordered by prominence. Rust rules over Oracle
 text decide most roles. The local LLM proposes roles only for cards the rules cannot fully read, and each role it
 proposes must cite an Oracle line and pass a textual guard for that role. Precedence: hand override, then rule-certain
-roles, then the LLM's guarded roles together with the rules' non-certain roles. Every disagreement is reported.
+roles, then the LLM's guarded roles together with the rules' non-certain roles. The merge is add-only (the LLM never
+removes a rule role), and every role's `llm_add` is off until its additions are audited, so today the merged table
+has the rules table's role sets. Every disagreement is reported.
 
 **Digest.** One `|`-separated line per card (`Name|cost|type|roles|gist|flags`), at most 160 characters. The gist is
 the Oracle line cited as evidence for the primary role, never LLM-written prose, so it cannot be a hallucination.
@@ -102,8 +104,9 @@ Sections: the deck's own cards; per-role top cards by EDHREC rank (caps keep a f
 section for subtypes the commander's text names; cards new since the last sync; unranked cards. `--role R` lifts that
 role's cap and pages through the rest.
 
-**Local LLM.** The loaded model is Qwen3-Coder-30B (32K context, no internet) behind llama.cpp's OpenAI API. Requests
-use temperature 0, a fixed seed and a JSON schema that constrains roles to the taxonomy; ten cards per request. The
+**Local LLM.** The production model is the dense Qwen3.6-27B-Q5_K_M, thinking off (32K context, no internet), behind
+llama.cpp's OpenAI API. Requests use temperature 0, a fixed seed and a JSON schema that constrains roles to the
+taxonomy; ten cards per request. The
 prompt is fixed and versioned. Output is validated (ids, vocabulary, cited line, guard regex), retried once as a batch
 and once per card, and a card that still fails keeps its rule roles. Results are cached by a hash of the normalised
 card text, the taxonomy version, the prompt version and the model id, so reruns are cheap and diffs reviewable.
@@ -123,7 +126,7 @@ Each phase has command-level checks (below). They are what the adversarial revie
 |---|---|
 | 1 | `bulk-sync` yields 25,000 to 40,000 cards, none a token, and every card in `data/scryfall_cache.json` present; a second run reports "up to date" and downloads nothing; `slim_bulk` agrees with `slim` on the 15 cache fields; a corrupt `--from-file` exits non-zero and leaves `oracle.json` byte-identical; peak memory under 2 GB |
 | 2 | `find` returns the right cards for each filter and never an off-identity or already-in-deck card under `--deck`; back-face names resolve; a bad regex exits non-zero; a full scan under 1 s |
-| 3 | `roles --rules` is byte-deterministic; hand-tag recall at least 0.95; gold precision at least 0.90 and recall at least 0.85; the LLM stage beats rules alone on the gold cards it handles or stays off for that role; bait cards get no guarded role; schema-valid after retries at least 99% |
+| 3 | `roles --rules` is byte-deterministic; hand-tag recall at least 0.95; gold precision at least 0.90 and recall at least 0.85; bait cards get no guarded role; schema-valid after retries at least 99%. The merged gate (`roles --validate --stage merged`: routed F1 of the merged table not below the rules alone) can only tie or fail on the tuning and regression gold, because the rules score 1.0 there by construction and an add-only merge can only add false positives; the blind set is where it was meant to run, and the LLM-stage check is the audit of its additions (a follow-up). With `llm_add` off for every role it ties, prints that the merged stage equals the rules stage, and passes |
 | 3b | `map.md` under 32 KB; the five-colour digest under 200 KB; every digest line has six fields and at most 160 characters; two runs byte-identical |
 | 4 | `find` shows model status, deck usage and `FINDINGS.md` hits; a card not in `cards.json` never shows `Full`; status agrees with `cardgen audit` on 20 sampled cards |
 | 5 | `CLAUDE.md` and `AGENTS.md` carry the same workflow section; this document is linked from `cards.md` |
@@ -190,7 +193,7 @@ hidden temp file in the target directory, and a kill during that copy leaves it 
 |---|---|---|
 | 1 | `fetch-build` | fetches into a separate clone (`~/.cache/commander-sim-knowledge/repo`), resets it to `$KNOWLEDGE_REF` (default `origin/main`), builds `cardgen` there under the memory cap; the clone is `--root`, so decks, the engine cache and FINDINGS come from it. A failed fetch or build keeps the previous build in use |
 | 2 | `bulk-sync` | the Oracle Cards bulk file, only if its `updated_at` changed (else `skip`, "up to date"); fewer than 25,000 cards is refused; the previous catalog stays as `oracle.prev.json` |
-| 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out), so `roles.json` keeps the reviewed LLM roles; the table from before the run goes to the report |
+| 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out; with `llm_add` off for every role the result has the rules table's role sets); the table from before the run goes to the report |
 | 4 | `llm` | cards the rules could not read (route `NoRole` or `UnknownLine`) that miss the cache: `roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending` with `CARDGEN_LLM_VARIANT=think`, new rows to `llm_roles.pending.jsonl` only. A dry run first counts the cards to do; none means `skip` and the GPU is not woken |
 | 5 | `map-digest` | `map.md` and one digest per deck of `mine` |
 | 6 | `report` | `reports/YYYY-MM-DD.md` by `cardgen weekly-report`, built whole in staging and then renamed into place; an earlier report of the day stays as `DATE.N.md` (N counts up, compared as a number) and the newest 12 stay; if `cardgen` cannot run, a short report goes through the same publication. If the state directory is unusable (read-only, full) the failure is still reported. The exit code is non-zero only if no report could be written |
@@ -318,7 +321,7 @@ How it was measured, honestly:
 | `roles_gold.toml` | 207 | tuning | 248 of 248 role assignments right: memorised, says nothing about generalisation |
 | `roles_gold_regression.toml` | 113 | first a hidden acceptance set, scored four times and its failures fed back, so now regression only | precision 0.979, recall 0.960 |
 | independent audits | 200 + 200 random cards, two unseen seed pairs | an estimate by a second labeller | cards the rules decide alone: precision 0.955 and 0.967, recall 0.955 and 0.983 when only clear errors count; precision 0.82 to 0.83 when debatable calls count against the rules |
-| blind set 3 | 120, hidden | scored once, rules-only against rules plus LLM | not yet scored |
+| blind set 3 | 120, hidden | scored once, rules-only against rules plus LLM | rules 27 errors, merged 26 (+4 true, +3 false, -4 missed roles), routed F1 0.8661 against 0.8500; measured on the pilot's answers, which the production run did not reproduce card for card ([LLM results](#llm-results-2026-11-22)) |
 
 The first held-out half scored precision 0.851 and recall 0.841 against 0.989 and 1.000 on the tuning cards it had
 been tuned on: that is the overfitting this process exists to catch.
@@ -326,16 +329,73 @@ been tuned on: that is the overfitting this process exists to catch.
 Named limits of the rule stage (each is covered by a check or a later phase, none is accepted silently):
 - The rules decide about 27% of legal cards alone. Routing is 73% of legal cards (23,773), because the rules are
   deliberately conservative: a routed card is re-checked and a confident wrong rule is not. The first LLM run is
-  therefore about 4 to 5 hours of GPU time, paid again only when the prompt changes.
+  therefore a long GPU run: the production run over the 12,520 candidate cards took about 12 hours, paid again only when
+  the prompt changes.
 - A card with a real role plus a second function the rules never read can still be decided by the rules alone (2 of 52
   in one audit). The shadow audit in phase 3L re-checks a seeded sample of rules-decided cards for exactly this.
-- Only 4 of 246 gold assignments are `certain`, so the LLM stage may veto most rule roles on routed cards.
+- Only 4 of 246 gold assignments are `certain`, but the merge is add-only: a wrong non-certain rule role on a routed
+  card stays, because letting the LLM veto roles scored worse on the blind set.
 - Roles are about what a card does, not whether it is good in a deck. The sim and JD decide that.
 
-The local-LLM stage (phase 3L) is described in `rust/crates/cardgen/README.md` ("The LLM stage"): the prompt budget
-(about 3.1k tokens for the system prompt, 3.4k with the worked-example turn), the validation and retry ladder, the cache keyed on the card text, the
-prompt fingerprint and the model id (never the rules fingerprint), the merge policy and its disagreement reports. The
-coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --validate --stage merged`, `llama down`).
+The local-LLM stage (phase 3L) is described in `rust/crates/cardgen/README.md` ("The LLM stage" and "Final configuration
+and the production run"): the validation and retry ladder, the cache keyed on the card text, the prompt fingerprint
+(variant and no-think marker included) and the model file name (never the rules fingerprint), the merge policy and its
+disagreement reports. It runs on the dense Qwen3.6-27B-Q5_K_M with thinking off, started by hand for a manual run
+(`systemctl --user start llama-27b`, the tracked unit `scripts/systemd/llama-27b.service`; `llama up` starts the coder
+model, which is not this one) or by the weekly job. The coordinator's sequence is `roles --llm`, `roles --merge
+--no-think`, `roles --validate --stage merged`, then committing `llm_roles.jsonl`.
+
+### LLM results (2026-11-22)
+
+**The production run.** The dense Qwen3.6-27B, thinking off, the `think` prompt variant, over the 12,520 candidate
+cards (Commander-legal cards whose rules route contained `NoRole` or `UnknownLine`): 12,288 classified and 66 failed
+(0.5%), with 218 per-card retries and 1,454 chat requests, about 12 hours at roughly 34 s per batch of ten. The rows are
+in the tracked cache `data/knowledge/llm_roles.jsonl`.
+
+**The merge.** 23,685 routed legal cards, of which 12,454 have an LLM answer and 11,231 were not run (their route held
+only `RejectedHit`, `SameLine` or `RiskyRole`, so they were never sent); 2,513 disagreements. The add-only merge with
+every role on would add 2,293 LLM-only roles on 2,176 cards: removal 547, anthem 313, counters 198, recursion 197, stax
+172, drain 135, protection 133, wipe 113, lifegain 96, gy-hate 92, reanimate 89, tokens 71, tutor 36, self-mill 34,
+discard 32, copy 27, counter 8.
+
+**How good are those additions: unknown, and probably not good enough.**
+- Opus's rough eyeball of 60 of them put roughly 40 to 45% right (an unverified judgement, not a measurement). The misses
+  it named: drain on one-shot spells (convention 8), self-only "enters with counters" (convention 4), single-target
+  pumps as anthem.
+- On the routed tuning gold the merge added 2 false positives (Mystic Confluence to stax, Refuse // Cooperate to drain);
+  on the regression gold 2 (Cost of Brilliance and Quest for Pure Flame, both to counters). It fixed none of the rule
+  misses. That is why the merged gate fails with additions on, on both sets.
+- The one-time blind-set result (rules 27 errors, merged 26) was measured on the pilot's answers. A comparison of the 92
+  cards present in both the pilot and the production cache found only 90.2% identical on-role answers (84.8% on all
+  roles): answers depend on the batch neighbours, so the pilot's figures do not carry over to the production rows.
+- Stability test (200 cards at batch 5 against production): `STABILITY_RESULT_PLACEHOLDER`
+
+**The decision.** `llm_add = false` for all 26 roles in `data/knowledge/roles.toml`; `keep_rule = true` for all 26. The
+cache is kept as an inert artefact (rows keyed on card text, prompt and model; nothing reads them for a role), and
+`roles.json` has exactly the rules-only role sets, so no unaudited role reaches `find --role`, the digests or the map.
+Measured on the real tree: no card differs in its role set, 384 of 35,014 differ in primary role or role order (the merge
+still puts the LLM's order and primary first among the rule roles it kept), and the 11,231 routed cards that were never
+sent carry `llm_failed` as the merge always set it. The merge code is unchanged and tested; a role is switched on again only after its additions pass the audit below. A merge that
+finds rows in the cache but none under the current prompt is an error (`--model <id>`, the same `--no-think` flag and
+`CARDGEN_LLM_VARIANT` as the run), not a silent rules-only table.
+
+### Follow-ups (not in this PR)
+
+- The stability test result and a prompt round (target: at least 97% identical on-role answers at batch 5; below 93% the
+  prompt or batching is reworked).
+- A seeded precision audit of the LLM additions: n = 30 per role (all of them when fewer), a blind Sonnet labeller that
+  sees the card text and the gold header but never the LLM's answer, Opus review of the wrong and debatable rows, a 0.85
+  precision floor per role; JD decides each role.
+- A gate rewrite: `--validate --stage merged` becomes an addition-audit gate over a tracked
+  `data/knowledge/roles_llm_audit.toml` (rows of `oracle_id`, `role`, `verdict`, plus the seed and the labeller), instead
+  of an F1 comparison on gold the rules were tuned on.
+- `roles --audit --llm-added` as a tracked flag, in place of the one-off script that sampled the additions.
+- A prompt round for "counter unless pays" (not stax) and for convention 8 (drain). It re-asks every card, about 12 hours
+  of GPU, so it comes after the audit.
+- The ramp and fixing rule gaps (Gaea's Cradle, Cabal Coffers, the Verge lands stay roleless: `llm_add` was and is off for
+  them, and the rules do not read them).
+- Installing the weekly job (JD, by hand, after the knowledge branches are merged into main).
+- The phase status table rows below: the LLM stage is run, with additions off.
 
 ## Limits
 
@@ -354,7 +414,7 @@ coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --valida
 | 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
 | 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
 | 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
-| 3L Roles, local LLM stage | `knowledge-llm` | built and measured against the real model (dense Qwen3.6-27B); the targeted production run over 12,520 cards started 2026-11-21 and its results are to be merged |
+| 3L Roles, local LLM stage | `knowledge-llm`, `knowledge-final` | built and measured against the real model (dense Qwen3.6-27B); the targeted production run is done (12,288 of 12,520 cards classified, cache committed) and `llm_add` is off for all 26 roles until the additions are audited ([LLM results](#llm-results-2026-11-22)) |
 | 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
 | 4 Status, decks and findings join | `knowledge-status` | done, merged into `knowledge-base` (adversarial tests, Opus review; no-record cards print `m:N`, Full-auto counts as below Full) |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | section written and Opus-reviewed, merged into `knowledge-base`; JD signs off the wording before the final PR; linked from `cards.md` |

@@ -575,13 +575,16 @@ to change it) for the roles of the cards the rules routed, `roles --merge` combi
 overrides, and `roles --validate --stage merged` scores the result. Everything an agent needs to run it:
 
 ```
-llama up            # start the server (a systemd user service); the model is Qwen3-Coder-30B-A3B, 32K context
-llama ready         # wait until it answers
+systemctl --user start llama-27b    # the dense Qwen3.6-27B, 32K context ("llama up" starts the coder model: not this one)
+llama ready                         # wait until it answers
 cardgen roles --llm --only-routed [--limit N] [--batch 10]     # classify; resumable, writes llm_roles.jsonl
 cardgen roles --merge                                           # writes roles.json and reports/
 cardgen roles --validate --stage merged
-llama down          # free the VRAM
+systemctl --user stop llama-27b     # free the VRAM
 ```
+
+The exact production commands, with the memory cap and the flags the cache rows depend on, are under "Final
+configuration and the production run" below.
 
 The server must already be up: `--llm` reads the model id from `GET /v1/models` first and exits non-zero with
 `LLM unreachable` (touching no file) if it cannot. `--dry-run` counts candidates, cache hits and batches without a chat
@@ -648,8 +651,9 @@ the same key; a plain `roles --merge` and `roles --validate --stage merged` read
   cited, plus each non-certain rule role the LLM also proposed or whose role has `keep_rule = true` in `roles.toml`
   (frozen: true for all 26 roles, so the LLM never removes a rule role: add-only; JD's earlier 16/10 split is
   superseded, per-role `keep_rule = false` is still supported). A role with `llm_add = false` (default true; frozen
-  false for ramp, fixing, draw, selection, sac-outlet, finisher, evasion, blink) is off for the LLM: its proposals are
-  dropped like a failed guard and counted per role in the `--merge` output. Neither flag is part of the cache key. Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
+  false for ALL 26 roles until the production run's additions are audited, so the merged table has the rules table's
+  role sets; the LLM's order and primary still apply to the rule roles it kept) is off for the LLM: its proposals are dropped like a failed guard and counted per role in the `--merge`
+  output. Neither flag is part of the cache key. Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
   rule roles by prominence; at most four (a certain role is never the one cut). A card with no rule roles simply takes
   its guarded LLM roles. A role found by both stages keeps the rule's evidence; an LLM-only role has source `Llm`;
 - a routed Commander-legal card with no valid answer (failed, or not run yet) keeps its rule roles with `llm_failed`
@@ -668,7 +672,9 @@ unreviewed weekly run never reaches `roles.json`. The table's hash covers `meta.
 
 **Validation.** `roles --validate --stage rules` (the default) is unchanged. `--stage merged` scores the saved merged
 table, leaving out override cards, and adds per-role and micro precision, recall and F1, the routed-subset F1 for the
-rules alone against the merged table (merged below rules fails the stage), the rules-final figures, primary accuracy and
+rules alone against the merged table (merged below rules fails the stage; the tuning and regression gold are sets the
+rules were tuned on, so this can only tie or fail there, and with no role on it prints "LLM additions are off for every
+role: the merged stage equals the rules stage" and ties), the rules-final figures, primary accuracy and
 the LLM numbers from the last run and merge (classified, failed, retries, disagreements by route reason), and the LLM
 alone: its cached answers on the routed gold cards with the guards applied, scored apart from the merge (the rules
 were tuned to the tuning gold, so "merged at least rules" cannot show the LLM's own value there).
@@ -695,28 +701,41 @@ never leaves a half-written cache; there is no signal handler because none is ne
 its dead process, so the next run takes it over, skips the cached cards (no request for them) and continues.
 
 **Measured (pilot, the numbers behind the frozen configuration).** LLM alone on the routed gold cards, with the dense
-Qwen3.6-27B, thinking off, the `think` prompt: precision 0.92 and recall 0.78 to 0.80 over the roles that stay on; eight
-roles (ramp, fixing, draw, selection, sac-outlet, finisher, evasion, blink) scored too weakly and are off. On the blind
+Qwen3.6-27B, thinking off, the `think` prompt: precision 0.92 and recall 0.78 to 0.80 over the 18 roles it did best on;
+eight roles (ramp, fixing, draw, selection, sac-outlet, finisher, evasion, blink) scored too weakly (all 26 are now off,
+see below). On the blind
 set the merged table against rules only made 26 errors against 27 (+4 true, +3 false, -4 missed roles). Letting the LLM
 veto rule roles hurt, so the merge is add-only. The first pilot, with the 30B-A3B MoE model, scored P 0.73 / R 0.60 alone on the tuning routed cards.
 
-**Production run** (the coordinator starts the server; `--endpoint` names the `/v1` base):
+**Production run** (the coordinator starts the server by hand; `--endpoint` names the `/v1` base). The server is the
+dense Qwen3.6-27B-Q5_K_M from the tracked user unit `scripts/systemd/llama-27b.service` (link it once with
+`systemctl --user link`, then `systemctl --user start llama-27b`). `llama up` starts the coder model, which is the wrong
+one for this run:
 
 ```
-llama up; llama ready                       # Qwen3.6-27B, 32K context
-CARDGEN_LLM_VARIANT=think cardgen roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think \
-    --endpoint http://127.0.0.1:8080/v1     # about 12,520 legal cards, about 12 hours; rerun the same line after an interruption
-llama down
-cardgen roles --rules                       # the rule table, unchanged
-CARDGEN_LLM_VARIANT=think cardgen roles --merge --no-think
-cardgen roles --validate --stage merged
+systemctl --user start llama-27b; llama ready                  # Qwen3.6-27B, 32K context
+M="systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0"
+CARDGEN_LLM_VARIANT=think $M cardgen roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think \
+    --endpoint http://127.0.0.1:8080/v1 2> /tmp/roles-llm.err   # about 12,520 legal cards, about 12 hours; progress
+                                                                 # lines go to stderr; rerun the same line after an interruption
+systemctl --user stop llama-27b
+$M cardgen roles --rules                                        # the rule table, unchanged
+CARDGEN_LLM_VARIANT=think $M cardgen roles --merge --no-think
+$M cardgen roles --validate --stage merged
+git add data/knowledge/llm_roles.jsonl && git commit -m "LLM role answers ..."   # the cache is the only non-reproducible input
 ```
 
 Check with `--dry-run` first (the selected count and batch count). Only the cards the rules cannot read (no role, or a
-line no rule understands) are sent; every other card keeps its rule roles untouched.
+line no rule understands) are sent; every other card keeps its rule roles untouched. **`llm_add` is off for all 26 roles
+until the audit** (see "LLM results (2026-11-22)" in `documents/card-knowledge.md`): the merge reads the cache and drops
+every proposal, so `roles.json` has the rules-only role sets and no unaudited role reaches `find --role`. A merge with
+rows in the cache but none under the current prompt (a missing `--no-think`, another `CARDGEN_LLM_VARIANT`) is an error
+that names `--model <id>`, never a silent rules-only table.
 
-**Known limits.** The model proposes only the 18 roles that stay on; a card whose missing role is one of the 8 off roles
-is not repaired. A rule role is never removed, so a wrong rule role on a sent card stays. A sent card the model fails on
+**Known limits.** With `llm_add` off for every role the model's answers are cached but change nothing in `roles.json`.
+A rule role is never removed, so a wrong rule role on a sent card stays. A sent card the model fails on
 keeps its rule roles with `llm_failed`; a run with more than 20% failures exits non-zero. Answers are keyed on the card
 text, prompt, variant, no-think marker and model file name, so changing any of them re-asks everything. The blind-set
-gain is small (26 versus 27 errors): the stage adds a few true roles and a few false ones.
+result (26 versus 27 errors) was measured on the pilot's answers, which the production run did not reproduce card for
+card (a 92-card comparison found 90.2% identical on-role answers: answers depend on the batch neighbours); the
+production additions are unaudited.
