@@ -4,6 +4,7 @@ data/images/
 # generated card knowledge (the tracked files in data/knowledge/ stay tracked)
 data/knowledge/oracle.json
 data/knowledge/oracle.prev.json
+data/knowledge/roles.json
 data/knowledge/*.tmp
 data/saves/
 rust/target/

@@ -1,0 +1,226 @@
+# Role taxonomy v1. Definitions are self-contained prompt text. Guards apply to the cited Oracle line.
+version = 1
+
+[[role]]
+id = "ramp"
+definition = """A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Adds mana beyond a land drop: rocks, dorks, land ramp, rituals, cost reducers. Lands get roles only beyond tapping for one mana. Land searches onto the battlefield from spells or enter triggers are ramp; self-replacing fetches are not. Narrow cost reducers and life paid instead of mana count; self-only cost reduction does not. Sacrifice-for-mana is ramp and sac-outlet, ramp first. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A mana filter (an activation whose mana cost equals the mana it adds, e.g. '{1}, {T}: Add one mana of any color') is `fixing`, not `ramp`: ramp needs net mana beyond a land drop."""
+src = "rules"
+guard = """\
+(?i)add|less to (?:cast|activate)|cost.*less|pay .*life rather than|search .*library|additional land|\
+untap.*lands?|land creature token|affinity|return.*land cards?.*battlefield|treasure"""
+
+[[role]]
+id = "fixing"
+definition = """produces 2+ colours or any colour (lands included). Land searches reaching two or more basic types, any basic land or any land count; searches for one basic type do not. An MDFC land face adds nothing. Narrow or conditional main effects count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A mana filter (an activation whose mana cost equals the mana it adds, e.g. '{1}, {T}: Add one mana of any color') is `fixing`, not `ramp`: ramp needs net mana beyond a land drop."""
+src = "rules"
+guard = '(?i)add|mana of any|search .*library|landcycling|enchanted land is'
+
+[[role]]
+id = "draw"
+definition = """\
+net cards in hand: draw, impulse draw, wheels. Draw means net advantage. A spell cantrip and a permanent \
+sacrificing itself to draw one replace themselves and are not draw. Repeated draw or drawing two or more is \
+draw. Impulse draw and playing from the library top are draw. Main or repeatable effects only; at most four \
+roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land \
+backs add nothing; prepare cards use their spell face and their creature face's own abilities. Food, Blood, Map, Junk and other non-Treasure, non-Clue \
+artifact tokens are not `tokens`: judge their ability on its own. A repeatable Clue maker is tokens AND draw; \
+one Clue from a spell or an enter trigger is tokens only. A self-replacing aura or equipment ('When enchanted creature dies, draw a card', 'when this dies, draw') replaces itself like a cantrip and is not `draw` (convention 3). The monarch draws a card every end step: becoming the monarch repeatably is `draw`."""
+src = "rules"
+guard = """\
+(?i)draw|monarch|(?:play|cast|plot).*?(?:library|exiled)|(?:put|return).*?hand|cascade|investigate|clue token|\
+junk token|may (?:play|cast) (?:it|that card|those cards|one of those cards)"""
+
+[[role]]
+id = "selection"
+definition = """loot/rummage, scry or surveil 2+, card filtering with no net cards. Scry or surveil 2+ and digging without net cards count; scry 1 does not. Looting or rummaging filters without net cards. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)scry|surveil|draw.*discard|discard.*draw|look at|reveal.*top|from among.*hand|connive|recruit|learn|blood token'
+
+[[role]]
+id = "tutor"
+definition = """searches the library for a nonland card (a land search is ramp/fixing). Searches must reach nonland cards. Land-only searches are ramp/fixing. Roles never come from combo or commander context; a tutor is not a finisher for finding a combo. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. 'Search your library for a card named ~' (a copy of itself) is not `tutor`."""
+src = "rules"
+guard = '(?i)search .*library|transmute'
+
+[[role]]
+id = "removal"
+definition = """removes, steals or neutralises one opposing permanent (destroy, exile, bounce, -X/-X, fight, edict). Targeted multi-permanent destruction is removal, not wipe. Temporary stealing, bare tapping, combat-only damage and a 1-damage enter trigger do not count. Damage that can hit creatures is removal, not also drain. Exile and return of your own permanents is blink. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. Tokens given to an opponent as compensation (Mercy Killing) are not `tokens`; the edict or destroy part is still `removal`."""
+src = "rules+llm"
+guard = """\
+(?i)destroy|exile|return|damage|-[0-9x]+/-|fight|sacrifice|control of|control enchanted (?:creature|\
+permanent)|annihilator|put (?:up to [a-z]+ )?target.*library|shuffles.*library|at the beginning.*tap|enchanted.*(?:tap|untap|\
+attack|loses)|it gets -|target permanent.*untap|tap.*target.*(?:creature|permanent|land|artifact|enchantment)"""
+
+[[role]]
+id = "wipe"
+definition = """removes 2+ permanents at once (each/all, or a mass -X/-X). Each/all destruction, exile, bounce or mass negative toughness counts. Static permanent mass -1/-1 counts. Targeted multi-permanent destruction and 1-damage enter triggers do not count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)\b(?:all|each)\b|overload|destroy the rest|creatures.*get -[0-9x]+/-[0-9x]+'
+
+[[role]]
+id = "counter"
+definition = """counters a spell or ability. Cannot be countered is neither counter nor protection. Ward reminder text is never counter. Counters placed on permanents are not counter. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)counter|exile.*spells?'
+
+[[role]]
+id = "protection"
+definition = """\
+protects your permanents or yourself (hexproof, indestructible, phasing, Fog, Boots). Printed keywords affecting \
+only their own card give no protection. Giving hexproof, shroud, indestructible or protection to other creatures \
+counts. Protection-only team grants are protection, not anthem. Attack taxes are stax. Cannot be countered is \
+not protection. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker \
+ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. Granting ward to other permanents is protection. A team-wide lifelink-only grant is lifegain, not \
+anthem (anthem needs a stat pump or evasion/combat keyword grant)."""
+src = "rules+llm"
+guard = '(?i)hexproof|shroud|indestructible|protection|phase|prevent.*damage|regenerate|ward|umbra armor'
+
+[[role]]
+id = "stax"
+definition = """taxes or restricts opponents, symmetrically or not (Rule of Law, Drannith, Esper Sentinel tax). Attack taxes and restrictions on players count. Printed self keywords and bare tapping do not count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "llm"
+guard = """\
+(?i)can't|cannot|cost|unless.*pay|only.*(?:spell|turn)|loses all abilities|enter tapped|don't untap|\
+lands are Mountains|shuffle their library|instead.*sacrifices.*land"""
+
+[[role]]
+id = "discard"
+definition = """makes opponents discard. Only opposing discards count. Self costs, echo, one-shot hand dumps, random self-discard and mana-plus-discard activations do not count. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)discard'
+
+[[role]]
+id = "gy-hate"
+definition = """exiles graveyards or stops graveyard use. Exiling graveyards or preventing graveyard use counts. Exiling your own card to pay a cost is not graveyard hate. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)graveyard'
+
+[[role]]
+id = "recursion"
+definition = """\
+returns cards from your graveyard to hand or library, puts noncreature permanent cards from your graveyard onto \
+the battlefield, or lets you cast or play them from there. Returns to hand or library and permission to cast \
+other cards from your graveyard count. A card's own flashback is an alternate mode, not a recursion role by \
+itself. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates \
+costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. \
+`recursion` returns cards from your graveyard to hand or library, puts noncreature permanent cards from your \
+graveyard onto the battlefield, or lets you cast or play them from there; a card that can return a creature or a \
+noncreature card ("permanent card") is both recursion and reanimate. `reanimate` stays creature cards onto the \
+battlefield."""
+src = "rules"
+guard = '(?i)graveyard|flashback|soulshift'
+
+[[role]]
+id = "reanimate"
+definition = """\
+puts creatures from a graveyard onto the battlefield. Moves creature cards from a graveyard to the battlefield. \
+Alternate spell faces and conditional main effects count. Main or repeatable effects only; at most four roles \
+ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs \
+add nothing; prepare cards use their spell face and their creature face's own abilities. `recursion` returns cards from your graveyard to hand or library, \
+puts noncreature permanent cards from your graveyard onto the battlefield, or lets you cast or play them from \
+there; a card that can return a creature or a noncreature card ("permanent card") is both recursion and \
+reanimate. `reanimate` stays creature cards onto the battlefield."""
+src = "rules"
+guard = '(?i)graveyard|creature.*dies.*return|creature card.*battlefield|opponent sacrifices a nontoken permanent'
+
+[[role]]
+id = "self-mill"
+definition = """puts your own cards into your graveyard (mill, Entomb, discard outlets). Free repeatable discard outlets count. Self-sacrifice, additional costs, echo, one-shot hand dumps, random discard and mana-plus-discard activations do not. Chosen graveyard placement such as Entomb or Intuition counts; opponent-separated piles do not. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)mill|discard|graveyard'
+
+[[role]]
+id = "tokens"
+definition = """\
+creates creature or treasure/clue tokens. Creature, Treasure and Clue tokens count. A token copy of a creature is copy AND tokens, copy first. Manifest makes a face-down \
+card, not a token. Tokens made as opponent compensation do not describe your deck-building function. Main or \
+repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least \
+starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. A repeatable or multi-Treasure maker is tokens AND ramp; a single Treasure rider on another effect is tokens only. Food, Blood, Map, Junk and other non-Treasure, non-Clue artifact \
+tokens are not `tokens`: judge their ability on its own. A repeatable Clue maker is tokens AND draw; one Clue \
+from a spell or an enter trigger is tokens only. Tokens given to an opponent as compensation (Mercy Killing) are not `tokens`; the edict or destroy part is still `removal`."""
+src = "rules"
+guard = '(?i)token|investigate|amass|populate|incubate|mobilize|afterlife|recruit'
+
+[[role]]
+id = "anthem"
+definition = """\
+pumps or grants keywords to your team. Team pumps and team grants of evasion or combat keywords count. Team \
+protection-only grants do not. Self buffs and single-target pumps are not anthem. Main or repeatable effects \
+only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no \
+role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities. Granting ward to other permanents is \
+protection. A team-wide lifelink-only grant is lifegain, not anthem (anthem needs a stat pump or evasion/combat \
+keyword grant). A +1/+1 counter on each creature you control is counters and anthem. Counters on players \
+(poison, energy, experience, rad) are not `counters`; proliferate is. Amass is tokens, and also counters when \
+repeatable. A team-wide haste grant alone is not `anthem`: anthem needs a stat pump or an evasion/combat-damage keyword (flying, double strike, trample, menace, 'can't be blocked') for your whole team. A pump or grant on 'up to N target creatures' (not your whole team) is not `anthem`."""
+src = "rules"
+guard = '(?i)(?:creatures?|[a-z]+s).*?(?:gets?|gains?|have|has)|\+1/\+1 counter|(?:each )?other .*gets?'
+
+[[role]]
+id = "sac-outlet"
+definition = """sacrifices a permanent as a cost, repeatably. The sacrifice must be a repeatable cost accepting other permanents. Self-sacrifice, additional casting costs, echo and one-shot hand dumps do not count. Sacrifice for mana also counts as ramp, ramp first. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)sacrifice.*:'
+
+[[role]]
+id = "drain"
+definition = """opponents lose life from triggers (aristocrats, Y'shtola-style payoffs). Repeatable opposing life loss or a spell making each opponent lose life counts. One-shot single-player burn and caster life payments do not. Damage able to hit a creature or any target is removal, not also drain. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules+llm"
+guard = '(?i)loses? .*life|damage'
+
+[[role]]
+id = "lifegain"
+definition = """\
+gains life, or pays off life gained. Life gain or a payoff for gaining life must be the purpose or a repeatable \
+trigger. Small riders on other spell effects and life paid or lost by the caster do not count. Printed or static \
+lifelink on permanents and repeatable activated lifelink grants count, listed last. One-turn lifelink from a \
+spell or trigger is incidental. Main or repeatable effects only; at most four roles ordered by prominence. \
+Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare \
+cards use their spell face and their creature face's own abilities. Granting ward to other permanents is protection. A team-wide lifelink-only grant is \
+lifegain, not anthem (anthem needs a stat pump or evasion/combat keyword grant)."""
+src = "rules"
+guard = '(?i)gain.*life|lifelink|food token|double.*life total'
+
+[[role]]
+id = "counters"
+definition = """\
+puts +1/+1 or other counters; proliferate. Repeatable self-counter triggers, counters placed on other permanents \
+and proliferate count. One-time self enters-with or renown counters and bookkeeping counters such as ki, \
+suspect, void, finality and time do not. Main or repeatable effects only; at most four roles ordered by \
+prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; \
+prepare cards use their spell face and their creature face's own abilities. A +1/+1 counter on each creature you control is counters and anthem. Counters \
+on players (poison, energy, experience, rad) are not `counters`; proliferate is. Amass is tokens, and also \
+counters when repeatable."""
+src = "rules"
+guard = """\
+(?i)counter|proliferate|backup|bolster|support|adapt|awaken|connive|dethrone|mentor|evolve|training|amass|\
+map token"""
+
+[[role]]
+id = "blink"
+definition = """exiles and returns your permanents. Exile and return of your own permanents counts; ordinary graveyard returns are recursion or reanimate. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)exile.*(?:return|put both cards onto the battlefield)'
+
+[[role]]
+id = "copy"
+definition = """copies spells, permanents or tokens (clones included). Spell, permanent and token copies count. A token copy of a creature is copy AND tokens, copy first. A prepare reminder saying cast a copy of its spell never counts. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules+llm"
+guard = '(?i)cop(?:y|ies)|casualty|conspire|replicate|storm'
+
+[[role]]
+id = "extra-phase"
+definition = """extra turns or extra combats. Extra turns and additional combats count. A planeswalker minus ability costing at least its starting loyalty gives no role. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules"
+guard = '(?i)extra (?:turn|combat)|additional (?:combat|turn|beginning phase)'
+
+[[role]]
+id = "finisher"
+definition = """ends or wins the game when resolved or untouched: alt-win, mass pump-and-attack, infinite enabler, overwhelming bomb. Use only what is in Oracle text; no commander-deck or combo context. A tutor for a combo or one half of an unstated combo is not a finisher. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "llm"
+guard = '(?i)win the game|loses the game|infect|double|damage|\+[x0-9]+/\+[x0-9]+|untap|mana|combat'
+
+[[role]]
+id = "evasion"
+definition = """makes your attackers unblockable or hard to block, or grants double strike. Printed self flying, menace, shadow, landwalk, trample and cannot be blocked give no role. Grants to other creatures of flying, menace, fear, cannot be blocked or double strike count. Team grants are also anthem. Trample alone is not evasion. Main or repeatable effects only; at most four roles ordered by prominence. Planeswalker ultimates costing at least starting loyalty give no role. MDFC land backs add nothing; prepare cards use their spell face and their creature face's own abilities."""
+src = "rules+llm"
+guard = '''(?i)flying|menace|fear|shadow|horsemanship|can't be blocked|double strike|intimidate'''
