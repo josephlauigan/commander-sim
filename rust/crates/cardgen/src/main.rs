@@ -41,6 +41,21 @@ const USAGE: &str = "usage:
                                                 --meld unless --name is given; --sort defaults to edhrec, --limit to
                                                 30 (all = no limit); --count prints only the number of matches;
                                                 notes about a cut page or a filtered-out name go to stderr
+  cardgen map [--out PATH] [--stdout] [--data-dir DIR]
+                                                write the whole-catalog summary (about 3k tokens, under 32 KB) to
+                                                data/knowledge/map.md; needs oracle.json and roles.json; --stdout
+                                                also prints it
+  cardgen digest (--deck KEY | --ident LETTERS) [--role R | --view roleless|new] [--limit N] [--offset N]
+                 [--out PATH] [--budget-tokens N] [--stdout] [--data-dir DIR]
+                                                one compact line per card for a deck's colours (or any identity),
+                                                always written to data/knowledge/digests/KEY.txt (a page to
+                                                KEY.ROLE.txt or KEY.VIEW.txt): sections A the deck's cards (the
+                                                commander first), B best per role, C synergy with the commander's
+                                                subtypes, D new since the previous sync, E the best-ranked cards
+                                                with no role; --role R pages through every card that has R in
+                                                any position, --view roleless|new through the complete lists;
+                                                --budget-tokens defaults to 42000 (estimated as bytes/4);
+                                                --stdout also prints the text
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
@@ -92,6 +107,8 @@ fn run(args: &[String]) -> Result<(), String> {
         "deck" => deck(&project, &mut args),
         "bulk-sync" => bulk_sync(&project, &mut args),
         "find" => find(&project, &args),
+        "map" => map(&project, &args),
+        "digest" => digest(&project, &args),
         "roles" => {
             let (out, passed) = cardgen::roles::command(&project, &args)?;
             print!("{out}");
@@ -238,6 +255,44 @@ fn find(project: &Project, args: &[String]) -> Result<(), String> {
         Err(e) => return Err(format!("cannot write the result: {e}")),
     }
     let _ = std::io::stderr().write_all(o.stderr().as_bytes());
+    Ok(())
+}
+
+/// the text of a generated view to stdout (a closed pipe is not an error)
+fn print_text(text: &str) -> Result<(), String> {
+    use std::io::Write;
+    match std::io::stdout().write_all(text.as_bytes()).and_then(|_| std::io::stdout().flush()) {
+        Ok(()) => Ok(()),
+        Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => Ok(()),
+        Err(e) => Err(format!("cannot write the result: {e}")),
+    }
+}
+
+fn map(project: &Project, args: &[String]) -> Result<(), String> {
+    let (o, stdout) = cardgen::map::command(project, args)?;
+    if stdout {
+        print_text(&o.text)?;
+        eprintln!("{}", o.summary());
+    } else {
+        println!("{}", o.summary());
+    }
+    Ok(())
+}
+
+fn digest(project: &Project, args: &[String]) -> Result<(), String> {
+    use cardgen::knowledge::FindError;
+    let wants_text = args.iter().any(|a| a == "--stdout");
+    let o = match cardgen::digest::command(project, args) {
+        Ok(o) => o,
+        Err(FindError::Usage(m)) => return Err(format!("{m}\n{}", cardgen::digest::USAGE)),
+        Err(FindError::Failed(m)) => return Err(m),
+    };
+    if wants_text {
+        print_text(&o.digest.text)?;
+        eprintln!("{}", o.summary());
+    } else {
+        println!("{}", o.summary());
+    }
     Ok(())
 }
 
