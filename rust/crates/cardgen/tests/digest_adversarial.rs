@@ -154,13 +154,13 @@ fn line_checks(line: &str) {
     assert!(line.chars().count() <= 160, "{} chars: {line}", line.chars().count());
     assert!(!line.contains(['\t', '\r', '\n']), "{line:?}");
     assert!(f.iter().all(|s| !s.is_empty() && s.trim() == *s), "{line:?}");
-    let mut flags: Vec<_> = f[5].split_whitespace().collect();
-    assert!(["r:rules", "r:llm", "r:uncertain", "r:none"].contains(&flags.pop().unwrap()), "{line}");
+    let flags: Vec<_> = f[5].split_whitespace().collect();
     assert!(
-        flags.iter().all(|s| *s == "*"
-            || ["GC", "BAN", "NL"].contains(s)
-            || s.strip_prefix('#').is_some_and(|n| n.parse::<u32>().is_ok())
-            || s.strip_prefix('$').is_some_and(|n| n.parse::<u64>().is_ok())),
+        flags == ["-"]
+            || flags.iter().all(|s| *s == "*"
+                || ["GC", "BAN", "NL", "?"].contains(s)
+                || s.strip_prefix('#').is_some_and(|n| n.parse::<u32>().is_ok())
+                || s.strip_prefix('$').is_some_and(|n| n.parse::<u64>().is_ok())),
         "{line}"
     );
 }
@@ -300,10 +300,15 @@ fn role_tables_rules_merged_failed_stale_missing_and_corrupt() {
     }
     e.reattach();
     let l = digest::Lines::new(&e.index, &e.table);
-    assert!(l.line(i, false).ends_with("r:llm"));
-    assert!(l.line(e.index.lookup("Vanilla")[0], false).ends_with("r:none"));
-    assert!(l.line(e.index.lookup("Other Draw")[0], false).ends_with("r:rules"));
-    assert!(l.line(e.index.lookup("Unranked Draw")[0], false).ends_with("r:uncertain"));
+    // only an unreviewed card carries a flag for it
+    let status = |name: &str| {
+        let i = e.index.lookup(name)[0];
+        (l.review(i), l.line(i, false).ends_with('?'))
+    };
+    assert_eq!((l.review(i), l.line(i, false).ends_with('?')), (digest::Review::Llm, false));
+    assert_eq!(status("Vanilla"), (digest::Review::None, false));
+    assert_eq!(status("Other Draw"), (digest::Review::Rules, false));
+    assert_eq!(status("Unranked Draw"), (digest::Review::Uncertain, true));
     assert!(
         digest::build(&e.index, &e.table, &spec(None, &Prev::Missing))
             .unwrap()
@@ -452,7 +457,8 @@ fn defect_cut_leaves_an_unterminated_quoted_ability() {
     let e = Env::new(vec![card(
         "Grant",
         "Enchantment",
-        "Creatures you control have \"Whenever this creature attacks, draw a card, then discard a card, create a Treasure token, and gain 3 life.\"",
+        "Creatures you control have \"Whenever this creature attacks, draw a card, then discard a card, create a \
+         Treasure token, and gain 3 life.\"",
         &[],
         Some(1),
     )]);
@@ -464,7 +470,8 @@ fn defect_cut_leaves_an_unterminated_quoted_ability() {
 #[test]
 fn defect_line_limit_fails_when_fixed_fields_alone_are_too_long() {
     // A real catalog name (not legal, but legalities do not exclude a deck's section A).
-    let name = "Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental";
+    let name = "Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the \
+                Absolute Longest Card Name Ever Elemental";
     let mut c = card(name, "Creature — Elemental", "Trample", &["G"], Some(1));
     c["mana_cost"] = json!("{1}{G}{G}");
     c["legalities"]["commander"] = json!("not_legal");
@@ -863,6 +870,7 @@ fn real_map_counts_match_independent_python() {
         .as_array()
         .unwrap()
         .iter()
+        .take(15)
         .map(|p| format!("{} {}", p[0].as_str().unwrap(), p[1]))
         .collect::<Vec<_>>()
         .join(", ");
@@ -882,11 +890,11 @@ fn real_map_counts_match_independent_python() {
         num(a["covered"].as_u64().unwrap())
     )));
     assert!(text.contains(&format!("{} cards need the LLM", num(a["routed"].as_u64().unwrap()))));
+    // the combos of JD's six decks (only those), with their counts
     for row in a["spellbook"].as_array().unwrap() {
-        assert!(text.contains(&format!(
-            "| {} |",
-            row.as_array().unwrap().iter().map(|s| s.as_str().unwrap()).collect::<Vec<_>>().join(" | ")
-        )));
+        let row: Vec<&str> = row.as_array().unwrap().iter().map(|s| s.as_str().unwrap()).collect();
+        let shown = text.contains(&format!("- {} (fetched {}): {} in the list", row[0], row[2], row[3]));
+        assert_eq!(shown, MINE.contains(&row[0]), "spellbook row {row:?}");
     }
 }
 

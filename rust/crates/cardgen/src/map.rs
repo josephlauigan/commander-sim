@@ -7,7 +7,7 @@
 
 use crate::data::Project;
 use crate::digest;
-use crate::knowledge::{self, Card, Index, Legal, T_CREATURE};
+use crate::knowledge::{self, Card, Deck, Index, Legal};
 use crate::roles::{self, IDS};
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
@@ -16,8 +16,11 @@ use std::path::{Path, PathBuf};
 /// the hard size limit of `map.md`, in bytes
 pub const MAX_BYTES: usize = 32 * 1024;
 /// rows of the biggest-creature-types, biggest-subtypes and keyword lists
-pub const TOP_TYPES: usize = 40;
-pub const TOP_KEYWORDS: usize = 60;
+pub const TOP_SUBTYPES: usize = 40;
+pub const TOP_CREATURE_TYPES: usize = 15;
+pub const TOP_KEYWORDS: usize = 15;
+/// the most combos listed per deck
+const MAX_COMBOS: usize = 10;
 
 fn num(n: usize) -> String {
     let s = n.to_string();
@@ -56,8 +59,18 @@ fn counted(v: &[(String, usize)]) -> String {
     v.iter().map(|(n, c)| format!("{n} {c}")).collect::<Vec<_>>().join(", ")
 }
 
-/// per deck file of `data/spellbook/`: (deck, identity, fetched, included, included by changing commanders, almost)
-fn spellbook(dir: &Path) -> Result<Vec<[String; 6]>, String> {
+/// What one `data/spellbook/` file says about a deck: its key, identity and fetch date, the combos in the list (as
+/// card names), and the counts of the combos a commander change or one more card would give.
+struct Spellbook {
+    deck: String,
+    fetched: String,
+    included: Vec<Vec<String>>,
+    by_changing_commanders: usize,
+    almost: usize,
+}
+
+/// every file of `data/spellbook/`, read and checked (a file that does not parse is an error naming it)
+fn spellbook(dir: &Path) -> Result<Vec<Spellbook>, String> {
     let mut files: Vec<PathBuf> = vec![];
     for e in std::fs::read_dir(dir).map_err(|e| format!("{}: {e}", dir.display()))? {
         let p = e.map_err(|e| e.to_string())?.path();
@@ -70,24 +83,137 @@ fn spellbook(dir: &Path) -> Result<Vec<[String; 6]>, String> {
     for f in files {
         let text = std::fs::read_to_string(&f).map_err(|e| format!("{}: {e}", f.display()))?;
         let v: serde_json::Value = serde_json::from_str(&text).map_err(|e| format!("{}: {e}", f.display()))?;
-        let count = |k: &str| v.get(k).and_then(|a| a.as_array()).map_or(0, Vec::len).to_string();
+        let count = |k: &str| v.get(k).and_then(|a| a.as_array()).map_or(0, Vec::len);
         let s = |k: &str| v.get(k).and_then(|x| x.as_str()).unwrap_or("-").to_string();
         let stem = f.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
-        let deck = Some(s("deck")).filter(|d| d != "-").unwrap_or(stem);
-        rows.push([
-            deck,
-            s("identity"),
-            s("fetched"),
-            count("included"),
-            count("included_by_changing_commanders"),
-            count("almost_included"),
-        ]);
+        let included = v
+            .get("included")
+            .and_then(|a| a.as_array())
+            .into_iter()
+            .flatten()
+            .map(|combo| {
+                combo
+                    .get("cards")
+                    .and_then(|c| c.as_array())
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|c| c.get("name").and_then(|n| n.as_str()).map(String::from))
+                    .collect()
+            })
+            .collect();
+        rows.push(Spellbook {
+            deck: Some(s("deck")).filter(|d| d != "-").unwrap_or(stem),
+            fetched: s("fetched"),
+            included,
+            by_changing_commanders: count("included_by_changing_commanders"),
+            almost: count("almost_included"),
+        });
     }
     Ok(rows)
 }
 
-/// Builds the map text. `spellbook_dir` is `data/spellbook/` (the combos section says so when it is absent).
+/// A deck of `data/decks.json` `mine` with its opponent tiers.
+pub struct MineDeck {
+    pub deck: Deck,
+    pub tiers: Vec<String>,
+}
+
+/// JD's own decks (`mine`) of a `decks.json`
+pub fn load_mine(path: &Path) -> Result<Vec<MineDeck>, String> {
+    let text = std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let v: serde_json::Value = serde_json::from_str(&text).map_err(|e| format!("{}: {e}", path.display()))?;
+    let mut out = vec![];
+    for d in v.get("mine").and_then(|m| m.as_array()).into_iter().flatten() {
+        let deck: Deck = serde_json::from_value(d.clone()).map_err(|e| format!("{}: {e}", path.display()))?;
+        let tiers = d
+            .get("tiers")
+            .and_then(|t| t.as_array())
+            .into_iter()
+            .flatten()
+            .filter_map(|t| t.as_str().map(String::from))
+            .collect();
+        out.push(MineDeck { deck, tiers });
+    }
+    Ok(out)
+}
+
+/// the subtypes after the `—` of one face's type line (`Time Lord` is one subtype)
+fn face_subtypes(face: &str) -> Vec<String> {
+    let Some((_, subs)) = face.split_once('—') else { return vec![] };
+    let words: Vec<&str> = subs.split_whitespace().collect();
+    let (mut out, mut i) = (vec![], 0);
+    while i < words.len() {
+        let multi = knowledge::MULTI_WORD_SUBTYPES.iter().find(|m| {
+            let parts: Vec<&str> = m.split(' ').collect();
+            words[i..].starts_with(&parts)
+        });
+        match multi {
+            Some(m) => {
+                out.push(m.to_string());
+                i += m.split(' ').count();
+            }
+            None => {
+                out.push(words[i].to_string());
+                i += 1;
+            }
+        }
+    }
+    out
+}
+
+/// The creature types of the cards and how many cards have each: the subtypes of every creature-bearing face (a
+/// face with `Creature` or `Kindred` in its type), each counted once per card, leaving out the subtypes that only
+/// non-creature faces have (`Equipment`, `Aura`, `Adventure`, the land types of a `Land Creature`).
+fn creature_types<'a>(cards: impl Iterator<Item = &'a Card> + Clone) -> Vec<(String, usize)> {
+    let faces_of = |c: &Card| -> Vec<String> {
+        let mut faces: Vec<String> = c.raw.type_line.split(" // ").map(String::from).collect();
+        if faces.len() == 1 {
+            let from: Vec<String> =
+                c.raw.card_faces.iter().flatten().map(|f| f.type_line.clone()).filter(|t| !t.is_empty()).collect();
+            if from.len() > 1 {
+                faces = from;
+            }
+        }
+        faces
+    };
+    let creature_face = |f: &str| {
+        let head = f.split('—').next().unwrap_or("").to_lowercase();
+        head.split_whitespace().any(|w| ["creature", "kindred", "tribal"].contains(&w))
+    };
+    let mut other: std::collections::BTreeSet<String> = Default::default();
+    for c in cards.clone() {
+        for f in faces_of(c).iter().filter(|f| !creature_face(f)) {
+            other.extend(face_subtypes(f));
+        }
+    }
+    let mut m: BTreeMap<String, usize> = BTreeMap::new();
+    for c in cards {
+        let mut own: std::collections::BTreeSet<String> = Default::default();
+        for f in faces_of(c).iter().filter(|f| creature_face(f)) {
+            own.extend(face_subtypes(f).into_iter().filter(|s| !other.contains(s)));
+        }
+        for s in own {
+            *m.entry(s).or_default() += 1;
+        }
+    }
+    m.into_iter().collect()
+}
+
+/// Builds the map text. `spellbook_dir` is `data/spellbook/` (the combos section says so when it is absent); JD's
+/// decks come from the `decks.json` beside it.
 pub fn build(index: &Index, table: &digest::Table, spellbook_dir: Option<&Path>) -> Result<String, String> {
+    let decks_file = spellbook_dir.and_then(Path::parent).map(|p| p.join("decks.json")).filter(|p| p.is_file());
+    let decks = decks_file.map(|p| load_mine(&p)).transpose()?.unwrap_or_default();
+    build_with(index, table, spellbook_dir, &decks)
+}
+
+/// [`build`] with JD's decks given.
+pub fn build_with(
+    index: &Index,
+    table: &digest::Table,
+    spellbook_dir: Option<&Path>,
+    decks: &[MineDeck],
+) -> Result<String, String> {
     if index.roles(0).is_none() {
         return Err("the catalog has no role table attached; run `cardgen roles --rules`".into());
     }
@@ -205,13 +331,13 @@ pub fn build(index: &Index, table: &digest::Table, spellbook_dir: Option<&Path>)
     );
     let _ = writeln!(
         w,
-        "- {} cards were decided by the rules alone (digest flag `r:rules`, or `r:none` for no role).",
+        "- {} cards were decided by the rules alone, or have no role and nothing to ask (no flag in the digest).",
         num(rules_alone)
     );
     let _ = writeln!(
         w,
-        "- {} cards need the LLM (`needs_llm`): {} have an LLM answer merged (`r:llm`), {} are unreviewed \
-         (`r:uncertain`: their roles may be incomplete or wrong).",
+        "- {} cards need the LLM (`needs_llm`): {} have an LLM answer merged, {} are unreviewed (the digest \
+         flag `?`: their roles may be incomplete or wrong).",
         num(routed),
         num(answered),
         num(unreviewed)
@@ -227,12 +353,16 @@ pub fn build(index: &Index, table: &digest::Table, spellbook_dir: Option<&Path>)
         }
         m.into_iter().collect()
     };
-    let creature = counts(&|c| covered(c) && c.types & T_CREATURE != 0);
+    let creature = creature_types(index.cards.iter().filter(|c| covered(c)));
     let subs = counts(&covered);
-    let _ = writeln!(w, "\n## Creature types ({} in all; the {TOP_TYPES} biggest, cards)\n", creature.len());
-    let _ = writeln!(w, "{}", counted(&top(creature, TOP_TYPES)));
-    let _ = writeln!(w, "\n## Subtypes of every kind ({} in all; the {TOP_TYPES} biggest, cards)\n", subs.len());
-    let _ = writeln!(w, "{}", counted(&top(subs, TOP_TYPES)));
+    let _ = writeln!(w, "\n## Creature types ({} in all; the {TOP_CREATURE_TYPES} biggest, cards)\n", creature.len());
+    let _ = writeln!(w, "{}", counted(&top(creature, TOP_CREATURE_TYPES)));
+    let _ = writeln!(
+        w,
+        "\n## Subtypes of every kind ({} in all, creature types and the rest; the {TOP_SUBTYPES} biggest, cards)\n",
+        subs.len()
+    );
+    let _ = writeln!(w, "{}", counted(&top(subs, TOP_SUBTYPES)));
     let mut kw: BTreeMap<&str, usize> = BTreeMap::new();
     for (_, c) in &cover {
         let mut seen: Vec<&str> = vec![];
@@ -259,21 +389,72 @@ pub fn build(index: &Index, table: &digest::Table, spellbook_dir: Option<&Path>)
     let _ = writeln!(w, "\n## Banned in Commander ({})\n", by_legal(Legal::Banned));
     let _ = writeln!(w, "{}", names(&|c| c.legal == Legal::Banned));
 
-    // combos
-    let _ = writeln!(w, "\n## Combos known per deck (Commander Spellbook, data/spellbook/)\n");
-    match spellbook_dir.map(spellbook) {
-        Some(Ok(rows)) if !rows.is_empty() => {
+    // JD's decks
+    let _ = writeln!(w, "\n## JD's decks (data/decks.json)\n");
+    if decks.is_empty() {
+        let _ = writeln!(w, "No decks found (data/decks.json `mine`).");
+    } else {
+        let _ = writeln!(
+            w,
+            "| key | commander | identity | tiers | list cards not Commander-legal | cards with each role |\n\
+             |---|---|---|---|---|---|"
+        );
+        for d in decks {
+            let own = digest::deck_cards(index, &d.deck);
+            let illegal: Vec<&str> = own
+                .iter()
+                .map(|&i| &index.cards[i as usize])
+                .filter(|c| c.legal != Legal::Legal)
+                .map(|c| c.raw.name.as_str())
+                .collect();
+            let commander = match &d.deck.commander2 {
+                Some(c2) => format!("{} + {c2}", d.deck.commander),
+                None => d.deck.commander.clone(),
+            };
+            let roles_cell =
+                digest::role_counts(index, &own).iter().map(|(r, n)| format!("{r} {n}")).collect::<Vec<_>>().join(", ");
             let _ = writeln!(
                 w,
-                "| deck | identity | fetched | in the list | with another commander | one card away |\n\
-                 |---|---|---|---|---|---|"
+                "| {} | {commander} | {} | {} | {} | {roles_cell} |",
+                d.deck.key,
+                d.deck.ident,
+                d.tiers.join(" "),
+                if illegal.is_empty() {
+                    "0".to_string()
+                } else {
+                    format!("{} ({})", illegal.len(), illegal.join(", "))
+                },
             );
-            for r in &rows {
-                let _ = writeln!(w, "| {} |", r.join(" | "));
-            }
         }
-        Some(Ok(_)) => {
+    }
+
+    // combos
+    let _ = writeln!(w, "\n## Combos in JD's decks (Commander Spellbook, data/spellbook/KEY.json)\n");
+    match spellbook_dir.map(spellbook) {
+        Some(Ok(rows)) if rows.is_empty() => {
             let _ = writeln!(w, "No deck files in data/spellbook/.");
+        }
+        Some(Ok(rows)) => {
+            let mut any = false;
+            for d in decks {
+                let Some(r) = rows.iter().find(|r| r.deck == d.deck.key) else { continue };
+                any = true;
+                let list: Vec<String> = r.included.iter().take(MAX_COMBOS).map(|c| c.join(" + ")).collect();
+                let more = if r.included.len() > MAX_COMBOS { "; ..." } else { "" };
+                let mut parts = vec![format!(
+                    "{} in the list{}",
+                    r.included.len(),
+                    if list.is_empty() { String::new() } else { format!(": {}{more}", list.join("; ")) }
+                )];
+                if r.by_changing_commanders > 0 {
+                    parts.push(format!("{} more with another commander", r.by_changing_commanders));
+                }
+                parts.push(format!("{} one card away (see the file)", r.almost));
+                let _ = writeln!(w, "- {} (fetched {}): {}.", d.deck.key, r.fetched, parts.join(". "));
+            }
+            if !any {
+                let _ = writeln!(w, "No spellbook file for the decks above.");
+            }
         }
         Some(Err(e)) => return Err(e),
         None => {
@@ -292,21 +473,27 @@ pub fn build(index: &Index, table: &digest::Table, spellbook_dir: Option<&Path>)
     Ok(out)
 }
 
-const HOW_TO_USE: [&str; 5] = [
+const HOW_TO_USE: [&str; 6] = [
     "Layers: this map (1), a deck digest (2), one card in full (3), the sim (4).",
     "- Search: `cardgen find --ident WU --cmc '<=2' --type instant --text 'counter target' --role counter --limit 20` \
      (`--deck KEY` for a deck's colours without its cards, `--count`, `--json`).",
     "- Digest of a deck's colours, one line per card: `cardgen digest --deck KEY --stdout` (or read \
-     data/knowledge/digests/KEY.txt); one role in full: \
-     `cardgen digest --deck KEY --role removal --limit 300 --offset 0 --stdout`; \
-     any identity: `cardgen digest --ident WUB --stdout`.",
+     data/knowledge/digests/KEY.txt); every card that has a role: \
+     `cardgen digest --deck KEY --role removal --limit 300 --offset 0 --stdout`; every candidate with no role: \
+     `cardgen digest --deck KEY --view roleless --stdout`; the new ones: `--view new`; any identity: \
+     `cardgen digest --ident WUB --stdout`.",
     "- One card in full: `cardgen find --name \"Sol Ring\" --full` (add `--legal any` for a banned or not-legal card).",
-    "- The digest `r:` flag says how a card's roles were decided: `r:rules`, `r:llm`, `r:uncertain` (not reviewed \
-     yet), \
-     `r:none`. Roles say what a card does, not whether it is good in a deck: the sim decides (see AGENTS.md).",
+    "- For a swap: take the roles of the card to cut (section A of the deck's digest), read the best of that role in \
+     its `## B role X` block, list the whole role with `--role X` (primary-X cards first, then the rest) and the \
+     roleless candidates with `--view roleless`, then read the finalists with `find --name N --full`; a line marked \
+     `BAN` or `NL` is not Commander-legal. Absent from the digest is not the same as nonexistent.",
+    "- The digest `?` flag marks a card whose roles are not reviewed yet (routed to the LLM, no answer): its roles may \
+     be incomplete or wrong. Roles say what a card does, not whether it is good in a deck: the sim decides (see \
+     AGENTS.md).",
 ];
 
-pub const USAGE: &str = "usage: cardgen map [--out PATH] [--stdout] [--data-dir DIR]\n  (the map is always written to its file; --stdout also prints it)";
+pub const USAGE: &str = "usage: cardgen map [--out PATH] [--stdout] [--data-dir DIR]
+  (the map is always written to its file; --stdout also prints it)";
 
 /// What the command did.
 #[derive(Debug)]
@@ -342,7 +529,9 @@ pub fn command(project: &Project, args: &[String]) -> Result<(Output, bool), Str
     }
     let (index, table) = digest::open(project, data_dir.as_deref())?;
     let spell = project.data("spellbook");
-    let text = build(&index, &table, spell.is_dir().then_some(spell.as_path()))?;
+    let decks_path = project.data("decks.json");
+    let decks = if decks_path.is_file() { load_mine(&decks_path)? } else { vec![] };
+    let text = build_with(&index, &table, spell.is_dir().then_some(spell.as_path()), &decks)?;
     let path = out_path.unwrap_or_else(|| digest::out_dir(project, data_dir.as_deref()).join("map.md"));
     digest::write_file(&path, &text)?;
     Ok((Output { text, path }, stdout))

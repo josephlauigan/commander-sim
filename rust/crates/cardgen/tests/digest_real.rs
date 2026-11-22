@@ -217,7 +217,7 @@ fn the_map_is_under_32_kb_complete_and_deterministic() {
     let covered = hits.iter().filter(|&&i| roles::is_deck_card(&idx.cards[i as usize])).count();
     assert!(text.contains(&format!("cover {} legal cards", num(covered))), "{}", &text[..600]);
     assert!(text.contains("## Game Changers (") && text.contains("## Banned in Commander ("));
-    assert!(text.contains("| thanos | WUBRG |"));
+    assert!(text.contains("- thanos (fetched") && text.contains("| thanos | Thanos, the Mad Titan | WUBRG | t5 |"));
 }
 
 fn num(n: usize) -> String {

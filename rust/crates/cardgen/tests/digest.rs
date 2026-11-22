@@ -16,7 +16,8 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 const TAXONOMY: &str = include_str!("../../../../data/knowledge/roles.toml");
 const FIXTURE: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/roles_oracle.json");
-const LONG141: &str = "Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental";
+const LONG141: &str = "Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to \
+                       Have the Absolute Longest Card Name Ever Elemental";
 const LONG_NAME: &str = "Test Card With An Extraordinarily Long Name, Eater Of Many Worlds And Keeper Of Small Secrets";
 
 fn card(name: &str, type_line: &str, text: &str, ident: &[&str], legal: &str, rank: Option<u32>) -> Value {
@@ -89,6 +90,13 @@ fn records() -> Vec<Value> {
     v
 }
 
+/// replaces the environment's catalog by these records (the caller regenerates the role table)
+fn write_catalog(env: &Env, cards: &[Value]) {
+    let meta = json!({"schema": 1, "bulk_updated_at": "x", "download_uri": "x", "synced": "x", "count": cards.len()});
+    let doc = json!({"meta": meta, "cards": cards});
+    std::fs::write(env.dir().join("oracle.json"), serde_json::to_string(&doc).unwrap()).unwrap();
+}
+
 fn decks() -> Value {
     json!({"version": 1, "mine": [
         {"key": "dragons", "name": "Dragons", "commander": "Lathliss, Dragon Queen", "ident": "R", "tiers": ["t1"],
@@ -97,7 +105,8 @@ fn decks() -> Value {
         {"key": "thanos", "name": "Thanos", "commander": "Thanos, the Mad Titan", "ident": "WUBRG", "tiers": ["t5"],
          "cards": ["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe", "Island", "Island", "Island"]},
         {"key": "duo", "name": "Duo", "commander": "Lathliss, Dragon Queen", "commander2": "Dragonlord Dromoka",
-         "ident": "WUBRG", "tiers": ["t1"], "cards": ["Lightning Bolt", "Test Banned Draw", "Test Not Legal Draw", LONG141]},
+         "ident": "WUBRG", "tiers": ["t1"],
+         "cards": ["Lightning Bolt", "Test Banned Draw", "Test Not Legal Draw", LONG141]},
     ], "pool": []})
 }
 
@@ -126,7 +135,9 @@ impl Env {
         std::fs::write(root.join("data/decks.json"), decks().to_string()).unwrap();
         std::fs::write(
             root.join("data/spellbook/dragons.json"),
-            json!({"deck": "dragons", "identity": "R", "fetched": "2026-11-04", "included": [{}, {}],
+            json!({"deck": "dragons", "identity": "R", "fetched": "2026-11-04",
+                   "included": [{"cards": [{"name": "Lightning Bolt"}, {"name": "Mogg Fanatic"}]},
+                                {"cards": [{"name": "Sol Ring"}, {"name": "Thundermaw Hellkite"}]}],
                    "included_by_changing_commanders": [{}], "almost_included": [{}, {}, {}]})
             .to_string(),
         )
@@ -281,14 +292,16 @@ fn every_line_has_six_fields_at_most_160_characters_and_no_stray_bar() {
         for l in &lines {
             assert_eq!(l.split('|').count(), 6, "{l}");
             assert!(l.chars().count() <= 160, "{} chars: {l}", l.chars().count());
-            // the flags are the known ones, in order: * GC #rank $usd r:status
+            // the flags are the known ones, in order: * BAN|NL GC #rank $usd ?, or `-` for none
             let flags = field(l, 5);
-            let mut parts = flags.split(' ').peekable();
-            let mut rest: Vec<&str> = parts.by_ref().collect();
-            let status = rest.pop().unwrap();
-            assert!(["r:rules", "r:llm", "r:uncertain", "r:none"].contains(&status), "{l}");
+            let rest: Vec<&str> = flags.split(' ').collect();
+            assert!(rest == ["-"] || !rest.contains(&"-"), "{l}");
+            let at = |f: &str| rest.iter().position(|x| *x == f);
+            assert!(at("?").is_none_or(|p| p == rest.len() - 1), "? is last: {l}");
             for (i, f) in rest.iter().enumerate() {
-                let ok = *f == "*" && i == 0
+                let ok = *f == "-" && rest.len() == 1
+                    || *f == "?"
+                    || *f == "*" && i == 0
                     || ["BAN", "NL", "GC"].contains(f)
                     || f.strip_prefix('#').is_some_and(|n| n.parse::<u32>().is_ok())
                     || f.strip_prefix('$').is_some_and(|n| n.parse::<u32>().is_ok());
@@ -319,7 +332,8 @@ fn a_long_name_with_many_subtypes_still_fits_and_keeps_its_fields() {
     assert_eq!(line.split('|').count(), 6);
     assert!(line.chars().count() <= 160, "{}: {line}", line.chars().count());
     // the subtypes gave way before the gist or the name did, and some gist is left
-    assert_eq!(field(&line, 2), "LgC", "{line}");
+    let types = field(&line, 2);
+    assert!(types.starts_with("LgC") && types.len() < "LgC—Elf Druid Warrior Wizard Shaman Cleric".len(), "{line}");
     assert!(field(&line, 4).starts_with("Whenever another"), "{line}");
 }
 
@@ -366,7 +380,8 @@ fn cut_is_a_whole_token_prefix_never_longer_than_asked() {
     // never inside a mana symbol or an open quote
     assert_eq!(digest::cut("{W}{U}{B}{R}{G}: Draw a card.", 6), "");
     assert_eq!(digest::cut("{T}, {1}{W}: Draw a card and gain life.", 11), "{T},…");
-    let q = "Creatures you control have \"Whenever this creature attacks, draw a card, then discard a card.\" Then shuffle.";
+    let q = "Creatures you control have \"Whenever this creature attacks, draw a card, then discard a card.\" \
+             Then shuffle.";
     for max in 10..q.len() {
         let c = digest::cut(q, max);
         assert_eq!(c.matches('"').count() % 2, 0, "{max}: {c}");
@@ -421,7 +436,7 @@ fn the_gist_is_the_line_cited_for_the_primary_role_and_the_first_line_when_none_
     let l = lines.line(id, false);
     assert_eq!(field(&l, 4), "Counter target spell.");
     assert_eq!(field(&l, 3), "draw");
-    assert!(field(&l, 5).ends_with("r:rules"), "{l}");
+    assert!(!field(&l, 5).ends_with('?'), "a hand override needs no review: {l}");
     // a rule role cites its line: Force of Will's counter role cites the second line, not the first (alternate cost)
     let fow = env.index.lookup("Force of Will");
     if let Some(&i) = fow.first() {
@@ -460,10 +475,10 @@ fn the_review_flag_of_each_kind_of_assignment() {
     assert_eq!(digest::review(&a(true, false, &["ramp"]), true), Review::Llm);
     assert_eq!(digest::review(&a(true, false, &[]), true), Review::Llm);
     assert_eq!(digest::review(&a(true, true, &["ramp"]), true), Review::Uncertain);
-    assert_eq!(Review::Rules.flag(), "r:rules");
-    assert_eq!(Review::Llm.flag(), "r:llm");
-    assert_eq!(Review::Uncertain.flag(), "r:uncertain");
-    assert_eq!(Review::None.flag(), "r:none");
+    assert_eq!(Review::Rules.flag(), None);
+    assert_eq!(Review::Llm.flag(), None);
+    assert_eq!(Review::Uncertain.flag(), Some("?"));
+    assert_eq!(Review::None.flag(), None);
 }
 
 #[test]
@@ -472,7 +487,7 @@ fn flags_on_real_lines_in_a_rules_only_table_and_in_a_merged_one() {
     let flag_of = |env: &Env, name: &str| {
         let i = env.index.lookup(name)[0];
         let l = digest::Lines::new(&env.index, &env.table).line(i, false);
-        field(&l, 5).split(' ').next_back().unwrap().to_string()
+        if field(&l, 5).ends_with('?') { "?" } else { "" }.to_string()
     };
     // rules-only: every routed card is uncertain, the others rules or none
     let (mut rules, mut uncertain, mut none) = (0, 0, 0);
@@ -486,7 +501,7 @@ fn flags_on_real_lines_in_a_rules_only_table_and_in_a_merged_one() {
             _ => Review::Rules,
         };
         let l = digest::Lines::new(&env.index, &env.table).line(i as u32, false);
-        assert!(field(&l, 5).ends_with(want.flag()), "{l}");
+        assert_eq!(field(&l, 5).ends_with('?'), want == Review::Uncertain, "{l}");
         match want {
             Review::Rules => rules += 1,
             Review::Uncertain => uncertain += 1,
@@ -494,13 +509,13 @@ fn flags_on_real_lines_in_a_rules_only_table_and_in_a_merged_one() {
         }
     }
     assert!(rules > 10 && uncertain > 10, "{rules} {uncertain} {none}");
-    assert_eq!(flag_of(&env, "Skywhaler's Shot"), "r:uncertain");
+    assert_eq!(flag_of(&env, "Skywhaler's Shot"), "?");
     assert_eq!(env.table.kind(), "rules-only");
     // merged: the answered card is r:llm, the failed one stays uncertain, a rules card stays r:rules
     env.merged();
     assert_eq!(env.table.kind(), "merged (model test-model)");
-    assert_eq!(flag_of(&env, "Skywhaler's Shot"), "r:llm");
-    assert_eq!(flag_of(&env, "Counterspell"), "r:uncertain");
+    assert_eq!(flag_of(&env, "Skywhaler's Shot"), "");
+    assert_eq!(flag_of(&env, "Counterspell"), "?");
     let decided = env
         .index
         .cards
@@ -513,7 +528,7 @@ fn flags_on_real_lines_in_a_rules_only_table_and_in_a_merged_one() {
         })
         .map(|(_, c)| c.raw.name.clone())
         .expect("a card the rules decided alone");
-    assert_eq!(flag_of(&env, &decided), "r:rules");
+    assert_eq!(flag_of(&env, &decided), "");
     // the header names the table
     let text = env.digest("dragons").text;
     assert!(text.contains("role table: merged (model test-model)"), "{}", &text[..300]);
@@ -920,14 +935,27 @@ fn the_map_has_every_section_fits_32_kb_and_is_deterministic() {
         "## Keywords",
         "## Game Changers",
         "## Banned in Commander (1)",
-        "## Combos known per deck",
+        "## JD's decks",
+        "## Combos in JD's decks",
         "## How to use",
     ] {
         assert!(text.contains(h), "missing {h}");
     }
     assert!(text.contains("fixture-2026-11-21"), "the bulk date, no clock");
     assert!(text.contains("Test Banned Draw"));
-    assert!(text.contains("| dragons | R | 2026-11-04 | 2 | 1 | 3 |"), "{text}");
+    assert!(
+        text.contains(
+            "- dragons (fetched 2026-11-04): 2 in the list: Lightning Bolt + Mogg Fanatic; Sol Ring + Thundermaw \
+             Hellkite. 1 more with another commander. 3 one card away (see the file)."
+        ),
+        "{text}"
+    );
+    // JD's decks: key, commander, identity, tiers, not-legal list cards (duo lists three), role counts
+    let row =
+        |key: &str| text.lines().find(|l| l.starts_with(&format!("| {key} | "))).unwrap_or_else(|| panic!("{key}"));
+    assert!(row("dragons").starts_with("| dragons | Lathliss, Dragon Queen | R | t1 | 0 |"), "{}", row("dragons"));
+    assert!(row("duo").contains("Lathliss, Dragon Queen + Dragonlord Dromoka | WUBRG | t1 | 3 ("), "{}", row("duo"));
+    assert!(row("thanos").contains(" | t5 | 0 | "), "{}", row("thanos"));
     for cmd in ["cardgen digest --deck KEY", "--role removal", "cardgen find --name \"Sol Ring\" --full"] {
         assert!(text.contains(cmd), "footer lacks {cmd}");
     }
@@ -973,7 +1001,7 @@ fn map_coverage_counts_match_the_table_for_a_rules_only_and_a_merged_role_table(
     assert!(text.contains("Role table: rules-only."));
     assert!(
         text.contains(&format!(
-            "{n} cards need the LLM (`needs_llm`): 0 have an LLM answer merged (`r:llm`), {n} are unreviewed"
+            "{n} cards need the LLM (`needs_llm`): 0 have an LLM answer merged, {n} are unreviewed"
         )),
         "{text}"
     );
@@ -985,7 +1013,7 @@ fn map_coverage_counts_match_the_table_for_a_rules_only_and_a_merged_role_table(
     assert!(text.contains("Role table: merged (model test-model)."));
     assert!(
         text.contains(&format!(
-            "{n} cards need the LLM (`needs_llm`): 1 have an LLM answer merged (`r:llm`), {} are unreviewed",
+            "{n} cards need the LLM (`needs_llm`): 1 have an LLM answer merged, {} are unreviewed",
             n - 1
         )),
         "{text}"
@@ -1124,7 +1152,7 @@ fn the_commands_write_their_files_and_report_them() {
     assert_eq!(m.path, dir.join("map.md"));
     assert_eq!(std::fs::read_to_string(&m.path).unwrap(), m.text);
     // spellbook comes from the project, not the knowledge dir
-    assert!(m.text.contains("| dragons | R |"));
+    assert!(m.text.contains("- dragons (fetched 2026-11-04)"));
     // the budget flag is honoured
     let mut a: Vec<String> = ["--deck", "thanos", "--budget-tokens", "1500"].map(String::from).to_vec();
     a.extend(dd);
@@ -1200,7 +1228,7 @@ fn a_non_legal_card_is_never_reviewed_by_the_llm_and_has_a_ban_or_nl_flag_on_its
         llm_failed: failed,
         ..Assignment::default()
     };
-    // llm::merge clears llm_failed on a card that is not Commander-legal: the table says answered, the card was not asked
+    // llm::merge clears llm_failed on a card that is not Commander-legal: the table says answered, but it was not asked
     assert_eq!(digest::review_card(&a(true, false), true, true), Review::Llm);
     assert_eq!(digest::review_card(&a(true, false), true, false), Review::Uncertain);
     assert_eq!(digest::review_card(&a(false, false), true, false), Review::Rules);
@@ -1299,9 +1327,10 @@ fn a_previous_sync_with_another_schema_or_a_record_without_an_id_is_unreadable()
         std::fs::write(dir.join("oracle.prev.json"), json).unwrap();
         Prev::load(&dir)
     };
-    assert!(
-        matches!(load(r#"{"meta":{"schema":999},"cards":[{"oracle_id":"a"}]}"#), Prev::Unreadable(m) if m.contains("schema"))
-    );
+    assert!(matches!(
+        load(r#"{"meta":{"schema":999},"cards":[{"oracle_id":"a"}]}"#),
+        Prev::Unreadable(m) if m.contains("schema")
+    ));
     assert!(matches!(load(r#"{"cards":[{"name":"x"}]}"#), Prev::Unreadable(m) if m.contains("no oracle_id")));
     assert!(matches!(load(r#"{"cards":[{"oracle_id":""}]}"#), Prev::Unreadable(_)));
     assert!(matches!(load(r#"{"meta":{"schema":1},"cards":[{"oracle_id":"a"}]}"#), Prev::Ids(ids) if ids.len() == 1));
@@ -1495,4 +1524,132 @@ fn a_role_page_includes_cards_with_the_role_in_a_later_position_and_cites_their_
         assert_eq!(field(&l, 4), want, "{l}");
         assert!(p.text.contains("primary-") && p.text.contains("cards first, then the others"));
     }
+}
+
+// ------------------------------------------------------------------------------------------------ round 2: group 3
+
+#[test]
+fn creature_types_count_only_creature_bearing_faces_once_per_card() {
+    // a creature front with an Adventure back, a land creature with a land type, a Kindred spell with a creature type
+    let mut cards: Vec<Value> = vec![];
+    let mut giant =
+        card("Test Giant // Journey", "Creature — Giant // Sorcery — Adventure", "", &["R"], "legal", Some(1));
+    giant["card_faces"] = json!([
+        {"name": "Test Giant", "type_line": "Creature — Giant", "oracle_text": "Flying"},
+        {"name": "Journey", "type_line": "Sorcery — Adventure", "oracle_text": "Draw a card."}
+    ]);
+    cards.push(giant);
+    cards.push(card("Test Dryad", "Land Creature — Forest Dryad", "", &["G"], "legal", Some(2)));
+    cards.push(card("Test Forest", "Basic Land — Forest", "({T}: Add {G}.)", &["G"], "legal", Some(3)));
+    cards.push(card("Test Kindred", "Kindred Sorcery — Elf", "Draw a card.", &["G"], "legal", Some(4)));
+    cards.push(card("Test Two Elves", "Creature — Elf Elf", "", &["G"], "legal", Some(5)));
+    let mut env = Env::new();
+    write_catalog(&env, &cards);
+    env.rules_only();
+    let text = map::build(&env.index, &env.table, None).unwrap();
+    let creature = text.lines().skip_while(|l| !l.starts_with("## Creature types")).nth(2).unwrap();
+    let count =
+        |name: &str| creature.split(", ").find_map(|e| e.strip_prefix(&format!("{name} "))?.parse::<usize>().ok());
+    assert_eq!(count("Giant"), Some(1), "{creature}");
+    assert_eq!(count("Adventure"), None, "{creature}");
+    assert_eq!(count("Forest"), None, "a land type is not a creature type: {creature}");
+    assert!(count("Dryad").is_some());
+    // Elf: the Kindred spell and the creature with the type twice count once each
+    assert_eq!(count("Elf"), Some(2), "{creature}");
+    // the all-subtypes list keeps the non-creature ones
+    let all = text.lines().skip_while(|l| !l.starts_with("## Subtypes of every kind")).nth(2).unwrap();
+    assert!(all.contains("Adventure 1") && all.contains("Forest 2"), "{all}");
+}
+
+#[test]
+fn the_map_is_the_short_one_15_types_15_keywords_no_pool_combo_table() {
+    let env = Env::new();
+    let spell = env.root.join("data/spellbook");
+    // a pool deck's spellbook file is read (and must parse) but not shown
+    std::fs::write(
+        spell.join("other.json"),
+        json!({"deck": "somebody-else", "identity": "W", "fetched": "2026-01-01",
+               "included": [{"cards": [{"name": "X"}]}], "almost_included": [{}]})
+        .to_string(),
+    )
+    .unwrap();
+    let text = map::build(&env.index, &env.table, Some(&spell)).unwrap();
+    assert!(!text.contains("somebody-else") && !text.contains("| deck | identity | fetched |"));
+    let n = |h: &str| text.lines().skip_while(|l| !l.starts_with(h)).nth(2).unwrap().split(", ").count();
+    assert!(n("## Creature types") <= 15 && n("## Keywords") <= 15);
+    assert!(text.contains("For a swap: take the roles of the card to cut"));
+    // a deck file that does not parse is still an error naming it
+    std::fs::write(spell.join("broken.json"), "{bad").unwrap();
+    assert!(map::build(&env.index, &env.table, Some(&spell)).unwrap_err().contains("broken.json"));
+}
+
+// ------------------------------------------------------------------------------------------------ round 2: group 4
+
+#[test]
+fn a_named_card_reference_in_the_commanders_text_is_not_tribal_synergy() {
+    let mut cards = vec![
+        card(
+            "Test Leader",
+            "Legendary Creature — Human",
+            "When this creature enters, search your library for a card named Spirit Guide, reveal it, put it into \
+             your hand.",
+            &["R"],
+            "legal",
+            Some(1),
+        ),
+        card("Spirit Guide", "Creature — Elf", "", &["R"], "legal", Some(2)),
+        card("Test Spirit", "Creature — Spirit", "Flying", &["R"], "legal", Some(3)),
+        // a candidate that only names a card
+        card("Elf Lord Guide", "Creature — Human", "", &["R"], "legal", Some(6)),
+        card("Test Namer", "Sorcery", "Search your library for a card named Elf Lord Guide.", &["R"], "legal", Some(4)),
+        // and one that names the subtype itself
+        card("Test Tribal", "Sorcery", "Create a 1/1 Elf token.", &["R"], "legal", Some(5)),
+    ];
+    cards[0]["oracle_id"] = json!("leader");
+    let mut env = Env::new();
+    write_catalog(&env, &cards);
+    env.rules_only();
+    let deck = knowledge::Deck {
+        key: "x".into(),
+        ident: "R".into(),
+        commander: "Test Leader".into(),
+        commander2: None,
+        cards: vec![],
+    };
+    // `Spirit` is named only as part of a card name: no synergy with Spirits
+    assert_eq!(digest::commander_subtypes(&env.index, &deck), Vec::<String>::new());
+    // the candidates' text is masked the same way: `named Elf Lord Guide` is not Elf text
+    let mut elf = deck.clone();
+    elf.commander = "Test Tribal".into();
+    let subs = digest::commander_subtypes(&env.index, &elf);
+    assert_eq!(subs, ["Elf"]);
+    let d = digest::build(&env.index, &env.table, &env.spec(Some(&elf), &Prev::Missing)).unwrap();
+    let c = names(&section(&d.text, 'C'));
+    assert!(c.contains(&"Spirit Guide".to_string()), "an Elf by its type line: {c:?}");
+    assert!(!c.contains(&"Test Namer".to_string()), "a card that only names Elf Lord Guide is not Elf synergy: {c:?}");
+}
+
+#[test]
+fn flags_are_made_in_one_place_with_a_context_and_only_an_unreviewed_card_gets_a_question_mark() {
+    let mut env = Env::new();
+    let ctx = digest::Context::default();
+    let id = env.index.lookup("Smothering Tithe")[0];
+    let c = &env.index.cards[id as usize];
+    let f = digest::flags(c, Review::Uncertain, true, &ctx);
+    assert_eq!(f.first().map(String::as_str), Some("*"));
+    assert!(f.contains(&"GC".to_string()) && f.last().map(String::as_str) == Some("?"), "{f:?}");
+    assert!(f.iter().any(|x| x.starts_with('#')) && f.iter().any(|x| x.starts_with('$')));
+    assert!(!digest::flags(c, Review::Rules, false, &ctx).contains(&"?".to_string()));
+    assert!(!digest::flags(c, Review::Llm, false, &ctx).contains(&"?".to_string()));
+    // the line prints exactly those flags, and a context changes nothing yet
+    let lines = digest::Lines::new(&env.index, &env.table);
+    let with = digest::Lines::with_context(&env.index, &env.table, digest::Context::default());
+    assert_eq!(lines.line(id, true), with.line(id, true));
+    assert_eq!(field(&lines.line(id, true), 5), digest::flags(c, lines.review(id), true, &ctx).join(" "));
+    // a card with nothing to say has `-`
+    let mut bare = card("Test Bare", "Creature — Goblin", "", &[], "legal", None);
+    bare["legalities"]["commander"] = json!("legal");
+    write_catalog(&env, &[bare]);
+    env.rules_only();
+    assert_eq!(field(&digest::Lines::new(&env.index, &env.table).line(0, false), 5), "-");
 }

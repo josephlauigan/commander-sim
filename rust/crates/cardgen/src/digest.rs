@@ -2,18 +2,20 @@
 //!
 //! One line per card, `Name|{cost}|Type—Subtypes|roles|gist|flags` (six `|`-separated fields, at most 160 characters).
 //! The cards come from [`Index::search`], so the deck's identity ceiling and exclusions are the ones `find` applies;
-//! the digest never re-implements them. The gist is a word-boundary cut of the Oracle line cited as evidence for the
-//! card's primary role (or its first Oracle line when no line is cited), never written text. Nothing here needs the
-//! LLM: the role table is read as it is, rules-only or merged, and each line says how its roles were decided (`r:`).
+//! the digest never re-implements them. The gist is a whole-token cut of the Oracle line cited as evidence for the
+//! card's primary role (or its first Oracle line that says something when no line is cited), never written text.
+//! Nothing here needs the LLM: the role table is read as it is, rules-only or merged, and a card whose roles are not
+//! reviewed yet carries a `?` flag. [`flags`] makes every line's flags.
 //!
-//! Sections: A the deck's own cards, B per primary role the best-ranked cards, C cards that share a subtype with the
-//! commander's text, D cards new since the previous sync, E unranked cards per role. `--role R` prints one role's cards
-//! and pages through them. Output is deterministic: no timestamps, a fixed order.
+//! Sections: A the deck's own cards (the commander first), B per primary role the best-ranked cards, C cards that
+//! share a subtype with the commander's text, D cards new since the previous sync, E the best-ranked cards with no
+//! role. `--role R` pages through every card that has R, `--view roleless|new` through the complete lists. Output is
+//! deterministic: no timestamps, a fixed order.
 
 use crate::data::Project;
 use crate::knowledge::{self, Card, Deck, FindError, Index, Legal, Query, Sort};
 use crate::roles::{self, Assignment};
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -46,7 +48,7 @@ pub fn tokens(s: &str) -> usize {
 
 // ------------------------------------------------------------------------------------------------ one line
 
-/// How a card's roles were decided (the `r:` flag).
+/// How a card's roles were decided (only an unreviewed card gets a flag, `?`).
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Review {
     /// the rules (or a hand override) decided alone: the LLM was never needed
@@ -60,12 +62,12 @@ pub enum Review {
 }
 
 impl Review {
-    pub fn flag(self) -> &'static str {
+    /// the flag of a line: `?` for a card not reviewed yet, nothing for the others (the rules decided, the LLM
+    /// answered, or there are no roles and nothing to ask)
+    pub fn flag(self) -> Option<&'static str> {
         match self {
-            Review::Rules => "r:rules",
-            Review::Llm => "r:llm",
-            Review::Uncertain => "r:uncertain",
-            Review::None => "r:none",
+            Review::Uncertain => Some("?"),
+            Review::Rules | Review::Llm | Review::None => None,
         }
     }
 }
@@ -257,15 +259,59 @@ pub fn cut(s: &str, max: usize) -> String {
     cut_to(s, max, true)
 }
 
+/// What else a line can say about a card, by whoever has it. Every part is empty today; phase 4 fills them (the
+/// model status of a card by name, the decks of JD's that play it, how many `FINDINGS.md` entries name it) and
+/// [`flags`] prints them, so `find` can show the same flags.
+#[derive(Clone, Debug, Default)]
+pub struct Context {
+    /// engine model status by card name (`m:`)
+    pub model_status: HashMap<String, String>,
+    /// a mark per card index: the card is in one of JD's decks (`d:`)
+    pub deck_members: Vec<bool>,
+    /// findings that name the card, by card name (`k:`)
+    pub findings: HashMap<String, usize>,
+}
+
+/// The flags of a card, in the order they are printed: `*` in the deck's list, `BAN` or `NL` when the catalog does
+/// not call it Commander-legal, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, `?` roles not reviewed yet.
+/// The one place a line's flags are made.
+pub fn flags(c: &Card, review: Review, in_deck: bool, _ctx: &Context) -> Vec<String> {
+    let mut flags: Vec<String> = vec![];
+    if in_deck {
+        flags.push("*".into());
+    }
+    match c.legal {
+        Legal::Legal => {}
+        Legal::Banned => flags.push("BAN".into()),
+        _ => flags.push("NL".into()),
+    }
+    if c.raw.game_changer {
+        flags.push("GC".into());
+    }
+    if let Some(rank) = c.raw.edhrec_rank {
+        flags.push(format!("#{rank}"));
+    }
+    if let Some(usd) = c.usd {
+        flags.push(format!("${}", usd.round() as i64));
+    }
+    flags.extend(review.flag().map(String::from));
+    flags
+}
+
 /// Builds digest lines for one catalog.
 pub struct Lines<'a> {
     pub index: &'a Index,
     merged: bool,
+    ctx: Context,
 }
 
 impl<'a> Lines<'a> {
     pub fn new(index: &'a Index, table: &Table) -> Lines<'a> {
-        Lines { index, merged: table.merged }
+        Lines::with_context(index, table, Context::default())
+    }
+
+    pub fn with_context(index: &'a Index, table: &Table, ctx: Context) -> Lines<'a> {
+        Lines { index, merged: table.merged, ctx }
     }
 
     pub fn review(&self, i: u32) -> Review {
@@ -285,26 +331,8 @@ impl<'a> Lines<'a> {
         let a = self.index.roles(i).unwrap_or(&default);
         let cost = Some(clean(&c.cost())).filter(|s| !s.is_empty()).unwrap_or_else(|| "-".into());
         let roles = if a.roles.is_empty() { "-".to_string() } else { a.roles.join(",") };
-        let mut flags: Vec<String> = vec![];
-        if in_deck {
-            flags.push("*".into());
-        }
-        match c.legal {
-            Legal::Legal => {}
-            Legal::Banned => flags.push("BAN".into()),
-            _ => flags.push("NL".into()),
-        }
-        if c.raw.game_changer {
-            flags.push("GC".into());
-        }
-        if let Some(rank) = c.raw.edhrec_rank {
-            flags.push(format!("#{rank}"));
-        }
-        if let Some(usd) = c.usd {
-            flags.push(format!("${}", usd.round() as i64));
-        }
-        flags.push(self.review(i).flag().into());
-        let flags = flags.join(" ");
+        let flags = flags(c, self.review(i), in_deck, &self.ctx);
+        let flags = if flags.is_empty() { "-".to_string() } else { flags.join(" ") };
         let src = clean(&gist_source(c, a, role));
         let src_len = src.chars().count();
         let subs = c.subtypes();
@@ -574,9 +602,38 @@ fn has_word(text: &str, word: &str) -> bool {
     })
 }
 
-/// the Oracle text with reminder text removed and the card's own name as `~` (the text the rules read), joined
-fn plain_text(c: &Card) -> String {
-    c.lines().iter().map(|(_, l)| roles::normalize(c, l)).collect::<Vec<_>>().join("\n")
+/// `text` with every `named <card name>` reference (the name resolved in the catalog, the longest that resolves)
+/// replaced by `@`: a card called `Spirit Guide` is not Spirit synergy
+fn mask_named(index: &Index, text: &str) -> String {
+    const NAMED: &str = "named ";
+    let (mut out, mut rest) = (String::with_capacity(text.len()), text);
+    while let Some(p) = rest.find(NAMED) {
+        out.push_str(&rest[..p + NAMED.len()]);
+        let after = &rest[p + NAMED.len()..];
+        let line = after.split('\n').next().unwrap_or("");
+        let words: Vec<&str> = line.split(' ').collect();
+        let matched = (1..=words.len().min(8)).rev().find_map(|k| {
+            let cand = words[..k].join(" ");
+            let cand = cand.trim_end_matches([',', '.', ';', ':', '"', ')']);
+            (!cand.is_empty() && !index.lookup(cand).is_empty()).then_some(cand.len())
+        });
+        match matched {
+            Some(n) => {
+                out.push('@');
+                rest = &after[n..];
+            }
+            None => rest = after,
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
+/// the Oracle text with reminder text removed, the card's own name as `~` (the text the rules read) and the names of
+/// other cards masked, joined
+fn plain_text(index: &Index, c: &Card) -> String {
+    let text = c.lines().iter().map(|(_, l)| roles::normalize(c, l)).collect::<Vec<_>>().join("\n");
+    mask_named(index, &text)
 }
 
 /// Every subtype of the catalog that the commanders' Oracle text names (`Dragon`, `Equipment`; a plural names it too).
@@ -586,7 +643,7 @@ pub fn commander_subtypes(index: &Index, deck: &Deck) -> Vec<String> {
     let names = std::iter::once(&deck.commander).chain(deck.commander2.iter());
     for n in names {
         for i in resolve(index, n) {
-            let text = plain_text(&index.cards[i as usize]);
+            let text = plain_text(index, &index.cards[i as usize]);
             // a subtype is a capitalised word (the lower-case `of` of a joke card's type line is not one)
             for (sub, _) in vocab.iter().filter(|(s, _)| s.chars().next().is_some_and(char::is_uppercase)) {
                 if !found.contains(sub) && plural_forms(sub).iter().any(|f| has_word(&text, f)) {
@@ -600,7 +657,7 @@ pub fn commander_subtypes(index: &Index, deck: &Deck) -> Vec<String> {
 }
 
 /// whether the card's type line has one of the subtypes or its text names one
-fn names_subtype(c: &Card, subs: &[String], forms: &[Vec<String>]) -> bool {
+fn names_subtype(index: &Index, c: &Card, subs: &[String], forms: &[Vec<String>]) -> bool {
     if c.subtypes().iter().any(|s| subs.iter().any(|t| t == s)) {
         return true;
     }
@@ -608,7 +665,7 @@ fn names_subtype(c: &Card, subs: &[String], forms: &[Vec<String>]) -> bool {
     if !forms.iter().flatten().any(|f| c.text.contains(f.as_str())) {
         return false;
     }
-    let text = plain_text(c);
+    let text = plain_text(index, c);
     forms.iter().flatten().any(|f| has_word(&text, f))
 }
 
@@ -648,9 +705,8 @@ fn legend() -> Vec<String> {
         .into(),
         concat!(
             "# flags: * in the deck's list; BAN banned / NL not legal in Commander; GC Game Changer; #N EDHREC rank; ",
-            "$N price in USD; r: how the roles were ",
-            "decided: rules (the rules alone, or a hand override), llm (an LLM answer is merged), uncertain (not reviewed yet: roles may ",
-            "be incomplete or wrong), none (no roles)"
+            "$N price in USD; ? roles not reviewed yet (routed to the LLM, no answer: they may be incomplete or ",
+            "wrong; no ? means the rules or a hand override decided, or the LLM answered); - no flags"
         )
         .into(),
     ]
@@ -933,7 +989,7 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
     } else {
         hits.iter()
             .copied()
-            .filter(|&i| names_subtype(&index.cards[i as usize], &subs, &forms))
+            .filter(|&i| names_subtype(index, &index.cards[i as usize], &subs, &forms))
             .take(CAP_SYNERGY)
             .collect()
     };

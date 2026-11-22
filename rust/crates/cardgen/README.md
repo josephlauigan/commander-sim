@@ -252,66 +252,77 @@ already play. It is the number to size a digest against.
 
 ```
 cardgen map [--out PATH] [--stdout] [--data-dir DIR]
-cardgen digest (--deck KEY | --ident LETTERS) [--role R [--limit N] [--offset N]] [--out PATH]
-               [--budget-tokens N] [--stdout] [--data-dir DIR]
+cardgen digest (--deck KEY | --ident LETTERS) [--role R | --view roleless|new] [--limit N] [--offset N]
+               [--out PATH] [--budget-tokens N] [--stdout] [--data-dir DIR]
 ```
 
 Layers 1 and 2 of `documents/card-knowledge.md`. Both are read-only except for the file they write, offline, and never
-need the LLM: they read `oracle.json` and `roles.json` (`cardgen roles --rules`, or the merged table after `roles
---merge`) and say which kind of table they used. A missing catalog or role table is an error that names `cardgen
-bulk-sync` or `cardgen roles --rules`. Both print a one-line summary (path, bytes, estimated tokens); `--stdout` prints
-the text instead and sends the summary to stderr. The files are generated views and git-ignored.
+need the LLM: they read `oracle.json` and whichever `roles.json` is present (`cardgen roles --rules`, or the merged table
+after `roles --merge`) and say which kind of table they used. A missing catalog or role table is an error that names
+`cardgen bulk-sync` or `cardgen roles --rules`. The file is always written (a uniquely named temporary file in the same
+directory, renamed over the target, removed on every error, so concurrent writers all succeed); the one-line summary
+(path, bytes, estimated tokens) goes to stdout, or with `--stdout` the text goes to stdout and the summary to stderr.
+The files are generated views and git-ignored.
 
 **`map`** writes `data/knowledge/map.md` (default; `--out` or `--data-dir` change it), about 3k tokens and never over
 32 KB: the bulk date and the counts (legal, banned, not legal, Game Changers), Commander-legal cards per colour
 identity (all 32 combinations), cards per role by mono-colour, colourless and multicolour (and per primary role), role
 coverage and review status (how many legal cards the rules decided alone, how many are routed to the LLM, how many of
-those have an answer and how many are still `unreviewed`), the 40 biggest creature types and subtypes and the 60
-biggest keywords, the Game Changers, the banned cards, the combos known per deck (counts from `data/spellbook/`) and the
-commands to go further. Every count is over the cards `find` and `digest` cover: Commander-legal, not a meld result,
-not a Sticker or Attraction. No timestamp, only the bulk file's `updated_at`.
+those have an answer and how many are still unreviewed), the 15 biggest creature types (subtypes of creature-bearing
+faces only, once per card), the 40 biggest subtypes of every kind and the 15 biggest keywords, the Game Changers, the
+banned cards, a table of JD's decks (key, commander, identity, tiers, how many list cards the catalog does not call
+Commander-legal, the cards with each role), the combos in JD's decks (card names, from `data/spellbook/`) and the
+commands to go further, with a paragraph on using the digest for a swap. Every count is over the cards `find` and
+`digest` cover: Commander-legal, not a meld result, not a Sticker or Attraction. No timestamp, only the bulk file's
+`updated_at`.
 
-**`digest`** writes `data/knowledge/digests/KEY.txt` (`ident-WUB.txt` for `--ident`, `KEY.ROLE[.OFFSET].txt` for a
-`--role` page): one line per card, `Name|{cost}|Type—Subtypes|roles|gist|flags`, six `|`-separated fields, at most 160
-characters (a `|` inside Oracle text is written `/`).
+**`digest`** writes `data/knowledge/digests/KEY.txt` (`ident-WUB.txt` for `--ident`, `KEY.ROLE[.OFFSET].txt` or
+`KEY.VIEW[.OFFSET].txt` for a page): one line per card, `Name|{cost}|Type—Subtypes|roles|gist|flags`, six `|`-separated
+fields, at most 160 characters (a `|` inside Oracle text is written `/`; a name too long for its line is cut at a word
+and ends in `…`).
 
 | Field | Content |
 |---|---|
-| type | `Lg` for a legendary card, then a letter per card type of any face in the order A E L C P B I S (`AC` artifact creature, `LgC` legendary creature, `O` other), then `—` and the subtypes (they give way first when the line is too long) |
+| type | per face (joined with `/`, written once when the faces agree): `Lg` for a legendary face, then a letter per card type in the order A E L C P B I S (`AC` artifact creature, `LgC` legendary creature, `C/L` an MDFC with a land back, `O` other), then `—` and the subtypes (they give way first when the line is too long) |
 | roles | the card's roles, primary first; `-` for none |
-| gist | the Oracle line cited as evidence for the **primary** role (rule evidence or LLM evidence: `roles::line_text`, so reminder text is gone and `~` is the card), cut at a word boundary to 110 characters (`…` marks a cut). A card with no cited line (no roles, or a hand override) shows its first Oracle line; `-` when it has no text. Never written text, so it cannot be a hallucination |
-| flags | `*` the card is in the deck's list, `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, then the review status: `r:rules` (the rules decided alone, no LLM needed), `r:llm` (an LLM answer is merged), `r:uncertain` (routed to the LLM and no answer yet: the roles may be incomplete or wrong), `r:none` (no roles, nothing to ask) |
+| gist | the Oracle line cited as evidence for the **primary** role (`roles::line_text`: reminder text gone, `~` the card), cut at a whole-token boundary to 110 characters (never inside `{...}`, never in an open quote; `…` marks a cut; `-` when no whole token fits). A card with no cited line (no roles, or a hand override) shows its first Oracle line that is not just keywords (`Flying, trample`), else the first line; `-` when it has no text. On a `--role R` page the gist cites R's own line. Never written text, so it cannot be a hallucination |
+| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` when the card's roles are not reviewed yet (routed to the LLM and no answer: they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `digest::flags` makes them, with a `Context` for what phase 4 adds |
 
 The candidates come from `Index::search`, so the deck's identity ceiling and exclusions are the ones `find --deck`
 applies: Commander-legal cards inside the identity (`--ident` may narrow a deck's, never widen it), not in the deck, no
-meld results, and no Stickers or Attractions. Sections, each introduced by a `## ` line, in this order, EDHREC rank
-ascending with ties by name:
+meld results, and no Stickers or Attractions. A header of `# ` lines gives the deck, the role-table kind, the
+commander(s) with their full Oracle text, the deck's role counts and basic-land multiplicity, a reminder that absent
+here is not the same as does not exist, the legend, the section sizes and any trimming; no timestamps. Sections, each
+introduced by a `## ` line, EDHREC rank ascending with ties by name:
 
-- **A** the deck's own cards (every name once, `*`), uncapped;
+- **A** the deck's own cards (every name once, the commander first, `*`), uncapped;
+- **C** (built first) synergy: every card whose type line or text names a subtype that the commander's Oracle text names
+  (`Dragon`, `Equipment`; plurals count, `Time Lord` is one subtype; `named <card name>` references are masked, so a
+  card named Spirit Guide is not Spirit synergy), at most 300;
 - **B** per role: the 60 best-ranked cards whose **primary** role it is (150 for the deck's 5 most common roles: each
-  card counts once for each of its roles), a card listed once, under its primary role; cards with no role are in no B
-  block;
-- **C** synergy: every card whose type line or text names a subtype that the commander's Oracle text names (`Dragon`,
-  `Equipment`; plurals count, `Time Lord` is one subtype), at most 300; it may repeat a card of B;
-- **D** cards new since the previous sync (the `oracle_id`s of `oracle.json` that `oracle.prev.json` lacks), uncapped and
-  not repeated from C; omitted with a note when there is no `oracle.prev.json`;
-- **E** cards with no EDHREC rank, 40 per role, not repeated from C or D (the catalog has about 70 legal unranked cards,
-  so E is nearly always empty).
+  card counts once for each of its roles; `fixing` is left out of that top 5 in a one-colour deck), not repeated from C;
+- **D** cards new since the previous sync (the `oracle_id`s of `oracle.json` that `oracle.prev.json` lacks), the first
+  100 (`--view new` has them all), not repeated from C; omitted with a note when there is no usable `oracle.prev.json`
+  (a file with another `meta.schema` or a record without an `oracle_id` is unreadable);
+- **E** the 60 best-ranked cards that have no role (not repeated from C or D; `--view roleless` has them all). Roleless
+  cards are 31% of the catalog under the rules-only table and many are staples, so they are listed on purpose.
 
-A header of `# ` comment lines gives the deck, the identity, the role-table kind (`rules-only` or `merged (model M)`), the
-legend, the section sizes and any trimming; there are no timestamps. The size target is `--budget-tokens` (default
-50,000, estimated as bytes/4, never below characters/4): when the caps give more, section B's caps are cut by one common
-factor to the largest that fits, and the header says so (E is cut next, then the digest is left over budget with a note,
-because A, C and D are not capped). A five-colour deck's digest stays under 200 KB.
+The size target is `--budget-tokens` (default 42,000, estimated as bytes/4, never below characters/4 and probably
+15 to 30% under a real tokenizer on this symbol-dense text): when the caps give more, B's and E's caps are cut by one
+common factor to the largest that fits, and the header says so (if even that is not enough the digest is left over
+budget with a note, because A, C and D are not trimmed). A five-colour deck's digest stays under 200 KB.
 
-`--role R` prints only the cards whose primary role is R (the deck's own cards left out), all of them, as one block
-`## B role R: cards 1-N of TOTAL ...`, in pages: a page ends at `--limit` cards or at 30,000 tokens (`--budget-tokens`
-overrides that), and the last line of the header says `next page: --offset N` while there are more. `--limit` and
-`--offset` need `--role`.
+`--role R` lists every non-deck card that has role R in any position, the cards whose primary role it is first, then
+the others, each group best first; `--view roleless` and `--view new` list the complete candidate sets of the same
+names. They are pages: a page ends at `--limit` cards or at 30,000 tokens (`--budget-tokens` overrides that, and a budget
+that cannot hold the page header and one card is an error), and the block header says `next page: --offset N` while there
+are more. `--limit` and `--offset` need `--role` or `--view`. Between them the role pages and `--view roleless` reach
+every candidate of the digest.
 
-For code: `digest::open` (catalog and role table), `digest::build(&Index, &Table, &Spec)`, `digest::Lines::line` (one
-line), `digest::review`, `digest::commander_subtypes`, `digest::Prev::load`, and `map::build(&Index, &Table,
-Option<&Path>)`; none of them reads argv.
+For code: `digest::open` (catalog and role table), `digest::build(&Index, &Table, &Spec)`, `digest::Lines::{new,
+with_context, line, line_for}`, `digest::flags`, `digest::review`, `digest::deck_cards`, `digest::role_counts`,
+`digest::commander_subtypes`, `digest::Prev::load`, and `map::build(&Index, &Table, Option<&Path>)` (JD's decks come from
+the `decks.json` beside the spellbook directory) or `map::build_with`; none of them reads argv.
 
 ## Equivalence
 
