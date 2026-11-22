@@ -2,6 +2,8 @@
 //! acceptance checks. Run with `cargo test --release -p cardgen --test find_real -- --ignored`. A worktree without its
 //! own `oracle.json` reads the main checkout's.
 
+mod common;
+
 use cardgen::data::Project;
 use cardgen::knowledge::{self, Index, Query};
 use serde_json::Value;
@@ -10,8 +12,17 @@ use std::time::Instant;
 
 const NEEDS: &str = "needs data/knowledge/oracle.json (run cardgen bulk-sync)";
 
+fn root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..")
+}
+
 fn project() -> Project {
-    Project::new(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.."))
+    Project::new(root())
+}
+
+/// a deck of one colour (of `mine`, else of the pool): its key and identity
+fn single_colour_deck() -> (String, String) {
+    common::deck_where(&root(), "a one-colour deck", |n| n == 1)
 }
 
 fn run(args: &[&str]) -> String {
@@ -43,14 +54,17 @@ fn sol_ring_is_one_card() {
 
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
-fn deck_cloud_stays_in_white_and_out_of_the_deck() {
-    let decks: Value = serde_json::from_str(&std::fs::read_to_string(project().data("decks.json")).unwrap()).unwrap();
-    let cloud = decks["mine"].as_array().unwrap().iter().find(|d| d["key"] == "cloud").unwrap();
-    let in_deck: Vec<&str> = cloud["cards"].as_array().unwrap().iter().map(|c| c.as_str().unwrap()).collect();
-    let all = json(&["--deck", "cloud", "--limit", "5000"]);
+fn a_single_colour_deck_stays_in_its_colour_and_out_of_the_deck() {
+    let (key, ident) = single_colour_deck();
+    let decks = common::decks(&root());
+    let deck =
+        ["mine", "pool"].iter().flat_map(|g| decks[g].as_array().unwrap()).find(|d| d["key"] == key.as_str()).unwrap();
+    let in_deck: Vec<&str> = deck["cards"].as_array().unwrap().iter().map(|c| c.as_str().unwrap()).collect();
+    let all = json(&["--deck", &key, "--limit", "5000"]);
     assert!(all.len() > 1000);
     for c in &all {
-        assert!(["", "W"].contains(&c["identity"].as_str().unwrap()), "{c}");
+        let id = c["identity"].as_str().unwrap();
+        assert!(id.chars().all(|ch| ident.contains(ch)), "{key} ({ident}): {c}");
         assert!(!in_deck.contains(&c["name"].as_str().unwrap()), "{} is in the deck", c["name"]);
         assert_eq!(c["legal"], "legal");
     }
@@ -265,9 +279,12 @@ fn json_rows_are_complete_and_ident_cannot_widen_a_deck() {
     assert_eq!(sink.len(), 1);
     assert!(!sink[0]["oracle_text"].as_str().unwrap().is_empty());
     assert!(!sink[0]["mana_cost"].as_str().unwrap().is_empty());
-    let a: Vec<String> = ["--deck", "cloud", "--ident", "U", "--count"].iter().map(|s| s.to_string()).collect();
+    let (key, ident) = single_colour_deck();
+    let (outside, _) = common::colour_outside(&ident);
+    let a: Vec<String> =
+        ["--deck", &key, "--ident", &outside.to_string(), "--count"].iter().map(|s| s.to_string()).collect();
     assert!(matches!(knowledge::find(&project(), &a), Err(knowledge::FindError::Usage(_))));
-    assert!(json(&["--deck", "cloud", "--ident", "W", "--limit", "5"]).len() == 5);
+    assert!(json(&["--deck", &key, "--ident", &ident, "--limit", "5"]).len() == 5);
 }
 
 /// the one multi-word subtype is one subtype: no fake `Lord` or `Time`
@@ -286,10 +303,11 @@ fn subtype_vocab_has_time_lord_whole() {
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync)"]
 fn search_matches_the_cli_for_a_deck() {
     let idx = Index::open(&project(), None).unwrap();
-    let deck = knowledge::load_deck(&project(), "cloud").unwrap();
+    let (key, ident) = single_colour_deck();
+    let deck = knowledge::load_deck(&project(), &key).unwrap();
     let (hits, unresolved) = idx.search(&Query::default(), Some(&deck)).unwrap();
     assert!(unresolved.is_empty());
-    assert_eq!(hits.len(), names(&["--deck", "cloud", "--limit", "all"]).len());
-    let q = Query { ident: Some(0b00010), ..Query::default() };
+    assert_eq!(hits.len(), names(&["--deck", &key, "--limit", "all"]).len());
+    let q = Query { ident: Some(common::colour_outside(&ident).1), ..Query::default() };
     assert!(matches!(idx.search(&q, Some(&deck)), Err(knowledge::FindError::Usage(_))));
 }

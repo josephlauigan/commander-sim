@@ -2,6 +2,8 @@
 //! and `roles.json` from `cardgen roles --rules` or `--merge`): the phase 3b acceptance checks. Run with
 //! `cargo test --release -p cardgen --test digest_real -- --ignored`. Whichever role table is present is used.
 
+mod common;
+
 use cardgen::data::Project;
 use cardgen::digest::{self, Prev, Spec, Table};
 use cardgen::knowledge::{self, Index, Legal, Query};
@@ -12,10 +14,13 @@ use std::path::PathBuf;
 use std::time::Instant;
 
 const NEEDS: &str = "needs data/knowledge/oracle.json (run cardgen bulk-sync) and roles.json";
-const MINE: [&str; 6] = ["cloud", "sheoldred", "thanos", "thrasios", "urdragon", "yshtola"];
+
+fn root() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..")
+}
 
 fn project() -> Project {
-    Project::new(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.."))
+    Project::new(root())
 }
 
 fn open() -> (Index, Table) {
@@ -47,12 +52,14 @@ fn build(
     digest::build(idx, table, &spec).unwrap()
 }
 
-/// every digest of JD's six decks: line shape, the identity ceiling, section A, the budget, determinism
+/// every digest of every deck of `mine` (from data/decks.json): line shape, identity ceiling, section A, budget, determinism
 #[test]
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync) and roles.json"]
-fn the_six_decks_of_mine_have_clean_digests_within_budget() {
+fn every_deck_of_mine_has_a_clean_digest_within_budget() {
     let (idx, table) = open();
-    for key in MINE {
+    let mine = common::mine_keys(&root());
+    assert!(!mine.is_empty(), "data/decks.json has no deck in `mine`");
+    for key in &mine {
         let deck = knowledge::load_deck(&project(), key).unwrap();
         let limit = knowledge::deck_ident(&deck).unwrap();
         let t = Instant::now();
@@ -124,7 +131,8 @@ fn the_six_decks_of_mine_have_clean_digests_within_budget() {
 #[ignore = "needs data/knowledge/oracle.json (run cardgen bulk-sync) and roles.json"]
 fn role_pages_of_a_real_deck_chain_without_gaps_or_overlaps() {
     let (idx, table) = open();
-    let deck = knowledge::load_deck(&project(), "cloud").unwrap();
+    let (key, _) = common::deck_where(&root(), "a one-colour deck", |n| n == 1);
+    let deck = knowledge::load_deck(&project(), &key).unwrap();
     // one page with a huge budget holds the whole role (every card that has it, primary first)
     let spec = Spec {
         deck: Some(&deck),
@@ -160,7 +168,7 @@ fn role_pages_of_a_real_deck_chain_without_gaps_or_overlaps() {
         }
     }
     assert_eq!(got, want);
-    println!("cloud removal: {total} cards in {pages} page(s)");
+    println!("{key} removal: {total} cards in {pages} page(s)");
     // every role of every deck has a first page within the budget
     for role in roles::IDS {
         let p = build(&idx, &table, &deck, Some(role), None, 0);
@@ -217,7 +225,21 @@ fn the_map_is_under_32_kb_complete_and_deterministic() {
     let covered = hits.iter().filter(|&&i| roles::is_deck_card(&idx.cards[i as usize])).count();
     assert!(text.contains(&format!("cover {} legal cards", num(covered))), "{}", &text[..600]);
     assert!(text.contains("## Game Changers (") && text.contains("## Banned in Commander ("));
-    assert!(text.contains("- thanos (fetched") && text.contains("| thanos | Thanos, the Mad Titan | WUBRG | t5 |"));
+    // every deck of `mine` has its row (key, commander, identity, tiers) and, when it has a spellbook file, its combos
+    let decks = common::decks(&root());
+    for d in decks["mine"].as_array().unwrap() {
+        let key = d["key"].as_str().unwrap();
+        let commander = match d.get("commander2").and_then(|c| c.as_str()) {
+            Some(c2) => format!("{} + {c2}", d["commander"].as_str().unwrap()),
+            None => d["commander"].as_str().unwrap().to_string(),
+        };
+        let tiers: Vec<&str> = d["tiers"].as_array().into_iter().flatten().map(|t| t.as_str().unwrap()).collect();
+        let row = format!("| {key} | {commander} | {} | {} |", d["ident"].as_str().unwrap(), tiers.join(" "));
+        assert!(text.contains(&row), "no row {row:?}");
+        if spell.join(format!("{key}.json")).exists() {
+            assert!(text.contains(&format!("- {key} (fetched")), "no combos line for {key}");
+        }
+    }
 }
 
 fn num(n: usize) -> String {

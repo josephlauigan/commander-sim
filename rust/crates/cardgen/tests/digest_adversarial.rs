@@ -1,4 +1,6 @@
 //! Offline adversarial review. Defect tests intentionally stay red; real-catalog tests are opt-in.
+mod common;
+
 use cardgen::data::Project;
 use cardgen::digest::{self, Digest, Prev, Spec, Table};
 use cardgen::knowledge::{self, Deck, Index, Legal};
@@ -9,8 +11,6 @@ use std::path::PathBuf;
 use std::process::{Command, Output};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Barrier};
-
-const MINE: [&str; 6] = ["cloud", "sheoldred", "thanos", "thrasios", "urdragon", "yshtola"];
 
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..")
@@ -608,11 +608,27 @@ fn synthetic_map_is_small_deterministic_and_spellbook_errors_are_explicit() {
 fn real() -> (Index, Table) {
     digest::open(&Project::new(root()), Some(&root().join("data/knowledge"))).unwrap()
 }
-fn independent() -> Value {
+/// the decks the python audit lists candidates for, chosen by property from data/decks.json (never by name): a deck of
+/// one colour, one of five, one of two or three, and a pool deck of two colours (one JD does not own)
+fn audit_keys() -> Vec<String> {
+    let r = root();
+    let mut keys = vec![
+        common::deck_where(&r, "a one-colour deck", |n| n == 1).0,
+        common::deck_where(&r, "a five-colour deck", |n| n == 5).0,
+        common::deck_where(&r, "a two- or three-colour deck", |n| n == 2 || n == 3).0,
+        common::pool_deck_where(&r, "a two-colour pool deck", |n| n == 2),
+    ];
+    let mut seen = BTreeSet::new();
+    keys.retain(|k| seen.insert(k.clone()));
+    keys
+}
+/// the raw-JSON audit (`oracle_audit.py`): catalog-wide counts, the spellbook rows and the candidates of `keys`
+fn independent(keys: &[String]) -> Value {
     let out = Command::new("python3")
         .arg("-I")
         .arg(root().join("rust/crates/cardgen/tests/fixtures/adversarial_digest/oracle_audit.py"))
         .arg(root())
+        .args(keys)
         .output()
         .unwrap();
     assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
@@ -667,7 +683,7 @@ fn check_digest(index: &Index, d: &Digest, ident: u8) {
 
 #[test]
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
-fn whole_catalog_lines_and_all_32_identities_and_six_decks() {
+fn whole_catalog_lines_and_all_32_identities_and_every_deck_of_mine() {
     let (idx, table) = real();
     let l = digest::Lines::new(&idx, &table);
     for (i, c) in
@@ -693,7 +709,7 @@ fn whole_catalog_lines_and_all_32_identities_and_six_decks() {
             digest::build(&idx, &table, &Spec { ident: Some(ident), ..spec(None, &Prev::Missing) }).unwrap().text
         );
     }
-    for key in MINE {
+    for key in &common::mine_keys(&root()) {
         let deck = knowledge::load_deck(&Project::new(root()), key).unwrap();
         let d = digest::build(&idx, &table, &spec(Some(&deck), &Prev::Missing)).unwrap();
         check_digest(&idx, &d, knowledge::deck_ident(&deck).unwrap());
@@ -730,8 +746,9 @@ fn defect_real_catalog_gists_have_unterminated_quotes() {
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
 fn real_all_role_pages_match_independent_raw_json_and_chain_in_order() {
     let (idx, table) = real();
-    let audit = independent();
-    for key in ["cloud", "thanos", "thrasios", "lathril-golgari-elves"] {
+    let keys = audit_keys();
+    let audit = independent(&keys);
+    for key in &keys {
         let deck = knowledge::load_deck(&Project::new(root()), key).unwrap();
         for role in roles::IDS {
             let expected: Vec<String> = audit["candidates"][key]["roles"][role]
@@ -765,9 +782,10 @@ fn real_all_role_pages_match_independent_raw_json_and_chain_in_order() {
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
 fn defect_candidate_union_cannot_reach_roleless_cards() {
     let (idx, table) = real();
-    let audit = independent();
+    let keys = audit_keys();
+    let audit = independent(&keys);
     let mut failures = vec![];
-    for key in ["cloud", "thanos", "thrasios", "lathril-golgari-elves"] {
+    for key in &keys {
         let deck = knowledge::load_deck(&Project::new(root()), key).unwrap();
         let mut got = BTreeSet::new();
         let d =
@@ -850,7 +868,7 @@ fn num(n: u64) -> String {
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
 fn real_map_counts_match_independent_python() {
     let (idx, table) = real();
-    let a = independent();
+    let a = independent(&[]);
     let text = map::build(&idx, &table, Some(&root().join("data/spellbook"))).unwrap();
     assert!(text.len() < 32 * 1024);
     assert_eq!(text, map::build(&idx, &table, Some(&root().join("data/spellbook"))).unwrap());
@@ -895,11 +913,12 @@ fn real_map_counts_match_independent_python() {
         num(a["covered"].as_u64().unwrap())
     )));
     assert!(text.contains(&format!("{} cards need the LLM", num(a["routed"].as_u64().unwrap()))));
-    // the combos of JD's six decks (only those), with their counts
+    // the combos of the decks of `mine` (only those), with their counts
+    let mine = common::mine_keys(&root());
     for row in a["spellbook"].as_array().unwrap() {
         let row: Vec<&str> = row.as_array().unwrap().iter().map(|s| s.as_str().unwrap()).collect();
         let shown = text.contains(&format!("- {} (fetched {}): {} in the list", row[0], row[2], row[3]));
-        assert_eq!(shown, MINE.contains(&row[0]), "spellbook row {row:?}");
+        assert_eq!(shown, mine.iter().any(|k| k == row[0]), "spellbook row {row:?}");
     }
 }
 
@@ -907,7 +926,7 @@ fn real_map_counts_match_independent_python() {
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
 fn defect_real_map_creature_vocabulary_includes_noncreature_faces() {
     let (idx, table) = real();
-    let a = independent();
+    let a = independent(&[]);
     let text = map::build(&idx, &table, None).unwrap();
     let header = text.lines().find(|s| s.starts_with("## Creature types")).unwrap();
     let count: u64 = header.split('(').nth(1).unwrap().split_whitespace().next().unwrap().parse().unwrap();
@@ -969,7 +988,8 @@ fn real_type_abbreviations_match_every_card_and_face_type_head() {
 #[ignore = "needs data/knowledge/oracle.json and roles.json"]
 fn defect_disjoint_previous_sync_exceeds_default_five_colour_budget() {
     let (idx, table) = real();
-    let deck = knowledge::load_deck(&Project::new(root()), "thanos").unwrap();
+    let (key, _) = common::deck_where(&root(), "a five-colour deck", |n| n == 5);
+    let deck = knowledge::load_deck(&Project::new(root()), &key).unwrap();
     let prev = Prev::Ids(Default::default());
     let d = digest::build(&idx, &table, &spec(Some(&deck), &prev)).unwrap();
     assert!(

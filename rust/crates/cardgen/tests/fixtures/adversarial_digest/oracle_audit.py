@@ -1,4 +1,4 @@
-"""Independent, offline raw-JSON oracle for digest/map integration tests. Run with python3 -I."""
+"""Independent, offline raw-JSON oracle for digest/map integration tests. Run with python3 -I ROOT [DECK_KEY ...]: the keys come from the Rust test."""
 import collections
 import json
 import pathlib
@@ -84,5 +84,5 @@ print(json.dumps({
     "subtype_vocabulary": len(subtypes),
     "creature_face_subtype_vocabulary": len(creature_face_subtypes),
     "spellbook": spell,
-    "candidates": {k: candidates(k) for k in ("cloud", "thanos", "thrasios", "lathril-golgari-elves")},
+    "candidates": {k: candidates(k) for k in sys.argv[2:]},
 }))
