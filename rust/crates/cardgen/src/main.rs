@@ -65,7 +65,16 @@ const USAGE: &str = "usage:
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut args: Vec<String> = vec![];
+    for (n, arg) in std::env::args_os().skip(1).enumerate() {
+        match arg.into_string() {
+            Ok(a) => args.push(a),
+            Err(bad) => {
+                eprintln!("cardgen: argument {} is not valid Unicode ({bad:?})\n{USAGE}", n + 1);
+                std::process::exit(1);
+            }
+        }
+    }
     if let Err(e) = run(&args) {
         eprintln!("cardgen: {e}");
         std::process::exit(1);

@@ -372,6 +372,8 @@ pub fn build_with_facts(
         let _ = writeln!(w, "\n## Engine model coverage (can the simulator evaluate the card)\n");
         if !f.engine.present {
             let _ = writeln!(w, "No engine data in this project (data/carddb.txt): no card has a status.");
+        } else if let Some(note) = f.engine.note() {
+            let _ = writeln!(w, "Engine status unavailable: {note}");
         } else {
             let n = |k: &str| num(by.get(k).copied().unwrap_or(0));
             let _ = writeln!(w, "| status | cards |\n|---|---|");
@@ -470,7 +472,11 @@ pub fn build_with_facts(
                     let count =
                         |status: &str| own.iter().filter(|&&i| f.status_of(i).is_some_and(|s| s.0 == status)).count();
                     let mentions: usize = own.iter().map(|&i| f.findings_of(i).len()).sum();
-                    format!(" {} | {} | {mentions} |", count("Partial"), count("Unmodeled"))
+                    if f.engine.present && f.engine.unavailable.is_none() {
+                        format!(" {} | {} | {mentions} |", count("Partial"), count("Unmodeled"))
+                    } else {
+                        format!(" - | - | {mentions} |")
+                    }
                 }
             };
             let _ = writeln!(

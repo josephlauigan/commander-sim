@@ -268,27 +268,30 @@ pub struct Context {
     /// engine model status by card index (`m:X`): only cards that have a `cards.json` record
     pub model_status: HashMap<u32, String>,
     /// per card index (aligned with `Index::cards`, may be shorter): a bit per JD deck that plays the card (`d:`)
-    pub deck_bits: Vec<u16>,
+    pub deck_bits: Vec<u64>,
     /// the letter of each deck bit, in bit order: `(C, "cloud")`; the digest header prints it
     pub deck_letters: Vec<(char, String)>,
     /// the deck bit that section A leaves out of its own `d:` (the digest's own deck)
-    pub current: Option<u16>,
+    pub current: Option<u64>,
     /// `FINDINGS.md` entries that name the card, by card index (`k:N`, only when N > 0)
     pub findings: HashMap<u32, usize>,
+    /// the note printed in the header when the engine status is unavailable (`m:` flags are then left out)
+    pub engine_note: Option<String>,
 }
 
 impl Context {
     /// The letter table for decks in the order of `decks.json` `mine`: the first letter of the key not used yet
-    /// (upper case), else the first unused of A to Z. Deterministic; at most 16 decks (one bit each).
+    /// (upper case), else the first unused of A to Z, then a to z. Deterministic; at most 52 decks.
     pub fn letters(keys: &[String]) -> Vec<(char, String)> {
         let mut used: Vec<char> = vec![];
         let mut out = vec![];
-        for key in keys.iter().take(16) {
+        for key in keys.iter().take(52) {
             let pick = key
                 .chars()
                 .filter(|c| c.is_ascii_alphabetic())
                 .map(|c| c.to_ascii_uppercase())
                 .chain('A'..='Z')
+                .chain('a'..='z')
                 .find(|c| !used.contains(c))
                 .unwrap_or('?');
             used.push(pick);
@@ -831,6 +834,7 @@ pub fn build_with(index: &Index, table: &Table, spec: &Spec, ctx: &Context) -> R
         num(hits.len())
     ));
     head.extend(legend());
+    head.extend(ctx.engine_note.iter().map(|n| format!("# {n}")));
     head.extend(ctx.model_legend());
     head.extend(ctx.legend());
     if !unresolved.is_empty() {
@@ -1434,7 +1438,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<Output, FindError> 
     };
     // phase 4: the engine status of each card, JD's decks that play it and the FINDINGS lines that name it
     let facts = crate::facts::Facts::load(project, &index, true, true).map_err(FindError::Failed)?;
-    let ctx = facts.context(deck.as_ref().map(|d| d.key.as_str()));
+    let ctx = facts.context_checked(deck.as_ref().map(|d| d.key.as_str()))?;
     let digest = build_with(&index, &table, &spec, &ctx)?;
     let path = a
         .out

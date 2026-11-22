@@ -1934,3 +1934,38 @@ fn the_map_gets_an_engine_coverage_section_and_model_columns_and_stays_determini
     let c = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&none)).unwrap();
     assert!(c.contains("No engine data in this project"));
 }
+
+#[test]
+fn an_unavailable_engine_export_is_one_header_line_in_the_digest_and_a_sentence_in_the_map_with_no_m_flags() {
+    let (env, mut facts) = facts_env();
+    facts.engine.status.clear();
+    facts.engine.unavailable = Some("data/cards.json is missing".into());
+    let ctx = facts.context(Some("thanos"));
+    let deck = env.deck("thanos");
+    let d = digest::build_with(&env.index, &env.table, &env.spec(Some(&deck), &Prev::Missing), &ctx).unwrap();
+    let note = "# (engine status unavailable: data/cards.json is missing; run cardgen export)";
+    assert_eq!(d.text.matches(note).count(), 1, "{}", &d.text[..800]);
+    assert!(card_lines(&d.text).iter().all(|l| !field(l, 5).split(' ').any(|t| t.starts_with("m:"))));
+    // the d: and k: flags are still there
+    assert!(card_lines(&d.text).iter().any(|l| field(l, 5).contains("k:")));
+    let spell = env.root.join("data/spellbook");
+    let decks = map::load_mine(&env.project().data("decks.json")).unwrap();
+    let m = map::build_with_facts(&env.index, &env.table, Some(&spell), &decks, Some(&facts)).unwrap();
+    assert!(
+        m.contains("## Engine model coverage")
+            && m.contains("Engine status unavailable: (engine status unavailable: data/cards.json is missing")
+    );
+    assert!(!m.contains("| Full-auto |"));
+    let row = m.lines().find(|l| l.starts_with("| thanos |")).unwrap();
+    assert!(row.contains("| - | - |"), "{row}");
+    // an available export prints no such line
+    let (env2, facts2) = facts_env();
+    let ok = digest::build_with(
+        &env2.index,
+        &env2.table,
+        &env2.spec(Some(&env2.deck("thanos")), &Prev::Missing),
+        &facts2.context(None),
+    )
+    .unwrap();
+    assert!(!ok.text.contains("engine status unavailable"));
+}

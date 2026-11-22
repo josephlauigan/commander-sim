@@ -385,24 +385,63 @@ fn defect_status_for_card_absent_from_exported_engine_database() {
     assert!(e.facts().context(None).model_status.is_empty());
 }
 
+/// Coordinator decision (round 2): a missing, malformed, wrong-shape or stale `data/cards.json` makes the engine facts
+/// unavailable: plain `find` works with one stderr note and no `status`; `--status` is a clear error; a valid export
+/// gives the status. Edited from the first version, which expected every case to fail `find --json`.
 #[test]
 fn defect_missing_or_malformed_cards_json_is_ignored() {
     let e = Env::new(vec![card("Test Engine Relic")]);
     e.engine();
-    let mut accepted = vec![];
-    for bad in [None, Some("{"), Some("[]"), Some(r#"{"cards":[{"name":"Test Engine Relic"}"#)] {
-        let p = e.0.join("data/cards.json");
-        if let Some(text) = bad {
-            e.write("data/cards.json", text);
-        } else {
-            std::fs::remove_file(p).unwrap();
+    e.attach_roles();
+    let stale_one = r#"{"version":1,"cards":[{"name":"Test Engine Relic"},{"name":"Test Extra Card"}]}"#;
+    let cases: [(&str, Option<&str>, &str); 6] = [
+        ("missing", None, "data/cards.json is missing"),
+        ("brace", Some("{"), "not valid JSON"),
+        ("empty array", Some("[]"), "is not {"),
+        ("truncated", Some(r#"{"cards":[{"name":"Test Engine Relic"}"#), "not valid JSON"),
+        ("empty export", Some(r#"{"version":1,"cards":[]}"#), "is stale"),
+        ("stale by one card", Some(stale_one), "is stale"),
+    ];
+    for (what, text, why) in cases {
+        match text {
+            Some(t) => e.write("data/cards.json", t),
+            None => {
+                let _ = std::fs::remove_file(e.0.join("data/cards.json"));
+            }
         }
-        let result = e.find(&["--json"]);
-        if let Ok(out) = result {
-            accepted.push((bad, out.out));
+        let out = e.find(&["--json"]).unwrap_or_else(|err| panic!("{what}: plain find must work: {err}"));
+        let rows: Vec<Value> = serde_json::from_str(&out.out).unwrap();
+        assert!(rows[0].get("status").is_none() && rows[0].get("status_note").is_none(), "{what}: {}", rows[0]);
+        assert!(rows[0]["decks"].is_array() && rows[0]["findings"].is_array(), "{what}");
+        let err = out.stderr();
+        assert_eq!(err.lines().count(), 1, "{what}: one stderr line, got {err:?}");
+        assert!(
+            err.starts_with("(engine status unavailable: ")
+                && err.contains(why)
+                && err.trim_end().ends_with("; run cardgen export)"),
+            "{what}: {err}"
+        );
+        match e.find(&["--status", "full"]) {
+            Err(FindError::Failed(m)) => {
+                assert!(m.contains("engine status unavailable") && m.contains(why), "{what}: {m}")
+            }
+            other => panic!("{what}: --status must fail, got {other:?}"),
         }
+        assert!(matches!(e.find(&["--status", "none"]), Err(FindError::Failed(_))), "{what}");
+        assert!(e.find(&[]).unwrap().stderr().is_empty(), "{what}: a table search does not need the engine");
+        let facts = e.facts();
+        assert!(facts.engine.status.is_empty() && facts.context(None).model_status.is_empty(), "{what}");
+        assert!(facts.context(None).engine_note.unwrap().contains(why), "{what}");
+        // nothing was written by the read commands
+        assert_eq!(e.0.join("data/cards.json").is_file(), text.is_some(), "{what}");
     }
-    assert!(accepted.is_empty(), "missing/malformed engine JSON must fail: {accepted:?}");
+    // a valid export: the status is there and nothing is said
+    e.write("data/cards.json", r#"{"version":1,"cards":[{"name":"Test Engine Relic"}]}"#);
+    let out = e.find(&["--json"]).unwrap();
+    let rows: Vec<Value> = serde_json::from_str(&out.out).unwrap();
+    assert_eq!(rows[0]["status"], "Full", "{}", rows[0]);
+    assert_eq!(out.stderr(), "");
+    assert_eq!(e.find(&["--status", "full", "--count"]).unwrap().out, "1\n");
 }
 
 #[test]
@@ -411,6 +450,8 @@ fn missing_and_malformed_audit_sources_fail_cleanly() {
         for value in [None, Some("[broken")] {
             let e = Env::new(vec![card("Test Engine Relic")]);
             e.engine();
+            // round 2: the export must be valid and current for the audit sources to be read at all
+            e.write("data/cards.json", r#"{"version":1,"cards":[{"name":"Test Engine Relic"}]}"#);
             if let Some(text) = value {
                 e.write(&format!("data/{file}"), text);
             } else {

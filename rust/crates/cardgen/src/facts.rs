@@ -70,7 +70,22 @@ pub struct Engine {
     pub conflicts: Vec<String>,
     /// how many engine records there are
     pub records: usize,
+    /// why the engine facts cannot be used (`data/cards.json` missing, unreadable, malformed or stale): the project has
+    /// engine data but no status is shown, and no read command regenerates the export
+    pub unavailable: Option<String>,
 }
+
+impl Engine {
+    /// the one-line note a command prints when the engine facts are unavailable
+    pub fn note(&self) -> Option<String> {
+        self.unavailable.as_ref().map(|why| format!("(engine status unavailable: {why}; run cardgen export)"))
+    }
+}
+
+/// the most decks of `mine` the facts hold (one bit each)
+pub const MAX_DECKS: usize = 64;
+/// the most decks the digest's `d:` letters can name (`A`-`Z`, then `a`-`z`)
+pub const MAX_LETTERS: usize = 52;
 
 /// Everything phase 4 joins to a catalog card.
 #[derive(Clone, Debug, Default)]
@@ -78,10 +93,10 @@ pub struct Facts {
     pub engine: Engine,
     /// the keys of the decks of `mine`, in the order of `decks.json`; the bit of a deck is its position
     pub keys: Vec<String>,
-    /// the letter of each deck (`Context::letters`)
+    /// the letter of each deck (`Context::letters`), for the first [`MAX_LETTERS`] decks
     pub letters: Vec<(char, String)>,
     /// per card index, a bit per deck of `mine` that plays the card
-    pub deck_bits: Vec<u16>,
+    pub deck_bits: Vec<u64>,
     /// per card index, the lines of the decks' `FINDINGS.md` files that mention it (file order, then line order)
     pub findings: HashMap<u32, Vec<Finding>>,
     /// the `FINDINGS.md` files that were read
@@ -103,9 +118,16 @@ impl Facts {
     pub fn decks_and_findings(project: &Project, index: &Index) -> Result<Facts, String> {
         let path = project.data("decks.json");
         let decks = if path.is_file() { load_mine(&path)? } else { vec![] };
-        let keys: Vec<String> = decks.iter().take(16).map(|d| d.deck.key.clone()).collect();
-        let mut deck_bits = vec![0u16; index.cards.len()];
-        for (bit, d) in decks.iter().take(16).enumerate() {
+        if decks.len() > MAX_DECKS {
+            return Err(format!(
+                "{}: {} decks in mine; at most {MAX_DECKS} are supported (one bit per deck)",
+                path.display(),
+                decks.len()
+            ));
+        }
+        let keys: Vec<String> = decks.iter().map(|d| d.deck.key.clone()).collect();
+        let mut deck_bits = vec![0u64; index.cards.len()];
+        for (bit, d) in decks.iter().enumerate() {
             let names = d.deck.cards.iter().chain(std::iter::once(&d.deck.commander)).chain(d.deck.commander2.iter());
             for n in names.filter(|n| !n.trim().is_empty()) {
                 for i in digest::resolve(index, n) {
@@ -118,7 +140,7 @@ impl Facts {
     }
 
     /// the bit of a deck of `mine`; an unknown key is a usage error that lists the keys
-    pub fn deck_bit(&self, key: &str) -> Result<u16, FindError> {
+    pub fn deck_bit(&self, key: &str) -> Result<u64, FindError> {
         let want = key.to_lowercase();
         match self.keys.iter().position(|k| k.to_lowercase() == want) {
             Some(n) => Ok(1 << n),
@@ -127,6 +149,17 @@ impl Facts {
                 if self.keys.is_empty() { "(none)".to_string() } else { self.keys.join(", ") }
             ))),
         }
+    }
+
+    /// [`Facts::context`], but a usage error when the digest's `d:` letters cannot name every deck of `mine`
+    pub fn context_checked(&self, current: Option<&str>) -> Result<Context, FindError> {
+        if self.keys.len() > MAX_LETTERS {
+            return Err(FindError::Failed(format!(
+                "{} decks in mine: the digest's d: letters (A-Z, a-z) name at most {MAX_LETTERS}",
+                self.keys.len()
+            )));
+        }
+        Ok(self.context(current))
     }
 
     /// the keys of the decks of `mine` that play card `i`
@@ -157,21 +190,69 @@ impl Facts {
                 .collect(),
             deck_bits: self.deck_bits.clone(),
             deck_letters: self.letters.clone(),
-            current: current.and_then(|k| self.keys.iter().position(|x| x == k)).map(|n| 1u16 << n),
+            current: current.and_then(|k| self.keys.iter().position(|x| x == k)).map(|n| 1u64 << n),
             findings: self.findings.iter().map(|(i, v)| (*i, v.len())).collect(),
+            engine_note: self.engine.note(),
         }
     }
 }
 
 // ------------------------------------------------------------------------------------------------ engine
 
+/// the card names of an exported `data/cards.json` (`{"version": .., "cards": [{"name": ..}, ..]}`), or why it cannot
+/// be used
+fn read_export(path: &std::path::Path) -> Result<BTreeSet<String>, String> {
+    #[derive(serde::Deserialize)]
+    struct Rec {
+        name: String,
+    }
+    #[derive(serde::Deserialize)]
+    struct File {
+        #[allow(dead_code)]
+        version: serde_json::Value,
+        cards: Vec<Rec>,
+    }
+    let text = match std::fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Err("data/cards.json is missing".into()),
+        Err(e) => return Err(format!("data/cards.json cannot be read ({e})")),
+    };
+    let value: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("data/cards.json is not valid JSON ({e})"))?;
+    let file: File = serde_json::from_value(value)
+        .map_err(|e| format!("data/cards.json is not {{\"version\": .., \"cards\": [..]}} ({e})"))?;
+    Ok(file.cards.into_iter().map(|r| r.name).collect())
+}
+
 /// The engine records of the project, resolved to catalog cards. A project without `data/carddb.txt` has none.
 pub fn engine_facts(project: &Project, index: &Index) -> Result<Engine, String> {
     if !project.data("carddb.txt").is_file() {
         return Ok(Engine::default());
     }
+    let unavailable = |why: String| Ok(Engine { present: true, unavailable: Some(why), ..Engine::default() });
+    // the exported `data/cards.json` is the engine's record set; a missing, malformed or stale export makes the facts
+    // unavailable (a read command never regenerates it)
+    let exported = match read_export(&project.data("cards.json")) {
+        Ok(names) => names,
+        Err(why) => return unavailable(why),
+    };
     let inp = Inputs::load(project)?;
     let built = inp.build();
+    let rebuilt: BTreeSet<&str> = built.cards.keys().map(String::as_str).collect();
+    let differ: Vec<&str> = exported
+        .iter()
+        .map(String::as_str)
+        .filter(|n| !rebuilt.contains(n))
+        .chain(rebuilt.iter().copied().filter(|n| !exported.contains(*n)))
+        .collect();
+    if !differ.is_empty() {
+        let shown: Vec<&str> = differ.iter().take(3).copied().collect();
+        return unavailable(format!(
+            "data/cards.json is stale: {} card name(s) differ from the data files, e.g. {}",
+            differ.len(),
+            shown.join(", ")
+        ));
+    }
     let audit = Audit::new(&inp, &built.cards)?;
     // a card of any deck of `mine` is audited as JD's decks play it, as `cardgen audit --mine` does
     let mut mine: BTreeSet<&str> = inp.my_cards.iter().flat_map(|(_, c)| c.iter().map(String::as_str)).collect();
@@ -179,7 +260,7 @@ pub fn engine_facts(project: &Project, index: &Index) -> Result<Engine, String> 
         mine.insert(&d.commander);
         mine.extend(d.commander2.as_deref());
     }
-    let mut e = Engine { present: true, records: built.cards.len(), ..Engine::default() };
+    let mut e = Engine { present: true, records: exported.len(), ..Engine::default() };
     let mut from: HashMap<u32, &str> = HashMap::new();
     for name in built.cards.keys() {
         let (s, n) = audit.card_status(name, mine.contains(name.as_str()));
@@ -326,15 +407,33 @@ fn spans(s: &str) -> Vec<(usize, usize)> {
     for pair in bold.chunks_exact(2) {
         out.push((pair[0] + 2, pair[1]));
     }
-    let ticks: Vec<usize> = s.match_indices('`').map(|(i, _)| i).collect();
-    for pair in ticks.chunks_exact(2) {
-        out.push((pair[0] + 1, pair[1]));
+    // code spans (CommonMark): a run of backticks closes at the next run of the same length
+    let mut runs: Vec<(usize, usize)> = vec![];
+    let mut at = 0;
+    while let Some(i) = s[at..].find('`') {
+        let start = at + i;
+        let len = s[start..].bytes().take_while(|b| *b == b'`').count();
+        runs.push((start, len));
+        at = start + len;
+    }
+    let mut n = 0;
+    while n < runs.len() {
+        let (start, len) = runs[n];
+        match runs[n + 1..].iter().position(|r| r.1 == len) {
+            Some(k) => {
+                let close = n + 1 + k;
+                out.push((start + len, runs[close].0));
+                n = close + 1;
+            }
+            None => n += 1,
+        }
     }
     out
 }
 
+/// the first [`TEXT_CHARS`] characters of the physical line as written (trailing spaces can be a Markdown line break)
 fn cut(s: &str) -> String {
-    s.trim_end().chars().take(TEXT_CHARS).collect()
+    s.chars().take(TEXT_CHARS).collect()
 }
 
 /// reads `audit/<key>/FINDINGS.md` of each deck key that has one
@@ -361,7 +460,8 @@ fn read_findings(
     let mut found: BTreeMap<u32, Vec<Finding>> = BTreeMap::new();
     for (file, text) in &texts {
         let mut heading = String::new();
-        for (n, line) in text.lines().enumerate() {
+        // one leading byte order mark is not part of the first line
+        for (n, line) in text.strip_prefix('\u{feff}').unwrap_or(text).lines().enumerate() {
             let mut hit = BTreeSet::new();
             needles.mentions(line, &mut hit);
             for i in hit {
@@ -373,7 +473,7 @@ fn read_findings(
                 });
             }
             if line.starts_with('#') {
-                heading = cut(line);
+                heading = cut(line.trim_end());
             }
         }
     }

@@ -239,6 +239,23 @@ the digest and the map (so they cannot disagree):
   card's full name, mention the card `--name` would pick (the legal card; the exact name beats a face name). Each line
   is listed once per card.
 
+**Unavailable engine facts.** The exported `data/cards.json` is the engine's record set, and a status exists only for
+names it contains. When `data/carddb.txt` exists but `data/cards.json` is missing, unreadable, not valid JSON, not the
+shape `{"version": .., "cards": [..]}`, or its card names differ from the set the data files rebuild (a stale export,
+even by one card), the engine facts are unavailable: a plain `find --json` or `--full` still prints decks and findings,
+leaves out `status` and `status_note` and writes one stderr line, `(engine status unavailable: <reason>; run cardgen
+export)`; `find --status ...` fails with that message and a non-zero exit; the digest prints the same line in its header
+and no `m:` flags; the map's engine section says so and the deck columns show `-`. No read command regenerates the
+export. A project with no `data/carddb.txt` has no engine data and says nothing. An unreadable data file (a broken
+`audit.toml`) is an error, not "unavailable".
+
+Decks: the membership bits, `decks`, the findings and `--in-deck`/`--not-in-deck` cover every deck of `mine` up to 64
+(more is an error naming the limit). The digest's `d:` letters are `A`-`Z`, then `a`-`z`, so it names at most 52 decks;
+more than 52 decks of `mine` is an error for the digest only. A mention inside a code span counts for a short name when
+the span is a CommonMark one (a run of backticks closed by a run of the same length). One leading BOM is ignored; the
+finding `text` is the physical line as written (trailing spaces kept) cut to 200 characters. A non-Unicode command-line
+argument is a usage error (exit 1), never a panic.
+
 The digest's `k:N` is the number of `findings` of a card. The engine is built only when the output or a filter needs it
 (`--json`, `--full`, `--status`: about 0.2 s more); a plain table search does not touch it.
 

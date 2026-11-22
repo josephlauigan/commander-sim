@@ -322,7 +322,7 @@ fn deck_membership_is_a_bit_per_deck_by_folded_name_face_name_commander_and_basi
     assert_eq!(bits("Sol Ring"), 0);
     // a shared name marks the Commander-legal card only
     let shared = index.lookup("Pick Your Poison");
-    let by_legal: Vec<(bool, u16)> = shared
+    let by_legal: Vec<(bool, u64)> = shared
         .iter()
         .map(|&i| (index.cards[i as usize].raw.oracle_id.ends_with("-legal"), facts.deck_bits[i as usize]))
         .collect();
@@ -632,4 +632,89 @@ fn two_engine_records_for_one_card_show_the_lower_status_and_the_conflict_is_lis
         "{:?}",
         facts.engine.conflicts
     );
+}
+
+// ------------------------------------------------------------------------------------------------ many decks
+
+fn many_decks(n: usize) -> Env {
+    let env = Env::new(vec![rec("Sol Ring", "Artifact", "x", "legal")]);
+    env.decks(json!(
+        (0..n)
+            .map(|i| json!({"key": format!("deck-{i}"), "commander": "", "ident": "", "cards": ["Sol Ring"]}))
+            .collect::<Vec<_>>()
+    ));
+    env.findings(&format!("deck-{}", n - 1), "Sol Ring in the last deck\n");
+    env
+}
+
+#[test]
+fn twenty_eight_decks_keep_every_bit_finding_filter_and_a_distinct_letter() {
+    let env = many_decks(28);
+    let (index, facts) = env.facts();
+    assert_eq!(facts.keys.len(), 28);
+    let letters: BTreeSet<char> = facts.letters.iter().map(|(c, _)| *c).collect();
+    assert_eq!(letters.len(), 28, "distinct letters");
+    assert!(letters.iter().all(|c| c.is_ascii_alphabetic()) && letters.iter().any(|c| c.is_ascii_lowercase()));
+    assert_eq!(facts.letters, env.facts().1.letters, "deterministic");
+    let sol = index.lookup("Sol Ring")[0];
+    assert_eq!(facts.decks_of(sol).len(), 28);
+    assert_eq!(facts.findings_of(sol).len(), 1);
+    let rows = env.json(&[]);
+    assert_eq!(rows[0]["decks"].as_array().unwrap().len(), 28);
+    assert_eq!(rows[0]["findings"].as_array().unwrap().len(), 1);
+    assert_eq!(env.ok(&["--in-deck", "deck-27", "--count"]).trim(), "1");
+    assert_eq!(env.ok(&["--not-in-deck", "deck-27", "--count"]).trim(), "0");
+    // the digest flag names all 28 decks
+    let ctx = facts.context_checked(None).unwrap();
+    let f = cardgen::digest::flags(sol, &index.cards[sol as usize], cardgen::digest::Review::None, false, &ctx);
+    let d = f.iter().find(|x| x.starts_with("d:")).unwrap();
+    assert_eq!(d.len() - 2, 28, "{d}");
+}
+
+#[test]
+fn fifty_three_decks_work_in_find_and_are_a_clear_error_for_the_digest_letters() {
+    let env = many_decks(53);
+    let (index, facts) = env.facts();
+    assert_eq!(facts.keys.len(), 53);
+    let sol = index.lookup("Sol Ring")[0];
+    assert_eq!(facts.decks_of(sol).len(), 53);
+    assert_eq!(facts.findings_of(sol).len(), 1);
+    assert_eq!(env.json(&[])[0]["decks"].as_array().unwrap().len(), 53);
+    assert_eq!(env.ok(&["--in-deck", "deck-52", "--count"]).trim(), "1");
+    match facts.context_checked(None) {
+        Err(FindError::Failed(m)) => assert!(m.contains("53 decks") && m.contains("52"), "{m}"),
+        other => panic!("{other:?}"),
+    }
+    // 52 decks are the limit of the letters: fine
+    let (_, f52) = many_decks(52).facts();
+    let letters: BTreeSet<char> = f52.letters.iter().map(|(c, _)| *c).collect();
+    assert_eq!(letters.len(), 52);
+    assert!(f52.context_checked(None).is_ok());
+}
+
+#[test]
+fn sixty_four_decks_are_the_limit_of_the_bitmask() {
+    let env = many_decks(64);
+    let (index, facts) = env.facts();
+    assert_eq!(facts.decks_of(index.lookup("Sol Ring")[0]).len(), 64);
+    assert_eq!(env.ok(&["--in-deck", "deck-63", "--count"]).trim(), "1");
+    let over = many_decks(65);
+    let e = Facts::decks_and_findings(&over.project(), &over.index()).unwrap_err();
+    assert!(e.contains("65 decks") && e.contains("64"), "{e}");
+}
+
+#[test]
+fn a_backtick_run_closes_at_a_run_of_the_same_length_a_bom_is_skipped_and_text_keeps_its_spaces() {
+    let env = Env::new(vec![rec("Opt", "Instant", "x", "legal"), rec("Sol Ring", "Artifact", "x", "legal")]);
+    env.decks(json!([{"key": "alpha", "commander": "", "ident": "", "cards": []}]));
+    env.findings(
+        "alpha",
+        "\u{feff}# Top\n`Opt` a\n``Opt`` b\n```Opt``` c\n``a `q` Opt`` d\n`` Opt ` e\n``Opt` f\nSol Ring  \n",
+    );
+    let (index, facts) = env.facts();
+    let lines: Vec<usize> = facts.findings_of(index.lookup("Opt")[0]).iter().map(|f| f.line).collect();
+    // the last two have a run with no closing run of its length: no code span, so a short name does not count
+    assert_eq!(lines, [2, 3, 4, 5], "{lines:?}");
+    let sol = &facts.findings_of(index.lookup("Sol Ring")[0])[0];
+    assert_eq!((sol.line, sol.heading.as_str(), sol.text.as_str()), (8, "# Top", "Sol Ring  "));
 }

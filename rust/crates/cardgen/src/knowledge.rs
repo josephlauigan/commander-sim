@@ -1357,6 +1357,9 @@ pub struct FindOutput {
     pub notes_on_stderr: bool,
     /// Derived-role availability is always a stderr diagnostic, independent of display mode.
     pub role_note: Option<String>,
+    /// set when the engine facts were asked for (`--json`, `--full`) but `data/cards.json` cannot be used: one stderr
+    /// line, `(engine status unavailable: ...; run cardgen export)`; the rows then have no `status`
+    pub engine_note: Option<String>,
 }
 
 impl FindOutput {
@@ -1376,7 +1379,7 @@ impl FindOutput {
     pub fn stderr(&self) -> String {
         let mut out: String =
             if self.notes_on_stderr { self.notes.iter().map(|n| format!("{n}\n")).collect() } else { String::new() };
-        if let Some(note) = &self.role_note {
+        for note in self.engine_note.iter().chain(self.role_note.iter()) {
             out.push_str(note);
             out.push('\n');
         }
@@ -1515,6 +1518,13 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
     } else {
         None
     };
+    let mut engine_note = None;
+    if let Some(note) = facts.as_ref().and_then(|f| f.engine.unavailable.as_ref()) {
+        if q.status.is_some() {
+            return Err(FindError::Failed(format!("engine status unavailable: {note}; run cardgen export")));
+        }
+        engine_note = facts.as_ref().and_then(|f| f.engine.note());
+    }
     let hits = match &facts {
         Some(f) => {
             let in_bit = q.in_deck.as_deref().map(|k| f.deck_bit(k)).transpose()?;
@@ -1572,7 +1582,7 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
         if hits.is_empty() {
             named_but_filtered(&mut notes);
         }
-        return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr, role_note });
+        return Ok(FindOutput { out: format!("{}\n", hits.len()), notes, notes_on_stderr, role_note, engine_note });
     }
     let total = hits.len();
     let shown_ids: Vec<u32> = hits.iter().copied().skip(q.offset).take(q.limit).collect();
@@ -1601,5 +1611,5 @@ pub fn find_with_notes(project: &Project, args: &[String]) -> Result<FindOutput,
     } else {
         table(&shown)
     };
-    Ok(FindOutput { out, notes, notes_on_stderr, role_note })
+    Ok(FindOutput { out, notes, notes_on_stderr, role_note, engine_note })
 }
