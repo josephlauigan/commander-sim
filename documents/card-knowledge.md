@@ -282,11 +282,11 @@ journalctl --user -u knowledge-weekly                                  # what a 
 watch `journalctl --user -fu knowledge-weekly`. That run clones over ssh, downloads the crates, builds `cardgen` in release
 (minutes, behind the heavy lock `/tmp/cargo-heavy.lock`, which it waits for at most an hour), downloads about 160 MB of bulk
 data and reports "first run" with the deck cards that are not legal now. In the daytime the LLM stage is skipped by the night
-window; to see it work, run during the window or set `KNOWLEDGE_LLM_HOURS=0-24` once and watch the GPU decision. Then check:
+window; to see it work, run during the window or open the window once: `systemctl --user set-environment KNOWLEDGE_LLM_HOURS=0-24; systemctl --user start knowledge-weekly.service; systemctl --user unset-environment KNOWLEDGE_LLM_HOURS` (the unit captures the environment when it starts; `systemctl --user show-environment | grep KNOWLEDGE` must be empty afterwards), and watch the GPU decision. Then check:
 `reports/DATE.md` has the six stage rows; `git status --porcelain` of the main checkout is unchanged; there is no
 `~/.cache/commander-sim-knowledge/owns-llama-27b` marker; `llama-27b` is inactive (if the job started it); the llm note
 says the GPU decision. Merging the branch deletes the tracked `sync.lock` in the main checkout; the next `bulk-sync`
-rebuilds it from `oracle.json`. A catch-up run at wake time uses the CPU and disk at low priority but not the GPU.
+rebuilds it from `oracle.json`. A catch-up run at wake time uses the CPU and disk at low priority, and the GPU only if it wakes between 00:00 and 07:00 (the window gates the start: a stage that starts at 06:59 can hold the GPU until about 08:40).
 No long manual runs on `llama-27b` while the job may start it: `systemctl --user stop llama-27b` ends the job's server (its
 rows are kept).
 

@@ -339,7 +339,8 @@ gpu_state() {
   local -a targets=()
   local -A seen=()
   local total_kib=0 unknown=0 node
-  [[ $limit =~ ^[0-9]+$ ]] || {
+  # at most 9 digits, forced to base 10 ("08" is no octal error, "010" is 10 not 8)
+  [[ $limit =~ ^[0-9]{1,9}$ ]] && limit=$((10#$limit)) || {
     echo unknown
     return 0
   }
@@ -356,6 +357,7 @@ gpu_state() {
     [[ $link == "${targets[0]}" || (${#targets[@]} -gt 1 && $link == "${targets[1]}") ]] || continue
     info="${fd%/fd/*}/fdinfo/${fd##*/}"
     text="$(cat -- "$info" 2>/dev/null)" || {
+      [[ -L $fd ]] || continue # the descriptor vanished (process exit race): not a holder
       unknown=1
       continue
     }

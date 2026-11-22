@@ -1025,6 +1025,10 @@ fn the_gpu_is_busy_only_when_other_processes_hold_a_gigabyte_of_video_memory() {
     assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "4096")]), "free");
     assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "100")]), "busy");
     assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "lots")]), "unknown");
+    // leading zeros are decimal and never fail open: "08" is 8 MiB (busy), "010" is 10 MiB (busy)
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "08")]), "busy");
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "010")]), "busy");
+    assert_eq!(gpu_state(&sb, &two_gib, &[("KNOWLEDGE_GPU_BUSY_MIB", "12345678901234567890")]), "unknown");
 }
 
 #[test]
