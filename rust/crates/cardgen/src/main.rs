@@ -11,10 +11,79 @@ const USAGE: &str = "usage:
   cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
                                                 replace a deck's list (KEY: your deck key, a pool deck key, or a path)
+  cardgen bulk-sync [--from-file PATH [--updated-at STAMP]] [--data-dir DIR] [--min-count N]
+                                                download Scryfall's Oracle Cards bulk file and write
+                                                data/knowledge/oracle.json (+ oracle.prev.json, sync.lock, which
+                                                is untracked); prints \"up to date\" when the bulk file has not
+                                                changed. --from-file parses a local bulk file (no network, no
+                                                up-to-date check); with --updated-at the file stands in for the
+                                                remote at that bulk date (up-to-date check, no network); the
+                                                directory can also be set with CARDGEN_KNOWLEDGE_DIR
+  cardgen roles --rules [--data-dir DIR]        classify the catalog and write roles.json (offline)
+  cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--batch 10] [--dry-run] [--endpoint URL] [--model ID]
+                       [--pending] [--data-dir DIR]
+                                                classify routed cards through the local LLM server (llama.cpp,
+                                                http://127.0.0.1:8080/v1) into llm_roles.jsonl; needs `llama up`
+  cardgen roles --merge [--model ID] [--pending] [--data-dir DIR]
+                                                rules + LLM cache + overrides -> roles.json, reports/ (offline;
+                                                --pending also reads llm_roles.pending.jsonl)
+  cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
+  cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]
+  cardgen roles --show NAME | --stats | --lint [--data-dir DIR]
+  cardgen find [--name N] [--name-contains S] [--ident WU] [--legal legal|banned|not_legal|any] [--cmc '<=2']
+               [--type WORD]... [--text REGEX]... [--role R]... [--gc] [--deck KEY] [--meld]
+               [--status LIST] [--in-deck KEY] [--not-in-deck KEY]
+               [--sort edhrec|name|cmc|usd] [--limit N|all] [--offset N] [--count] [--json] [--full] [--data-dir DIR]
+                                                search the whole Commander catalog (data/knowledge/oracle.json, see
+                                                bulk-sync); filters combine with AND. --name is exact (also a face
+                                                name, accents and apostrophe style ignored); --ident is a limit
+                                                (WU = any card inside W and U, C or empty = colourless only);
+                                                --legal defaults to legal; --type and --text repeat (all must match;
+                                                --text is a case-insensitive regex over the Oracle text of every
+                                                face); --deck KEY limits to that deck's colours (--ident may
+                                                only narrow them) and leaves out its cards; a meld result needs
+                                                --meld unless --name is given; --sort defaults to edhrec, --limit to
+                                                30 (all = no limit); --count prints only the number of matches;
+                                                notes about a cut page or a filtered-out name go to stderr
+                                                --json rows and --full also show the engine model status, the decks
+                                                of mine that play the card and the FINDINGS.md lines that name it;
+                                                --status LIST (full, full-auto, approximate, partial, unmodeled,
+                                                none = no engine record) and --in-deck / --not-in-deck KEY filter
+                                                on them
+  cardgen weekly-report [--date YYYY-MM-DD] [--commit TEXT] [--stages FILE] [--roles-before FILE] [--llm-log FILE]
+                        [--out PATH] [--keep N] [--stdout] [--data-dir DIR]
+                                                the weekly job's report (reports/DATE.md): action needed for the decks
+                                                in data/decks.json, the run, new cards, ban and Game Changer changes
+                                                (oracle.prev.json against oracle.json), role changes; offline,
+                                                writes only the report
+  cardgen map [--out PATH] [--stdout] [--data-dir DIR]
+                                                write the whole-catalog summary (about 3k tokens, under 32 KB) to
+                                                data/knowledge/map.md; needs oracle.json and roles.json; --stdout
+                                                also prints it
+  cardgen digest (--deck KEY | --ident LETTERS) [--role R | --view roleless|new] [--limit N] [--offset N]
+                 [--out PATH] [--budget-tokens N] [--stdout] [--data-dir DIR]
+                                                one compact line per card for a deck's colours (or any identity),
+                                                always written to data/knowledge/digests/KEY.txt (a page to
+                                                KEY.ROLE.txt or KEY.VIEW.txt): sections A the deck's cards (the
+                                                commander first), B best per role, C synergy with the commander's
+                                                subtypes, D new since the previous sync, E the best-ranked cards
+                                                with no role; --role R pages through every card that has R in
+                                                any position, --view roleless|new through the complete lists;
+                                                --budget-tokens defaults to 42000 (estimated as bytes/4);
+                                                --stdout also prints the text
   (--root DIR names the repository; by default the one containing the current directory)";
 
 fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
+    let mut args: Vec<String> = vec![];
+    for (n, arg) in std::env::args_os().skip(1).enumerate() {
+        match arg.into_string() {
+            Ok(a) => args.push(a),
+            Err(bad) => {
+                eprintln!("cardgen: argument {} is not valid Unicode ({bad:?})\n{USAGE}", n + 1);
+                std::process::exit(1);
+            }
+        }
+    }
     if let Err(e) = run(&args) {
         eprintln!("cardgen: {e}");
         std::process::exit(1);
@@ -60,6 +129,16 @@ fn run(args: &[String]) -> Result<(), String> {
         "audit" => audit(&project, &mut args),
         "validate" => validate(&project, &args),
         "deck" => deck(&project, &mut args),
+        "bulk-sync" => bulk_sync(&project, &mut args),
+        "find" => find(&project, &args),
+        "map" => map(&project, &args),
+        "digest" => digest(&project, &args),
+        "weekly-report" => weekly_report(&project, &args),
+        "roles" => {
+            let (out, passed) = cardgen::roles::command(&project, &args)?;
+            print!("{out}");
+            if passed { Ok(()) } else { Err("role validation thresholds missed".into()) }
+        }
         _ => Err(USAGE.into()),
     }
 }
@@ -182,5 +261,111 @@ fn deck(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     if !o.ok {
         std::process::exit(1);
     }
+    Ok(())
+}
+
+fn find(project: &Project, args: &[String]) -> Result<(), String> {
+    use cardgen::knowledge::FindError;
+    use std::io::Write;
+    let o = match cardgen::knowledge::find_with_notes(project, args) {
+        Ok(o) => o,
+        Err(FindError::Usage(m)) => return Err(format!("{m}\n{USAGE}")),
+        Err(FindError::Failed(m)) => return Err(m),
+    };
+    let wrote = std::io::stdout().write_all(o.stdout().as_bytes()).and_then(|_| std::io::stdout().flush());
+    match wrote {
+        Ok(()) => {}
+        // a closed pipe (`| head`) is not an error
+        Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => return Ok(()),
+        Err(e) => return Err(format!("cannot write the result: {e}")),
+    }
+    let _ = std::io::stderr().write_all(o.stderr().as_bytes());
+    Ok(())
+}
+
+/// the text of a generated view to stdout (a closed pipe is not an error)
+fn print_text(text: &str) -> Result<(), String> {
+    use std::io::Write;
+    match std::io::stdout().write_all(text.as_bytes()).and_then(|_| std::io::stdout().flush()) {
+        Ok(()) => Ok(()),
+        Err(e) if e.kind() == std::io::ErrorKind::BrokenPipe => Ok(()),
+        Err(e) => Err(format!("cannot write the result: {e}")),
+    }
+}
+
+fn map(project: &Project, args: &[String]) -> Result<(), String> {
+    let (o, stdout) = cardgen::map::command(project, args)?;
+    if stdout {
+        print_text(&o.text)?;
+        eprintln!("{}", o.summary());
+    } else {
+        println!("{}", o.summary());
+    }
+    Ok(())
+}
+
+fn digest(project: &Project, args: &[String]) -> Result<(), String> {
+    use cardgen::knowledge::FindError;
+    let wants_text = args.iter().any(|a| a == "--stdout");
+    let o = match cardgen::digest::command(project, args) {
+        Ok(o) => o,
+        Err(FindError::Usage(m)) => return Err(format!("{m}\n{}", cardgen::digest::USAGE)),
+        Err(FindError::Failed(m)) => return Err(m),
+    };
+    if wants_text {
+        print_text(&o.digest.text)?;
+        eprintln!("{}", o.summary());
+    } else {
+        println!("{}", o.summary());
+    }
+    Ok(())
+}
+
+fn bulk_sync(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
+    use cardgen::bulk;
+    let from_file = opt(args, "--from-file")?.map(PathBuf::from);
+    let updated_at = opt(args, "--updated-at")?;
+    if updated_at.is_some() && from_file.is_none() {
+        return Err("--updated-at needs --from-file".into());
+    }
+    let (dir, explicit_dir) = match opt(args, "--data-dir")? {
+        Some(d) => (PathBuf::from(d), true),
+        None => match std::env::var_os("CARDGEN_KNOWLEDGE_DIR") {
+            Some(d) if !d.is_empty() => (PathBuf::from(d), true),
+            _ => (project.data("knowledge"), false),
+        },
+    };
+    let min_count = match opt(args, "--min-count")? {
+        Some(n) => n.parse::<usize>().map_err(|_| format!("--min-count needs a number, got {n}"))?,
+        None => bulk::MIN_COUNT,
+    };
+    if !args.is_empty() {
+        return Err(USAGE.into());
+    }
+    if from_file.is_some() && updated_at.is_none() && !explicit_dir {
+        eprintln!(
+            "warning: --from-file writes bulk_updated_at=from-file into {}/sync.lock; pass --data-dir for a scratch \
+             directory",
+            dir.display()
+        );
+    }
+    let synced = bulk::now_utc();
+    let out = match (from_file, updated_at) {
+        (Some(path), Some(updated_at)) => {
+            let opts = bulk::Options { dir, from_file: None, min_count, synced };
+            bulk::run(&opts, &mut bulk::LocalRemote { updated_at, path })?
+        }
+        (from_file, _) => bulk::run(&bulk::Options { dir, from_file, min_count, synced }, &mut bulk::Http)?,
+    };
+    print!("{}", out.text);
+    Ok(())
+}
+
+fn weekly_report(project: &Project, args: &[String]) -> Result<(), String> {
+    let o = cardgen::weekly::command(project, args)?;
+    if o.stdout {
+        print_text(&o.text)?;
+    }
+    println!("{}", o.summary());
     Ok(())
 }

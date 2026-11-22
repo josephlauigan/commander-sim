@@ -65,6 +65,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "fancy-regex",
+ "flate2",
  "serde",
  "serde_json",
  "sim-core",

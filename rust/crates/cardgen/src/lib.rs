@@ -4,17 +4,25 @@
 
 pub mod audit;
 pub mod autotag;
+pub mod bulk;
 pub mod cardinfo;
 pub mod cd;
 pub mod data;
 pub mod decks;
+pub mod digest;
 pub mod dsl;
 pub mod dsl_parse;
 pub mod export;
+pub mod facts;
 pub mod json;
+pub mod knowledge;
+pub mod llm;
+pub mod map;
 pub mod paths;
 pub mod py;
 pub mod re;
+pub mod roles;
 pub mod scryfall;
 pub mod sources;
 pub mod update_deck;
+pub mod weekly;

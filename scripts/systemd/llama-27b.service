@@ -1,0 +1,19 @@
+# The dense Qwen3.6-27B (Q5_K_M) llama.cpp server the weekly job's LLM stage uses (thinking off is a request option, not
+# a server one). NOT enabled and not wanted by any target: scripts/knowledge-weekly.sh starts it only when the GPU is free
+# and port 8080 is not served, and stops it only if it started it. Link it once so `systemctl --user start` finds it:
+#   systemctl --user link ~/projects/commander-sim/scripts/systemd/llama-27b.service
+# The coder server (llama-server.service) is a different unit and is left alone.
+[Unit]
+Description=llama.cpp SYCL server (Qwen3.6-27B Q5_K_M) for the weekly card-knowledge job
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/llama-server.env
+ExecStart=%h/llama.cpp/build-sycl/bin/llama-server \
+  -m %h/llama/llama-b10775/models/Qwen3.6-27B-Q5_K_M.gguf \
+  -ngl 99 -c 32768 --jinja \
+  --host 127.0.0.1 --port 8080
+# a backstop for a server nobody stopped: the unit ends itself after 120 minutes. The weekly job's worst case is 300 s
+# to load (plus about 10 s), 180 s for the smoke prompt, 5400 s of budget and 60 s kill-after, about 5950 s; the rest is
+# margin. Raise it if KNOWLEDGE_LLM_BUDGET_SECS or KNOWLEDGE_LLM_READY_SECS is raised.
+RuntimeMaxSec=7200

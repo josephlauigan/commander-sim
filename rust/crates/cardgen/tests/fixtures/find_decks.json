@@ -1,0 +1,76 @@
+{
+ "version": 1,
+ "mine": [
+  {
+   "key": "azorius",
+   "name": "Azorius",
+   "commander": "Isamaru, Hound of Konda",
+   "ident": "WU",
+   "tiers": [
+    "t1"
+   ],
+   "cards": [
+    "Isamaru, Hound of Konda",
+    "Sol Ring",
+    "Petty Theft",
+    "Fire // Ice",
+    "Counterspell",
+    "Island",
+    "Island",
+    "Not In Catalog"
+   ]
+  },
+  {
+   "key": "mono-white",
+   "name": "Mono White",
+   "commander": "Isamaru, Hound of Konda",
+   "ident": "W",
+   "tiers": [
+    "t1"
+   ],
+   "cards": [
+    "Swords to Plowshares",
+    "Plains"
+   ]
+  },
+  {
+   "key": "red",
+   "name": "Red",
+   "commander": "Lightning Bolt",
+   "ident": "R",
+   "tiers": [
+    "t1"
+   ],
+   "cards": [
+    "Lightning Bolt"
+   ]
+  },
+  {
+   "key": "colorless",
+   "name": "Colorless",
+   "commander": "Sol Ring",
+   "ident": "C",
+   "tiers": [
+    "t1"
+   ],
+   "cards": [
+    "Sol Ring"
+   ]
+  }
+ ],
+ "pool": [
+  {
+   "key": "pooldeck",
+   "name": "Pool",
+   "commander": "Birds of Paradise",
+   "commander2": "Llanowar Elves",
+   "ident": "G",
+   "tiers": [
+    "t3"
+   ],
+   "cards": [
+    "Noble Hierarch"
+   ]
+  }
+ ]
+}

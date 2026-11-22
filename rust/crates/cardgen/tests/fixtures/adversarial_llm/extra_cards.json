@@ -1,0 +1,174 @@
+[
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Sticker Sheet",
+  "oracle_id": "adv-0001",
+  "type_line": "Stickers",
+  "oracle_text": "Draw a card. Counter target spell."
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Attraction",
+  "oracle_id": "adv-0002",
+  "type_line": "Artifact — Attraction",
+  "oracle_text": "Visit — Destroy target creature. Draw a card."
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Reminder Only",
+  "oracle_id": "adv-0003",
+  "type_line": "Creature — Bear",
+  "oracle_text": "(This card has only reminder text and no rules text of its own.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Counter Twin A",
+  "oracle_id": "adv-0004",
+  "type_line": "Instant",
+  "oracle_text": "Counter target spell."
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Counter Twin B",
+  "oracle_id": "adv-0005",
+  "type_line": "Instant",
+  "oracle_text": "Counter target spell."
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "normal",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Vanilla",
+  "oracle_id": "adv-0006",
+  "type_line": "Creature — Bear",
+  "power": "2",
+  "toughness": "2"
+ },
+ {
+  "mana_cost": "{1}",
+  "cmc": 1.0,
+  "colors": [],
+  "color_identity": [],
+  "keywords": [],
+  "layout": "adventure",
+  "game_changer": false,
+  "legalities": {
+   "commander": "legal"
+  },
+  "edhrec_rank": 999999,
+  "usd": "0.10",
+  "released_at": "2024-01-01",
+  "set": "tst",
+  "rarity": "common",
+  "reserved": false,
+  "name": "Adv Dual Face",
+  "oracle_id": "adv-0007",
+  "type_line": "Creature — Human // Instant",
+  "card_faces": [
+   {
+    "name": "Adv Dual Face Front",
+    "mana_cost": "{1}",
+    "type_line": "Creature — Human",
+    "oracle_text": "Whenever you gain life, draw a card.",
+    "power": "1",
+    "toughness": "1"
+   },
+   {
+    "name": "Adv Dual Face Back",
+    "mana_cost": "{1}{U}",
+    "type_line": "Instant — Adventure",
+    "oracle_text": "Counter target spell."
+   }
+  ]
+ }
+]

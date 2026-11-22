@@ -1,0 +1,16 @@
+# Runs knowledge-weekly.service every Sunday at 04:00 local time (JD, 2026-11-22). Persistent: a run missed while the
+# machine was off or asleep happens at the next start. Install by hand:
+#   systemctl --user link ~/projects/commander-sim/scripts/systemd/knowledge-weekly.service
+#   systemctl --user link ~/projects/commander-sim/scripts/systemd/knowledge-weekly.timer
+#   systemctl --user enable --now knowledge-weekly.timer
+[Unit]
+Description=Weekly refresh of the card knowledge base, Sunday 04:00
+
+[Timer]
+OnCalendar=Sun *-*-* 04:00:00
+Persistent=true
+RandomizedDelaySec=10min
+Unit=knowledge-weekly.service
+
+[Install]
+WantedBy=timers.target
