@@ -196,7 +196,7 @@ coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --valida
 | 1 `bulk-sync` | `knowledge-bulk-sync` | done, merged into `knowledge-base` |
 | 2 `find` | `knowledge-find` | done, merged into `knowledge-base` |
 | 3 Roles, rule stage | `knowledge-roles` | done, merged into `knowledge-base` |
-| 3L Roles, local LLM stage | `knowledge-llm` | built (client, cache, merge policy, validation stage, fake-server tests); real pilots not run |
+| 3L Roles, local LLM stage | `knowledge-llm` | built and measured against the real model (dense Qwen3.6-27B); the targeted production run over 12,520 cards started 2026-11-21 and its results are to be merged |
 | 3b `map` and `digest` | `knowledge-digest` | not started |
 | 4 Status, decks and findings join | `knowledge-status` | not started |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | not started |
