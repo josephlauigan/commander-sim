@@ -91,7 +91,7 @@ fn llm_stage_prompt_lines_budget_and_empty_cache_merge_over_the_catalog() {
     assert!(system + worst_batch / 4 + 10 * 160 < 24_000, "a batch of the ten longest cards must fit the 32K context");
     // with nothing cached every routed card keeps its rule roles and is flagged; nothing else changes
     let (merged, _, stats) =
-        llm::merge_table(&index, &taxonomy, &rules, &Default::default(), &Default::default(), None).unwrap();
+        llm::merge_table(&index, &taxonomy, &rules, &Default::default(), &Default::default(), None, &Default::default()).unwrap();
     for (id, a) in rules.iter() {
         let m = &merged[id];
         assert_eq!((&m.roles, &m.evidence, &m.route, m.needs_llm), (&a.roles, &a.evidence, &a.route, a.needs_llm));

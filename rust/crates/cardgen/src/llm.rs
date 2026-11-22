@@ -17,9 +17,14 @@ use std::time::Duration;
 pub const DEFAULT_ENDPOINT: &str = "http://127.0.0.1:8080/v1";
 pub const DEFAULT_BATCH: usize = 10;
 const MAX_ROLES: usize = 4;
-/// Consecutive transport failures after which a run saves what it has and stops.
-const MAX_TRANSPORT_FAILURES: usize = 3;
-const FLUSH_EVERY: usize = 25;
+/// Consecutive transport failures (no answer at all) after which a run saves what it has and stops.
+const MAX_TRANSPORT_FAILURES: usize = 2;
+/// Consecutive batches in which not one card got a valid answer (a server rejecting every request) after which it stops.
+const MAX_EMPTY_BATCHES: usize = 3;
+/// A run that leaves more than this share of the cards it asked about `llm_failed` exits non-zero.
+const MAX_FAILED_SHARE: f64 = 0.20;
+/// Seconds one request may take (a batch of ten answers in about ten).
+const REQUEST_TIMEOUT_SECS: u64 = 180;
 
 // ---------------------------------------------------------------------------------------------------- the prompt
 
@@ -30,13 +35,12 @@ const INTRO: &str = concat!(
 );
 const ANSWER_RULES: &str = concat!(
     "HOW TO ANSWER\n",
-    "Reply with one JSON object {\"cards\":[...]}: exactly one entry per card, each {\"id\",\"roles\",\"primary\",",
-    "\"evidence\"} with the card's id. roles: at most 4 role ids, most prominent first. primary: the first role, or ",
-    "null when roles is empty. evidence: for every role, the number of the line that supports it (the number before ",
-    "the line text); cite the line where that effect is written. If no role applies return roles [], primary null and ",
-    "evidence {}. Count main or repeatable effects only: riders, costs, drawbacks, conditions that merely mention an ",
-    "effect and keywords that affect only the card itself give no role. Most plain bodies and minor-rider cards have ",
-    "no role."
+    "Reply with one JSON object {\"cards\":[...]} with exactly one entry per card, in the order given: {\"id\": the ",
+    "card's id, \"roles\": [...]}. Each element of roles is {\"role\": a role id, \"line\": the number before the line ",
+    "where that effect is written}. Give at most 4 roles, most prominent first; the first is the card's primary role. ",
+    "If no role applies, roles is []. Count main or repeatable effects only: riders, costs, drawbacks, conditions that ",
+    "merely mention an effect and keywords that affect only the card itself give no role, except as GENERAL RULES ",
+    "says. Most plain bodies and minor-rider cards have no role."
 );
 
 /// One worked example: a card as the model sees it and the correct answer. None of these cards is in a gold set.
@@ -118,13 +122,18 @@ pub fn user_message(cards: &[(String, &str, &[(usize, String)])]) -> String {
 fn quoted(s: &str) -> String {
     serde_json::to_string(s).expect("string")
 }
-/// An answer entry written in the schema's property order (id, roles, primary, evidence), the order the grammar
-/// makes the model write it in: the roles are decided before the lines that support them are cited.
+/// An answer entry in the schema's property order: the card's id, then its roles most prominent first, each with the
+/// line that supports it (`evidence` pairs a role with its line; the first role is the primary).
 pub fn answer_entry(id: &str, roles: &[&str], evidence: &[(&str, usize)]) -> String {
-    let list = roles.iter().map(|r| quoted(r)).collect::<Vec<_>>().join(",");
-    let primary = roles.first().map_or("null".to_string(), |r| quoted(r));
-    let cites = evidence.iter().map(|(r, n)| format!("{}:{n}", quoted(r))).collect::<Vec<_>>().join(",");
-    format!("{{\"id\":{},\"roles\":[{list}],\"primary\":{primary},\"evidence\":{{{cites}}}}}", quoted(id))
+    let list = roles
+        .iter()
+        .map(|r| {
+            let line = evidence.iter().find(|(e, _)| e == r).map_or(0, |(_, n)| *n);
+            format!("{{\"role\":{},\"line\":{line}}}", quoted(r))
+        })
+        .collect::<Vec<_>>()
+        .join(",");
+    format!("{{\"id\":{},\"roles\":[{list}]}}", quoted(id))
 }
 
 fn examples_text() -> String {
@@ -152,26 +161,26 @@ pub fn estimate_tokens(s: &str) -> usize {
 }
 
 /// The JSON schema (llama.cpp grammar-constrains the output to it) for a batch of `n` cards, as text so that the
-/// property order is the one written here: `id`, `roles`, `primary`, `evidence`.
+/// property order is the one written here. One array carries both the roles and their lines, so a grammar that only
+/// allows optional keys in declared order cannot block a legal answer; `id` is an enum of the batch's ids. If a server
+/// rejects `minimum` (HTTP 400), drop `,"minimum":0` below: the validator refuses a negative line anyway.
 pub fn response_schema_text(t: &Taxonomy, n: usize) -> String {
-    let ids: Vec<String> = t.role.iter().map(|r| quoted(&r.id)).collect();
-    let names = ids.join(",");
-    let evidence = ids.iter().map(|i| format!("{i}:{{\"type\":\"integer\"}}")).collect::<Vec<_>>().join(",");
+    let names = t.role.iter().map(|r| quoted(&r.id)).collect::<Vec<_>>().join(",");
+    let ids = (0..n).map(|i| quoted(&batch_id(i))).collect::<Vec<_>>().join(",");
     format!(
         concat!(
             "{{\"type\":\"object\",\"properties\":{{\"cards\":{{\"type\":\"array\",\"minItems\":{n},\"maxItems\":{n},",
-            "\"items\":{{\"type\":\"object\",\"properties\":{{",
-            "\"id\":{{\"type\":\"string\",\"pattern\":\"^[a-z][0-9]$\"}},",
-            "\"roles\":{{\"type\":\"array\",\"maxItems\":{max},\"items\":{{\"type\":\"string\",\"enum\":[{names}]}}}},",
-            "\"primary\":{{\"enum\":[{names},null]}},",
-            "\"evidence\":{{\"type\":\"object\",\"properties\":{{{evidence}}},\"additionalProperties\":false}}}},",
-            "\"required\":[\"id\",\"roles\",\"primary\",\"evidence\"],\"additionalProperties\":false}}}}}},",
+            "\"items\":{{\"type\":\"object\",\"properties\":{{\"id\":{{\"enum\":[{ids}]}},",
+            "\"roles\":{{\"type\":\"array\",\"maxItems\":{max},\"items\":{{\"type\":\"object\",\"properties\":{{",
+            "\"role\":{{\"enum\":[{names}]}},\"line\":{{\"type\":\"integer\",\"minimum\":0}}}},",
+            "\"required\":[\"role\",\"line\"],\"additionalProperties\":false}}}}}},",
+            "\"required\":[\"id\",\"roles\"],\"additionalProperties\":false}}}}}},",
             "\"required\":[\"cards\"],\"additionalProperties\":false}}"
         ),
         n = n,
         max = MAX_ROLES,
         names = names,
-        evidence = evidence,
+        ids = ids,
     )
 }
 /// The same schema as a value (key order not preserved), for inspection.
@@ -189,77 +198,62 @@ pub struct LlmCard {
     pub evidence: BTreeMap<String, usize>,
 }
 
-/// Check a model reply against the batch it answers. `cards` are the batch ids with the numbered lines shown (the only
-/// citable ones). Any deviation is an error: wrong id set, unknown role, more than four roles, a primary outside the
-/// roles, a missing, out-of-range or skipped citation, or a role whose guard fails on its cited line.
+/// Check a model reply against the batch it answers, card by card. `cards` are the batch ids with the numbered lines
+/// shown (the only citable ones). `Err` means the document as a whole is unusable (not JSON, no `cards` array). Each
+/// card then gets its own verdict: `Err` for a structural fault (its id missing or repeated, a role outside the
+/// vocabulary or repeated, more than four roles, a line that is missing, out of range or was not shown), `Ok` for an
+/// answer. A role whose guard fails on its cited line is NOT a fault: the raw answer is kept and the merge drops
+/// that role as a `GuardDrop`.
 pub fn validate_output(
     content: &str,
     cards: &[(String, &[(usize, String)])],
     taxonomy: &Taxonomy,
-) -> Result<Vec<LlmCard>, String> {
+) -> Result<Vec<Result<LlmCard, String>>, String> {
+    let _ = taxonomy;
     let doc: Value = serde_json::from_str(content).map_err(|e| format!("not JSON: {e}"))?;
     let entries = doc.get("cards").and_then(Value::as_array).ok_or("no cards array")?;
-    if entries.len() != cards.len() {
-        return Err(format!("{} entries for {} cards", entries.len(), cards.len()));
-    }
-    let mut by_id: BTreeMap<&str, &Value> = BTreeMap::new();
+    let mut by_id: BTreeMap<&str, Vec<&Value>> = BTreeMap::new();
     for e in entries {
-        let id = e.get("id").and_then(Value::as_str).ok_or("entry without an id")?;
-        if by_id.insert(id, e).is_some() {
-            return Err(format!("repeated id {id}"));
+        if let Some(id) = e.get("id").and_then(Value::as_str) {
+            by_id.entry(id).or_default().push(e);
         }
     }
-    let mut out = Vec::with_capacity(cards.len());
-    for (id, lines) in cards {
-        let e = by_id.remove(id.as_str()).ok_or_else(|| format!("missing id {id}"))?;
-        let bad = |what: &str| format!("{id}: {what}");
-        let roles: Vec<String> = e
-            .get("roles")
-            .and_then(Value::as_array)
-            .ok_or_else(|| bad("roles is not an array"))?
-            .iter()
-            .map(|r| r.as_str().map(str::to_string).ok_or_else(|| bad("a role is not a string")))
-            .collect::<Result<_, _>>()?;
-        if roles.len() > MAX_ROLES {
-            return Err(bad("more than 4 roles"));
-        }
-        if roles.iter().collect::<BTreeSet<_>>().len() != roles.len() {
-            return Err(bad("repeated role"));
-        }
-        if let Some(r) = roles.iter().find(|r| !roles::IDS.contains(&r.as_str())) {
-            return Err(bad(&format!("role {r} is not in the vocabulary")));
-        }
-        let primary = match e.get("primary") {
-            Some(Value::Null) => None,
-            Some(Value::String(p)) => Some(p.clone()),
-            _ => return Err(bad("primary is neither a role nor null")),
-        };
-        match (&primary, roles.is_empty()) {
-            (None, true) => {}
-            (Some(p), false) if roles.contains(p) => {}
-            _ => return Err(bad("primary must be one of the roles, or null when there are none")),
-        }
-        let ev = e.get("evidence").and_then(Value::as_object).ok_or_else(|| bad("evidence is not an object"))?;
-        if let Some(k) = ev.keys().find(|k| !roles.contains(k)) {
-            return Err(bad(&format!("evidence for {k}, which is not a proposed role")));
-        }
-        let mut evidence = BTreeMap::new();
-        for role in &roles {
-            let n =
-                ev.get(role).and_then(Value::as_u64).ok_or_else(|| bad(&format!("no line number cited for {role}")))?
-                    as usize;
-            let (_, text) = lines
-                .iter()
-                .find(|(i, _)| *i == n)
-                .ok_or_else(|| bad(&format!("{role} cites line {n}, which is out of range or skipped")))?;
-            if !taxonomy.guard(role).is_match(text).unwrap_or(false) {
-                return Err(bad(&format!("{role} fails its guard on line {n}")));
-            }
-            evidence.insert(role.clone(), n);
-        }
-        out.push(LlmCard { roles, primary, evidence });
+    Ok(cards
+        .iter()
+        .map(|(id, lines)| match by_id.get(id.as_str()).map(Vec::as_slice) {
+            None | Some([]) => Err(format!("{id}: missing id")),
+            Some([e]) => check_card(id, e, lines),
+            Some(_) => Err(format!("{id}: repeated id")),
+        })
+        .collect())
+}
+
+fn check_card(id: &str, e: &Value, lines: &[(usize, String)]) -> Result<LlmCard, String> {
+    let bad = |what: &str| format!("{id}: {what}");
+    let items = e.get("roles").and_then(Value::as_array).ok_or_else(|| bad("roles is not an array"))?;
+    if items.len() > MAX_ROLES {
+        return Err(bad("more than 4 roles"));
     }
-    Ok(out)
+    let mut roles = vec![];
+    let mut evidence = BTreeMap::new();
+    for item in items {
+        let role = item.get("role").and_then(Value::as_str).ok_or_else(|| bad("a role entry has no role id"))?;
+        if !roles::IDS.contains(&role) {
+            return Err(bad(&format!("role {role} is not in the vocabulary")));
+        }
+        if roles.iter().any(|r| r == role) {
+            return Err(bad(&format!("repeated role {role}")));
+        }
+        let n =
+            item.get("line").and_then(Value::as_u64).ok_or_else(|| bad(&format!("no line number cited for {role}")))?
+                as usize;
+        if !lines.iter().any(|(i, _)| *i == n) {
+            return Err(bad(&format!("{role} cites line {n}, which is out of range or skipped")));
+        }
+        roles.push(role.to_string());
+        evidence.insert(role.to_string(), n);
+    }
+    Ok(LlmCard { primary: roles.first().cloned(), roles, evidence })
 }
 
 // ------------------------------------------------------------------------------------------------------- the cache
@@ -319,6 +313,9 @@ pub fn read_rows(path: &Path) -> Result<BTreeMap<String, Row>, String> {
     let mut rows = BTreeMap::new();
     for (n, line) in text.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
         let row: Row = serde_json::from_str(line).map_err(|e| format!("{} line {}: {e}", path.display(), n + 1))?;
+        if let Some(r) = row.roles.iter().chain(row.evidence.keys()).find(|r| !roles::IDS.contains(&r.as_str())) {
+            return Err(format!("{} line {}: role '{r}' is not in the vocabulary", path.display(), n + 1));
+        }
         rows.insert(row.key.clone(), row);
     }
     Ok(rows)
@@ -352,26 +349,46 @@ pub fn write_atomic(path: &Path, data: &[u8]) -> Result<(), String> {
 
 /// The tracked cache with the scheduled job's pending rows read after it (a pending row wins on the same key).
 pub fn load_cache(dir: &Path) -> Result<BTreeMap<String, Row>, String> {
+    load_cache_with(dir, true)
+}
+/// The tracked cache, and the pending file after it unless `pending` is false (`roles --merge --no-pending`).
+pub fn load_cache_with(dir: &Path, pending: bool) -> Result<BTreeMap<String, Row>, String> {
     let mut rows = read_rows(&cache_path(dir))?;
-    rows.extend(read_rows(&pending_path(dir))?);
+    if pending {
+        rows.extend(read_rows(&pending_path(dir))?);
+    }
     Ok(rows)
 }
 
 // ------------------------------------------------------------------------------------------------------ the client
 
 enum Fail {
-    /// the server could not be reached or answered with an error status
+    /// no answer at all: the connection failed, was cut or timed out
     Transport(String),
-    /// the answer arrived but is not a valid classification
+    /// the server answered with an error status (the reply body says why, e.g. a rejected grammar)
+    Status(u16, String),
+    /// the answer arrived but its document is unusable
     Invalid(String),
 }
 impl Fail {
     fn why(&self) -> String {
         match self {
             Fail::Transport(e) => format!("transport: {e}"),
+            Fail::Status(code, body) => format!("HTTP {code}: {body}"),
             Fail::Invalid(e) => format!("invalid answer: {e}"),
         }
     }
+}
+/// The start of an error reply's body, on one line.
+fn snippet(body: &str) -> String {
+    let one: String = body.split_whitespace().collect::<Vec<_>>().join(" ");
+    one.chars().take(300).collect()
+}
+
+/// The model id the cache is keyed on: a server reports the path it was started with (`-m /models/x.gguf`), so only the
+/// file name counts.
+pub fn model_key(id: &str) -> String {
+    id.rsplit(['/', '\\']).next().unwrap_or(id).to_string()
 }
 
 pub struct Client {
@@ -380,33 +397,40 @@ pub struct Client {
 }
 impl Client {
     pub fn new(endpoint: &str) -> Self {
-        let agent =
-            ureq::AgentBuilder::new().timeout_connect(Duration::from_secs(5)).timeout(Duration::from_secs(900)).build();
+        let agent = ureq::AgentBuilder::new()
+            .timeout_connect(Duration::from_secs(5))
+            .timeout(Duration::from_secs(REQUEST_TIMEOUT_SECS))
+            .build();
         Self { agent, base: endpoint.trim_end_matches('/').to_string() }
     }
-    /// The id of the loaded model, from GET /models.
+    /// The id of the loaded model, from GET /models (its file name, see [`model_key`]).
     pub fn model(&self) -> Result<String, String> {
-        let body = self
-            .agent
-            .get(&format!("{}/models", self.base))
-            .call()
-            .map_err(|e| format!("LLM unreachable: {}: {e}", self.base))?
-            .into_string()
-            .map_err(|e| format!("LLM unreachable: {}: {e}", self.base))?;
-        let v: Value = serde_json::from_str(&body).map_err(|e| format!("LLM unreachable: bad /models reply: {e}"))?;
-        v["data"][0]["id"]
-            .as_str()
-            .or_else(|| v["models"][0]["model"].as_str())
-            .map(str::to_string)
-            .ok_or_else(|| "LLM unreachable: /models names no model".to_string())
+        let url = format!("{}/models", self.base);
+        let unreachable = |why: String| format!("LLM unreachable: {url}: {why}");
+        let body = match self.agent.get(&url).call() {
+            Ok(r) => r.into_string().map_err(|e| unreachable(e.to_string()))?,
+            Err(ureq::Error::Status(code, r)) => {
+                return Err(unreachable(format!("HTTP {code}: {}", snippet(&r.into_string().unwrap_or_default()))));
+            }
+            Err(e) => return Err(unreachable(e.to_string())),
+        };
+        let v: Value = serde_json::from_str(&body).map_err(|e| unreachable(format!("bad /models reply: {e}")))?;
+        let id = v["data"][0]["id"].as_str().or_else(|| v["models"][0]["model"].as_str()).map(model_key);
+        id.filter(|m| !m.trim().is_empty()).ok_or_else(|| unreachable("/models names no model".into()))
     }
     fn chat(&self, body: &str) -> Result<String, Fail> {
-        let resp = self
+        let resp = match self
             .agent
             .post(&format!("{}/chat/completions", self.base))
             .set("Content-Type", "application/json")
             .send_string(body)
-            .map_err(|e| Fail::Transport(e.to_string()))?;
+        {
+            Ok(r) => r,
+            Err(ureq::Error::Status(code, r)) => {
+                return Err(Fail::Status(code, snippet(&r.into_string().unwrap_or_default())));
+            }
+            Err(e) => return Err(Fail::Transport(e.to_string())),
+        };
         let text = resp.into_string().map_err(|e| Fail::Transport(e.to_string()))?;
         let v: Value = serde_json::from_str(&text).map_err(|e| Fail::Invalid(format!("reply is not JSON: {e}")))?;
         let choice = v["choices"].get(0).ok_or_else(|| Fail::Invalid("reply has no choices".into()))?;
@@ -612,9 +636,20 @@ pub struct RunStats {
 /// What the merge saw, written to `reports/merge.json`.
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MergeStats {
+    /// Commander-legal routed cards the overrides do not fix
     pub routed: usize,
     pub with_answer: usize,
+    /// routed legal cards without an answer: `failed` plus `not_run`
     pub llm_failed: usize,
+    /// of those, cards the last run asked about and could not get a valid answer for (`reports/llm-failed.txt`)
+    #[serde(default)]
+    pub failed: usize,
+    /// of those, cards no run has answered yet
+    #[serde(default)]
+    pub not_run: usize,
+    /// routed cards that are not Commander-legal: never sent, never flagged
+    #[serde(default)]
+    pub not_legal: usize,
     /// route label -> disagreement kind -> count
     pub disagreements: BTreeMap<String, BTreeMap<String, usize>>,
 }
@@ -678,9 +713,53 @@ fn read_ids(index: &Index, path: &Path) -> Result<BTreeSet<u32>, String> {
     Ok(out)
 }
 
+/// The lock file of one cache target: created exclusively for the length of a `roles --llm` run, so two runs never
+/// write one cache at the same moment. A second run waits for the first (up to `CARDGEN_LLM_LOCK_WAIT_SECS`, default
+/// 900) and then names the file in its error, which is also how a stale lock from a crashed run is found.
+struct Lock(PathBuf);
+impl Lock {
+    fn acquire(path: PathBuf) -> Result<Lock, String> {
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+        }
+        let wait = std::env::var("CARDGEN_LLM_LOCK_WAIT_SECS").ok().and_then(|v| v.parse::<u64>().ok()).unwrap_or(900);
+        let deadline = std::time::Instant::now() + Duration::from_secs(wait);
+        loop {
+            match std::fs::OpenOptions::new().write(true).create_new(true).open(&path) {
+                Ok(mut f) => {
+                    use std::io::Write as _;
+                    let _ = writeln!(f, "{}", std::process::id());
+                    return Ok(Lock(path));
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
+                    if std::time::Instant::now() >= deadline {
+                        return Err(format!(
+                            "{} exists: another `roles --llm` is writing this cache (or a crashed run left the file \
+                             behind: remove it when no run is active)",
+                            path.display()
+                        ));
+                    }
+                    std::thread::sleep(Duration::from_millis(100));
+                }
+                Err(e) => return Err(format!("{}: {e}", path.display())),
+            }
+        }
+    }
+}
+impl Drop for Lock {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.0);
+    }
+}
+
 /// `roles --llm`: classify the chosen cards through the local server and extend the cache. Reads the model id first, so
 /// an unreachable server stops the run before any file is touched. `rules` gives the rule map and the Oracle ids the
 /// hand overrides fix (those cards are never sent).
+///
+/// Ladder, per batch of cards: one request; after a transport error (no answer) the identical request once more;
+/// every card the answer did not cover validly, or all of them after an error status or an unusable document, is then
+/// asked once on its own (a card already asked alone is not asked again: the request would be identical). A card
+/// that still has no valid answer is `llm_failed`. A guard miss is not a fault (see [`validate_output`]).
 pub fn run(
     index: &Index,
     taxonomy: &Taxonomy,
@@ -691,10 +770,15 @@ pub fn run(
     if opts.batch == 0 || opts.batch > 260 {
         return Err("--batch must be between 1 and 260".into());
     }
+    if opts.model.is_some() && !opts.dry_run {
+        return Err(
+            "--model only names the model for a --dry-run; a real run asks the server which model is loaded".into()
+        );
+    }
     let client = Client::new(&opts.endpoint);
     let model = match &opts.model {
-        Some(m) if opts.dry_run => m.clone(),
-        _ => client.model()?,
+        Some(m) => Some(model_key(m)).filter(|m| !m.trim().is_empty()).ok_or("--model is empty")?,
+        None => client.model()?,
     };
     let (rules, fixed) = rules()?;
     let prompt = prompt_fnv(taxonomy);
@@ -755,14 +839,16 @@ pub fn run(
         ));
     }
     let target = if opts.pending { pending_path(dir) } else { cache_path(dir) };
-    let mut file_rows = read_rows(&target)?;
+    // Nothing is classified until the target can be read and written: the lock file is created beside it.
+    read_rows(&target)?;
+    let _lock = Lock::acquire(target.with_extension("lock"))?;
+    let mut new_rows: BTreeMap<String, Row> = BTreeMap::new();
     let mut failed: Vec<String> = vec![];
     let mut aborted: Option<String> = None;
-    let mut done_batches = 0usize;
-    let mut dirty = false;
+    let mut empty_batches = 0usize;
 
     let transport = std::cell::Cell::new(0usize);
-    let attempt = |items: &[&Todo], stats: &mut RunStats| -> Result<Vec<LlmCard>, Fail> {
+    let attempt = |items: &[&Todo], stats: &mut RunStats| -> Result<Vec<Result<LlmCard, String>>, Fail> {
         let ids: Vec<String> = (0..items.len()).map(batch_id).collect();
         let shown: Vec<(String, &str, &[(usize, String)])> = items
             .iter()
@@ -791,42 +877,57 @@ pub fn run(
 
     'batches: for chunk in todo.chunks(opts.batch) {
         let items: Vec<&Todo> = chunk.iter().collect();
-        let mut results: Vec<Result<LlmCard, String>> = vec![Err("not answered".into()); items.len()];
-        let mut outcome = attempt(&items, &mut stats);
-        if outcome.is_err() && !down() {
+        let mut results: Vec<Option<Result<LlmCard, String>>> = vec![None; items.len()];
+        let mut again: Vec<(usize, String)> = vec![];
+        let mut first = attempt(&items, &mut stats);
+        if matches!(first, Err(Fail::Transport(_))) && !down() {
             stats.batch_retries += 1;
-            outcome = attempt(&items, &mut stats);
+            first = attempt(&items, &mut stats);
         }
-        match outcome {
-            Ok(cards) => results = cards.into_iter().map(Ok).collect(),
-            Err(first) => {
-                if down() {
-                    aborted = Some(format!("LLM unreachable mid-run: {}", first.why()));
-                    break 'batches;
-                }
-                for (i, item) in items.iter().enumerate() {
-                    let one = [*item];
-                    let mut r = attempt(&one, &mut stats);
-                    if r.is_err() && !down() {
-                        stats.card_retries += 1;
-                        r = attempt(&one, &mut stats);
-                    }
+        let mut last_why = String::new();
+        match first {
+            Ok(per_card) => {
+                for (i, r) in per_card.into_iter().enumerate() {
                     match r {
-                        Ok(mut c) => results[i] = Ok(c.pop().expect("one card asked, one answered")),
-                        Err(e) if down() => {
-                            aborted = Some(format!("LLM unreachable mid-run: {}", e.why()));
-                            break 'batches;
-                        }
-                        Err(e) => results[i] = Err(e.why()),
+                        Ok(c) => results[i] = Some(Ok(c)),
+                        Err(why) => again.push((i, why)),
                     }
                 }
             }
+            Err(f) if down() => aborted = Some(format!("LLM unreachable mid-run: {}", f.why())),
+            Err(f) => {
+                last_why = f.why();
+                again.extend((0..items.len()).map(|i| (i, f.why())));
+            }
         }
+        for (i, why) in again {
+            if aborted.is_some() {
+                break;
+            }
+            if items.len() == 1 {
+                results[i] = Some(Err(why)); // asked alone already: the same request would give the same answer
+                continue;
+            }
+            stats.card_retries += 1;
+            let one = [items[i]];
+            let mut r = attempt(&one, &mut stats);
+            if matches!(r, Err(Fail::Transport(_))) && !down() {
+                r = attempt(&one, &mut stats);
+            }
+            match r {
+                Ok(mut v) => results[i] = v.pop(),
+                Err(f) if down() => aborted = Some(format!("LLM unreachable mid-run: {}", f.why())),
+                Err(f) => results[i] = Some(Err(f.why())),
+            }
+        }
+        // The cards answered so far are kept even when the run is stopping.
+        let mut answered = 0usize;
         for (item, result) in items.iter().zip(results) {
             match result {
-                Ok(c) => {
+                Some(Ok(c)) => {
+                    answered += 1;
                     stats.classified += 1;
-                    file_rows.insert(
+                    new_rows.insert(
                         item.key.clone(),
                         Row {
                             key: item.key.clone(),
@@ -839,33 +940,41 @@ pub fn run(
                             prompt: prompt.clone(),
                         },
                     );
-                    dirty = true;
                 }
-                Err(why) => {
+                Some(Err(why)) => {
                     stats.failed += 1;
                     failed.push(format!("{}: {why}", card_label(item.card)));
+                    last_why = why;
                 }
+                None => {}
             }
         }
-        done_batches += 1;
-        if dirty && done_batches % FLUSH_EVERY == 0 {
-            write_atomic(&target, &rows_bytes(&file_rows))?;
-            dirty = false;
+        if answered > 0 {
+            // re-read before writing: another process may have added rows since this run started
+            let mut current = read_rows(&target)?;
+            current.extend(new_rows.clone());
+            write_atomic(&target, &rows_bytes(&current))?;
+        }
+        empty_batches = if answered == 0 { empty_batches + 1 } else { 0 };
+        if aborted.is_none() && empty_batches >= MAX_EMPTY_BATCHES {
+            aborted = Some(format!("no valid answer for {MAX_EMPTY_BATCHES} batches in a row (last: {last_why})"));
+        }
+        if aborted.is_some() {
+            break 'batches;
         }
     }
-    if dirty {
-        write_atomic(&target, &rows_bytes(&file_rows))?;
-    }
     let reports = reports_dir(dir);
-    write_atomic(
-        &reports.join("llm-run.json"),
-        format!("{}\n", serde_json::to_string_pretty(&stats).unwrap()).as_bytes(),
-    )?;
-    let mut failed_text = String::new();
-    for f in &failed {
-        let _ = writeln!(failed_text, "{f}");
+    let text = |s: &RunStats| format!("{}\n", serde_json::to_string_pretty(s).unwrap());
+    write_atomic(&reports.join("llm-run-last.json"), text(&stats).as_bytes())?;
+    if stats.chat_requests > 0 {
+        // a warm rerun must not overwrite the report of the last real run
+        write_atomic(&reports.join("llm-run.json"), text(&stats).as_bytes())?;
+        let mut failed_text = String::new();
+        for f in &failed {
+            let _ = writeln!(failed_text, "{f}");
+        }
+        write_atomic(&reports.join("llm-failed.txt"), failed_text.as_bytes())?;
     }
-    write_atomic(&reports.join("llm-failed.txt"), failed_text.as_bytes())?;
     if let Some(e) = aborted {
         return Err(format!(
             "{e}; saved {} classified cards to {}, rerun to continue",
@@ -873,7 +982,7 @@ pub fn run(
             target.display()
         ));
     }
-    Ok(format!(
+    let summary = format!(
         "LLM stage: model {model}; {} candidate cards, {} cached, {} classified, {} failed \
          ({} batch retries, {} per-card retries); {} chat requests (plus 1 model query)\nwrote {}\n",
         stats.candidates,
@@ -884,17 +993,35 @@ pub fn run(
         stats.card_retries,
         stats.chat_requests,
         target.display()
-    ))
+    );
+    let asked = stats.classified + stats.failed;
+    if asked > 0 && stats.failed as f64 > MAX_FAILED_SHARE * asked as f64 {
+        return Err(format!(
+            "{} of {asked} cards ended llm_failed, more than {:.0}%: {}see reports/llm-failed.txt",
+            stats.failed,
+            MAX_FAILED_SHARE * 100.0,
+            summary.replace('\n', "; ")
+        ));
+    }
+    Ok(summary)
 }
 
 // ------------------------------------------------------------------------------------------------ merging a table
 
-/// The model the cache holds answers from for this prompt: the one `--model` names, else the only one present.
+/// The model the cache holds answers from for this prompt: the one `--model` names (it must have rows), else the only
+/// one present.
 fn merge_model(rows: &BTreeMap<String, Row>, prompt: &str, wanted: Option<&str>) -> Result<String, String> {
-    if let Some(m) = wanted {
-        return Ok(m.to_string());
-    }
     let models: BTreeSet<&str> = rows.values().filter(|r| r.prompt == prompt).map(|r| r.model.as_str()).collect();
+    if let Some(m) = wanted {
+        let m = model_key(m);
+        if !models.contains(m.as_str()) {
+            return Err(format!(
+                "no cached answers from model '{m}' for the current prompt (the cache has: {})",
+                if models.is_empty() { "none".to_string() } else { models.into_iter().collect::<Vec<_>>().join(", ") }
+            ));
+        }
+        return Ok(m);
+    }
     match models.len() {
         0 => Ok(String::new()),
         1 => Ok(models.into_iter().next().unwrap().to_string()),
@@ -913,6 +1040,7 @@ pub fn merge_table(
     overrides: &BTreeMap<String, Assignment>,
     cache: &BTreeMap<String, Row>,
     model: Option<&str>,
+    failed: &BTreeSet<String>,
 ) -> Result<(RoleMap, String, MergeStats), String> {
     let prompt = prompt_fnv(taxonomy);
     let model = merge_model(cache, &prompt, model)?;
@@ -928,7 +1056,8 @@ pub fn merge_table(
         let lines = roles::prompt_lines(c);
         let check = |role: &str, line: usize| -> Option<Option<usize>> {
             let (_, text) = lines.iter().find(|(i, _)| *i == line)?;
-            taxonomy.guard(role).is_match(text).unwrap_or(false).then(|| c.lines()[line].0)
+            // a role switched off with `llm_add = false` is refused here like a failed guard
+            (taxonomy.llm_add(role) && taxonomy.guard(role)?.is_match(text).unwrap_or(false)).then(|| c.lines()[line].0)
         };
         let env = MergeEnv { keep: &keep, check: &check };
         let rule = &rules[id];
@@ -937,12 +1066,21 @@ pub fn merge_table(
         } else {
             cache.get(&cache_key(&card_text(c), &prompt, &model)).map(Row::card)
         };
+        let legal = c.legal == Legal::Legal;
         if rule.needs_llm && !overrides.contains_key(id) {
-            stats.routed += 1;
-            stats.with_answer += usize::from(llm.is_some());
-            stats.llm_failed += usize::from(llm.is_none());
+            if !legal {
+                stats.not_legal += usize::from(llm.is_none());
+            } else {
+                stats.routed += 1;
+                stats.with_answer += usize::from(llm.is_some());
+                stats.llm_failed += usize::from(llm.is_none());
+                stats.failed += usize::from(llm.is_none() && failed.contains(id));
+                stats.not_run += usize::from(llm.is_none() && !failed.contains(id));
+            }
         }
-        let (a, mut dis) = merge(rule, llm.as_ref(), overrides.get(id), &env);
+        let (mut a, mut dis) = merge(rule, llm.as_ref(), overrides.get(id), &env);
+        // only Commander-legal cards are ever sent, so only they can be waiting for an answer
+        a.llm_failed &= legal;
         for d in &mut dis {
             d.card = c.raw.name.clone();
         }
@@ -953,6 +1091,36 @@ pub fn merge_table(
         *stats.disagreements.entry(route_label(&d.route)).or_default().entry(format!("{:?}", d.kind)).or_default() += 1;
     }
     Ok((merged, disagreement_report(&all, &stats), stats))
+}
+
+/// The roles the cached answer for `card` proposes that pass their guard on the cited line, with no rules and no
+/// merge (the LLM alone); `None` when nothing is cached for this prompt and model.
+pub fn alone_roles(
+    card: &Card,
+    taxonomy: &Taxonomy,
+    cache: &BTreeMap<String, Row>,
+    prompt: &str,
+    model: &str,
+) -> Option<Vec<String>> {
+    let lines = roles::prompt_lines(card);
+    if lines.is_empty() {
+        return Some(vec![]);
+    }
+    let row = cache.get(&cache_key(&card_text(card), prompt, model))?;
+    Some(
+        row.roles
+            .iter()
+            .filter(|r| {
+                taxonomy.llm_add(r)
+                    && row.evidence.get(*r).is_some_and(|n| {
+                        lines.iter().find(|(i, _)| i == n).is_some_and(|(_, text)| {
+                            taxonomy.guard(r).is_some_and(|g| g.is_match(text).unwrap_or(false))
+                        })
+                    })
+            })
+            .cloned()
+            .collect(),
+    )
 }
 
 fn route_label(route: &[RouteReason]) -> String {
@@ -968,8 +1136,9 @@ pub fn disagreement_report(all: &[Disagreement], stats: &MergeStats) -> String {
     let mut out = String::from("ROLE DISAGREEMENTS (rules versus the local LLM, one line each)\n");
     let _ = writeln!(
         out,
-        "routed cards {}: {} with an LLM answer, {} without (rule roles kept, llm_failed set)",
-        stats.routed, stats.with_answer, stats.llm_failed
+        "routed legal cards {}: {} with an LLM answer, {} without (rule roles kept, llm_failed set: {} failed, {} not run \
+         yet); {} routed cards are not legal (never sent)",
+        stats.routed, stats.with_answer, stats.llm_failed, stats.failed, stats.not_run, stats.not_legal
     );
     let _ = writeln!(out, "\nBY ROUTE REASON");
     for (route, kinds) in &stats.disagreements {
@@ -1000,6 +1169,17 @@ pub fn disagreement_report(all: &[Disagreement], stats: &MergeStats) -> String {
     out
 }
 
+/// The Oracle ids the last run could not get a valid answer for (`reports/llm-failed.txt`, best effort).
+fn failed_ids(dir: &Path) -> BTreeSet<String> {
+    let text = std::fs::read_to_string(reports_dir(dir).join("llm-failed.txt")).unwrap_or_default();
+    text.lines()
+        .filter_map(|l| {
+            let open = l.find(" (")? + 2;
+            Some(l[open..open + l[open..].find(')')?].to_string())
+        })
+        .collect()
+}
+
 /// `roles --merge`: write the merged table and the reports beside the catalog.
 pub fn run_merge(
     index: &Index,
@@ -1008,9 +1188,10 @@ pub fn run_merge(
     overrides: &BTreeMap<String, Assignment>,
     dir: &Path,
     model: Option<&str>,
+    pending: bool,
 ) -> Result<String, String> {
-    let cache = load_cache(dir)?;
-    let (merged, report, stats) = merge_table(index, taxonomy, rules, overrides, &cache, model)?;
+    let cache = load_cache_with(dir, pending)?;
+    let (merged, report, stats) = merge_table(index, taxonomy, rules, overrides, &cache, model, &failed_ids(dir))?;
     write_atomic(&dir.join("roles.json"), &roles::bytes(&merged)?)?;
     let reports = reports_dir(dir);
     write_atomic(&reports.join("roles-disagreements.txt"), report.as_bytes())?;
@@ -1020,13 +1201,16 @@ pub fn run_merge(
     )?;
     let total: usize = stats.disagreements.values().flat_map(|k| k.values()).sum();
     Ok(format!(
-        "merged {} cards (model '{}'): {} routed, {} with an LLM answer, {} without; {total} disagreements \
-         (reports/roles-disagreements.txt)\nwrote {}\n",
+        "merged {} cards (model '{}'): {} routed legal cards, {} with an LLM answer, {} without ({} failed, {} not run); \
+         {} routed cards not legal; {total} disagreements (reports/roles-disagreements.txt)\nwrote {}\n",
         merged.len(),
         merged.meta.model,
         stats.routed,
         stats.with_answer,
         stats.llm_failed,
+        stats.failed,
+        stats.not_run,
+        stats.not_legal,
         dir.join("roles.json").display()
     ))
 }

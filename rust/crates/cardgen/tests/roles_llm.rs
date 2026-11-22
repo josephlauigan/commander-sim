@@ -158,7 +158,7 @@ struct Item {
 }
 /// The cards of a request, parsed back out of the user message exactly as the prompt printed them.
 fn parse_batch(body: &Value) -> Vec<Item> {
-    let user = body["messages"][1]["content"].as_str().unwrap();
+    let user = body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap();
     let mut items: Vec<Item> = vec![];
     for line in user.lines().skip(1) {
         if let Some(rest) = line.strip_prefix('[') {
@@ -192,8 +192,11 @@ fn says(item: &Item) -> (Vec<&'static str>, Vec<(&'static str, usize)>) {
     }
 }
 fn entry(id: &str, roles: &[&str], evidence: &[(&str, usize)]) -> Value {
-    json!({"id": id, "roles": roles, "primary": roles.first(),
-           "evidence": evidence.iter().map(|(r, n)| (r.to_string(), json!(n))).collect::<serde_json::Map<_, _>>()})
+    let roles: Vec<Value> = roles
+        .iter()
+        .map(|r| json!({"role": r, "line": evidence.iter().find(|(e, _)| e == r).map_or(0, |(_, n)| *n)}))
+        .collect();
+    json!({"id": id, "roles": roles})
 }
 fn valid(items: &[Item]) -> Value {
     json!({"cards": items.iter().map(|i| { let (r, e) = says(i); entry(&i.id, &r, &e) }).collect::<Vec<_>>()})
@@ -202,8 +205,8 @@ fn find<'a>(v: &'a mut Value, starts: &str, items: &[Item]) -> Option<&'a mut Va
     let id = items.iter().find(|i| first(i).starts_with(starts))?.id.clone();
     v["cards"].as_array_mut()?.iter_mut().find(|c| c["id"] == id.as_str())
 }
-/// One class of invalid model output, applied to an otherwise valid answer for `items`.
-fn corrupt(class: &str, items: &[Item]) -> Reply {
+/// One class of invalid model output for ONE card (the first removal card), applied to an otherwise valid answer.
+fn corrupt_card(class: &str, items: &[Item]) -> Value {
     let mut v = valid(items);
     match class {
         "ids" => v["cards"][0]["id"] = json!("z9"),
@@ -216,35 +219,36 @@ fn corrupt(class: &str, items: &[Item]) -> Reply {
             let roles = ["removal", "wipe", "draw", "tokens", "ramp"];
             v["cards"][0] = entry(&id, &roles, &roles.map(|r| (r, 0)));
         }
-        "primary" => {
-            let c = find(&mut v, "Destroy target creature with power", items).unwrap();
-            c["primary"] = json!("wipe");
+        "repeated role" => {
+            let id = v["cards"][0]["id"].as_str().unwrap().to_string();
+            v["cards"][0] = entry(&id, &["removal", "removal"], &[("removal", 0)]);
         }
         "out of range" => {
             let c = find(&mut v, "Destroy target creature with power", items).unwrap();
-            c["evidence"]["removal"] = json!(99);
+            c["roles"][0]["line"] = json!(99);
         }
         "skipped line" => {
             // Elspeth's ultimate (line 2) is never shown, so it cannot be cited
             let c = find(&mut v, "+1: Create three", items).unwrap();
-            c["evidence"]["wipe"] = json!(2);
-        }
-        "guard" => {
-            let id = items.iter().find(|i| first(i) == "Counter target spell.").unwrap().id.clone();
-            let c = v["cards"].as_array_mut().unwrap().iter_mut().find(|c| c["id"] == id.as_str()).unwrap();
-            *c = entry(&id, &["draw"], &[("draw", 0)]);
+            c["roles"][1]["line"] = json!(2);
         }
         "no citation" => {
             let c = find(&mut v, "Destroy target creature with power", items).unwrap();
-            c["evidence"] = json!({});
+            c["roles"][0].as_object_mut().unwrap().remove("line");
         }
-        "malformed" => return Reply::Content("{\"cards\": [{\"id\": \"a0\", ".into()),
-        "truncated" => return Reply::Truncated(v.to_string()[..40].to_string()),
-        "no choices" => return Reply::Raw("{}".into()),
-        "http 500" => return Reply::Status(500),
         other => panic!("unknown class {other}"),
     }
-    Reply::Content(v.to_string())
+    v
+}
+/// One class of unusable reply (no document, or an error status) for the whole batch.
+fn corrupt_document(class: &str, items: &[Item]) -> Reply {
+    match class {
+        "malformed" => Reply::Content("{\"cards\": [{\"id\": \"a0\", ".into()),
+        "truncated" => Reply::Truncated(valid(items).to_string()[..40].to_string()),
+        "no choices" => Reply::Raw("{}".into()),
+        "http 500" => Reply::Status(500),
+        other => panic!("unknown class {other}"),
+    }
 }
 fn good() -> Handler {
     Box::new(|_, body| Reply::Content(valid(&parse_batch(body)).to_string()))
@@ -345,11 +349,14 @@ fn a_valid_batch_is_requested_validated_cached_and_merged() {
         (&json!(5), &json!(5))
     );
     let items = &schema["properties"]["cards"]["items"]["properties"];
-    assert_eq!(items["roles"]["items"]["enum"].as_array().unwrap().len(), 26);
+    // one array of {role, line} pairs: the roles and their citations cannot drift apart or be written out of order
+    let pair = &items["roles"]["items"]["properties"];
+    assert_eq!(pair["role"]["enum"].as_array().unwrap().len(), 26);
+    assert_eq!((&pair["line"]["type"], &pair["line"]["minimum"]), (&json!("integer"), &json!(0)));
     assert_eq!(items["roles"]["maxItems"], 4);
-    assert!(items["primary"]["enum"].as_array().unwrap().contains(&Value::Null));
-    assert_eq!(items["id"]["pattern"], "^[a-z][0-9]$");
-    let user = body["messages"][1]["content"].as_str().unwrap();
+    assert_eq!(items["id"]["enum"], json!(["a0", "a1", "a2", "a3", "a4"]));
+    assert!(items.get("primary").is_none() && items.get("evidence").is_none());
+    let user = body["messages"].as_array().unwrap().last().unwrap()["content"].as_str().unwrap();
     assert!(user.starts_with("Classify these 5 cards.\n[a0] ") && user.contains("[a4] "), "{user}");
     assert!(!user.contains("needs_llm") && !user.contains("roles"), "the model must not see rule roles: {user}");
     assert_eq!(body["messages"][0]["role"], "system");
@@ -399,67 +406,99 @@ fn a_valid_batch_is_requested_validated_cached_and_merged() {
 }
 
 #[test]
-fn every_invalid_output_class_triggers_the_retry_ladder_and_recovers_on_the_resend() {
-    for class in [
-        "ids",
-        "vocabulary",
-        "five roles",
-        "primary",
-        "out of range",
-        "skipped line",
-        "guard",
-        "no citation",
-        "malformed",
-        "truncated",
-        "no choices",
-        "http 500",
-    ] {
+fn a_structurally_invalid_card_is_asked_alone_once_and_never_costs_the_batch() {
+    for class in ["ids", "vocabulary", "five roles", "repeated role", "out of range", "skipped line", "no citation"] {
         let e = Env::new();
         let fake = Fake::start(Box::new(move |n, body| {
             let items = parse_batch(body);
-            if n == 0 { corrupt(class, &items) } else { Reply::Content(valid(&items).to_string()) }
+            if n == 0 {
+                Reply::Content(corrupt_card(class, &items).to_string())
+            } else {
+                Reply::Content(valid(&items).to_string())
+            }
         }));
         let out = e.llm(&fake, &[]).unwrap_or_else(|err| panic!("{class}: {err}"));
-        assert_eq!(fake.chats(), 2, "{class}: the same batch is resent once: {out}");
+        assert_eq!(fake.chats(), 2, "{class}: the batch, then only the bad card alone: {out}");
         assert!(
-            out.contains("5 classified") && out.contains("0 failed") && out.contains("1 batch retries"),
+            out.contains("5 classified") && out.contains("0 failed") && out.contains("1 per-card retries"),
             "{class}: {out}"
         );
+        let bodies = fake.bodies.lock().unwrap().clone();
+        assert_eq!(parse_batch(&bodies[1]).len(), 1, "{class}: the resend carries one card");
         assert_eq!(e.rows().len(), 5, "{class}");
     }
 }
 
 #[test]
-fn a_batch_failing_twice_is_sent_card_by_card() {
+fn an_unusable_reply_document_sends_every_card_alone_once_and_a_transport_error_resends_the_batch() {
+    for class in ["malformed", "truncated", "no choices", "http 500"] {
+        let e = Env::new();
+        let fake = Fake::start(Box::new(move |n, body| {
+            let items = parse_batch(body);
+            if n == 0 { corrupt_document(class, &items) } else { Reply::Content(valid(&items).to_string()) }
+        }));
+        let out = e.llm(&fake, &[]).unwrap_or_else(|err| panic!("{class}: {err}"));
+        assert_eq!(fake.chats(), 1 + 5, "{class}: the batch once, then five cards alone: {out}");
+        assert!(out.contains("5 classified") && out.contains("5 per-card retries"), "{class}: {out}");
+        let bodies = fake.bodies.lock().unwrap().clone();
+        assert!(bodies[1..].iter().all(|b| parse_batch(b).len() == 1), "{class}");
+        assert_eq!(bodies[1]["response_format"]["json_schema"]["schema"]["properties"]["cards"]["minItems"], 1);
+        assert_eq!(e.rows().len(), 5, "{class}");
+    }
+    // only a transport error (no answer at all) resends the identical batch
     let e = Env::new();
-    let fake = Fake::start(Box::new(|n, body| {
-        let items = parse_batch(body);
-        if n < 2 { corrupt("vocabulary", &items) } else { Reply::Content(valid(&items).to_string()) }
-    }));
+    let fake =
+        Fake::start(Box::new(
+            |n, body| {
+                if n == 0 { Reply::Drop } else { Reply::Content(valid(&parse_batch(body)).to_string()) }
+            },
+        ));
     let out = e.llm(&fake, &[]).unwrap();
-    assert_eq!(fake.chats(), 2 + 5, "{out}");
+    assert_eq!(fake.chats(), 2, "{out}");
+    assert!(out.contains("1 batch retries") && out.contains("0 per-card retries"), "{out}");
     let bodies = fake.bodies.lock().unwrap().clone();
-    assert!(bodies[2..].iter().all(|b| parse_batch(b).len() == 1), "per-card requests carry one card");
-    assert_eq!(bodies[2]["response_format"]["json_schema"]["schema"]["properties"]["cards"]["minItems"], 1);
-    assert!(out.contains("5 classified") && out.contains("0 failed") && out.contains("0 per-card retries"), "{out}");
-    assert_eq!(e.rows().len(), 5);
+    assert_eq!(bodies[0], bodies[1], "the resend is byte-identical");
 }
 
 #[test]
-fn a_card_failing_alone_twice_is_llm_failed_and_keeps_its_rule_roles() {
+fn a_guard_miss_is_soft_the_raw_answer_is_cached_and_the_merge_logs_the_drop() {
     let e = Env::new();
-    let fake = Fake::start(Box::new(|n, body| {
+    let fake = Fake::start(Box::new(|_, body| {
         let items = parse_batch(body);
-        let bad_card = items.len() == 1 && first(&items[0]).starts_with("Destroy target creature with power");
-        if items.len() > 1 && n < 2 || bad_card {
-            corrupt("vocabulary", &items)
-        } else {
-            Reply::Content(valid(&items).to_string())
-        }
+        let mut v = valid(&items);
+        // Counterspell is said to be a draw card, citing its only line: the guard for draw refuses it
+        let id = items.iter().find(|i| first(i) == "Counter target spell.").unwrap().id.clone();
+        let c = v["cards"].as_array_mut().unwrap().iter_mut().find(|c| c["id"] == id.as_str()).unwrap();
+        *c = entry(&id, &["draw"], &[("draw", 0)]);
+        Reply::Content(v.to_string())
     }));
     let out = e.llm(&fake, &[]).unwrap();
-    // 2 batch attempts, then five cards alone, the failing one twice
-    assert_eq!(fake.chats(), 2 + 5 + 1, "{out}");
+    assert_eq!(fake.chats(), 1, "{out}");
+    assert!(out.contains("5 classified") && out.contains("0 failed"), "{out}");
+    let row = e.rows().into_iter().find(|r| r.name == "Counterspell").unwrap();
+    assert_eq!((row.roles.as_slice(), row.evidence["draw"]), (&["draw".to_string()][..], 0), "the raw answer is kept");
+    e.command(&["--merge"]).unwrap();
+    let report = std::fs::read_to_string(e.dir().join("reports/roles-disagreements.txt")).unwrap();
+    assert!(report.contains("Counterspell"), "{report}");
+    let map = roles::load(&e.dir().join("roles.json")).unwrap();
+    assert_eq!(assignment_of(&e.index(), &map, "Counterspell").roles, ["counter"], "a rules-final card never changes");
+}
+
+#[test]
+fn a_card_failing_alone_is_llm_failed_and_keeps_its_rule_roles() {
+    let e = Env::new();
+    let fake = Fake::start(Box::new(|_, body| {
+        let items = parse_batch(body);
+        let mut v = valid(&items);
+        if let Some(c) = find(&mut v, "Destroy target creature with power", &items) {
+            let id = c["id"].clone();
+            *c = entry(id.as_str().unwrap(), &["banana"], &[("banana", 0)]);
+        }
+        Reply::Content(v.to_string())
+    }));
+    let out = e.llm(&fake, &[]).unwrap();
+    // the batch, then the bad card alone: the same request is not repeated
+    assert_eq!(fake.chats(), 2, "{out}");
     assert!(out.contains("4 classified") && out.contains("1 failed") && out.contains("1 per-card retries"), "{out}");
     assert_eq!(e.rows().len(), 4);
     let failed = std::fs::read_to_string(e.dir().join("reports/llm-failed.txt")).unwrap();
@@ -471,6 +510,9 @@ fn a_card_failing_alone_twice_is_llm_failed_and_keeps_its_rule_roles() {
     assert!(merged.llm_failed && merged.needs_llm, "{merged:?}");
     assert_eq!((&merged.roles, &merged.evidence), (&rule.roles, &rule.evidence), "the rule roles stand");
     assert!(!assignment_of(&i, &map, "Ugin's Mastery").llm_failed, "a routed card with an answer is not llm_failed");
+    let stats: llm::MergeStats =
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap();
+    assert_eq!((stats.failed, stats.not_run), (1, stats.llm_failed - 1), "{stats:?}");
 }
 
 #[test]
@@ -567,7 +609,7 @@ fn a_server_that_dies_mid_run_keeps_what_was_classified_and_stops() {
     let err = e.llm(&fake, &["--batch", "2"]).unwrap_err();
     assert!(err.contains("LLM unreachable mid-run") && err.contains("saved 2 classified"), "{err}");
     assert_eq!(e.rows().len(), 2, "the finished batch is on disk");
-    assert_eq!(fake.chats(), 1 + 3, "three consecutive failures stop the run");
+    assert_eq!(fake.chats(), 1 + 2, "the batch and its resend both unanswered: the run stops");
 }
 
 #[test]
@@ -623,7 +665,10 @@ fn cards_fixed_by_an_override_are_never_sent_even_when_the_override_clears_their
     let fake = Fake::start(good());
     let out = e.llm(&fake, &[]).unwrap();
     assert!(out.contains("4 classified"), "{out}");
-    let user = fake.bodies.lock().unwrap()[0]["messages"][1]["content"].as_str().unwrap().to_string();
+    let user = fake.bodies.lock().unwrap()[0]["messages"].as_array().unwrap().last().unwrap()["content"]
+        .as_str()
+        .unwrap()
+        .to_string();
     assert!(
         user.starts_with("Classify these 4 cards.") && !user.contains("Destroy target creature with power"),
         "{user}"
@@ -924,7 +969,7 @@ fn taxonomy_prompt_text_hash_and_guards() {
     let text = t.prompt_text();
     for id in roles::IDS {
         assert_eq!(text.matches(&format!("\n- {id}: ")).count(), 1, "{id} appears once as a role line");
-        assert!(t.guard(id).is_match("anything").is_ok());
+        assert!(t.guard(id).unwrap().is_match("anything").is_ok());
     }
     // JD's split: the 16 roles the rules own keep their hits on a routed card, the 10 judgement roles may be vetoed
     let kept: Vec<&str> = t.role.iter().filter(|r| r.keep_rule).map(|r| r.id.as_str()).collect();
@@ -1042,16 +1087,12 @@ fn the_system_prompt_fits_its_token_budget_and_its_examples_are_valid_and_not_fr
     let cards: Vec<(String, &[(usize, String)])> =
         lines.iter().enumerate().map(|(i, l)| (llm::batch_id(i), l.as_slice())).collect();
     let parsed = llm::validate_output(&content, &cards, &t).unwrap();
-    assert_eq!(parsed.len(), 6);
+    assert!(parsed.len() == 6 && parsed.iter().all(|r| r.is_ok()), "{parsed:?}");
     assert!(system.contains("WORKED EXAMPLE") && system.contains(&content));
-    // the examples and the grammar write each entry in the same order: roles are decided before they are cited
-    assert!(content.starts_with(concat!(
-        "{\"cards\":[{\"id\":\"a0\",\"roles\":[\"removal\"],",
-        "\"primary\":\"removal\",\"evidence\":{\"removal\":0}}"
-    )));
+    assert!(content.starts_with("{\"cards\":[{\"id\":\"a0\",\"roles\":[{\"role\":\"removal\",\"line\":0}]}"));
     let schema = llm::response_schema_text(&t, 3);
     let at = |key: &str| schema.find(&format!("\"{key}\":{{")).unwrap();
-    assert!(at("id") < at("roles") && at("roles") < at("primary") && at("primary") < at("evidence"), "{schema}");
+    assert!(at("id") < at("roles") && at("roles") < at("role") && at("role") < at("line"), "{schema}");
     let body = llm::chat_body("m", "sys", "usr", &schema, 3);
     let parsed: Value = serde_json::from_str(&body).unwrap();
     assert_eq!(parsed["max_tokens"], 160 * 3 + 64);

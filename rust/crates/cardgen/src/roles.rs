@@ -72,6 +72,13 @@ pub struct Role {
     /// keep this role's rule-found, non-certain hits on a routed card the LLM omitted them from (default false)
     #[serde(default)]
     pub keep_rule: bool,
+    /// may the LLM add this role to a card (default true; false = the LLM is off for this role). Merge-time only: it
+    /// is not part of the prompt or the cache key.
+    #[serde(default = "yes")]
+    pub llm_add: bool,
+}
+fn yes() -> bool {
+    true
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -118,13 +125,17 @@ impl Taxonomy {
         }
         Ok(Self { version: t.version, shared: t.shared, clause: t.clause, role: t.role, guards })
     }
-    /// The compiled guard of a role: the textual check an LLM-proposed role must pass on its cited line.
-    pub fn guard(&self, role: &str) -> &Regex {
-        let i = self.role.iter().position(|r| r.id == role).unwrap_or_else(|| panic!("unknown role {role}"));
-        &self.guards[i]
+    /// The compiled guard of a role: the textual check an LLM-proposed role must pass on its cited line. A role the
+    /// taxonomy does not have has no guard (`None`), which callers treat as a failed guard.
+    pub fn guard(&self, role: &str) -> Option<&Regex> {
+        self.role.iter().position(|r| r.id == role).map(|i| &self.guards[i])
     }
     pub fn keep_rule(&self, role: &str) -> bool {
         self.role.iter().any(|r| r.id == role && r.keep_rule)
+    }
+    /// false when the LLM is switched off for this role (`llm_add = false`)
+    pub fn llm_add(&self, role: &str) -> bool {
+        self.role.iter().any(|r| r.id == role && r.llm_add)
     }
     /// The taxonomy as prompt text: the shared rules once, each role's one-line definition and its own clauses, then
     /// each cross-role clause once with the roles it concerns. Meaning-bearing text only: guards, sources and
@@ -2335,6 +2346,7 @@ struct Options {
     endpoint: Option<String>,
     model: Option<String>,
     pending: bool,
+    no_pending: bool,
     stage: Option<String>,
 }
 fn options(args: &[String]) -> Result<Options, String> {
@@ -2372,6 +2384,7 @@ fn options(args: &[String]) -> Result<Options, String> {
             "--only-routed" if !o.only_routed => o.only_routed = true,
             "--dry-run" if !o.dry_run => o.dry_run = true,
             "--pending" if !o.pending => o.pending = true,
+            "--no-pending" if !o.no_pending => o.no_pending = true,
             "--limit" | "--batch" | "--ids" | "--endpoint" | "--model" | "--stage" => {
                 let v = args.get(i).filter(|s| !s.starts_with("--")).ok_or_else(|| format!("{a} needs a value"))?;
                 let number = || v.parse::<usize>().ok().filter(|n| *n > 0).ok_or_else(|| format!("invalid {a} '{v}'"));
@@ -2410,11 +2423,12 @@ fn options(args: &[String]) -> Result<Options, String> {
         || o.pending;
     if llm_flag && o.mode != "--llm"
         || o.model.is_some() && !["--llm", "--merge"].contains(&o.mode.as_str())
+        || o.no_pending && o.mode != "--merge"
         || o.stage.as_ref().is_some_and(|s| o.mode != "--validate" || !["rules", "merged"].contains(&s.as_str()))
     {
         return Err(concat!(
             "roles: --llm takes [--limit N] [--ids FILE] [--only-routed] [--batch N] [--dry-run] [--endpoint URL] ",
-            "[--model ID] [--pending]; --merge takes [--model ID]; --validate takes [--stage rules|merged]"
+            "[--model ID] [--pending]; --merge takes [--model ID] [--no-pending]; --validate takes [--stage rules|merged]"
         )
         .into());
     }
@@ -2635,7 +2649,8 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
     let o = options(args)?;
     let dir = knowledge::knowledge_dir(project, o.dir.as_deref())?;
     let mut index = Index::load(&dir.join("oracle.json"))?;
-    let taxonomy = Taxonomy::parse(&read(&project.data("knowledge/roles.toml"))?)?;
+    // the taxonomy comes from the same bytes the index fingerprinted and `attach_roles` checks guards against
+    let taxonomy = Taxonomy::parse(index.taxonomy_text())?;
     if o.mode == "--lint" {
         return lint(&index);
     }
@@ -2680,7 +2695,7 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         let mut rules = generate(&index, "")?;
         rules.meta.rules_fnv = rules_hash(text.as_bytes());
         let ovr = overrides(&index, &text)?;
-        return crate::llm::run_merge(&index, &taxonomy, &rules, &ovr, &dir, o.model.as_deref())
+        return crate::llm::run_merge(&index, &taxonomy, &rules, &ovr, &dir, o.model.as_deref(), !o.no_pending)
             .map(|text| (text, true));
     }
     let map = load(&path)?;
@@ -2700,7 +2715,15 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
         } else {
             (&rules, BTreeSet::new())
         };
-        let ctx = Scoring { scored, excluded: &excluded, stage, llm: Some(crate::llm::read_stats(&dir)) };
+        let cache = if stage == "merged" { crate::llm::load_cache(&dir)? } else { Default::default() };
+        let alone = |c: &Card| crate::llm::alone_roles(c, &taxonomy, &cache, &map.meta.prompt_fnv, &map.meta.model);
+        let ctx = Scoring {
+            scored,
+            excluded: &excluded,
+            stage,
+            llm: Some(crate::llm::read_stats(&dir)),
+            alone: (stage == "merged").then_some(&alone),
+        };
         let report = validate_with(project, &index, &rules, &ctx, &read(&gold)?, &taxonomy)?;
         let passed = report.passed;
         return Ok((
@@ -2962,6 +2985,10 @@ pub struct Validation {
     pub routed_cards: usize,
     pub routed_rules_micro: Score,
     pub routed_scored_micro: Score,
+    /// the LLM's cached answers alone (guards applied) on the routed gold cards they cover, apart from the merge
+    pub llm_alone_cards: usize,
+    pub llm_alone_micro: Score,
+    pub llm_alone: BTreeMap<String, Score>,
     pub llm: Option<crate::llm::LlmStats>,
     pub not_roles: Vec<String>,
     pub certain_not_roles: Vec<String>,
@@ -2991,6 +3018,8 @@ pub struct Scoring<'a> {
     pub excluded: &'a BTreeSet<String>,
     pub stage: &'a str,
     pub llm: Option<crate::llm::LlmStats>,
+    /// the roles the cached LLM answers alone propose for a card (guards applied), `None` when it has no answer
+    pub alone: Option<&'a dyn Fn(&Card) -> Option<Vec<String>>>,
 }
 /// Score the rule stage's own map (no overrides, no LLM).
 pub fn validate(
@@ -3005,7 +3034,7 @@ pub fn validate(
         project,
         index,
         rules,
-        &Scoring { scored: rules, excluded: &none, stage: "rules", llm: None },
+        &Scoring { scored: rules, excluded: &none, stage: "rules", llm: None, alone: None },
         gold,
         taxonomy,
     )
@@ -3039,6 +3068,9 @@ pub fn validate_with(
         routed_cards: 0,
         routed_rules_micro: Score::default(),
         routed_scored_micro: Score::default(),
+        llm_alone_cards: 0,
+        llm_alone_micro: Score::default(),
+        llm_alone: BTreeMap::new(),
         llm: ctx.llm.clone(),
         not_roles: vec![],
         certain_not_roles: vec![],
@@ -3137,6 +3169,8 @@ pub fn validate_with(
         let a = &scored[&index.cards[i as usize].raw.oracle_id];
         let routed = rules[&index.cards[i as usize].raw.oracle_id].needs_llm;
         v.routed_cards += usize::from(routed);
+        let alone = if routed { ctx.alone.and_then(|f| f(&index.cards[i as usize])) } else { None };
+        v.llm_alone_cards += usize::from(alone.is_some());
         v.primary_total += 1;
         v.primary_correct += usize::from(a.primary == g.primary);
         v.rules_final_cards += usize::from(!a.needs_llm);
@@ -3150,6 +3184,16 @@ pub fn validate_with(
                     (true, true) => score.tp += 1,
                     (false, true) => score.fp += 1,
                     (true, false) => score.missed += 1,
+                    _ => {}
+                }
+            }
+            if routed && alone.is_some() {
+                let said = alone.as_ref().unwrap().iter().any(|r| r == role);
+                let per_role = v.llm_alone.entry(role.into()).or_default();
+                match (expected, said) {
+                    (true, true) => per_role.tp += 1,
+                    (false, true) => per_role.fp += 1,
+                    (true, false) => per_role.missed += 1,
                     _ => {}
                 }
             }
@@ -3220,6 +3264,9 @@ pub fn validate_with(
     if !v.certain_not_roles.is_empty() {
         v.failures.push("certain not_roles violations".into());
     }
+    for s in v.llm_alone.values() {
+        v.llm_alone_micro.add(s);
+    }
     if ctx.stage == "merged" && v.routed_scored_micro.f1() < v.routed_rules_micro.f1() {
         v.failures.push("merged F1 on the routed gold cards is below the rules alone".into());
     }
@@ -3269,6 +3316,18 @@ impl Validation {
         let _ = writeln!(out, "ROUTED GOLD CARDS ({} cards the rules sent to the LLM; all roles)", self.routed_cards);
         row(&mut out, "rules alone", &self.routed_rules_micro);
         row(&mut out, &format!("{} stage", self.stage), &self.routed_scored_micro);
+        if self.llm_alone_cards > 0 {
+            let _ = writeln!(
+                out,
+                "LLM ALONE (its cached answers, guards applied, no rules: {} of {} routed gold cards answered)",
+                self.llm_alone_cards, self.routed_cards
+            );
+            out.push_str("  role               tp   fp miss   precision recall      f1\n");
+            for (r, s) in &self.llm_alone {
+                row(&mut out, r, s);
+            }
+            row(&mut out, "llm alone micro", &self.llm_alone_micro);
+        }
         let _ = writeln!(
             out,
             "not_roles violations: {} all, {} certain",

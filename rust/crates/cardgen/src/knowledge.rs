@@ -548,7 +548,7 @@ impl Index {
                             taxonomy = Some(crate::roles::Taxonomy::parse(&self.taxonomy_src)?);
                         }
                         let guard = taxonomy.as_ref().expect("parsed above").guard(role);
-                        if !guard.is_match(&crate::roles::line_text(c, line)).unwrap_or(false) {
+                        if !guard.is_some_and(|g| g.is_match(&crate::roles::line_text(c, line)).unwrap_or(false)) {
                             return Err(bad());
                         }
                     }
@@ -558,6 +558,11 @@ impl Index {
         }
         self.roles = Some(rows);
         Ok(())
+    }
+
+    /// the text of the taxonomy (roles.toml beside the catalog, else the built-in copy): what the guards come from
+    pub fn taxonomy_text(&self) -> &str {
+        &self.taxonomy_src
     }
 
     /// Attached roles for a card index; None means no roles file was attached.
