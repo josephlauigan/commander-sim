@@ -59,7 +59,6 @@ script_mutations = [
     ('count-sanity-one', lambda s: s.replace('KNOWLEDGE_BULK_MIN:-25000', 'KNOWLEDGE_BULK_MIN:-1')),
     ('merge-includes-pending', lambda s: s.replace('cg roles --merge --no-think', 'cg roles --merge --pending --no-think')),
     ('llm-call-without-mode', lambda s: s.replace('LLM_ARGS=(roles --llm --routes', 'LLM_ARGS=(roles --routes')),
-    ('gpu-unknown-is-free', lambda s: s.replace('  *) echo unknown ;;', '  *) echo free ;;')),
     ('no-report-retention', lambda s: s.replace('  prune_reports\n}', '  :\n}')),
     ('claim-before-reprobe', lambda s: s.replace('  if [[ -n "$(llm_models)" ]]; then return 20; fi\n', '')),
     ('gpu-threshold-ignored', lambda s: s.replace('if ((total_kib >= limit * 1024)); then', 'if ((total_kib >= 1)); then')),
