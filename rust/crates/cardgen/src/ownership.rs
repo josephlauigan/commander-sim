@@ -227,7 +227,7 @@ pub fn valid_date(s: &str) -> bool {
     }
     let num = |r: std::ops::Range<usize>| s[r].parse::<u32>().unwrap_or(0);
     let (y, m, d) = (num(0..4), num(5..7), num(8..10));
-    if y < 2000 || !(1..=12).contains(&m) {
+    if y < 1000 || !(1..=12).contains(&m) {
         return false;
     }
     let leap = y % 4 == 0 && (y % 100 != 0 || y % 400 == 0);
@@ -244,27 +244,18 @@ pub fn valid_date(s: &str) -> bool {
 /// `find --name`), else by the folded spelling, a face name standing for the full name of a deck card that has it
 struct Resolver {
     index: Option<Index>,
-    /// fallback: folded face name -> folded full name, over every name of the deck lists
-    faces: HashMap<String, String>,
 }
 
 impl Resolver {
-    fn new(index: Option<Index>, deck_names: &[&String]) -> Resolver {
-        let mut faces = HashMap::new();
-        for n in deck_names {
-            let full = fold(n);
-            for face in n.split(" // ") {
-                let f = fold(face);
-                if f != full {
-                    faces.entry(f).or_insert_with(|| full.clone());
-                }
-            }
-        }
-        Resolver { index, faces }
+    fn new(index: Option<Index>) -> Resolver {
+        Resolver { index }
     }
 
-    /// the comparison key of a name and whether it resolved (always true without a catalog)
-    fn key(&self, name: &str) -> (String, bool) {
+    /// The comparison key of a name and whether it resolved (always true without a catalog). `scope` is the card
+    /// list a name is read against when there is no catalog: a full name of the list wins over a face name (so
+    /// `Lightning Bolt` and `Emeritus of Conflict // Lightning Bolt` stay two cards, as in the catalog), else the
+    /// list's card that has that face (the smallest folded name when several do: no dependence on list order).
+    fn key(&self, name: &str, scope: &[String]) -> (String, bool) {
         match &self.index {
             Some(ix) => match ix.lookup(name).iter().map(|&i| ix.cards[i as usize].raw.oracle_id.as_str()).min() {
                 Some(id) => (format!("id:{id}"), true),
@@ -272,7 +263,11 @@ impl Resolver {
             },
             None => {
                 let f = fold(name);
-                (self.faces.get(&f).cloned().unwrap_or(f), true)
+                if scope.iter().any(|n| fold(n) == f) {
+                    return (f, true);
+                }
+                let with_face = scope.iter().filter(|n| n.split(" // ").any(|face| fold(face) == f));
+                (with_face.map(|n| fold(n)).min().unwrap_or(f), true)
             }
         }
     }
@@ -343,8 +338,14 @@ fn mine_decks(project: &Project) -> Result<Vec<(String, Vec<String>)>, String> {
     mine.iter()
         .map(|d| {
             let key = d["key"].as_str().ok_or_else(|| format!("{}: a deck without a key", path.display()))?;
-            let cards = d["cards"].as_array().map(Vec::as_slice).unwrap_or(&[]);
-            Ok((key.to_string(), cards.iter().filter_map(|c| c.as_str().map(String::from)).collect()))
+            let bad = |what: String| format!("{}: deck {key}: {what}", path.display());
+            let cards = d["cards"].as_array().ok_or_else(|| bad("`cards` is missing or not a list".into()))?;
+            let names = cards
+                .iter()
+                .enumerate()
+                .map(|(i, c)| c.as_str().map(String::from).ok_or_else(|| bad(format!("cards[{i}] is not a string"))))
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok((key.to_string(), names))
         })
         .collect()
 }
@@ -374,14 +375,14 @@ pub fn check(project: &Project, opts: &Options) -> Result<Report, String> {
         }
     }
     let catalog = index.is_some();
-    let all_names: Vec<&String> = decks.iter().flat_map(|(_, c)| c.iter()).collect();
-    let res = Resolver::new(index, &all_names);
+    let all_names: Vec<String> = decks.iter().flat_map(|(_, c)| c.iter().cloned()).collect();
+    let res = Resolver::new(index);
 
     // the deck lists, as comparison key -> name, basics left out
     let lists: Vec<(&str, BTreeMap<String, String>)> = decks
         .iter()
         .map(|(k, cards)| {
-            let m = cards.iter().filter(|c| !is_basic(c)).map(|c| (res.key(c).0, c.clone())).collect();
+            let m = cards.iter().filter(|c| !is_basic(c)).map(|c| (res.key(c, cards).0, c.clone())).collect();
             (k.as_str(), m)
         })
         .collect();
@@ -435,7 +436,7 @@ pub fn check(project: &Project, opts: &Options) -> Result<Report, String> {
     // card key -> its name and, per deck that has it, the `copies` written there (for the second-copies checks)
     type HaveIn = BTreeMap<String, (String, Vec<(String, Option<u64>)>)>;
     let mut have_in: HaveIn = BTreeMap::new();
-    for (key, list) in &lists {
+    for ((key, list), (_, deck_names)) in lists.iter().zip(&decks) {
         let mut line = DeckLine { key: key.to_string(), listed: false, have: 0, proxy: 0, missing: 0, confirmed: None };
         let Some(section) = sections.get(*key) else {
             sink.err(Some(key), None, "the deck is in data/decks.json `mine` but has no [deck.KEY] section");
@@ -479,7 +480,7 @@ pub fn check(project: &Project, opts: &Options) -> Result<Report, String> {
                     sink.err(Some(key), Some(&e.name), format!("a basic land is never listed ({status})"));
                     continue;
                 }
-                let (k, resolved) = res.key(&e.name);
+                let (k, resolved) = res.key(&e.name, deck_names);
                 if !resolved {
                     sink.err(Some(key), Some(&e.name), format!("not found in the card catalog ({status})"));
                 }
@@ -563,13 +564,23 @@ pub fn check(project: &Project, opts: &Options) -> Result<Report, String> {
                 sink.err(None, None, format!("unknown key {k:?} in [spare] (only cards)"));
             }
             let mut seen: BTreeSet<String> = BTreeSet::new();
+            let mut spare_overflow = false;
             for e in entries(t.get("cards"), None, "spare.cards", &mut sink) {
-                report.spare += e.copies.unwrap_or(1);
+                match report.spare.checked_add(e.copies.unwrap_or(1)) {
+                    Some(total) => report.spare = total,
+                    None => {
+                        report.spare = u64::MAX;
+                        if !spare_overflow {
+                            spare_overflow = true;
+                            sink.err(None, Some(&e.name), "the spare copies add up to more than 2^64 - 1");
+                        }
+                    }
+                }
                 if is_basic(&e.name) {
                     sink.err(None, Some(&e.name), "a basic land is never listed (spare)");
                     continue;
                 }
-                let (k, resolved) = res.key(&e.name);
+                let (k, resolved) = res.key(&e.name, &all_names);
                 if !resolved {
                     sink.err(None, Some(&e.name), "not found in the card catalog (spare)");
                 }

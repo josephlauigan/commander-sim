@@ -459,8 +459,8 @@ deck (have, proxy and missing counts, confirmed or not) and the spare count (the
   cards in the file that are not in the list, basic lands left out on both sides; the commanders count only if
   `decks.json` has them in `cards`); a name that is not in the catalog; a card with two statuses in one deck or listed
   twice in one status or twice in `spare`; a basic land listed; an unknown key or table, a bad `copies` (below 1 or not
-  an integer), a deck key that is not in `mine`, malformed TOML, a missing or wrong `version`, a date that is not a
-  quoted `YYYY-MM-DD`; a deck of `mine` with no section; a wrong `copies` (below).
+  an integer), a `[spare]` total of copies above 2^64 - 1, a deck key that is not in `mine`, malformed TOML, a missing
+  or wrong `version`, a date that is not a quoted `YYYY-MM-DD` (any real calendar date from year 1000); a deck of `mine` with no section; a wrong `copies` (below).
 - **WARNING**: a deck without `confirmed` ("unconfirmed: treat as unknown"); a `have` card in two or more decks that
   is not confirmed (below); without `oracle.json`, that name resolution was skipped.
 - **INFO** (not counted as a warning): a `spare` card that a deck list also has is a second copy, to confirm.
@@ -471,11 +471,15 @@ decks that hold it as `have`. A `copies` that is written and differs from k is a
 deck `copies` must be 1 or absent (ERROR otherwise); `proxy` and `missing` entries take no `copies` above 1.
 
 Without a catalog (`data/knowledge/oracle.json`, from `bulk-sync`; a worktree reads the main checkout's) the names are
-compared by their folded spelling against `decks.json`, so a face name matches only a deck card that has it, and the
-run warns that resolution was skipped; `--strict` makes that an error. A catalog that is present but unreadable is an
+compared by their folded spelling against `decks.json`: a full card name of the deck wins over a face name (so
+`Lightning Bolt` and `Emeritus of Conflict // Lightning Bolt` stay two cards), a face name matches a card of the same
+deck that has it (a `spare` name: a card of any deck), and the run warns that resolution was skipped; `--strict` makes that an error. A catalog that is present but unreadable is an
 error. `--data-dir DIR` names the directory with `oracle.json` (a directory without one skips resolution). The test
 `the_real_ownership_file_passes_against_the_real_decks` runs this check on the real files without a catalog, so a
 deck change that leaves `data/ownership.toml` behind fails `cargo test`.
+
+Invalid reference data stops the command with an error (exit 1, no report): a deck of `mine` whose `cards` is missing
+or not a list, or has an entry that is not a string, is never read as an empty or shorter list.
 
 ## Equivalence
 
