@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": 1,
-    "count": 38
+    "count": 46
   },
   "cards": [
     {
@@ -1099,6 +1099,234 @@
       "released_at": "2004-02-06",
       "set": "dst",
       "rarity": "common",
+      "reserved": false
+    },
+    {
+      "name": "Breath of Darigaaz",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Kicker {2} (You may pay an additional {2} as you cast this spell.)\nBreath of Darigaaz deals 1 damage to each creature without flying and each player. If this spell was kicked, it deals 4 damage to each creature without flying and each player instead.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "1954994f-17bf-4ea5-af72-60f9bfcb6569",
+      "edhrec_rank": 14800,
+      "usd": "0.33",
+      "released_at": "2018-06-08",
+      "set": "cm2",
+      "rarity": "uncommon",
+      "reserved": false
+    },
+    {
+      "name": "Coldsteel Heart",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Snow Artifact",
+      "oracle_text": "This artifact enters tapped.\nAs this artifact enters, choose a color.\n{T}: Add one mana of the chosen color.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "21d700e8-0255-418e-96a0-6fe05b3f836d",
+      "edhrec_rank": 2129,
+      "usd": "1.55",
+      "released_at": "2022-07-08",
+      "set": "2x2",
+      "rarity": "uncommon",
+      "reserved": false
+    },
+    {
+      "name": "Daredevil Dragster",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "At end of combat, if this Vehicle attacked or blocked this combat, put a velocity counter on it. Then if it has two or more velocity counters on it, sacrifice it and draw two cards.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "6aa96a6e-9a88-4662-aa26-b4c16c0ef650",
+      "edhrec_rank": 20176,
+      "usd": "0.09",
+      "released_at": "2017-01-20",
+      "set": "aer",
+      "rarity": "uncommon",
+      "reserved": false
+    },
+    {
+      "name": "Dockside Extortionist",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Goblin Pirate",
+      "oracle_text": "When this creature enters, create X Treasure tokens, where X is the number of artifacts and enchantments your opponents control. (Treasure tokens are artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": "1",
+      "toughness": "2",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Treasure"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "banned"
+      },
+      "oracle_id": "697bcfe1-ecbf-42a1-bfc7-0766d48ca56b",
+      "usd": "9.14",
+      "released_at": "2022-07-08",
+      "set": "2x2",
+      "rarity": "mythic",
+      "reserved": false
+    },
+    {
+      "name": "Goblin Chainwhirler",
+      "mana_cost": "{R}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Goblin Warrior",
+      "oracle_text": "First strike\nWhen this creature enters, it deals 1 damage to each opponent and each creature and planeswalker they control.",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "0342b085-be20-475a-bc38-59b9cb6012e8",
+      "edhrec_rank": 5093,
+      "usd": "0.64",
+      "released_at": "2018-04-27",
+      "set": "dom",
+      "rarity": "rare",
+      "reserved": false
+    },
+    {
+      "name": "Ritual of Steel",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card at the beginning of the next turn's upkeep.\nEnchanted creature gets +0/+2.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "0af91b63-a874-4184-8f8f-3871429fd1ad",
+      "edhrec_rank": 29831,
+      "usd": "0.09",
+      "released_at": "1996-10-08",
+      "set": "mir",
+      "rarity": "common",
+      "reserved": false
+    },
+    {
+      "name": "Scroll Rack",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{1}, {T}: Exile any number of cards from your hand face down. Put that many cards from the top of your library into your hand. Then look at the exiled cards and put them on top of your library in any order.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "648bd03d-247e-4d6f-87a9-12a67688cbf5",
+      "edhrec_rank": 1356,
+      "usd": "38.32",
+      "released_at": "2020-11-20",
+      "set": "cmr",
+      "rarity": "mythic",
+      "reserved": false
+    },
+    {
+      "name": "Throne of Eldraine",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "As Throne of Eldraine enters, choose a color.\n{T}: Add four mana of the chosen color. Spend this mana only to cast monocolored spells of that color.\n{3}, {T}: Draw two cards. Spend only mana of the chosen color to activate this ability.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "game_changer": false,
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "5b9a2b81-a645-43be-8001-03817ac210ca",
+      "edhrec_rank": 918,
+      "usd": "29.59",
+      "released_at": "2026-05-18",
+      "set": "plst",
+      "rarity": "rare",
       "reserved": false
     }
   ]

@@ -453,7 +453,8 @@ pub const RULES: &[Rule] = &[
         pattern: concat!(
             r"\b(?:scry|surveil) (?:[2-9]|[1-9][0-9]+|x)\b|draws? .*?discards?|discards? .*?draws?|",
             r"look at the top|from among them into your hand|reveal the top|",
-            r"discards any number of cards, then draws|\b(?:connives?|recruit|learn)\b|create[^.]*blood token",
+            r"discards any number of cards, then draws|\b(?:connives?|recruit|learn)\b|create[^.]*blood token|",
+            r"exile any number of cards from your hand[^.]*[.,] (?:then )?(?:draw|put) that many",
         ),
         negative: r"",
         id: "filter",
@@ -801,9 +802,7 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
             Some("single-subject, haste-only, symmetric or non-creature effect")
         }
         "ramp" | "fixing" if typ.contains("Land") && single_mana_ability(full) => Some("land tapping for one mana"),
-        "draw" if (has(typ, &["Aura", "Equipment"]) || !spell) && grammar!(SELF_DEATH_DRAW, full) => {
-            Some("self-replacing death draw")
-        }
+        "draw" if self_replacing_draw(typ, full) => Some("self-replacing death draw"),
         "draw" if grammar!(r"^search your library for (?:a|up to [a-z]+) basic land cards?", effect) => {
             Some("land search to hand")
         }
@@ -909,6 +908,10 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
             Some("inspection without filtering")
         }
         "fixing" if grammar!(r"^\{t\}: add \{[wubrgc]\}\.$", full) => Some("one-colour tap mana"),
+        "fixing" if creates(full, "treasure") && !full.contains("add") => Some("Treasure maker is never fixing (C18)"),
+        "fixing" if grammar!(r"^add [^.]*mana of the chosen colou?r\.?$", effect) => {
+            Some("one chosen colour is ramp, not fixing (C16)")
+        }
         "fixing" if accepted.contains("ramp") && grammar!(r"^add (\{[wubrgc]\})(?:\1)*\.$", effect) => {
             Some("accepted ramp with one repeated mana symbol")
         }
@@ -980,11 +983,26 @@ fn incidental(role: &str, _card: &Card, full: &str, typ: &str, accepted: &BTreeS
     }
 }
 
+/// C17: exiling any number of cards from your hand to get that many back (Scroll Rack's shape) filters the hand.
+fn hand_swap(s: &str) -> bool {
+    grammar!(r"exile any number of cards from your hand[^.]*[.,] (?:then )?(?:draw|put) that many", s)
+}
+
+/// C18: a Treasure maker's any-colour `produced_mana` comes from its tokens; when no line of the card itself adds
+/// mana, that is no sign of a missed fixing role.
+fn treasure_mana_only(card: &Card) -> bool {
+    let texts: Vec<String> = card.lines().iter().map(|(_, line)| normalize(card, line).to_lowercase()).collect();
+    texts.iter().any(|t| creates(t, "treasure")) && !texts.iter().any(|t| grammar!(r"\badd\b", t))
+}
+
 /// Equal draws/discards are filtering, including third-person and conditional two-sentence loot.
 fn loot(s: &str) -> bool {
     let s = s.replace("draws ", "draw ").replace("discards ", "discard ");
     if grammar!(r"draws? (?:a card for each|NUMBER cards? (?:for each|equal to))", &s) {
         return false;
+    }
+    if hand_swap(&s) {
+        return true;
     }
     if grammar!(r"(?:discard|shuffle)[^.]*cards?[^.]*draw that many", &s) {
         return true;
@@ -1010,6 +1028,18 @@ const SELF_DEATH_DRAW: &str = concat!(
     r"(?:when|if) (?:enchanted creature|equipped creature|this [a-z]+|~) ",
     r"(?:dies|is put into a graveyard from the battlefield)[^.]*draw (?:a|one) card",
 );
+// C15: an aura or equipment that draws one card once, when it enters, is a cantrip like a spell's.
+const ATTACHMENT_CANTRIP: &str = concat!(
+    r"^(?:when|if) (?:this (?:aura|equipment)|~) enters, draw (?:a|one) card",
+    r"(?: at the beginning of the next turn.s upkeep)?\.?$",
+);
+/// C10 and C15: a permanent drawing one card when it or its host dies, or an aura/equipment cantrip on entering,
+/// replaces itself and is not `draw`.
+fn self_replacing_draw(typ: &str, full: &str) -> bool {
+    let attachment = has(typ, &["Aura", "Equipment"]);
+    (attachment || !has(typ, &["Instant", "Sorcery"])) && grammar!(SELF_DEATH_DRAW, full)
+        || attachment && grammar!(ATTACHMENT_CANTRIP, full)
+}
 
 /// A land ability that adds exactly one mana, whatever the options: a filter or painland tap, not net ramp.
 fn single_mana_ability(s: &str) -> bool {
@@ -1292,6 +1322,7 @@ impl Classifier {
                 && card.raw.produced_mana.as_ref().is_some_and(|mana| {
                     mana.iter().filter(|m| ["W", "U", "B", "R", "G"].contains(&m.as_str())).count() >= 2
                 })
+                && !treasure_mana_only(card)
         {
             route.insert(RouteReason::NoRole);
         }
@@ -1438,8 +1469,14 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                     .count();
                 return searched.contains("land") && !searched.contains("nonland") || types >= 2;
             }
+            // C16: one mana of a chosen colour is one colour (ramp); it fixes only beside another colour on the card.
+            let colours = ['w', 'u', 'b', 'r', 'g']
+                .iter()
+                .filter(|ch| s.split("add").nth(1).unwrap_or("").contains(&format!("{{{ch}}}")))
+                .count();
             s.contains("basic landcycling")
                 || s.contains("add")
+                    && !creates(s, "treasure")
                     && (has(
                         s,
                         &[
@@ -1449,13 +1486,10 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                             "different colors",
                             "each color",
                             "any type",
-                            "chosen color",
                         ],
-                    ) || ['w', 'u', 'b', 'r', 'g']
-                        .iter()
-                        .filter(|ch| s.split("add").nth(1).unwrap_or("").contains(&format!("{{{ch}}}")))
-                        .count()
-                        >= 2)
+                    ) || colours >= 2
+                        || s.contains("chosen color")
+                            && (colours >= 1 || grammar!(r"\badd \{[wubrg]\}", &c.text.to_lowercase())))
         }
         "tutor" => {
             if s.starts_with("transmute") {
@@ -1503,8 +1537,8 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
             {
                 return false;
             }
+            // C14: damage to each creature, or each creature of one group, sweeps it even for 1 damage.
             (!s.contains("damage") || !s.contains("combat damage"))
-                && !(s.contains("1 damage") && !spell && !repeat)
                 && !s.contains("each of up to")
                 && !(s.contains("exile") && s.contains("return") && s.contains("you control"))
         }
@@ -1595,6 +1629,9 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
                 && !s.contains("loses all other abilities")
         }
         "draw" => {
+            if hand_swap(s) {
+                return false;
+            }
             if s.contains("you become the monarch") {
                 return true;
             }
@@ -1606,7 +1643,7 @@ fn accept(r: &Rule, c: &Card, s: &str, typ: &str, intrinsic: bool, full: &str) -
             }
             if s.contains("draw") {
                 if !(draws_for_you(s) || grammar!(r"each player.s[^.]*that player draws?", full))
-                    || (has(typ, &["Aura", "Equipment"]) || !spell) && grammar!(SELF_DEATH_DRAW, full)
+                    || self_replacing_draw(typ, full)
                 {
                     return false;
                 }
@@ -2244,6 +2281,10 @@ const EXCEPTIONS: &[(&str, &str)] = &[
     (
         r"each creature[^.]*loses all abilities[^.]*1/1",
         "Frozen mass base-stat replacement; distinct from targeted shrink.",
+    ),
+    (
+        r"exile any number of cards from your hand[^.]*[.,] (?:then )?(?:draw|put) that many",
+        "C17: a hand filter that nets no cards (one catalog card); selection, never draw.",
     ),
     (r"return (?:~|this creature) and another target", "Frozen paired self/opponent bounce; separate object ordering."),
     (r"chosen creatures fight", "Frozen non-targeted fight wording; needs removal review."),

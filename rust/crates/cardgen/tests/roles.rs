@@ -29,7 +29,7 @@ fn every_rule_has_real_positive_and_decoy_oracle_text() {
         ("fixing", "Windswept Heath", "Loyal Warhound"),
         ("library-search", "Demonic Tutor", "Furnace Host Charger"),
         ("counter-spell", "Counterspell", "Tomakul Honor Guard"),
-        ("mass-removal", "Toxic Deluge", "Thundermaw Hellkite"),
+        ("mass-removal", "Toxic Deluge", "Lightning Bolt"),
         ("single-removal", "Skywhaler's Shot", "Metallic Mastery"),
         ("exile-return", "Ephemerate", "Reanimate"),
         ("protect", "Heroic Intervention", "Invisible Stalker"),
@@ -668,7 +668,7 @@ fn round_three_precision_audit_regressions() {
         ("Nashi, Moon Sage's Scion", &["draw"]),
         ("Lifegift", &["lifegain"]),
         ("The Lord of Pain", &["drain", "stax"]),
-        ("Grisly Transformation", &["draw", "evasion"]),
+        ("Grisly Transformation", &["evasion"]), // C15: an aura cantrip is not draw.
         ("Golgari Charm", &["protection", "removal", "wipe"]),
         ("Bitter Reunion", &["draw"]), // C8: haste alone is not anthem.
         ("Dog Umbra", &["protection", "removal"]),
@@ -969,6 +969,83 @@ fn approved_c7_through_c13_and_general_audit_vocabulary() {
             assert!(!a.roles.iter().any(|r| r == role), "{name}: unexpected {role}: {a:?}");
         }
     }
+}
+
+#[test]
+fn approved_c14_through_c18_use_real_oracle_text() {
+    let i = rulings_index();
+    for (name, yes, no) in [
+        // C14: 1 damage to each creature of one group sweeps it; a single targeted effect does not.
+        ("Thundermaw Hellkite", vec!["wipe"], vec!["removal", "evasion", "drain"]),
+        ("Breath of Darigaaz", vec!["wipe"], vec!["drain"]),
+        // C15: an aura cantrip is not draw; a vehicle sacrificing itself to draw two still is.
+        ("Ritual of Steel", vec![], vec!["draw"]),
+        ("Daredevil Dragster", vec!["draw"], vec![]),
+        // C16: one chosen colour is ramp, not fixing (a second colour beside it still fixes).
+        ("Throne of Eldraine", vec!["ramp", "draw"], vec!["fixing"]),
+        ("Coldsteel Heart", vec!["ramp"], vec!["fixing"]),
+        ("Thriving Grove", vec!["fixing"], vec!["ramp"]),
+        // C17: Scroll Rack is a hand filter.
+        ("Scroll Rack", vec!["selection"], vec!["draw"]),
+        // C18: Treasure makers are tokens and ramp, never fixing.
+        ("Smothering Tithe", vec!["tokens", "ramp"], vec!["fixing"]),
+        ("Dockside Extortionist", vec!["tokens", "ramp"], vec!["fixing"]),
+    ] {
+        let a = classify(&i, name);
+        for role in yes {
+            assert!(a.roles.iter().any(|r| r == role), "{name}: missing {role}: {a:?}");
+        }
+        for role in no {
+            assert!(!a.roles.iter().any(|r| r == role), "{name}: unexpected {role}: {a:?}");
+        }
+    }
+    // The wipe is decided by the rules alone, and Treasure's any-colour mana does not route its maker.
+    assert!(!classify(&i, "Thundermaw Hellkite").needs_llm);
+    for name in ["Smothering Tithe", "Dockside Extortionist"] {
+        let a = classify(&i, name);
+        assert!(!a.route.contains(&roles::RouteReason::NoRole), "{name}: {a:?}");
+    }
+}
+
+#[test]
+fn partial_sweeps_cantrips_and_chosen_colour_mana_general_shapes() {
+    // C14: any group of creatures, any enter or activated sweep.
+    for text in [
+        "When this creature enters, it deals 1 damage to each attacking creature.",
+        "{R}: This creature deals 1 damage to each tapped creature.",
+    ] {
+        let a = round5_synthetic("Creature — Elemental", text, &[]);
+        assert!(a.roles.contains(&"wipe".into()), "{text}: {a:?}");
+    }
+    let a =
+        round5_synthetic("Creature — Elemental", "When this creature enters, it deals 1 damage to any target.", &[]);
+    assert!(!a.roles.contains(&"wipe".into()), "{a:?}");
+    // C15: an equipment cantrip and a self-sacrifice draw replace themselves; a repeating draw does not.
+    for text in ["When this Equipment enters, draw a card.", "{2}, Sacrifice this artifact: Draw a card."] {
+        let typ = if text.contains("Equipment") { "Artifact — Equipment" } else { "Artifact" };
+        assert!(!round5_synthetic(typ, text, &[]).roles.contains(&"draw".into()), "{text}");
+    }
+    let a = round5_synthetic("Artifact — Equipment", "Whenever equipped creature attacks, draw a card.", &[]);
+    assert!(a.roles.contains(&"draw".into()), "{a:?}");
+    // C16: one mana of the chosen colour on a land is not fixing either.
+    let a = round5_synthetic(
+        "Artifact",
+        "As this artifact enters, choose a color.\n{T}: Add one mana of the chosen color.",
+        &[],
+    );
+    assert!(a.roles.contains(&"ramp".into()) && !a.roles.contains(&"fixing".into()), "{a:?}");
+    // C17: the draw-that-many wording of the same hand filter.
+    let a = round5_synthetic(
+        "Artifact",
+        "{1}, {T}: Exile any number of cards from your hand face down, then draw that many cards.",
+        &[],
+    );
+    assert!(a.roles.contains(&"selection".into()) && !a.roles.contains(&"draw".into()), "{a:?}");
+    // C18: a Treasure maker whose tokens make WUBRG is not routed, but a real mana source with the same tokens is.
+    let maker = "Whenever a creature dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this \
+                 token: Add one mana of any color.\")";
+    let a = round5_synthetic("Enchantment", maker, &["W", "U", "B", "R", "G"]);
+    assert!(!a.route.contains(&roles::RouteReason::NoRole) && !a.roles.contains(&"fixing".into()), "{a:?}");
 }
 
 #[test]
