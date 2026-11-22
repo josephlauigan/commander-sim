@@ -40,23 +40,28 @@ Combo stops are down to Silence and Ranger-Captain of Eos; answers to noncreatur
 a variant of Line B or A (Sorin is out); Line D's payoffs are Elas il-Kor, Haliya, Vito and Archangel of Thune; Wrath of God cannot touch opposing indestructible
 creatures; Stroke of Midnight gives the opponent a 1/1 Human; the deck's black is oversupplied (no card costs {B}{B}).
 
-### Open engine defects (found by the interaction tests; NOT fixed, NOT accepted by JD)
-Twelve tests of the package's card interactions fail on purpose against the engine (108 tests written, 96 pass). They are not in this change: the test file
-`cards_yoshimaru_equipment.rs` lands with the engine-fix change, after JD's decision, so main never carries ignored tests. Until then no sim of the Yoshimaru
-deck means anything for the cards below. Each line: the card, what the engine does, what the Oracle text says.
-1. Court of Ardenvale never returns a land card (the filter drops lands); a land card is a permanent card with mana value 0.
-2. Zack Fair's sacrifice moves every Equipment attached to him; the text attaches "an Equipment".
-3. Zack Fair's sacrifice may target a creature with protection from white (a Sword of Hearth and Home carrier), though Zack is white.
-4. Kor Outfitter's enter trigger attaches an Equipment to the carrier with protection from white, though Kor Outfitter is white.
-5. Ardenn's beginning-of-combat attach does the same.
-6. Restoration Angel's enter trigger blinks the protected carrier, though the Angel is white.
-7. Felidar Guardian's enter trigger blinks the protected carrier, though Felidar is white.
-8. The AI offers Ephemerate on the protected carrier, though Ephemerate is white (Flickerwisp is correct).
-9. **Steelshaper's Gift is compiled with an empty search filter**: it puts the best card of any type into the hand (it found Sol Ring) instead of only an
-   Equipment card, so it is a {W} tutor for anything. It is in the list.
-10. Stroke of Midnight's token is a plain 1/1 of the controller's colour, not a white Human.
-11. Wrath of God has no "can't be regenerated" tag, so a regeneration shield saves a creature.
-12. Metalcraft counts only artifact permanents; Treasure tokens (kept as a counter on the player) are not counted, and Lotho makes Treasures.
-Opus's triage: fix 9 and 3 to 8 (one shared protection check, `protected_from`, at six call sites; Outfitter and Ardenn need a source-aware variant of
-`best_holder`) before any sim, and 1, 2, 10, 11 and 12 in the same change; none needs to be accepted as a limit. `best_holder`, `zack_sacrifice`, `metalcraft`
-and `resto_etb` are shared with the Cloud deck, so Cloud's numbers may shift.
+### Engine defects found by the interaction tests (fixed by the engine change that lands with this list)
+Tests of the package's card interactions (`rust/crates/sim-core/tests/cards_yoshimaru_equipment.rs`, 120 tests) found twelve engine defects; all twelve are fixed
+by the engine change, which also found three more of the same class (Giver of Runes and the AI's other protectors, Eerie Interlude, Teleportation Circle and
+the other end-step flickers). Each line: the card, what the engine did, what the Oracle text says.
+1. Court of Ardenvale never returned a land card; a land card is a permanent card with mana value 0 (now returned through the real land-entry path).
+2. Zack Fair's sacrifice moved every Equipment attached to him; the text attaches "an Equipment" (now one, the most valuable).
+3. Zack Fair's sacrifice could target a creature with protection from white (a Sword of Hearth and Home carrier), though Zack is white.
+4. Kor Outfitter's enter trigger attached an Equipment to the protected carrier, though Kor Outfitter is white.
+5. Ardenn's beginning-of-combat attach did the same.
+6. Restoration Angel's enter trigger blinked the protected carrier, though the Angel is white.
+7. Felidar Guardian's enter trigger blinked the protected carrier, though Felidar is white.
+8. The AI offered Ephemerate on the protected carrier, though Ephemerate is white.
+9. Steelshaper's Gift was compiled with an empty search filter and fetched any card (it found Sol Ring); it now searches only for an Equipment card.
+10. Stroke of Midnight's token was a plain 1/1 of the controller's colour, not a white Human.
+11. Wrath of God had no "can't be regenerated" tag, so a regeneration shield saved a creature.
+12. Metalcraft counted only artifact permanents, not Treasure, Food, Clue and Blood tokens (Lotho makes Treasures).
+Fixed through the existing `protected_from` helper at the call sites that lacked it (equip abilities are colourless and unchanged; Deflecting Swat, Siren Stormtamer and
+Not of This World target the spell, so they are exempt). `best_holder`, `zack_sacrifice`, `metalcraft` and `resto_etb` are shared with the retired Cloud card code, so
+its numbers can shift.
+
+### Still open: same defect class, NOT fixed, NOT accepted by JD (his decision pending)
+- Momentary Blink cast from hand ignores protection from white (the AI and a person's choice).
+- The practice-mode (person) paths of Kor Outfitter and Ardenn do not filter their creature choices by protection from white.
+- Zack Fair in practice mode gives the person no choice of which Equipment moves (the engine picks).
+- Secure the Scene's token is a plain 1/1; the text says a white Soldier (it shares the `opp_token` effect Stroke of Midnight now parameterises).
