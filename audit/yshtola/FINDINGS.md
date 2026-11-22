@@ -75,7 +75,7 @@ a walker (AI and practice mode). An adversarial review (Sol, 44 tests in `tests/
 eight were in the card's code and were fixed (a skipped step still triggered, the draw came before the active player's,
 no response window, no check for lost abilities, no protection-from-blue check on the -2, the AI chose -2 targets during
 resolution, artifact lands and creature lands were ignored). The other three are engine-wide limits that every walker or
-multi-target ability shares, listed for JD (tests kept `#[ignore = "ENGINE LIMIT: ..."]`): unpaid ward counters only the
+multi-target ability shares, **accepted by JD on 2026-11-21** as named limits (tests kept `#[ignore = "ENGINE LIMIT: ..."]`): unpaid ward counters only the
 warded target, not the whole -2; the loyalty once-per-turn stamp does not reset on consecutive extra turns and practice
 mode ignores Oath of Teferi; the walker options have no `neutered` check. To check in the first run: the Theorist's cast
 and stuck-in-hand numbers, how often it survives to a second activation, and the Map's cracks (the breakdown counts casts
