@@ -132,5 +132,15 @@ fn the_real_roles_toml_merged_with_the_real_cache_adds_no_llm_only_role() {
         llm_only_additions += merged[id].roles.iter().filter(|r| !a.roles.contains(r)).count();
     }
     assert_eq!(llm_only_additions, 0, "LLM-only additions == 0");
+    // nothing from the LLM is used: no card differs from the rules table in role order or primary either, and a
+    // routed legal card is unreviewed (`llm_failed`), as in a rules-only table
+    let (mut order_diffs, mut primary_diffs, mut flag_diffs) = (0, 0, 0);
+    for c in index.cards.iter().filter(|c| roles::is_deck_card(c)) {
+        let (a, m) = (&rules[&c.raw.oracle_id], &merged[&c.raw.oracle_id]);
+        order_diffs += usize::from(a.roles != m.roles);
+        primary_diffs += usize::from(a.primary != m.primary);
+        flag_diffs += usize::from(m.llm_failed != (a.needs_llm && c.legal == cardgen::knowledge::Legal::Legal));
+    }
+    assert_eq!((order_diffs, primary_diffs, flag_diffs), (0, 0, 0), "role order, primary, llm_failed");
     index.attach_roles(&merged).unwrap();
 }

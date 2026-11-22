@@ -349,7 +349,7 @@ and ends in `…`).
 | type | per face (joined with `/`, written once when the faces agree): `Lg` for a legendary face, then a letter per card type in the order A E L C P B I S (`AC` artifact creature, `LgC` legendary creature, `C/L` an MDFC with a land back, `O` other), then `—` and the subtypes (they give way first when the line is too long) |
 | roles | the card's roles, primary first; `-` for none |
 | gist | the Oracle line cited as evidence for the **primary** role (`roles::line_text`: reminder text gone, `~` the card), cut at a whole-token boundary to 110 characters (never inside `{...}`, never in an open quote; `…` marks a cut; `-` when no whole token fits). A card with no cited line (no roles, or a hand override) shows its first Oracle line that is not just keywords (`Flying, trample`), else the first line; `-` when it has no text. On a `--role R` page the gist cites R's own line. Never written text, so it cannot be a hallucination |
-| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` (always last) when the card's role tags are not reviewed yet (about the tags, not the card's quality: routed to the LLM and no answer, so they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered). `-` when there is nothing to say. `m:X` the engine model status of the card, (`F` Full, `f` Full-auto (compiled, not hand-verified), `A` Approximate, `P` Partial, `U` Unmodeled, and `N` = NO engine record: status unknown, treat as below Full; adding it needs a cards.json entry, `cardgen export` and `cardgen audit`, then JD; a card below `F`, or `N`, goes to JD before it is accepted). Every line has an `m:` flag when the engine facts are available and none when they are unavailable (the header says so), `d:XY` the other decks of JD's `mine` that play the card (one letter per deck, assigned from the keys in `decks.json` order and printed in the header; section A leaves out the digest's own deck, and the header legend ends with `(this digest: X)`), `k:N` the lines of the decks' `audit/*/FINDINGS.md` that name the card (only when N > 0). `digest::flags` makes them in the order `* BAN|NL GC #N $N m:X d:XY k:N ?`; `facts::Facts::context` fills the `Context` (indices resolved once: model status, a bit per JD deck with the letter table the header prints, the current deck, findings counts). The header gains one line for the `d:` letters and one for `m:` and `k:`; the gist shrinks to keep the line within 160 characters |
+| flags | `*` the card is in the deck's list, `BAN` banned / `NL` not legal in Commander (a deck's own card can be one), `GC` Game Changer, `#N` EDHREC rank, `$N` price in USD, and `?` (always last) when the card's role tags are not reviewed yet (about the tags, not the card's quality: routed to the LLM and no answer, so they may be incomplete or wrong; no `?` means the rules or a hand override decided, or the LLM answered; with `llm_add` off for every role the LLM's answers are not used, so every routed card has `?`). `-` when there is nothing to say. `m:X` the engine model status of the card, (`F` Full, `f` Full-auto (compiled, not hand-verified), `A` Approximate, `P` Partial, `U` Unmodeled, and `N` = NO engine record: status unknown, treat as below Full; adding it needs a cards.json entry, `cardgen export` and `cardgen audit`, then JD; a card below `F`, or `N`, goes to JD before it is accepted). Every line has an `m:` flag when the engine facts are available and none when they are unavailable (the header says so), `d:XY` the other decks of JD's `mine` that play the card (one letter per deck, assigned from the keys in `decks.json` order and printed in the header; section A leaves out the digest's own deck, and the header legend ends with `(this digest: X)`), `k:N` the lines of the decks' `audit/*/FINDINGS.md` that name the card (only when N > 0). `digest::flags` makes them in the order `* BAN|NL GC #N $N m:X d:XY k:N ?`; `facts::Facts::context` fills the `Context` (indices resolved once: model status, a bit per JD deck with the letter table the header prints, the current deck, findings counts). The header gains one line for the `d:` letters and one for `m:` and `k:`; the gist shrinks to keep the line within 160 characters |
 
 The candidates come from `Index::search`, so the deck's identity ceiling and exclusions are the ones `find --deck`
 applies: Commander-legal cards inside the identity (`--ident` may narrow a deck's, never widen it), not in the deck, no
@@ -554,7 +554,9 @@ reported, not hidden by a threshold.
 
 CI uses real Oracle text frozen in `tests/fixtures/roles_oracle.json`, with positive and decoy examples for every
 rule. Full-catalog tests are opt-in: `cargo test --release -p cardgen --test roles_real -- --ignored` (requires the
-local catalog). Run Cargo and test binaries under the repository memory cap.
+local catalog). Run Cargo and test binaries under the repository memory cap. Run `cardgen roles --rules` before the
+ignored tests: `real_saved_roles_json_matches_a_fresh_generation` compares the saved `roles.json` with a fresh rules
+table, so it fails after any `roles --merge`.
 
 The recall-only engine-tag mapping is value-aware:
 
@@ -651,8 +653,9 @@ the same key; a plain `roles --merge` and `roles --validate --stage merged` read
   cited, plus each non-certain rule role the LLM also proposed or whose role has `keep_rule = true` in `roles.toml`
   (frozen: true for all 26 roles, so the LLM never removes a rule role: add-only; JD's earlier 16/10 split is
   superseded, per-role `keep_rule = false` is still supported). A role with `llm_add = false` (default true; frozen
-  false for ALL 26 roles until the production run's additions are audited, so the merged table has the rules table's
-  role sets; the LLM's order and primary still apply to the rule roles it kept) is off for the LLM: its proposals are dropped like a failed guard and counted per role in the `--merge`
+  false for ALL 26 roles until the production run's additions are audited, so the merge uses nothing from the LLM: every
+  assignment is the rules' own, order and primary included, and every routed legal card keeps `llm_failed`, so the digest
+  shows `?`) is off for the LLM: its proposals are dropped like a failed guard and counted per role in the `--merge`
   output. Neither flag is part of the cache key. Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
   rule roles by prominence; at most four (a certain role is never the one cut). A card with no rule roles simply takes
   its guarded LLM roles. A role found by both stages keeps the rule's evidence; an LLM-only role has source `Llm`;
@@ -728,7 +731,7 @@ git add data/knowledge/llm_roles.jsonl && git commit -m "LLM role answers ..."  
 Check with `--dry-run` first (the selected count and batch count). Only the cards the rules cannot read (no role, or a
 line no rule understands) are sent; every other card keeps its rule roles untouched. **`llm_add` is off for all 26 roles
 until the audit** (see "LLM results (2026-11-22)" in `documents/card-knowledge.md`): the merge reads the cache and drops
-every proposal, so `roles.json` has the rules-only role sets and no unaudited role reaches `find --role`. A merge with
+every proposal, so `roles.json` has the rules table's assignments exactly (every routed card stays `?`) and no unaudited role reaches `find --role`. A merge with
 rows in the cache but none under the current prompt (a missing `--no-think`, another `CARDGEN_LLM_VARIANT`) is an error
 that names `--model <id>`, never a silent rules-only table.
 

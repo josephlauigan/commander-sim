@@ -1731,6 +1731,19 @@ fn with_every_llm_add_off_the_merge_adds_nothing_and_one_role_turned_on_adds_it(
     }
     assert_eq!(added, 0, "LLM-only additions == 0");
     assert_eq!(shot(&off), shot(&rules));
+    // and nothing else from the LLM is used either: every card's assignment is the rules' own, order and primary
+    // included, except that a routed legal card stays unreviewed (`llm_failed`)
+    let mut unreviewed = 0;
+    for c in index.cards.iter().filter(|c| roles::is_deck_card(c)) {
+        let id = &c.raw.oracle_id;
+        let mut got = off[id].clone();
+        let waiting = rules[id].needs_llm && c.legal == Legal::Legal;
+        assert_eq!(got.llm_failed, waiting, "{}", c.raw.name);
+        unreviewed += usize::from(waiting);
+        got.llm_failed = rules[id].llm_failed;
+        assert_eq!(got, rules[id], "{}", c.raw.name);
+    }
+    assert!(unreviewed > 0, "the fixture has routed legal cards, so the check is not vacuous");
     // turning one role on in a scratch copy of the real file brings its additions back, the rest stay off
     let one_on = TAXONOMY.replacen(
         "keep_rule = true\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
@@ -1740,6 +1753,52 @@ fn with_every_llm_add_off_the_merge_adds_nothing_and_one_role_turned_on_adds_it(
     assert_ne!(one_on, TAXONOMY);
     std::fs::write(e.dir().join("roles.toml"), one_on).unwrap();
     assert_eq!(shot(&e.merged()), ["removal", "selection"]);
+}
+
+#[test]
+fn an_answer_that_reverses_a_cards_rule_roles_changes_its_primary_only_when_a_role_is_on() {
+    plain_variant();
+    let e = Env::new();
+    e.command(&["--rules"]).unwrap();
+    let rules = roles::load(&e.dir().join("roles.json")).unwrap();
+    let index = e.index();
+    // a routed legal card the rules gave two roles to: its primary is the rules' first role
+    let card = index
+        .cards
+        .iter()
+        .find(|c| {
+            let a = &rules[&c.raw.oracle_id];
+            roles::is_deck_card(c)
+                && c.legal == Legal::Legal
+                && a.needs_llm
+                && a.roles.len() >= 2
+                && !roles::prompt_lines(c).is_empty()
+        })
+        .expect("a fixture card with two rule roles");
+    let name = card.raw.name.clone();
+    let before = rules[&card.raw.oracle_id].clone();
+    std::fs::write(e.dir().join("ids.txt"), &name).unwrap();
+    // a model that names the card's rule roles in reverse order (each cited on line 0)
+    let reversed: Vec<String> = before.roles.iter().rev().cloned().collect();
+    let fake = Fake::start(Box::new(move |_, body| {
+        let items = parse_batch(body);
+        let names: Vec<&str> = reversed.iter().map(String::as_str).collect();
+        let ev: Vec<(&str, usize)> = names.iter().map(|r| (*r, 0)).collect();
+        let cards: Vec<Value> = items.iter().map(|i| entry(&i.id, &names, &ev)).collect();
+        Reply::Content(json!({"cards": cards}).to_string())
+    }));
+    e.llm(&fake, &[]).unwrap();
+    // the scratch taxonomy (every role on): the LLM's order wins, so the primary changes
+    let on = e.merged();
+    let a = assignment_of(&index, &on, &name);
+    assert_ne!(a.primary, before.primary, "{name}: the reversed answer is used");
+    // the real roles.toml (every role off): nothing of the answer is used, the assignment is the rules' own
+    std::fs::write(e.dir().join("roles.toml"), TAXONOMY).unwrap();
+    let off = e.merged();
+    let mut a = assignment_of(&index, &off, &name).clone();
+    assert!(a.llm_failed, "a routed card stays unreviewed");
+    a.llm_failed = false;
+    assert_eq!(a, before);
 }
 
 /// A gold file of two cards with the labels the fake model's answers disagree with on one of them.
@@ -1781,6 +1840,7 @@ fn the_merged_gate_ties_when_every_llm_add_is_off_and_still_fails_a_false_positi
     let (text, v) = validate(&e);
     assert!(!text.contains(line), "{text}");
     assert_eq!(v["llm_additions_off"], false);
+    assert!(text.contains("LLM ALONE (its cached answers"), "{text}");
     assert!(failures(&v).iter().any(|f| f.contains("merged F1")), "{:?}", failures(&v));
     // additions off for every role: one line says so, the routed comparison is a tie and the gate does not fire
     std::fs::write(e.dir().join("roles.toml"), TAXONOMY).unwrap();
@@ -1790,9 +1850,15 @@ fn the_merged_gate_ties_when_every_llm_add_is_off_and_still_fails_a_false_positi
     assert_eq!(v["routed_scored_micro"], v["routed_rules_micro"], "a tie");
     assert!(v["routed_cards"].as_u64().unwrap() >= 1);
     assert!(!failures(&v).iter().any(|f| f.contains("merged F1")), "{:?}", failures(&v));
-    // the rules stage never prints the line
+    // the LLM-alone block (it counts no proposal with every role off) gives way to one line
+    assert!(text.contains("LLM ALONE: not scored") && !text.contains("LLM ALONE (its cached"), "{text}");
+    // the rules stage never prints the line, and its primary accuracy is the merged stage's
     let (rules_text, _) = e.command(&["--validate", "--gold", &gold]).unwrap();
     assert!(!rules_text.contains(line), "{rules_text}");
+    let (rules_json, _) = e.command(&["--validate", "--gold", &gold, "--json"]).unwrap();
+    let rv: Value = serde_json::from_str(&rules_json).unwrap();
+    assert_eq!(v["primary_correct"], rv["primary_correct"], "the merged stage takes nothing from the LLM");
+    assert_eq!(v["primary_total"], rv["primary_total"]);
 }
 
 #[test]

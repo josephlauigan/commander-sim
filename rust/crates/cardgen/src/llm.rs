@@ -1313,7 +1313,7 @@ fn merge_model(rows: &BTreeMap<String, Row>, prompt: &str, wanted: Option<&str>)
             Err(format!(
                 "the cache holds {} rows (models: {}) but none for the current prompt, so the merge would use no LLM \
                  answer at all; pass --model <id> with the same --no-think flag and CARDGEN_LLM_VARIANT the run used \
-                 (an empty --model is never a silent rules-only merge)",
+                 (an empty --model is never a silent rules-only merge), or run `roles --rules` for a rules-only table",
                 rows.len(),
                 held.into_iter().collect::<Vec<_>>().join(", ")
             ))
@@ -1346,6 +1346,7 @@ pub fn merge_table(
     let mut merged = RoleMap { meta, cards: BTreeMap::new() };
     let mut all: Vec<Disagreement> = vec![];
     let mut stats = MergeStats::default();
+    let inert = taxonomy.llm_inert();
     for c in index.cards.iter().filter(|c| roles::is_deck_card(c)) {
         let id = &c.raw.oracle_id;
         let lines = roles::prompt_lines(c);
@@ -1379,6 +1380,12 @@ pub fn merge_table(
             }
         }
         let (mut a, mut dis) = merge(rule, llm.as_ref(), overrides.get(id), &env);
+        if inert && !overrides.contains_key(id) {
+            // nothing from the LLM is used: the rules' assignment exactly (order, primary), and a routed card stays
+            // unreviewed
+            a = rule.clone();
+            a.llm_failed = rule.needs_llm;
+        }
         // only Commander-legal cards are ever sent, so only they can be waiting for an answer
         a.llm_failed &= legal;
         for d in &mut dis {

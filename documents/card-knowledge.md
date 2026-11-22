@@ -96,7 +96,7 @@ text decide most roles. The local LLM proposes roles only for cards the rules ca
 proposes must cite an Oracle line and pass a textual guard for that role. Precedence: hand override, then rule-certain
 roles, then the LLM's guarded roles together with the rules' non-certain roles. The merge is add-only (the LLM never
 removes a rule role), and every role's `llm_add` is off until its additions are audited, so today the merged table
-has the rules table's role sets. Every disagreement is reported.
+uses nothing from the LLM (every assignment is the rules'). Every disagreement is reported.
 
 **Digest.** One `|`-separated line per card (`Name|cost|type|roles|gist|flags`), at most 160 characters. The gist is
 the Oracle line cited as evidence for the primary role, never LLM-written prose, so it cannot be a hallucination.
@@ -193,7 +193,7 @@ hidden temp file in the target directory, and a kill during that copy leaves it 
 |---|---|---|
 | 1 | `fetch-build` | fetches into a separate clone (`~/.cache/commander-sim-knowledge/repo`), resets it to `$KNOWLEDGE_REF` (default `origin/main`), builds `cardgen` there under the memory cap; the clone is `--root`, so decks, the engine cache and FINDINGS come from it. A failed fetch or build keeps the previous build in use |
 | 2 | `bulk-sync` | the Oracle Cards bulk file, only if its `updated_at` changed (else `skip`, "up to date"); fewer than 25,000 cards is refused; the previous catalog stays as `oracle.prev.json` |
-| 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out; with `llm_add` off for every role the result has the rules table's role sets); the table from before the run goes to the report |
+| 3 | `roles` | `roles --rules`, then `roles --merge --no-think --model Qwen3.6-27B-Q5_K_M.gguf` when the tracked `llm_roles.jsonl` has rows (add-only; pending rows stay out; with `llm_add` off for every role the merge uses nothing from the LLM); the table from before the run goes to the report |
 | 4 | `llm` | cards the rules could not read (route `NoRole` or `UnknownLine`) that miss the cache: `roles --llm --routes NoRole,UnknownLine --only-routed --batch 10 --no-think --pending` with `CARDGEN_LLM_VARIANT=think`, new rows to `llm_roles.pending.jsonl` only. A dry run first counts the cards to do; none means `skip` and the GPU is not woken |
 | 5 | `map-digest` | `map.md` and one digest per deck of `mine` |
 | 6 | `report` | `reports/YYYY-MM-DD.md` by `cardgen weekly-report`, built whole in staging and then renamed into place; an earlier report of the day stays as `DATE.N.md` (N counts up, compared as a number) and the newest 12 stay; if `cardgen` cannot run, a short report goes through the same publication. If the state directory is unusable (read-only, full) the failure is still reported. The exit code is non-zero only if no report could be written |
@@ -352,8 +352,10 @@ cards (Commander-legal cards whose rules route contained `NoRole` or `UnknownLin
 (0.5%), with 218 per-card retries and 1,454 chat requests, about 12 hours at roughly 34 s per batch of ten. The rows are
 in the tracked cache `data/knowledge/llm_roles.jsonl`.
 
-**The merge.** 23,685 routed legal cards, of which 12,454 have an LLM answer and 11,231 were not run (their route held
-only `RejectedHit`, `SameLine` or `RiskyRole`, so they were never sent); 2,513 disagreements. The add-only merge with
+**The merge.** 23,685 routed legal cards, of which 12,454 have an LLM answer and 11,231 were not run: about 11,165 were
+never sent (their route held only `RejectedHit`, `SameLine` or `RiskyRole`) and 66 failed (without `reports/llm-failed.txt`
+the failed cards are counted in the not-run figure). The merge reported 2,513 disagreements with the additions on and
+reports 4,792 today, because every dropped proposal counts as a `GuardDrop`. The add-only merge with
 every role on would add 2,293 LLM-only roles on 2,176 cards: removal 547, anthem 313, counters 198, recursion 197, stax
 172, drain 135, protection 133, wipe 113, lifegain 96, gy-hate 92, reanimate 89, tokens 71, tutor 36, self-mill 34,
 discard 32, copy 27, counter 8.
@@ -377,18 +379,19 @@ discard 32, copy 27, counter 8.
   the guards.
 
 **The decision.** `llm_add = false` for all 26 roles in `data/knowledge/roles.toml`; `keep_rule = true` for all 26. The
-cache is kept as an inert artefact (rows keyed on card text, prompt and model; nothing reads them for a role), and
-`roles.json` has exactly the rules-only role sets, so no unaudited role reaches `find --role`, the digests or the map.
-Measured on the real tree: no card differs in its role set, 384 of 35,014 differ in primary role or role order (the merge
-still puts the LLM's order and primary first among the rule roles it kept), and the 11,231 routed cards that were never
-sent carry `llm_failed` as the merge always set it. The merge code is unchanged and tested; a role is switched on again only after its additions pass the audit below. A merge that
+cache is kept as an inert artefact (rows keyed on card text, prompt and model; nothing reads them for a role). With no
+role on and every `keep_rule` set the merge uses nothing from the LLM (`Taxonomy::llm_inert`): every card's assignment is
+the rules' own, so no card differs from the rules table in role set, order or primary (checked on all 35,014 cards), and
+every routed legal card keeps `llm_failed`, so every routed card keeps `?` in the digest and none counts as answered in
+the map. The digest header still reads `merged (model ...)`, because the table carries the model and prompt it was
+merged under. The merge code is otherwise unchanged and tested; a role is switched on again only after its additions pass the audit below. A merge that
 finds rows in the cache but none under the current prompt is an error (`--model <id>`, the same `--no-think` flag and
 `CARDGEN_LLM_VARIANT` as the run), not a silent rules-only table.
 
 ### Follow-ups (not in this PR)
 
-- The stability test result and a prompt round (target: at least 97% identical on-role answers at batch 5; below 93% the
-  prompt or batching is reworked).
+- A prompt or batching round to reach at least 97% identical role sets at batch 5 (measured 74.0%; below 93% means
+  rework).
 - A seeded precision audit of the LLM additions: n = 30 per role (all of them when fewer), a blind Sonnet labeller that
   sees the card text and the gold header but never the LLM's answer, Opus review of the wrong and debatable rows, a 0.85
   precision floor per role; JD decides each role.
@@ -424,7 +427,7 @@ finds rows in the cache but none under the current prompt is an error (`--model 
 | 3b `map` and `digest` | `knowledge-digest` | done, merged into `knowledge-base` |
 | 4 Status, decks and findings join | `knowledge-status` | done, merged into `knowledge-base` (adversarial tests, Opus review; no-record cards print `m:N`, Full-auto counts as below Full) |
 | 5 Workflow in the rule files | `knowledge-workflow-doc` | section written and Opus-reviewed, merged into `knowledge-base`; JD signs off the wording before the final PR; linked from `cards.md` |
-| 6 Weekly timer and report | `knowledge-weekly` | code, units, tests and this section written; the timer is JD's to install (`sync.lock` untracked, `--pending` merge default, 27B decisions of 2026-11-22) |
+| 6 Weekly timer and report | `knowledge-weekly` | code, units, tests and this section written; the timer is JD's to install (`sync.lock` untracked, LLM rows go to pending by default, 27B decisions of 2026-11-22) |
 
 Branching: `knowledge-base` is the integration branch off origin/main. Each phase is built on its own branch
 (`knowledge-<phase>`), and merged into `knowledge-base` only after its review chain passes: built by Sonnet,
