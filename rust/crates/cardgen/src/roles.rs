@@ -256,6 +256,13 @@ impl std::ops::DerefMut for RoleMap {
     }
 }
 
+/// The hash `meta.table_fnv` holds: the card table bytes together with the prompt fingerprint and the model id of the
+/// metadata, so editing either of those two by hand is noticed too.
+pub fn table_digest(meta: &RoleMeta, table: &[u8]) -> String {
+    let mut bytes = format!("{}\0{}\0", meta.prompt_fnv, meta.model).into_bytes();
+    bytes.extend_from_slice(table);
+    fingerprint(&bytes)
+}
 pub fn fingerprint(bytes: &[u8]) -> String {
     format!("{:016x}", crate::bulk::fnv1a64(bytes))
 }
@@ -406,8 +413,8 @@ pub fn check_file(path: &Path, index: &Index) -> Result<(), String> {
     let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
     let (meta, end) = parse_meta(&bytes)?;
     meta.check(index)?;
-    if fingerprint(&bytes[end..]) != meta.table_fnv {
-        return Err("roles.json: damaged card table; run `cardgen roles --rules`".into());
+    if table_digest(&meta, &bytes[end..]) != meta.table_fnv {
+        return Err("roles.json: damaged card table or metadata; run `cardgen roles --rules`".into());
     }
     Ok(())
 }
@@ -2322,8 +2329,8 @@ pub fn generate(index: &Index, overrides_text: &str) -> Result<RoleMap, String> 
 pub fn load(path: &Path) -> Result<RoleMap, String> {
     let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))?;
     let (meta, end) = parse_meta(&bytes)?;
-    if fingerprint(&bytes[end..]) != meta.table_fnv {
-        return Err(format!("{}: damaged card table; run `cardgen roles --rules`", path.display()));
+    if table_digest(&meta, &bytes[end..]) != meta.table_fnv {
+        return Err(format!("{}: damaged card table or metadata; run `cardgen roles --rules`", path.display()));
     }
     serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}; run `cardgen roles --rules`", path.display()))
 }
@@ -2334,7 +2341,7 @@ pub fn bytes(map: &RoleMap) -> Result<Vec<u8>, String> {
     let mut out = serde_json::to_vec_pretty(&marked).map_err(|e| e.to_string())?;
     out.push(b'\n');
     let (_, end) = parse_meta(&out)?;
-    let hash = fingerprint(&out[end..]);
+    let hash = table_digest(&marked.meta, &out[end..]);
     let at = out[..end].windows(16).rposition(|w| w == b"0000000000000000").ok_or("meta placeholder")?;
     out[at..at + 16].copy_from_slice(hash.as_bytes());
     Ok(out)
@@ -2666,6 +2673,9 @@ pub fn command(project: &Project, args: &[String]) -> Result<(String, bool), Str
     let dir = knowledge::knowledge_dir(project, o.dir.as_deref())?;
     let mut index = Index::load(&dir.join("oracle.json"))?;
     // the taxonomy comes from the same bytes the index fingerprinted and `attach_roles` checks guards against
+    if !dir.join("roles.toml").is_file() {
+        return Err(format!("{}: no roles.toml beside the catalog", dir.join("roles.toml").display()));
+    }
     let taxonomy = Taxonomy::parse(index.taxonomy_text())?;
     if o.mode == "--lint" {
         return lint(&index);

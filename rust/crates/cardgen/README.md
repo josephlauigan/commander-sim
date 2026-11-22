@@ -273,7 +273,7 @@ src/json.rs, re.rs, py.rs   JSON, regex and string behaviour (ordered objects, b
 ```
 cardgen roles --rules [--data-dir DIR]
 cardgen roles --llm [--limit N] [--ids FILE] [--only-routed] [--batch 10] [--dry-run] [--endpoint URL] [--model ID] [--pending]
-cardgen roles --merge [--model ID] [--data-dir DIR]
+cardgen roles --merge [--model ID] [--no-pending] [--data-dir DIR]
 cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
 cardgen roles --show "Ashnod's Altar" [--data-dir DIR]
 cardgen roles --stats [--data-dir DIR]
@@ -416,28 +416,43 @@ scheduled job.
 
 **The prompt.** The system prompt is `Taxonomy::prompt_text()` (the shared rules once, then each role's one-line
 `definition` and role-specific `clauses`, then each cross-role convention once with the roles it concerns; no card is
-named), the fixed answer rules and one worked example of six cards (a rider on a removal spell, a cost-side counter,
-a "would draw" replacement, a permanent steal, a one-turn Fog and a body with no role; none is in a gold set). The user
-message is ten cards (`--batch`), each `[id] type line` and its numbered lines from `roles::prompt_lines` (the same
-normalised text the rules and guards read: reminder text stripped, `~` for the card name, MDFC land backs,
-planeswalker ultimates and over-long lines left out, original line numbers kept). The model is never shown the rule
-roles. Every request has `temperature` 0, `seed` 1, `cache_prompt` true and a grammar-constrained `json_schema`:
-role names are an `enum` of the 26 ids, `cards` has `minItems` = `maxItems` = the batch size, ids are two characters
-(`a0`, `a1`, ...), properties are written in the order id, roles, primary, evidence. The system prompt is about 3.2k
-tokens by the chars / 4 estimate, so a batch of ten stays far below the 32K context.
+named) and the fixed answer rules. The worked examples are a real user/assistant turn pair between the system prompt
+and the real user message (eight cards: a rider on a removal spell, a cost-side counter, a "would draw" replacement, a
+permanent steal, a one-turn Fog, a body with no role, and two cards with two roles each; none is in a gold set), so the
+whole prefix is static and `cache_prompt` can reuse it. The user message is ten cards (`--batch`), each `[id] type line`
+and its numbered lines from `roles::prompt_lines` (the same normalised text the rules and guards read: reminder text
+stripped, `~` for the card name, MDFC land backs, planeswalker ultimates and over-long lines left out, original line
+numbers kept); each later face is announced by an unnumbered header such as `(second face: Instant — Adventure)`. The
+model is never shown the rule roles. Every request has `temperature` 0, `seed` 1, `cache_prompt` true and a
+grammar-constrained `json_schema`: `cards` has `minItems` = `maxItems` = the batch size, `id` is an enum of the batch's
+ids (`a0`, `a1`, ...) and `roles` is ONE array of at most four `{"role": <enum of the 26 ids>, "line": <integer >= 0>}`
+pairs, most prominent first (the first is the primary). One array, not a map of optional keys, because llama.cpp's
+schema converter only allows optional properties in declared order, which would make some multi-role answers
+unwritable. If a server answers HTTP 400 to the schema, drop `,"minimum":0` in `response_schema_text` first. The system
+prompt is about 3.1k tokens by the chars / 4 estimate (3.4k with the example turn), so a batch of ten stays far below the
+32K context.
 
-**Validation and retries.** An answer is accepted only if its ids are exactly the batch's, every role is in the
-vocabulary (at most four, none repeated), `primary` is one of the roles (or null when there are none), every role cites a
-line that was shown, and every role passes its `roles.toml` guard regex on the cited line's text. Otherwise the same
-batch is sent once more; if that fails too, each card is sent alone (itself retried once). A card that fails alone twice
-is reported in `reports/llm-failed.txt` and gets `llm_failed` in the merged table; its rule roles stand. Three transport
-failures in a row (the server died) stop the run after saving the finished batches. `reports/llm-run.json` holds the run's
-counts (classified, failed, retries, chat requests).
+**Validation and retries.** Each card of an answer is judged alone. A card is structurally invalid if its id is missing
+or repeated, a role is outside the vocabulary or repeated, there are more than four roles, or a line is missing, out
+of range or was not shown; that card is asked once on its own (a card already asked alone is not asked again: the
+request would be identical). A role whose `roles.toml` guard fails on the cited line is not a fault: the raw answer is
+cached and `merge` drops that role as a `GuardDrop`. An unusable reply (not JSON, no `cards` array) or an HTTP error
+status (the reply body is in the error) sends every card of the batch alone once. Only a transport error (no answer: a
+refused or cut connection, a timeout of 180 s) resends the identical batch once; two unanswered requests in a row stop
+the run after saving what was answered, and so do three batches in a row without one valid answer. A card with no valid
+answer is reported in `reports/llm-failed.txt` and is `llm_failed` in the merged table; its rule roles stand. A run
+whose failed cards exceed 20% of the cards it asked about exits non-zero. Every batch is flushed to the cache at once
+(re-reading the file first and adding only this run's rows, atomically). A lock file beside the target
+(`llm_roles.lock`, `llm_roles.pending.lock`) is created exclusively for the run: a second run waits for it, then
+(after `CARDGEN_LLM_LOCK_WAIT_SECS`, default 900) names the file in its error, which is also how a stale lock from a
+crashed run is found. The cache target is probed (read, and lock created) before anything is classified.
+`reports/llm-run.json` is the last run that made requests; a warm run writes only `reports/llm-run-last.json`.
 
 **The cache.** `llm_roles.jsonl` (tracked, one JSON row per line, sorted by key) is the only input that cannot be
 regenerated. A row is `{key, name, roles, primary, evidence, model, taxonomy, prompt}`; the key is the FNV-1a-64 of the
-card's normalised text (type line and numbered lines), the prompt fingerprint and the model id. The prompt fingerprint
-(`prompt_fnv`) covers everything the model is told: the definitions, clauses, conventions, answer rules and examples.
+card's normalised text (type line, face headers and numbered lines), the prompt fingerprint and the model id (a server
+reports the path it was started with, so only the file name counts). The prompt fingerprint (`prompt_fnv`) covers
+everything the model is told: the definitions, clauses, conventions, answer rules and the example turn.
 It is never keyed on `rules_fnv`: editing the classifier, a guard, `keep_rule` or the overrides leaves every row valid,
 while a changed definition, a changed prompt or another model id makes the old rows unreachable (they stay in the file;
 writes are append-merge by key, atomic through a temp file and rename, and deterministic). A rerun with everything
@@ -451,23 +466,30 @@ cached makes no chat request (it prints the count; the one `GET /v1/models` is h
 - a card the rules decided (`needs_llm == false`) keeps its rule roles; the LLM never changes it;
 - a routed card with a valid answer ends with the certain roles, plus every LLM role whose guard passes on the line it
   cited, plus each non-certain rule role the LLM also proposed or whose role has `keep_rule = true` in `roles.toml`
-  (default false). Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
+  (JD's split: true for the 16 roles the rules own, false for the 10 judgement roles the LLM may veto). A role with
+  `llm_add = false` (default true) is off for the LLM: its proposals are dropped like a failed guard. Neither flag is
+  part of the cache key. Order: the LLM's primary if it survived, then the LLM's order, then the certain roles, then the kept
   rule roles by prominence; at most four (a certain role is never the one cut). A card with no rule roles simply takes
   its guarded LLM roles. A role found by both stages keeps the rule's evidence; an LLM-only role has source `Llm`;
-- a routed card with no valid answer (failed, or not run yet) keeps its rule roles with `llm_failed` set; `needs_llm`
-  stays true.
+- a routed Commander-legal card with no valid answer (failed, or not run yet) keeps its rule roles with `llm_failed`
+  set; `needs_llm` stays true. A routed card that is not legal is never sent and never flagged; the merge report counts
+  failed, not run and not legal apart.
 
 Every veto (a non-certain rule role the LLM did not confirm), guard drop, certain role the LLM omitted, overflow and
 (for rules-decided cards) shadow difference is written to `reports/roles-disagreements.txt` with the rule and LLM role
 sets, grouped by route reason; `reports/merge.json` has the counts. `roles --merge` is deterministic (byte-identical
 reruns) and writes `roles.json` with `meta.prompt_fnv` and `meta.model`; `find --role`, `roles --show` and
 `Index::attach_roles` work on it (LLM evidence is checked again there: a real, readable line and a passing guard). With
-several models cached for the current prompt, `--merge` needs `--model ID`.
+several models cached for the current prompt, `--merge` needs `--model ID`, and a model with no rows for the current
+prompt is an error. `--no-pending` leaves `llm_roles.pending.jsonl` out. The table's hash covers `meta.prompt_fnv` and
+`meta.model` too, and `attach_roles` refuses a table built under another prompt.
 
 **Validation.** `roles --validate --stage rules` (the default) is unchanged. `--stage merged` scores the saved merged
 table, leaving out override cards, and adds per-role and micro precision, recall and F1, the routed-subset F1 for the
 rules alone against the merged table (merged below rules fails the stage), the rules-final figures, primary accuracy and
-the LLM numbers from the last run and merge (classified, failed, retries, disagreements by route reason).
+the LLM numbers from the last run and merge (classified, failed, retries, disagreements by route reason), and the LLM
+alone: its cached answers on the routed gold cards with the guards applied, scored apart from the merge (the rules
+were tuned to the tuning gold, so "merged at least rules" cannot show the LLM's own value there).
 
 Tests (`tests/roles_llm.rs`) run against a fake local server (a `TcpListener` with canned `/v1/models` and
 `/v1/chat/completions` replies); no test touches a real model or the network.

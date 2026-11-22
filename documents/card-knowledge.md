@@ -175,7 +175,7 @@ Named limits of the rule stage (each is covered by a check or a later phase, non
 - Roles are about what a card does, not whether it is good in a deck. The sim and JD decide that.
 
 The local-LLM stage (phase 3L) is described in `rust/crates/cardgen/README.md` ("The LLM stage"): the prompt budget
-(about 3.2k tokens for the system prompt), the validation and retry ladder, the cache keyed on the card text, the
+(about 3.1k tokens for the system prompt, 3.4k with the worked-example turn), the validation and retry ladder, the cache keyed on the card text, the
 prompt fingerprint and the model id (never the rules fingerprint), the merge policy and its disagreement reports. The
 coordinator runs it (`llama up`, `roles --llm`, `roles --merge`, `roles --validate --stage merged`, `llama down`).
 

@@ -22,7 +22,7 @@ const USAGE: &str = "usage:
                        [--pending] [--data-dir DIR]
                                                 classify routed cards through the local LLM server (llama.cpp,
                                                 http://127.0.0.1:8080/v1) into llm_roles.jsonl; needs `llama up`
-  cardgen roles --merge [--model ID] [--data-dir DIR]
+  cardgen roles --merge [--model ID] [--no-pending] [--data-dir DIR]
                                                 rules + LLM cache + overrides -> roles.json, reports/ (offline)
   cardgen roles --validate [--gold PATH] [--json] [--stage rules|merged] [--data-dir DIR]
   cardgen roles --audit [--seed N] [--n 80] [--rule ID] [--certain] [--data-dir DIR]

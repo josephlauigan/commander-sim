@@ -914,6 +914,8 @@ fn llm_evidence_is_attached_only_when_it_cites_a_readable_line_that_passes_the_g
     };
     let with = |card: &str, role: &str, e: Evidence| {
         let mut m = rules.clone();
+        // a table with LLM evidence names the prompt it was merged under
+        m.meta.prompt_fnv = llm::prompt_fnv(&Taxonomy::parse(TAXONOMY).unwrap());
         let a = m.get_mut(card).unwrap();
         a.roles = vec![role.into()];
         a.primary = role.into();
@@ -1261,4 +1263,164 @@ fn validate_stage_merged_scores_the_saved_merged_map_without_override_cards() {
     let (json_text, _) = e.command(&["--validate", "--gold", gold, "--stage", "merged", "--json"]).unwrap();
     let v: Value = serde_json::from_str(&json_text).unwrap();
     assert_eq!(v["primary_total"], 1, "the overridden gold card is excluded");
+}
+
+// ------------------------------------------------------------------------------------------- round 2: review fixes
+
+#[test]
+fn a_second_run_waits_for_the_lock_and_a_stale_lock_is_named() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    // a lock left behind (a crashed run): the run gives up with the file's name once its wait is over
+    std::fs::write(e.dir().join("llm_roles.lock"), "999999\n").unwrap();
+    // SAFETY of the env var: only this test makes a run meet an existing lock
+    unsafe { std::env::set_var("CARDGEN_LLM_LOCK_WAIT_SECS", "1") };
+    let err = e.llm(&fake, &[]).unwrap_err();
+    assert!(err.contains("llm_roles.lock") && err.contains("another `roles --llm`"), "{err}");
+    assert_eq!(fake.chats(), 0, "nothing is classified without the lock");
+    // the lock file of a finished run is gone, and the pending target has its own lock
+    std::fs::remove_file(e.dir().join("llm_roles.lock")).unwrap();
+    e.llm(&fake, &["--pending"]).unwrap();
+    assert!(!e.dir().join("llm_roles.lock").exists() && !e.dir().join("llm_roles.pending.lock").exists());
+}
+
+#[test]
+fn llm_add_false_switches_the_llm_off_for_a_role_without_touching_the_cache() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    let on = e.merged();
+    let shot = |m: &roles::RoleMap| assignment_of(&e.index(), m, "Skywhaler's Shot").roles.clone();
+    assert_eq!(shot(&on), ["removal", "selection"]);
+    // `selection` off: the LLM may not add it (its answers stay cached and the prompt, hence the key, is unchanged)
+    let toml = std::fs::read_to_string(e.dir().join("roles.toml")).unwrap();
+    let off = toml.replacen(
+        "keep_rule = false\n\n[[role]]\nid = \"tutor\"",
+        "keep_rule = false\nllm_add = false\n\n[[role]]\nid = \"tutor\"",
+        1,
+    );
+    assert_ne!(toml, off);
+    std::fs::write(e.dir().join("roles.toml"), off).unwrap();
+    let out = e.llm(&fake, &[]).unwrap();
+    assert_eq!(fake.chats(), 1, "still warm: {out}");
+    assert_eq!(shot(&e.merged()), ["removal"]);
+    let report = std::fs::read_to_string(e.dir().join("reports/roles-disagreements.txt")).unwrap();
+    assert!(report.contains("GuardDrop | Skywhaler's Shot | selection"), "{report}");
+}
+
+#[test]
+fn no_pending_leaves_the_scheduled_jobs_rows_out_of_a_merge() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &["--pending"]).unwrap();
+    assert!(!e.dir().join("llm_roles.jsonl").exists());
+    let stats = |args: &[&str]| -> llm::MergeStats {
+        e.command(args).unwrap();
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap()
+    };
+    assert!(stats(&["--merge"]).with_answer > 0);
+    // with no tracked rows there is no model to merge, and nothing is answered
+    assert_eq!(stats(&["--merge", "--no-pending"]).with_answer, 0);
+    assert!(e.command(&["--rules", "--no-pending"]).is_err(), "--no-pending belongs to --merge");
+}
+
+#[test]
+fn the_model_key_is_the_file_name_a_warm_run_keeps_the_last_real_report_and_the_cache_is_probed_first() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    fake.set_model("/models/qwen/Qwen3-Coder-30B.gguf");
+    e.llm(&fake, &[]).unwrap();
+    assert!(e.rows().iter().all(|r| r.model == "Qwen3-Coder-30B.gguf"));
+    assert!(fake.bodies.lock().unwrap().iter().all(|b| b["model"] == "Qwen3-Coder-30B.gguf"));
+    // another path to the same file name is the same model: warm
+    fake.set_model("/elsewhere/Qwen3-Coder-30B.gguf");
+    let before: Value = serde_json::from_slice(&std::fs::read(e.dir().join("reports/llm-run.json")).unwrap()).unwrap();
+    e.llm(&fake, &[]).unwrap();
+    assert_eq!(fake.chats(), 1);
+    // the warm run did not overwrite the report of the last real run; it wrote its own
+    let after: Value = serde_json::from_slice(&std::fs::read(e.dir().join("reports/llm-run.json")).unwrap()).unwrap();
+    assert_eq!(before, after);
+    assert_eq!(before["classified"], 5);
+    let last: Value =
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/llm-run-last.json")).unwrap()).unwrap();
+    assert_eq!((last["classified"].clone(), last["chat_requests"].clone()), (json!(0), json!(0)));
+    // `--model` is for a dry run only, and an empty one is refused
+    assert!(e.llm(&fake, &["--model", "x"]).unwrap_err().contains("--dry-run"));
+    assert!(e.llm(&fake, &["--dry-run", "--model", ""]).is_err());
+}
+
+#[test]
+fn only_legal_cards_are_flagged_and_the_merge_reports_failed_not_run_and_not_legal_apart() {
+    let e = Env::new();
+    let path = e.dir().join("oracle.json");
+    let mut doc: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    for c in doc["cards"].as_array_mut().unwrap() {
+        if c["name"] == "Skywhaler's Shot" {
+            c["legalities"]["commander"] = json!("not_legal");
+        }
+    }
+    std::fs::write(&path, doc.to_string()).unwrap();
+    let fake = Fake::start(good());
+    let out = e.llm(&fake, &[]).unwrap();
+    assert!(out.contains("4 classified"), "the non-legal card is never sent: {out}");
+    let map = e.merged();
+    let i = e.index();
+    let shot = assignment_of(&i, &map, "Skywhaler's Shot");
+    assert!(shot.needs_llm && !shot.llm_failed, "a non-legal routed card is not llm_failed: {shot:?}");
+    let stats: llm::MergeStats =
+        serde_json::from_slice(&std::fs::read(e.dir().join("reports/merge.json")).unwrap()).unwrap();
+    assert_eq!((stats.not_legal, stats.failed), (1, 0), "{stats:?}");
+    assert_eq!(stats.routed, stats.with_answer + stats.llm_failed);
+    assert_eq!(stats.llm_failed, stats.failed + stats.not_run);
+}
+
+#[test]
+fn a_damaged_cache_row_with_an_unknown_role_is_an_error_naming_file_and_line() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    let text = std::fs::read_to_string(e.dir().join("llm_roles.jsonl")).unwrap();
+    let mut lines: Vec<String> = text.lines().map(String::from).collect();
+    let mut row: Value = serde_json::from_str(&lines[1]).unwrap();
+    row["roles"] = json!(["banana"]);
+    row["evidence"] = json!({"banana": 0});
+    lines[1] = row.to_string();
+    std::fs::write(e.dir().join("llm_roles.jsonl"), lines.join("\n") + "\n").unwrap();
+    let err = e.command(&["--merge"]).unwrap_err();
+    assert!(err.contains("llm_roles.jsonl line 2") && err.contains("banana"), "{err}");
+}
+
+#[test]
+fn a_merged_table_is_tied_to_the_prompt_and_model_it_was_built_with() {
+    let e = Env::new();
+    let fake = Fake::start(good());
+    e.llm(&fake, &[]).unwrap();
+    let map = e.merged();
+    let path = e.dir().join("roles.json");
+    // editing the prompt fingerprint or the model by hand (even re-writing the table through `bytes`) is refused
+    let mut other = map.clone();
+    other.meta.prompt_fnv = "0123456789abcdef".into();
+    std::fs::write(&path, roles::bytes(&other).unwrap()).unwrap();
+    let err = e.index().attach_roles(&roles::load(&path).unwrap()).unwrap_err();
+    assert!(err.contains("another LLM prompt"), "{err}");
+    assert!(e.command(&["--validate", "--stage", "merged"]).unwrap_err().contains("another LLM prompt"));
+    // a hand edit of the metadata line alone breaks the table hash
+    std::fs::write(&path, roles::bytes(&map).unwrap()).unwrap();
+    let text = std::fs::read_to_string(&path).unwrap().replacen(&map.meta.model, "x-model", 1);
+    std::fs::write(&path, text).unwrap();
+    assert!(roles::load(&path).unwrap_err().contains("damaged"));
+    // a rules-only table cannot claim LLM evidence
+    let mut claim = e.merged();
+    claim.meta.prompt_fnv.clear();
+    assert!(e.index().attach_roles(&claim).is_err());
+}
+
+#[test]
+fn the_taxonomy_for_llm_and_merge_comes_from_the_bytes_the_index_checks_guards_against() {
+    let e = Env::new();
+    let i = e.index();
+    assert_eq!(i.taxonomy_text(), TAXONOMY);
+    // an unreadable roles.toml beside the catalog is an error for the LLM commands, not a silent fallback
+    std::fs::write(e.dir().join("roles.toml"), "version = 1\n").unwrap();
+    assert!(e.command(&["--merge"]).is_err());
 }

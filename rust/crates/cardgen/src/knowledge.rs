@@ -503,6 +503,16 @@ impl Index {
         }
         let mut rows = Vec::with_capacity(self.cards.len());
         let mut taxonomy: Option<crate::roles::Taxonomy> = None;
+        // A merged table was built under one LLM prompt; another prompt (or a table that claims LLM evidence without
+        // naming one) means its LLM roles are not the ones this build would accept.
+        let claims_llm = map.values().any(|a| a.evidence.values().any(|e| e.source == Source::Llm));
+        if !map.meta.prompt_fnv.is_empty() || claims_llm {
+            let tax = crate::roles::Taxonomy::parse(&self.taxonomy_src)?;
+            if map.meta.prompt_fnv != crate::llm::prompt_fnv(&tax) {
+                return Err("roles.json: built under another LLM prompt; run `cardgen roles --merge`".into());
+            }
+            taxonomy = Some(tax);
+        }
         for c in &self.cards {
             if !crate::roles::is_deck_card(c) {
                 if map.contains_key(&c.raw.oracle_id) {

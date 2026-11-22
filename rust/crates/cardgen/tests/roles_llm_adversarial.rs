@@ -2277,7 +2277,9 @@ fn check_merged(
             cache.get(&llm::cache_key(&llm::card_text(c), &prompt, model))
         };
         let Some(row) = answer else {
-            assert!(a.llm_failed && a.roles == rule.roles && a.evidence == rule.evidence, "{ctx}");
+            // only Commander-legal cards are ever sent, so only they are flagged as waiting for an answer
+            assert!(a.llm_failed == (c.legal == Legal::Legal), "{ctx}");
+            assert!(a.roles == rule.roles && a.evidence == rule.evidence, "{ctx}");
             continue;
         };
         assert!(!a.llm_failed, "{ctx}");
@@ -3339,11 +3341,14 @@ fn real_catalog_pipeline_with_2000_cards_of_pseudo_random_valid_answers_keeps_ev
         .iter()
         .filter(|c| roles::is_deck_card(c) && !ovr.contains_key(&c.raw.oracle_id) && rules[&c.raw.oracle_id].needs_llm)
         .filter(|c| !roles::prompt_lines(c).is_empty())
+        // only Commander-legal cards are ever sent, so only they can be flagged as waiting
+        .filter(|c| c.legal == Legal::Legal)
         .count();
     let answered = index
         .cards
         .iter()
         .filter(|c| roles::is_deck_card(c) && !ovr.contains_key(&c.raw.oracle_id) && rules[&c.raw.oracle_id].needs_llm)
+        .filter(|c| c.legal == Legal::Legal)
         .filter(|c| rows.contains_key(&llm::cache_key(&llm::card_text(c), &llm::prompt_fnv(&tax), "fake-model-1")))
         .count();
     assert_eq!(failed, routed_all - answered, "llm_failed is exactly the routed cards without an answer");
@@ -3512,8 +3517,9 @@ fn real_catalog_validation_accepts_a_citation_exactly_when_the_line_is_shown_and
             for role in roles::IDS {
                 let guard = tax.guard(role).unwrap().is_match(&text).unwrap_or(false);
                 let answer = json!({"cards": [entry("a0", &[role], &[(role, i)])]});
-                let ok = llm::validate_output(&answer.to_string(), &batch, &tax).is_ok();
-                assert_eq!(ok, is_shown && guard, "{} line {i} {role}: shown {is_shown} guard {guard}", card.raw.name);
+                // a shown line is citable whatever the guard says (a guard miss is dropped later by the merge)
+                let ok = llm::validate_output(&answer.to_string(), &batch, &tax).unwrap()[0].is_ok();
+                assert_eq!(ok, is_shown, "{} line {i} {role}: shown {is_shown} guard {guard}", card.raw.name);
                 accepted += usize::from(ok);
                 refused_skipped += usize::from(!is_shown && guard && !ok);
             }
