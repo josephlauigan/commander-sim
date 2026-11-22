@@ -16,6 +16,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 const TAXONOMY: &str = include_str!("../../../../data/knowledge/roles.toml");
 const FIXTURE: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/roles_oracle.json");
+const LONG141: &str = "Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental";
 const LONG_NAME: &str = "Test Card With An Extraordinarily Long Name, Eater Of Many Worlds And Keeper Of Small Secrets";
 
 fn card(name: &str, type_line: &str, text: &str, ident: &[&str], legal: &str, rank: Option<u32>) -> Value {
@@ -50,6 +51,26 @@ fn records() -> Vec<Value> {
         card("Test Unranked Removal", "Instant", "Destroy target creature.", &[], "legal", None),
         card("Test Pipe", "Instant", "Draw a card. Choose one | Gain 2 life.", &["R"], "legal", Some(99_000)),
         card("Test Vanilla", "Creature — Goblin", "", &["R"], "legal", Some(98_000)),
+        {
+            let mut c = card(
+                "Test Keywords",
+                "Creature — Goblin",
+                "Flying, trample\nWhenever this creature attacks, put a charge counter on it.",
+                &["R"],
+                "legal",
+                Some(96_000),
+            );
+            c["keywords"] = json!(["Flying", "Trample"]);
+            c
+        },
+        {
+            let mut c =
+                card("Test Only Keywords", "Creature — Goblin", "Flying, trample", &["R"], "legal", Some(94_000));
+            c["keywords"] = json!(["Flying", "Trample"]);
+            c
+        },
+        card("Test Two Roles", "Sorcery", "Draw two cards.\nDestroy target creature.", &["R"], "legal", Some(95_000)),
+        card(LONG141, "Creature — Elemental", "Trample", &["G"], "not_legal", Some(1)),
         card(
             LONG_NAME,
             "Legendary Creature — Elf Druid Warrior Wizard Shaman Cleric Knight Rogue Soldier Human Dragon",
@@ -71,7 +92,7 @@ fn decks() -> Value {
         {"key": "thanos", "name": "Thanos", "commander": "Thanos, the Mad Titan", "ident": "WUBRG", "tiers": ["t5"],
          "cards": ["Counterspell", "Demonic Tutor", "Cyclonic Rift", "Smothering Tithe"]},
         {"key": "duo", "name": "Duo", "commander": "Lathliss, Dragon Queen", "commander2": "Dragonlord Dromoka",
-         "ident": "WUBRG", "tiers": ["t1"], "cards": ["Lightning Bolt", "Test Banned Draw"]},
+         "ident": "WUBRG", "tiers": ["t1"], "cards": ["Lightning Bolt", "Test Banned Draw", "Test Not Legal Draw", LONG141]},
     ], "pool": []})
 }
 
@@ -263,7 +284,7 @@ fn every_line_has_six_fields_at_most_160_characters_and_no_stray_bar() {
             assert!(["r:rules", "r:llm", "r:uncertain", "r:none"].contains(&status), "{l}");
             for (i, f) in rest.iter().enumerate() {
                 let ok = *f == "*" && i == 0
-                    || *f == "GC"
+                    || ["BAN", "NL", "GC"].contains(f)
                     || f.strip_prefix('#').is_some_and(|n| n.parse::<u32>().is_ok())
                     || f.strip_prefix('$').is_some_and(|n| n.parse::<u32>().is_ok());
                 assert!(ok, "bad flag {f} in {l}");
@@ -310,26 +331,45 @@ fn type_abbreviations() {
     assert_eq!(abbrev("Time Warp"), "S");
     assert_eq!(abbrev("Liliana of the Veil"), "LgP");
     // a card of several faces has the types of every face
-    assert_eq!(abbrev("Agadeem's Awakening // Agadeem, the Undercrypt"), "LS");
+    assert_eq!(abbrev("Agadeem's Awakening // Agadeem, the Undercrypt"), "S/L");
+    assert_eq!(abbrev("Hired Muscle // Scarmaker"), "C/LgC");
 }
 
 #[test]
-fn cut_is_a_word_boundary_prefix_and_never_longer_than_asked() {
+fn cut_is_a_whole_token_prefix_never_longer_than_asked() {
     let s = "Whenever another nontoken Dragon you control enters, create a 5/5 red Dragon creature token with flying.";
-    for max in 2..s.len() + 3 {
+    for max in 0..s.len() + 3 {
         let c = digest::cut(s, max);
         assert!(c.chars().count() <= max.max(1), "{max}: {c}");
+        if c.is_empty() {
+            // nothing fits: the caller writes `-`
+            assert!(max < s.chars().take_while(|c| *c != ' ').count() + 2, "{max}");
+            continue;
+        }
         let body = c.strip_suffix('…').unwrap_or(&c);
         assert!(s.starts_with(body), "{max}: {c}");
         if c.ends_with('…') {
-            // cut at a word boundary: the next character of the source is a space, or the cut is at a space
-            let rest = &s[body.len()..];
-            assert!(rest.starts_with(' ') || rest.is_empty() || !body.contains(' '), "{max}: {c}");
+            // cut at a word boundary: the next character of the source is a space
+            assert!(s[body.len()..].starts_with(' '), "{max}: {c}");
         } else {
             assert_eq!(c, s);
         }
     }
     assert_eq!(digest::cut("short", 110), "short");
+    // no complete word fits: nothing, not half a word
+    assert_eq!(digest::cut("Vigilance", 5), "");
+    // never inside a mana symbol or an open quote
+    assert_eq!(digest::cut("{W}{U}{B}{R}{G}: Draw a card.", 6), "");
+    assert_eq!(digest::cut("{T}, {1}{W}: Draw a card and gain life.", 11), "{T},…");
+    let q = "Creatures you control have \"Whenever this creature attacks, draw a card, then discard a card.\" Then shuffle.";
+    for max in 10..q.len() {
+        let c = digest::cut(q, max);
+        assert_eq!(c.matches('"').count() % 2, 0, "{max}: {c}");
+        assert!(c.chars().count() <= max);
+    }
+    assert_eq!(digest::cut(q, 60), "Creatures you control have…");
+    // a name is cut at a word without the quote rule
+    assert_eq!(digest::cut_to("\"Name Sticker\" Goblin Shaman", 22, false), "\"Name Sticker\" Goblin…");
 }
 
 #[test]
@@ -517,6 +557,9 @@ fn only_legal_deck_cards_of_the_identity_never_a_sticker_an_attraction_or_a_meld
         let d = env.digest(key);
         for l in card_lines(&d.text) {
             let name = field(&l, 0);
+            if name.ends_with('…') {
+                continue; // a name cut to fit its line
+            }
             let found = env.index.lookup(&name);
             let c = &env.index.cards[found[0] as usize];
             // only the deck's own list (section A) may name a card that is not Commander-legal
@@ -526,7 +569,9 @@ fn only_legal_deck_cards_of_the_identity_never_a_sticker_an_attraction_or_a_meld
             assert_eq!(c.ident & !limit, 0, "{name} is outside the identity of {key}");
         }
         for banned in ["Test Attraction", "Test Sticker", "Test Not Legal Draw", "Test Meld Result"] {
-            assert!(!d.text.contains(&format!("\n{banned}|")), "{banned} is in the {key} digest");
+            // the duo deck lists the not-legal card itself (section A)
+            let own = key == "duo" && banned == "Test Not Legal Draw";
+            assert!(own || !d.text.contains(&format!("\n{banned}|")), "{banned} is in the {key} digest");
         }
     }
     // an off-identity card of the fixture really is absent from the red digest
@@ -542,7 +587,14 @@ fn a_deck_card_that_is_not_commander_legal_is_still_section_a_and_the_header_say
     let a = section(&d.text, 'A');
     let banned: Vec<&String> = a.iter().filter(|l| l.starts_with("Test Banned Draw|")).collect();
     assert_eq!(banned.len(), 1, "{a:?}");
-    assert!(d.text.contains("# deck cards the catalog does not list as Commander-legal (1): Test Banned Draw"));
+    assert!(d.text.contains("# deck cards the catalog does not list as Commander-legal (3): "), "{}", &d.text[..900]);
+    for l in &a {
+        let flags = field(l, 5);
+        let name = field(l, 0);
+        assert_eq!(flags.split(' ').any(|f| f == "BAN"), name == "Test Banned Draw", "{l}");
+        let nl = name == "Test Not Legal Draw" || name.starts_with("Our Market Research");
+        assert_eq!(flags.split(' ').any(|f| f == "NL"), nl, "{l}");
+    }
     // nowhere else, and a legal deck has no such line
     assert_eq!(card_lines(&d.text).iter().filter(|l| l.starts_with("Test Banned Draw|")).count(), 1);
     assert!(!env.digest("dragons").text.contains("does not list as Commander-legal"));
@@ -858,7 +910,7 @@ fn the_map_has_every_section_fits_32_kb_and_is_deterministic() {
     let legal = env.index.cards.iter().filter(|c| c.legal == Legal::Legal).count();
     let all = env.index.cards.len();
     assert!(
-        text.contains(&format!("{all} cards: {legal} Commander-legal, 1 banned, 1 not legal;")),
+        text.contains(&format!("{all} cards: {legal} Commander-legal, 1 banned, 2 not legal;")),
         "{}",
         &text[..300]
     );
@@ -1110,4 +1162,147 @@ fn the_deck_cards_map_counts_roles_through_the_shared_search() {
             assert!(allowed.contains(&n), "{n} in {s} is not a search hit");
         }
     }
+}
+
+// ------------------------------------------------------------------------------------------------ round 2: group 1
+
+#[test]
+fn a_non_legal_card_is_never_reviewed_by_the_llm_and_has_a_ban_or_nl_flag_on_its_own_line() {
+    let a = |needs_llm: bool, failed: bool| Assignment {
+        roles: vec!["ramp".into()],
+        primary: "ramp".into(),
+        needs_llm,
+        llm_failed: failed,
+        ..Assignment::default()
+    };
+    // llm::merge clears llm_failed on a card that is not Commander-legal: the table says answered, the card was not asked
+    assert_eq!(digest::review_card(&a(true, false), true, true), Review::Llm);
+    assert_eq!(digest::review_card(&a(true, false), true, false), Review::Uncertain);
+    assert_eq!(digest::review_card(&a(false, false), true, false), Review::Rules);
+    let mut env = Env::new();
+    env.merged();
+    let lines = digest::Lines::new(&env.index, &env.table);
+    let i = env.index.lookup("Test Banned Draw")[0];
+    let l = lines.line(i, true);
+    assert!(field(&l, 5).split(' ').any(|f| f == "BAN"), "{l}");
+    assert_eq!(field(&l, 5).split(' ').next(), Some("*"), "{l}");
+    let nl = lines.line(env.index.lookup("Test Not Legal Draw")[0], false);
+    assert!(field(&nl, 5).split(' ').any(|f| f == "NL"), "{nl}");
+    // a legal card has neither
+    assert!(!field(&lines.line(env.index.lookup("Lightning Bolt")[0], false), 5).contains("BAN"));
+}
+
+#[test]
+fn the_gist_fallback_skips_keyword_only_lines_and_a_role_page_cites_that_roles_line() {
+    let env = Env::new();
+    let id = env.index.lookup("Test Keywords")[0];
+    let c = &env.index.cards[id as usize];
+    // no cited line: the first line that says something, not `Flying, trample`
+    let g = digest::gist_source(c, &Assignment::default(), None);
+    assert_eq!(g, "Whenever this creature attacks, put a charge counter on it.");
+    let two = env.index.lookup("Test Two Roles")[0];
+    let a = env.index.roles(two).unwrap().clone();
+    assert!(a.roles.contains(&"draw".to_string()) && a.roles.contains(&"removal".to_string()), "{a:?}");
+    let lines = digest::Lines::new(&env.index, &env.table);
+    let gist_of = |role: Option<&str>| field(&lines.line_for(two, false, role), 4);
+    assert_eq!(gist_of(Some("draw")), "Draw two cards.");
+    assert_eq!(gist_of(Some("removal")), "Destroy target creature.");
+    // the plain line cites the primary role's line
+    assert_eq!(gist_of(None), gist_of(Some(a.primary.as_str())));
+}
+
+#[test]
+fn a_keyword_only_card_keeps_its_keyword_line_when_it_has_nothing_else() {
+    let env = Env::new();
+    let only = env.index.lookup("Test Only Keywords")[0];
+    assert_eq!(digest::gist_source(&env.index.cards[only as usize], &Assignment::default(), None), "Flying, trample");
+    let vanilla = env.index.lookup("Test Vanilla")[0];
+    assert_eq!(digest::gist_source(&env.index.cards[vanilla as usize], &Assignment::default(), None), "");
+}
+
+#[test]
+fn a_name_too_long_for_its_line_is_cut_at_a_word_with_an_ellipsis_and_the_line_stays_within_160() {
+    let env = Env::new();
+    let i = env.index.lookup(LONG141)[0];
+    let lines = digest::Lines::new(&env.index, &env.table);
+    let l = lines.line(i, true);
+    assert_eq!(l.split('|').count(), 6, "{l}");
+    assert!(l.chars().count() <= 160, "{} chars: {l}", l.chars().count());
+    let name = field(&l, 0);
+    assert!(name.ends_with('…') && LONG141.starts_with(name.trim_end_matches('…')), "{name}");
+    assert!(LONG141[name.trim_end_matches('…').len()..].starts_with(' '), "cut at a word: {name}");
+    assert!(field(&l, 4) == "-" || !field(&l, 4).is_empty());
+    // the same line inside the digest
+    let d = env.digest("duo");
+    assert!(card_lines(&d.text).iter().all(|l| l.chars().count() <= 160));
+}
+
+#[test]
+fn concurrent_writers_all_succeed_the_file_is_one_payload_and_no_temp_file_is_left() {
+    let env = Env::new();
+    let target = env.root.join("out/same.txt");
+    let results: Vec<Result<(), String>> = std::thread::scope(|s| {
+        let hs: Vec<_> = (0..12)
+            .map(|i| {
+                let t = &target;
+                s.spawn(move || digest::write_file(t, &format!("writer-{i}\n").repeat(20_000)))
+            })
+            .collect();
+        hs.into_iter().map(|h| h.join().unwrap()).collect()
+    });
+    assert!(results.iter().all(Result::is_ok), "{results:?}");
+    let text = std::fs::read_to_string(&target).unwrap();
+    assert!((0..12).any(|i| text == format!("writer-{i}\n").repeat(20_000)));
+    let left: Vec<_> = std::fs::read_dir(env.root.join("out")).unwrap().map(|e| e.unwrap().file_name()).collect();
+    assert_eq!(left.len(), 1, "{left:?}");
+    // a failed rename (the target is a directory) leaves nothing behind
+    let dir = env.root.join("out/dir");
+    std::fs::create_dir(&dir).unwrap();
+    assert!(digest::write_file(&dir, "x").is_err());
+    let names: BTreeSet<_> = std::fs::read_dir(env.root.join("out"))
+        .unwrap()
+        .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    assert_eq!(names, ["dir", "same.txt"].map(String::from).into_iter().collect::<BTreeSet<_>>());
+}
+
+#[test]
+fn a_previous_sync_with_another_schema_or_a_record_without_an_id_is_unreadable() {
+    let env = Env::new();
+    let dir = env.dir();
+    let load = |json: &str| {
+        std::fs::write(dir.join("oracle.prev.json"), json).unwrap();
+        Prev::load(&dir)
+    };
+    assert!(
+        matches!(load(r#"{"meta":{"schema":999},"cards":[{"oracle_id":"a"}]}"#), Prev::Unreadable(m) if m.contains("schema"))
+    );
+    assert!(matches!(load(r#"{"cards":[{"name":"x"}]}"#), Prev::Unreadable(m) if m.contains("no oracle_id")));
+    assert!(matches!(load(r#"{"cards":[{"oracle_id":""}]}"#), Prev::Unreadable(_)));
+    assert!(matches!(load(r#"{"meta":{"schema":1},"cards":[{"oracle_id":"a"}]}"#), Prev::Ids(ids) if ids.len() == 1));
+    // a genuinely empty previous sync is valid (and distinct from a corrupt one)
+    assert!(matches!(load(r#"{"cards":[]}"#), Prev::Ids(ids) if ids.is_empty()));
+    assert!(matches!(load("{}"), Prev::Unreadable(_)));
+}
+
+#[test]
+fn a_role_page_budget_that_cannot_hold_the_header_and_one_card_is_an_error() {
+    let env = Env::new();
+    let deck = env.deck("thanos");
+    for budget in [1, 50] {
+        let e = digest::build(
+            &env.index,
+            &env.table,
+            &Spec { role: Some("removal"), budget_tokens: Some(budget), ..env.spec(Some(&deck), &Prev::Missing) },
+        );
+        assert!(usage(e.unwrap_err()).contains("cannot hold the page header and its first card"));
+    }
+    // a budget that holds the header and one card gives exactly a fitting page
+    let ok = digest::build(
+        &env.index,
+        &env.table,
+        &Spec { role: Some("removal"), budget_tokens: Some(900), ..env.spec(Some(&deck), &Prev::Missing) },
+    )
+    .unwrap();
+    assert!(digest::tokens(&ok.text) <= 900 && !ok.over_budget && ok.lines >= 1);
 }

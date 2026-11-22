@@ -306,7 +306,7 @@ const HOW_TO_USE: [&str; 5] = [
      `r:none`. Roles say what a card does, not whether it is good in a deck: the sim decides (see AGENTS.md).",
 ];
 
-pub const USAGE: &str = "usage: cardgen map [--out PATH] [--stdout] [--data-dir DIR]";
+pub const USAGE: &str = "usage: cardgen map [--out PATH] [--stdout] [--data-dir DIR]\n  (the map is always written to its file; --stdout also prints it)";
 
 /// What the command did.
 #[derive(Debug)]

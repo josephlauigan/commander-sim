@@ -11,13 +11,11 @@
 //! and pages through them. Output is deterministic: no timestamps, a fixed order.
 
 use crate::data::Project;
-use crate::knowledge::{
-    self, Card, Deck, FindError, Index, Legal, Query, Sort, T_ARTIFACT, T_BATTLE, T_CREATURE, T_ENCHANTMENT, T_INSTANT,
-    T_LAND, T_LEGENDARY, T_PLANESWALKER, T_SORCERY,
-};
+use crate::knowledge::{self, Card, Deck, FindError, Index, Legal, Query, Sort};
 use crate::roles::{self, Assignment};
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU64, Ordering};
 
 /// the default size of a digest, in estimated tokens
 pub const DEFAULT_BUDGET_TOKENS: usize = 50_000;
@@ -110,36 +108,67 @@ pub fn open(project: &Project, data_dir: Option<&Path>) -> Result<(Index, Table)
 /// The review status of one assignment. A routed card of a merged table has an answer unless the merge marked it
 /// `llm_failed`; a routed card of a rules-only table has none.
 pub fn review(a: &Assignment, merged: bool) -> Review {
+    review_card(a, merged, true)
+}
+
+/// [`review`] for a card of known legality: the merge only asks Commander-legal cards (it clears `llm_failed` on the
+/// others), so a routed card that is not legal never has an answer, whatever the table says.
+pub fn review_card(a: &Assignment, merged: bool, legal: bool) -> Review {
     if !a.needs_llm {
         if a.roles.is_empty() { Review::None } else { Review::Rules }
-    } else if merged && !a.llm_failed {
+    } else if merged && legal && !a.llm_failed {
         Review::Llm
     } else {
         Review::Uncertain
     }
 }
 
-const ABBREV: [(u16, char); 8] = [
-    (T_ARTIFACT, 'A'),
-    (T_ENCHANTMENT, 'E'),
-    (T_LAND, 'L'),
-    (T_CREATURE, 'C'),
-    (T_PLANESWALKER, 'P'),
-    (T_BATTLE, 'B'),
-    (T_INSTANT, 'I'),
-    (T_SORCERY, 'S'),
-];
-
-/// The type abbreviation: `Lg` for a legendary card, then a letter per card type of any face in the order
-/// A E L C P B I S (`AC` is an artifact creature, `LgC` a legendary creature), `O` when it has none of them.
-pub fn type_abbrev(c: &Card) -> String {
+/// the abbreviation of one face's type line: `Lg` when legendary, then a letter per card type in the order
+/// A E L C P B I S, `O` when it has none of them
+fn face_abbrev(type_line: &str) -> String {
+    let head = type_line.split('—').next().unwrap_or("").to_lowercase();
+    let has = |w: &str| head.split_whitespace().any(|x| x == w);
     let mut s = String::new();
-    if c.types & T_LEGENDARY != 0 {
+    if has("legendary") {
         s.push_str("Lg");
     }
-    let letters: String = ABBREV.iter().filter(|(bit, _)| c.types & bit != 0).map(|(_, l)| *l).collect();
+    let letters: String = [
+        ("artifact", 'A'),
+        ("enchantment", 'E'),
+        ("land", 'L'),
+        ("creature", 'C'),
+        ("planeswalker", 'P'),
+        ("battle", 'B'),
+        ("instant", 'I'),
+        ("sorcery", 'S'),
+    ]
+    .iter()
+    .filter(|(w, _)| has(w))
+    .map(|(_, l)| *l)
+    .collect();
     s.push_str(if letters.is_empty() { "O" } else { &letters });
     s
+}
+
+/// The type abbreviation: per face, `Lg` for a legendary face, then a letter per card type in the order
+/// A E L C P B I S (`AC` is an artifact creature, `LgC` a legendary creature), `O` when it has none of them. The faces
+/// of a multi-face card are joined with `/` (`C/L` is an MDFC with a land back, `LgC/LgA` Birgi); when every face
+/// has the same abbreviation it is written once (`I` for Fire // Ice).
+pub fn type_abbrev(c: &Card) -> String {
+    let mut faces: Vec<&str> = c.raw.type_line.split(" // ").collect();
+    if faces.len() == 1 {
+        let from_faces: Vec<&str> =
+            c.raw.card_faces.iter().flatten().map(|f| f.type_line.as_str()).filter(|t| !t.is_empty()).collect();
+        if from_faces.len() > 1 {
+            faces = from_faces;
+        }
+    }
+    let mut parts: Vec<String> = faces.iter().map(|f| face_abbrev(f)).collect();
+    parts.dedup();
+    if parts.iter().all(|p| *p == parts[0]) {
+        parts.truncate(1);
+    }
+    parts.join("/")
 }
 
 /// a field of a line: `|` becomes `/`, white space other than a space becomes a space
@@ -153,34 +182,77 @@ fn clean(s: &str) -> String {
         .collect()
 }
 
-/// The Oracle line a gist is cut from, before cleaning and cutting: the line cited as evidence for the primary role
-/// (the normalised text the rules and guards read); for a card with no cited line (no roles, or a hand override) its
-/// first Oracle line with text after reminder text is removed. Empty when the card has no such line.
-pub fn gist_source(c: &Card, a: &Assignment) -> String {
-    if let Some(line) = a.evidence.get(&a.primary).and_then(|e| e.line) {
+/// whether every comma-separated part of the line starts with one of the card's keywords (`Flying, trample`, `Equip
+/// {1}`): such a line says little about what the card does
+fn keyword_only(c: &Card, line: &str) -> bool {
+    let kws: Vec<String> = c.raw.keywords.iter().map(|k| k.to_lowercase()).collect();
+    !kws.is_empty()
+        && line.split(',').all(|part| {
+            let part = part.trim().to_lowercase();
+            kws.iter().any(|k| part.starts_with(k.as_str()))
+        })
+}
+
+/// The Oracle line a gist is cut from, before cleaning and cutting: the line cited as evidence for `role` (for the
+/// primary role when `role` is `None` or cites no line of its own table entry; the normalised text the rules and
+/// guards read). For a card with no cited line (no roles, or a hand override) its first Oracle line with text after
+/// reminder text is removed, skipping a line that only lists keywords unless there is nothing else. Empty when the
+/// card has no such line.
+pub fn gist_source(c: &Card, a: &Assignment, role: Option<&str>) -> String {
+    let ev = match role {
+        Some(r) if a.evidence.contains_key(r) => a.evidence.get(r),
+        _ => a.evidence.get(&a.primary),
+    };
+    if let Some(line) = ev.and_then(|e| e.line) {
         let t = roles::line_text(c, line);
         if !t.is_empty() {
             return t;
         }
     }
-    if let Some((_, t)) = roles::prompt_lines(c).into_iter().next() {
+    let prompt = roles::prompt_lines(c);
+    if let Some((_, t)) = prompt.iter().find(|(_, t)| !keyword_only(c, t)) {
+        return t.clone();
+    }
+    if let Some((_, t)) = prompt.into_iter().next() {
         return t;
     }
     c.lines().iter().map(|(_, l)| roles::normalize(c, l)).find(|t| !t.is_empty()).unwrap_or_default()
 }
 
 /// `s` cut at a word boundary to at most `max` characters; a cut text ends in `…` (counted). The result is always a
-/// prefix of `s` (plus the `…`).
-pub fn cut(s: &str, max: usize) -> String {
+/// prefix of `s` (plus the `…`). With `whole_tokens` the cut is also never inside a `{…}` symbol or a quoted
+/// ability: the last space at which the braces are closed and the quotes balanced is used, so a gist never ends in
+/// an open quote. When no such boundary fits the result is empty (the caller writes `-`).
+pub fn cut_to(s: &str, max: usize, whole_tokens: bool) -> String {
     if s.chars().count() <= max {
         return s.to_string();
     }
-    if max < 2 {
-        return String::new();
+    let (mut depth, mut quotes, mut n) = (0usize, 0usize, 0usize);
+    let mut best: Option<usize> = None;
+    for (i, ch) in s.char_indices() {
+        if n + 1 > max {
+            break;
+        }
+        if ch == ' ' && i > 0 && (!whole_tokens || (depth == 0 && quotes % 2 == 0)) {
+            let prefix = s[..i].trim_end();
+            if !prefix.is_empty() {
+                best = Some(prefix.len());
+            }
+        }
+        match ch {
+            '{' => depth += 1,
+            '}' => depth = depth.saturating_sub(1),
+            '"' => quotes += 1,
+            _ => {}
+        }
+        n += 1;
     }
-    let end = s.char_indices().nth(max - 1).map_or(s.len(), |(i, _)| i);
-    let at = if s[end..].starts_with(' ') { end } else { s[..end].rfind(' ').filter(|&i| i > 0).unwrap_or(end) };
-    format!("{}…", s[..at].trim_end())
+    best.map(|b| format!("{}…", &s[..b])).unwrap_or_default()
+}
+
+/// [`cut_to`] for a gist: whole tokens only.
+pub fn cut(s: &str, max: usize) -> String {
+    cut_to(s, max, true)
 }
 
 /// Builds digest lines for one catalog.
@@ -195,20 +267,30 @@ impl<'a> Lines<'a> {
     }
 
     pub fn review(&self, i: u32) -> Review {
-        self.index.roles(i).map_or(Review::None, |a| review(a, self.merged))
+        let legal = self.index.cards[i as usize].legal == Legal::Legal;
+        self.index.roles(i).map_or(Review::None, |a| review_card(a, self.merged, legal))
     }
 
     /// The digest line of card `i`; `in_deck` adds the `*` flag.
     pub fn line(&self, i: u32, in_deck: bool) -> String {
+        self.line_for(i, in_deck, None)
+    }
+
+    /// [`Lines::line`] for a page of one role: the gist cites that role's own evidence line.
+    pub fn line_for(&self, i: u32, in_deck: bool, role: Option<&str>) -> String {
         let c = &self.index.cards[i as usize];
         let default = Assignment::default();
         let a = self.index.roles(i).unwrap_or(&default);
-        let name = clean(&c.raw.name);
         let cost = Some(clean(&c.cost())).filter(|s| !s.is_empty()).unwrap_or_else(|| "-".into());
         let roles = if a.roles.is_empty() { "-".to_string() } else { a.roles.join(",") };
         let mut flags: Vec<String> = vec![];
         if in_deck {
             flags.push("*".into());
+        }
+        match c.legal {
+            Legal::Legal => {}
+            Legal::Banned => flags.push("BAN".into()),
+            _ => flags.push("NL".into()),
         }
         if c.raw.game_changer {
             flags.push("GC".into());
@@ -221,11 +303,23 @@ impl<'a> Lines<'a> {
         }
         flags.push(self.review(i).flag().into());
         let flags = flags.join(" ");
-        let src = clean(&gist_source(c, a));
+        let src = clean(&gist_source(c, a, role));
         let src_len = src.chars().count();
         let subs = c.subtypes();
         let abbrev = type_abbrev(c);
         let len = |s: &str| s.chars().count();
+        // the name gives way only when the fields that cannot shrink leave no room for it and a one-character gist
+        let rest = len(&cost) + len(&abbrev) + len(&roles) + len(&flags) + 5 + 1;
+        let name_room = MAX_LINE_CHARS.saturating_sub(rest).max(2);
+        let mut name = clean(&c.raw.name);
+        if len(&name) > name_room {
+            let cut_name = cut_to(&name, name_room, false);
+            name = if cut_name.is_empty() {
+                format!("{}…", name.chars().take(name_room - 1).collect::<String>())
+            } else {
+                cut_name
+            };
+        }
         // the subtypes give way first when the other fields leave too little room for the gist
         let mut keep = subs.len();
         let (types, room) = loop {
@@ -238,7 +332,8 @@ impl<'a> Lines<'a> {
             }
             keep -= 1;
         };
-        let gist = if src.is_empty() || room == 0 { "-".to_string() } else { cut(&src, room.min(GIST_CHARS)) };
+        let cut_gist = if src.is_empty() { String::new() } else { cut(&src, room.min(GIST_CHARS)) };
+        let gist = if cut_gist.is_empty() { "-".to_string() } else { cut_gist };
         format!("{name}|{cost}|{types}|{roles}|{gist}|{flags}")
     }
 }
@@ -256,28 +351,46 @@ pub enum Prev {
 }
 
 impl Prev {
-    /// Reads `oracle.prev.json` of a knowledge directory.
+    /// Reads `oracle.prev.json` of a knowledge directory. A file that does not parse, has another `meta.schema` than
+    /// this build reads, or has a record without an `oracle_id` is [`Prev::Unreadable`]: taking its missing ids for
+    /// "nothing" would mark every card new. A valid file with no cards is a valid, empty previous sync.
     pub fn load(dir: &Path) -> Prev {
         #[derive(serde::Deserialize)]
+        struct Meta {
+            schema: Option<i64>,
+        }
+        #[derive(serde::Deserialize)]
         struct Id {
-            #[serde(default)]
-            oracle_id: String,
+            oracle_id: Option<String>,
         }
         #[derive(serde::Deserialize)]
         struct File {
+            meta: Option<Meta>,
             cards: Vec<Id>,
         }
         let path = dir.join("oracle.prev.json");
         if !path.is_file() {
             return Prev::Missing;
         }
-        let read = std::fs::File::open(&path)
+        let bad = |e: String| Prev::Unreadable(format!("{}: {e}", path.display()));
+        let file = match std::fs::File::open(&path)
             .map_err(|e| e.to_string())
-            .and_then(|f| serde_json::from_reader::<_, File>(std::io::BufReader::new(f)).map_err(|e| e.to_string()));
-        match read {
-            Ok(f) => Prev::Ids(f.cards.into_iter().map(|c| c.oracle_id).collect()),
-            Err(e) => Prev::Unreadable(format!("{}: {e}", path.display())),
+            .and_then(|f| serde_json::from_reader::<_, File>(std::io::BufReader::new(f)).map_err(|e| e.to_string()))
+        {
+            Ok(f) => f,
+            Err(e) => return bad(e),
+        };
+        if let Some(schema) = file.meta.and_then(|m| m.schema).filter(|s| *s != knowledge::SCHEMA) {
+            return bad(format!("meta.schema is {schema}, this cardgen reads schema {}", knowledge::SCHEMA));
         }
+        let mut ids = HashSet::with_capacity(file.cards.len());
+        for (n, c) in file.cards.into_iter().enumerate() {
+            match c.oracle_id.filter(|id| !id.is_empty()) {
+                Some(id) => ids.insert(id),
+                None => return bad(format!("record {} has no oracle_id", n + 1)),
+            };
+        }
+        Prev::Ids(ids)
     }
 }
 
@@ -317,7 +430,6 @@ pub struct Digest {
     pub next_offset: Option<usize>,
     /// section B's caps (role, top role) after trimming, when they were cut to meet the budget
     pub b_caps: Option<(usize, usize)>,
-    pub e_cap: Option<usize>,
     pub over_budget: bool,
 }
 
@@ -451,7 +563,7 @@ fn legend() -> Vec<String> {
         "# line: Name|{cost}|Type—Subtypes|roles, primary first|gist|flags (- = none)".into(),
         concat!(
             "# types: Lg legendary; A artifact, E enchantment, L land, C creature, P planeswalker, B battle, ",
-            "I instant, S sorcery, O other"
+            "I instant, S sorcery, O other; faces of a multi-face card are joined with / (C/L: creature, land back)"
         )
         .into(),
         concat!(
@@ -460,8 +572,9 @@ fn legend() -> Vec<String> {
         )
         .into(),
         concat!(
-            "# flags: * in the deck's list; GC Game Changer; #N EDHREC rank; $N price in USD; r: how the roles were ",
-            "decided: rules (the rules alone), llm (an LLM answer is merged), uncertain (not reviewed yet: roles may ",
+            "# flags: * in the deck's list; BAN banned / NL not legal in Commander; GC Game Changer; #N EDHREC rank; ",
+            "$N price in USD; r: how the roles were ",
+            "decided: rules (the rules alone, or a hand override), llm (an LLM answer is merged), uncertain (not reviewed yet: roles may ",
             "be incomplete or wrong), none (no roles)"
         )
         .into(),
@@ -523,54 +636,89 @@ pub fn build(index: &Index, table: &Table, spec: &Spec) -> Result<Digest, FindEr
     }
 }
 
+/// A page of one list of cards (`--role R`): `title` is the text after `## B role R: ` of the block header, built from
+/// the range and the tail; `role` selects the evidence line of the gists.
+fn page(
+    l: &Lines,
+    spec: &Spec,
+    all: &[u32],
+    head: Vec<String>,
+    id: char,
+    role: Option<&str>,
+    title: &dyn Fn(&str, &str) -> String,
+) -> Result<Digest, FindError> {
+    let cap = spec.budget_tokens.unwrap_or(ROLE_PAGE_TOKENS);
+    let limit = spec.limit.unwrap_or(usize::MAX);
+    let mut used: usize = head.iter().map(|h| tokens(h) + 1).sum::<usize>() + 60;
+    let mut shown: Vec<String> = vec![];
+    for &i in all.iter().skip(spec.offset) {
+        if shown.len() >= limit {
+            break;
+        }
+        let line = l.line_for(i, false, role);
+        used += tokens(&line) + 1;
+        if used > cap && !shown.is_empty() {
+            break;
+        }
+        shown.push(line);
+    }
+    let render = |shown: &[String]| -> (String, Option<usize>) {
+        let end = spec.offset + shown.len();
+        let next = (end < all.len()).then_some(end);
+        let range = if shown.is_empty() {
+            format!("no cards at offset {} (there are {})", spec.offset, num(all.len()))
+        } else {
+            format!("cards {}-{} of {}", spec.offset + 1, end, num(all.len()))
+        };
+        let tail = match next {
+            Some(n) => format!("; next page: --offset {n}"),
+            None => "; last page".into(),
+        };
+        let mut text = head.join("\n");
+        text.push('\n');
+        text.push_str(&title(&range, &tail));
+        text.push('\n');
+        for s in shown {
+            text.push_str(s);
+            text.push('\n');
+        }
+        (text, next)
+    };
+    let (mut text, mut next) = render(&shown);
+    // the estimate above is rough: drop lines until the real text fits, but never below one card
+    while tokens(&text) > cap && shown.len() > 1 {
+        shown.pop();
+        (text, next) = render(&shown);
+    }
+    if tokens(&text) > cap && !shown.is_empty() {
+        return usage(format!(
+            "--budget-tokens {cap} cannot hold the page header and its first card (about {} tokens needed)",
+            tokens(&text)
+        ));
+    }
+    Ok(Digest {
+        text,
+        lines: shown.len(),
+        sections: vec![Section { id, role: role.map(String::from), lines: shown.len() }],
+        total: Some(all.len()),
+        next_offset: next,
+        b_caps: None,
+        over_budget: false,
+    })
+}
+
 /// `--role R`: the cards whose primary role is R, best first, a page of them
 fn role_page(l: &Lines, spec: &Spec, hits: &[u32], role: &str, mut head: Vec<String>) -> Result<Digest, FindError> {
     let index = l.index;
     let all: Vec<u32> = hits.iter().copied().filter(|&i| index.roles(i).is_some_and(|a| a.primary == role)).collect();
-    let cap = spec.budget_tokens.unwrap_or(ROLE_PAGE_TOKENS);
-    let limit = spec.limit.unwrap_or(usize::MAX);
     head.push(format!(
         "# page: role {role}{}; {} cards have it as their primary role",
         if spec.deck.is_some() { ", the deck's own cards left out" } else { "" },
         num(all.len())
     ));
-    let mut used: usize = head.iter().map(|h| tokens(h) + 1).sum::<usize>() + 80;
-    let mut shown: Vec<String> = vec![];
-    for &i in all.iter().skip(spec.offset) {
-        let line = l.line(i, false);
-        used += tokens(&line) + 1;
-        if shown.len() >= limit || (used > cap && !shown.is_empty()) {
-            break;
-        }
-        shown.push(line);
-    }
-    let end = spec.offset + shown.len();
-    let next = (end < all.len()).then_some(end);
-    let range = if shown.is_empty() {
-        format!("no cards at offset {} (the role has {})", spec.offset, num(all.len()))
-    } else {
-        format!("cards {}-{} of {}", spec.offset + 1, end, num(all.len()))
-    };
-    let tail = match next {
-        Some(n) => format!("; next page: --offset {n}"),
-        None => "; last page".into(),
-    };
-    let mut text = head.join("\n");
-    text.push_str(&format!("\n## B role {role}: {range}, best EDHREC rank first, unranked last{tail}\n"));
-    for s in &shown {
-        text.push_str(s);
-        text.push('\n');
-    }
-    Ok(Digest {
-        text,
-        lines: shown.len(),
-        sections: vec![Section { id: 'B', role: Some(role.to_string()), lines: shown.len() }],
-        total: Some(all.len()),
-        next_offset: next,
-        b_caps: None,
-        e_cap: None,
-        over_budget: false,
-    })
+    let title =
+        |range: &str, tail: &str| format!("## B role {role}: {range}, best EDHREC rank first, unranked last{tail}");
+    page(l, spec, &all, head, 'B', Some(role), &title)
 }
 
 /// the default digest: sections A to E within the budget
@@ -808,7 +956,6 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
         total: None,
         next_offset: None,
         b_caps: (sb < 1000).then_some((CAP_ROLE * sb / 1000, CAP_TOP_ROLE * sb / 1000)),
-        e_cap: (se < 1000).then_some(CAP_UNRANKED * se / 1000),
         over_budget: over,
     })
 }
@@ -817,7 +964,8 @@ fn full(l: &Lines, spec: &Spec, hits: &[u32], mut head: Vec<String>) -> Result<D
 
 pub const USAGE: &str =
     "usage: cardgen digest (--deck KEY | --ident LETTERS) [--role R [--limit N] [--offset N]] [--out PATH]
-                      [--budget-tokens N] [--stdout] [--data-dir DIR]";
+                      [--budget-tokens N] [--stdout] [--data-dir DIR]
+  (the digest is always written to its file; --stdout also prints it, and the one-line summary goes to stderr)";
 
 /// What the command did.
 #[derive(Debug)]
@@ -856,16 +1004,30 @@ pub fn out_dir(project: &Project, data_dir: Option<&Path>) -> PathBuf {
     }
 }
 
-/// Writes a generated file: its directory is created, the text goes to `<path>.tmp` and is renamed over `path`.
+/// Writes a generated file: its directory is created, the text goes to a temporary file of its own in the same
+/// directory (`.NAME.PID.N.tmp`, created with `create_new`, so no two writers share one) and is renamed over `path`.
+/// The temporary file is removed on every error path.
 pub fn write_file(path: &Path, text: &str) -> Result<(), String> {
-    if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
-        std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+    use std::io::Write;
+    static COUNTER: AtomicU64 = AtomicU64::new(0);
+    let parent = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
+    std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
+    let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "out".into());
+    let tmp = parent.join(format!(".{name}.{}.{}.tmp", std::process::id(), COUNTER.fetch_add(1, Ordering::SeqCst)));
+    let written = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&tmp)
+        .and_then(|mut f| f.write_all(text.as_bytes()).and_then(|_| f.flush()))
+        .map_err(|e| format!("{}: {e}", tmp.display()));
+    if let Err(e) = written {
+        let _ = std::fs::remove_file(&tmp);
+        return Err(e);
     }
-    let mut tmp = path.as_os_str().to_owned();
-    tmp.push(".tmp");
-    let tmp = PathBuf::from(tmp);
-    std::fs::write(&tmp, text).map_err(|e| format!("{}: {e}", tmp.display()))?;
-    std::fs::rename(&tmp, path).map_err(|e| format!("{}: {e}", path.display()))
+    std::fs::rename(&tmp, path).map_err(|e| {
+        let _ = std::fs::remove_file(&tmp);
+        format!("{}: {e}", path.display())
+    })
 }
 
 /// Parsed `digest` arguments.

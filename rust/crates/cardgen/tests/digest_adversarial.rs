@@ -149,7 +149,7 @@ fn line_checks(line: &str) {
     assert!(["r:rules", "r:llm", "r:uncertain", "r:none"].contains(&flags.pop().unwrap()), "{line}");
     assert!(
         flags.iter().all(|s| *s == "*"
-            || *s == "GC"
+            || ["GC", "BAN", "NL"].contains(s)
             || s.strip_prefix('#').is_some_and(|n| n.parse::<u32>().is_ok())
             || s.strip_prefix('$').is_some_and(|n| n.parse::<u64>().is_ok())),
         "{line}"
@@ -876,32 +876,45 @@ fn real_type_abbreviations_match_every_card_and_face_type_head() {
     let raw: Value =
         serde_json::from_slice(&std::fs::read(root().join("data/knowledge/oracle.json")).unwrap()).unwrap();
     for c in raw["cards"].as_array().unwrap() {
-        let mut heads = BTreeSet::new();
-        for line in std::iter::once(c["type_line"].as_str().unwrap())
-            .chain(c["card_faces"].as_array().into_iter().flatten().filter_map(|f| f["type_line"].as_str()))
-        {
-            for face in line.split(" // ") {
-                heads.extend(face.split('—').next().unwrap().split_whitespace().map(str::to_lowercase));
+        // one abbreviation per face (the faces of the type line, else the card_faces), written once when all agree
+        let mut faces: Vec<&str> = c["type_line"].as_str().unwrap().split(" // ").collect();
+        if faces.len() == 1 {
+            let from: Vec<&str> =
+                c["card_faces"].as_array().into_iter().flatten().filter_map(|f| f["type_line"].as_str()).collect();
+            if from.len() > 1 {
+                faces = from;
             }
         }
-        let mut expected = if heads.contains("legendary") { "Lg" } else { "" }.to_string();
-        let types: String = [
-            ("Artifact", 'A'),
-            ("Enchantment", 'E'),
-            ("Land", 'L'),
-            ("Creature", 'C'),
-            ("Planeswalker", 'P'),
-            ("Battle", 'B'),
-            ("Instant", 'I'),
-            ("Sorcery", 'S'),
-        ]
-        .iter()
-        .filter(|(t, _)| heads.contains(&t.to_lowercase()))
-        .map(|(_, a)| a)
-        .collect();
-        expected.push_str(if types.is_empty() { "O" } else { &types });
+        let mut parts: Vec<String> = faces
+            .iter()
+            .map(|face| {
+                let heads: BTreeSet<String> =
+                    face.split('—').next().unwrap().split_whitespace().map(str::to_lowercase).collect();
+                let mut expected = if heads.contains("legendary") { "Lg" } else { "" }.to_string();
+                let types: String = [
+                    ("Artifact", 'A'),
+                    ("Enchantment", 'E'),
+                    ("Land", 'L'),
+                    ("Creature", 'C'),
+                    ("Planeswalker", 'P'),
+                    ("Battle", 'B'),
+                    ("Instant", 'I'),
+                    ("Sorcery", 'S'),
+                ]
+                .iter()
+                .filter(|(t, _)| heads.contains(&t.to_lowercase()))
+                .map(|(_, a)| a)
+                .collect();
+                expected.push_str(if types.is_empty() { "O" } else { &types });
+                expected
+            })
+            .collect();
+        parts.dedup();
+        if parts.iter().all(|p| *p == parts[0]) {
+            parts.truncate(1);
+        }
         let i = idx.by_oracle_id(c["oracle_id"].as_str().unwrap()).unwrap();
-        assert_eq!(digest::type_abbrev(&idx.cards[i as usize]), expected, "{}", c["name"]);
+        assert_eq!(digest::type_abbrev(&idx.cards[i as usize]), parts.join("/"), "{}", c["name"]);
     }
 }
 
