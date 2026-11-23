@@ -71595,6 +71595,73 @@
    "spell_prio": false
   },
   {
+   "name": "Kyodai, Soul of Kamigawa",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "leg": true,
+    "pow": "3",
+    "fly": true,
+    "flash": true
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "WUBRG"
+     },
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 5,
+       "tgh": 5,
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flash",
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "spirit"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, another target permanent gains indestructible for as long as you control ~."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Laboratory Maniac",
    "types": "C",
    "generic": 2,
@@ -73051,6 +73118,45 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Leyline of the Guildpact",
+   "types": "E",
+   "generic": 0,
+   "pips": "GGBR",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If this card is in your opening hand, you may begin the game with it on the battlefield.",
+    "Each nonland permanent you control is all colors.",
+    "Lands you control are every basic land type in addition to their other types."
+   ],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": false,
     "instant": false,

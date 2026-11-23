@@ -69,12 +69,9 @@ fn snapshot(g: &Game, p: PlayerId) -> (Vec<String>, usize, i32, u32) {
 
 #[test]
 fn the_hint_plays_the_ais_land_first_and_says_why() {
-    // Thanos with an Urborg out: Yavimaya Coast (green and blue, untapped) against Path of Ancestry (four new colours, tapped)
-    let (mut g, p) = game_with(
-        "thanos",
-        &["Urborg, Tomb of Yawgmoth"],
-        &["Yavimaya Coast", "Path of Ancestry", "Counterspell", "Swords to Plowshares"],
-    );
+    // The Ur-Dragon with a Forest out: Tundra (white and blue, untapped) against Path of Ancestry (four new colours, tapped)
+    let (mut g, p) =
+        game_with("urdragon", &["Forest"], &["Tundra", "Path of Ancestry", "Sol Ring", "Swords to Plowshares"]);
     let before = snapshot(&g, p);
     let h = hint(&mut g, p);
     assert_eq!(snapshot(&g, p), before, "asking changes nothing: {h}");
@@ -90,7 +87,7 @@ fn the_hint_plays_the_ais_land_first_and_says_why() {
     assert!(why.contains("points"), "{why}");
     assert!(why.contains("your lands don't make yet") || why.contains("no new colour"), "{why}");
     assert!(why.contains("untapped") || why.contains("tapped"), "{why}");
-    let other = if top == "Path of Ancestry" { "Yavimaya Coast" } else { "Path of Ancestry" };
+    let other = if top == "Path of Ancestry" { "Tundra" } else { "Path of Ancestry" };
     let others = d.iter().find(|l| l.starts_with("Your other lands, by points:")).unwrap_or_else(|| panic!("{h}"));
     assert!(others.contains(other), "{others}");
     // after the land, the spell part: what to cast with the land in play, or pass (Path of Ancestry enters tapped)
@@ -112,8 +109,7 @@ fn a_new_colour_beats_a_basic_of_a_colour_you_have() {
 
 #[test]
 fn no_land_once_the_land_drop_is_used() {
-    let (mut g, p) =
-        game_with("thanos", &["Urborg, Tomb of Yawgmoth"], &["Yavimaya Coast", "Counterspell", "Swords to Plowshares"]);
+    let (mut g, p) = game_with("urdragon", &["Forest"], &["Tundra", "Sol Ring", "Swords to Plowshares"]);
     g.player_mut(p).lands_played = 1;
     let h = hint(&mut g, p);
     assert!(!h["text"].as_str().unwrap().starts_with("Play "), "{h}");

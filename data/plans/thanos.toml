@@ -1,30 +1,31 @@
-# JD's Thanos, the Mad Titan Cali Commander artifact-combo deck (decklists/cali_commander/thanos-artifact-combo.md, key
+# JD's Kyodai, Soul of Kamigawa Cali Commander artifact-combo deck (decklists/cali_commander/thanos-artifact-combo.md, key
 # `thanos`; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `thanos` is not a Tier
 # 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
-# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Thanos first,
+# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Kyodai first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
-# into Walking Ballista. Thanos's power-up is card code (impls/t6_thanos.rs), not this plan.
+# into Walking Ballista. Kyodai (Partial: its enter trigger is unparsed) and Leyline of the Guildpact (Unmodeled) have no card code,
+# so the plan cannot use them. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
 # Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
-# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The schema can't express the choice of odd or even for
-# the power-up.
+# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander values below are
+# placeholders for a {3}{W} flash flier, not tuned.
 deck = "thanos"
 default = "plan"
 engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 
-# Thanos plans to be down on turn 2-3 and then play value, not a goldfish combo: pool defaults for temperature, a little
+# The deck plans to have its commander down on turn 2-4 and then play value, not a goldfish combo: pool defaults for temperature, a little
 # above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
 [style]
 temp = 1.0
 aggression = 0.6
 caution = 0.5
 
-# The cheapest threat and the enabler of Deflecting Swat and Jeska's Will: cast on turn 2 when {R}{W}{B} is there (the
-# colourless rocks can't pay for him), before the engines.
+# The enabler of Deflecting Swat, Jeska's Will and Akroma's Will: a {3}{W} flash flier, castable on turn 2 off a fast rock
+# (the colourless rocks pay the generic part) and on turn 4 off lands, before the engines.
 [commander]
-prio = 88
-turn = 2
+prio = 80
+turn = 3
 
 [key_cards]
 "Walking Ballista" = 70
@@ -38,7 +39,7 @@ kind = "combo"
 pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Staff of Domination", "Urza, Lord High Artificer"]]
 
 # What the tutors fetch (the guide's "What to tutor for"): the combo's missing piece first, an engine on turns 2-3 when
-# nothing is going, the wipe or the Rings when the board can't be beaten.
+# nothing is going, Meteor Golem or the Rings when the board can't be beaten.
 [[wish]]
 cards = ["Basalt Monolith", "Rings of Brighthearth"]
 when = ["lands+rocks>=3"]
@@ -59,7 +60,7 @@ cards = ["Meteor Golem"]
 when = ["opp-power>=15"]
 score = 76
 
-# Acceleration and fixing are the first plays; Thanos and the engines next; the big top end last.
+# Acceleration and fixing are the first plays; Kyodai and the engines next; the big top end last.
 [[prio]]
 cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Mind Stone", "Birds of Paradise",
     "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Hierarchy", "Talisman of Progress",
@@ -101,7 +102,7 @@ value = 56
 else = 40
 
 [[prio]]
-cards = ["Hangarback Walker", "Primeval Titan", "Windborn Muse"]
+cards = ["Hangarback Walker", "Primeval Titan"]
 value = 68
 
 # The top end: after the board is built

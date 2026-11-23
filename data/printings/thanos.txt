@@ -1,17 +1,12 @@
-1 Adarkar Wastes (dmu) 377
 1 Akroma's Will (soa) 66
 1 An Offer You Can't Refuse (fdn) 311
 1 Ancient Tomb (tmp) 315
 1 Arcane Signet (cmr) 297
 1 Avacyn's Pilgrim (isd) 170
 1 Basalt Monolith (3ed) 235
-1 Battlefield Forge (blc) 293
 1 Birds of Paradise (dmr) 439
 1 Blightsteel Colossus (sld) 2223
-1 Blood Crypt (ecl) 349
 1 Brain Freeze (soa) 78
-1 Brushland (fic) 377
-1 Caves of Koilos (dmu) 378
 1 Chaos Warp (pw24) 7
 1 Chrome Mox (2xm) 240
 1 Coalition Relic (fut) 161
@@ -29,7 +24,6 @@
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
 1 Esper Sentinel (mh2) 328
-1 Exotic Orchard (brc) 185
 1 Exsanguinate (cmm) 638
 1 Faeburrow Elder (plst) ELD-190
 1 Fellwar Stone (sld) 2557
@@ -41,7 +35,6 @@
 1 Grim Tutor (m21) 315
 1 Hallowed Fountain (sld) 123
 1 Hangarback Walker (plg20) 2
-1 Haunted Ridge (fra) 398
 1 Heroic Intervention (sld) 1750
 1 Jeska's Will (soa) 109
 1 Lightning Greaves (sld) 1662
@@ -55,46 +48,31 @@
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
-1 Overgrown Tomb (grn) 253
 1 Paradise Druid (pwar) 171
-1 Path of Ancestry (cmm) 661
-1 Plaza of Heroes (msc) 255
 1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
 1 Rhystic Study (pcy) 45
 1 Rings of Brighthearth (ltc) 352
 1 Sculpting Steel (sld) 864
-1 Shivan Reef (dmu) 380
 1 Silence (sld) 7003
 1 Sneak Attack (sld) 2178
 1 Sol Ring (sld) 2093
-1 Spirebluff Canal (otj) 270
 1 Steam Vents (rvr) 298
-1 Stormcarved Coast (dbl) 532
 1 Strip Mine (4ed) 363
-1 Sulfur Falls (isd) 248
-1 Sunpetal Grove (fic) 432
 1 Swords to Plowshares (ice) 54
 1 Tainted Pact (ody) 164
 1 Talisman of Hierarchy (h1r) 36
 1 Talisman of Progress (msc) 221
 1 Teferi's Protection (sta) 74
-1 Temple Garden (grn) 258
 1 Tezzeret, Cruel Captain (eoe) 287
-1 Thanos, the Mad Titan (msh) 400
 1 Thassa's Oracle (thb) 73
 1 The Mightstone and Weakstone (bro) 238
 1 The One Ring (ltr) 451
 1 Tinker (plst) ULG-45
-1 Underground River (wc98) bs362
 1 Underworld Breach (pza) 10
-1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Urza, Lord High Artificer (fca) 5
 1 Urza's Saga (plst) MH2-259
 1 Vampiric Tutor (soa) 100
 1 Walking Ballista (sld) 58
 1 Watery Grave (pgrn) 259p
-1 Windborn Muse (dmr) 415
-1 Woodland Cemetery (soc) 424
 1 Worldly Tutor (dmr) 442
-1 Yavimaya Coast (c21) 409

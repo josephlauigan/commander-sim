@@ -17,8 +17,8 @@ tiers = ["t3", "t4"]
 
 [thanos]
 file = "cali_commander/thanos-artifact-combo.md"
-name = "Thanos"
-commander = "Thanos, the Mad Titan"
+name = "Kyodai"
+commander = "Kyodai, Soul of Kamigawa"
 ident = "WUBRG"
 tiers = ["t5"]
 

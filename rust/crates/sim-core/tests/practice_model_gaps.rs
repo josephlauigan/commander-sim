@@ -105,7 +105,7 @@ fn loran_is_listed_and_asks_which_opponent_draws() {
     let (mine, p1, p2) = (g.player(P0).hand.len(), g.player(P1).hand.len(), g.player(P2).hand.len());
     let h = run(&mut g, Use::Perm(l), "{T}:", |r| {
         if r.prompt.contains("Loran: which opponent draws a card?") {
-            r.choices.iter().position(|c| c.contains("Thanos"))
+            r.choices.iter().position(|c| c.contains("Kyodai"))
         } else {
             None
         }

@@ -258,7 +258,9 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test.
 /// (2026-11-05: Doomsday and Ponder, listed by the rewire, were fixed by the doomsday branch.)
-const TO_FIX: &[&str] = &[];
+/// (2026-11-22: Kyodai, Soul of Kamigawa, the `thanos` deck's commander, is Partial: its enter trigger is not coded, so the AI
+/// picks the permanent that gains indestructible. Fixing it means modelling the card; see audit/thanos/FINDINGS.md.)
+const TO_FIX: &[&str] = &["thanos: Kyodai, Soul of Kamigawa"];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[

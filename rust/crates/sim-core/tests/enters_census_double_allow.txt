@@ -58,6 +58,7 @@ Kaalia, Zenith Seeker | [exhausted] The successive revealed library slices conta
 Kazuul, Tyrant of the Cliffs | [deferred] Tok=1 entry proxy invents an ETB for an opponent-attacking ability. Correcting the underlying card model is outside the source/event-copy scope.
 Kindred Discovery | [fixture] Raw observer installation bypasses the as-enters creature-type choice; the hook has no chosen type to match against the standard entrants.
 Kor Outfitter | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
+Kyodai, Soul of Kamigawa | [deferred] Kyodai, Soul of Kamigawa is Partial: its enter trigger (another target permanent gains indestructible while he stays) is not parsed or coded, so it cannot be blanked or doubled. JD took a docs-and-data change for the commander swap (2026-11-22, audit/thanos/FINDINGS.md). Ticket: model Kyodai.
 Lathliss, Dragon Queen | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
 Light-Paws, Emperor's Voice | [fixture] The standard observer entrants contain neither an Aura nor an Equipment; the cast-Aura or Equipment-enter guard is not exercised.
 Linvala, the Preserver | [fixture] Every seat starts at 50 life, and no opponent has more creatures after Linvala enters; neither intervening-if condition fires.
