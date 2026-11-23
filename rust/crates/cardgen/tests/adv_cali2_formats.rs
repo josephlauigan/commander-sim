@@ -140,8 +140,18 @@ fn a_missing_formats_toml_is_a_named_error_everywhere() {
         eprintln!("{args:?}: {}", err.lines().next().unwrap_or(""));
     }
     // commands that do not need the format table keep working without it
+    // (an empty catalog dir keeps this independent of a card catalog in the main checkout: with a catalog `map` reaches the
+    // engine facts, which do need formats.toml and fail by name; coordinator's setup-only edit, assertions unchanged)
+    let empty = p.root.join("empty-knowledge");
+    std::fs::create_dir_all(&empty).unwrap();
     for args in [vec!["map", "--stdout"], vec!["digest", "--help"]] {
-        let o = Command::new(exe).arg("--root").arg(&p.root).args(&args).output().unwrap();
+        let o = Command::new(exe)
+            .env("CARDGEN_KNOWLEDGE_DIR", &empty)
+            .arg("--root")
+            .arg(&p.root)
+            .args(&args)
+            .output()
+            .unwrap();
         assert!(!String::from_utf8_lossy(&o.stderr).contains("formats.toml"), "{args:?}");
     }
 }
