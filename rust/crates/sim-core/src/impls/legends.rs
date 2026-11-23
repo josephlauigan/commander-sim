@@ -1343,7 +1343,7 @@ fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
         .player(p)
         .lands
         .iter()
-        .filter(|&&l| g.db.get(g.perm(l).card()).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
+        .filter(|&&l| crate::engine::chars::land_types(g, l).has('B')) // layer 4: Urborg, Leyline, Blood Moon
         .count() as i32;
     (n, n)
 }

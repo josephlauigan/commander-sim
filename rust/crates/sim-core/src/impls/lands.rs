@@ -877,8 +877,7 @@ fn mortuary(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
 }
 
 fn is_island(g: &Game, l: PermId) -> bool {
-    let d = g.db.get(g.perm(l).card());
-    &*d.name == "Island" || d.has_subtype("island")
+    crate::engine::chars::land_types(g, l).has('U') // layer 4: Leyline of the Guildpact
 }
 
 /// enters untapped with three other Islands, then puts the best instant or sorcery from the graveyard on top

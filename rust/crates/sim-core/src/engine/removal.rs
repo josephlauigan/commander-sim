@@ -61,7 +61,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 }
                 _ => is_c,
             };
-            if tgt == "blue" && !cd.is_some_and(|d| d.pips.contains('U')) {
+            if tgt == "blue" && !colors_of(g, m).has('U') {
                 continue;
             }
             if stag(Tag::Nonblack) && colors_of(g, m).has('B') {
