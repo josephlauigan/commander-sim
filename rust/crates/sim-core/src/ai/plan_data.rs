@@ -65,6 +65,10 @@ pub struct Knobs {
     /// --- plan-files-3: the deck taps out on its own turn: Ad Nauseam may also be cast in its own second main phase
     /// (with room for four cards; `plans::adnaus_cast_now`)
     pub adnaus_main2: Option<bool>,
+    /// --- stage4: the deck casts Silence / Orim's Chant from hand before a line goes, as a Tier 6 player does
+    /// (`t6_table::protect_before_go`, called from `combos::attempt`); off by default. Only this one step of the Tier 6
+    /// table is opened: the `[[go_now]]` / `[[hold_up]]` slots and the table's answers stay Tier 6 only.
+    pub protect_before_go: Option<bool>,
 }
 
 /// --- plan-files-3: where the deck's Equipment goes (`dsl::equip_options`): the holder's score among the equip
@@ -1592,6 +1596,11 @@ pub fn commander_chumps_to_live(g: &Game, p: PlayerId) -> bool {
 /// Ad Nauseam in the deck's own second main phase too (`knobs.adnaus_main2`)
 pub fn adnaus_main2(g: &Game, p: PlayerId) -> bool {
     active(g, p).is_some_and(|l| l.plan.knobs.adnaus_main2 == Some(true))
+}
+
+/// the deck casts its protection spell before a line goes (`knobs.protect_before_go`)
+pub fn protect_before_go(g: &Game, p: PlayerId) -> bool {
+    active(g, p).is_some_and(|l| l.plan.knobs.protect_before_go == Some(true))
 }
 
 /// the attack `atk` at defender d without the commanders a stay-home rule keeps home

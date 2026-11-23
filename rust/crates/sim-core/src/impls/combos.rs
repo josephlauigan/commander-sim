@@ -535,7 +535,9 @@ pub fn ready_to_go(g: &Game, p: PlayerId, i: usize) -> bool {
 
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
-    if !crate::impls::t6_plans::is_t6(g, p) {
+    let t6 = crate::impls::t6_plans::is_t6(g, p);
+    // --- stage4: a plan deck may opt in to the protection step alone (`knobs.protect_before_go`)
+    if !t6 && !crate::ai::plan_data::protect_before_go(g, p) {
         return attempt_run(g, p, i);
     }
     // Tier 6: protection first (Silence / Orim's Chant), then every spell and ability of the line is a win step the
@@ -546,6 +548,9 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if ok && playable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
         let need = mana_need(g, p, cmb, &casts);
         crate::ai::t6_table::protect_before_go(g, p, need)?;
+    }
+    if !t6 {
+        return attempt_run(g, p, i);
     }
     g.t6_going = Some(p);
     let r = attempt_run(g, p, i);

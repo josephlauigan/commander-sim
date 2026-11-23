@@ -33,6 +33,11 @@ equipment = ["Buster Sword", "Mithril Coat", "Sting, the Glinting Dagger", "Swif
 prio = 92
 turn = 1
 
+# Silence / Orim's Chant before a line goes, as a Tier 6 deck does (`t6_table::protect_before_go`); opt-in knob, measured
+# on this deck only (Stage 4). The Tier 6 table's other slots stay closed to this deck.
+[knobs]
+protect_before_go = true
+
 # win lines, best first: the tutors want the first missing piece
 [[line]]
 name = "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"

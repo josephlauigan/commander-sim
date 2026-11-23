@@ -182,4 +182,6 @@ and those files are read only with their hand AI off, so the default play of eve
   priority), when that is above 0 (`pool::generic_prio`). Y'shtola's cast trigger on the MV 3+ noncreature spells.
 - **Knobs**: `commander_chumps_to_live = true` (the commander chump-blocks only when the attack would otherwise kill,
   `combat.rs`); `adnaus_main2 = true` (Ad Nauseam also in the deck's own second main phase with room for four cards,
-  `plans::adnaus_cast_now`).
+  `plans::adnaus_cast_now`); `protect_before_go = true` (Stage 4: the deck casts Silence / Orim's Chant before a line goes,
+  as a Tier 6 deck does: `t6_table::protect_before_go`, gated in `combos::attempt`; off by default, and the Tier 6
+  `[[go_now]]` / `[[hold_up]]` slots stay Tier 6 only).
