@@ -167,7 +167,9 @@ pub fn spark_hold_shape(g: &Game, p: PlayerId) -> bool {
         let worldly = u32::from(tutor("Worldly Tutor"));
         let other_missing = u32::from(in_hand(g, p, TWINFLAME).is_none())
             + u32::from(bf(g, p, SEASON).is_none() && in_hand(g, p, SEASON).is_none());
-        if !in_lib(g, p, GARTH) || other_missing + 1 > any + worldly {
+        // The plan's wish rows send a tutor to Garth only once Doubling Season is out (`out:`, data/plans/urdragon.toml;
+        // the Terror and Goldspan row comes before the line), so with Season only in hand the tutor fetches a Dragon.
+        if !in_lib(g, p, GARTH) || bf(g, p, SEASON).is_none() || other_missing + 1 > any + worldly {
             return false; // Garth is dead (graveyard, exile, phased out, elsewhere) or no castable tutor is left for it
         }
     }
@@ -182,8 +184,9 @@ pub fn spark_hold_shape(g: &Game, p: PlayerId) -> bool {
 /// Can p pay for card `c` on its next turn? Its price now (`cost_of`, taxes included), the count of mana
 /// (`next_turn_mana`: lands, mana permanents, one land drop) and the colours: the mana units now (untapped lands and
 /// mana permanents, `mana_units`) plus every tapped land (it untaps) as `land_card_unit` reads it, plus at most one
-/// land from the hand, must pay it (`units_pay_with_rituals`, so rituals in hand count as they do for the combos). A
-/// mana permanent that is tapped or summoning sick is left out, so the answer can only err towards "not payable".
+/// land from the hand, must pay it (`units_pay_with_rituals`, so rituals in hand count as they do for the combos). The
+/// mana permanents `mana_units` leaves out now (tapped, or a summoning-sick dork) come from `next_turn_perm_units`;
+/// the few with special rules are left out, so the answer can only err towards "not payable".
 fn payable_next_turn(g: &Game, p: PlayerId, c: CardId) -> bool {
     use crate::engine::mana::{cost_of, land_card_unit, mana_units, next_turn_mana, units_pay_with_rituals};
     let (gn, pips) = cost_of(g, p, c);
@@ -197,6 +200,7 @@ fn payable_next_turn(g: &Game, p: PlayerId, c: CardId) -> bool {
             u.push(land_card_unit(g, p, g.perm(l).card()));
         }
     }
+    u.extend(crate::engine::mana::next_turn_perm_units(g, p));
     let skip = [c];
     if units_pay_with_rituals(g, p, &u, gn, &pips, &skip) {
         return true;

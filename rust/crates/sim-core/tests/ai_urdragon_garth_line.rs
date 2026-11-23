@@ -1884,15 +1884,15 @@ fn hold_b_a_tutor_in_hand_holds_for_the_piece_in_the_library() {
 #[test]
 fn hold_b_garth_in_the_library_needs_a_tutor_of_its_own() {
     // Worldly Tutor fetches Garth; Season and Twinflame are in hand
-    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Hand, &["Worldly Tutor"]);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &["Worldly Tutor"]);
     held_spark(&mut g);
-    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Hand, &[]);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &[]);
     offered_spark(&mut g);
     // one Vampiric Tutor cannot fetch both Garth and Twinflame
-    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Library, &["Vampiric Tutor"]);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Library, &["Vampiric Tutor"]);
     offered_spark(&mut g);
     // with a second tutor it can (the line's piece and Garth)
-    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Library, &["Vampiric Tutor", "Worldly Tutor"]);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Library, &["Vampiric Tutor", "Worldly Tutor"]);
     held_spark(&mut g);
     // Season, Twinflame and Garth all in the library: the line is not near (Spark Double's own test), no hold
     let mut g = hold_row("urdragon", Z::Library, Z::Library, Z::Library, &["Vampiric Tutor", "Demonic Tutor"]);
@@ -2012,4 +2012,79 @@ fn hold_property_the_hold_and_the_copy_agree_over_500_seeded_states() {
         }
     }
     assert!(held > 20 && copied > 20, "the random states exercise both sides: held {held}, copied {copied}");
+}
+
+#[test]
+fn hold_s2_garth_in_the_library_is_held_only_with_doubling_season_on_the_battlefield() {
+    // the plan's wish rows send a tutor to Garth only once Doubling Season is out: with Season in hand it fetches a Dragon
+    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Hand, &["Worldly Tutor"]);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &["Worldly Tutor"]);
+    assert!(spark_hold(&g, P0));
+    held_spark(&mut g);
+    // Garth in hand: Season in hand is enough
+    let g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    assert!(spark_hold(&g, P0));
+}
+
+#[test]
+fn hold_r2_tapped_lands_still_pay_for_garth_next_turn() {
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    for l in g.player(P0).lands.clone() {
+        g.perm_mut(l).tapped = true;
+    }
+    assert!(spark_hold(&g, P0), "every land tapped: they untap, Garth is payable next turn");
+}
+
+/// seven lands of four colours (no green) and a mana permanent that supplies {G}: `extra` names it
+fn no_green_row(source: &str, tapped: bool, sick: bool) -> Game {
+    let mut g = table(&["urdragon", "seph"]);
+    for q in &mut g.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    for n in [SPARK, GARTH, SEASON, TWIN] {
+        put(&mut g, P0, n, Z::Hand);
+    }
+    for name in ["Island", "Plains", "Swamp", "Mountain"] {
+        lands(&mut g, P0, name, 1, false);
+    }
+    lands(&mut g, P0, "Island", 3, false);
+    perm(&mut g, P0, TERROR);
+    let m = perm(&mut g, P0, source);
+    g.perm_mut(m).tapped = tapped;
+    g.perm_mut(m).sick = sick;
+    g
+}
+
+#[test]
+fn hold_r2_a_tapped_arcane_signet_supplies_the_missing_colour() {
+    let g = no_green_row("Arcane Signet", true, false);
+    assert!(spark_hold(&g, P0), "the Signet untaps: {{G}} next turn");
+    // the control: no source of green at all releases the hold (seven lands of four colours)
+    let mut c = table(&["urdragon", "seph"]);
+    for q in &mut c.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    for n in [SPARK, GARTH, SEASON, TWIN] {
+        put(&mut c, P0, n, Z::Hand);
+    }
+    for name in ["Island", "Plains", "Swamp", "Mountain"] {
+        lands(&mut c, P0, name, 1, false);
+    }
+    lands(&mut c, P0, "Island", 3, false);
+    perm(&mut c, P0, TERROR);
+    assert!(!spark_hold(&c, P0));
+}
+
+#[test]
+fn hold_r2_a_summoning_sick_dork_supplies_the_missing_colour() {
+    for dork in ["Elvish Mystic", "Birds of Paradise"] {
+        let g = no_green_row(dork, false, true);
+        assert!(spark_hold(&g, P0), "{dork}: untapped, summoning sick, taps for {{G}} next turn");
+        let g = no_green_row(dork, true, false);
+        assert!(spark_hold(&g, P0), "{dork}: tapped");
+    }
 }

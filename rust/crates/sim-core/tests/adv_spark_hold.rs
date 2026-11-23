@@ -3,7 +3,6 @@
 mod play_common;
 use play_common::*;
 use sim_core::ai::brain::{Situation, card_utility, main_options};
-use sim_core::engine::zones;
 use sim_core::ids::CardId;
 use sim_core::impls::t45_urdragon::ur_pick;
 use sim_core::impls::t45_urdragon_combos::{spark_garth_target, spark_hold, spark_hold_shape};
@@ -269,11 +268,11 @@ fn a2c_worldly_is_not_counted_for_a_noncreature_piece() {
     }
     // Demonic AND Vampiric in hand, Garth in the library, Season out, Twinflame in the library: Garth by one, Twin by the
     // other: the hold is right to be on
-    let c = Cfg { garth: G::Z(Z::Library), season: Z::Hand, twin: Z::Library, tutors: 3, lands: 7 };
+    let c = Cfg { garth: G::Z(Z::Library), season: Z::Bf, twin: Z::Library, tutors: 3, lands: 7 };
     assert!(spark_hold_shape(&build("urdragon", &c), P0));
     // one tutor, two pieces still to fetch: no hold
     for t in [1u8, 2] {
-        let c = Cfg { garth: G::Z(Z::Library), season: Z::Hand, twin: Z::Library, tutors: t, lands: 7 };
+        let c = Cfg { garth: G::Z(Z::Library), season: Z::Bf, twin: Z::Library, tutors: t, lands: 7 };
         assert!(!spark_hold_shape(&build("urdragon", &c), P0), "tutors {t}");
     }
 }
@@ -480,14 +479,13 @@ fn f2_garth_in_library_with_an_uncastable_tutor_does_not_hold_spark() {
 fn f3_a_tax_that_prices_garth_out_of_next_turns_mana_releases_the_hold() {
     let mut g = build("urdragon", &Cfg { garth: G::Z(Z::Hand), season: Z::Hand, twin: Z::Hand, tutors: 0, lands: 5 });
     assert!(spark_hold(&g, P0));
-    if g.db.id("Sphere of Resistance").is_some() {
-        perm(&mut g, P1, "Sphere of Resistance");
-        let garth = card(&g, GARTH);
-        let (gn, pips) = sim_core::engine::mana::cost_of(&g, P0, garth);
-        assert_eq!(gn + pips.len() as u32, 6, "the tax is seen");
-        assert!(!spark_hold(&g, P0), "five lands, Garth costs six now");
-        assert!(spark_offered(&mut g));
-    }
+    assert!(g.db.id("Sphere of Resistance").is_some(), "Sphere of Resistance is in the card database");
+    perm(&mut g, P1, "Sphere of Resistance");
+    let garth = card(&g, GARTH);
+    let (gn, pips) = sim_core::engine::mana::cost_of(&g, P0, garth);
+    assert_eq!(gn + pips.len() as u32, 6, "the tax is seen");
+    assert!(!spark_hold(&g, P0), "five lands, Garth costs six now");
+    assert!(spark_offered(&mut g));
 }
 
 /// Garth countered after Spark was held: the hold ends, Spark is offered
@@ -511,19 +509,16 @@ fn f5_stolen_phased_token_garth_release_and_spark_copies_something_else_consiste
     }
 }
 
-/// the hold's cost reading is `cost_of` at the real price: a cost reducer (Jet Medallion-like) lowering Garth's cost does
-/// not change hold; a count of 4 sources with Garth reduced to 4
+/// four lands and no land in hand: next turn four mana against Garth's five, so the hold is off
 #[test]
-fn f6_the_hold_uses_the_real_price_of_garth() {
-    // four lands, no land in hand: next turn four mana; Garth five: released (author's f), and the zone check
+fn f6_four_lands_and_no_land_in_hand_cannot_reach_garths_five() {
     let g = build("urdragon", &Cfg { garth: G::Z(Z::Hand), season: Z::Hand, twin: Z::Hand, tutors: 0, lands: 4 });
     assert!(!spark_hold(&g, P0));
-    let _ = zones::TOKEN_CAP;
 }
 
-/// Spark Double is held and Garth is not offered either: nothing in the hand moves
+/// seven Islands: Garth cannot be cast, so Spark Double must not be held for it
 #[test]
-fn f1b_islands_only_nothing_is_offered_for_garth_nor_spark() {
+fn f1b_islands_only_garth_is_not_offered_but_spark_double_is() {
     let mut g = hold_row_mana("Island", 7, &[]);
     let labels: Vec<String> = main_options(&mut g, P0, false).unwrap().into_iter().map(|o| o.label).collect();
     println!("{labels:?}");
