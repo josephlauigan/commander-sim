@@ -330,7 +330,9 @@ fn gain_drain(g: &mut Game, src: Src, p: PlayerId, n: i32, card: &str) -> Res {
 /// effects, no creature for combat, edicts, creature removal and "a creature dies". Dying again as that enchantment
 /// returns nothing; exile and bounce never reach this hook.
 fn tenacity_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    if m != src || g.perm(m).token || g.perm(m).data.truthy(DataKey::NotCreature) {
+    // `phys` set: a clone (Mirage Mirror, Phantasmal Image...) showing Tenacity's face; its own card is what goes to the
+    // graveyard, and the real Enduring Tenacity there (if any) is not coming back because a copy died
+    if m != src || g.perm(m).token || g.perm(m).phys.is_some() || g.perm(m).data.truthy(DataKey::NotCreature) {
         return Ok(());
     }
     let (Some(cd), o) = (g.perm(m).cd, g.perm(m).orig) else { return Ok(()) };
@@ -962,7 +964,7 @@ fn drain_loop_ready(g: &Game, p: PlayerId) -> Ready {
 }
 
 pub static COMBOS: [Combo; 1] = [Combo {
-    name: "Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror",
+    name: "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror",
     groups: &[&GAIN_DRAINS, &LOSS_GAINS],
     ready: drain_loop_ready,
     mana: (0, ""),

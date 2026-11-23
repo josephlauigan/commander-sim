@@ -10,7 +10,9 @@ use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, phyrexian_life, total_mana_spell};
+use crate::engine::mana::{
+    can_pay, can_pay_spell, cost_of, cost_of_x, pay, pay_spell, phyrexian_life, total_mana_spell,
+};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -136,10 +138,14 @@ fn poet_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 // ------------------------------------------------------------------ Cost of Brilliance
 /// Cost of Brilliance: the AI draws two (and loses 2 life) itself and puts the counter on its best creature
-fn cost_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
-    draw(g, q, 2, false)?;
-    lose_life(g, q, 2, Some(p), "other", None)?;
+fn cost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    // two targets: a player who is dead or no longer targetable (hexproof) gets nothing (never redirected to the caster),
+    // and the counter still goes on its creature, as a spell resolves for the targets that are still legal
+    if player_target_ok(g, p, c, q) {
+        draw(g, q, 2, false)?;
+        lose_life(g, q, 2, Some(p), "other", None)?;
+    }
     let host = ctx.host.filter(|&m| live_creature(g, m)).or_else(|| best_creature(g, p));
     if let Some(m) = host {
         plus_counter(g, m, 1);
@@ -198,6 +204,10 @@ fn cost_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
+    // a plan made earlier: a target that died or became untargetable since is rejected before anything is paid
+    if !player_target_ok(g, p, c, face) {
+        return Ok(false);
+    }
     let host = best_creature(g, p);
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), host, ..Ctx::default() })
 }
@@ -1634,9 +1644,14 @@ fn dreams_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// Painful Lesson: the target player draws two cards, then loses 2 life
-fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+/// Painful Lesson: the target player draws two cards, then loses 2 life. No `ctx.face` means the caster is the target; a
+/// named target that is dead or no longer targetable (hexproof) makes the spell fizzle: nothing happens, it goes to the
+/// graveyard (it is never redirected to the caster)
+fn lesson_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !player_target_ok(g, p, c, q) {
+        return Ok("gy");
+    }
     draw(g, q, 2, false)?;
     if g.player(q).alive {
         lose_life(g, q, 2, Some(p), "other", Some(false))?;
@@ -1677,12 +1692,16 @@ fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
+    // a plan made earlier is revalidated before anything is paid: a target that died or became untargetable fizzles the plan
+    if !player_target_ok(g, p, c, face) {
+        return Ok(false);
+    }
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), ..Ctx::default() })
 }
 
-/// can p's Damnable Pact (card c) still target q: a live player, and not one with hexproof (Shalai; p itself is always a
-/// legal target of its own spell)
-fn pact_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
+/// can p's spell c (Damnable Pact, Painful Lesson) still target the player q: a live player, and not one with hexproof
+/// (Shalai; p itself is always a legal target of its own spell)
+fn player_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
     g.player(q).alive && (q == p || !player_hexproof_from(g, q, g.db.get(c).colors))
 }
 
@@ -1692,7 +1711,7 @@ fn pact_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
 /// the spell fizzle: nothing happens, it goes to the graveyard (it is never redirected to the caster)
 fn pact_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let q = ctx.face.unwrap_or(p);
-    if !pact_target_ok(g, p, c, q) {
+    if !player_target_ok(g, p, c, q) {
         return Ok("gy");
     }
     let x = ctx.x.max(0);
@@ -1705,37 +1724,23 @@ fn pact_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-/// the sum of the cost changes on Damnable Pact (negative: a reducer such as Jet Medallion)
-fn pact_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    crate::dsl::cost_delta(g, p, c)
-        + crate::impls::t0_stella::kaza_delta(g, p, c)
-        + crate::engine::hooks::total_cost(g, p, c)
-        + crate::cardcode::self_cost(g, p, c)
-        + crate::impls::t45_urdragon::eminence(g, p, c)
-}
-
-/// what Damnable Pact costs p now with X included: (generic, coloured pips). `cost_of` prices the spell at X = 0, where a
-/// generic reducer (Jet Medallion) has nothing to take off and is clamped away; here X meets the reduction first, and the
-/// generic part is floored at 0 once
-fn pact_cost(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
-    let (g0, pips) = cost_of(g, p, c);
-    let delta = pact_delta(g, p, c);
-    // with a reducer g0 is the extras (taxes) on a floored 0
-    let gn = if delta < 0 { g0 as i32 + (x + delta).max(0) } else { g0 as i32 + x };
-    let floor = crate::engine::hooks::max_min_cost(g, p, c) - pips.chars().count() as i32; // Trinisphere
-    (gn.max(floor).max(0) as u32, pips)
-}
-
-/// the most X the spare mana allows for Damnable Pact (0 when it can't be cast at all)
+/// the most X the mana allows for Damnable Pact (0 when it can't be cast at all). The cost is `cost_of_x`, so a
+/// reducer (Jet Medallion) lets X run past the spare mana by what it takes off: the search starts from the X at which the
+/// cost, linear in X once the floors no longer bite, would just use all the mana, and goes down to the first payable X
 fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if !castable(g, p, c, "hand") {
         return 0;
     }
-    let (g0, pips) = cost_of(g, p, c);
-    let spare = total_mana_spell(g, p, c, false) as i32 - g0 as i32 - pips.chars().count() as i32;
-    // a reducer lets X run past the spare mana by what it takes off: try the largest X first
-    let top = spare - pact_delta(g, p, c).min(0);
-    (1..=top).rev().find(|&x| can_pay_spell(g, p, c, pact_cost(g, p, c, x).0, &pips, false)).unwrap_or(0)
+    let total = total_mana_spell(g, p, c, false) as i32;
+    // the cost at X = total is total + k (k: taxes less reductions; negative with a reducer)
+    let k = cost_of_x(g, p, c, total).0 as i32 - total;
+    (1..=(total - k).max(0))
+        .rev()
+        .find(|&x| {
+            let (gn, pips) = cost_of_x(g, p, c, x);
+            can_pay_spell(g, p, c, gn, &pips, false)
+        })
+        .unwrap_or(0)
 }
 
 /// Damnable Pact as a main-phase play (own turn only: it is a sorcery; the deck's plan must `plays` it).
@@ -1765,7 +1770,7 @@ fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         let opps: Vec<PlayerId> = g
             .opps(p)
             .filter(|&q| {
-                pact_target_ok(g, p, c, q)
+                player_target_ok(g, p, c, q)
                     && !g.player(q).life_locked
                     && g.player(q).library.len() as i32 > xmax
                     && per_of(g, q) >= 1
@@ -1825,10 +1830,10 @@ fn pact_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     };
     let x = (arg >> 32) as i32;
     // a plan made earlier is revalidated before anything is paid: the card, the target, a new Silence, the mana
-    if !g.player(p).hand.contains(&c) || x < 1 || !pact_target_ok(g, p, c, face) || !castable(g, p, c, "hand") {
+    if !g.player(p).hand.contains(&c) || x < 1 || !player_target_ok(g, p, c, face) || !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    let (gn, pips) = pact_cost(g, p, c, x);
+    let (gn, pips) = cost_of_x(g, p, c, x);
     if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
@@ -2138,8 +2143,11 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: PermId, loot: bool) -> Res<bool> {
 
 /// Peer into the Abyss: the target draws half their library (rounded up) and loses half their life (rounded up,
 /// worked out after the draws)
-fn peer_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+fn peer_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !player_target_ok(g, p, c, q) {
+        return Ok("gy"); // the target died or became untargetable: the spell fizzles (never redirected to the caster)
+    }
     let n = g.player(q).library.len().div_ceil(2) as u32;
     draw(g, q, n, false)?;
     let life = g.player(q).life;

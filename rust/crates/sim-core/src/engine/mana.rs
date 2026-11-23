@@ -990,10 +990,18 @@ pub fn phyrexian_life(g: &Game, p: PlayerId, c: CardId, pips: &str) -> i32 {
 
 /// what card c costs p now: (generic, coloured pips). Python's `cost_of`.
 pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
+    cost_of_x(g, p, c, 0)
+}
+
+/// what card c costs p now when cast with X = x: the printed cost with x added to the generic part, then every
+/// reduction, tax, floor and minimum `cost_of` applies, in the same order (a generic reducer such as Jet Medallion
+/// takes its {1} off the generic part that includes X; a later tax is added after it; each step floors the generic cost
+/// at 0). `cost_of` is this at x = 0. K'rrik's life payment stays with `phyrexian_life`.
+pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;
-    let mut gn = d.generic as i32;
+    let mut gn = d.generic as i32 + x.max(0);
     let mut pips: String = d.pips.to_string();
     if t.has(Tag::PerCreature) {
         // Blasphemous Act, Vanquish the Horde

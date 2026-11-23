@@ -595,3 +595,46 @@ fn tenacity_phased_out_does_not_trigger_life_gain_and_survives_disk() {
     assert!(g.perm(t).on_bf && g.perm(t).phased);
     assert_eq!(tenacities(&g, P0), vec![t]);
 }
+
+// ------------------------------------------------------------------ a clone of Enduring Tenacity is not the card
+#[test]
+fn a_clone_of_tenacity_dying_does_not_return_the_real_card_from_the_graveyard() {
+    let mut g = game();
+    perm(&mut g, P1, TEN);
+    let image = perm(&mut g, P0, "Phantasmal Image");
+    assert_eq!(&*g.perm(image).name, TEN, "the Image is a copy of Enduring Tenacity");
+    assert!(g.perm(image).phys.is_some(), "its own card is the physical card");
+    // the real Enduring Tenacity sits in P0's graveyard (as it would after being milled or discarded)
+    let real = card(&g, TEN);
+    g.player_mut(P0).gy.push(real);
+    zones::die(&mut g, image, "destroy").unwrap();
+    assert!(tenacities(&g, P0).is_empty(), "the clone dying brings nothing back");
+    assert!(g.player(P0).gy.contains(&real), "the real card stays where it was");
+    assert!(g.player(P0).gy.contains(&card(&g, "Phantasmal Image")), "the clone card goes to the graveyard");
+}
+
+#[test]
+fn a_token_copy_of_tenacity_dying_returns_nothing() {
+    let mut g = game();
+    let old = perm(&mut g, P0, TEN);
+    let real = card(&g, TEN);
+    g.player_mut(P0).gy.push(real);
+    g.perm_mut(old).token = true;
+    zones::die(&mut g, old, "destroy").unwrap();
+    assert!(tenacities(&g, P0).is_empty());
+    assert!(g.player(P0).gy.contains(&real));
+}
+
+#[test]
+fn the_real_tenacity_still_returns_with_a_clone_of_it_in_play() {
+    let mut g = game();
+    perm(&mut g, P1, TEN);
+    let image = perm(&mut g, P0, "Phantasmal Image");
+    assert!(g.perm(image).phys.is_some());
+    let real = perm(&mut g, P0, TEN);
+    assert!(g.perm(real).phys.is_none());
+    zones::die(&mut g, real, "destroy").unwrap();
+    let back: Vec<PermId> = tenacities(&g, P0).into_iter().filter(|&m| m != image).collect();
+    assert_eq!(back.len(), 1, "the physical card comes back as an enchantment");
+    assert!(!g.is_creature(back[0]));
+}
