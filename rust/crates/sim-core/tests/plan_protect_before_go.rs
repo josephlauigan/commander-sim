@@ -109,3 +109,60 @@ fn a_tier_6_seat_still_casts_silence_whatever_its_plan_says() {
         assert!(in_gy(&g, P0, "Silence"), "{key}: Tier 6 casts it first");
     }
 }
+
+// ------------------------------------------------------------------ round 2: the knob path's two changes stay off Tier 6
+const HELIOD: &str = "Heliod, Sun-Crowned + Walking Ballista";
+
+/// `key` at P0 with Heliod out, Walking Ballista and Silence (no Orim's Chant) in hand, `plains` Plains and `swamps`
+/// Swamps; `opps` of P1/P2 hold four Islands and a hand that could answer
+fn heliod(key: &str, plains: usize, swamps: usize, opps: usize) -> Game {
+    let mut g = table_with(&[key, "sisay-legends-toolbox", "yshtola", "sauron"], 5, 40);
+    g.active = Some(P0);
+    lands(&mut g, P0, "Plains", plains, false);
+    lands(&mut g, P0, "Swamp", swamps, false);
+    perm(&mut g, P0, "Heliod, Sun-Crowned");
+    hand(&mut g, P0, &["Walking Ballista", "Silence"]);
+    for q in [P1, P2].into_iter().take(opps) {
+        lands(&mut g, q, "Island", 4, false);
+        hand(&mut g, q, &["Brainstorm", "Opt", "Preordain", "Ponder", "Island"]);
+    }
+    g
+}
+
+fn go_heliod(g: &mut Game) {
+    let i = combos::combo_index(HELIOD).unwrap();
+    combos::attempt(g, P0, i as i64).unwrap();
+}
+
+#[test]
+fn tier_6_with_one_stopper_and_only_silence_casts_nothing() {
+    let mut g = heliod("kraum-tymna-blue-breach-midrange", 2, 5, 1);
+    assert!(t6_plans::is_t6(&g, P0));
+    let stops = [P1, P2].iter().filter(|&&q| t6_table::stop_chance(&g, q) >= 0.15).count();
+    assert_eq!(stops, 1);
+    go_heliod(&mut g);
+    assert!(!in_gy(&g, P0, "Silence"), "Tier 6 keeps Silence for two stoppers, as before");
+    // the knob deck, same position, casts it
+    let mut g = heliod("yoshimaru", 2, 5, 1);
+    go_heliod(&mut g);
+    assert!(in_gy(&g, P0, "Silence"));
+}
+
+#[test]
+fn tier_6_under_damping_sphere_is_unchanged_and_a_knob_deck_keeps_silence() {
+    // 5 lands: the line is {3}{W}, Silence {W}; with Silence counted the Sphere adds {1} to the line
+    let mut g = heliod("kraum-tymna-blue-breach-midrange", 2, 3, 2);
+    perm(&mut g, P1, "Damping Sphere");
+    go_heliod(&mut g);
+    assert!(in_gy(&g, P0, "Silence"), "Tier 6 still casts Silence first");
+    assert_ne!(g.winner, Some(P0), "and the line is not played: the known Tier 6 flaw, a ticket, not changed here");
+    let mut g = heliod("yoshimaru", 2, 3, 2);
+    perm(&mut g, P1, "Damping Sphere");
+    go_heliod(&mut g);
+    assert!(in_hand(&g, P0, "Silence"), "the knob deck sees the tax and keeps Silence");
+    assert_eq!(g.winner, Some(P0));
+}
+
+fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
+}
