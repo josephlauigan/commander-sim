@@ -266,9 +266,12 @@ pub fn card_worth(g: &Game, p: PlayerId, c: CardId, in_gy: bool) -> f64 {
     v
 }
 
-/// Search for n cards with different names; an opponent chooses which `keep` of them go to your hand, the rest go to
-/// your graveyard (Gifts Ungiven, Intuition). You pick the pile that is best against their choice.
+/// Search for n cards with different names and split them as the opponent chooses (Gifts Ungiven, n = 4: they choose
+/// `keep` = 2 for your graveyard, the rest, fewer when the pile is short, go to your hand; Intuition, n = 3: they
+/// choose `keep` = 1 for your hand, the rest go to your graveyard). You pick the pile that is best against their
+/// choice; a person who is the opponent makes the choice themselves.
 pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
+    let gifts = n == 4; // (Gifts Ungiven; Intuition has n = 3)
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let mut opp = max_by(&opps, |q| threat(g, p, q));
     if opps.len() > 1 && crate::human::is_human(g, p) {
@@ -301,7 +304,10 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         if pile.is_empty() {
             return Ok(());
         }
-        let hand = if pile.len() > keep {
+        let hn = hand_count(gifts, keep, pile.len());
+        let hand = if let Some(h) = opp_choice(g, p, opp, &pile, gifts, keep)? {
+            h
+        } else {
             let seats = std::mem::take(&mut g.humans);
             let hv: Vec<(CardId, f64)> = pile.iter().map(|&c| (c, ai::tutor_value(g, p, c))).collect();
             let gv: Vec<(CardId, f64)> =
@@ -310,7 +316,7 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
             let val = |v: &[(CardId, f64)], c: CardId| v.iter().find(|x| x.0 == c).unwrap().1;
             // the opponent's split: the one that leaves you the least value
             let mut best: Option<(f64, Vec<CardId>)> = None;
-            for hand in combinations(&pile, keep) {
+            for hand in combinations(&pile, hn) {
                 let v: f64 = hand.iter().map(|&c| val(&hv, c)).psum()
                     + pile.iter().filter(|c| !hand.contains(c)).map(|&c| val(&gv, c)).psum();
                 if best.as_ref().is_none_or(|b| v < b.0) {
@@ -318,8 +324,6 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
                 }
             }
             best.map(|b| b.1).unwrap_or_else(|| pile.clone())
-        } else {
-            pile.clone()
         };
         return finish_pile(g, p, opp, &pile, &hand, false);
     }
@@ -346,7 +350,7 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
     // the opponent's choice: the split that leaves you the least value
     let result = |pile: &[CardId]| -> (f64, Vec<CardId>) {
         let mut best: Option<(f64, Vec<CardId>)> = None;
-        for hand in combinations(pile, keep.min(pile.len())) {
+        for hand in combinations(pile, hand_count(gifts, keep, pile.len())) {
             let v: f64 = hand.iter().map(|&c| val(&hv, c)).psum()
                 + pile.iter().filter(|c| !hand.contains(c)).map(|&c| val(&gv, c)).psum();
             if best.as_ref().is_none_or(|b| v < b.0) {
@@ -362,7 +366,12 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
             best = Some((r.0, pl, r.1));
         }
     }
-    let (_, pile, hand) = best.unwrap();
+    let (_, pile, mut hand) = best.unwrap();
+    if agent_for(g, p).is_none()
+        && let Some(h) = opp_choice(g, p, opp, &pile, gifts, keep)?
+    {
+        hand = h; // a person who is the opponent chooses the split themselves
+    }
     for &c in &pile {
         let lib = &mut g.player_mut(p).library;
         let i = lib.iter().position(|&x| x == c).unwrap();
@@ -376,6 +385,37 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         return Ok(());
     }
     finish_pile(g, p, opp, &pile, &hand, true)
+}
+
+/// how many of a pile of `len` cards go to the hand: Gifts Ungiven puts the two the opponent chooses (or all of a
+/// smaller pile) into the graveyard and the rest into the hand; Intuition puts the one card chosen into the hand
+fn hand_count(gifts: bool, keep: usize, len: usize) -> usize {
+    if gifts { len - keep.min(len) } else { keep.min(len) }
+}
+
+/// the cards of `pile` that go to the hand, when the opponent is a person with a choice to make (Gifts Ungiven: they
+/// choose the cards for the graveyard; Intuition: the card for the hand); None when the AI's scoring splits the pile
+fn opp_choice(
+    g: &Game,
+    p: PlayerId,
+    opp: Option<PlayerId>,
+    pile: &[CardId],
+    gifts: bool,
+    keep: usize,
+) -> Res<Option<Vec<CardId>>> {
+    let hn = hand_count(gifts, keep, pile.len());
+    let Some(o) = opp.filter(|&o| crate::human::is_human(g, o) && hn > 0 && hn < pile.len()) else {
+        return Ok(None);
+    };
+    let by = format!("{}'s {}", g.player(p).name, if gifts { "Gifts Ungiven" } else { "Intuition" });
+    Ok(Some(if gifts {
+        let prompt = format!("{by}: choose cards to put into their graveyard");
+        let bin = crate::human::choices::pick_cards(g, o, pile, pile.len() - hn, &prompt, "choose")?;
+        pile.iter().copied().filter(|c| !bin.contains(c)).collect()
+    } else {
+        let prompt = format!("{by}: choose the card to put into their hand");
+        crate::human::choices::pick_cards(g, o, pile, hn, &prompt, "choose")?
+    }))
 }
 
 /// the pile's cards (already out of the library) go to the hand or the graveyard
