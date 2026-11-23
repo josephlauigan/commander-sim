@@ -1,0 +1,115 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  urdragon                    100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+1,500 games (analysis, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 3 minutes
+  progress  10.0%  0m27s elapsed, ~4m03s left
+  progress  20.0%  0m56s elapsed, ~3m44s left
+  progress  30.0%  1m23s elapsed, ~3m15s left
+  progress  40.0%  1m53s elapsed, ~2m50s left
+  progress  50.0%  2m22s elapsed, ~2m22s left
+  progress  60.0%  2m49s elapsed, ~1m52s left
+  progress  70.0%  3m15s elapsed, ~1m23s left
+  progress  80.0%  3m44s elapsed, ~0m56s left
+  progress  90.0%  4m13s elapsed, ~0m28s left
+  progress 100.0%  4m43s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== urdragon analysis [loose profile, lookahead AI, 1500 games] ===========
+Win rate 27.6%   (4-player baseline 25%)   average rounds survived 8.5
+
+-- How it wins --
+  damage      96.6% of wins
+  alt          2.9% of wins
+  timeout      0.5% of wins
+  Opponents it eliminated: 0.82 per game, by
+    combat             56.7%
+    triggers           39.9%
+    burn                2.2%
+    commander damage    1.0%
+    decked              0.2%
+    other               0.1%
+  Damage dealt per game: 42.4, from
+    combat              30.3  (72%)
+    triggers            11.7  (28%)
+    burn                 0.3  (1%)
+    drain                0.0  (0%)
+
+-- Sephiroth --
+  Flips per game 0.000 (games with a flip 0.0%); first flip on round 0.00 on average
+  Emblem drains per game 0.00; cards drawn by Sephiroth per game 0.00; creatures sacrificed per game 0.30
+  Wipes cast per game 0.00 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.00
+  Creatures stolen per game 0.00: reanimation spells 0.00, Grave Betrayal 0.00, Dread Slaver 0.00, prepared Reanimate 0.00; Kaya's Ghostform returns 0.00; Rabid Attack draws 0.00
+
+-- How it loses --
+  Eliminated in 72.3% of games, on average in round 7.9
+    by Urza     via combo              13.7% of games
+    by Kinnan   via combo              13.1% of games
+    by Miirym   via combat              9.1% of games
+    by Zur the Enchanter via combo               8.9% of games
+    by Yawgmoth via combo               6.9% of games
+    by Miirym   via triggers            6.9% of games
+    by Kinnan   via combat              2.9% of games
+    by Yawgmoth via drain               2.5% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 0%  T6 0%  T7 0%  T8 0%  T9 0%  T10 0%  T11 0%  T12 0%
+  Online at all: 0.0% of games
+  Commander resolves on turn: median 7.0, mean 7.4 (over the 45.6% of games it resolves)
+  Commander resolved by turn:  T4 2%  T5 8%  T6 18%  T7 27%  T8 34%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Tiamat                                     cast in  13.9% of games, win rate when cast  69.7% (+42.1)
+    Summon: Bahamut                            cast in   9.9% of games, win rate when cast  63.8% (+36.2)
+    Utvara Hellkite                            cast in  11.1% of games, win rate when cast  61.7% (+34.1)
+    Scion of the Ur-Dragon                     cast in   7.5% of games, win rate when cast  57.5% (+29.9)
+    Morophon, the Boundless                    cast in   9.3% of games, win rate when cast  56.8% (+29.2)
+    Austere Command                            cast in   7.3% of games, win rate when cast  55.0% (+27.4)
+    Lathliss, Dragon Queen                     cast in  12.5% of games, win rate when cast  54.5% (+26.9)
+    Miirym, Sentinel Wyrm                      cast in  20.6% of games, win rate when cast  54.4% (+26.8)
+    Old Gnawbone                               cast in  16.9% of games, win rate when cast  53.4% (+25.8)
+    The Ur-Dragon                              cast in  46.5% of games, win rate when cast  52.9% (+25.3)
+  Lowest win rate when cast:
+    Chaos Warp                                 cast in  16.3% of games, win rate when cast  32.4% (+4.8)
+    Rivaz of the Claw                          cast in  14.5% of games, win rate when cast  32.6% (+5.0)
+    Rhythm of the Wild                         cast in  11.3% of games, win rate when cast  33.7% (+6.1)
+    Mana Vault                                 cast in  22.9% of games, win rate when cast  34.1% (+6.5)
+    Fierce Guardianship                        cast in  10.3% of games, win rate when cast  34.4% (+6.8)
+    Swords to Plowshares                       cast in  16.8% of games, win rate when cast  35.3% (+7.7)
+    Path to Exile                              cast in  16.9% of games, win rate when cast  36.0% (+8.4)
+    Three Visits                               cast in  16.5% of games, win rate when cast  36.4% (+8.8)
+    The One Ring                               cast in  16.3% of games, win rate when cast  36.5% (+8.9)
+    Llanowar Elves                             cast in  16.8% of games, win rate when cast  36.5% (+8.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Teferi's Protection                        cast  24.0% of the games it was drawn [reactive: only cast in response]
+    Twinflame                                  cast  25.0% of the games it was drawn
+    Triple Triad                               cast  31.1% of the games it was drawn
+    Doubling Season                            cast  32.1% of the games it was drawn
+    Garth One-Eye                              cast  34.4% of the games it was drawn
+    Scion of the Ur-Dragon                     cast  35.2% of the games it was drawn
+    Nibelheim Aflame                           cast  35.3% of the games it was drawn
+    Austere Command                            cast  37.1% of the games it was drawn
+    Decimate                                   cast  39.4% of the games it was drawn
+    Steel Hellkite                             cast  41.0% of the games it was drawn
+    Dragonlord Silumgar                        cast  41.7% of the games it was drawn
+    Summon: Bahamut                            cast  42.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    The Ur-Dragon                              0.15
+    Terror of the Peaks                        0.06
+    Dragonlord Dromoka                         0.04
+    Korvold, Fae-Cursed King                   0.04
+    Goldspan Dragon                            0.03
+    Scourge of Valkas                          0.03
+    Hellkite Tyrant                            0.03
+    Summon: Bahamut                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, miirym-temur-dragons = Miirym, urza-mono-blue-artifacts = Urza, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(283s total)

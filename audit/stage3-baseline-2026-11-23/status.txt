@@ -1,0 +1,10 @@
+start yshtola 07:43:14
+done yshtola exit 0 07:48:33
+start sheoldred 07:48:33
+done sheoldred exit 0 07:57:24
+start kyodai 07:57:24
+done kyodai exit 0 08:04:19
+start urdragon 08:04:19
+done urdragon exit 0 08:12:54
+start yoshimaru 08:12:54
+done yoshimaru exit 0 08:27:53

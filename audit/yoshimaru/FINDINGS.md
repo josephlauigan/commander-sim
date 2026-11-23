@@ -6,6 +6,52 @@ The deck's living list of strengths and weaknesses and what was tested.
 enter-effect midrange; 100 cards). **Tiers:** t4 and t5 (`data/my_decks.toml`). **No sims yet.**
 The findings of the retired Tymna/Thrasios Doomsday deck are in `audit/retired/thrasios/`.
 
+## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games per tier, seed 500000)
+t4 **27.5%** (about ±2.3 at 95%, binomial arithmetic), t5 **24.5%** (±2.2): **26.0% over t4, t5**. 4-player baseline 25%; average rounds survived 8.3 (t4), 8.4 (t5). Raw (`--analyze`):
+`audit/stage3-baseline-2026-11-23/yoshimaru-analyze.txt`.
+This is the first simulation of this list (the intro above, written before it, still says "No sims yet"). It is a baseline from the new engine (exact X and alternative-cost pricing, hybrid mana, the
+Stage 2 filters); no older number in this file is for this list or build, so none is comparable. It is also the first measurement of the Equipment package: the claims under "What to check in the first runs"
+below stay untested except where named here.
+
+- **How it wins,** t4 / t5: combo 64.6% / 62.2% of wins, damage 35.4% / 37.5% (t5 timeout 0.3%). It eliminates 0.78 / 0.71 opponents a game. t4: combo 56.4%, combat 25.3%, drain 6.6%, commander damage 6.2%,
+  triggers 5.6%. t5: combo 51.4%, combat 25.6%, drain 8.1%, commander damage 7.5%, triggers 7.4%. Damage dealt 26.2 / 30.3 a game, combat 22.6 (86%) / 26.7 (88%). Tymna: 2.57 / 3.26 cards drawn a game, 3.26 / 3.38
+  Tymna turns, 0.78 / 0.90 opponents hit per Tymna turn; she lands on turn 3.71 / 3.72 (in 94% / 93% of games).
+- **How it loses:** t4 eliminated in 72.5% of games (round 8.1): Krenko combat 11.3% and triggers 6.1%, Edgar Markov combat 8.9% and combo 3.6%, Yuriko triggers 8.3% and combat 3.4%, Chulane combo 8.3%, Prosper
+  triggers 4.2%. t5 75.5% (round 8.0): Kinnan combo 14.8% and combat 3.2%, Urza combo 14.1%, Miirym combat 10.1% and triggers 5.7%, Zur combo 9.9% and commander damage 2.1%, Yawgmoth combo 8.7%.
+- **Plan timing** (the plan line prints blank), t4 / t5: online by T4 1% / 1%, T5 4% / 3%, T6 7% / 4%, T8 14% / 10%, T12 19% / 16%; at all 19.5% / 17.5%. The commander lines disagree: "resolves on turn" gives median 1.0
+  (mean 1.5 / 1.6) over 99.1% / 99.5% of games, but "resolved by turn" gives T4 33% / 35% and T8 35% / 38%. The output does not explain it: unmeasured, and worth a check before anyone uses either line.
+- **Often stuck in hand** (cast in under half the games drawn), t4 / t5: Silence 1.4% / 0.7%, Eerie Interlude 5.5% / 5.3%, Solitude 13.8% / 7.6%, Restoration Angel 15.1% / 16.6% (reactive), Teferi's Protection 17.1% / 16.7%
+  (reactive), Conjurer's Closet 21.1% / 19.2%, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%, Flawless Maneuver 37.9% / 33.2%, The Wandering Emperor 39.5% / 40.4%, Gandalf the White 43.1% / 35.0%; t4 only:
+  Court of Ardenvale 42.1%; t5 only: Wrath of God 34.0%.
+- **Most removed by opponents (per game),** t4 / t5: Yoshimaru 0.47 / 0.48, Tymna 0.14 / 0.18, Sword of Fire and Ice 0.08 / 0.05, Sting 0.05 / 0.02, Sword of Hearth and Home 0.04 / 0.02, Skrelv 0.04 / 0.04, Mana Vault 0.04 (t4),
+  Exquisite Blood 0.04 (t4), Adeline 0.03 (t5), Elesh Norn, Mother of Machines 0.02 (t5).
+
+What the numbers say (correlation, not causation):
+- **t4 is 3.0 points above t5.** 27.5% against 24.5%, borderline against the intervals (a difference of two independent runs needs about ±3.1) and between different opponents, so not a paired result. The t5 losses are the
+  fast artifact and mana combos (Kinnan 14.8%, Urza 14.1%, Zur 9.9%, Yawgmoth 8.7% combos: 47.5% of games); at t4 the combos are Chulane 8.3% and Edgar Markov 3.6%, and combat and triggers decide more.
+- **Combo is most of the wins.** About 17.8% (t4) and 15.2% (t5) of games are won by combo (arithmetic from the win rate and the combo share), close to the 19.5% / 17.5% the plan line calls online; what that line counts is not
+  named in the output, so read it as a similarity of numbers only: unmeasured.
+- **The Ballista and Heliod line is the best-performing.** Walking Ballista wins 69.9% / 66.3% of the games it is cast in (cast in 20.8% / 20.2% of games) and Heliod, Sun-Crowned 68.1% / 57.9% (18.8% / 19.3%); Exquisite Blood
+  55.6% / 51.5%, Vito 48.9% / 48.2%. Archangel of Thune wins 45.1% / 39.2% (cast in 12.3% / 11.7%): the guide's Archangel + Ballista line is one the plan file leaves out (above). A high win rate when cast can also mean a card is
+  only cast in games already going well.
+- **The blink pieces sit in hand.** Conjurer's Closet is cast in 21.1% / 19.2% of the games drawn, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%; Silence 1.4% / 0.7% and Eerie Interlude 5.5% / 5.3% are not flagged
+  reactive and are nearly never cast. Why is not in the output: unmeasured. Whether the plan file's Equipment rows put Swords on the right creatures (the first item under "What to check in the first runs") is also not in
+  `--analyze`: unmeasured.
+- **The commanders are the targets and add nothing alone.** Yoshimaru is removed 0.47 / 0.48 times a game and Tymna 0.14 / 0.18, far above any other card (Sword of Fire and Ice is next at 0.08 / 0.05). Both are cast in 94-99% of
+  games and win at the deck's own rate (Yoshimaru 27.4% / 24.5%, Tymna 26.9% / 24.7%). Stoneforge Mystic is the lowest card at t4 (23.2% when cast, -4.2, cast in 14.1% of games), the only one clearly below the deck.
+
+## Silence knob, paired test 2026-11-23 (branch stage4-protect-knob 223d437b against main f1ffd896; same seeds, loose, 1,500 games per tier)
+`[knobs] protect_before_go = true` (Silence cast before a catalogue line goes). t4 **27.5% -> 27.6%**, t5 **24.5% -> 24.8%**: inside the noise (standard error about 1.1 points), as predicted. The mechanism moved: Silence cast in **1.4% -> 4.7%** (t4) and **0.7% -> 4.1%** (t5) of the games it is drawn; combo share of wins 64.6% -> 64.7% (t4), 62.2% -> 63.2% (t5). Raw: `audit/stage3-paired-2026-11-23/knob-yoshimaru-analyze.txt`.
+- The knob reaches only lines that go through `combos::attempt`: Heliod + Walking Ballista and Vito + Exquisite Blood. Archangel + Ballista and Restoration Angel + Felidar Guardian are not in the combo catalogue, so it does nothing for them.
+- Not measured: how often the protect step fired (the `t6_protect` counter is not printed; ticket T-S4-3); whether Silence was countered more or less.
+
+## Equipment carrier rule, paired tests 2026-11-23 (arms on seed 500000 x 1,500 games and seed 700000 x 3,000 games per tier, loose)
+Arm A = main with the Silence knob; arm B = the full carrier package (flier +2, unblocked +1.5, Yoshimaru -4, Delney -4, Boots +4 on Tymna, plus the Ballista veto and Tymna -6, free-attach pair scoring); arm C = veto only (Sword of Hearth and Home never on Walking Ballista, no +power Equipment on Tymna, nothing else scored). Raw: `audit/stage3-paired-2026-11-23/big-*`.
+- Win rate, seed 700000 x 3,000: t4 A 26.3, B 25.7, C 25.7; t5 A 22.0, B 23.0, C 22.3. Seed 500000 x 1,500: t4 A 27.6 -> B 26.5; t5 A 24.8 -> B 23.1. All inside the noise (about 0.8 per tier per arm at 3,000 games).
+- **Commander-damage eliminations by this deck, share of its eliminations (t4 / t5):** A 5.4 / 6.8, B 2.9 / 4.2, **C 5.6 / 6.7**. The halving in B replicated on both seeds and is gone in C: the guessed weights (Yoshimaru -4 and the flier stacking), not the veto or the Tymna rule, cause it. The guide says commander damage "is not a plan" (line 96), from an unsimulated list; a 5-7% share of eliminations does not contradict that, but the weights cost it for nothing measurable in return.
+- Equipment worn per game (t4 / t5): B commander 0.22 / 0.26, flier 0.15 / 0.18, other 0.54 / 0.65; C commander 0.43 / 0.48, flier 0.12 / 0.15, other 0.31 / 0.45; protection from white on Ballista 0.00 in both. Tymna cards drawn and opponents hit per Tymna turn are flat in all arms.
+- Decision: ship arm C (the guide-backed rules) with the report and Court fixes; the other weights stay out until a measured reason. No arm shows a win-rate gain, so this is rule correctness, not a measured improvement.
+
 ## What the simulator cannot do yet
 - Every card is Full or Full-auto except Delney, Streetwise Lookout (Approximate: the extra instance for leaves that run at once or inline in the
   engine is left out; see her note in `data/audit.toml`). Full-auto means compiled from Oracle text, not hand-written card code: Stroke of Midnight and

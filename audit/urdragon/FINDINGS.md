@@ -7,6 +7,40 @@ proxies allowed, reworked 2026-11-14 (28 Dragons besides the commander, 29 with 
 Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). **No sims yet.** The findings of the
 retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 
+## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games, seed 500000)
+**t5: 27.6%** (about ±2.3 at 95%, binomial arithmetic), 4-player baseline 25%, average rounds survived 8.5. Raw (`--analyze`): `audit/stage3-baseline-2026-11-23/urdragon-analyze.txt`.
+This is the first simulation of this list (the intro above, written before it, still says "No sims yet"). It is a baseline from the new engine (exact X and alternative-cost pricing, hybrid mana, the
+Stage 2 filters); no older number in this file is for this list or build, so none is comparable.
+
+- **How it wins:** damage 96.6% of wins, alt 2.9%, timeout 0.5%. It eliminates 0.82 opponents a game: combat 56.7%, triggers 39.9%, burn 2.2%, commander damage 1.0%. Damage dealt 42.4 a game: combat 30.3 (72%),
+  triggers 11.7 (28%), burn 0.3.
+- **How it loses:** eliminated in 72.3% of games, on average in round 7.9. Urza combo 13.7%, Kinnan combo 13.1%, Miirym combat 9.1% and triggers 6.9%, Zur combo 8.9%, Yawgmoth combo 6.9% and drain 2.5%,
+  Kinnan combat 2.9%.
+- **Plan timing: unmeasured.** The plan line prints blank and online is 0% at every turn and 0.0% at all, so the output says nothing about this deck's plan. The Ur-Dragon resolves in only 45.6% of games, median
+  turn 7.0 (mean 7.4); by T4 2%, T5 8%, T6 18%, T7 27%, T8 34%.
+- **Often stuck in hand** (cast in under half the games drawn): Teferi's Protection 24.0% (reactive), Twinflame 25.0%, Triple Triad 31.1%, Doubling Season 32.1%, Garth One-Eye 34.4%, Scion of the Ur-Dragon 35.2%,
+  Nibelheim Aflame 35.3%, Austere Command 37.1%, Decimate 39.4%, Steel Hellkite 41.0%, Dragonlord Silumgar 41.7%, Summon: Bahamut 42.1%.
+- **Most removed by opponents (per game):** The Ur-Dragon 0.15, Terror of the Peaks 0.06, Dragonlord Dromoka 0.04, Korvold 0.04, Goldspan Dragon, Scourge of Valkas, Hellkite Tyrant, Summon: Bahamut 0.03 each.
+
+What the numbers say (correlation, not causation):
+- **Most wins come after The Ur-Dragon is cast.** It is cast in 46.5% of games and wins 52.9% of them (+25.3): about 24.6% of games, roughly 89% of the 27.6% (arithmetic from those two figures). In the other
+  53.5% of games the deck wins about 5.6%. Why it is not cast in those games (mana, removal, the hand) is not in the output: unmeasured.
+- **The deck is slow to its commander.** Median turn 7.0, and by T6 only 18%: the output shows no ramp or mana-by-turn figure, so how much of this is the mana base or the top-heavy curve (the Open questions below
+  ask about both) is unmeasured.
+- **The big Dragons win when they land and some sit in hand.** Tiamat 69.7% (cast in 13.9% of games), Summon: Bahamut 63.8% (9.9%), Utvara Hellkite 61.7% (11.1%), Scion of the Ur-Dragon 57.5% (7.5%), Morophon 56.8%;
+  Summon: Bahamut is cast in 42.1% of the games drawn, Steel Hellkite 41.0%, Dragonlord Silumgar 41.7%, Scion 35.2%. Expensive cards are cast in games that are already going well, so this does not show that
+  they help.
+- **The Garth line is mostly held.** Garth One-Eye is cast in 34.4% of the games it is drawn, Doubling Season 32.1%, Twinflame 25.0%. The Twinflame hold while the line is alive is by design (the card-code fixes
+  below); how often the line fired, or won, is not in the output: unmeasured (alt wins are 2.9% of wins).
+- **The lowest-ranked cards are not low.** All ten lowest win rates when cast are above the deck's 27.6% (+4.8 to +8.9: Chaos Warp, Rivaz, Rhythm of the Wild 33.7%, Mana Vault, Fierce Guardianship, Swords,
+  Path, Three Visits, The One Ring, Llanowar Elves), so the list shows no card cast with a win rate below the deck's (a cast card is also a sign of a game that lasted). Rhythm of the Wild (the 11-20 swap) is cast in 11.3% of games; Nibelheim Aflame (the 11-22 swap) is cast in 35.3% of the
+  games drawn.
+
+## Spark Double hold, paired test 2026-11-23 (branch urdragon-spark-hold 2c6bedd2 against main f1ffd896; same seeds, t5, loose, 1,500 games)
+Win rate **27.6% before and 27.6% after**; damage 96.6% of wins in both. Garth One-Eye cast in 34.4% -> 34.1% of the games it is drawn, Doubling Season 32.1% -> 31.7%, Twinflame 25.0% -> 25.0%. Kyodai on the same seeds is identical to its baseline apart from the elapsed-time line, so the hold does not reach other decks. Raw: `audit/stage3-paired-2026-11-23/spark-urdragon-analyze.txt`, `spark-kyodai-analyze.txt`.
+- The Garth line is a rare path here (non-damage wins are 2.9% of wins), so a headline move was not expected; the numbers agree.
+- Not measured: Spark Double's own cast rate (the `--analyze` card lists show only the extremes, and Spark Double is in neither). The sim gate "if Spark's cast rate drops by more than about 5 points add a Garth priority bump" cannot be read from this output. Two known limits stay open, unmeasured: a tutor can fetch a Dragon instead of Garth, and the hold has no timeout if the AI never casts Garth.
+
 ## 2026-11-22: Cyclonic Rift => Nibelheim Aflame (JD's choice, not simulated)
 Nibelheim Aflame ({2}{R}{R} sorcery, flashback {5}{R}{R}; model status Full; owned) takes Cyclonic Rift's slot (a proxy). It is
 not slot-for-slot: Rift was a {1}{U} instant that, overloaded at {6}{U}, bounced every nonland permanent the opponents control
