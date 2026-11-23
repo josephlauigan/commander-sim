@@ -320,8 +320,16 @@ pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         || crate::impls::yoshimaru_cards::gandalf_flash(g, p, c)
 }
 
-/// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
+/// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...), and does the AI
+/// expect it to get through (Vexing Bauble, Chalice of the Void, Void Mirror: `ai_cast_countered`)
 pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
+    cast_allowed(g, p, c, zone) && (g.hooks.is_empty() || crate::human::is_human(g, p) || !ai_cast_countered(g, p, c))
+}
+
+/// `castable` without the AI's counter estimate: only what forbids the cast (the locks, split second, Silence and the
+/// `allowed` hooks). For a caller whose mana is not known yet, which the estimate reads from `cost_of` (a Walking Ballista
+/// cast for X >= 1 from a loop's coloured mana is not countered by a Chalice of the Void on 0 or a Vexing Bauble)
+pub fn cast_allowed(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     let d = g.db.get(c);
     if crate::impls::t0_giada::cast_locked(g, p, c) {
         return false; // Serra Avenger: not on your first three turns
@@ -340,10 +348,7 @@ pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
             return false;
         }
     }
-    if g.hooks.is_empty() {
-        return true;
-    }
-    hooks::allowed(g, p, c, zone) && (crate::human::is_human(g, p) || !ai_cast_countered(g, p, c))
+    g.hooks.is_empty() || hooks::allowed(g, p, c, zone)
 }
 
 /// The AI does not cast a spell that Vexing Bauble, Chalice of the Void or Void Mirror would counter as it is cast. The

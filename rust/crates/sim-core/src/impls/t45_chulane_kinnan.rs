@@ -644,9 +644,14 @@ fn curio_ready(g: &Game, p: PlayerId) -> Ready {
     (true, vec![a, cu, ch], vec![c])
 }
 
-/// unbounded mana wins: Walking Ballista (on the battlefield or in hand), or Thrasios drawing the deck to it
+/// unbounded mana wins: Walking Ballista (on the battlefield, or in hand and allowed to be cast: Rule of Law with a spell
+/// already cast, or another lock, stops the cast; `cast_allowed`, not `castable`, because the loop's mana casts it for
+/// X >= 1 with coloured mana, which a Chalice of the Void on 0, a Vexing Bauble or a Void Mirror does not counter), or
+/// Thrasios drawing the deck to it
 fn mana_outlet(g: &Game, p: PlayerId) -> bool {
-    if mine(g, p, BALLISTA).is_some() || held(g, p, BALLISTA).is_some() {
+    if mine(g, p, BALLISTA).is_some()
+        || held(g, p, BALLISTA).is_some_and(|b| crate::engine::cast::cast_allowed(g, p, b, "hand"))
+    {
         return true;
     }
     let lib = g.player(p).library.iter().any(|&c| cname(g, c) == BALLISTA);
@@ -733,7 +738,9 @@ pub static COMBOS: [Combo; 5] = [
         ready: tender_ready,
         mana: (0, ""),
         finish: None,
-        xcost: &[(BALLISTA, 1)],
+        // mana spent on X ({X}{X} at X = 1). Unused by this line: it does not cast the Ballista, the loop's unbounded
+        // mana pays for it, as `combos::mana_sink` models every other unbounded-mana line
+        xcost: &[(BALLISTA, 2)],
         steps: &[],
     },
     Combo {
@@ -742,7 +749,9 @@ pub static COMBOS: [Combo; 5] = [
         ready: nyx_ready,
         mana: (0, ""),
         finish: None,
-        xcost: &[(BALLISTA, 1)],
+        // mana spent on X ({X}{X} at X = 1). Unused by this line: it does not cast the Ballista, the loop's unbounded
+        // mana pays for it, as `combos::mana_sink` models every other unbounded-mana line
+        xcost: &[(BALLISTA, 2)],
         steps: &[],
     },
     Combo {
@@ -751,7 +760,9 @@ pub static COMBOS: [Combo; 5] = [
         ready: cub_ready,
         mana: (0, ""),
         finish: None,
-        xcost: &[(BALLISTA, 1)],
+        // mana spent on X ({X}{X} at X = 1). Unused by this line: it does not cast the Ballista, the loop's unbounded
+        // mana pays for it, as `combos::mana_sink` models every other unbounded-mana line
+        xcost: &[(BALLISTA, 2)],
         steps: &[],
     },
 ];

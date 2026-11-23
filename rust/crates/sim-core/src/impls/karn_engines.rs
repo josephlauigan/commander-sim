@@ -858,25 +858,22 @@ pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res
 }
 
 // ================================================================== Hangarback Walker
-/// the X the AI casts Hangarback Walker for ({X}{X}): a third of its mana, one to four, none if it cannot pay for one
+/// the X the AI casts Hangarback Walker for ({X}{X}): a third of its mana, one to four, and never more than the cost
+/// pipeline lets it pay (`brain::max_x_upto`: reducers and taxes included; it prices with `cost_of_x`, so there is no loop
+/// through `cost_of`); none if it cannot pay for one (a reducer can make X = 1 payable with less than {2})
 pub fn hangar_x(g: &Game, p: PlayerId) -> i32 {
-    let total = total_mana(g, p, false) as i32;
-    if total < 2 { 0 } else { (total / 3).clamp(1, 4) }
+    let Some(c) = g.db.id("Hangarback Walker") else { return 0 };
+    let want = (total_mana(g, p, false) as i32 / 3).clamp(1, 4);
+    crate::ai::brain::max_x_upto(g, p, c, 2, false, want)
 }
 
-/// {X}{X}: two generic mana per X (the data has no mana cost for it); uncastable when it cannot pay for X = 1
-fn hangar_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if crate::human::is_human(g, p) {
-        return 0; // practice mode asks the person for X and charges 2X then (`human::cast_inner`)
-    }
-    match hangar_x(g, p) {
-        0 => 99,
-        x => 2 * x,
-    }
+/// {X}{X} priced at the X the AI chose (`cost_of` does it through `CardImpl::auto_x`); uncastable when it cannot pay for X = 1
+fn hangar_auto_x(g: &Game, p: PlayerId, _c: CardId) -> Option<i32> {
+    Some(hangar_x(g, p)).filter(|&x| x > 0)
 }
 
-fn hangar_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if hangar_x(g, p) == 0 { 0 } else { 44 }
+fn hangar_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    if hangar_auto_x(g, p, c).is_none() { 0 } else { 44 }
 }
 
 /// Walking Ballista enters with X +1/+1 counters, X being half the mana its cast paid (`last_x`): read by
@@ -1141,7 +1138,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Rogue's Passage")?.land_options = Some(passage_options);
     r.card(db, "Endless Atlas")?.options = Some(atlas_options);
     let c = r.card(db, "Hangarback Walker")?;
-    c.self_cost = Some(hangar_cost);
+    c.auto_x = Some(hangar_auto_x);
     c.prio = Some(hangar_prio);
     c.self_dies = Some(hangar_dies);
     let c = r.card(db, "Batterskull")?;

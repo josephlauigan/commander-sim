@@ -14,14 +14,13 @@ use super::t5::is_artifact;
 use crate::cards::CardDb;
 use crate::engine::cast::{casts_this_turn, lock_this_turn};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::trigger_window;
 use crate::engine::zones::max_by;
 use crate::flow::Res;
 use crate::hooks::{Event, Registry, Src};
 use crate::ids::PermId;
 use crate::ids::{CardId, PlayerId};
-use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
 use crate::state::{DataKey, LockKind, Val};
 use crate::sym::{Sym, intern};
@@ -269,26 +268,35 @@ pub fn chalice_counters(g: &Game, m: PermId) -> i32 {
 /// The X the AI casts p's Chalice for, 1 to 3 as the mana allows: the one that hits the most nonland cards still to
 /// come (hand and library) in the opponents' decks, less the same count in its own. X = 0 (which stops mana value 0:
 /// the Moxen, Lotus Petal) only when every X from 1 up would hurt p more than the table; `None` when it can pay for
-/// none of them (the card is then not cast).
+/// none of them (the card is then not cast). What it can pay is what the cost pipeline charges, reducers and taxes
+/// included (`brain::max_x_upto`, which prices with `cost_of_x`, so there is no loop through `cost_of`).
 pub fn chalice_x(g: &Game, p: PlayerId) -> Option<i32> {
     let c = g.db.id("Chalice of the Void")?;
-    let count = |q: PlayerId, x: i32| {
+    let afford = crate::ai::brain::max_x_upto(g, p, c, 2, false, CHALICE_MAX_X);
+    if afford < 1 {
+        return None; // (before the library scan: this runs on every price check of the card)
+    }
+    // one pass over each seat's hand and library: how many nonland cards of mana value 0 to CHALICE_MAX_X it holds
+    let tally = |q: PlayerId| {
         let pl = g.player(q);
-        pl.hand.iter().chain(pl.library.iter()).filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc as i32 == x).count()
-            as i32
+        let mut n = [0i32; CHALICE_MAX_X as usize + 1];
+        for &c in pl.hand.iter().chain(pl.library.iter()) {
+            let d = g.db.get(c);
+            if !d.land && (d.cmc as usize) < n.len() {
+                n[d.cmc as usize] += 1;
+            }
+        }
+        n
     };
-    let score = |x: i32| g.opps(p).map(|q| count(q, x)).ssum() - count(p, x);
-    let afford = (total_mana_spell(g, p, c, false) as i32 / 2).min(CHALICE_MAX_X);
+    let (own, opps): (_, Vec<_>) = (tally(p), g.opps(p).map(tally).collect());
+    let score = |x: i32| opps.iter().map(|n| n[x as usize]).sum::<i32>() - own[x as usize];
     let best = (1..=afford).max_by_key(|&x| (score(x), -x))?;
     Some(if score(0) > score(best).max(0) { 0 } else { best })
 }
 
-/// {X}{X}: two generic mana per X the AI chose (the data has no mana cost for it); uncastable when it can't pay for X = 1
-fn chalice_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if crate::human::is_human(g, p) {
-        return 0; // practice mode asks the person for X and charges 2X then (`human::cast_inner`)
-    }
-    chalice_x(g, p).map_or(99, |x| 2 * x)
+/// the X the AI casts Chalice of the Void for ({X}{X}, the data has no mana cost for it), priced by `cost_of`
+fn chalice_auto_x(g: &Game, p: PlayerId, _c: CardId) -> Option<i32> {
+    chalice_x(g, p)
 }
 
 /// enters with X charge counters, X being the X it was cast with (`DataKey::CastX`, set as it enters: a cost increase is
@@ -347,7 +355,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(chalice_etb);
     *c = c.at_once(Event::Etb);
     c.cast_counter = Some(chalice_counter);
-    c.self_cost = Some(chalice_cost);
+    c.auto_x = Some(chalice_auto_x);
     r.card(db, "Void Mirror")?.cast_counter = Some(mirror_counter);
     Ok(())
 }

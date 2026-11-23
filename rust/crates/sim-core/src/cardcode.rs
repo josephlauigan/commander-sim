@@ -127,6 +127,12 @@ pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
     }
 }
 
+/// the X the AI casts c for when `cost_of` prices it (`CardImpl::auto_x`): None when the card has no such slot, Some(None)
+/// when it has one and cannot pay for any X
+pub fn auto_x(g: &Game, p: PlayerId, c: crate::ids::CardId) -> Option<Option<i32>> {
+    g.registry.get(c).and_then(|i| i.auto_x).map(|f| f(g, p, c))
+}
+
 /// rules.revolt: a permanent of p's left the battlefield this turn
 pub fn revolt(g: &Game, p: PlayerId) -> bool {
     g.player(p).left_turn == Some(g.turn_stamp())

@@ -631,7 +631,7 @@ fn harmonize_keeps_four_green_pips_under_trinisphere() {
     g.player_mut(P).library = vec![target];
     let f = g.registry.get(c).unwrap().gy_options.unwrap();
     let oo = f(&mut g, c, P, Some(false)).unwrap();
-    // BUG: harmonize uses Trinisphere's floor calculated with printed GG, then substitutes GGGG: costs five, not four.
+    // (harmonize counts Trinisphere's minimum over the alternative cost's own four symbols: four mana, not five)
     assert_eq!(oo.len(), 1, "{{X}}{{G}}{{G}}{{G}}{{G}}, X=6 reduced by six power: four mana already meets Trinisphere");
     assert!(run(&mut g, &oo[0]));
     assert_eq!(tapped(&g), 4);
@@ -639,12 +639,9 @@ fn harmonize_keeps_four_green_pips_under_trinisphere() {
 }
 
 #[test]
-fn harmonize_normal_reducers_taxes_and_wrong_colours() {
+fn harmonize_normal_reducers_taxes_minimum_and_wrong_colours() {
     for n in 0..=10 {
         for mode in 0..8 {
-            if mode == 5 {
-                continue;
-            } // the Trinisphere failure is isolated above
             let mut g = game();
             setup(&mut g, "Emerald Medallion", mode);
             basics(&mut g, "G", n);
@@ -652,12 +649,16 @@ fn harmonize_normal_reducers_taxes_and_wrong_colours() {
             let c = card(&g, "Nature's Rhythm");
             g.player_mut(P).gy.push(c);
             let oo = g.registry.get(c).unwrap().gy_options.unwrap()(&mut g, c, P, Some(false)).unwrap();
-            let payable =
-                (0..=64).any(|x| mana::can_pay_spell(&g, P, c, mana::cost_of_x(&g, P, c, x).0, "GGGG", false));
-            assert_eq!(!oo.is_empty(), payable, "{n}/{mode}");
-            if payable {
+            // the part of X the mana pays, as the cost pipeline prices {X}{G}{G}{G}{G} (Trinisphere counts all four)
+            let paid = (0..=64).rev().find(|&x| {
+                let (gn, pips) = mana::cost_of_with(&g, P, c, x, "GGGG");
+                mana::can_pay_spell(&g, P, c, gn, &pips, false)
+            });
+            assert_eq!(!oo.is_empty(), paid.is_some(), "{n}/{mode}");
+            if let Some(x) = paid {
+                let (gn, _) = mana::cost_of_with(&g, P, c, x, "GGGG");
                 assert!(run(&mut g, &oo[0]));
-                assert_eq!(tapped(&g), n as u32);
+                assert_eq!(tapped(&g), gn + 4, "{n}/{mode}");
             }
         }
     }
@@ -752,7 +753,7 @@ fn twinflame_must_pay_the_spell_tax_in_addition_to_strive() {
 }
 
 #[test]
-fn unchanged_combo_accounting_is_conservative_with_an_artifact_reducer() {
+fn combo_mana_need_prices_x_exactly_with_an_artifact_reducer() {
     use sim_core::impls::combos;
     let mut g = game();
     perm(&mut g, P, "Etherium Sculptor");
@@ -760,7 +761,8 @@ fn unchanged_combo_accounting_is_conservative_with_an_artifact_reducer() {
     let cmb = combos::all().iter().find(|c| c.name == "Heliod, Sun-Crowned + Walking Ballista").unwrap();
     let (gn, pips) = combos::mana_need(&g, P, cmb, &[c]);
     let exact = mana::cost_of_x(&g, P, c, 2).0 + cmb.mana.0;
-    assert_eq!(gn, exact + 1, "one extra mana reserved: conservative, not an underpayment");
+    assert_eq!(exact, 2, "{{X}}{{X}} at X = 1 is {{2}}, the Sculptor takes {{1}} off, the loop needs {{W}}");
+    assert_eq!(gn, exact, "the reducer applies to the generic part that includes X: nothing extra is reserved");
     assert_eq!(pips, "W");
 }
 
@@ -796,7 +798,7 @@ fn free_positive_x_is_not_lost_when_reducers_exceed_the_pool() {
 }
 
 #[test]
-fn planner_reservation_overestimates_reduced_x_by_one_but_never_overspends() {
+fn planner_reservation_prices_reduced_x_exactly() {
     use sim_core::ai::planner;
     use sim_core::hooks::Action;
     let mut g = game();
@@ -809,8 +811,8 @@ fn planner_reservation_overestimates_reduced_x_by_one_but_never_overspends() {
         act: Some(Action::Cast { card: cards[1], zone: None }),
     };
     let kept = planner::reserve(&mut g, P, cards[0], 3, vec![option.clone()]);
-    assert!(kept.is_empty(), "document the conservative cost_of(0)+X reservation");
-    // The rejected sequence is actually payable: one mana for Elves, three for X=3 Zenith less one.
+    assert_eq!(kept.len(), 1, "Elves {{G}} and X = 3 Zenith ({{3}}{{G}} less the Medallion's {{1}}) are four mana");
+    // The kept sequence is payable: one mana for Elves, three for X=3 Zenith.
     assert!(run(&mut g, &option));
     g.player_mut(P).plan_x = Some(3);
     assert!(brain::do_cast(&mut g, P, cards[0], None).unwrap());
@@ -818,7 +820,7 @@ fn planner_reservation_overestimates_reduced_x_by_one_but_never_overspends() {
 }
 
 #[test]
-fn unfixed_artifact_self_costs_are_conservative_with_reducers_and_ignore_krrik() {
+fn xx_artifact_costs_are_exact_with_reducers_and_ignore_krrik() {
     for name in ["Hangarback Walker", "Chalice of the Void"] {
         for krrik in [false, true] {
             let mut g = game();
@@ -832,17 +834,25 @@ fn unfixed_artifact_self_costs_are_conservative_with_reducers_and_ignore_krrik()
             let c = hand(&mut g, P, &[name])[0];
             let x = if name == "Hangarback Walker" { 2 } else { 1 };
             let (gn, pips) = mana::cost_of(&g, P, c);
-            assert_eq!(gn, 2 * x, "self_cost adds 2X after the artifact reducer was floored away");
+            assert_eq!(
+                gn,
+                2 * x - 1,
+                "{{X}}{{X}}: the artifact reducer takes {{1}} off the generic part that includes X"
+            );
             assert!(pips.is_empty());
             assert!(brain::do_cast(&mut g, P, c, None).unwrap());
-            assert_eq!(tapped(&g), 2 * x, "one more than the legal 2X-1 cost (conservative)");
+            assert_eq!(tapped(&g), 2 * x - 1, "exactly what the cost pipeline charges");
+            let m = g.player(P).perms.iter().copied().find(|&m| g.perm(m).cd == Some(c)).unwrap();
+            let counters =
+                if name == "Hangarback Walker" { g.perm(m).plus as i64 } else { g.perm(m).data.int(DataKey::Charge) };
+            assert_eq!(counters, x as i64, "the counters are X, not what the mana paid");
             assert_eq!(g.player(P).life, 40, "neither artifact has a black pip for K'rrik");
         }
     }
 }
 
 #[test]
-fn twinflame_strive_with_a_reducer_pays_one_extra_mana_conservatively() {
+fn twinflame_strive_with_a_reducer_pays_exactly() {
     let mut g = game();
     basics(&mut g, "R", 5);
     perm(&mut g, P, "Ruby Medallion");
@@ -854,7 +864,7 @@ fn twinflame_strive_with_a_reducer_pays_one_extra_mana_conservatively() {
     assert_eq!(oo.len(), 1);
     assert_eq!(oo[0].label, "Twinflame (2 targets)");
     assert!(run(&mut g, &oo[0]));
-    assert_eq!(tapped(&g), 5, "printed {{3}}{{R}}{{R}}, one more than the reduced four-mana cost");
+    assert_eq!(tapped(&g), 4, "{{3}}{{R}}{{R}} less the Medallion's {{1}}");
 }
 
 #[test]

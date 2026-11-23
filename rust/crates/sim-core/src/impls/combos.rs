@@ -13,7 +13,7 @@ use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
+use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, cost_of_x, pay, seq_cost_x}; // --- ai-fix: C
 use crate::engine::mana::{can_pay_spell, pay_spell};
 use crate::engine::removal::legal_targets;
 use crate::engine::repl;
@@ -415,11 +415,12 @@ fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
 }
 
 /// combos.mana_need: the loop's own mana plus the pieces still to cast, in order, at what the engine will charge for them
-/// (`seq_cost`: taxes such as Thorn of Amethyst, Defense Grid and Damping Sphere included), X included
+/// (`seq_cost_x`: taxes such as Thorn of Amethyst, Defense Grid and Damping Sphere included), X included: a piece with
+/// an `xcost` is priced at that X through the cost pipeline (a reducer takes its {1} off the generic part that includes X)
 pub fn mana_need(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, String) {
-    let (gn, pips) = seq_cost(g, p, casts);
-    let x: u32 = casts.iter().map(|&c| cmb.x_for(name_of(g, c))).sum();
-    (cmb.mana.0 + gn + x, format!("{}{pips}", cmb.mana.1))
+    let xs: Vec<(CardId, i32)> = casts.iter().map(|&c| (c, cmb.x_for(name_of(g, c)) as i32)).collect();
+    let (gn, pips) = seq_cost_x(g, p, &xs);
+    (cmb.mana.0 + gn, format!("{}{pips}", cmb.mana.1))
 }
 
 /// the combo and its mana (the loop's own and the pieces' still to cast) can be paid for
@@ -589,7 +590,9 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     }
     for (i, &c) in casts.iter().enumerate() {
         // the last pieces are cast normally: they can be countered. They cost what any cast costs (taxes included)
-        let (gn, pips) = cost_of(g, p, c);
+        // (a piece with an X is priced at it: the check and the payment are one price, as `mana_need` counted it)
+        let x = cmb.x_for(name_of(g, c));
+        let (gn, pips) = if x > 0 { cost_of_x(g, p, c, x as i32) } else { cost_of(g, p, c) };
         if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
             if i > 0 {
                 crate::glog!(g, "    ...{} fizzles ({} is gone)", cmb.name, name_of(g, c));
@@ -598,8 +601,9 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
             }
             return Ok(i > 0); // something already happened: the turn state changed
         }
-        let x = cmb.x_for(name_of(g, c));
-        pay_spell(g, p, c, gn + x, &pips, false)?;
+        if !pay_spell(g, p, c, gn, &pips, false)? {
+            return Ok(i > 0); // (can_pay_spell said yes; nothing was paid, the state is as it was)
+        }
         if x > 0 {
             g.last_x = x as i32;
         }
@@ -1533,7 +1537,7 @@ fn public_piece(g: &Game, q: PlayerId, grp: &[&str]) -> bool {
             || pl.commanders().any(|c| {
                 pl.cmd_zone_of(c) && name_of(g, c) == *n && {
                     let (gn, pips) = cost_of(g, q, c);
-                    can_pay_spell(g, q, c, gn + pl.tax_of(c), &pips, false)
+                    can_pay_spell(g, q, c, gn, &pips, false) // (`cost_of` has the commander's tax)
                 }
             })
     })

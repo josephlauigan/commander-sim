@@ -45,7 +45,7 @@
 //! numbers: every play is made on a copy, which has its own.
 
 use super::act;
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, ritual_net};
+use crate::engine::mana::{can_pay_spell, cost_of, cost_of_x, ritual_net};
 use crate::flow::Res;
 use crate::hooks::Action;
 use crate::ids::{CardId, PlayerId};
@@ -325,7 +325,8 @@ fn fodder_cast(g: &Game, p: PlayerId, hand: &[CardId], castable_now: &dyn Fn(Car
         .filter(|&(c, z)| g.db.get(c).creature && castable_now(c, z))
         .min_by_key(|&(c, z)| {
             let (gn, pips) = cost_of(g, p, c);
-            (gn + pips.chars().count() as u32 + if z == "cmd" { pl.tax_of(c) } else { 0 }, z != "cmd")
+            // (`cost_of` already adds a commander's tax outside the hand)
+            (gn + pips.chars().count() as u32, z != "cmd")
         })
         .map(|(c, _)| Step::Cast(c))
 }
@@ -335,7 +336,10 @@ fn fodder_cast(g: &Game, p: PlayerId, hand: &[CardId], castable_now: &dyn Fn(Car
 /// `eot`: the end-of-turn window before p's turn: instants only.
 fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
     let pl = g.player(p);
-    let castable_with = |c: CardId, zone: &str, x: u32, held_ok: bool| -> bool {
+    // `x`: the X of a creature X tutor, part of its cast cost and priced by `cost_of_x` (reducers apply to it); `extra`: mana
+    // the card needs besides its cast (Transmute Artifact's difference in mana value, paid as it resolves), which no
+    // reducer touches
+    let castable_with = |c: CardId, zone: &str, x: u32, extra: u32, held_ok: bool| -> bool {
         let d = g.db.get(c);
         if eot && !(d.instant || d.tag(Tag::Flash)) {
             return false;
@@ -349,11 +353,11 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
         if g.cast_checks() && !crate::engine::cast::castable(g, p, c, zone) {
             return false;
         }
-        let (gn, pips) = cost_of(g, p, c);
-        let tax = if zone == "cmd" { pl.tax_of(c) } else { 0 };
-        can_pay_spell(g, p, c, gn + tax + x, &pips, d.tag(Tag::Convoke))
+        // (`cost_of` and `cost_of_x` already add a commander's tax outside the hand)
+        let (gn, pips) = if x == 0 { cost_of(g, p, c) } else { cost_of_x(g, p, c, x as i32) };
+        can_pay_spell(g, p, c, gn + extra, &pips, d.tag(Tag::Convoke))
     };
-    let castable_at = |c: CardId, zone: &str, x: u32| castable_with(c, zone, x, false);
+    let castable_at = |c: CardId, zone: &str, extra: u32| castable_with(c, zone, 0, extra, false);
     let castable_now = |c: CardId, zone: &str| castable_at(c, zone, 0);
     let hand: Vec<CardId> = pl.hand.iter().copied().filter(|c| known.contains(c)).collect();
     let tutors: Vec<(CardId, Dest, Vec<CardId>)> =
@@ -402,7 +406,7 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
             for &t in pieces.iter().chain(mana.iter().take(MAX_MANA_TARGETS)) {
                 if n < MAX_TARGETS
                     && legal.contains(&t)
-                    && castable_with(*c, "hand", pay_x(g, p, Step::Tutor(*c, t)), true)
+                    && castable_with(*c, "hand", pay_x(g, p, Step::Tutor(*c, t)), 0, true)
                 {
                     out.push(Step::Tutor(*c, t));
                     n += 1;
@@ -871,9 +875,47 @@ pub fn eot_play(g: &mut Game, p: PlayerId) -> Res<Option<(Step, Vec<Step>, &'sta
     Ok(Some((plan[0], plan, if f.closer { CLOSER } else { READY })))
 }
 
-/// The main phase keeps the reserved tutor's mana up: an option is dropped when the tutor can't be paid for after it
-/// (a cast by its cost; any other play by making it on a copy), and the tutor itself is not cast now (the
-/// end-of-turn window casts it, for the planner's card).
+/// The position the reserved tutor is really cast in (`plays` with `eot`, in the end-of-turn window before p's next turn),
+/// made from a planner copy `w` of the position after p's play: the seat before p is the active one (Defense Grid taxes a
+/// spell cast on another player's turn), and it is the next round, so no spell p cast this turn counts any more
+/// (Damping Sphere's count starts again). Every pool is empty, as `turn::step_start` empties them at the start of every
+/// turn (mana floating now is gone), and every other seat has untapped (a tapped Trinisphere applies again); p's own
+/// permanents stay as they are, p untaps on its own turn, after the window. What the other seats do before then is not
+/// played: nobody but p acts.
+fn window_of(mut w: Game, p: PlayerId) -> Game {
+    use crate::engine::values::card_tag;
+    if let Some(q) = w.after(p).filter(|&q| w.player(q).alive).last() {
+        w.active = Some(q);
+    }
+    w.round += 1;
+    w.player_mut(p).turn_casts = None;
+    for q in &mut w.players {
+        q.mana.clear();
+        q.pool.art = 0;
+        q.pool.spell = 0;
+    }
+    for q in w.after(p).collect::<Vec<_>>() {
+        for l in w.player(q).lands.clone() {
+            if !w.perm(l).phased {
+                w.perm_mut(l).tapped = false;
+            }
+        }
+        for m in w.player(q).perms.clone() {
+            let keep = card_tag(&w, m, Tag::Nountap);
+            if !keep && !w.perm(m).phased {
+                w.perm_mut(m).tapped = false;
+            }
+        }
+        w.player_mut(q).tapped_treasures = 0;
+    }
+    w
+}
+
+/// The main phase keeps the reserved tutor's mana up: an option is dropped when the tutor can't be paid for after it,
+/// priced in the window where it is cast (`window_of`), and the tutor itself is not cast now (the end-of-turn window
+/// casts it, for the planner's card). Every play, a cast of any card included, is made on a copy and the tutor is priced
+/// on the window copy of that position, so what the play brings is seen: a reducer, a tax, a rock, an untapped land, a
+/// sacrificed source, a removed tax piece. Mana a ritual floats is gone by the window and is not counted.
 pub fn reserve(
     g: &mut Game,
     p: PlayerId,
@@ -881,22 +923,21 @@ pub fn reserve(
     x: u32,
     opts: Vec<crate::hooks::Opt>,
 ) -> Vec<crate::hooks::Opt> {
-    let (tg, tp) = cost_of(g, p, tutor);
-    let tg = tg + x; // --- t6-xtutor: an X tutor also keeps its X (`tutor_x`; 0 for any other)
+    // --- t6-xtutor: an X tutor also keeps its X (`tutor_x`; 0 for any other), priced through the cost pipeline
+    let price = |g: &Game| if x == 0 { cost_of(g, p, tutor) } else { cost_of_x(g, p, tutor, x as i32) };
     let mut out = vec![];
     for o in opts {
         let keep = match &o.act {
             None => true,
             Some(Action::Cast { card, .. }) if *card == tutor => false,
-            Some(Action::Cast { card, .. }) => {
-                let (gn, pips) = crate::engine::mana::seq_cost(g, p, &[*card, tutor]);
-                can_pay(g, p, gn + x, &pips, false)
-            }
             Some(a) => {
                 let mut g2 = copy(g, p);
-                matches!(act::perform(&mut g2, p, a), Ok(true))
-                    && g2.player(p).hand.contains(&tutor)
-                    && can_pay_spell(&g2, p, tutor, tg, &tp, false)
+                matches!(act::perform(&mut g2, p, a), Ok(true)) && g2.player(p).hand.contains(&tutor) && {
+                    // the tutor is priced where it will be cast: in the window after the play
+                    let w = window_of(g2, p);
+                    let (tg, tp) = price(&w);
+                    can_pay_spell(&w, p, tutor, tg, &tp, false)
+                }
             }
         };
         if keep {
@@ -1087,4 +1128,125 @@ pub fn land_plan_why(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Ca
         )
     };
     Ok(Some((c, t, why)))
+}
+
+/// the plays the planner offers where a price decides: a creature X tutor at X = its target's mana value (priced by
+/// `cost_of_x`, so a reducer applies to its X), a tutor's own extra mana (Transmute Artifact, no reducer touches it) and
+/// a commander from the command zone (`cost_of` has its tax already)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::testkit::*;
+
+    const P0: PlayerId = PlayerId(0);
+
+    /// seat 0 is `key`; the other seats are inert goldfish (empty hand, a library of Wastes); p0's hand is empty and its
+    /// library is Islands, as the plan tests build their positions
+    fn goldfish(key: &str) -> Game {
+        let mut g = table(&[key, "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax"]);
+        for i in 1..3 {
+            let wastes: Vec<_> = (0..60).map(|_| card(&g, "Wastes")).collect();
+            let pl = g.player_mut(PlayerId(i));
+            pl.key = crate::sym::intern(&format!("goldfish-{}", i + 1));
+            pl.hand.clear();
+            pl.library = wastes;
+        }
+        let lib: Vec<_> = (0..40).map(|_| card(&g, "Island")).collect();
+        let pl = g.player_mut(P0);
+        pl.hand.clear();
+        pl.library = lib;
+        pl.turns = 5;
+        g.round = 6;
+        g.active = Some(P0);
+        g.step = TurnStep::Main1;
+        g
+    }
+
+    fn offers(g: &Game, s: Step) -> bool {
+        let known = g.player(P0).hand.clone();
+        plays(g, P0, &known, false).contains(&s)
+    }
+
+    /// Kinnan's seat with Kinnan out and Basalt Monolith tapped (it makes no mana), `forests` Forests, `tutor` in hand,
+    /// Thrasios (the line's piece, mana value 2) in the library; `medallion` puts an Emerald Medallion out
+    fn zenith_table(forests: usize, medallion: bool) -> (Game, Step) {
+        let mut g = goldfish("kinnan-bonder-mana-combo");
+        perm(&mut g, P0, "Kinnan, Bonder Prodigy");
+        let m = perm(&mut g, P0, "Basalt Monolith");
+        g.perm_mut(m).tapped = true;
+        if medallion {
+            perm(&mut g, P0, "Emerald Medallion");
+        }
+        lands(&mut g, P0, "Forest", forests, false);
+        let gsz = hand(&mut g, P0, &["Green Sun's Zenith"])[0];
+        let thr = card(&g, "Thrasios, Triton Hero");
+        g.player_mut(P0).library.insert(0, thr);
+        (g, Step::Tutor(gsz, thr))
+    }
+
+    #[test]
+    fn a_creature_x_tutor_is_priced_by_cost_of_x_so_a_reducer_applies_to_its_x() {
+        // {X}{G} at X = 2: three mana; with an Emerald Medallion (green spells cost {1} less) two
+        let (g, s) = zenith_table(2, false);
+        assert_eq!(tutor_x(&g, s), 2);
+        assert!(!offers(&g, s), "two Forests do not pay {{2}}{{G}}");
+        let (g, s) = zenith_table(3, false);
+        assert!(offers(&g, s), "three do");
+        let (g, s) = zenith_table(2, true);
+        assert!(offers(&g, s), "two do with the Medallion: its {{1}} comes off the generic part that includes X");
+        let (g, s) = zenith_table(1, true);
+        assert!(!offers(&g, s), "one does not");
+    }
+
+    /// Kinnan's seat with a tapped Sol Ring out, Transmute Artifact in hand for Basalt Monolith (mana value 3, a Sol Ring
+    /// sacrificed: {2} extra), `islands` Islands, and a Goblin Electromancer (instants and sorceries cost {1}
+    /// less)
+    fn transmute_table(islands: usize) -> (Game, Step) {
+        let mut g = goldfish("kinnan-bonder-mana-combo");
+        perm(&mut g, P0, "Kinnan, Bonder Prodigy");
+        let ring = perm(&mut g, P0, "Sol Ring");
+        g.perm_mut(ring).tapped = true; // (the artifact to sacrifice, not a source of mana)
+        perm(&mut g, P0, "Goblin Electromancer");
+        lands(&mut g, P0, "Island", islands, false);
+        let ta = hand(&mut g, P0, &["Transmute Artifact"])[0];
+        let mono = card(&g, "Basalt Monolith");
+        g.player_mut(P0).library.insert(0, mono);
+        (g, Step::Tutor(ta, mono))
+    }
+
+    #[test]
+    fn a_tutors_extra_mana_is_paid_in_full_under_a_reducer() {
+        // {U}{U} and {2} for the artifact put onto the battlefield: four mana. The Electromancer cannot take {1} off the
+        // {2}: it is paid as the spell resolves, not as part of its cost (and {U}{U} has no generic part to reduce)
+        let (g, s) = transmute_table(3);
+        assert!(!offers(&g, s), "three Islands do not pay it");
+        let (g, s) = transmute_table(4);
+        assert!(offers(&g, s), "four do");
+    }
+
+    /// Kraum and Tymna's seat with Diabolic Intent (it sacrifices a creature) in hand, no creature out and `scrublands`
+    /// Scrublands: a commander is the creature the planner casts as fodder. Tymna the Weaver ({1}{W}{B}) is in the
+    /// command zone with a commander tax of `tax`
+    fn fodder_table(scrublands: usize, tax: u32) -> (Game, Step) {
+        let mut g = goldfish("kraum-tymna-blue-breach-midrange");
+        let tymna = card(&g, "Tymna the Weaver");
+        if g.player(P0).cmd == tymna {
+            g.player_mut(P0).tax = tax;
+        } else {
+            g.player_mut(P0).tax2 = tax;
+        }
+        lands(&mut g, P0, "Scrubland", scrublands, false);
+        hand(&mut g, P0, &["Diabolic Intent"]);
+        (g, Step::Cast(tymna))
+    }
+
+    #[test]
+    fn a_commander_from_the_command_zone_costs_cost_of_and_no_more() {
+        // {1}{W}{B} and a tax of {2}: five mana, `cost_of` counts the tax (the planner added it a second time)
+        let (g, s) = fodder_table(4, 2);
+        assert!(!offers(&g, s), "four do not pay {{3}}{{W}}{{B}}");
+        let (g, s) = fodder_table(5, 2);
+        assert_eq!(crate::engine::mana::cost_of(&g, P0, card(&g, "Tymna the Weaver")), (3, "WB".into()));
+        assert!(offers(&g, s), "five do");
+    }
 }

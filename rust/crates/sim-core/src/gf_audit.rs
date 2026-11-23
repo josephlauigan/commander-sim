@@ -200,8 +200,7 @@ pub fn decision(g: &mut Game, p: PlayerId, opts: &[Opt]) {
     let nonland = pl.hand.iter().any(|&c| !g.db.get(c).land) || pl.cmds_in_zone().next().is_some();
     let pay = |c: CardId| {
         let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-        let tax = if pl.is_commander(c) { pl.tax_of(c) } else { 0 };
-        crate::engine::mana::can_pay_spell(g, p, c, gn + tax, &pips, false)
+        crate::engine::mana::can_pay_spell(g, p, c, gn, &pips, false) // (`cost_of` has a commander's tax)
     };
     let offered: Vec<CardId> = opts.iter().filter_map(spell_card).collect();
     let mut payable = false;

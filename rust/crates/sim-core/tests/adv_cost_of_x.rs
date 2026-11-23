@@ -33,6 +33,21 @@ fn x_in_label(opt: &Opt) -> i32 {
     rest.split_whitespace().next().unwrap().trim_end_matches(')').parse().unwrap()
 }
 
+/// what `cost_of` says for a card: `cost_of_x` at x = 0, except a card whose X the AI picks itself (`CardImpl::auto_x`:
+/// Hangarback Walker, Chalice of the Void), which is priced at that X times its {X} symbols (and 99 more generic when it
+/// can pay for none, unless the price does not depend on X)
+fn expected_cost_of(g: &Game, c: CardId) -> (u32, String) {
+    let xcount = g.db.get(c).xcount as i32;
+    match sim_core::cardcode::auto_x(g, P0, c) {
+        Some(Some(x)) => mana::cost_of_x(g, P0, c, x * xcount),
+        Some(None) if !mana::x_free(g, P0, c) => {
+            let (gn, pips) = mana::cost_of_x(g, P0, c, 0);
+            (gn + 99, pips)
+        }
+        _ => mana::cost_of_x(g, P0, c, 0),
+    }
+}
+
 #[test]
 fn x_zero_matches_cost_of_across_the_entire_database_and_boards() {
     for board in [None, Some("Jet Medallion"), Some("Sphere of Resistance"), Some("K'rrik, Son of Yawgmoth")] {
@@ -41,7 +56,11 @@ fn x_zero_matches_cost_of_across_the_entire_database_and_boards() {
             perm(&mut g, P0, name);
         }
         for d in g.db.iter() {
-            assert_eq!(mana::cost_of_x(&g, P0, d.id, 0), mana::cost_of(&g, P0, d.id), "{}: {board:?}", d.name);
+            // (every card but the two {X}{X} artifacts the AI casts for an X of its own choosing)
+            assert_eq!(expected_cost_of(&g, d.id), mana::cost_of(&g, P0, d.id), "{}: {board:?}", d.name);
+            if sim_core::cardcode::auto_x(&g, P0, d.id).is_none() {
+                assert_eq!(mana::cost_of_x(&g, P0, d.id, 0), mana::cost_of(&g, P0, d.id), "{}: {board:?}", d.name);
+            }
         }
     }
 }
@@ -51,7 +70,10 @@ fn negative_x_is_zero_including_i32_min_across_the_database() {
     let g = game(3);
     for d in g.db.iter() {
         for x in [-1, i32::MIN] {
-            assert_eq!(mana::cost_of_x(&g, P0, d.id, x), mana::cost_of(&g, P0, d.id), "{}: {x}", d.name);
+            assert_eq!(mana::cost_of_x(&g, P0, d.id, x), mana::cost_of_x(&g, P0, d.id, 0), "{}: {x}", d.name);
+            if sim_core::cardcode::auto_x(&g, P0, d.id).is_none() {
+                assert_eq!(mana::cost_of_x(&g, P0, d.id, x), mana::cost_of(&g, P0, d.id), "{}: {x}", d.name);
+            }
         }
     }
 }
