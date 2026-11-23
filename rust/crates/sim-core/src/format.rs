@@ -88,19 +88,17 @@ impl TableAi {
         Ok(out)
     }
 
-    /// the values as a report names them (the fields that differ from Commander's, or "Commander's")
+    /// the profile as a report names it: `Commander's (4-player)`, or each field's value
     pub fn describe(&self) -> String {
-        let mut v = vec![];
-        if self.learned_eval != Self::COMMANDER.learned_eval {
-            v.push(format!("learned_eval {}", if self.learned_eval { "on" } else { "off" }));
+        if *self == Self::COMMANDER {
+            return "Commander's (4-player)".into();
         }
-        if self.go_rules != Self::COMMANDER.go_rules {
-            v.push(format!("go_rules {}", if self.go_rules == GoRules::All { "all" } else { "t6" }));
-        }
-        if self.duel != Self::COMMANDER.duel {
-            v.push(format!("duel cover {}", if self.duel { "on" } else { "off" }));
-        }
-        if v.is_empty() { "Commander's AI profile".into() } else { v.join(", ") }
+        format!(
+            "learned eval {}, go rules {}, duel cover {}",
+            if self.learned_eval { "on" } else { "off" },
+            if self.go_rules == GoRules::All { "every seat" } else { "Tier 6 only" },
+            if self.duel { "on" } else { "off" }
+        )
     }
 }
 

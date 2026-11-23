@@ -12,7 +12,7 @@
 
 use crate::args::Args;
 use crate::play::Sim;
-use sim_core::format::{Format, GoRules, TableAi};
+use sim_core::format::{Format, TableAi};
 
 /// The index (into the sorted opponent keys) of the opponent seed `seed` meets: the opponent is `sorted_keys[(seed / 2) % n]`,
 /// so adding or removing a pool deck in a tier re-deals the opponents of nearly every seed: Cali numbers from before and
@@ -100,22 +100,32 @@ pub fn table_for_spec(fmt: &Format, spec: Option<&str>) -> Result<TableAi, Strin
 }
 
 /// the AI profile a table of `fmt` plays: the format's, with env `TABLE_AI`'s fields turned off. A bad `TABLE_AI` stops
-/// the run, as every env switch does.
+/// the run, as every env switch does. On a table with no duel (a Commander format) `TABLE_AI` is a no-op: say so once.
 pub fn table_for(fmt: &Format) -> TableAi {
-    table_for_spec(fmt, table_ai_env().as_deref()).unwrap_or_else(|e| panic!("{e}"))
+    static NOTE: std::sync::Once = std::sync::Once::new();
+    let spec = table_ai_env();
+    if let Some(s) = &spec
+        && !is_duel(fmt)
+    {
+        NOTE.call_once(|| {
+            eprintln!("note: TABLE_AI={s} changes nothing at a {} table (the arm is for a 2-seat format)", fmt.name)
+        });
+    }
+    table_for_spec(fmt, spec.as_deref()).unwrap_or_else(|e| panic!("{e}"))
 }
 
-/// the label text of a 2-seat run's AI under `spec` (env `TABLE_AI`)
+/// the label text of a 2-seat run's AI under `spec` (env `TABLE_AI`): the opponents and knobs, the AI profile generated
+/// from the `TableAi` fields, and the arm
 pub fn ai_label_for(fmt: &Format, spec: Option<&str>) -> String {
-    let base = match table_for_spec(fmt, spec) {
-        Ok(t) if (t.learned_eval, t.go_rules, t.duel) == (true, GoRules::T6, false) => "4-player AI".to_string(),
-        Ok(t) => format!("AI profile: {}", t.describe()),
+    let profile = match table_for_spec(fmt, spec) {
+        Ok(t) => t.describe(),
         Err(e) => e,
     };
-    match spec {
-        Some(s) => format!("{}, {base} (TABLE_AI={s})", fmt.name),
-        None => format!("{}, {base}", fmt.name),
-    }
+    let arm = spec.map(|s| format!(" (TABLE_AI={s})")).unwrap_or_default();
+    format!(
+        "{}, opponents: 4-player pool lists 1v1, tier knobs fitted on 4-seat tables; AI profile: {profile}{arm}",
+        fmt.name
+    )
 }
 
 /// What every report of a 2-seat run says about its AI: the format's AI profile (learned evaluation, go rules, duel
@@ -345,7 +355,12 @@ mod tests {
         assert!(describe(cali).unwrap().contains("30 life") && describe(cmd).is_none());
         assert!(ai_label(cali).unwrap().starts_with("Cali Commander, "));
         // TABLE_AI=commander plays the 4-player AI: the label says so, and shows the switch
-        assert_eq!(ai_label_for(cali, Some("commander")), "Cali Commander, 4-player AI (TABLE_AI=commander)");
+        assert_eq!(
+            ai_label_for(cali, Some("commander")),
+            "Cali Commander, opponents: 4-player pool lists 1v1, tier knobs fitted on 4-seat tables; AI profile: \
+             Commander's (4-player) (TABLE_AI=commander)"
+        );
+        assert!(ai_label_for(cali, None).ends_with(&format!("AI profile: {}", cali.ai.describe())));
         assert_eq!(table_for_spec(cali, Some("commander")).unwrap(), TableAi::COMMANDER);
         assert!(table_for_spec(cali, Some("duel,nonsense")).is_err());
         assert!(ai_label(cmd).is_none() && !is_duel(cmd));

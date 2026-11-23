@@ -167,18 +167,34 @@ pub fn go_risk(g: &Game, p: PlayerId) -> f64 {
 }
 
 /// `go_risk` with cover the caller holds that `protection` does not see (`covered`: the line carries its own lock, as a
-/// Doomsday pile with Silence in it does): it counts like Silence or Orim's Chant held in hand, once
+/// Doomsday pile with Silence in it does): it counts like Silence or Orim's Chant held in hand, once. Silence or Orim's
+/// Chant in hand always counts here (card code that any deck reaches, Doomsday's `risk_ok`, relies on it).
 pub fn go_risk_covered(g: &Game, p: PlayerId, covered: bool) -> f64 {
+    go_risk_with(g, p, covered, true)
+}
+
+/// does p cast Silence / Orim's Chant before a line: a Tier 6 seat, or a plan deck with the opt-in knob (the two
+/// protection branches of `combos::attempt`; `go_rules = all` does not widen them)
+pub fn casts_cover(g: &Game, p: PlayerId) -> bool {
+    t6_plans::is_t6(g, p) || crate::ai::plan_data::protect_before_go(g, p)
+}
+
+/// The risk `go_ok` gates a catalogued line by: `go_risk`, but Silence or Orim's Chant in hand counts as cover only for a
+/// seat that will cast it (`casts_cover`). Under `go_rules = all` a generic seat holding Silence casts none, so it gets
+/// no cover. For a Tier 6 seat or a knob seat this is `go_risk`.
+pub fn go_gate_risk(g: &Game, p: PlayerId) -> f64 {
+    go_risk_with(g, p, false, casts_cover(g, p))
+}
+
+/// `go_risk_covered`, with whether Silence / Orim's Chant held in hand counts (`hand_cover`)
+pub fn go_risk_with(g: &Game, p: PlayerId, covered: bool, hand_cover: bool) -> f64 {
     let mut miss = 1.0;
     for q in g.opps(p) {
         miss *= 1.0 - stop_chance(g, q);
     }
     let mut risk = 1.0 - miss;
-    // cover counts only when p will cast it before the line: a Tier 6 seat or a plan deck with the opt-in knob (the two
-    // protection branches of `combos::attempt`). Under `go_rules = all` another seat holding Silence casts none
-    let casts_cover = t6_plans::is_t6(g, p) || crate::ai::plan_data::protect_before_go(g, p);
     let prot = protection(g, p);
-    if (casts_cover && prot.iter().any(|&c| can_pay_spell(g, p, c, 0, "W", false))) || covered {
+    if (hand_cover && prot.iter().any(|&c| can_pay_spell(g, p, c, 0, "W", false))) || covered {
         risk *= 0.2; // Silence / Chant first
     }
     let mine_free = g.player(p).hand.iter().filter(|&&c| is_free_ctr(g, p, c)).count().min(2);
@@ -227,7 +243,7 @@ pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
     if let Some(v) = t6_plans::go_now(g, p, combo) {
         return v;
     }
-    go_risk(g, p) <= go_threshold(g, p)
+    go_gate_risk(g, p) <= go_threshold(g, p)
 }
 
 /// Cast Silence (two or more opponents could answer) or Orim's Chant (one) before the line starts, when the mana for
@@ -264,12 +280,18 @@ fn protect_step(
     }
     let prot = protection(g, p);
     let chant_held = prot.iter().any(|&c| &*g.db.get(c).name == "Orim's Chant");
+    // a duel table waits for no Chant it cannot pay for now ({2}{W}): Silence covers the one opponent then
+    let chant_usable = prot.iter().any(|&c| {
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        &*g.db.get(c).name == "Orim's Chant" && can_pay_spell(g, p, c, cg, &cp, false)
+    });
     for c in prot {
         let d = g.db.get(c);
         let silence = &*d.name == "Silence";
-        // one opponent: an opt-in deck, or a duel table (`table.duel`, from the format's seats), casts Silence when it
-        // holds no Orim's Chant
-        let want_silence = stops.len() >= 2 || ((opt_in.is_some() || g.settings.table.duel) && !chant_held);
+        // one opponent: an opt-in deck casts Silence when it holds no Orim's Chant; a duel table (`table.duel`, from the
+        // format's seats) when it holds none it can pay for now
+        let want_silence =
+            stops.len() >= 2 || (opt_in.is_some() && !chant_held) || (g.settings.table.duel && !chant_usable);
         if silence != want_silence {
             continue;
         }

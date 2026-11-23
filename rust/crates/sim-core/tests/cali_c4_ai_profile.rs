@@ -144,8 +144,8 @@ fn turned_off_names_fields_and_commander_resets_all() {
     assert_eq!(CALI.turned_off("go_rules, duel").unwrap(), TableAi { go_rules: GoRules::T6, duel: false, ..CALI });
     let e = CALI.turned_off("go_rules,speed").unwrap_err();
     assert!(e.contains("bad TABLE_AI") && e.contains("learned_eval"), "{e}");
-    assert_eq!(TableAi::COMMANDER.describe(), "Commander's AI profile");
-    assert_eq!(CALI.describe(), "learned_eval off, go_rules all, duel cover on");
+    assert_eq!(TableAi::COMMANDER.describe(), "Commander's (4-player)");
+    assert_eq!(CALI.describe(), "learned eval off, go rules every seat, duel cover on");
 }
 
 #[test]
@@ -201,14 +201,14 @@ fn the_loader_derives_duel_from_the_seats_and_commander_cannot_change() {
     }
 }
 
-// ------------------------------------------------------------------ go_risk: cover only when it will be cast
+// ------------------------------------------------------------------ the gate's cover: only when it will be cast
 #[test]
-fn go_risk_counts_silence_only_for_a_seat_that_will_cast_it() {
+fn the_gate_counts_silence_only_for_a_seat_that_will_cast_it() {
     // the same position with and without Silence in hand, Plains open
     let risk = |key: &str, silence: bool| {
         let mut g = position(key, if silence { &["Silence"] } else { &[] }, true, 4);
         set_table(&mut g, GO_ALL);
-        t6_table::go_risk(&g, P0)
+        t6_table::go_gate_risk(&g, P0)
     };
     // a generic seat (no knob) holding Silence gets no cover, so the table's go rules cannot be fooled by it
     assert!(!plan_data::protect_before_go(&position("sauron", &[], false, 4), P0));
@@ -220,6 +220,45 @@ fn go_risk_counts_silence_only_for_a_seat_that_will_cast_it() {
         let (with, without) = (risk(key, true), risk(key, false));
         assert!(with < without, "{key}: {with} against {without}");
     }
+}
+
+#[test]
+fn go_risk_itself_still_counts_silence_in_hand_for_any_deck() {
+    // `go_risk` and `go_risk_covered` are what card code reaches (Doomsday's `risk_ok`): unchanged for every seat
+    let g = |silence: bool| position("sauron", if silence { &["Silence"] } else { &[] }, true, 4);
+    let (with, without) = (g(true), g(false));
+    for (a, b) in [
+        (t6_table::go_risk(&with, P0), t6_table::go_risk(&without, P0)),
+        (t6_table::go_risk_covered(&with, P0, false), t6_table::go_risk_covered(&without, P0, false)),
+    ] {
+        assert!(a < b && (a - 0.2 * b).abs() < 1e-12, "x0.2 for a payable Silence: {a} against {b}");
+    }
+    assert_eq!(t6_table::go_risk_with(&with, P0, false, true), t6_table::go_risk(&with, P0));
+}
+
+#[test]
+fn a_doomsday_seat_that_is_not_tier_6_keeps_its_silence_cover_in_the_risk_check() {
+    use sim_core::impls::doomsday;
+    // yshtola-style: a Doomsday deck, not Tier 6, no knob, holding a payable Silence, no lock, no Veil of Summer
+    let mut g = position("yshtola", &["Silence"], true, 4);
+    assert!(!t6_plans::is_t6(&g, P0) && !plan_data::protect_before_go(&g, P0));
+    let thr = t6_table::go_threshold(&g, P0);
+    let bare = {
+        let mut h = position("yshtola", &[], true, 4);
+        (t6_table::go_risk_covered(&h, P0, false), doomsday::risk_ok(&h, P0, false), {
+            set_table(&mut h, CALI);
+            doomsday::risk_ok(&h, P0, false)
+        })
+    };
+    assert!(bare.0 > thr, "armed table: risk {} over the bar {thr}", bare.0);
+    assert!(!bare.1, "no Silence: Doomsday waits");
+    let covered = t6_table::go_risk_covered(&g, P0, false);
+    assert!((covered - 0.2 * bare.0).abs() < 1e-12, "the x0.2 still applies: {covered} against {}", bare.0);
+    assert!(covered <= thr);
+    // under the default profile and under the Cali profile alike: the old formula
+    assert!(doomsday::risk_ok(&g, P0, false), "payable Silence in hand: Doomsday goes, as on main");
+    set_table(&mut g, CALI);
+    assert!(doomsday::risk_ok(&g, P0, false), "the Cali profile does not change Doomsday's check");
 }
 
 // ------------------------------------------------------------------ the go gates for every seat

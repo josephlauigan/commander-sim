@@ -52,6 +52,13 @@ pub fn is_t6(g: &Game, p: PlayerId) -> bool {
 /// seat always; every seat when the table's profile says so (`TableAi::go_rules`, Cali). Under the Commander profile
 /// this is `is_t6`. Only these gates move: the protection step (`combos::attempt`), the deck-identity rules and the
 /// counter rules stay on `is_t6`.
+///
+/// What `go_rules = all` changes for a generic seat, beyond `go_ok` gating its lines: it sets `t6_going` while its line
+/// runs, which (a) lifts the Ad Nauseam hand cap (`tutors.rs`: right for a seat mid-line) and (b) makes a Tier 6
+/// counterer answer EVERY step of that line with every counter, free ones too (`t6_table::counter_verdict`). Both are
+/// real Cali changes, and semantically right, so the `go_rules` A/B arm (`TABLE_AI=go_rules`) switches them as well as
+/// the gates. A generic seat's `go_ok` counts Silence / Orim's Chant as cover only when it will cast it
+/// (`t6_table::go_gate_risk`).
 pub fn go_rules(g: &Game, p: PlayerId) -> bool {
     is_t6(g, p) || g.settings.table.go_rules == crate::format::GoRules::All
 }
