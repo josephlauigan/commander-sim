@@ -10,7 +10,7 @@ use super::partials::{
 };
 use super::t3::{ability, card_is, plan};
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::cast::{cast_card, castable, on_cast};
+use crate::engine::cast::{cast_card, castable, on_cast, record_cast};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{
     Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell,
@@ -635,6 +635,7 @@ fn emperor_flash(
     pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} flashes in The Wandering Emperor", pname(g, d));
+    record_cast(g, d, c);
     on_cast(g, d, c)?;
     if !counter_window(g, d, c, 5.0, vec![])? {
         g.player_mut(d).gy.push(c);
@@ -681,7 +682,10 @@ fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
         return Ok(vec![]);
     }
     let whites = !white_cards(g, p, c).is_empty() && evoke_allowed(g, p, c);
-    let Some(t) = best_opp_creature(g, p, |_, _| true) else { return Ok(vec![]) };
+    // a creature whose ward p cannot pay is no target (the exile would be countered and both cards lost)
+    let Some(t) = best_opp_creature(g, p, |g, m| crate::engine::ward::ward_affordable(g, p, m, 0, "")) else {
+        return Ok(vec![]);
+    };
     if !whites || pval(g, t) < 6.0 {
         return Ok(vec![]);
     }
@@ -695,7 +699,15 @@ fn solitude_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let whites = white_cards(g, p, c);
-    let Some(x) = min_by(&whites, |x| card_worth(g, p, x, false)) else { return Ok(false) };
+    // the yoshimaru seat keeps the pieces of its lines (Heliod ...) when another white card can pay
+    let spare: Vec<CardId> = if g.player(p).key == "yoshimaru" {
+        let spare = |x: &CardId| !super::t6_pieces::is_line_piece(g, p, &g.db.get(*x).name);
+        whites.iter().copied().filter(spare).collect()
+    } else {
+        vec![]
+    };
+    let pool = if spare.is_empty() { &whites } else { &spare };
+    let Some(x) = min_by(pool, |x| card_worth(g, p, x, false)) else { return Ok(false) };
     evoke_solitude(g, p, c, x)
 }
 
@@ -727,6 +739,7 @@ fn evoke_solitude(g: &mut Game, p: PlayerId, c: CardId, x: CardId) -> Res<bool> 
     g.player_mut(p).exile.push(x);
     remove_card(&mut g.player_mut(p).hand, c);
     crate::glog!(g, "  {} evokes Solitude (exiling {})", pname(g, p), g.db.get(x).name);
+    record_cast(g, p, c);
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 6.0, vec![])? {
         g.player_mut(p).gy.push(c);

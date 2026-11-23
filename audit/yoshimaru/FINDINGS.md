@@ -20,8 +20,8 @@ below stay untested except where named here.
   triggers 4.2%. t5 75.5% (round 8.0): Kinnan combo 14.8% and combat 3.2%, Urza combo 14.1%, Miirym combat 10.1% and triggers 5.7%, Zur combo 9.9% and commander damage 2.1%, Yawgmoth combo 8.7%.
 - **Plan timing** (the plan line prints blank), t4 / t5: online by T4 1% / 1%, T5 4% / 3%, T6 7% / 4%, T8 14% / 10%, T12 19% / 16%; at all 19.5% / 17.5%. The commander lines disagree: "resolves on turn" gives median 1.0
   (mean 1.5 / 1.6) over 99.1% / 99.5% of games, but "resolved by turn" gives T4 33% / 35% and T8 35% / 38%. The output does not explain it: unmeasured, and worth a check before anyone uses either line.
-- **Often stuck in hand** (cast in under half the games drawn), t4 / t5: Silence 1.4% / 0.7%, Eerie Interlude 5.5% / 5.3%, Solitude 13.8% / 7.6%, Restoration Angel 15.1% / 16.6% (reactive), Teferi's Protection 17.1% / 16.7%
-  (reactive), Conjurer's Closet 21.1% / 19.2%, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%, Flawless Maneuver 37.9% / 33.2%, The Wandering Emperor 39.5% / 40.4%, Gandalf the White 43.1% / 35.0%; t4 only:
+- **Often stuck in hand** (cast in under half the games drawn), t4 / t5: Silence 1.4% / 0.7%, Eerie Interlude 5.5% / 5.3%, Solitude 13.8% / 7.6% (undercounted: evokes were not recorded as casts; fixed in the solitude-fix PR), Restoration Angel 15.1% / 16.6% (reactive), Teferi's Protection 17.1% / 16.7%
+  (reactive), Conjurer's Closet 21.1% / 19.2%, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%, Flawless Maneuver 37.9% / 33.2%, The Wandering Emperor 39.5% / 40.4% (undercounted: flash casts were not recorded as casts; fixed in the solitude-fix PR), Gandalf the White 43.1% / 35.0%; t4 only:
   Court of Ardenvale 42.1%; t5 only: Wrath of God 34.0%.
 - **Most removed by opponents (per game),** t4 / t5: Yoshimaru 0.47 / 0.48, Tymna 0.14 / 0.18, Sword of Fire and Ice 0.08 / 0.05, Sting 0.05 / 0.02, Sword of Hearth and Home 0.04 / 0.02, Skrelv 0.04 / 0.04, Mana Vault 0.04 (t4),
   Exquisite Blood 0.04 (t4), Adeline 0.03 (t5), Elesh Norn, Mother of Machines 0.02 (t5).

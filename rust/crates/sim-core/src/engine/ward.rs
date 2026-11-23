@@ -94,8 +94,19 @@ fn shown(g: &Game, m: PermId) -> String {
 }
 
 /// Can `actor` pay for a spell or ability that targets `m` (the AI's look-ahead): no ward, or one it can afford now
-/// (mana wards only: `extra` more mana is spent first).
+/// (`extra` more mana is spent first). Covers ward {N} (the card's own and an Aura's), Sauron's "sacrifice a legendary
+/// artifact or creature" and Valgavoth's "sacrifice three nonland permanents", the same wards `removal::legal_targets`
+/// skips; the life wards (Hexing Squelcher, Prismari) are not checked.
 pub fn ward_affordable(g: &Game, actor: PlayerId, m: PermId, extra_generic: u32, pips: &str) -> bool {
-    let ward = g.perm(m).cd.map_or(0, |c| g.db.get(c).ward);
-    ward == 0 || g.perm(m).owner == actor || can_pay(g, actor, extra_generic + ward, pips, false)
+    if g.perm(m).owner == actor {
+        return true;
+    }
+    let ward = g.perm(m).cd.map_or(0, |c| g.db.get(c).ward) + cardcode::aura_ward(g, m);
+    if ward > 0 && !can_pay(g, actor, extra_generic + ward, pips, false) {
+        return false;
+    }
+    if card_tag(g, m, Tag::Sauron) && ward_legends(g, actor).is_empty() {
+        return false;
+    }
+    !crate::impls::t12_kaalia_sythis::ward_blocks(g, actor, m)
 }
