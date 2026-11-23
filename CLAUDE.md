@@ -85,7 +85,8 @@ Sonnet; Sonnet fails twice → Sol competing attempt; both fail → Opus root-ca
   to a fresh Sonnet agent (`model: "sonnet"`, `effort: "high"`), a new instance and never the author of the code under
   test, with the same scope, finish condition and handoff path; a review or adversarial-test pass opens with "You are
   an independent adversarial reviewer, not the author". The Opus final review stays and its brief says which pass was
-  Sonnet's. Tell JD in the next report that Sol was out of usage and who did the work. Full rule: ROUTING.md §3.
+  Sonnet's. Tell JD in the next report that Sol was out of usage and who did the work. A competing attempt on a bug
+  Sonnet failed twice is not handed back to Sonnet: it goes to Opus root-cause (JD, 2026-11-23). Full rule: ROUTING.md §3.
 
 ## Checking subagents' work
 
