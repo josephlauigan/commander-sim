@@ -45,7 +45,7 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::hooks::trigger_controller;
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -205,7 +205,7 @@ fn intervention_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if !can_pay_spell(g, p, c, gn, &pips, false) {
         return -1;
     }
-    total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32
+    crate::ai::brain::max_x(g, p, c, 1, false) // `cost_of_x`: a reducer applies to the generic part with X
 }
 
 /// mode 1 when two or more opposing artifacts / enchantments are worth it (one with little else to do late), mode 2
@@ -249,8 +249,7 @@ fn intervention_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || x < 1 || intervention_max_x(g, p, c) < x {
         return Ok(false);
     }
-    let (gn, pips) = cost_of(g, p, c);
-    if !pay_spell(g, p, c, gn + x as u32, &pips, false)? {
+    if !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     let rem = if life_mode { None } else { Some(intern("destroy")) };

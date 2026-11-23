@@ -1956,7 +1956,7 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
     if post.is_none() || g.active != Some(p) {
         return Ok(vec![]);
     }
-    let x_max = crate::engine::mana::total_mana_spell(g, p, c, false) as i32 - 2;
+    let x_max = crate::ai::brain::max_x(g, p, c, 1, false); // `cost_of_x`: a reducer applies to the generic part with X
     if x_max < 3 {
         return Ok(vec![]);
     }
@@ -1967,9 +1967,6 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
         let x = x_max.min(4);
         (x, 0.6 + 0.2 * x as f64)
     };
-    if !can_pay_spell(g, p, c, x as u32, "WW", false) {
-        return Ok(vec![]);
-    }
     Ok(vec![Opt {
         utility: u,
         label: format!("White Sun's Twilight X={x}"),
@@ -1979,10 +1976,9 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
 
 fn twilight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, x) = (CardId((arg / 64) as u16), (arg % 64) as u32);
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "WW", false) {
+    if !g.player(p).hand.contains(&c) || !crate::ai::brain::pay_x(g, p, c, x as i32, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, x, "WW", false)?;
     crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx { x: x as i32, ..Default::default() })?;
     Ok(true)
 }

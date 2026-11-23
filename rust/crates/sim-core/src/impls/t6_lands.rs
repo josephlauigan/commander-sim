@@ -8,7 +8,7 @@ use super::lands::{can_pay_without, pay_without};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, counter_window};
@@ -802,12 +802,9 @@ fn smash_targets(g: &Game, p: PlayerId, dmg: i32) -> Vec<(PermId, i32, f64)> {
 }
 
 fn smash_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, f64)> {
-    let spare = total_mana_spell(g, p, c, false) as i32 - 2;
+    let spare = crate::ai::brain::max_x(g, p, c, 1, false); // `cost_of_x`: a reducer applies to the generic part with X
     let mut best: Option<(i32, f64)> = None;
-    for x in 1..=spare.max(0) {
-        if !can_pay_spell(g, p, c, x as u32, "RR", false) {
-            break;
-        }
+    for x in 1..=spare {
         let score: f64 = smash_targets(g, p, smash_damage(x)).iter().map(|t| t.2).sum();
         if score >= 5.0 && best.is_none_or(|b| score > b.1 + 0.01) {
             best = Some((x, score));
@@ -837,8 +834,7 @@ fn smash_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some((x, _)) = smash_plan(g, p, c) else { return Ok(false) };
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) || !pay_spell(g, p, c, gn + x as u32, &pips, false)? {
+    if !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;

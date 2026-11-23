@@ -16,7 +16,7 @@ use super::mine::{etb_value, is_legendary, spell_copy_value};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, copy_spell, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of_x, pay, pay_spell};
 use crate::engine::stack::counter_window;
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{die, enter_token_copy_with, max_by};
@@ -184,15 +184,19 @@ const MOCKINGBIRD: &str = "Mockingbird";
 
 /// the cheapest X that reaches the best creature: (X, the creature, its value). The mana spent is X + {U}.
 fn mockingbird_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, PermId, f64)> {
-    let total = total_mana_spell(g, p, c, false);
-    if total < 1 || !can_pay_spell(g, p, c, 0, "U", false) {
+    // priced by `cost_of_x`: a reducer applies to the generic part that includes X, a tax after it
+    let payable = |x: u32| {
+        let (gn, pips) = cost_of_x(g, p, c, x as i32);
+        can_pay_spell(g, p, c, gn, &pips, false)
+    };
+    if !payable(0) {
         return None;
     }
-    let (t, v) = best_copy(g, p, Kind::Creature, None, Some(total))?;
-    let _ = c;
+    let most = crate::ai::brain::max_x(g, p, c, 1, false) as u32;
+    let (t, v) = best_copy(g, p, Kind::Creature, None, Some(most + 1))?;
     let mv = g.db.get(g.perm(t).cd?).cmc;
     let x = mv.saturating_sub(1);
-    if v < 3.0 || !can_pay_spell(g, p, c, x, "U", false) {
+    if v < 3.0 || !payable(x) {
         return None;
     }
     Some((x, t, v))
@@ -216,7 +220,9 @@ fn mockingbird_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some((x, t, _)) = mockingbird_plan(g, p, c) else { return Ok(false) };
-    pay_spell(g, p, c, x, "U", false)?;
+    if !crate::ai::brain::pay_x(g, p, c, x as i32, 1, false)? {
+        return Ok(false);
+    }
     // it enters as a copy of the creature chosen as it was cast (`clone_copy`)
     cast_card(g, p, c, "hand", Ctx { x: x as i32, target: Some(t), ..Ctx::default() })?;
     Ok(true)

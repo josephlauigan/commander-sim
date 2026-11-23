@@ -53,7 +53,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, grants_flash};
 use crate::engine::life::{check_state, gain};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, pval};
@@ -798,14 +798,13 @@ fn meathook_x(g: &Game, p: PlayerId, mana: u32) -> (i32, f64) {
 }
 
 fn meathook_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let (cg, cp) = cost_of(g, p, c);
-    let spare = total_mana_spell(g, p, c, false).saturating_sub(cg + cp.len() as u32);
+    let spare = crate::ai::brain::max_x(g, p, c, 1, false) as u32; // `cost_of_x`: X is priced with the reducers
     let (x, v) = meathook_x(g, p, spare);
     if x > 0 && v >= 6.0 { 68 } else { 44 }
 }
 
 /// the AI's X, chosen as the spell is cast (`CardImpl::cast_x`): the one that kills the most opposing value for the least
-/// of its own, with the mana left after {B}{B}
+/// of its own, up to the most X its cost (`cost_of_x`) allows
 fn meathook_cast_x(g: &Game, p: PlayerId, _c: CardId, spare: u32) -> u32 {
     meathook_x(g, p, spare).0.max(0) as u32
 }
@@ -816,8 +815,7 @@ fn meathook_cast_x(g: &Game, p: PlayerId, _c: CardId, spare: u32) -> u32 {
 /// asked as they cast it (the engine's X question for every {X} spell), the AI's X comes from `meathook_x`
 /// (`CardImpl::cast_x`). It is on the stack with the spell (`Ctx::x`, shown to a person who may respond) and stays on the
 /// permanent (`DataKey::CastX`, set as it enters) for the enters trigger, which uses it even if mana appears or
-/// disappears meanwhile. Engine-wide X-spell limits: the counter checks read the printed mana value (not X), and a cost
-/// reduction does not apply to {X}. A permanent that enters any other way (blinked, put onto the
+/// disappears meanwhile. Engine-wide X-spell limit: the counter checks read the printed mana value (not X). A permanent that enters any other way (blinked, put onto the
 /// battlefield) has X = 0: its trigger still goes on the stack and does nothing. The enters trigger goes on the stack
 /// (the table may respond; a countered trigger does nothing; an opponent's Elesh Norn, Mother of Machines blanks it, your own Elesh Norn and a Starfield
 /// Vocalist add one more, Panharmonicon does not: an enchantment); every creature on the battlefield gets -X/-X and those with toughness 0 or less die together.

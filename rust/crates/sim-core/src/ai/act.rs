@@ -49,10 +49,9 @@ fn face(g: &mut Game, p: PlayerId, c: CardId, q: crate::ids::PlayerId, kick: u32
 
 /// Crackle with Power for X
 fn crackle(g: &mut Game, p: PlayerId, c: CardId, x: u32) -> Res<bool> {
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3 * x, "RR", false) {
+    if !g.player(p).hand.contains(&c) || !brain::pay_x(g, p, c, x as i32, 3, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, 3 * x, "RR", false)?;
     cast_card(g, p, c, "hand", Ctx { x: x as i32, ..Ctx::default() })?;
     Ok(true)
 }

@@ -17,7 +17,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok};
 use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
@@ -1653,7 +1653,7 @@ fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     if post != Some(false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
-    let k = (total_mana_spell(g, p, c, false) / 2).min(3);
+    let k = (crate::ai::brain::max_x(g, p, c, 2, false) as u32).min(3); // `cost_of_x`: {2} a kick, in the generic cost
     if k < 1 {
         return Ok(vec![]);
     }
@@ -1668,11 +1668,10 @@ fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
 pub(crate) fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, k) = unpack(arg);
     let c = CardId(c as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2 * k, "", false) {
+    if !g.player(p).hand.contains(&c) || !crate::ai::brain::pay_x(g, p, c, k as i32, 2, false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay_spell(g, p, c, 2 * k, "", false)?;
     crate::glog!(g, "  {} casts Everflowing Chalice kicked {} times", pname(g, p), k);
     let pl = g.player_mut(p);
     pl.cast_names.insert(c); // the card report counts it as cast (it read "never cast: untagged")

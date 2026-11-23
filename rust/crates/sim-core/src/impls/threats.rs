@@ -24,7 +24,7 @@
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay_spell, pay_spell, total_mana_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -257,11 +257,7 @@ fn late(g: &Game, p: PlayerId, c: CardId) -> bool {
 
 /// the AI's X for Torment of Hailfire: all the mana it has
 fn torment_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn, &pips, false) {
-        return None;
-    }
-    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let x = crate::ai::brain::max_x(g, p, c, 1, false); // `cost_of_x`: a reducer applies to the generic part with X
     (x >= 1).then_some(x)
 }
 
@@ -304,11 +300,9 @@ fn torment_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some(x) = torment_x(g, p, c) else { return Ok(false) };
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
+    if !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -435,11 +429,8 @@ fn comet_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 /// the AI's (X, kicks) for Comet Storm with all its mana: the split that scores best (kills first), ties to more X
 fn comet_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, u32, f64, i32)> {
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn, &pips, false) {
-        return None;
-    }
-    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    // X and the kicks are both generic mana in the cost: `cost_of_x` prices their sum (a reducer applies to it)
+    let spare = crate::ai::brain::max_x(g, p, c, 1, false);
     let mut best: Option<(i32, u32, f64, i32)> = None;
     for k in 0..spare.max(0) {
         let x = spare - k;
@@ -480,12 +471,9 @@ fn comet_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some((x, k, _, _)) = comet_plan(g, p, c) else { return Ok(false) };
-    let (gn, pips) = cost_of(g, p, c);
-    let tot = gn + (x as u32) + k;
-    if !can_pay_spell(g, p, c, tot, &pips, false) {
+    if !crate::ai::brain::pay_x(g, p, c, x + k as i32, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, tot, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, kicks: k, ..Ctx::default() })?;
     Ok(true)
 }
