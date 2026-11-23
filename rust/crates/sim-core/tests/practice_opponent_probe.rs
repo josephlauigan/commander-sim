@@ -231,8 +231,12 @@ fn losses(g: &Game, b: &Snap, a: &Snap, text: &str) -> Vec<String> {
         }
     }
     let random_only = has("at random") && !has("choice") && !has("chooses");
+    // Timetwister and its kind put the whole hand into the library and draw a new one: a card that comes straight
+    // back is the shuffle's luck, not a choice (the seat's library, and so the draw, changes with the deck's list)
+    let hand_shuffled = has("shuffles their hand");
     if (has("discard") || has("hand") || has("choice") || has("chooses") || has("each player") || has("each opponent"))
         && !random_only
+        && !hand_shuffled
     {
         let gone = missing(&b.hand, &a.hand);
         if b.hand.len() >= 2 && !gone.is_empty() && gone.len() < b.hand.len() {

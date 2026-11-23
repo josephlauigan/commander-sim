@@ -7,6 +7,12 @@ proxies allowed, reworked 2026-11-14 (28 Dragons besides the commander, 29 with 
 Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). **No sims yet.** The findings of the
 retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 
+## 2026-11-22: basic Swamp => Field of the Dead (JD's choice, not simulated)
+Field of the Dead (a Game Changer land, model status Full) takes the Swamp's slot: it enters tapped, taps for {C}, and makes a 2/2 Zombie
+whenever a land enters while you control seven or more lands with different names, and nearly every land in this list has its own name. What it
+costs: a black source (black land sources 18 to 17), an untapped land, and the Swamp's protection against Blood Moon (one basic, a Forest,
+is left; it makes only green). Game Changers go from 10 to 11 (still Bracket 4). Not measured.
+
 ## 2026-11-20: Temur Ascendancy => Rhythm of the Wild (JD's choice, not simulated)
 Rhythm of the Wild ({1}{R}{G}, enchantment; model status Full) takes Temur Ascendancy's slot. It makes your creature
 spells uncounterable and gives your nontoken creatures riot (each enters with a +1/+1 counter or haste, your choice; it

@@ -9,6 +9,25 @@ put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Under
 line). **No sims yet.** The findings of the artifacts-and-Dragons list are in `FINDINGS-artifacts-and-dragons-list.md`,
 those of the cEDH list in `FINDINGS-old-list.md`.
 
+## 2026-11-22: Thought Vessel, Fiery Emancipation, Nibelheim Aflame => Mox Opal, Tezzeret, Cruel Captain, Chrome Mox (JD's choice, not simulated)
+An artifact package of three pairs, none of them measured (the engine has no Cali mode, so no paired test could judge it).
+**Mox Opal** ({0}, legendary, metalcraft: any colour with three or more artifacts) takes Thought Vessel's slot, rock for rock: Thought
+Vessel made only {C}, which the deck has many other sources of (Sol Ring, Mana Crypt, Mana Vault, Basalt Monolith, Mind Stone, the Mightstone
+and Weakstone, Ancient Tomb, Strip Mine, Urza's Saga, the painlands). An Opus consult picked Thought Vessel because JD did not want Fellwar
+Stone cut; the runner-up was Mind Stone, which can cash in for a card. The artifact count is unchanged by this pair. **Tezzeret, Cruel
+Captain** ({3}) takes Fiery Emancipation's slot: his 0 untaps the Basalt Monolith (twice with Rings of Brighthearth) and his -3 tutors an
+artifact of mana value 1 or less (Sol Ring, Mana Crypt, Mana Vault, Lotus Petal, the Moxen, Esper Sentinel, and Walking Ballista or Hangarback Walker at
+mana value 0 in the library). **Chrome Mox** ({0}, a Game Changer) takes Nibelheim Aflame's slot (JD preferred it to Grim Monolith): it
+imprints a nonartifact, nonland card, so it costs a card. Fiery Emancipation was the card the earlier notes named as the weakest; Nibelheim Aflame is the other {R}{R} card that left. What it costs: two red cards leave the deck (Thanos stays the red commander, with Chaos Warp, Deflecting Swat, Jeska's
+Will, Gamble, Underworld Breach, Sneak Attack and Ragavan still red); the Moxen's colours need a card to imprint, and Mox Opal is dead until
+three artifacts are out (the deck has 25 with the five artifact creatures, 24 before). Counts after: 15 rocks and rituals (14), enchantments
+4 (5), sorceries 7 (8), one planeswalker, Game Changers +1; lands and land colour sources unchanged. A fourth pair (Windborn Muse => Mishra's
+Bauble) was left out (JD took three). Engine status: Mox Opal, Tezzeret and Chrome Mox are Full (`cardgen find --full`). The plan file's
+turn<=4 rock priority now lists Mox Opal and Chrome Mox in place of Thought Vessel; Tezzeret has no plan line yet. Sculpting Steel must not copy
+Mox Opal (legendary) or Chrome Mox (the copy has nothing imprinted). Staff of Domination stays (a proxy, printing cmr 343). Route A2 is unchanged.
+Nothing in `data/spellbook/thanos.json` was re-fetched: the two entries that used Fiery Emancipation were removed, and combos for the new
+cards are not in the file.
+
 ## 2026-11-15: Triple Triad => Gifts Ungiven (JD's choice, not simulated)
 Gifts Ungiven ({3}{U} instant, a Game Changer; the list now has 17 by the cache's flags) takes Triple Triad's slot. Why:
 an instant tutor at the opponent's end step with the combo pieces already in the deck. Its piles that hold for every split
@@ -21,7 +40,7 @@ does not either (the opponent bins the Monolith and no tutor finds it in the gra
 Breach pair trick, not a new route, on top of eight 1-3 mana tutors (Demonic, Vampiric, Mystical, Enlightened, Worldly,
 Grim, Gamble, Diabolic Intent) and Tinker. What it costs: Triple Triad ({R}{R}{R}) flips few free spells at an average
 nonland mana value of 2.53 before the swap, 2.50 after (it went to the Ur-Dragon, where the Dragons cost 5 to 7). Not measured. An Opus consult rated Gifts the weaker of its two
-adds for this deck (Mindbreak Trap went to Y'shtola); Fiery Emancipation, the other {R}{R}{R} six-drop, is its next cut. In
+adds for this deck (Mindbreak Trap went to Y'shtola); Fiery Emancipation, the other {R}{R}{R} six-drop, was its next cut (it went out on 2026-11-22, above). In
 the simulator the AI builds Gifts piles from tutor value and graveyard worth (`engine/tutors.rs` `pile_tutor`), not from
 the combo, and the Oracle line, Tinker and Sneak Attack have no card code or plan lines for `thanos`, so a sim number
 would understate it. Check the blue count when a run exists: 12 land sources make {U}, 14 counting Exotic Orchard (blue
@@ -37,7 +56,7 @@ it finds no combo piece, and it is a plain artifact on an empty board. Elesh Nor
 Meteor Golem, Primeval Titan and The Mightstone and Weakstone, and stopped the opponent's enter triggers (a defence
 against an opposing Thassa's Oracle), so those go too. An Opus consult (Dockside Extortionist, not Steel, was the question
 then) ranked Mana Drain, Chrome Mox and Imperial Seal first and advised cutting Fiery Emancipation, the weakest card,
-rather than Elesh Norn; Fiery Emancipation is still the next cut. The engine models Sculpting Steel (Full: it enters as a copy of the best artifact on the
+rather than Elesh Norn; Fiery Emancipation went out on 2026-11-22 (above). The engine models Sculpting Steel (Full: it enters as a copy of the best artifact on the
 battlefield, `card_overrides.toml`), but `thanos` has no plan line for it and Tinker, Sneak Attack and the Rings loop are
 not modelled, so a sim number would not reflect the Rings and Blightsteel lines. Not measured. Commander
 Spellbook lists no combo with Sculpting Steel for this list.

@@ -33,7 +33,7 @@ adnaus_main2 = true
 # Cast priorities (was sheoldred_prio): rocks first while she is not out (she comes a turn sooner); the draw tolls
 # (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out
 [[prio]]
-cards = ["Arcane Signet", "Fellwar Stone"]
+cards = ["Arcane Signet", "Jet Medallion"]
 when = ["not commander-out"]
 value = 88
 

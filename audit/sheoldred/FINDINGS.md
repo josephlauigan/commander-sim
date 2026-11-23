@@ -4,6 +4,15 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-22: Fellwar Stone => Jet Medallion (JD's choice, not simulated)
+Jet Medallion ({2}, an artifact: black spells cost {1} less; model status Full, with its own test) takes Fellwar Stone's slot. Fellwar Stone
+made only a colour an opposing land could produce, so it was a weak rock in a mono-black deck. The Medallion cuts only the generic part of a
+cost, so the black spells with generic mana in their cost get cheaper (Sheoldred itself is {2}{B}{B}, Gray Merchant, Grave Titan, Massacre
+Wurm, Sanguine Bond and the other finishers) and {B}-only spells (Dark Ritual, Entomb) get nothing. It is not slot-for-slot: a
+rock that made mana is traded for a cost reducer, so the deck has two rocks (Arcane Signet, Mind Stone) instead of three and the same
+number of artifacts. The plan file's early-cast priority (`data/plans/sheoldred.toml`, rocks while she is not out) now names Jet Medallion
+in place of Fellwar Stone. Not measured; a paired test at t3-t4 was offered and not run.
+
 ## 2026-11-09: Wander Off => K'rrik, Son of Yawgmoth (JD's choice, not simulated this time)
 K'rrik ({4}{B/P}{B/P}{B/P}, lifelink, {B} in any cost payable with 2 life, +1/+1 counter per black spell; model status
 Full) takes Wander Off's slot ({3}{B} instant, exile target creature). Wander Off was low by win rate when cast in the

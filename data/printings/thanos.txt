@@ -1,100 +1,100 @@
+1 Adarkar Wastes (dmu) 377
+1 Akroma's Will (soa) 66
+1 An Offer You Can't Refuse (fdn) 311
 1 Ancient Tomb (tmp) 315
 1 Arcane Signet (cmr) 297
-1 Astral Dragon (clb) 613
-1 Badlands (cei) 278
-1 Basalt Monolith (leb) 232
-1 Bayou (ced) 279
-1 Birds of Paradise (blc) 81
+1 Avacyn's Pilgrim (isd) 170
+1 Basalt Monolith (3ed) 235
+1 Battlefield Forge (blc) 293
+1 Birds of Paradise (dmr) 439
+1 Blightsteel Colossus (sld) 2223
 1 Blood Crypt (ecl) 349
-1 Bloodstained Mire (mh3) 352
-1 Breeding Pool (unf) 286
+1 Brain Freeze (soa) 78
+1 Brushland (fic) 377
+1 Caves of Koilos (dmu) 378
 1 Chaos Warp (pw24) 7
-1 Chromatic Lantern (fca) 61
-1 Chrome Mox (2xm) 358
-1 City of Brass (2x2) 403
+1 Chrome Mox (2xm) 240
 1 Coalition Relic (fut) 161
-1 Command Tower (mic) 170
+1 Staff of Domination (cmr) 343
+1 Command Tower (sld) 7030
+1 Counterspell (pf26) 5
 1 Crucible of Worlds (2x2) 393
-1 Cursed Mirror (who) 474
-1 Decimate (sld) 140
+1 Cyclonic Rift (sld) 1869
+1 Dark Ritual (3ed) 99
 1 Deflecting Swat (cmm) 698
-1 Demonic Tutor (sld) 1856
-1 Disdainful Stroke (soa) 147
+1 Demonic Consultation (ice) 121
+1 Demonic Tutor (cmm) 696
+1 Diabolic Intent (fca) 34
+1 Dovin's Veto (p30a) 27
 1 Enlightened Tutor (dmr) 412
-1 Expedition Map (lcc) 112
-1 Flooded Strand (mh3) 353
+1 Ephemerate (sta) 68
+1 Esper Sentinel (mh2) 328
+1 Exotic Orchard (brc) 185
+1 Exsanguinate (cmm) 638
+1 Faeburrow Elder (plst) ELD-190
+1 Fellwar Stone (sld) 2557
 1 Force of Negation (2x2) 346
-1 Force of Will (2xm) 340
-1 Forest (sos) 271
+1 Force of Will (dmr) 418
 1 Gamble (dmr) 433
 1 Gifts Ungiven (2x2) 347
-1 Gilded Lotus (brr) 80
-1 Glorybringer (tdc) 215
-1 Goldspan Dragon (sld) 1780
-1 Grim Monolith (ulg) 126
-1 Hallowed Fountain (unf) 277
+1 Grand Abolisher (cmm) 625
+1 Grim Tutor (m21) 315
+1 Hallowed Fountain (sld) 123
 1 Hangarback Walker (plg20) 2
-1 Imperial Seal (2x2) 354
+1 Haunted Ridge (fra) 398
+1 Heroic Intervention (sld) 1750
 1 Jeska's Will (soa) 109
-1 Karn, Scion of Urza (sld) 1419
-1 Lightning Greaves (sld) 99
-1 Mana Confluence (sld) 1012a
-1 Mana Drain (2x2) 348
-1 Mana Vault (ced) 260
-1 Marsh Flats (spg) 115
+1 Lightning Greaves (sld) 1662
+1 Llanowar Elves (btd) 58
+1 Lotus Petal (p30m) 2
+1 Mana Crypt (2xm) 361
+1 Mana Vault (4ed) 334
 1 Meteor Golem (sld) 285
 1 Mind Stone (wth) 153
-1 Misty Rainforest (spg) 111
-1 Mox Diamond (sth) 138
-1 Mox Jasper (tdm) 325
 1 Mox Opal (2xm) 362
-1 Mystic Forge (brr) 99
-1 Nature's Lore (fic) 311
-1 Nicol Bolas, the Ravager (sld) 1158
-1 Overgrown Tomb (rvr) 296
-1 Pact of Negation (ltc) 523
-1 Plateau (ced) 280
-1 Polluted Delta (mh3) 356
+1 Mystic Confluence (tsr) 312
+1 Mystic Remora (dmr) 420
+1 Mystical Tutor (dmr) 421
+1 Overgrown Tomb (grn) 253
+1 Paradise Druid (pwar) 171
+1 Path of Ancestry (cmm) 661
+1 Plaza of Heroes (msc) 255
+1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
 1 Rhystic Study (pcy) 45
-1 Rings of Brighthearth (mps) 21
-1 Sacred Foundry (unf) 285
-1 Scion of Draco (mh2) 323
-1 Scrubland (cei) 282
-1 Smothering Tithe (cmm) 57
-1 Sol Ring (cmm) 703
-1 Solemn Simulacrum (brc) 161
-1 Steam Vents (unf) 283
-1 Steel Hellkite (brc) 163
-1 Stomping Ground (rvr) 299
+1 Rings of Brighthearth (ltc) 352
+1 Sculpting Steel (sld) 864
+1 Shivan Reef (dmu) 380
+1 Silence (sld) 7003
+1 Sneak Attack (sld) 2178
+1 Sol Ring (sld) 2093
+1 Spirebluff Canal (otj) 270
+1 Steam Vents (rvr) 298
+1 Stormcarved Coast (dbl) 532
 1 Strip Mine (4ed) 363
-1 Summon: Bahamut (fin) 356
-1 Swords to Plowshares (pf25) 12
-1 Sylvan Library (spg) 155
-1 Taiga (cei) 283
-1 Teferi's Protection (mar) 51
-1 Temple Garden (unf) 281
-1 Terror of the Peaks (pspl) 1
+1 Sulfur Falls (isd) 248
+1 Sunpetal Grove (fic) 432
+1 Swords to Plowshares (ice) 54
+1 Tainted Pact (ody) 164
+1 Talisman of Hierarchy (h1r) 36
+1 Talisman of Progress (msc) 221
+1 Teferi's Protection (sta) 74
+1 Temple Garden (grn) 258
+1 Tezzeret, Cruel Captain (eoe) 287
 1 Thanos, the Mad Titan (msh) 400
+1 Thassa's Oracle (thb) 73
 1 The Mightstone and Weakstone (bro) 238
 1 The One Ring (ltr) 451
-1 The Ur-Dragon (sld) 11
-1 Thran Dynamo (uds) 139
-1 Thundermaw Hellkite (scd) 164
-1 Tropical Island (cei) 284
-1 Tundra (ced) 285
-1 Underground Sea (ced) 286
+1 Tinker (plst) ULG-45
+1 Underground River (wc98) bs362
+1 Underworld Breach (pza) 10
+1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Urza, Lord High Artificer (fca) 5
-1 Urza's Bauble (ice) 343
 1 Urza's Saga (plst) MH2-259
-1 Utvara Hellkite (rvr) 431
 1 Vampiric Tutor (soa) 100
-1 Verdant Catacombs (spg) 113
-1 Volcanic Island (ced) 287
 1 Walking Ballista (sld) 58
-1 Watery Grave (rvr) 301
-1 Wayfarer's Bauble (5dn) 165
-1 Windswept Heath (mh3) 360
-1 Wooded Foothills (mh3) 361
+1 Watery Grave (pgrn) 259p
+1 Windborn Muse (dmr) 415
+1 Woodland Cemetery (soc) 424
 1 Worldly Tutor (dmr) 442
-1 Wrenn and Six (2x2) 334
+1 Yavimaya Coast (c21) 409

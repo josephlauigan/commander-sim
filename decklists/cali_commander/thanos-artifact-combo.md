@@ -27,7 +27,7 @@ counters on Thanos. Choose odd or even. Destroy each other creature with mana va
 each power-up ability only once. Reduce the cost by his mana cost if he entered this turn. Zero is even.)*
 
 **When to cast him.** Turn 2 off Birds of Paradise or two rocks, turn 3 otherwise. He needs exactly {R}{W}{B}: Sol Ring,
-Mana Crypt, Mana Vault and Ancient Tomb can't pay for him, but Arcane Signet, Coalition Relic, Birds and the duals can.
+Mana Crypt, Mana Vault and Ancient Tomb can't pay for him, but Arcane Signet, Coalition Relic, Birds, Mox Opal (with three artifacts), Chrome Mox (imprint a card of the colour you need) and the duals can.
 He is the cheapest threat, a good blocker against the decks that attack, and he turns on two free spells:
 
 - **Deflecting Swat** ({2}{R}, free while you control a commander): new targets for target spell or ability. Move
@@ -39,7 +39,7 @@ Both are checked as you cast the spell. If Thanos dies, Swat costs full price ag
 
 **The power-up** is a one-sided wipe in a deck that has few creatures of its own: six mana, or {C}{U}{G} the turn he
 enters. {C} means colourless mana, not generic: Sol Ring, Mana Crypt, Mana Vault, Basalt Monolith, Mind Stone, The
-Mightstone and Weakstone (for abilities), Thought Vessel, Ancient Tomb, Strip Mine and the painlands can pay it. Coloured-only sources (the duals, Command Tower, Signet, Birds) can't. It is an ability, so Force of Will
+Mightstone and Weakstone (for abilities), Ancient Tomb, Strip Mine and the painlands can pay it. Coloured-only sources (the duals, Command Tower, Signet, Birds) can't. It is an ability, so Force of Will
 effects and Silence don't stop it. Rings of Brighthearth can copy it for {2}: choose odd for one and even for the other
 and every other creature dies. In a 1v1 game it is mostly for clearing a blocker or a Dragon before a Blightsteel
 attack, or when the opponent has built a board and you have no combo yet.
@@ -147,17 +147,28 @@ If the combo is stopped, the deck still has threats and a way to grind:
   4. **An opponent's rock** (Sol Ring, Mana Vault, a Signet) when you have none of your own.
   It is also a spare artifact to sacrifice to Tinker and an extra {U} under Urza. **Do not copy** The One Ring or The
   Mightstone and Weakstone (legendary: the copy and the original cannot both stay), Walking Ballista or Hangarback
-  Walker (they enter with no counters and die), Mana Crypt (the extra coin flip costs about 1.5 life a turn more, so
+  Walker (they enter with no counters and die), Mox Opal (legendary), Chrome Mox (a copy has nothing imprinted and makes
+  no mana), Mana Crypt (the extra coin flip costs about 1.5 life a turn more, so
   only when you win that turn), or an opponent's Null Rod.
-- **Fiery Emancipation** ({3}{R}{R}{R}) is a six-mana red enchantment that comes down on a big-mana turn, not before:
-  it triples damage from your sources (Thanos, Ballista).
+- **Tezzeret, Cruel Captain** ({3}, loyalty 4): gets a loyalty counter whenever an artifact you control enters, which
+  this deck does all the time. **0:** untap target artifact or creature (an artifact creature also gets a +1/+1
+  counter): untap the Basalt Monolith for another {C}{C}{C}, or a rock you have spent; with Rings of Brighthearth, pay
+  {2} to copy it and untap twice. **-3:** search for an artifact with mana value 1 or less and put it into your hand:
+  Sol Ring, Mana Crypt, Mana Vault, Lotus Petal, Mox Opal, Chrome Mox, Esper Sentinel, and Walking Ballista or Hangarback Walker (mana
+  value 0 in the library). Use him to fetch the Ballista or a free rock. His -7 emblem (three +1/+1 counters on an
+  artifact each combat) is rarely reached.
+- **Mox Opal** ({0}, legendary artifact): taps for one mana of any colour while you control three or more artifacts, and
+  it counts itself. It is dead on turn 1 and good from turn 2 with two other artifacts out (the deck has 25 artifacts
+  with the artifact creatures). **Chrome Mox** ({0}, a Game Changer): when it enters, exile a nonartifact, nonland card
+  from your hand; it taps for one mana of any colour of that card. Imprint the card whose colours you are missing for
+  Thanos ({R}{W}{B}), not a combo piece; it costs a card, so it is best on a hand with a spare.
 - **Esper Sentinel** ({W}) draws you a card when the opponent casts their first noncreature spell each turn and doesn't
   pay {1}. **Mystic Confluence** ({3}{U}{U}) is a flexible counter, bounce or draw.
 
 ### Game plan
 
-**Turns 1-2.** Land and fast mana: Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual, Arcane Signet, Mind
-Stone, a Talisman, a dork. A turn-1 rock plus a turn-2 Thanos is the strongest start. On the play you skip your first
+**Turns 1-2.** Land and fast mana: Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual, Chrome Mox, Mox Opal (with three
+artifacts), Arcane Signet, Mind Stone, a Talisman, a dork. A turn-1 rock plus a turn-2 Thanos is the strongest start. On the play you skip your first
 draw, so an opening seven with a tutor and two mana sources is better than a clunky seven with five lands.
 
 **Turns 3-4.** Assemble a route. Count which routes your hand supports (A: Basalt + Rings; A2: Staff + Elder + five
@@ -287,11 +298,11 @@ Ring until you know the matchup. Thanos's lifelink and Exsanguinate pay some of 
 black 12, red 12, white 11, green 10, counting Command Tower, Path of Ancestry, Exotic Orchard and Plaza of Heroes
 (Plaza makes coloured mana only for legendary spells, so Thanos, and cannot pay for Gifts Ungiven; Orchard makes blue
 only if an opponent's land does). The deck also has 5 mana dorks (Birds of Paradise,
-Llanowar Elves, Paradise Druid, Avacyn's Pilgrim, Faeburrow Elder), 14 rocks and rituals (Mana Crypt, Sol Ring, Mana
-Vault, Lotus Petal, Dark Ritual, Arcane Signet, Coalition Relic, Fellwar Stone, Mind Stone, Talisman of Hierarchy,
-Talisman of Progress, Thought Vessel, The Mightstone and Weakstone, Basalt Monolith). Red and green are the thin
-colours: only Thanos, Faeburrow Elder, Chaos Warp, Deflecting Swat, Jeska's Will, Gamble, Underworld Breach, Sneak
-Attack, Ragavan, Nibelheim Aflame ({R}{R}) and Fiery Emancipation ({R}{R}{R}) need red, and only the green dorks,
+Llanowar Elves, Paradise Druid, Avacyn's Pilgrim, Faeburrow Elder), 15 rocks and rituals (Mana Crypt, Sol Ring, Mana
+Vault, Lotus Petal, Dark Ritual, Chrome Mox, Mox Opal, Arcane Signet, Coalition Relic, Fellwar Stone, Mind Stone,
+Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, Basalt Monolith). Red and green are the thin
+colours: only Thanos, Chaos Warp, Deflecting Swat, Jeska's Will, Gamble, Underworld Breach, Sneak
+Attack and Ragavan need red, and only the green dorks,
 Faeburrow Elder, Worldly Tutor, Heroic Intervention and Primeval Titan need green, so a fetch-free mana base is
 enough. The painlands (Adarkar Wastes, Battlefield Forge, Brushland, Caves of Koilos, Shivan Reef, Underground River,
 Yavimaya Coast) and the shocklands (Blood Crypt, Hallowed Fountain, Overgrown Tomb, Steam Vents, Temple Garden, Watery
@@ -312,13 +323,15 @@ game. Check with the organiser whether proxies are allowed.
 
 **Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista, Windborn Muse
 
-**Artifacts (19).** Arcane Signet, Basalt Monolith, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Thought Vessel
+**Artifacts (20).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Mox Opal, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring
 
-**Enchantments (5).** Fiery Emancipation, Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
+**Enchantments (4).** Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
+
+**Planeswalkers (1).** Tezzeret, Cruel Captain
 
 **Instants (24).** Akroma's Will, An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Deflecting Swat, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (8).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Jeska's Will, Nibelheim Aflame, Tinker
+**Sorceries (7).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Jeska's Will, Tinker
 
 **Lands (27).** Adarkar Wastes, Ancient Tomb, Battlefield Forge, Blood Crypt, Brushland, Caves of Koilos, Command Tower, Exotic Orchard, Hallowed Fountain, Haunted Ridge, Overgrown Tomb, Path of Ancestry, Plaza of Heroes, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Strip Mine, Sulfur Falls, Sunpetal Grove, Temple Garden, Underground River, Urborg, Tomb of Yawgmoth, Urza's Saga, Watery Grave, Woodland Cemetery, Yavimaya Coast
 
@@ -340,6 +353,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Brushland
 1 Caves of Koilos
 1 Chaos Warp
+1 Chrome Mox
 1 Coalition Relic
 1 Command Tower
 1 Counterspell
@@ -358,7 +372,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Exsanguinate
 1 Faeburrow Elder
 1 Fellwar Stone
-1 Fiery Emancipation
 1 Force of Negation
 1 Force of Will
 1 Gamble
@@ -377,10 +390,10 @@ game. Check with the organiser whether proxies are allowed.
 1 Mana Vault
 1 Meteor Golem
 1 Mind Stone
+1 Mox Opal
 1 Mystic Confluence
 1 Mystic Remora
 1 Mystical Tutor
-1 Nibelheim Aflame
 1 Overgrown Tomb
 1 Paradise Druid
 1 Path of Ancestry
@@ -407,11 +420,11 @@ game. Check with the organiser whether proxies are allowed.
 1 Talisman of Progress
 1 Teferi's Protection
 1 Temple Garden
+1 Tezzeret, Cruel Captain
 1 Thanos, the Mad Titan
 1 Thassa's Oracle
 1 The Mightstone and Weakstone
 1 The One Ring
-1 Thought Vessel
 1 Tinker
 1 Underground River
 1 Underworld Breach

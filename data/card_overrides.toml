@@ -4166,6 +4166,10 @@ dsl = []
 status = "Full"
 note = "your life gain drains the most threatening opponent; with Exquisite Blood a combo"
 
+["Sapphire Medallion"]
+status = "Full"
+note = ""
+
 ["Satoru Umezawa"]
 tags = "leg human pow=2 tgh=4"
 dsl = []
