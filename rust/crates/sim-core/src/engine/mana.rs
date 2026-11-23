@@ -988,16 +988,40 @@ pub fn phyrexian_life(g: &Game, p: PlayerId, c: CardId, pips: &str) -> i32 {
     life
 }
 
-/// what card c costs p now: (generic, coloured pips). Python's `cost_of`.
+/// what card c costs p now: (generic, coloured pips). Python's `cost_of`: `cost_of_x` at x = 0, except a card whose X the
+/// AI picks itself when it prices the cast (`CardImpl::auto_x`: Hangarback Walker, Chalice of the Void, {X}{X}): that card
+/// is priced at that X, so what `cost_of` says is what the cast pays. A card without a usable X on an AI seat gets 99
+/// more generic mana (uncastable) unless its cost is the same whatever X is (Tamiyo's emblem, `x_free`). A person's seat
+/// is priced at x = 0: practice mode asks for X and charges it as it is cast (`human::cast_inner`).
 pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
+    let xcount = g.db.get(c).xcount;
+    if xcount > 0 && !crate::human::is_human(g, p) {
+        // (one field read for every other card; the slot is looked up only for an {X} card)
+        match cardcode::auto_x(g, p, c) {
+            Some(Some(x)) => return cost_of_x(g, p, c, x.max(0).saturating_mul(xcount as i32)),
+            Some(None) if !x_free(g, p, c) => {
+                let (gn, pips) = cost_of_x(g, p, c, 0);
+                return (gn.saturating_add(99), pips);
+            }
+            _ => {}
+        }
+    }
     cost_of_x(g, p, c, 0)
+}
+
+/// does the cast of c cost the same whatever X is (Tamiyo's emblem from the hand, Dracogenesis: no mana cost)? Its X is
+/// then 0 (107.3b). A price that reducers brought down to nothing at one X is not this: it differs at a large X. Probed
+/// the way `brain::max_x` probes it
+pub fn x_free(g: &Game, p: PlayerId, c: CardId) -> bool {
+    cost_of_x(g, p, c, 0) == cost_of_x(g, p, c, 1 << 16)
 }
 
 /// what card c costs p now when cast with X = x: the printed cost with x added to the generic part, then every
 /// reduction, tax, floor and minimum `cost_of` applies, in the same order (a generic reducer such as Jet Medallion
 /// takes its {1} off the generic part that includes X; a later tax is added after it; each step floors the generic cost
 /// at 0). The Trinisphere minimum comes after every reduction and tax and counts every symbol (rule 601.2f); delve, a way of
-/// paying, and the choices to pay life for a Phyrexian or K'rrik {B} come after it. `cost_of` is this at x = 0.
+/// paying, and the choices to pay life for a Phyrexian or K'rrik {B} come after it. `cost_of` is this at x = 0 (for a
+/// card whose own code picks X, see there). Never reads `CardImpl::auto_x`: it is the price at the X it is given.
 /// K'rrik's life payment stays with `phyrexian_life`.
 ///
 /// x is added to the generic part exactly once, whatever the card. A card without {X} must be given x = 0 (`cost_of`
@@ -1005,11 +1029,21 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
 /// as 0. The arithmetic is done in i64, so any i32 x is safe; the result is the true generic cost, saturating at
 /// `u32::MAX`.
 pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
+    cost_of_with(g, p, c, x, &g.db.get(c).pips)
+}
+
+/// `cost_of_x` for a cast whose coloured part is not the printed one: an alternative cost (harmonize's {X}{G}{G}{G}{G}) or
+/// the printed cost with symbols added (strive's {R} for each target beyond the first). The base generic part is still the
+/// printed `generic`, so any difference from it (strive's {2} per extra target, an alternative cost's own generic) must
+/// be passed in x. Every step that reads the cost's symbols works on `pips`, not the printed ones: the Trinisphere
+/// minimum counts them, Opposition Agent, hybrid and Morophon see them, and so do the Phyrexian and K'rrik choices (those
+/// two look at the printed card's own Phyrexian symbols, `d.phyrexian`, and at its black pips in the string).
+pub fn cost_of_with(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;
     let mut gn = d.generic as i64 + x.max(0) as i64;
-    let mut pips: String = d.pips.to_string();
+    let mut pips: String = pips.to_string();
     if t.has(Tag::PerCreature) {
         // Blasphemous Act, Vanquish the Horde
         let n = g
@@ -1105,25 +1139,42 @@ fn to_u32(gn: i64) -> u32 {
     gn.clamp(0, u32::MAX as i64) as u32
 }
 
-/// what casting these cards one after another costs in all: each one's `cost_of` now, plus {1} per Damping Sphere for
-/// every spell of the line cast before it (the Sphere counts the spells cast this turn, and `cost_of` sees only those
-/// already cast). The AI checks a combo or a sequence against this, not the printed costs
+/// what casting these cards one after another costs in all: each one's `cost_of` now, with the Damping Sphere's {1} for
+/// every spell cast before it in the line priced through the pipeline (see `seq_cost_x`). The AI checks a combo or a
+/// sequence against this, not the printed costs
 pub fn seq_cost(g: &Game, p: PlayerId, cards: &[CardId]) -> (u32, String) {
-    let spheres = if g.hooks.is_empty() {
-        0
-    } else {
-        hooks::hooked(g, Event::Cost)
+    seq_cost_x(g, p, &cards.iter().map(|&c| (c, 0)).collect::<Vec<_>>())
+}
+
+/// `seq_cost` with the X each card is cast for (0: `cost_of`, whatever the card's own X choice; above 0: `cost_of_x` with
+/// that X, already times the card's {X} symbol count as `cost_of_x` wants it).
+///
+/// Damping Sphere counts the spells cast this turn, and `cost_of` sees only those already cast. When a Sphere is out,
+/// every card after a spell of the line is priced on a copy of the game that has the line's earlier spells in this turn's
+/// casts, so the Sphere's tax meets the reducers, floors and the Trinisphere minimum in the engine's own order (the
+/// same copy `combos::casts_castable` makes). With no Sphere out nothing is copied.
+pub fn seq_cost_x(g: &Game, p: PlayerId, cards: &[(CardId, i32)]) -> (u32, String) {
+    let sphere = !g.hooks.is_empty()
+        && hooks::hooked(g, Event::Cost)
             .iter()
-            .filter(|(m, _)| g.perm(*m).cd.is_some_and(|c| &*g.db.get(c).name == "Damping Sphere"))
-            .count() as u32
-    };
-    let (mut gn, mut pips, mut before) = (0, String::new(), 0);
-    for &c in cards {
-        let (cg, cp) = cost_of(g, p, c);
-        if !g.db.get(c).land {
-            gn += spheres * before;
-            before += 1;
-        }
+            .any(|(m, _)| g.perm(*m).cd.is_some_and(|c| &*g.db.get(c).name == "Damping Sphere"));
+    let price = |g: &Game, c: CardId, x: i32| if x > 0 { cost_of_x(g, p, c, x) } else { cost_of(g, p, c) };
+    let (mut gn, mut pips) = (0, String::new());
+    for (i, &(c, x)) in cards.iter().enumerate() {
+        let before: Vec<CardId> = cards[..i].iter().map(|&(b, _)| b).filter(|&b| !g.db.get(b).land).collect();
+        let (cg, cp) = if sphere && !before.is_empty() {
+            let mut g2 = g.clone();
+            let st = g2.turn_stamp();
+            let mut done: Vec<CardId> = match &g2.player(p).turn_casts {
+                Some((s, cs)) if *s == st => cs.clone(),
+                _ => vec![],
+            };
+            done.extend(before);
+            g2.player_mut(p).turn_casts = Some((st, done));
+            price(&g2, c, x)
+        } else {
+            price(g, c, x)
+        };
         gn += cg;
         pips.push_str(&cp);
     }

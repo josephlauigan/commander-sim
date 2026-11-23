@@ -603,16 +603,14 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
         g.registry.get(c).and_then(|i| i.cast_x).filter(|_| d.xcount > 0 && !d.tag(Tag::Tokx) && !d.tag(Tag::Xtutor));
     let mut ctx = ctx0;
     if ctx.x == 0 && zone != "gy" && d.xcount > 0 && !crate::human::is_human(g, p) {
-        // {X}{X} permanents priced by their `self_cost` at the X the AI chooses (the cost is taken at the same state): the
-        // X is recorded with the cast, so they enter with X counters and not with half of everything paid, taxes included
-        let chosen = match &*d.name {
-            "Chalice of the Void" => crate::impls::t6_stax::chalice_x(g, p).unwrap_or(0),
-            "Hangarback Walker" => crate::impls::karn_engines::hangar_x(g, p),
-            _ => 0,
-        };
-        // a cast that costs nothing (Tamiyo's emblem from the hand, Dracogenesis) has X = 0 (107.3b)
-        let free = cost_of(g, p, c) == (0, String::new());
-        ctx.x = if free { 0 } else { chosen };
+        // {X}{X} permanents priced by `cost_of` at the X the AI chooses (`CardImpl::auto_x`, the cost is taken at the same
+        // state): the X is recorded with the cast, so they enter with X counters and not with half of everything paid,
+        // taxes included
+        if let Some(chosen) = crate::cardcode::auto_x(g, p, c) {
+            // a cast whose price does not depend on X (Tamiyo's emblem from the hand, Dracogenesis) has X = 0 (107.3b). Not
+            // "costs nothing": reducers can bring a real X down to a price of nothing, and its counters are still X
+            ctx.x = if crate::engine::mana::x_free(g, p, c) { 0 } else { chosen.unwrap_or(0) };
+        }
     }
     if zone != "gy" && (d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) || hook_x.is_some()) {
         let per = if hook_x.is_some() { d.xcount } else { 1 };
@@ -954,6 +952,14 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
 /// for every smaller X, so this is a binary search of X in 0..=(spare * per + 64): 64 is far more than any pile of generic
 /// reducers takes off. K'rrik's pips are dropped by `cost_of_x` itself, where the life allows
 pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
+    max_x_upto(g, p, c, per, cv, i32::MAX)
+}
+
+/// `max_x` for a caller that wants no X above `cap` (Chalice of the Void names 1 to 3, Hangarback Walker 1 to 4): the
+/// binary search runs over 0..=cap, a handful of prices instead of seven. The test for a price that does not depend on X
+/// is `engine::mana::x_free`, the same probe `cost_of` uses, so the two cannot disagree: a pile of reducers that brings a
+/// small X down to nothing is not mistaken for it
+pub fn max_x_upto(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool, cap: i32) -> i32 {
     let per = per.max(1) as i32;
     let total = total_mana_spell(g, p, c, cv) as i64;
     // (a person's mana is the pool, which `total_mana_spell` does not count: no reducer margin for a seat the AI only
@@ -964,7 +970,7 @@ pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
         let (gn, pips) = cost_of_x(g, p, c, per * x);
         can_pay_spell(g, p, c, gn, &pips, cv)
     };
-    let (mut lo, mut hi) = (0, top); // lo is payable or 0; the answer is in lo..=hi
+    let (mut lo, mut hi) = (0, top.min(cap.max(0))); // lo is payable or 0; the answer is in lo..=hi
     while lo < hi {
         let mid = lo + (hi - lo + 1) / 2;
         if payable(mid) {
@@ -974,7 +980,7 @@ pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
         }
     }
     // a cast that costs the same whatever X is (Tamiyo's emblem from the hand, Dracogenesis: no mana cost) has X = 0 (107.3b)
-    if lo > 0 && cost_of_x(g, p, c, 0) == cost_of_x(g, p, c, per * top) {
+    if lo > 0 && crate::engine::mana::x_free(g, p, c) {
         return 0;
     }
     lo

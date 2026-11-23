@@ -380,6 +380,9 @@ pub type PrioFn = fn(&Game, PlayerId, CardId) -> i32;
 /// the X the AI pays when it casts a card with {X} in its cost: (g, p, c, spare) -> X, where `spare` is the mana left
 /// after the rest of the cost (the engine pays at most that)
 pub type CastXFn = fn(&Game, PlayerId, CardId, u32) -> u32;
+/// the X the AI casts a card with {X} in its cost for, chosen when the cost is priced (`CardImpl::auto_x`); None: it
+/// cannot pay for any X
+pub type AutoXFn = fn(&Game, PlayerId, CardId) -> Option<i32>;
 /// a spell's importance to counter (0-9): Python's `CI.SPELL_IMP`
 pub type SpellImpFn = fn(&Game, PlayerId, CardId) -> f64;
 /// an entry of common.TOKEN_PT (tokens with data: Urza's Construct) or common.CREATURE_PT (any creature: the
@@ -419,7 +422,7 @@ pub enum SlotClass {
 /// Every `CardImpl` slot's class, in field order: the one place a slot is classed. `at_once` is not a slot (it marks
 /// how other slots run). `options` / `gy_options` / `hand_options` / `land_options` build the plays the AI may pick;
 /// `prio`, `spell_imp` and `pval` are numbers it ranks by.
-pub const SLOT_CLASS: [(&str, SlotClass); 104] = [
+pub const SLOT_CLASS: [(&str, SlotClass); 105] = [
     ("etb", SlotClass::Rule),
     ("enter_copy", SlotClass::Rule),
     ("leaves", SlotClass::Rule),
@@ -522,6 +525,7 @@ pub const SLOT_CLASS: [(&str, SlotClass); 104] = [
     ("saga", SlotClass::Rule),
     ("self_cost", SlotClass::Rule),
     ("cast_x", SlotClass::Ai),
+    ("auto_x", SlotClass::Ai),
     ("aura", SlotClass::Rule),
     ("walker", SlotClass::Rule),
 ];
@@ -671,6 +675,9 @@ pub struct CardImpl {
     pub self_cost: Option<PrioFn>,
     /// the AI's X for a spell cast with {X} in its cost (The Meathook Massacre): chosen as the spell is cast
     pub cast_x: Option<CastXFn>,
+    /// the X the AI casts an {X}{X}-style card for when the cost is priced before the cast (`cost_of`: Hangarback Walker,
+    /// Chalice of the Void); `None`: it cannot pay for any X, so the card is not cast. `cost_of_x` never reads it
+    pub auto_x: Option<AutoXFn>,
     /// an Aura's bonus, keywords and host rule (common.AURA; set by `impls::common::aura`)
     pub aura: Option<&'static crate::impls::common::AuraSpec>,
     /// a planeswalker's loyalty abilities for the walker framework (common.WALKERS; set by `impls::common::walker`)
@@ -705,7 +712,7 @@ pub struct CardImpl {
 impl CardImpl {
     /// Every slot by name, and whether it is filled. Destructuring the struct makes a new field a compile error here
     /// until it is listed, and the test `every_slot_has_a_class` then needs its class in `SLOT_CLASS`.
-    pub fn slot_fill(&self) -> [(&'static str, bool); 104] {
+    pub fn slot_fill(&self) -> [(&'static str, bool); 105] {
         let CardImpl {
             etb,
             enter_copy,
@@ -809,6 +816,7 @@ impl CardImpl {
             saga,
             self_cost,
             cast_x,
+            auto_x,
             aura,
             walker,
             at_once: _,
@@ -919,6 +927,7 @@ impl CardImpl {
             ("saga", saga.is_some()),
             ("self_cost", self_cost.is_some()),
             ("cast_x", cast_x.is_some()),
+            ("auto_x", auto_x.is_some()),
             ("aura", aura.is_some()),
             ("walker", walker.is_some()),
         ]

@@ -965,32 +965,23 @@ pub fn freyalise_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 // ================================================================== harmonize, bargain, improvise, transmute, cycling
-/// the part of X the mana pays for a harmonize cast, {X}{G}{G}{G}{G}: the most X' for which the generic part of
-/// `cost_of_x` at X' (the reducers and taxes apply to it) and {G}{G}{G}{G} are payable; the tapped creature's power comes
-/// off the generic cost with the other reductions, so X = X' + power (reductions all come off before a tax). None when
-/// even X' = 0 can't be paid
+/// the part of X the mana pays for a harmonize cast, {X}{G}{G}{G}{G}: the most X' for which `harmonize_cost` at X' is
+/// payable; the tapped creature's power comes off the generic cost with the other reductions, so X = X' + power (the
+/// reductions all come off before a tax, and the floors fall at the same point). None when even X' = 0 can't be paid.
+/// `max_x` at the printed {G}{G} bounds X' from above: with X' the alternative cost never costs less than the printed one
 fn harmonize_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let ok = |x: i32| can_pay_spell(g, p, c, harmonize_generic(g, p, c, x), "GGGG", false);
-    (0..=crate::ai::brain::max_x(g, p, c, 1, false)).rev().find(|&x| ok(x)).or_else(|| ok(0).then_some(0))
+    let ok = |x: i32| {
+        let (gn, pips) = harmonize_cost(g, p, c, x);
+        can_pay_spell(g, p, c, gn, &pips, false)
+    };
+    (0..=crate::ai::brain::max_x(g, p, c, 1, false)).rev().find(|&x| ok(x))
 }
 
-/// the generic part of the harmonize cost at X = x: `cost_of_x` applies Trinisphere's minimum to the printed pips, but the
-/// alternative cost {G}{G}{G}{G} is checked against it with its own four symbols. Where the printed minimum raised the
-/// generic cost, the cost before it is read from `cost_of_x` at a much larger X (every step is {1} per X there, so it is
-/// that cost less the extra X) and the alternative's own minimum applied to it
-fn harmonize_generic(g: &Game, p: PlayerId, c: CardId, x: i32) -> u32 {
-    let gn = crate::engine::mana::cost_of_x(g, p, c, x).0;
-    if g.hooks.is_empty() {
-        return gn;
-    }
-    let floor = crate::engine::hooks::max_min_cost(g, p, c) as i64;
-    let printed_floor = floor - g.db.get(c).pips.chars().count() as i64;
-    if gn as i64 > printed_floor {
-        return gn; // the minimum did not raise it
-    }
-    let far = x + 256;
-    let before = (crate::engine::mana::cost_of_x(g, p, c, far).0 as i64 - 256).max(0);
-    before.max(floor - 4).min(gn as i64) as u32
+/// what harmonize costs at X = x (the part the mana pays): {X}{G}{G}{G}{G} through the cost pipeline with the alternative
+/// cost's own four symbols, so the Trinisphere minimum counts them and not the printed {G}{G}. The printed generic part
+/// is 0, as the alternative cost's is
+fn harmonize_cost(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
+    crate::engine::mana::cost_of_with(g, p, c, x, "GGGG")
 }
 
 /// harmonize {X}{G}{G}{G}{G} (tapping a creature reduces it by its power): cast from the graveyard, then exile it
@@ -1020,8 +1011,8 @@ fn harmonize_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.perm_mut(m).tapped = true;
     }
     let Some(paid_x) = harmonize_x(g, p, c) else { return Ok(false) }; // X - r: the part of X the mana pays
-    let gn = harmonize_generic(g, p, c, paid_x);
-    if !pay_spell(g, p, c, gn, "GGGG", false)? {
+    let (gn, pips) = harmonize_cost(g, p, c, paid_x);
+    if !pay_spell(g, p, c, gn, &pips, false)? {
         return Ok(false);
     }
     let xx = paid_x + r;

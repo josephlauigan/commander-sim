@@ -94,6 +94,22 @@ fn x_zero_equals_cost_of_for_every_spell_with_no_x() {
 }
 
 #[test]
+fn cost_of_prices_a_card_whose_x_the_ai_picks_at_that_x_and_cost_of_x_never_does() {
+    // Hangarback Walker and Chalice of the Void ({X}{X}): `cost_of` is the price at the X the AI casts for
+    // (`CardImpl::auto_x`), `cost_of_x` the price at the X it is given (so x = 0 stays "X = 0", and nothing recurses)
+    for name in ["Hangarback Walker", "Chalice of the Void"] {
+        let mut g = game();
+        let c = card(&g, name);
+        assert_eq!(sim_core::cardcode::auto_x(&g, P0, c), Some(None), "{name}: no lands, it can pay for no X");
+        assert_eq!(cost_of_x(&g, P0, c, 0), (0, String::new()), "{name}: X = 0 is free");
+        assert_eq!(cost_of(&g, P0, c), (99, String::new()), "{name}: so it is not cast: priced out of reach");
+        lands(&mut g, P0, "Wastes", 6, false);
+        let x = sim_core::cardcode::auto_x(&g, P0, c).unwrap().expect("six lands pay for an X");
+        assert_eq!(cost_of(&g, P0, c), cost_of_x(&g, P0, c, 2 * x), "{name}");
+    }
+}
+
+#[test]
 fn a_spell_with_no_x_still_prices_as_before() {
     let mut g = game();
     let lesson = card(&g, "Painful Lesson"); // {2}{B}

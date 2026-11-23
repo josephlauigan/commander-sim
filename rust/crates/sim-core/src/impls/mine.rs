@@ -3376,14 +3376,19 @@ pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spel
     v
 }
 
-/// what Twinflame costs for n targets: the printed {1}{R} and {2}{R} for each target beyond the first, plus what the cost
-/// pipeline adds over the printed generic {1} (a spell tax: `cost_of` is the printed cost less reductions, plus taxes).
-/// A reduction is not applied (the cost stays the printed one when `cost_of` is below it: conservative by what the
-/// reducer takes off, never too little)
+/// what Twinflame costs for n targets: the printed {1}{R} and strive's {2}{R} for each target beyond the first, which is a
+/// cost increase (601.2f): the {2} goes in as X and the {R} in the coloured part, so `cost_of_with` applies every reducer,
+/// tax and the Trinisphere minimum to the whole cost in the engine's order. One target is exactly `cost_of`
 fn twinflame_cost(g: &Game, p: PlayerId, c: CardId, n: usize) -> (u32, String) {
-    let (gn, pips) = cost_of(g, p, c);
     let extra = n.saturating_sub(1);
-    (1 + 2 * extra as u32 + gn.saturating_sub(1), format!("{pips}{}", "R".repeat(extra)))
+    // Tamiyo's emblem casts the spell without paying its mana cost, but strive is a cost increase and is still paid
+    // (601.2f). `cost_of_with` returns nothing at all under the emblem, so the increase is priced here; the other taxes
+    // the engine drops under the emblem stay dropped (the engine's open rules question)
+    if g.player(p).emblems.contains(&"tamiyo") && g.player(p).hand.contains(&c) {
+        return (2 * extra as u32, "R".repeat(extra));
+    }
+    let pips = format!("{}{}", g.db.get(c).pips, "R".repeat(extra));
+    crate::engine::mana::cost_of_with(g, p, c, 2 * extra as i32, &pips)
 }
 
 /// the best number of Twinflame targets: (their total value, the targets)
