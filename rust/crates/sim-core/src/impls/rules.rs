@@ -566,7 +566,7 @@ pub fn emblem_combat(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dmg: i32
             .into_iter()
             .filter(|&c| {
                 let x = g.db.get(c);
-                x.creature && (x.pips.contains('U') || x.pips.contains('B'))
+                x.creature && (x.colors.has('U') || x.colors.has('B'))
             })
             .collect();
         if let Some(c) = first_max(&cs, |c| (g.db.get(c).bomb, card_worth(g, p, c, false))) {
@@ -679,7 +679,7 @@ fn brimaz_block(
 
 /// Allosaurus Shepherd: your green spells can't be countered
 fn shepherd(g: &Game, src: Src, p: PlayerId, c: CardId) -> bool {
-    p == g.perm(src).owner && g.db.get(c).pips.contains('G')
+    p == g.perm(src).owner && g.db.get(c).colors.has('G')
 }
 
 /// rules.ezuri_regen: {G}: regenerate another Elf (saves valuable Elves)

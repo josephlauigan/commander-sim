@@ -401,7 +401,9 @@ impl Session {
         let order: Vec<String> = g.players.iter().map(|p| p.name.to_string()).collect();
         self.on_log(&g, &format!("Seat order: {}", order.join(", ")), None, None);
         for (p, mut r) in mull {
-            if sim_core::human::choices::mulligan(&mut g, p, &mut r).is_err() {
+            if sim_core::human::choices::mulligan(&mut g, p, &mut r).is_err()
+                || sim_core::impls::card_models::opening_hand_person(&mut g, p).is_err()
+            {
                 return self.closed();
             }
         }

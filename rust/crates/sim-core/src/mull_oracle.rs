@@ -195,7 +195,7 @@ pub fn setup_playout(
                 mulligan_from(&mut g, p, &mut r, *from_try);
             }
         }
-        crate::impls::card_models::caverns_opening(&mut g, p);
+        crate::impls::card_models::opening_hand_actions(&mut g, p);
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }

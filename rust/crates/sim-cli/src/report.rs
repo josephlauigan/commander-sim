@@ -54,7 +54,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "sheoldred" => "first opponent drained by Sheoldred",
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
-        "thanos" => "first combo attempt",
+        "kyodai" => "first combo attempt",
         "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",

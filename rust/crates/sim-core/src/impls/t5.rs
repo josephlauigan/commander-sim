@@ -399,7 +399,7 @@ pub fn bloom_tender_colours(g: &Game, p: PlayerId) -> Colors {
     let mut cols = Colors::NONE;
     for &x in &g.player(p).perms {
         if let Some(c) = g.perm(x).cd {
-            cols = cols.union(Colors::from_letters(&g.db.get(c).pips));
+            cols = cols.union(g.db.get(c).colors);
         }
     }
     cols

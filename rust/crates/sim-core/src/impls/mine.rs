@@ -1360,7 +1360,7 @@ fn led_uses(g: &Game, p: PlayerId, ignore: Option<CardId>) -> Option<(f64, bool)
     if uses.is_empty() {
         return None;
     }
-    let blue = pl.cmd_in_zone && g.db.get(pl.cmd).pips.contains('U') && tot < 3;
+    let blue = pl.cmd_in_zone && g.db.get(pl.cmd).colors.has('U') && tot < 3;
     Some((uses.iter().copied().fold(f64::NEG_INFINITY, f64::max), blue))
 }
 

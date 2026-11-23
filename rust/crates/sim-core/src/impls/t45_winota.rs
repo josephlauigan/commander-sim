@@ -201,7 +201,7 @@ pub fn flare_fodder(g: &Game, p: PlayerId, name: &str, keep: Option<PermId>) -> 
                 && !x.token
                 && !x.is_cmd
                 && !no_sac(g, m)
-                && x.cd.is_some_and(|c| g.db.get(c).pips.contains('W'))
+                && x.cd.is_some_and(|c| g.db.get(c).colors.has('W'))
                 && pval(g, m) < 3.5
         })
         .min_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))

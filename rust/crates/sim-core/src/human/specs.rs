@@ -125,7 +125,7 @@ pub enum Pre {
 }
 
 fn perm_cands(g: &Game, p: PlayerId, c: CardId, kind: Tk) -> Vec<PermId> {
-    let pips = Colors::from_letters(&g.db.get(c).pips);
+    let pips = g.db.get(c).colors;
     let mut out = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
         for &m in &q.perms {
@@ -150,7 +150,7 @@ fn perm_cands(g: &Game, p: PlayerId, c: CardId, kind: Tk) -> Vec<PermId> {
 
 /// Decimate's legal targets: artifacts, creatures, enchantments and lands (anyone's)
 fn decimate_cands(g: &Game, p: PlayerId, c: CardId) -> [Vec<PermId>; 4] {
-    let pips = Colors::from_letters(&g.db.get(c).pips);
+    let pips = g.db.get(c).colors;
     let mut out: [Vec<PermId>; 4] = Default::default();
     for q in g.players.iter().filter(|q| q.alive) {
         for &m in q.perms.iter().chain(q.lands.iter()) {

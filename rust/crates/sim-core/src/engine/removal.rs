@@ -61,7 +61,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 }
                 _ => is_c,
             };
-            if tgt == "blue" && !cd.is_some_and(|d| d.pips.contains('U')) {
+            if tgt == "blue" && !colors_of(g, m).has('U') {
                 continue;
             }
             if stag(Tag::Nonblack) && colors_of(g, m).has('B') {
@@ -116,8 +116,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 continue; // --- Tiers 1/2 (kaalia-sythis): Valgavoth's ward (sacrifice three nonland permanents)
             }
             if let Some(s) = st
-                && (protected_from(g, m, Colors::from_letters(&s.pips))
-                    || crate::impls::tymna_cards::hexproof_from(g, m, Colors::from_letters(&s.pips)))
+                && (protected_from(g, m, s.colors) || crate::impls::tymna_cards::hexproof_from(g, m, s.colors))
             {
                 continue;
             }

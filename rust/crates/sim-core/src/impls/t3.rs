@@ -693,19 +693,14 @@ pub fn put_creature(
 fn natural_order_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     let green: Vec<PermId> = live_creatures(g, p)
         .into_iter()
-        .filter(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).pips.contains('G')))
+        .filter(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).colors.has('G')))
         .collect();
     if green.is_empty() {
         return 0;
     }
     let n = live_creatures(g, p).len();
-    let lib: Vec<CardId> = g
-        .player(p)
-        .library
-        .iter()
-        .copied()
-        .filter(|&x| g.db.get(x).creature && g.db.get(x).pips.contains('G'))
-        .collect();
+    let lib: Vec<CardId> =
+        g.player(p).library.iter().copied().filter(|&x| g.db.get(x).creature && g.db.get(x).colors.has('G')).collect();
     if n >= 6 && lib.iter().any(|&x| &*g.db.get(x).name == "Craterhoof Behemoth") {
         return 85;
     }
@@ -719,7 +714,7 @@ fn natural_order_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 
 /// sacrifices a spare green creature for the best green creature (Craterhoof on a wide board)
 fn natural_order(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    put_creature(g, p, |g, x| g.db.get(x).pips.contains('G'), true)?;
+    put_creature(g, p, |g, x| g.db.get(x).colors.has('G'), true)?;
     Ok("gy")
 }
 
@@ -731,7 +726,7 @@ fn x_tutor_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// Green Sun's Zenith: X = spare mana; a green creature with mana value X or less onto the battlefield
 fn gsz(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x;
-    put_creature(g, p, |g, y| g.db.get(y).cmc as i32 <= x && g.db.get(y).pips.contains('G'), true)?;
+    put_creature(g, p, |g, y| g.db.get(y).cmc as i32 <= x && g.db.get(y).colors.has('G'), true)?;
     Ok("gy")
 }
 

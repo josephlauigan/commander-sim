@@ -51,6 +51,10 @@ pub struct RawCard {
     pub derived: Derived,
     /// the colours of its Phyrexian mana symbols ("B" for {B/P})
     pub phyrexian: String,
+    /// its two-colour hybrid symbols in cost order ("GW" for {G/W}); `pips` hold the first colour of each (older exports
+    /// have no field)
+    #[serde(default)]
+    pub hybrid: Vec<String>,
     /// how many {X} symbols its printed cost has (0 for none; older exports have no field)
     #[serde(default)]
     pub xcount: u32,

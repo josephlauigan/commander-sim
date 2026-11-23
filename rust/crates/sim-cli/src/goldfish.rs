@@ -486,7 +486,7 @@ mod tests {
     fn the_loss_buckets_sum_to_the_own_turns() {
         use sim_core::gf_audit::Bucket;
         let sim = sim();
-        for key in ["thanos", "kinnan-bonder-mana-combo"] {
+        for key in ["kyodai", "kinnan-bonder-mana-combo"] {
             let games = run_deck(&sim, key, "loose", 16, 500000).unwrap();
             let audits: Vec<&sim_core::gf_audit::AuditOut> = games.iter().map(|g| g.audit.as_ref().unwrap()).collect();
             let (all, early) = crate::gf_audit::bucket_counts(&audits);
@@ -513,7 +513,7 @@ mod tests {
     #[test]
     fn the_loss_accounting_changes_no_play() {
         let sim = sim();
-        let key = "thanos";
+        let key = "kyodai";
         let deck = sim.seat(key, &list_of(&sim, key).unwrap()).unwrap();
         let seats = seats(&sim, &deck).unwrap();
         let st = sim.settings_in(profile("loose").unwrap(), None);

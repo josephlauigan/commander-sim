@@ -752,7 +752,7 @@ fn flare_fodder(g: &Game, p: PlayerId, cap: f64) -> Option<PermId> {
         .into_iter()
         .filter(|&m| {
             let x = g.perm(m);
-            !x.token && !x.is_cmd && !no_sac(g, m) && x.cd.is_some_and(|c| g.db.get(c).pips.contains('B'))
+            !x.token && !x.is_cmd && !no_sac(g, m) && x.cd.is_some_and(|c| g.db.get(c).colors.has('B'))
         })
         .filter(|&m| pval(g, m) < cap)
         .min_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))

@@ -289,6 +289,9 @@ pub struct CardDef {
     pub source: Box<str>,
     /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
     pub phyrexian: Box<str>,
+    /// its two-colour hybrid symbols, two letters each in cost order ("GWGU" for {G/W}{G/U}); `pips` hold the first
+    /// colour of each (engine::hybrid pays the other one when the first can't be paid)
+    pub hybrid: Box<str>,
     /// how many {X} symbols its printed cost has (practice mode asks the person for X when it is not 0)
     pub xcount: u32,
     /// the condition a land enters untapped under, if its text has one
@@ -318,6 +321,16 @@ impl CardDef {
 
     pub fn has_kw(&self, kw: &str) -> bool {
         self.kws.iter().any(|k| &**k == kw)
+    }
+
+    /// its mana symbols that count toward devotion to the colours `cols` (CR 700.5: a symbol counts once, for any
+    /// colour it has; a two-colour hybrid symbol counts for either half, `pips` holding only the first; {2/W} and
+    /// Phyrexian symbols are not handled)
+    pub fn devotion_to(&self, cols: &str) -> usize {
+        let set = Colors::from_letters(cols);
+        let hy: Vec<char> = self.hybrid.chars().collect();
+        self.pips.chars().filter(|&c| set.has(c)).count()
+            + hy.chunks_exact(2).filter(|w| !set.has(w[0]) && set.has(w[1])).count()
     }
 
     pub fn has_subtype(&self, s: &str) -> bool {
@@ -360,7 +373,7 @@ impl CardDef {
             pow: r.pow,
             tgh: r.tgh,
             bomb: r.bomb,
-            colors: Colors::from_letters(&r.pips),
+            colors: Colors::from_letters(&r.pips).union(Colors::from_letters(&r.hybrid.concat())),
             identity: r.identity.as_deref().map(Colors::from_letters),
             counters_mult: repl::counters_mult_of(&abilities),
             abilities,
@@ -372,6 +385,7 @@ impl CardDef {
             game_changer: r.game_changer == Some(true),
             source: r.source.as_str().into(),
             phyrexian: r.phyrexian.as_str().into(),
+            hybrid: r.hybrid.concat().into(),
             xcount: r.xcount,
             enters_rule: match &r.enters_rule {
                 Some(v) => Some(EnterRule::from_json(v).map_err(at)?),
@@ -420,6 +434,7 @@ pub fn engine_made() -> Vec<RawCard> {
             perm: false,
         },
         phyrexian: String::new(),
+        hybrid: vec![],
         xcount: 0,
         enters_rule: None,
         land_types: vec![],
