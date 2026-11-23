@@ -341,7 +341,6 @@ have = [
   "Wayfarer's Bauble",
   "Wrath of God",
   "Yoshimaru, Ever Faithful",
-  "Zack Fair",
 ]
 proxy = [
   "Adeline, Resplendent Cathar",
@@ -372,6 +371,7 @@ proxy = [
   "Recruiter of the Guard",
   "Scrubland",
   "Silence",
+  "Skrelv, Defector Mite",
   "Solitude",
   "Stoneforge Mystic",
   "Takenuma, Abandoned Mire",
@@ -477,4 +477,6 @@ proxy = [
 missing = []
 
 [spare]
-cards = []
+cards = [
+  "Zack Fair",
+]
