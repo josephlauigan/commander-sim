@@ -40,6 +40,11 @@ What the numbers say (correlation, not causation):
 - **The commanders are the targets and add nothing alone.** Yoshimaru is removed 0.47 / 0.48 times a game and Tymna 0.14 / 0.18, far above any other card (Sword of Fire and Ice is next at 0.08 / 0.05). Both are cast in 94-99% of
   games and win at the deck's own rate (Yoshimaru 27.4% / 24.5%, Tymna 26.9% / 24.7%). Stoneforge Mystic is the lowest card at t4 (23.2% when cast, -4.2, cast in 14.1% of games), the only one clearly below the deck.
 
+## Silence knob, paired test 2026-11-23 (branch stage4-protect-knob 223d437b against main f1ffd896; same seeds, loose, 1,500 games per tier)
+`[knobs] protect_before_go = true` (Silence cast before a catalogue line goes). t4 **27.5% -> 27.6%**, t5 **24.5% -> 24.8%**: inside the noise (standard error about 1.1 points), as predicted. The mechanism moved: Silence cast in **1.4% -> 4.7%** (t4) and **0.7% -> 4.1%** (t5) of the games it is drawn; combo share of wins 64.6% -> 64.7% (t4), 62.2% -> 63.2% (t5). Raw: `audit/stage3-paired-2026-11-23/knob-yoshimaru-analyze.txt`.
+- The knob reaches only lines that go through `combos::attempt`: Heliod + Walking Ballista and Vito + Exquisite Blood. Archangel + Ballista and Restoration Angel + Felidar Guardian are not in the combo catalogue, so it does nothing for them.
+- Not measured: how often the protect step fired (the `t6_protect` counter is not printed; ticket T-S4-3); whether Silence was countered more or less.
+
 ## What the simulator cannot do yet
 - Every card is Full or Full-auto except Delney, Streetwise Lookout (Approximate: the extra instance for leaves that run at once or inline in the
   engine is left out; see her note in `data/audit.toml`). Full-auto means compiled from Oracle text, not hand-written card code: Stroke of Midnight and

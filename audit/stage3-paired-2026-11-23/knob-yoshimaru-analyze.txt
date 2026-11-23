@@ -1,0 +1,207 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yoshimaru                   100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+3,000 games (analysis, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 6 minutes
+  progress  10.0%  1m30s elapsed, ~13m35s left
+  progress  20.0%  3m05s elapsed, ~12m20s left
+  progress  30.0%  4m43s elapsed, ~11m00s left
+  progress  40.0%  6m15s elapsed, ~9m23s left
+  progress  50.0%  8m00s elapsed, ~8m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== yoshimaru analysis [loose profile, lookahead AI, 1500 games] ===========
+Win rate 27.6%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  combo       64.7% of wins
+  damage      35.3% of wins
+  Opponents it eliminated: 0.78 per game, by
+    combo              56.6%
+    combat             25.1%
+    drain               6.6%
+    commander damage    6.0%
+    triggers            5.6%
+  Damage dealt per game: 26.2, from
+    combat              22.5  (86%)
+    drain                2.4  (9%)
+    triggers             1.3  (5%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 2.57; Tymna turns per game 3.25; opponents hit per Tymna turn 0.79
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.71 (in 94% of games)
+
+-- How it loses --
+  Eliminated in 72.4% of games, on average in round 8.1
+    by Krenko   via combat             11.3% of games
+    by Edgar Markov via combat              9.0% of games
+    by Chulane  via combo               8.3% of games
+    by Yuriko   via triggers            8.3% of games
+    by Krenko   via triggers            6.1% of games
+    by Prosper  via triggers            4.2% of games
+    by Edgar Markov via combo               3.5% of games
+    by Yuriko   via combat              3.3% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 1%  T5 4%  T6 7%  T7 10%  T8 14%  T9 16%  T10 17%  T11 18%  T12 19%
+  Online at all: 19.4% of games
+  Commander resolves on turn: median 1.0, mean 1.5 (over the 99.1% of games it resolves)
+  Commander resolved by turn:  T4 33%  T5 34%  T6 34%  T7 34%  T8 35%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Walking Ballista                           cast in  20.8% of games, win rate when cast  69.9% (+42.3)
+    Heliod, Sun-Crowned                        cast in  18.8% of games, win rate when cast  67.7% (+40.1)
+    Exquisite Blood                            cast in  19.6% of games, win rate when cast  56.1% (+28.5)
+    Vito, Thorn of the Dusk Rose               cast in  23.5% of games, win rate when cast  49.1% (+21.5)
+    Enlightened Tutor                          cast in  16.5% of games, win rate when cast  46.0% (+18.4)
+    Archangel of Thune                         cast in  12.2% of games, win rate when cast  45.4% (+17.8)
+    Vampiric Tutor                             cast in  12.7% of games, win rate when cast  44.7% (+17.1)
+    Recruiter of the Guard                     cast in   8.8% of games, win rate when cast  44.7% (+17.1)
+    Demonic Tutor                              cast in  15.6% of games, win rate when cast  43.2% (+15.6)
+    The Wandering Emperor                      cast in   6.9% of games, win rate when cast  42.7% (+15.1)
+  Lowest win rate when cast:
+    Stoneforge Mystic                          cast in  14.0% of games, win rate when cast  23.3% (-4.3)
+    Skyclave Apparition                        cast in  16.8% of games, win rate when cast  25.4% (-2.2)
+    Wrath of God                               cast in   8.7% of games, win rate when cast  26.2% (-1.4)
+    Mana Vault                                 cast in  17.6% of games, win rate when cast  26.9% (-0.7)
+    Tymna the Weaver                           cast in  94.3% of games, win rate when cast  27.0% (-0.6)
+    Court of Ardenvale                         cast in   7.5% of games, win rate when cast  27.4% (-0.2)
+    Yoshimaru, Ever Faithful                   cast in  99.3% of games, win rate when cast  27.6% (-0.0)
+    Wayfarer's Bauble                          cast in  16.5% of games, win rate when cast  27.9% (+0.3)
+    Kor Outfitter                              cast in  13.4% of games, win rate when cast  28.4% (+0.8)
+    Puresteel Paladin                          cast in  14.8% of games, win rate when cast  28.4% (+0.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Silence                                    cast   4.7% of the games it was drawn
+    Eerie Interlude                            cast   5.9% of the games it was drawn
+    Solitude                                   cast  13.8% of the games it was drawn
+    Restoration Angel                          cast  14.8% of the games it was drawn [reactive: only cast in response]
+    Teferi's Protection                        cast  17.2% of the games it was drawn [reactive: only cast in response]
+    Conjurer's Closet                          cast  21.1% of the games it was drawn
+    Teleportation Circle                       cast  24.2% of the games it was drawn
+    Forge Anew                                 cast  25.5% of the games it was drawn
+    Flawless Maneuver                          cast  37.9% of the games it was drawn
+    The Wandering Emperor                      cast  39.9% of the games it was drawn
+    Court of Ardenvale                         cast  41.7% of the games it was drawn
+    Gandalf the White                          cast  43.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Yoshimaru, Ever Faithful                   0.47
+    Tymna the Weaver                           0.14
+    Sword of Fire and Ice                      0.08
+    Sting, the Glinting Dagger                 0.04
+    Sword of Hearth and Home                   0.04
+    Skrelv, Defector Mite                      0.04
+    Mana Vault                                 0.04
+    Adeline, Resplendent Cathar                0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, edgar-markov-mardu-vampires = Edgar Markov, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+  progress  60.0%  9m11s elapsed, ~6m07s left
+  progress  70.0%  10m30s elapsed, ~4m30s left
+  progress  80.0%  11m40s elapsed, ~2m55s left
+  progress  90.0%  12m54s elapsed, ~1m26s left
+  progress 100.0%  14m14s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== yoshimaru analysis [loose profile, lookahead AI, 1500 games] ===========
+Win rate 24.8%   (4-player baseline 25%)   average rounds survived 8.4
+
+-- How it wins --
+  combo       63.2% of wins
+  damage      36.6% of wins
+  timeout      0.3% of wins
+  Opponents it eliminated: 0.71 per game, by
+    combo              52.4%
+    combat             25.0%
+    drain               7.9%
+    commander damage    7.4%
+    triggers            7.3%
+  Damage dealt per game: 30.3, from
+    combat              26.7  (88%)
+    drain                2.1  (7%)
+    triggers             1.5  (5%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 3.26; Tymna turns per game 3.38; opponents hit per Tymna turn 0.90
+  Thrasios activations per game 0.00
+  Tymna_the_Weaver lands on turn 3.72 (in 93% of games)
+
+-- How it loses --
+  Eliminated in 75.2% of games, on average in round 8.0
+    by Kinnan   via combo              14.6% of games
+    by Urza     via combo              14.1% of games
+    by Miirym   via combat             10.1% of games
+    by Zur the Enchanter via combo               9.9% of games
+    by Yawgmoth via combo               8.7% of games
+    by Miirym   via triggers            5.7% of games
+    by Kinnan   via combat              3.1% of games
+    by Zur the Enchanter via commander damage    2.2% of games
+
+-- Game plan timing --
+  Plan: 
+  Online by turn:  T2 0%  T3 0%  T4 1%  T5 3%  T6 4%  T7 7%  T8 10%  T9 13%  T10 14%  T11 15%  T12 16%
+  Online at all: 17.7% of games
+  Commander resolves on turn: median 1.0, mean 1.6 (over the 99.4% of games it resolves)
+  Commander resolved by turn:  T4 35%  T5 37%  T6 37%  T7 37%  T8 38%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Walking Ballista                           cast in  20.5% of games, win rate when cast  66.4% (+41.6)
+    Heliod, Sun-Crowned                        cast in  19.4% of games, win rate when cast  59.1% (+34.3)
+    Exquisite Blood                            cast in  18.3% of games, win rate when cast  52.6% (+27.8)
+    Vito, Thorn of the Dusk Rose               cast in  22.5% of games, win rate when cast  48.7% (+23.9)
+    Mithril Coat                               cast in  11.3% of games, win rate when cast  44.7% (+19.9)
+    Felidar Guardian                           cast in   9.6% of games, win rate when cast  44.4% (+19.6)
+    Recruiter of the Guard                     cast in   8.9% of games, win rate when cast  42.5% (+17.7)
+    Vampiric Tutor                             cast in  13.7% of games, win rate when cast  41.3% (+16.5)
+    Archangel of Thune                         cast in  11.7% of games, win rate when cast  40.0% (+15.2)
+    Elesh Norn, Mother of Machines             cast in  11.5% of games, win rate when cast  39.0% (+14.2)
+  Lowest win rate when cast:
+    Yoshimaru, Ever Faithful                   cast in  99.4% of games, win rate when cast  24.8% (+0.0)
+    Tymna the Weaver                           cast in  94.2% of games, win rate when cast  24.9% (+0.1)
+    Wrath of God                               cast in   6.9% of games, win rate when cast  26.0% (+1.2)
+    Path to Exile                              cast in  17.2% of games, win rate when cast  26.0% (+1.2)
+    The Wandering Emperor                      cast in   7.7% of games, win rate when cast  27.0% (+2.2)
+    Wayfarer's Bauble                          cast in  17.5% of games, win rate when cast  27.5% (+2.7)
+    Steelshaper's Gift                         cast in  16.9% of games, win rate when cast  28.9% (+4.1)
+    Deadly Rollick                             cast in  16.9% of games, win rate when cast  29.1% (+4.3)
+    Arcane Signet                              cast in  13.9% of games, win rate when cast  29.2% (+4.4)
+    Stroke of Midnight                         cast in  16.0% of games, win rate when cast  29.6% (+4.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Silence                                    cast   4.1% of the games it was drawn
+    Eerie Interlude                            cast   5.3% of the games it was drawn
+    Solitude                                   cast   7.9% of the games it was drawn
+    Restoration Angel                          cast  16.5% of the games it was drawn [reactive: only cast in response]
+    Teferi's Protection                        cast  16.7% of the games it was drawn [reactive: only cast in response]
+    Conjurer's Closet                          cast  19.2% of the games it was drawn
+    Teleportation Circle                       cast  20.3% of the games it was drawn
+    Forge Anew                                 cast  24.7% of the games it was drawn
+    Flawless Maneuver                          cast  33.2% of the games it was drawn
+    Wrath of God                               cast  34.2% of the games it was drawn
+    Gandalf the White                          cast  35.7% of the games it was drawn
+    The Wandering Emperor                      cast  40.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Yoshimaru, Ever Faithful                   0.48
+    Tymna the Weaver                           0.18
+    Sword of Fire and Ice                      0.05
+    Skrelv, Defector Mite                      0.04
+    Adeline, Resplendent Cathar                0.03
+    Sword of Hearth and Home                   0.02
+    Elesh Norn, Mother of Machines             0.02
+    Exquisite Blood                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, miirym-temur-dragons = Miirym, urza-mono-blue-artifacts = Urza, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(855s total)
