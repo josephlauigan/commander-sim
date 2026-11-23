@@ -88,18 +88,21 @@ fn sarkhan_unbroken_minus_eight_finds_a_dragon_only() {
     assert!(!bf.iter().any(|n| n == "Goblin Guide" || n == "Llanowar Elves"), "and nothing else did: {bf:?}");
 }
 
-/// Morcant's Loyalist: "When Morcant's Loyalist dies, return another target Elf or Warrior card from your graveyard
-/// to your hand."
+/// Morcant's Loyalist: "When Morcant's Loyalist dies, return another target Elf card from your graveyard to your hand."
 #[test]
-fn morcants_loyalist_returns_another_elf_or_warrior_only() {
+fn morcants_loyalist_returns_another_elf_only() {
     let mut g = game();
     let loyalist = perm(&mut g, P0, "Morcant's Loyalist");
-    let (elf, goblin, dragon) = ["Llanowar Elves", "Goblin Guide", "Wrathful Red Dragon"].map(|n| card(&g, n)).into();
-    g.player_mut(P0).gy.extend([goblin, dragon, elf]);
+    let (elf, goblin, dragon, warrior) =
+        ["Llanowar Elves", "Goblin Guide", "Wrathful Red Dragon", "Alesha, Who Laughs at Fate"]
+            .map(|n| card(&g, n))
+            .into();
+    g.player_mut(P0).gy.extend([goblin, dragon, elf, warrior]); // (a Warrior is not an Elf)
     zones::die(&mut g, loyalist, "destroy").unwrap();
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert!(g.player(P0).hand.contains(&elf), "the Elf came back");
     assert!(!g.player(P0).hand.contains(&goblin) && !g.player(P0).hand.contains(&dragon), "no other card did");
+    assert!(!g.player(P0).hand.contains(&warrior), "a Warrior is not an Elf");
     let lc = card(&g, "Morcant's Loyalist");
     assert!(g.player(P0).gy.contains(&lc), "the Loyalist stays in the graveyard: it is not another card");
     assert!(!g.player(P0).hand.contains(&lc));

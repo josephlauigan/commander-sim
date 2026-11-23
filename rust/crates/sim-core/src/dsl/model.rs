@@ -22,7 +22,7 @@ pub struct Filter {
     pub controller: Option<String>,
     pub other: Option<bool>,
     pub keyword: Option<String>,
-    /// (compiled for some cards, not read by the interpreter)
+    /// (a printed keyword: read for cards in a library, hand or graveyard, not for permanents)
     pub kw: Option<String>,
     pub basic: Option<bool>,
     pub subtype: Option<String>,
@@ -35,7 +35,7 @@ pub struct Filter {
     pub nontoken: Option<bool>,
     /// "target tapped creature" (Peerless Ropemaster)
     pub tapped: Option<bool>,
-    /// (compiled for some cards, not read by the interpreter)
+    /// (the printed colours, any of them: read for cards in a library, hand or graveyard, not for permanents)
     pub color: Option<String>,
     /// Tier 3 (aurelia): "attacking creatures you control" (Blade Historian): only creatures in combat as attackers
     pub attacking: Option<bool>,

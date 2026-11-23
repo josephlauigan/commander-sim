@@ -266,7 +266,8 @@ pub fn card_worth(g: &Game, p: PlayerId, c: CardId, in_gy: bool) -> f64 {
     v
 }
 
-/// Search for n cards with different names and split them as the opponent chooses (Gifts Ungiven, n = 4: they choose
+/// Search for n cards with different names (Gifts Ungiven says so; Intuition does not, a known limit that matters only
+/// for basic lands) and split them as the opponent chooses (Gifts Ungiven, n = 4: they choose
 /// `keep` = 2 for your graveyard, the rest, fewer when the pile is short, go to your hand; Intuition, n = 3: they
 /// choose `keep` = 1 for your hand, the rest go to your graveyard). You pick the pile that is best against their
 /// choice; a person who is the opponent makes the choice themselves.
