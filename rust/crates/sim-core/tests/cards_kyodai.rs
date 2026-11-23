@@ -399,3 +399,38 @@ fn pump_costs_wubrg_and_gives_plus_five_until_end_of_turn_stacking() {
     sim_core::engine::turn::step_start(&mut g, P1).unwrap();
     assert_eq!((epow(&g, k), etgh(&g, k)), (3, 3), "gone once the turn is over");
 }
+
+// ------------------------------------------------------------------ with Leyline of the Guildpact
+// Oracle: Leyline makes lands every basic land type (so each taps for any one colour) and every nonland permanent
+// all colours (so Faeburrow Elder taps for one mana of each of the five colours, and counts five colours for its P/T).
+
+#[test]
+fn pump_paid_by_five_islands_under_leyline_but_not_without_it() {
+    // without Leyline five Islands make {U} only: {W}{U}{B}{R}{G} can't be paid and nothing happens
+    let mut g = tbl();
+    let k = perm(&mut g, P0, KYODAI);
+    lands(&mut g, P0, "Island", 5, false);
+    assert!(!pump(&mut g, P0, k), "five Islands can't pay {{W}}{{U}}{{B}}{{R}}{{G}}");
+    assert_eq!((epow(&g, k), etgh(&g, k)), (3, 3));
+    // with Leyline each Island is every basic type: five lands, five colours
+    perm(&mut g, P0, "Leyline of the Guildpact");
+    assert!(pump(&mut g, P0, k), "five lands that each tap for any colour pay it");
+    assert_eq!((epow(&g, k), etgh(&g, k)), (8, 8), "+5/+5");
+}
+
+#[test]
+fn pump_paid_by_elder_under_leyline_gives_8_8() {
+    // Leyline: every nonland permanent is all five colours, so Faeburrow Elder taps for {W}{U}{B}{R}{G} alone
+    let mut g = tbl();
+    let k = perm(&mut g, P0, KYODAI);
+    let elder = perm(&mut g, P0, "Faeburrow Elder");
+    perm(&mut g, P0, "Leyline of the Guildpact");
+    assert_eq!(
+        (epow(&g, elder), etgh(&g, elder)),
+        (5, 5),
+        "+1/+1 for each of the five colours among permanents you control"
+    );
+    assert!(pump(&mut g, P0, k), "the Elder's five mana pay the pump");
+    assert_eq!((epow(&g, k), etgh(&g, k)), (8, 8));
+    assert!(g.perm(elder).tapped, "the Elder was tapped for the mana");
+}
