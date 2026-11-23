@@ -25,8 +25,10 @@ three artifacts are out (the deck has 25 with the five artifact creatures, 24 be
 Bauble) was left out (JD took three). Engine status: Mox Opal, Tezzeret and Chrome Mox are Full (`cardgen find --full`). The plan file's
 turn<=4 rock priority now lists Mox Opal and Chrome Mox in place of Thought Vessel; Tezzeret has no plan line yet. Sculpting Steel must not copy
 Mox Opal (legendary) or Chrome Mox (the copy has nothing imprinted). Staff of Domination stays (a proxy, printing cmr 343). Route A2 is unchanged.
-Nothing in `data/spellbook/thanos.json` was re-fetched: the two entries that used Fiery Emancipation were removed, and combos for the new
-cards are not in the file.
+`data/spellbook/thanos.json` was re-fetched on 2026-11-23 (after the two entries that used Fiery Emancipation had been removed): the five
+included combos are unchanged, so the new artifacts add none. Three combos are now "almost included": Tidespout Tyrant + Mox Opal and
+Hullbreaker Horror (both one card away, no result listed), and Time Vault + Tezzeret, Cruel Captain (infinite turns; Time Vault is not Commander-legal,
+so Spellbook marks the combo illegal; not in the list).
 
 ## 2026-11-15: Triple Triad => Gifts Ungiven (JD's choice, not simulated)
 Gifts Ungiven ({3}{U} instant, a Game Changer; the list now has 17 by the cache's flags) takes Triple Triad's slot. Why:
