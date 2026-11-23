@@ -7,6 +7,20 @@ proxies allowed, reworked 2026-11-14 (28 Dragons besides the commander, 29 with 
 Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). **No sims yet.** The findings of the
 retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 
+## 2026-11-22: Cyclonic Rift => Nibelheim Aflame (JD's choice, not simulated)
+Nibelheim Aflame ({2}{R}{R} sorcery, flashback {5}{R}{R}; model status Full; owned) takes Cyclonic Rift's slot (a proxy). It is
+not slot-for-slot: Rift was a {1}{U} instant that, overloaded at {6}{U}, bounced every nonland permanent the opponents control
+and left yours alone. Nibelheim Aflame lets a creature you control deal damage equal to its power to each other creature, yours
+included, so it kills the deck's own Dragons whenever their toughness is at or below that power; the chosen creature takes
+nothing. Its flashback discards the hand and draws four, a late refill Rift never had. What it costs: an instant-speed one-sided
+reset, a Game Changer (11 to 10, still Bracket 4), Rift's two-mana mode (Nibelheim costs four; both reach seven mana in their late modes), and a blue card (Rift needed {U}; the
+new card needs {R}{R}). Counts after: instants 9 (10), sorceries 8 (7), wipes Crux of Fate, Austere Command, Nibelheim Aflame and
+Steel Hellkite; the Dragon count and the lands are unchanged. The two Dragon-sparing wipes (Crux of Fate's non-Dragon mode, Austere
+Command's mana-value mode) stay. The plan file does not list wipes in `[[prio]]`, so the generic wipe logic (your own losses count
+1.2x) decides when it is cast; the engine (`rust/crates/sim-core/src/engine/removal.rs`) picks the caster's highest-power creature as the chosen one, so it will usually be The Ur-Dragon or another large Dragon, and the deck's other Dragons and creatures die. Not measured. To check in the first run: how often it
+is cast and what it kills of the deck's own board, how often the flashback is cast, and what the loss of the Rift reset costs
+against wipes and fast combos.
+
 ## 2026-11-22: basic Swamp => Field of the Dead (JD's choice, not simulated)
 Field of the Dead (a Game Changer land, model status Full) takes the Swamp's slot: it enters tapped, taps for {C}, and makes a 2/2 Zombie
 whenever a land enters while you control seven or more lands with different names, and nearly every land in this list has its own name. What it
