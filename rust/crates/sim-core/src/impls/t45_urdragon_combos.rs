@@ -50,7 +50,7 @@ use crate::engine::repl;
 use crate::engine::stack::counter_window;
 use crate::engine::zones::{TOKEN_CAP, Tokens, enter_token_copy_with, make_tokens};
 use crate::flow::Res;
-use crate::ids::{PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{CopyExc, Ctx, Game, Step as TurnStep};
 
 const ASTRAL: &str = "Astral Dragon";
@@ -160,24 +160,52 @@ pub fn spark_hold_shape(g: &Game, p: PlayerId) -> bool {
     }
     let garth_hand = in_hand(g, p, GARTH);
     if garth_hand.is_none() {
-        // Garth must still be fetchable: in the library, with a tutor in hand that the line's other piece does not use
-        // (Demonic or Vampiric Tutor fetch anything, Worldly Tutor only Garth)
-        let any =
-            u32::from(in_hand(g, p, "Demonic Tutor").is_some()) + u32::from(in_hand(g, p, "Vampiric Tutor").is_some());
-        let worldly = u32::from(in_hand(g, p, "Worldly Tutor").is_some());
+        // Garth must still be fetchable: in the library, with a tutor in hand that p can cast by next turn and that the
+        // line's other piece does not use (Demonic or Vampiric Tutor fetch anything, Worldly Tutor only Garth)
+        let tutor = |name: &str| in_hand(g, p, name).is_some_and(|c| payable_next_turn(g, p, c));
+        let any = u32::from(tutor("Demonic Tutor")) + u32::from(tutor("Vampiric Tutor"));
+        let worldly = u32::from(tutor("Worldly Tutor"));
         let other_missing = u32::from(in_hand(g, p, TWINFLAME).is_none())
             + u32::from(bf(g, p, SEASON).is_none() && in_hand(g, p, SEASON).is_none());
         if !in_lib(g, p, GARTH) || other_missing + 1 > any + worldly {
-            return false; // Garth is dead (graveyard, exile, phased out, elsewhere) or no tutor is left for it
+            return false; // Garth is dead (graveyard, exile, phased out, elsewhere) or no castable tutor is left for it
         }
     }
-    if let Some(c) = garth_hand {
-        let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-        if crate::engine::mana::next_turn_mana(g, p) < gn + pips.len() as u32 {
-            return false; // Garth is not castable by next turn: the hold waits for nothing
-        }
+    if let Some(c) = garth_hand
+        && !payable_next_turn(g, p, c)
+    {
+        return false; // Garth cannot be cast by next turn: the hold waits for nothing
     }
     true
+}
+
+/// Can p pay for card `c` on its next turn? Its price now (`cost_of`, taxes included), the count of mana
+/// (`next_turn_mana`: lands, mana permanents, one land drop) and the colours: the mana units now (untapped lands and
+/// mana permanents, `mana_units`) plus every tapped land (it untaps) as `land_card_unit` reads it, plus at most one
+/// land from the hand, must pay it (`units_pay_with_rituals`, so rituals in hand count as they do for the combos). A
+/// mana permanent that is tapped or summoning sick is left out, so the answer can only err towards "not payable".
+fn payable_next_turn(g: &Game, p: PlayerId, c: CardId) -> bool {
+    use crate::engine::mana::{cost_of, land_card_unit, mana_units, next_turn_mana, units_pay_with_rituals};
+    let (gn, pips) = cost_of(g, p, c);
+    if next_turn_mana(g, p) < gn + pips.len() as u32 {
+        return false;
+    }
+    let pl = g.player(p);
+    let mut u = mana_units(g, p, false);
+    for &l in &pl.lands {
+        if g.perm(l).on_bf && g.perm(l).tapped {
+            u.push(land_card_unit(g, p, g.perm(l).card()));
+        }
+    }
+    let skip = [c];
+    if units_pay_with_rituals(g, p, &u, gn, &pips, &skip) {
+        return true;
+    }
+    pl.hand.iter().copied().filter(|&h| g.db.get(h).land).any(|h| {
+        let mut v = u.clone();
+        v.push(land_card_unit(g, p, h));
+        units_pay_with_rituals(g, p, &v, gn, &pips, &skip)
+    })
 }
 
 /// The Ur-Dragon seat holds Spark Double (cast or free-dropped) while `spark_hold_shape` says the Garth line is near

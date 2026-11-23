@@ -1811,7 +1811,7 @@ fn twinflame_check_one_declined_chump_does_not_release() {
 use sim_core::impls::t45_urdragon_combos::{spark_garth_target, spark_hold};
 
 /// `key`'s seat with Spark Double in hand and the three pieces of the Garth line in the given zones, `extra` more cards
-/// in hand, `n` Islands (Garth costs five) and a creature for Spark Double to copy. Garth on the battlefield is the
+/// in hand, `n` lands of all five colours first (Garth costs five) and a creature for Spark Double to copy. Garth on the battlefield is the
 /// plain card.
 fn hold_row_n(key: &str, garth: Z, season: Z, twin: Z, extra: &[&str], n: usize) -> Game {
     let mut g = table(&[key, "seph"]);
@@ -1826,7 +1826,15 @@ fn hold_row_n(key: &str, garth: Z, season: Z, twin: Z, extra: &[&str], n: usize)
     for name in extra {
         put(&mut g, P0, name, Z::Hand);
     }
-    lands(&mut g, P0, "Island", n, false);
+    // one land of each colour first (Garth is {W}{U}{B}{R}{G}), Islands for the rest
+    for (i, name) in ["Island", "Plains", "Swamp", "Mountain", "Forest"].into_iter().enumerate() {
+        if i < n {
+            lands(&mut g, P0, name, 1, false);
+        }
+    }
+    if n > 5 {
+        lands(&mut g, P0, "Island", n - 5, false);
+    }
     perm(&mut g, P0, TERROR);
     g
 }
@@ -1939,8 +1947,8 @@ fn hold_f_garth_not_castable_by_next_turn_releases_the_hold() {
     assert_eq!(sim_core::engine::mana::next_turn_mana(&g, P0), 4);
     assert!(!spark_hold(&g, P0));
     offered_spark(&mut g);
-    // a land in hand makes it five
-    put(&mut g, P0, "Island", Z::Hand);
+    // a land in hand makes it five (the fifth colour, so Garth is payable)
+    put(&mut g, P0, "Forest", Z::Hand);
     assert_eq!(sim_core::engine::mana::next_turn_mana(&g, P0), 5);
     assert!(spark_hold(&g, P0));
     held_spark(&mut g);
