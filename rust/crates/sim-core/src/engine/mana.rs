@@ -57,6 +57,12 @@ pub enum Shape {
     /// `amt / cols.count()` whole sets of one mana of EACH colour in `cols` (Karoos {B}{G}, Signets, Faeburrow Elder,
     /// Bloom Tender); the few mana beyond whole sets (Kinnan's extra) are `Free`
     Each,
+    /// a land with two alternative mana abilities, only one of which is used per tap: its own (`amt` mana of the
+    /// colours in the payload, none = {C}: Ancient Tomb's {C}{C}, Cabal Coffers' {B} per Swamp) or, under Leyline of
+    /// the Guildpact (a basic land type: "{T}: add one mana of any color"), ONE mana of any colour. `cols` is
+    /// WUBRG then, `amt` the own ability's. Which ability a payment used is read from its amount and pips
+    /// (`alt_uses_own`): the own one makes Ancient Tomb's damage.
+    Alt(Colors),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -183,6 +189,8 @@ pub fn land_colors_now(g: &Game, p: PlayerId, l: PermId) -> Colors {
     let cols = land_cols(g, p, l, false, moon, dryad);
     if g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1) == 1 {
         cols.union(granted_cols_for(g, p, granted_cols(g), moon_land(g, l)))
+    } else if cols.count() <= 1 {
+        cols.union(granted_cols_for(g, p, Colors::NONE, moon_land(g, l))) // Leyline: the alternative ability (`Shape::Alt`)
     } else {
         cols
     }
@@ -222,8 +230,18 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         if !plain && !restr_ok_for(g, p, pay_for, g.db.get(land.card()).mana_restr) {
             continue; // Mishra's Workshop: artifact spells only
         }
+        let leyline = !plain && !granted_cols_for(g, p, Colors::NONE, plain).is_empty();
         if !plain && t.has(Tag::Tomb) && pl.life <= 2 {
-            continue; // Ancient Tomb's 2 damage would kill you
+            if leyline {
+                // Ancient Tomb's 2 damage would kill you, but its Leyline ability ({T}: one mana of any colour) deals none
+                u.push(Unit {
+                    src: Source::Land(l),
+                    cols: Colors::from_letters("WUBRG"),
+                    amt: 1,
+                    shape: Shape::Alt(Colors::NONE),
+                });
+            }
+            continue;
         }
         let mut amt = if plain { 1 } else { t.int(Tag::Amt).unwrap_or(1) };
         if !plain && let Some(n) = cardcode::dyn_mana_land(g, p, l) {
@@ -245,12 +263,20 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         let amt = amt.max(0) as u32;
         // several mana from one land: all one colour (Lotus Field), or one of each colour of its pair (a Karoo). Only
         // its own tagged colours: a land turned any-colour by a Lantern, Dryad or a card's rule stays free
-        let shape = if amt >= 2 && !anyc && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
+        let mut shape = if amt >= 2 && !anyc && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
             let printed = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
             shape_of(t, t.str(Tag::C).unwrap_or("C"), cols, printed, amt, true)
         } else {
             Shape::Free
         };
+        if leyline && !one && !anyc && !dryad && amt >= 2 && shape == Shape::Free && cols.count() <= 1 {
+            // Leyline of the Guildpact: Ancient Tomb, Cabal Coffers, Gaea's Cradle, Mishra's Workshop also have the
+            // basic types' ability, one mana of any colour: an alternative to their own, never both in one tap
+            if cardcode::land_colors(g, p, l).is_none() {
+                shape = Shape::Alt(cols);
+                cols = Colors::from_letters("WUBRG");
+            }
+        }
         u.push(Unit { src: Source::Land(l), cols, amt, shape });
     }
     let rite = has(g, p, Tag::Rite);
@@ -563,10 +589,28 @@ fn last_resort(s: Source) -> bool {
 /// May a unit that is `Shape::One` or `Each`, which has paid pips `col` already, pay one more pip of colour `c`
 /// (which it can make)? `One`: only the colour it is paying. `Each`: at most one of each colour per whole set, the few
 /// mana beyond whole sets standing in for any of its colours.
+/// `Shape::Alt(a)`: did a payment that took `n` of the unit's mana for the coloured pips `col` (and generic mana) use
+/// the land's own ability (`a`, `amt` mana) and not Leyline's one mana of any colour? Pips its own ability can make
+/// ({C} for a colourless one, its colour) mean its own; any other coloured pip means Leyline's. With no pips: one mana
+/// is Leyline's (no damage) unless the own ability makes a colour (a free choice, the leftover floats), two or more
+/// are its own.
+fn alt_uses_own(a: Colors, n: u32, col: &str) -> bool {
+    if col.is_empty() { n >= 2 || !a.is_empty() } else { col.chars().all(|x| x == 'C' || a.has(x)) }
+}
+
+/// May an `Alt(a)` unit, which has paid pips `col` already, pay one more pip `c`? A fresh unit pays any colour (Leyline's
+/// ability: one mana), or {C} when its own ability is colourless and makes more than one; once it has paid, only its
+/// own ability goes on (more of its colours, more {C}).
+fn alt_fits(w: &Unit, a: Colors, col: &str, c: char) -> bool {
+    let own = if c == 'C' { a.is_empty() && w.amt >= 2 } else { a.has(c) };
+    if col.is_empty() { c != 'C' || own } else { own && alt_uses_own(a, 0, col) }
+}
+
 fn fits_shape(w: &Unit, col: &str, c: char) -> bool {
     match w.shape {
         Shape::Free => true,
         Shape::One => col.is_empty() || col.starts_with(c),
+        Shape::Alt(a) => alt_fits(w, a, col, c),
         Shape::Each => {
             let (k, spare) = (w.sets(), w.amt - w.sets() * w.cols.count());
             let over: u32 = WUBRG
@@ -585,17 +629,23 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
     let mut col = vec![String::new(); u.len()];
     let mut order: Vec<char> = pips.chars().collect();
     // --- thanos: a {C} pip (colourless mana, not generic: Thanos's power-up) is paid only by a colourless unit
-    let fits = |w: &Unit, c: char| if c == 'C' { w.cols.is_empty() } else { w.cols.has(c) };
+    let fits = |w: &Unit, c: char| match w.shape {
+        Shape::Alt(a) => c != 'C' || (a.is_empty() && w.amt >= 2), // Leyline's any colour, or its own {C}{C}
+        _ if c == 'C' => w.cols.is_empty(),
+        _ => w.cols.has(c),
+    };
     order.sort_by_key(|&c| (0..u.len()).filter(|&i| fits(&u[i], c)).map(|i| rem[i]).sum::<u32>()); // stable
     for c in order {
-        let mut best: Option<(usize, (bool, bool, u32))> = None;
+        let mut best: Option<(usize, (bool, bool, u32, bool))> = None;
         for (i, w) in u.iter().enumerate() {
             // a unit of several mana pays only the colours it can make together (`Shape`): one colour for a Lotus, one
             // of each for a Karoo; the plain case (the common one) is just `fits`
             if rem[i] > 0 && fits(w, c) && (w.shape == Shape::Free || fits_shape(w, &col[i], c)) {
                 // a Lotus already paying a colour is that colour only
                 let colours = if w.shape == Shape::One && !col[i].is_empty() { 1 } else { w.cols.count() };
-                let k = (!restricted_float(w.src), last_resort(w.src), colours);
+                // on a tie, a land's Leyline ability (one mana, the land's own is lost) goes after a plain source
+                let alt_one = matches!(w.shape, Shape::Alt(a) if c != 'C' && !a.has(c));
+                let k = (!restricted_float(w.src), last_resort(w.src), colours, alt_one);
                 if best.is_none_or(|b| k < b.1) {
                     best = Some((i, k));
                 }
@@ -605,6 +655,12 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
         rem[i] -= 1;
         used[i] += 1;
         col[i].push(c);
+        if let Shape::Alt(a) = u[i].shape
+            && c != 'C'
+            && !a.has(c)
+        {
+            rem[i] = 0; // Leyline's ability made one mana for this pip; the land's own ability was not used
+        }
     }
     let mut need = generic;
     while need > 0 {
@@ -618,12 +674,14 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             if rem[i] == 0 {
                 continue;
             }
-            let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
+            // an untouched Alt land with a colourless own ability pays one generic mana with Leyline's ability: no waste, no damage
+            let leyline_one = need == 1 && used[i] == 0 && matches!(w.shape, Shape::Alt(a) if a.is_empty());
+            let waste = if used[i] > 0 || leyline_one { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
             let k = (
                 !restricted_float(w.src),
                 last_resort(w.src),
-                is_pain(g, w.src),
+                is_pain(g, w.src) && !leyline_one,
                 waste,
                 w.cols.count(),
                 -(scarce as i64),
@@ -637,6 +695,9 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
         rem[i] -= take;
         used[i] += take;
         need -= take;
+        if take == 1 && used[i] == 1 && col[i].is_empty() && matches!(u[i].shape, Shape::Alt(a) if a.is_empty()) {
+            rem[i] = 0; // paid with Leyline's one mana: the own {C}{C} was not made
+        }
     }
     Some((used, col))
 }
@@ -737,6 +798,14 @@ fn leftover_groups(w: &Unit, n: u32, pips: &str, elsewhere: impl Fn(char) -> u32
     let one = |c: char| Colors::from_letters(&c.to_string());
     match w.shape {
         Shape::Free => vec![(w.cols, left)],
+        // the own ability's mana left over (a colourless one, or its colour); Leyline's one mana has none
+        Shape::Alt(a) => {
+            if alt_uses_own(a, n, pips) {
+                vec![(a, left)]
+            } else {
+                vec![]
+            }
+        }
         Shape::One => {
             // the colour it was tapped for: the colour of the pips it paid, else the scarcest the player has elsewhere
             let c = pips
@@ -866,7 +935,9 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
             }
             let t = &g.db.get(g.perm(l).card()).tags;
             let plain = moon_land(g, l); // Blood Moon: no Tomb damage, no pain
-            let (tomb, pain) = (!plain && t.has(Tag::Tomb), !plain && t.has(Tag::Pain));
+            // Leyline's one mana of any colour from Ancient Tomb deals no damage (`Shape::Alt`)
+            let own = !matches!(w.shape, Shape::Alt(a) if !alt_uses_own(a, n, col));
+            let (tomb, pain) = (!plain && own && t.has(Tag::Tomb), !plain && t.has(Tag::Pain));
             if tomb {
                 lose_life(g, p, 2, Some(p), "other", Some(true))?; // Ancient Tomb deals 2 damage to you
             }
@@ -1258,8 +1329,11 @@ pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
     let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
     let letters = t.str(Tag::C).unwrap_or("C");
     let mut cols = tag_colors(letters, g.player(p).ident);
+    let leyline = granted_cols_for(g, p, Colors::NONE, false);
     if amt == 1 {
-        cols = cols.union(granted_cols_for(g, p, Colors::NONE, false)); // Leyline of the Guildpact: any colour
+        cols = cols.union(leyline); // Leyline of the Guildpact: any colour
+    } else if amt >= 2 && cols.count() <= 1 && !leyline.is_empty() {
+        return Unit { src: Source::float(Kind::Any), cols: leyline, amt, shape: Shape::Alt(cols) }; // `Shape::Alt`
     }
     Unit { src: Source::float(Kind::Any), cols, amt, shape: shape_of(t, letters, cols, amt, amt, true) }
 }

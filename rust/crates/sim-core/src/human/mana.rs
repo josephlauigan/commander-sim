@@ -415,6 +415,9 @@ fn unit_colours(g: &Game, u: &Unit) -> String {
     if cols.is_empty() {
         cols.push('C');
     }
+    if matches!(u.shape, Shape::Alt(a) if a.is_empty() && u.amt >= 2) {
+        cols.push('C'); // Leyline of the Guildpact on Ancient Tomb: its own {C}{C} or one mana of any colour
+    }
     let cd = match u.src {
         Source::Land(l) => Some(g.perm(l).card()),
         Source::Perm(m) => g.perm(m).cd,
@@ -581,6 +584,17 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
     let colour = colour.unwrap_or_else(|| cols.chars().next().unwrap());
     if !cols.contains(colour) {
         return Ok(Some(format!("That source can't make {} mana.", colour_name(colour))));
+    }
+    if let Shape::Alt(a) = u.shape
+        && colour != 'C'
+        && !a.has(colour)
+    {
+        // a land with Leyline of the Guildpact's ability beside its own: one mana of the colour asked for, not its own
+        spend_unit(g, p, u, 1, &colour.to_string())?;
+        g.player_mut(p).pool.add(colour, 1);
+        let sn = unit_label(g, u.src);
+        crate::glog!(g, "  {} taps {} for {{{}}}", name, sn, colour);
+        return Ok(None);
     }
     // a source of several mana, each one of several colours chosen separately (Relic of Sauron): the colour asked for
     // is the first mana, the person picks each other one
