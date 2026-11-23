@@ -271,6 +271,9 @@ pub enum DataKey {
     Dauthi,
     /// the X a permanent spell was cast with (Int, set as it enters: `Enter::x`); absent when it did not enter from a cast
     CastX,
+    /// Kyodai, Soul of Kamigawa: the controller as its enter trigger resolved, then each permanent it made indestructible
+    /// (a `Val::List` of `Val::Player` and `Val::Perm`s); read by its `grant_kw` hook
+    Kyodai,
 }
 
 /// A value in per-card state.

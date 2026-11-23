@@ -9726,6 +9726,9 @@ dsl = []
 status = "Full"
 note = "deathtouch, lifelink; the power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction, once per Thanos object (a blink or recast is a new object that may power up again): two +1/+1 counters, then each other creature of the chosen parity is destroyed at once. A permanent's mana value is its card's: a token copy has the copied card's, any other token 0 (even), zero is even. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it; a person chooses odd or even"
 
+["Kyodai, Soul of Kamigawa"]
+paths_ok = "compiled: flash, flying and the {W}{U}{B}{R}{G} +5/+5 pump; card code: the enter trigger (another target permanent gains indestructible for as long as you control Kyodai) and its grant_kw hook (impls/kyodai.rs)"
+
 ["Kindred Dominance"]
 tags = "wipe=dominance"
 dsl = []
