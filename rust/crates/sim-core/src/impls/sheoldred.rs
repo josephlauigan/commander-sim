@@ -146,7 +146,11 @@ fn cost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
         draw(g, q, 2, false)?;
         lose_life(g, q, 2, Some(p), "other", None)?;
     }
-    let host = ctx.host.filter(|&m| live_creature(g, m)).or_else(|| best_creature(g, p));
+    // a creature that was named and is gone is not replaced by another one; the best creature only stands in when none was named
+    let host = match ctx.host {
+        Some(m) => Some(m).filter(|&m| live_creature(g, m)),
+        None => best_creature(g, p),
+    };
     if let Some(m) = host {
         plus_counter(g, m, 1);
     }
@@ -159,12 +163,17 @@ fn best_creature(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// with Sheoldred out, the opponent a draw spell should hand cards to: the lowest life total (the drain can kill
-/// them first), who has cards left to draw
-fn drain_target(g: &Game, p: PlayerId, cards: usize) -> Option<PlayerId> {
+/// them first), who has cards left to draw. With a spell (`spell`), not one it can't target (hexproof from its colour)
+fn drain_target(g: &Game, p: PlayerId, spell: Option<CardId>, cards: usize) -> Option<PlayerId> {
     if !sheoldred_out(g, p) {
         return None;
     }
-    let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() > cards).collect();
+    let opps: Vec<PlayerId> = g
+        .opps(p)
+        .filter(|&q| {
+            g.player(q).alive && g.player(q).library.len() > cards && spell.is_none_or(|c| player_target_ok(g, p, c, q))
+        })
+        .collect();
     min_by(&opps, |q| g.player(q).life as f64)
 }
 
@@ -173,7 +182,7 @@ fn cost_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let host = best_creature(g, p);
-    if let Some(q) = drain_target(g, p, 2) {
+    if let Some(q) = drain_target(g, p, Some(c), 2) {
         // each card they draw costs them 2 life, and the spell 2 more: six in all
         let u = 5.0 + if g.player(q).life <= 6 { 3.0 } else { 0.0 } + if host.is_some() { 0.3 } else { 0.0 };
         return Ok(vec![Opt {
@@ -372,7 +381,7 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         }
         return Ok(());
     }
-    let target = if let Some(q) = drain_target(g, p, 1) {
+    let target = if let Some(q) = drain_target(g, p, None, 1) {
         q // Sheoldred is out: an opponent draws and loses 3 in all
     } else if g.player(p).life > 3 && g.player(p).library.len() > 2 {
         p
@@ -1663,7 +1672,7 @@ fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
     if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
-    if let Some(q) = drain_target(g, p, 2) {
+    if let Some(q) = drain_target(g, p, Some(c), 2) {
         let u = 4.8 + if g.player(q).life <= 6 { 3.0 } else { 0.0 };
         return Ok(vec![Opt {
             utility: u,
@@ -1724,23 +1733,32 @@ fn pact_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-/// the most X the mana allows for Damnable Pact (0 when it can't be cast at all). The cost is `cost_of_x`, so a
-/// reducer (Jet Medallion) lets X run past the spare mana by what it takes off: the search starts from the X at which the
-/// cost, linear in X once the floors no longer bite, would just use all the mana, and goes down to the first payable X
+/// the most X the mana allows for Damnable Pact (0 when it can't be cast at all). The cost is `cost_of_x`; it never
+/// falls as X grows, and an X that can be paid can be paid for every smaller X, so a binary search finds the largest
+/// payable X without assuming the cost is linear in X (reducers let X run past the spare mana; Trinisphere and
+/// K'rrik's life pips bend the line). 64 above the mana is far more than generic reducers can take off.
 fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if !castable(g, p, c, "hand") {
         return 0;
     }
     let total = total_mana_spell(g, p, c, false) as i32;
-    // the cost at X = total is total + k (k: taxes less reductions; negative with a reducer)
-    let k = cost_of_x(g, p, c, total).0 as i32 - total;
-    (1..=(total - k).max(0))
-        .rev()
-        .find(|&x| {
-            let (gn, pips) = cost_of_x(g, p, c, x);
-            can_pay_spell(g, p, c, gn, &pips, false)
-        })
-        .unwrap_or(0)
+    let payable = |x: i32| {
+        let (gn, pips) = cost_of_x(g, p, c, x);
+        can_pay_spell(g, p, c, gn, &pips, false)
+    };
+    if !payable(1) {
+        return 0;
+    }
+    let (mut lo, mut hi) = (1, total.saturating_add(64).max(1));
+    while lo < hi {
+        let mid = lo + (hi - lo + 1) / 2;
+        if payable(mid) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    lo
 }
 
 /// Damnable Pact as a main-phase play (own turn only: it is a sorcery; the deck's plan must `plays` it).
@@ -1798,7 +1816,8 @@ fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     // each card of ours more life, and their triggers resolve before our gains: with any out the floor is 12 and each card
     // counts its whole cost (the spell plus their toll), ignoring our own gain.
     // (the life the black pips cost with K'rrik out comes off first)
-    let pips_life = phyrexian_life(g, p, c, &cost_of(g, p, c).1);
+    // at the most X it could pay: the more X, the fewer {B} the mana covers, so that is the most life the pips cost
+    let pips_life = phyrexian_life(g, p, c, &cost_of_x(g, p, c, xmax).1);
     let foe = foe_toll(g, p);
     let pl = g.player(p);
     let floor = if foe == 0 && sheoldred_out(g, p) { 7 } else { 12 };
@@ -2169,7 +2188,8 @@ fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     }
     let toll = draw_toll(g, p);
     if toll > 0 {
-        let victims: Vec<PlayerId> = g.opps(p).filter(|&q| peer_kills(g, q, toll)).collect();
+        let victims: Vec<PlayerId> =
+            g.opps(p).filter(|&q| player_target_ok(g, p, c, q) && peer_kills(g, q, toll)).collect();
         if let Some(q) = min_by(&victims, |q| g.player(q).life as f64) {
             return Ok(vec![Opt {
                 utility: 12.0,

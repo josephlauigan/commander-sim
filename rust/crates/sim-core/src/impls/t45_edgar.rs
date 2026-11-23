@@ -328,14 +328,14 @@ fn gain_drain(g: &mut Game, src: Src, p: PlayerId, n: i32, card: &str) -> Res {
 /// enchantment. (It's not a creature.)" The card comes back as a new object marked `DataKey::NotCreature` (the engine's
 /// way to take the creature type off a creature card, as for Enduring Vitality): an enchantment for enchantment
 /// effects, no creature for combat, edicts, creature removal and "a creature dies". Dying again as that enchantment
-/// returns nothing; exile and bounce never reach this hook.
+/// returns nothing; exile and bounce never reach this hook. A nontoken clone showing this face returns its own card.
 fn tenacity_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    // `phys` set: a clone (Mirage Mirror, Phantasmal Image...) showing Tenacity's face; its own card is what goes to the
-    // graveyard, and the real Enduring Tenacity there (if any) is not coming back because a copy died
-    if m != src || g.perm(m).token || g.perm(m).phys.is_some() || g.perm(m).data.truthy(DataKey::NotCreature) {
+    // a clone (Mirage Mirror, Phantasmal Image...) showing Tenacity's face has Tenacity's trigger, and "it" is the dying
+    // object: its own card (`phys`), not the copied face and not a real Enduring Tenacity that happens to be in the graveyard
+    if m != src || g.perm(m).token || g.perm(m).data.truthy(DataKey::NotCreature) {
         return Ok(());
     }
-    let (Some(cd), o) = (g.perm(m).cd, g.perm(m).orig) else { return Ok(()) };
+    let (Some(cd), o) = (g.perm(m).phys.or(g.perm(m).cd), g.perm(m).orig) else { return Ok(()) };
     if !g.player(o).gy.contains(&cd)
         || !trigger_window(g, o, Some(m), "Enduring Tenacity returns as an enchantment", Some(4.0))?
     {
