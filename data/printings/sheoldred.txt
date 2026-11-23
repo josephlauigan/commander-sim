@@ -9,6 +9,7 @@
 1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Cabal Coffers (prm) 91393
+1 Cabal Ritual (tor) 51
 1 Call of the Ring (ltr) 79
 1 Cost of Brilliance (sos) 77
 1 Dark Ritual (itp) 19
