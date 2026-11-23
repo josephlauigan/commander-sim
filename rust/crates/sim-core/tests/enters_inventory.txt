@@ -235,6 +235,7 @@ Kor Spiritdancer | Etb | S
 Korvold, Fae-Cursed King | Etb | T
 Kraum, Ludevic's Opus | Etb | S |  | bookkeeping of the turn it came down
 Lagrella, the Magpie | Etb | T
+Kyodai, Soul of Kamigawa | Etb | T | | a triggered ability on the stack (a window to respond; the target is chosen as it resolves)
 Lathliss, Dragon Queen | Etb | T
 Latulla's Orders | Etb | S
 Lena, Selfless Champion | Etb | T
