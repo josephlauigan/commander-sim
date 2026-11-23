@@ -1035,16 +1035,6 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
         gn = 0;
         pips = "R".into();
     }
-    let mut paid_life = 0;
-    for col in d.phyrexian.chars() {
-        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
-        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
-        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, to_u32(gn), &pips, false) {
-            pips = pips.replacen(col, "", 1);
-            paid_life += 2;
-        }
-    }
-    crate::impls::krrik::drop_black(g, p, c, gn.clamp(i32::MIN as i64, i32::MAX as i64) as i32, &mut pips); // K'rrik: 2 life for a {B}
     crate::impls::t45_urdragon::morophon_pips(g, p, c, &mut pips); // --- Tiers 4/5 (urdragon): Morophon
     gn += crate::impls::t45_urdragon::eminence(g, p, c) as i64; // --- Tiers 4/5 (urdragon): The Ur-Dragon's eminence
     gn = (gn + crate::dsl::cost_delta(g, p, c) as i64).max(0);
@@ -1078,6 +1068,18 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
             pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
         }
     }
+    // Paying life for a coloured pip is decided against the generic cost as it now stands, after every reduction and tax
+    // above (a reducer such as Jet Medallion may make the mana enough, so no life is paid).
+    let mut paid_life = 0;
+    for col in d.phyrexian.chars() {
+        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
+        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, to_u32(gn), &pips, false) {
+            pips = pips.replacen(col, "", 1);
+            paid_life += 2;
+        }
+    }
+    crate::impls::krrik::drop_black(g, p, c, gn.clamp(i32::MIN as i64, i32::MAX as i64) as i32, &mut pips); // K'rrik: 2 life for a {B}
     if !g.hooks.is_empty() {
         // Trinisphere: the minimum applies to the total after every reduction and tax (601.2f)
         let floor = hooks::max_min_cost(g, p, c);

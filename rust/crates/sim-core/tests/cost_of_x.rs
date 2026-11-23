@@ -134,3 +134,17 @@ fn pact_with_one_less_land_gets_one_less_x_under_the_same_reducer_and_tax() {
     assert!(cast_pact_plan(&mut g, 2));
     assert_eq!(ls.iter().filter(|&&m| g.perm(m).tapped).count(), 4);
 }
+
+#[test]
+fn krrik_pays_life_only_for_a_pip_the_reduced_cost_cannot_pay_in_mana() {
+    // Gray Merchant of Asphodel {3}{B}{B} with four Swamps: K'rrik drops one {B} for 2 life (3 generic + {B})
+    let mut g = game();
+    perm(&mut g, P0, "K'rrik, Son of Yawgmoth");
+    lands(&mut g, P0, "Swamp", 4, false);
+    let merchant = card(&g, "Gray Merchant of Asphodel");
+    assert_eq!(cost_of(&g, P0, merchant), (3, "B".into()), "no reducer: one {{B}} is paid with life");
+    // with Jet Medallion the cost is {2}{B}{B}, four mana: payable, so no life is paid (the reducer used to be
+    // looked at only after K'rrik had already dropped the pip)
+    perm(&mut g, P0, "Jet Medallion");
+    assert_eq!(cost_of(&g, P0, merchant), (2, "BB".into()), "the reduced cost is payable in mana: no life");
+}
