@@ -109175,11 +109175,7 @@
        "do": "grant",
        "keyword": "indestructible",
        "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
+        "sel": "self"
        }
       }
      ],

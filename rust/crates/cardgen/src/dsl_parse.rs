@@ -1842,6 +1842,9 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             if g1.contains('{') || g1.contains("sacrifice") || g1.contains("pay") || g1.contains("discard") {
                 let cost = parse_cost(g1);
                 let body = sub(r"\.? ?activate (only|this ability only)[^.]*", "", m.gs(2));
+                // --- Tiers 1/2 (windgrace): "Tap ~. It gains indestructible until end of turn" (Seasoned Hallowblade):
+                // "it" is this permanent, not every creature you control
+                let body = sub(r"^(tap ~)\. it gains ", r"\1. ~ gains ", &body);
                 let (mut e, mut b) = parse_effects(&body);
                 // --- Tiers 1/2 (windgrace): "~ gains ... Tap it." (Soul of Windgrace): "it" is ~
                 if body.starts_with("~ ") && b.iter().any(|x| x == "tap it") {
