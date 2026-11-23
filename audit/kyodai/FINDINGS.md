@@ -71,9 +71,8 @@ Counts after: creatures 15 (16), enchantments 5 (4), Game Changers unchanged (Ky
 artifacts unchanged. An Opus consult picked the cut and the land list and found the Leyline blast exposure. Checks: Kyodai, Leyline and the 20 lands are
 Commander-legal and fit WUBRG (Scryfall and `cardgen find`); the fetchlands and duals are Full (mana only).
 **Open:** (1) superseded the same day: JD then asked for both cards to be fully modelled; see the next entry. (2) `data/ownership.toml` records Kyodai as have (JD bought it; the list JD sent on 2026-11-22 also makes Rhystic Study and Watery Grave proxies in this deck) and Leyline as a proxy, and the 20 lands as proxies; the replaced lands and Thanos and Windborn Muse are in `[spare]`.
-(3) `data/printings/kyodai.txt` now holds JD's 100 printings (checked against Scryfall: every set and number exists and matches its card; six are Japanese-language Mystical Archive printings). (4) `data/spellbook/kyodai.json` still lists
-Thanos as the commander and was not re-fetched; its five included combos do not use the commander or Windborn Muse, but check them before trusting its
-"almost included" list. (5) Cali ban list: the guide's list (Black Lotus, the five Moxen and the rest) does not include any of the 20 lands, Kyodai or Leyline;
+(3) `data/printings/kyodai.txt` now holds JD's 100 printings (checked against Scryfall: every set and number exists and matches its card; six are Japanese-language Mystical Archive printings). (4) `data/spellbook/kyodai.json` was re-fetched on 2026-11-23 for the new list (`scripts/spellbook-fetch.sh kyodai`; the commander is Kyodai): the five included
+combos are unchanged and the "almost included" list went from 173 to 174; nothing in it was reviewed. (5) Cali ban list: the guide's list (Black Lotus, the five Moxen and the rest) does not include any of the 20 lands, Kyodai or Leyline;
 whether proxies are allowed at JD's events is still open. (6) Local blast density (Pyroblast, Red Elemental Blast, Hydroblast) decides how much Leyline
 costs; JD knows his table.
 
