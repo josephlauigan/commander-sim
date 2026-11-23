@@ -7,42 +7,34 @@
 
 use crate::args::Args;
 use crate::decks::{MINE, TIERS, tier_label};
+use crate::duel;
 use crate::play::{GameOut, Sim, ai_name, profile};
 use crate::report::{self, Analysis, Axes, CardInfo};
 use crate::stats::{Counter, paired_delta, wilson};
 use sim_core::engine::turn::Seat;
 use sim_core::format::DEFAULT_FORMAT;
 use sim_core::settings::{AiMode, Settings};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::time::Instant;
 
 fn is_mine(key: &str) -> bool {
     MINE.contains(&key)
 }
 
-/// Why this deck cannot be seated at a Commander table: it plays another format (data/my_decks.toml `format`, via
-/// data/decks.json). None for a deck the Commander format admits.
-pub fn unseatable(sim: &Sim, deck: &str) -> Option<String> {
-    sim.engine.admits(deck, DEFAULT_FORMAT).err().map(|why| why.join("; "))
-}
-
-/// The simulator seats only 4-player Commander tables, so a deck of another format would silently be played as a
-/// Commander deck: it is refused instead, `--any-tier` or not.
-pub fn check_commander_table(sim: &Sim, deck: &str) -> Result<(), String> {
-    match unseatable(sim, deck) {
-        None => Ok(()),
-        Some(why) => Err(format!(
-            "{deck} cannot be simulated yet: {why}. The simulator seats only 4-player {} tables so far, and would \
-             otherwise play {deck} as a Commander game (--any-tier does not lift this).",
-            sim.engine.formats[DEFAULT_FORMAT].name
-        )),
-    }
+/// Why this deck of yours is not in the `--all-decks` matrix: it plays a 2-seat format, and the matrix (its even share,
+/// its average over the tiers) is built for 4-seat Commander tables. None for a deck that plays a 4-seat format.
+pub fn not_in_matrix(sim: &Sim, deck: &str) -> Option<String> {
+    let own = sim.engine.format_of(deck);
+    crate::duel::is_duel(own).then(|| {
+        format!("{deck} plays {} (1v1), which the 4-seat matrix does not run: use --deck {deck} --pool all", own.name)
+    })
 }
 
 /// the opponent tiers a deck of yours is simulated against (data/my_decks.toml via data/decks.json); every tier if
-/// the deck record carries none. A deck whose format the Commander format does not admit is refused.
+/// the deck record carries none. A deck is refused at a table its format does not admit: a Cali deck at a Commander
+/// table (`--format commander`).
 pub fn deck_tiers(sim: &Sim, deck: &str) -> Result<Vec<String>, String> {
-    check_commander_table(sim, deck)?;
+    sim.check_format(deck)?;
     Ok(match sim.engine.decks.get(deck) {
         Some(d) if !d.tiers.is_empty() => d.tiers.clone(),
         _ => TIERS.iter().map(|t| t.to_string()).collect(),
@@ -79,7 +71,7 @@ pub fn select_tiers(deck: &str, own: &[String], pool: &str, any_tier: bool) -> R
 pub struct TierPlan {
     pub tiers: Vec<String>,
     pub per_deck: Vec<(String, Vec<String>)>,
-    /// `--all-decks` leaves out a deck the simulator cannot seat (its format): (deck, why), one line each in the run
+    /// `--all-decks` leaves out a deck the matrix does not run (a 2-seat format): (deck, why), one line each in the run
     pub skipped: Vec<(String, String)>,
 }
 
@@ -92,7 +84,7 @@ pub fn tier_plan(sim: &Sim, a: &Args) -> Result<TierPlan, String> {
     let mut skipped: Vec<(String, String)> = vec![];
     if a.all_decks {
         for d in MINE {
-            if let Some(why) = unseatable(sim, d) {
+            if let Some(why) = not_in_matrix(sim, d) {
                 skipped.push((d.to_string(), why));
                 continue;
             }
@@ -129,6 +121,11 @@ pub struct RunTally {
     pub opp_won: Counter<String>,
     pub killed_me: Counter<String>,
     pub by_seed: HashMap<u64, bool>,
+    /// games the deck started in seat 0 (on the play) and won, and the rest (on the draw): read by a 2-seat run's report
+    pub play: (u64, u64),
+    pub draw: (u64, u64),
+    /// the seeds on which the deck was on the play
+    pub play_seeds: HashSet<u64>,
     pub axes: Axes,
     pub wintype: Counter<String>,
     /// Tier 6 report counters, filled only when `me` is a Tier 6 deck (the per-deck block of `--deck X --pool t6`)
@@ -149,6 +146,9 @@ impl RunTally {
             opp_won: Counter::new(),
             killed_me: Counter::new(),
             by_seed: HashMap::new(),
+            play: (0, 0),
+            draw: (0, 0),
+            play_seeds: HashSet::new(),
             axes: Axes::new(),
             wintype: Counter::new(),
             t6: Default::default(),
@@ -166,6 +166,14 @@ impl RunTally {
         self.n += 1;
         self.win += won as u64;
         self.by_seed.insert(seed, won);
+        let side = if pi == 0 {
+            self.play_seeds.insert(seed);
+            &mut self.play
+        } else {
+            &mut self.draw
+        };
+        side.0 += 1;
+        side.1 += won as u64;
         if won {
             self.win_turns += p.turns as u64;
             self.wintype.add(g.wintype_or_damage().to_string(), 1);
@@ -197,6 +205,11 @@ impl RunTally {
     }
 }
 
+/// the deck's results by seed on the play (seat 0, the starting player) or on the draw
+fn side_of(r: &RunTally, play: bool) -> HashMap<u64, bool> {
+    r.by_seed.iter().filter(|(s, _)| r.play_seeds.contains(s) == play).map(|(s, w)| (*s, *w)).collect()
+}
+
 pub struct Ctx<'a> {
     pub sim: &'a Sim,
     pub verbose: bool,
@@ -226,9 +239,10 @@ impl Ctx<'_> {
         seed0: u64,
     ) -> RunTally {
         let sim = self.sim;
-        let st = sim.settings_vs(profile(prof).unwrap(), opp_keys);
+        let fmt = sim.format_for(me);
+        let st = sim.settings_vs_for(profile(prof).unwrap(), opp_keys, fmt);
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
-            let seats = sim.seats_for(s, Some(me), my_seat, opp_keys, 3);
+            let seats = sim.table_for(s, Some(me), my_seat, opp_keys, fmt);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
         });
         let mut r = RunTally::new(prof);
@@ -250,9 +264,10 @@ impl Ctx<'_> {
         seed0: u64,
     ) -> (RunTally, Analysis) {
         let sim = self.sim;
-        let st = sim.settings_vs(profile(prof).unwrap(), opp_keys);
+        let fmt = sim.format_for(me);
+        let st = sim.settings_vs_for(profile(prof).unwrap(), opp_keys, fmt);
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
-            let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);
+            let seats = sim.table_for(s, Some(me), Some(my_seat), opp_keys, fmt);
             let mut g = GameOut::from_game(&sim.play(s, &seats, &st, false), true);
             for p in g.players.iter_mut().filter(|p| p.key != me) {
                 p.seen.clear();
@@ -273,10 +288,12 @@ impl Ctx<'_> {
 
     /// poolmode.analyze
     pub fn analyze(&self, me: &str, my_seat: &Seat, opp_keys: &[String], prof: &str, n: u64, seed0: u64) -> Analysis {
-        self.analyze_with(me, my_seat, opp_keys, self.sim.settings_vs(profile(prof).unwrap(), opp_keys), n, seed0)
+        let st = self.sim.settings_vs_for(profile(prof).unwrap(), opp_keys, self.sim.format_for(me));
+        self.analyze_with(me, my_seat, opp_keys, st, n, seed0)
     }
 
-    /// analyze with these settings (the preflight dry run plays the adaptive AI whatever --ai says)
+    /// analyze with these settings (the preflight dry run plays the adaptive AI whatever --ai says); the caller sets
+    /// the settings' rules to the deck's format
     pub fn analyze_with(
         &self,
         me: &str,
@@ -287,8 +304,9 @@ impl Ctx<'_> {
         seed0: u64,
     ) -> Analysis {
         let sim = self.sim;
+        let fmt = sim.format_for(me);
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
-            let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);
+            let seats = sim.table_for(s, Some(me), Some(my_seat), opp_keys, fmt);
             let g = GameOut::from_game(&sim.play(s, &seats, &st, false), true);
             // only my seat's card lists are needed: drop the others' early
             let mut g = g;
@@ -321,7 +339,9 @@ impl Ctx<'_> {
         self.tier_games_with(&st, me, opp_keys, k, n, seed0)
     }
 
-    /// `tier_games` with these settings (`--fit` plays every candidate's knobs on the same seeds)
+    /// `tier_games` with these settings (`--fit` plays every candidate's knobs on the same seeds). Commander tables
+    /// only: `--calibrate`, `--realism` and `--fit` are refused for a 2-seat format (`duel::check_modes`), so these
+    /// seats keep `seats_for` with the caller's k (4 pool decks, or me and 3).
     pub fn tier_games_with(
         &self,
         st: &Settings,
@@ -371,14 +391,30 @@ impl Ctx<'_> {
         let (n, w) = (r.n, r.win);
         let (lo, hi) = wilson(w, n);
         let nf = n as f64;
-        println!("\n=== {} vs {} [{}, {} AI, {n} games] ===", sim.name_of(me), tier_label(tier), r.profile, self.ai());
+        let fmt = sim.format_for(me);
+        let duel = duel::is_duel(fmt);
+        let label = duel::ai_label(fmt).map(|l| format!("; {l}")).unwrap_or_default();
         println!(
-            "Win rate {:5.1}%   95% CI {:.1}-{:.1}%   (even share 25%: {:+.1} pts)",
+            "\n=== {} vs {} [{}, {} AI, {n} games{label}] ===",
+            sim.name_of(me),
+            tier_label(tier),
+            r.profile,
+            self.ai()
+        );
+        println!(
+            "Win rate {:5.1}%   95% CI {:.1}-{:.1}%   (even share {}%: {:+.1} pts)",
             (100 * w) as f64 / nf,
             100.0 * lo,
             100.0 * hi,
-            100.0 * (w as f64 / nf - 0.25)
+            duel::even_share_pct(fmt.seats),
+            100.0 * (w as f64 / nf - 1.0 / fmt.seats as f64)
         );
+        if duel {
+            let side = |(g, won): (u64, u64)| {
+                if g == 0 { "n/a".to_string() } else { format!("{:.1}% ({won}/{g})", (100 * won) as f64 / g as f64) }
+            };
+            println!("On the play {}, on the draw {}", side(r.play), side(r.draw));
+        }
         let wt = if w > 0 { format!("{:.1}", r.win_turns as f64 / w as f64) } else { "n/a".into() };
         let lt = if n > w { format!("{:.1}", r.loss_turns as f64 / (n - w) as f64) } else { "n/a".into() };
         println!("Average turn (your own turn count) of wins {wt}, of losses {lt}");
@@ -394,19 +430,27 @@ impl Ctx<'_> {
                 .collect();
             println!("Wins by: {}", parts.join(", "));
         }
-        println!("  {:42} {:>7} {:>16} {:>15}", "Opponent", "seated", "won when seated", "eliminated you");
+        println!(
+            "  {:42} {:>7} {:>16} {:>15}",
+            "Opponent",
+            if duel { "games" } else { "seated" },
+            "won when seated",
+            "eliminated you"
+        );
         for k in r.seated.keys_by_count() {
             let s = r.seated.get(&k);
+            // a 2-seat table seats one opponent per game: the games against it, not a share of three seats
+            let seated = if duel { format!("{s:7}") } else { format!("{:6.1}%", (100 * s) as f64 / nf) };
             println!(
-                "  {:42.42} {:6.1}% {:15.1}% {:14.1}%",
+                "  {:42.42} {seated} {:15.1}% {:14.1}%",
                 format!("{} ({k})", sim.name_of(&k)),
-                (100 * s) as f64 / nf,
                 (100 * r.opp_won.get(&k)) as f64 / s as f64,
                 (100 * r.killed_me.get(&k)) as f64 / nf
             );
         }
         println!("  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)");
-        if sim_core::impls::t6_plans::is_t6_key(me) && tier == "t6" {
+        // the Tier 6 report reads 4-seat tables (seat shares, who holds the stops)
+        if sim_core::impls::t6_plans::is_t6_key(me) && tier == "t6" && !duel {
             print!("{}", crate::t6report::render(&r.t6, &[me.to_string()], &|k| sim.name_of(k)));
         }
     }
@@ -414,8 +458,10 @@ impl Ctx<'_> {
     /// poolmode.print_ab: baseline vs variant per profile, the verdict and the per-axis table
     pub fn print_ab(&self, me: &str, tier: &str, pairs: &[(RunTally, RunTally)]) {
         let sim = self.sim;
+        let fmt = sim.format_for(me);
+        let label = duel::ai_label(fmt).map(|l| format!("; {l}")).unwrap_or_default();
         println!(
-            "\n=== {} vs {}: baseline vs variant (paired, same opponents and draws) ===",
+            "\n=== {} vs {}: baseline vs variant (paired, same opponents and draws{label}) ===",
             sim.name_of(me),
             tier_label(tier)
         );
@@ -439,6 +485,24 @@ impl Ctx<'_> {
                 .map(|k| format!("{} {:.1}%", sim.name_of(k), (100 * v.killed_me.get(k)) as f64 / v.n as f64))
                 .collect();
             println!("{:15}eliminated by (variant): {}", "", opp.join("  "));
+            if duel::is_duel(fmt) {
+                // the same seed gives the same opponent in the same order for both lists
+                for (side, play) in [("on the play", true), ("on the draw", false)] {
+                    let (bs, vs) = (side_of(b, play), side_of(v, play));
+                    let (d, se, n) = paired_delta(&bs, &vs);
+                    let pct = |m: &HashMap<u64, bool>| {
+                        (100 * m.values().filter(|x| **x).count()) as f64 / m.len().max(1) as f64
+                    };
+                    println!(
+                        "{:15}{side:11} win {:5.1}% -> {:5.1}%  (delta {:+.1} pts, noise ±{:.1}, paired)   n={n}",
+                        "",
+                        pct(&bs),
+                        pct(&vs),
+                        100.0 * d,
+                        200.0 * se
+                    );
+                }
+            }
         }
         let profs: Vec<String> = pairs.iter().map(|(b, _)| b.profile.clone()).collect();
         println!("VERDICT: {}", report::verdict(&deltas, &ses, &profs));
@@ -449,10 +513,18 @@ impl Ctx<'_> {
         }
     }
 
-    fn print_opponent_names(&self, tier: &str) {
-        let parts: Vec<String> =
-            self.sim.pool_keys(tier).iter().map(|k| format!("{k} = {}", self.sim.name_of(k))).collect();
+    fn print_opponent_names(&self, keys: &[String]) {
+        let parts: Vec<String> = keys.iter().map(|k| format!("{k} = {}", self.sim.name_of(k))).collect();
         println!("  Opponent keys: {}", parts.join(", "));
+    }
+
+    /// a 2-seat run whose seeds do not seat the deck on the play and on the draw equally against every opponent says so
+    fn note_balance(&self, me: &str, opp_keys: &[String], n: u64, seed0: u64) {
+        if duel::is_duel(self.sim.format_for(me))
+            && let Some(note) = duel::balance_note(seed0, n, opp_keys.len())
+        {
+            println!("{note}");
+        }
     }
 
     /// poolmode.matrix: every deck against its own tiers, one table per profile (a dash where the deck doesn't play
@@ -463,7 +535,7 @@ impl Ctx<'_> {
             for (d, dt) in decks {
                 for tier in dt {
                     self.label(format!("{d} {tier} / {prof}"));
-                    let r = self.run(d, None, &self.sim.pool_keys(tier), prof, n, seed0);
+                    let r = self.run(d, None, &self.sim.opponents(tier, self.sim.format_for(d)), prof, n, seed0);
                     if self.sim.prog.lock().unwrap().on {
                         let (lo, hi) = wilson(r.win, r.n);
                         eprintln!(
@@ -477,9 +549,11 @@ impl Ctx<'_> {
                 }
             }
         }
+        // a 4-seat table: `--all-decks` leaves out a deck of a 2-seat format, and a 2-seat deck's tiers are reported apart
+        let even = duel::even_share_pct(self.sim.engine.formats[DEFAULT_FORMAT].seats);
         for prof in profiles {
             println!(
-                "\n=== Win rate by deck and tier [{prof} profile, {} AI, n={n} per cell; even share 25%; each deck only \
+                "\n=== Win rate by deck and tier [{prof} profile, {} AI, n={n} per cell; even share {even}%; each deck only \
                  against its own tiers] ===",
                 self.ai()
             );
@@ -578,7 +652,15 @@ impl Ctx<'_> {
                     );
                     for (k, w, s) in &res {
                         let (lo, hi) = wilson(*w, *s);
-                        let flag = if hi < 0.25 || *w as f64 / *s as f64 <= 0.25 { "  (not above 25%)" } else { "" };
+                        let even = 1.0 / self.sim.engine.formats[DEFAULT_FORMAT].seats as f64;
+                        let flag = if hi < even || *w as f64 / *s as f64 <= even {
+                            format!(
+                                "  (not above {}%)",
+                                duel::even_share_pct(self.sim.engine.formats[DEFAULT_FORMAT].seats)
+                            )
+                        } else {
+                            String::new()
+                        };
                         println!(
                             "    {:28} {:5.1}% ({:.1}-{:.1}){flag}",
                             sim.name_of(k),
@@ -620,13 +702,18 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     // each of your decks runs only against its own tiers (data/my_decks.toml), unless --any-tier
     let plan = tier_plan(sim, a)?;
     for (d, why) in &plan.skipped {
-        println!("--all-decks leaves out {d}: {why}; the simulator seats only Commander tables so far.");
+        println!("--all-decks leaves out {d}: {why}.");
     }
     let tiers: Vec<&str> = plan.tiers.iter().map(|t| t.as_str()).collect();
+    if let Some(line) = a.deck.as_deref().filter(|_| !a.all_decks).and_then(|d| duel::describe(sim.format_for(d))) {
+        println!("{line}");
+    }
     let t0 = Instant::now();
     let k = n * profiles.len() as u64;
     let plural = |x: usize, w: &str| format!("{x} {w}{}", if x > 1 { "s" } else { "" });
-    let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze);
+    // a 2-seat deck's tiers are reported apart, one report each: never the matrix, whose average pools its tiers
+    let duel_deck = !a.all_decks && a.deck.as_deref().is_some_and(|d| duel::is_duel(sim.format_for(d)));
+    let matrix_mode = a.all_decks || (tiers.len() > 1 && swaps.is_empty() && !a.analyze && !duel_deck);
     let (total, mut what) = if let Some(c) = &a.calibrate {
         let nt = TIERS.iter().filter(|t| a.pool.as_deref().is_none_or(|p| p == "all" || p == **t)).count() as u64;
         let w = if c == "within" || c == "all" { nt } else { 0 };
@@ -670,13 +757,16 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
             println!("Analyzing the variant list: {}", swap_text(swaps));
         }
         let infos = card_infos(sim, cards);
+        let fmt = sim.format_for(deck);
         for tier in &tiers {
+            let keys = sim.opponents(tier, fmt);
+            ctx.note_balance(deck, &keys, n, seed0);
             for prof in profiles {
                 ctx.label(format!("analyze {tier} / {prof}"));
-                let r = ctx.analyze(deck, &seat, &sim.pool_keys(tier), prof, n, seed0);
+                let r = ctx.analyze(deck, &seat, &keys, prof, n, seed0);
                 println!("\n######## vs {} ########", tier_label(tier));
-                report::print_analysis(deck, &infos, &r, prof, ctx.ai(), &|k| sim.name_of(k));
-                ctx.print_opponent_names(tier);
+                report::print_analysis(deck, &infos, &r, prof, ctx.ai(), &|k| sim.name_of(k), fmt);
+                ctx.print_opponent_names(&keys);
             }
         }
     } else if !swaps.is_empty() {
@@ -690,12 +780,14 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
             .get(deck)
             .map(|d| std::iter::once(d.commander.clone()).chain(d.commander2.clone()).collect())
             .unwrap_or_default();
+        let fmt = sim.format_for(deck);
         for tier in &tiers {
             let mut pairs = vec![];
             let mut analyses = vec![];
+            let keys = sim.opponents(tier, fmt);
+            ctx.note_balance(deck, &keys, n, seed0);
             for prof in profiles {
                 ctx.label(format!("{tier} current / {prof}"));
-                let keys = sim.pool_keys(tier);
                 let (b, v);
                 if explain {
                     let (bt, ba) = ctx.run_explained(deck, &bseat, &keys, prof, n, seed0);
@@ -719,10 +811,13 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     } else {
         let deck = a.deck.as_deref().unwrap();
         let seat = sim.seat(deck, base)?;
+        let fmt = sim.format_for(deck);
         for tier in &tiers {
+            let keys = sim.opponents(tier, fmt);
+            ctx.note_balance(deck, &keys, n, seed0);
             for prof in profiles {
                 ctx.label(format!("{tier} / {prof}"));
-                let r = ctx.run(deck, Some(&seat), &sim.pool_keys(tier), prof, n, seed0);
+                let r = ctx.run(deck, Some(&seat), &keys, prof, n, seed0);
                 ctx.print_run(deck, tier, &r);
             }
         }
@@ -764,11 +859,12 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
         Some(t) => select_tiers(deck, &own, t, a.any_tier)?.remove(0),
     };
     let tier = tier.as_str();
-    let st = sim.settings_in(profile(&prof)?, Some(tier)); // the table is the tier's: its default [table] knobs
+    let fmt = sim.format_for(deck);
+    let st = sim.settings_in_for(profile(&prof)?, Some(tier), fmt); // the table is the tier's: its default [table] knobs
     let game = a.trace.unwrap();
     let seed = a.seed + game;
     let seat = sim.seat(deck, cards)?;
-    let seats = sim.seats_for(seed, Some(deck), Some(&seat), &sim.pool_keys(tier), 3);
+    let seats = sim.table_for(seed, Some(deck), Some(&seat), &sim.opponents(tier, fmt), fmt);
     let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
     println!(
         "Play-by-play of pool game {game} (seed {seed}): {} vs {}, {prof} profile, {} AI",
@@ -776,6 +872,9 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
         tier_label(tier),
         ai_name(sim.opts.ai)
     );
+    if let Some(line) = duel::describe(fmt) {
+        println!("{line}");
+    }
     println!("{}", g.log.clone().unwrap_or_default().join("\n"));
     let winner = g.winner.map_or("none".to_string(), |w| sim.name_of(g.players[w].key));
     println!("Winner: {winner} ({})", g.wintype.unwrap_or("None"));
@@ -788,6 +887,10 @@ fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
         Some("all") | None => return Err("--trace needs --deck, or --pool with one tier".into()),
         Some(t) => t,
     };
+    // the deck-less trace draws four pool decks at a Commander table
+    if let Some(f) = sim.requested_format().filter(|f| duel::is_duel(f)) {
+        return Err(duel::refuse("--trace without --deck", None, f));
+    }
     let prof = a.profiles[0].clone();
     let st = sim.settings_in(profile(&prof)?, Some(tier));
     let game = a.trace.unwrap();
@@ -872,19 +975,33 @@ mod tier_tests {
         crate::args::parse(&s.split_whitespace().map(|x| x.to_string()).collect::<Vec<_>>()).unwrap()
     }
 
-    /// a deck whose format the Commander table does not admit is refused wherever the tiers are chosen, whatever
-    /// the tier and with `--any-tier` too: the simulator would otherwise play kyodai as a 4-player Commander game
+    /// a Cali deck plays its own format at every tier it is given (its own tiers, or any tier with `--any-tier`), and is
+    /// refused only at a table of another format that does not admit it (`--format commander`), `--any-tier` or not
     #[test]
-    fn a_deck_of_another_format_is_refused_at_every_tier() {
-        let sim = sim();
+    fn a_cali_deck_is_played_at_its_own_format_and_refused_at_a_commander_table() {
+        let mut sim = sim();
+        assert_eq!(
+            tier_plan(&sim, &args("--deck kyodai --pool all")).unwrap().per_deck,
+            [("kyodai".to_string(), v(&["t5", "t6"]))]
+        );
+        for pool in ["t5", "t6"] {
+            let plan = tier_plan(&sim, &args(&format!("--deck kyodai --pool {pool}"))).unwrap();
+            assert_eq!(plan.per_deck, [("kyodai".to_string(), v(&[pool]))]);
+        }
+        assert!(tier_plan(&sim, &args("--deck kyodai --pool t1")).is_err(), "a tier outside its own needs --any-tier");
+        assert!(tier_plan(&sim, &args("--deck kyodai --pool t1 --any-tier")).is_ok());
+        sim.set_format("commander").unwrap();
         for pool in ["t5", "t6", "all", "t1"] {
             for any in ["", " --any-tier"] {
                 let e = tier_plan(&sim, &args(&format!("--deck kyodai --pool {pool}{any}"))).err().unwrap();
-                assert!(e.contains("Cali Commander") && e.contains("kyodai"), "{pool}{any}: {e}");
+                assert!(
+                    e.contains("Cali Commander") && e.contains("kyodai") && e.contains("(--format)"),
+                    "{pool}{any}: {e}"
+                );
             }
         }
         let e = deck_tiers(&sim, "kyodai").unwrap_err();
-        assert!(e.contains("Cali Commander") && e.contains("--any-tier does not lift this"), "{e}");
+        assert!(e.contains("kyodai cannot be played at a Commander table") && e.contains("Cali Commander"), "{e}");
         assert_eq!(deck_tiers(&sim, "yoshimaru").unwrap(), v(&["t4", "t5"]));
         assert!(select_tiers("kyodai", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
     }
@@ -922,16 +1039,17 @@ mod tier_tests {
         assert_eq!(plan.skipped.len(), 1);
     }
 
-    /// the refusal follows data/decks.json: it fires for exactly the decks whose record has a format other than
-    /// commander
+    /// the 2-seat decks are the ones the matrix leaves out, and the Commander table refuses exactly the decks whose record
+    /// has a format other than commander: both follow data/decks.json
     #[test]
-    fn the_refusal_fires_exactly_for_a_format_other_than_commander() {
-        let sim = sim();
+    fn the_matrix_and_the_commander_table_follow_the_decks_format() {
+        let mut sim = sim();
         for key in MINE {
             let own = sim.engine.decks[key].format.as_deref().unwrap_or("commander");
-            assert_eq!(deck_tiers(&sim, key).is_err(), own != "commander", "{key} ({own})");
-            assert_eq!(unseatable(&sim, key).is_some(), own != "commander", "{key} ({own})");
+            assert!(deck_tiers(&sim, key).is_ok(), "{key}: its own format admits it");
+            assert_eq!(not_in_matrix(&sim, key).is_some(), own == "cali", "{key} ({own})");
         }
+        sim.set_format("commander").unwrap();
         assert_eq!(MINE.iter().filter(|k| deck_tiers(&sim, k).is_err()).collect::<Vec<_>>(), [&"kyodai"]);
         // a pool deck is a Commander deck
         assert!(sim.pool.iter().all(|d| deck_tiers(&sim, &d.key).is_ok()));

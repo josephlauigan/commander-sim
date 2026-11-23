@@ -397,7 +397,8 @@ pub struct CardInfo {
     pub held: bool,
 }
 
-/// compare.print_analysis. name_of maps a pool deck's key to its display name.
+/// compare.print_analysis. name_of maps a pool deck's key to its display name; `fmt` is the table's format (its seat
+/// count is the baseline).
 pub fn print_analysis(
     deck: &str,
     cards: &[CardInfo],
@@ -405,14 +406,17 @@ pub fn print_analysis(
     profile: &str,
     ai: &str,
     name_of: &dyn Fn(&str) -> String,
+    fmt: &sim_core::format::Format,
 ) {
     let nn = r.n;
     let n = nn as f64;
     let base = r.win as f64 / n;
-    println!("\n=========== {deck} analysis [{profile} profile, {ai} AI, {nn} games] ===========");
+    let label = crate::duel::ai_label(fmt).map(|l| format!("; {l}")).unwrap_or_default();
+    println!("\n=========== {deck} analysis [{profile} profile, {ai} AI, {nn} games{label}] ===========");
     println!(
-        "Win rate {:.1}%   (4-player baseline 25%)   average rounds survived {:.1}",
+        "Win rate {:.1}%   ({})   average rounds survived {:.1}",
         100.0 * base,
+        crate::duel::baseline_text(fmt.seats),
         r.survived as f64 / n
     );
 

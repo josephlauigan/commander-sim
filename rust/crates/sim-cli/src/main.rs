@@ -13,6 +13,7 @@ mod args;
 mod cardinfo;
 mod coverage;
 mod decks;
+mod duel;
 mod explain;
 mod fit;
 mod flow; // --- ai-flow
@@ -87,6 +88,12 @@ fn compare(argv: &[String]) -> i32 {
             }
         }
     }
+    if let Some(f) = &a.format
+        && let Err(e) = sim.set_format(f)
+    {
+        eprintln!("{e}");
+        return 1;
+    }
     let r = run(&sim, a);
     report_errors(&sim);
     match r {
@@ -133,6 +140,13 @@ fn swap_in_place(list: &[String], swaps: &[(String, String)]) -> Vec<String> {
 
 /// compare.main
 fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
+    // the modes that read four seats are refused for a 2-seat format, each by name, before anything is played
+    duel::check_modes(sim, &a)?;
+    if a.all_decks && a.format.is_some() {
+        return Err(
+            "--format: not with --all-decks (each deck is run in its own format; use --deck KEY --format KEY)".into()
+        );
+    }
     if a.fit {
         return fit::run(sim, &a).map(|()| 0);
     }

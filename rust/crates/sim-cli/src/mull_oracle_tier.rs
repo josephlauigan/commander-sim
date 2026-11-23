@@ -117,7 +117,7 @@ impl<'a> TierCtx<'a> {
             return Err(format!("tier {tier} has {} decks, a table needs three", opp.len()));
         }
         // the settings a pool run of this tier plays with (`poolmode::Ctx::run`)
-        let mut st = sim.settings_vs(profile(prof)?, &opp);
+        let mut st = sim.settings_vs_for(profile(prof)?, &opp, sim.format_for(key));
         if lookahead {
             st.ai = AiMode::Lookahead;
         }
@@ -126,7 +126,8 @@ impl<'a> TierCtx<'a> {
 
     /// the table of pod seed `pod`: pool mode's seats, and the deck's seat index
     fn pod(&self, pod: u64) -> (Vec<Seat>, usize) {
-        let seats = self.sim.seats_for(pod, Some(&self.key), Some(&self.seat), &self.opp, 3);
+        let fmt = self.sim.format_for(&self.key);
+        let seats = self.sim.table_for(pod, Some(&self.key), Some(&self.seat), &self.opp, fmt);
         let me = seats.iter().position(|s| s.key == self.key.as_str()).expect("the deck is seated");
         (seats, me)
     }

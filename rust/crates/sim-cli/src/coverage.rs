@@ -214,7 +214,13 @@ pub fn pool_run(
         }
     }
     for t in &plan.tiers {
-        let ds = sim.pool_keys(t).iter().filter_map(|k| pool_list(sim, k)).collect();
+        // the decks the tier's table admits: Cali Commander leaves out the Tabernacle deck of t6 (a Commander table: all)
+        let fmt = plan.per_deck.iter().find(|(_, ts)| ts.contains(t)).map(|(d, _)| sim.format_for(d));
+        let keys = match fmt {
+            Some(f) => sim.opponents(t, f),
+            None => sim.pool_keys(t),
+        };
+        let ds = keys.iter().filter_map(|k| pool_list(sim, k)).collect();
         out.push(Entry::Tier(tier_label(t).to_string(), ds));
     }
     Ok(out)

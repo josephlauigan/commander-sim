@@ -7,6 +7,8 @@ pub const DECK_KEYS: [&str; 5] = crate::decks::MINE;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
     pub deck: Option<String>,
+    /// --format KEY: play the run's decks in this format (a key of data/decks.json formats) instead of their own
+    pub format: Option<String>,
     pub swap: Vec<String>,
     pub pool: Option<String>,
     pub all_decks: bool,
@@ -33,7 +35,7 @@ pub struct Args {
     pub no_explain: bool,
     pub no_preflight: bool,
     pub preflight_only: bool,
-    /// --goldfish KEYS: these decks alone against three inert seats (goldfish.rs)
+    /// --goldfish KEYS: these decks alone against inert seats (goldfish.rs)
     pub goldfish: Option<String>,
     /// --mulligan-oracle KEYS: grade the keep/mulligan rule against goldfish playouts (mull_oracle.rs)
     pub mulligan_oracle: Option<String>,
@@ -67,15 +69,25 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 38] = [
+const OPTS: [Opt; 39] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
+    opt(
+        "--format",
+        false,
+        &[],
+        "KEY",
+        "the format the run is played in (a key of data/decks.json formats: commander, cali). Default: the deck's own \
+         (data/my_decks.toml `format`: kyodai plays cali, 1v1 at 30 life). Only a format that admits the deck: \
+         a Cali deck is refused at a Commander table. --calibrate, --realism, --fit, --mulligan-oracle and --vs-tier \
+         are not available for a 2-seat format yet",
+    ),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
         "--pool",
         false,
         &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
-        "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
+        "play --deck against the opponents of the format's table (three outside decks for Commander, one for Cali) drawn from this tier (see decklists/pool/); all = the deck's own tiers
          (data/my_decks.toml: e.g. yoshimaru t4-t5, sheoldred t3-t4). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
@@ -85,7 +97,8 @@ const OPTS: [Opt; 38] = [
         &[],
         "KEYS",
         "goldfish: each deck (comma-separated: your deck keys, Tier 6 pool keys, or t6 for all six) plays alone \
-         against three inert seats (40 life, they never cast, attack, block or respond; no tier limit). Reports the \
+         against inert seats (three at 40 life; one at 30 life for a Cali deck; they never cast, attack, block or \
+         respond; no tier limit). Reports the \
          kill turn (median, mean, share by turn 1-8), how it won, mulligans, the ready turn and protection held on \
          the kill turn. With --trace GAME: one game's play-by-play",
     ),
@@ -201,7 +214,7 @@ const OPTS: [Opt; 38] = [
 ];
 
 pub fn usage() -> &'static str {
-    "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
+    "usage: commander-sim [-h] [--deck KEY] [--format KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
      \x20                    [--goldfish KEYS] [--mulligan-oracle KEYS [--hands N] [--playouts M] [--vs-tier [--recheck K] [--out FILE]]]\n\
      \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
@@ -213,7 +226,7 @@ pub fn usage() -> &'static str {
 pub fn help() -> String {
     let mut s = String::new();
     s += usage();
-    s += "\n\nCommander pod simulator: one of your decks against three outside decks drawn from a tier of \
+    s += "\n\nCommander pod simulator: one of your decks against the opponents of the format's table (three outside decks for Commander) drawn from a tier of \
           decklists/pool/ (pool mode)\n\noptions:\n  -h, --help            show this help and exit\n";
     for o in &OPTS {
         let mut left = o.name.to_string();
@@ -233,7 +246,7 @@ pub fn help() -> String {
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
     s += "\nExamples\n  commander-sim --deck yoshimaru --pool t4 --profile loose --games 960\n  commander-sim --deck yoshimaru \
-          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish kyodai,t5 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
+          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish kyodai,t6 --games 2000   (kyodai alone against one inert seat at 30 life, the six Tier 6 decks against three at 40)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
 
@@ -270,6 +283,7 @@ fn int<T: std::str::FromStr>(name: &str, v: &str) -> Result<T, Exit> {
 pub fn parse(argv: &[String]) -> Result<Args, Exit> {
     let mut a = Args {
         deck: None,
+        format: None,
         swap: vec![],
         pool: None,
         all_decks: false,
@@ -341,6 +355,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         }
         match o.name {
             "--deck" => a.deck = Some(val),
+            "--format" => a.format = Some(val),
             "--swap" => a.swap.push(val),
             "--pool" => a.pool = Some(val),
             "--all-decks" => a.all_decks = true,
