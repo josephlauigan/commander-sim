@@ -8,12 +8,19 @@
 //! - **A triggered ability that uses the stack** (a hook not marked at once), so an opponent's Elesh Norn blanks it,
 //!   Panharmonicon and the other doublers repeat it (each instance picks its own target and holds its own grant), and
 //!   the table may respond. It does not trigger when there is no other permanent Kyodai's controller may target. The
-//!   target is chosen as it resolves (the engine's convention for hook triggers): the person is asked, the AI picks.
-//! - **The grant** is a static `grant_kw` hook on Kyodai (`partials::tekuthal_kw`'s shape): the targets and the
-//!   controller as the trigger resolved sit in Kyodai's data (`DataKey::Kyodai`), and the hook says "indestructible"
-//!   for them while Kyodai is on the battlefield under that controller. A blink or a recast is a new object with new
-//!   data, so the old grant ends and the new trigger makes its own. If Kyodai left before the trigger resolved, its
-//!   duration had already ended and nothing happens (CR 611.2b).
+//!   target is chosen as the trigger goes on the stack (the person is asked, the AI picks), before anyone responds; at
+//!   resolution it is rechecked (Kyodai still here under the same controller, the target still a legal choice) and never
+//!   re-picked.
+//! - **The grant** is a resolved duration effect, remembered rather than recomputed: the targets and the controller as
+//!   the trigger resolved sit in Kyodai's data (`DataKey::Kyodai`), each target keeps the Kyodai that granted it
+//!   (`DataKey::KyodaiOn`), and `chars::has_keyword` asks `grants` for "indestructible". It holds while Kyodai is on the
+//!   battlefield, phased in, under that controller; losing his abilities does not end it (CR 611.2b), but phasing out
+//!   (cleared when he phases back in, `turn::phase_in_for`, CR 702.26) or changing hands (cleared in
+//!   `control::gain_control`) ends it for good. A blink or a recast is a new object with new data, so the old grant
+//!   ends and the new trigger makes its own. If Kyodai left before the trigger resolved, nothing happens.
+//!   Limits: a direct `.owner =` write (a few cards write it without `gain_control`) does not clear the list, so a
+//!   Kyodai taken that way and returned resumes his grants; Imprisoned in the Moon is modelled as leaving the battlefield,
+//!   so it ends them.
 //! - **Targets**: the permanent must be on the battlefield and not phased out, not shrouded (Lightning Greaves too),
 //!   not hexproof when it is an opponent's, and not protected from white (Kyodai's colours, so from every colour
 //!   under a Leyline of the Guildpact). An opponent's ward is paid as it resolves (`ward::pay_ward`); unpaid, nothing
@@ -30,7 +37,6 @@ use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::ids::{PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
-use crate::sym::Sym;
 
 pub const KYODAI: &str = "Kyodai, Soul of Kamigawa";
 
@@ -90,25 +96,23 @@ fn ai_pick(g: &Game, o: PlayerId, src: PermId, cs: &[PermId]) -> Option<PermId> 
     best(&planned).or_else(|| best(&nonland)).or_else(|| best(pool))
 }
 
-/// "When Kyodai enters, another target permanent gains indestructible for as long as you control Kyodai."
+/// "When Kyodai enters, another target permanent gains indestructible for as long as you control Kyodai." The target is
+/// chosen (a person asked) as the trigger goes on the stack, before anyone may respond (Heliod's pattern, `t4::heliod_gain`);
+/// at resolution the source must still be here under the same controller and the target still a legal choice, else
+/// nothing happens (it is never re-picked).
 fn kyodai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
     let o = crate::engine::hooks::trigger_controller(g, src);
-    if candidates(g, src, o).is_empty() {
-        return Ok(()); // no target: the ability is not put on the stack
-    }
-    if !trigger_window(g, o, Some(src), "another target permanent gains indestructible", Some(5.0))? {
-        return Ok(());
-    }
-    // the duration "for as long as you control Kyodai" ended before it began: he left (or changed hands) in response
-    if !g.perm(src).on_bf || g.perm(src).phased || g.perm(src).owner != o {
-        return Ok(());
-    }
     let cs = candidates(g, src, o);
     if cs.is_empty() {
-        return Ok(()); // every target became illegal
+        return Ok(()); // no target: the ability is not put on the stack
+    }
+    const NAME: &str = "another target permanent gains indestructible";
+    if g.trig_probe {
+        // only whether the trigger goes on the stack: its target is chosen (and a person asked) once, as it does
+        return trigger_window(g, o, Some(src), NAME, Some(5.0)).map(|_| ());
     }
     let to = if crate::human::is_human(g, o) {
         crate::human::gaps_t2::pick_target(g, o, &cs, "Kyodai: which permanent gains indestructible?", None)?
@@ -116,6 +120,14 @@ fn kyodai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         ai_pick(g, o, src, &cs)
     };
     let Some(t) = to else { return Ok(()) };
+    if !trigger_window(g, o, Some(src), NAME, Some(5.0))? {
+        return Ok(()); // countered
+    }
+    // the duration "for as long as you control Kyodai" ended before it began (he left, phased out or changed hands in
+    // response), or the target is gone or no longer legal (hexproof, protection, phased out): nothing happens
+    if !g.perm(src).on_bf || g.perm(src).phased || g.perm(src).owner != o || !candidates(g, src, o).contains(&t) {
+        return Ok(());
+    }
     if g.perm(t).owner != o && !crate::engine::ward::pay_ward(g, o, t)? {
         return Ok(()); // ward countered the ability
     }
@@ -125,6 +137,14 @@ fn kyodai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     };
     list.push(Val::Perm(t));
     g.perm_mut(src).data.set(DataKey::Kyodai, Val::List(list));
+    let mut on = match g.perm(t).data.get(DataKey::KyodaiOn) {
+        Some(Val::List(v)) => v.clone(),
+        _ => vec![],
+    };
+    if !on.contains(&Val::Perm(src)) {
+        on.push(Val::Perm(src));
+    }
+    g.perm_mut(t).data.set(DataKey::KyodaiOn, Val::List(on));
     crate::glog!(
         g,
         "  Kyodai: {} gains indestructible for as long as {} controls him",
@@ -134,17 +154,24 @@ fn kyodai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// the grant: the permanents Kyodai made indestructible, while he is on the battlefield under the player who
-/// controlled him as the trigger resolved (`hooked` skips him when he is phased out or has lost his abilities)
-fn kyodai_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
-    kw == "indestructible"
-        && matches!(g.perm(src).data.get(DataKey::Kyodai),
-            Some(Val::List(v)) if v.first() == Some(&Val::Player(g.perm(src).owner)) && v.contains(&Val::Perm(m)))
+/// does a Kyodai's grant hold `m` indestructible now (`chars::has_keyword`)? A resolved duration effect: it lasts while
+/// that Kyodai is on the battlefield, phased in, under the player who controlled him as the trigger resolved, and his
+/// `DataKey::Kyodai` list still names `m`. Losing his abilities does not end it (so it is read here and not through a
+/// hook); changing hands (`control::gain_control`) or phasing in again (`turn::phase_in_for`) clears the list for good.
+pub fn grants(g: &Game, m: PermId) -> bool {
+    let Some(Val::List(on)) = g.perm(m).data.get(DataKey::KyodaiOn) else { return false };
+    on.iter().any(|k| {
+        let Val::Perm(s) = k else { return false };
+        let x = g.perm(*s);
+        x.on_bf
+            && !x.phased
+            && matches!(x.data.get(DataKey::Kyodai),
+                Some(Val::List(v)) if v.first() == Some(&Val::Player(x.owner)) && v.contains(&Val::Perm(m)))
+    })
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, KYODAI)?;
     c.etb = Some(kyodai_etb);
-    c.grant_kw = Some(kyodai_kw);
     Ok(())
 }
