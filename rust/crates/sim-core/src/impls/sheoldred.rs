@@ -10,7 +10,7 @@ use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -1680,6 +1680,103 @@ fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), ..Ctx::default() })
 }
 
+/// Damnable Pact ({X}{B}{B}): target player draws X cards, then loses X life (X from `ctx.x`; the draws go through the
+/// normal draw path, so Sheoldred, Underworld Dreams and Fate Unraveler fire; a target that died on the way loses nothing)
+fn pact_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+    let x = ctx.x.max(0);
+    if x > 0 {
+        draw(g, q, x as u32, false)?;
+        if g.player(q).alive {
+            lose_life(g, q, x, Some(p), "other", Some(false))?;
+        }
+    }
+    Ok("gy")
+}
+
+/// the most X the spare mana allows for Damnable Pact (0 when it can't be cast at all)
+fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let (gn, pips) = cost_of(g, p, c);
+    if !can_pay_spell(g, p, c, gn, &pips, false) || !castable(g, p, c, "hand") {
+        return 0;
+    }
+    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    if x >= 1 && can_pay_spell(g, p, c, gn + x as u32, &pips, false) { x } else { 0 }
+}
+
+/// Damnable Pact as a main-phase play (own turn only: it is a sorcery; the deck's plan must `plays` it).
+/// - A draw punisher out (Sheoldred, Underworld Dreams, Fate Unraveler): aim it at the lowest-life opponent whose library
+///   is longer than X. Each card costs them the toll (Sheoldred 2, Dreams 1, Unraveler 1 each) plus 1 from the spell.
+///   X is the most the spare mana allows, less when a smaller X already kills. A kill scores like `x_drain_option`
+///   (7 on top); with no kill it is cast only for X >= 2 and a total loss of 10 or more, which is a real chunk of a
+///   40-life table and worth the cards it hands over.
+/// - No punisher out: never at an opponent (that only gives them cards). At ourselves only when safe: X >= 2, life
+///   after paying X stays at 12 or more, X no more than half the library and at most 6, so the hand stays playable.
+fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let xmax = pact_max_x(g, p, c);
+    if xmax < 1 {
+        return Ok(vec![]);
+    }
+    let toll = draw_toll(g, p);
+    if toll > 0 {
+        let per = toll + 1;
+        let opps: Vec<PlayerId> =
+            g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() as i32 > xmax).collect();
+        let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(vec![]) };
+        let life = g.player(q).life;
+        let kills = !g.player(q).life_locked && xmax * per >= life;
+        let x = if kills { ((life + per - 1) / per).max(1) } else { xmax };
+        let total = (x * per).min(life.max(0));
+        if !kills && (x < 2 || total < 10) {
+            return Ok(vec![]);
+        }
+        let u = 1.5 + 0.12 * total as f64 + if kills { 7.0 } else { 0.0 };
+        return Ok(vec![Opt {
+            utility: u,
+            label: format!("Damnable Pact ({} draws {x} and loses {total})", g.player(q).name),
+            act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, q.0 as i64 + 1, x) }),
+        }]);
+    }
+    let pl = g.player(p);
+    let x = xmax.min(pl.life - 12).min(pl.library.len() as i32 / 2).min(6);
+    if x < 2 {
+        return Ok(vec![]);
+    }
+    let mut u = 2.0 + 0.4 * x as f64 + if pl.hand.len() <= 2 { 1.2 } else { 0.0 };
+    if pl.hand.len() >= 6 {
+        u -= 1.5;
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("Damnable Pact (draw {x})"),
+        act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, 0, x) }),
+    }])
+}
+
+/// the card (16 bits), the target (player index + 1, 0 = the caster; 16 bits) and X (the rest)
+fn pact_pack(c: CardId, face: i64, x: i32) -> i64 {
+    c.0 as i64 | (face << 16) | ((x as i64) << 32)
+}
+
+fn pact_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId((arg & 0xffff) as u16);
+    let face = match (arg >> 16) & 0xffff {
+        0 => p,
+        k => PlayerId((k - 1) as u8),
+    };
+    let x = (arg >> 32) as i32;
+    let (gn, pips) = cost_of(g, p, c);
+    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
+        return Ok(false);
+    }
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
+    cast_card(g, p, c, "hand", Ctx { face: Some(face), x, ..Ctx::default() })?;
+    Ok(true)
+}
+
 /// Dark Deal: each player discards their whole hand, then draws that many cards minus one (discards first, for all,
 /// then the draws, starting with the caster)
 fn deal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
@@ -2051,6 +2148,10 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Painful Lesson")?;
     c.resolve = Some(lesson_resolve);
     c.hand_options = Some(lesson_options);
+    c.prio = Some(zero_prio);
+    let c = r.card(db, "Damnable Pact")?;
+    c.resolve = Some(pact_resolve);
+    c.hand_options = Some(pact_options);
     c.prio = Some(zero_prio);
     let c = r.card(db, UNRAVELER)?;
     c.draw = Some(dreams_draw);

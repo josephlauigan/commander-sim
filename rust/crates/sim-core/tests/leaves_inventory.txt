@@ -44,6 +44,7 @@ Dread Slaver | Dies | T
 Edgar, Charmed Groom // Edgar Markov's Coffin | SelfDies | T
 Elderfang Ritualist | SelfDies | T
 Elenda, the Dusk Rose | SelfDies | T
+Enduring Tenacity | SelfDies | T
 Enduring Vitality | SelfDies | T
 Erebos, Bleak-Hearted | Dies | T
 Eyeblight Cullers | SelfDies | T

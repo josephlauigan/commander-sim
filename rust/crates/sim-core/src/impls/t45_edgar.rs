@@ -14,6 +14,8 @@
 //! - Bloodthirsty Conqueror: an opponent loses life: you gain that much (as Exquisite Blood).
 //! - Vito, Thorn of the Dusk Rose: you gain life: the opponent it hurts most loses that much (its lifelink activation
 //!   is compiled).
+//! - Enduring Tenacity: Vito's trigger; when it dies as a creature it returns as an enchantment that is not a creature
+//!   (`DataKey::NotCreature`, as Enduring Vitality does), and when that dies it stays dead.
 //! - Blade of the Bloodchief: a creature dies: a +1/+1 counter on the equipped creature, two on a Vampire.
 //! - Captivating Vampire: tap five untapped Vampires (summoning-sick ones too): gain control of the best opposing
 //!   creature for good; it becomes a Vampire. Used at the end of the turn before yours or after your combat.
@@ -43,7 +45,7 @@
 //! - Voldaren Estate: {C}, or any colour for a Vampire spell (1 life); {5},{T}, {1} less per Vampire: a Blood token;
 //!   a Blood's rummage. Left out: the life is paid whenever it taps while a Vampire spell is being paid for.
 //!
-//! Combos: a life-gain drain (Sanguine Bond, Vito, Marauding Blight-Priest) with a life-loss gain (Exquisite Blood,
+//! Combos: a life-gain drain (Sanguine Bond, Vito, Enduring Tenacity, Marauding Blight-Priest) with a life-loss gain (Exquisite Blood,
 //! Bloodthirsty Conqueror): an unbounded drain. Sanguine Bond + Exquisite Blood is combos.rs's own entry.
 
 use crate::cards::{CardDb, Colors};
@@ -73,6 +75,7 @@ const GROOM: &str = "Edgar, Charmed Groom // Edgar Markov's Coffin";
 const BLOODLETTER: &str = "Bloodletter of Aclazotz";
 const CONQUEROR: &str = "Bloodthirsty Conqueror";
 const VITO: &str = "Vito, Thorn of the Dusk Rose";
+const TENACITY: &str = "Enduring Tenacity";
 const BLADE: &str = "Blade of the Bloodchief";
 const CAPTIVATING: &str = "Captivating Vampire";
 const CLAVILENO: &str = "Clavileño, First of the Blessed";
@@ -293,6 +296,16 @@ fn conqueror(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
 
 /// "Whenever you gain life, target opponent loses that much life." (one it kills, else the most threatening)
 fn vito(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
+    gain_drain(g, src, p, n, VITO)
+}
+
+/// Enduring Tenacity has Vito's trigger word for word (it keeps it as the returned enchantment: `live` only asks that
+/// it is on the battlefield)
+fn tenacity(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
+    gain_drain(g, src, p, n, TENACITY)
+}
+
+fn gain_drain(g: &mut Game, src: Src, p: PlayerId, n: i32, card: &str) -> Res {
     if p == owner(g, src)
         && live(g, src)
         && g.opps(p).next().is_some()
@@ -303,11 +316,35 @@ fn vito(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
             return Ok(());
         }
         g.bond_depth += 1;
-        let q = crate::impls::t4::bond_target_for(g, p, n, "Vito, Thorn of the Dusk Rose")?;
+        let q = crate::impls::t4::bond_target_for(g, p, n, card)?;
         let r = lose_life(g, q, n, Some(p), "drain", None);
         g.bond_depth -= 1;
         r?;
     }
+    Ok(())
+}
+
+/// "When Enduring Tenacity dies, if it was a creature, return it to the battlefield under its owner's control. It's an
+/// enchantment. (It's not a creature.)" The card comes back as a new object marked `DataKey::NotCreature` (the engine's
+/// way to take the creature type off a creature card, as for Enduring Vitality): an enchantment for enchantment
+/// effects, no creature for combat, edicts, creature removal and "a creature dies". Dying again as that enchantment
+/// returns nothing; exile and bounce never reach this hook.
+fn tenacity_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if m != src || g.perm(m).token || g.perm(m).data.truthy(DataKey::NotCreature) {
+        return Ok(());
+    }
+    let (Some(cd), o) = (g.perm(m).cd, g.perm(m).orig) else { return Ok(()) };
+    if !g.player(o).gy.contains(&cd)
+        || !trigger_window(g, o, Some(m), "Enduring Tenacity returns as an enchantment", Some(4.0))?
+    {
+        return Ok(());
+    }
+    if !remove_card(&mut g.player_mut(o).gy, cd) {
+        return Ok(()); // exiled or otherwise gone
+    }
+    let n = enter(g, o, cd, Enter::default())?;
+    g.perm_mut(n).data.set(DataKey::NotCreature, Val::Bool(true));
+    crate::glog!(g, "    {} returns as an enchantment (Enduring Tenacity)", g.player(o).name);
     Ok(())
 }
 
@@ -894,7 +931,7 @@ fn estate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ combos
-const GAIN_DRAINS: [&str; 3] = [BOND, VITO, PRIEST];
+const GAIN_DRAINS: [&str; 4] = [BOND, VITO, TENACITY, PRIEST];
 const LOSS_GAINS: [&str; 2] = [BLOOD, CONQUEROR];
 
 /// a life-gain drain and a life-loss gain: any life change loops (the plain Sanguine Bond + Exquisite Blood pair is
@@ -951,6 +988,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     if has(VITO) {
         r.card(db, VITO)?.gain_life = Some(vito);
+    }
+    if has(TENACITY) {
+        let c = r.card(db, TENACITY)?;
+        c.gain_life = Some(tenacity);
+        c.self_dies = Some(tenacity_dies);
     }
     if has(BLADE) {
         r.card(db, BLADE)?.dies = Some(blade_dies);

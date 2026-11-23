@@ -90,6 +90,7 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Cost of Brilliance" | "Painful Lesson" | "Peer into the Abyss" | "Decorum Dissertation" => {
             &[Ask::Target(Tk::Player)]
         }
+        "Damnable Pact" => &[Ask::Target(Tk::Player), Ask::X],
         "Rewrite Regrets" => &[Ask::Gy { n: 1, min: 0, max_cmc: Some(6), pw: true }],
         "Helping Hand" => &[Ask::Gy { n: 1, min: 0, max_cmc: Some(3), pw: false }],
         "Victimize" => &[Ask::Gy { n: 2, min: 2, max_cmc: None, pw: false }, Ask::Sac],
