@@ -996,12 +996,18 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
 /// what card c costs p now when cast with X = x: the printed cost with x added to the generic part, then every
 /// reduction, tax, floor and minimum `cost_of` applies, in the same order (a generic reducer such as Jet Medallion
 /// takes its {1} off the generic part that includes X; a later tax is added after it; each step floors the generic cost
-/// at 0). `cost_of` is this at x = 0. K'rrik's life payment stays with `phyrexian_life`.
+/// at 0). The Trinisphere minimum comes last, after every reduction and tax (rule 601.2f). `cost_of` is this at x = 0.
+/// K'rrik's life payment stays with `phyrexian_life`.
+///
+/// x is added to the generic part exactly once, whatever the card. A card without {X} must be given x = 0 (`cost_of`
+/// does), and a card with several {X} symbols needs the caller to pass x times the symbol count. A negative x counts
+/// as 0. The arithmetic is done in i64, so any i32 x is safe; the result is the true generic cost, saturating at
+/// `u32::MAX`.
 pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;
-    let mut gn = d.generic as i32 + x.max(0);
+    let mut gn = d.generic as i64 + x.max(0) as i64;
     let mut pips: String = d.pips.to_string();
     if t.has(Tag::PerCreature) {
         // Blasphemous Act, Vanquish the Horde
@@ -1011,7 +1017,7 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
             .filter(|q| q.alive)
             .flat_map(|q| q.perms.iter())
             .filter(|&&m| g.is_creature(m) && !g.perm(m).phased)
-            .count() as i32;
+            .count() as i64;
         gn = (gn - n).max(0);
     }
     if t.has(Tag::Eris) {
@@ -1020,38 +1026,26 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
             pl.gy.iter().map(|&x| g.db.get(x)).filter(|x| x.instant || x.sorcery).map(|x| x.cmc).collect();
         mvs.sort();
         mvs.dedup();
-        gn = (gn - 2 * mvs.len() as i32).max(0);
+        gn = (gn - 2 * mvs.len() as i64).max(0);
     }
     if t.has(Tag::Dawning) {
-        gn = (gn - pl.gy.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count() as i32).max(0);
+        gn = (gn - pl.gy.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count() as i64).max(0);
     }
     if t.has(Tag::Spectacle) && pl.hit_turn == pl.turns as i32 {
         gn = 0;
         pips = "R".into();
     }
-    let mut paid_life = 0;
-    for col in d.phyrexian.chars() {
-        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
-        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
-        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, gn.max(0) as u32, &pips, false) {
-            pips = pips.replacen(col, "", 1);
-            paid_life += 2;
-        }
-    }
-    crate::impls::krrik::drop_black(g, p, c, gn, &mut pips); // K'rrik: 2 life for a {B}
     crate::impls::t45_urdragon::morophon_pips(g, p, c, &mut pips); // --- Tiers 4/5 (urdragon): Morophon
-    gn += crate::impls::t45_urdragon::eminence(g, p, c); // --- Tiers 4/5 (urdragon): The Ur-Dragon's eminence
-    gn = (gn + crate::dsl::cost_delta(g, p, c)).max(0);
-    gn = (gn + crate::impls::t0_stella::kaza_delta(g, p, c)).max(0); // Kaza, Roil Chaser
+    gn += crate::impls::t45_urdragon::eminence(g, p, c) as i64; // --- Tiers 4/5 (urdragon): The Ur-Dragon's eminence
+    gn = (gn + crate::dsl::cost_delta(g, p, c) as i64).max(0);
+    gn = (gn + crate::impls::t0_stella::kaza_delta(g, p, c) as i64).max(0); // Kaza, Roil Chaser
     if !g.hooks.is_empty() {
-        gn = (gn + hooks::total_cost(g, p, c)).max(0);
+        gn = (gn + hooks::total_cost(g, p, c) as i64).max(0);
         if crate::impls::blue_cards::defiler_discount(g, p, c) {
             pips = pips.replacen('U', "", 1); // Defiler of Dreams: pay 2 life for {U} less
         }
-        let floor = hooks::max_min_cost(g, p, c); // Trinisphere
-        gn = gn.max(floor - pips.chars().count() as i32);
     }
-    gn = (gn + cardcode::self_cost(g, p, c)).max(0); // Draco's domain, delve
+    gn = (gn + cardcode::self_cost(g, p, c) as i64).max(0); // Draco's domain, delve
     if pl.emblems.contains(&"tamiyo") && pl.hand.contains(&c) {
         return (0, String::new());
     }
@@ -1064,18 +1058,40 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
         gn += 3; // Disruptor Flute tax
     }
     if pl.is_commander(c) && !pl.hand.contains(&c) && &*d.name != "Liesa, Shroud of Dusk" {
-        gn += pl.tax_of(c) as i32; // no tax from hand
+        gn += pl.tax_of(c) as i64; // no tax from hand
     }
     if pl.agent_ids.contains(&c) {
         // Opposition Agent: spend mana as though it were mana of any type
         let off: String = pips.chars().filter(|&x| !pl.ident.has(x)).collect();
         if !off.is_empty() {
-            gn += off.chars().count() as i32;
+            gn += off.chars().count() as i64;
             pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
         }
     }
-    crate::engine::hybrid::resolve(g, p, c, gn.max(0) as u32, &mut pips); // {G/W}: the other colour when the first can't be paid
-    (gn.max(0) as u32, pips)
+    // Paying life for a coloured pip is decided against the generic cost as it now stands, after every reduction and tax
+    // above (a reducer such as Jet Medallion may make the mana enough, so no life is paid).
+    let mut paid_life = 0;
+    for col in d.phyrexian.chars() {
+        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
+        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, to_u32(gn), &pips, false) {
+            pips = pips.replacen(col, "", 1);
+            paid_life += 2;
+        }
+    }
+    crate::impls::krrik::drop_black(g, p, c, gn.clamp(i32::MIN as i64, i32::MAX as i64) as i32, &mut pips); // K'rrik: 2 life for a {B}
+    if !g.hooks.is_empty() {
+        // Trinisphere: the minimum applies to the total after every reduction and tax (601.2f)
+        let floor = hooks::max_min_cost(g, p, c);
+        gn = gn.max(floor as i64 - pips.chars().count() as i64);
+    }
+    crate::engine::hybrid::resolve(g, p, c, to_u32(gn), &mut pips); // {G/W}: the other colour when the first can't be paid
+    (to_u32(gn), pips)
+}
+
+/// a working generic cost as the u32 the callers pay with: 0 below zero, `u32::MAX` above
+fn to_u32(gn: i64) -> u32 {
+    gn.clamp(0, u32::MAX as i64) as u32
 }
 
 /// what casting these cards one after another costs in all: each one's `cost_of` now, plus {1} per Damping Sphere for

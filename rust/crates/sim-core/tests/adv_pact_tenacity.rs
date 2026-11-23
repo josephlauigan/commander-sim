@@ -596,9 +596,11 @@ fn tenacity_phased_out_does_not_trigger_life_gain_and_survives_disk() {
     assert_eq!(tenacities(&g, P0), vec![t]);
 }
 
-// ------------------------------------------------------------------ a clone of Enduring Tenacity is not the card
+// ------------------------------------------------------------------ a clone of Enduring Tenacity returns itself
+// (updated: a nontoken clone has Tenacity's trigger and "it" is the dying object, so the clone's own card returns as an
+// enchantment; the real Enduring Tenacity in the graveyard is not touched. This replaces the older "returns nothing")
 #[test]
-fn a_clone_of_tenacity_dying_does_not_return_the_real_card_from_the_graveyard() {
+fn a_clone_of_tenacity_dying_returns_itself_not_the_real_card_from_the_graveyard() {
     let mut g = game();
     perm(&mut g, P1, TEN);
     let image = perm(&mut g, P0, "Phantasmal Image");
@@ -606,11 +608,20 @@ fn a_clone_of_tenacity_dying_does_not_return_the_real_card_from_the_graveyard() 
     assert!(g.perm(image).phys.is_some(), "its own card is the physical card");
     // the real Enduring Tenacity sits in P0's graveyard (as it would after being milled or discarded)
     let real = card(&g, TEN);
+    let physical = card(&g, "Phantasmal Image");
     g.player_mut(P0).gy.push(real);
     zones::die(&mut g, image, "destroy").unwrap();
-    assert!(tenacities(&g, P0).is_empty(), "the clone dying brings nothing back");
     assert!(g.player(P0).gy.contains(&real), "the real card stays where it was");
-    assert!(g.player(P0).gy.contains(&card(&g, "Phantasmal Image")), "the clone card goes to the graveyard");
+    assert!(!g.player(P0).gy.contains(&physical), "the clone's own card left the graveyard");
+    let back: Vec<PermId> = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && (g.perm(m).phys == Some(physical) || g.perm(m).cd == Some(physical)))
+        .collect();
+    assert_eq!(back.len(), 1, "the clone's own card returns");
+    assert!(!g.is_creature(back[0]));
 }
 
 #[test]
