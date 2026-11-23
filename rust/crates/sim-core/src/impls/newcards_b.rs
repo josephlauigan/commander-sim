@@ -19,8 +19,6 @@ use crate::state::{DataKey, Game, Val};
 pub const CECIL: &str = "Cecil, Dark Knight";
 pub const LIGHTNING: &str = "Lightning, Army of One";
 pub const MARVIN: &str = "Marvin, Murderous Mimic";
-/// the commander starting life total (Cecil flips at half of it)
-const START_LIFE: i32 = 40;
 
 fn card_if<'a>(r: &'a mut Registry, db: &CardDb, name: &str) -> Result<Option<&'a mut crate::hooks::CardImpl>, String> {
     if db.id(name).is_none() {
@@ -43,7 +41,7 @@ pub fn cecil_deals(g: &mut Game, m: PermId, dmg: i32) -> Res {
     let p = g.perm(m).owner;
     crate::glog!(g, "    Cecil's Darkness: {} loses {}", g.player(p).name, dmg);
     lose_life(g, p, dmg, None, "other", Some(false))?;
-    if g.perm(m).on_bf && g.player(p).life <= START_LIFE / 2 {
+    if g.perm(m).on_bf && g.player(p).life <= g.player(p).start_life / 2 {
         let x = g.perm_mut(m);
         x.tapped = false;
         x.data.set(DataKey::Flipped, Val::Bool(true));
@@ -192,7 +190,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 pub fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     let name = &*g.db.get(c).name;
     if name == CECIL {
-        return Some(if g.player(p).life <= START_LIFE / 2 + 6 { 40 } else { 76 });
+        return Some(if g.player(p).life <= g.player(p).start_life / 2 + 6 { 40 } else { 76 });
     }
     if name == LIGHTNING {
         return Some(78);

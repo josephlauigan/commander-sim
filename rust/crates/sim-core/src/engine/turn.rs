@@ -1201,6 +1201,12 @@ pub fn phase_in_for(g: &mut Game, p: PlayerId) {
     }
 }
 
+/// whether p's draw step is skipped as the starting player's first turn (CR 103.8a): seat 0, the first turn of the
+/// first round, under rules where the starting player does not draw (`Rules.first_player_draws`)
+fn skips_first_draw(g: &Game, p: PlayerId) -> bool {
+    !g.settings.rules.first_player_draws && p.index() == 0 && g.round == 1 && g.player(p).turns == 1
+}
+
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
 pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
@@ -1326,44 +1332,50 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if g.over || !g.player(p).alive {
         return Ok(());
     }
-    for m in find(g, p, Tag::Vaultping) {
-        // Mana Vault: at the beginning of your draw step, 1 damage if tapped
-        if g.perm(m).tapped {
-            lose_life(g, p, 1, Some(p), "other", Some(true))?;
-        }
-    }
-    crate::impls::sheoldred::howling_mines(g, p)?; // Howling Mine: an additional card at the beginning of the draw step
-    // Necropotence and Solitary Confinement skip the whole step (no beginning-of-draw-step trigger); a dredge only
-    // replaces the draw, so the step still happens
-    let skipped = has(g, p, Tag::Necro) || cardcode::skip_draw(g, p);
-    if has(g, p, Tag::Necro) {
-        // Necropotence: skip your draw step
-    } else if loam_dredge(g, p)? || cardcode::dakmor_dredge(g, p)? || cardcode::skip_draw(g, p) {
-        // Life from the Loam, Dakmor Salvage dredged; Solitary Confinement
+    if skips_first_draw(g, p) {
+        // CR 103.8a: the player who goes first skips the draw step of their first turn (Mana Vault, Howling Mine, the
+        // Theorist and the draw-step priority go with it); a Commander game never gets here
+        crate::glog!(g, "  {} skips the draw step of the first turn", g.player(p).name);
     } else {
-        if crate::human::is_human(g, p) {
-            if !crate::human::cards::dredge(g, p)? {
+        for m in find(g, p, Tag::Vaultping) {
+            // Mana Vault: at the beginning of your draw step, 1 damage if tapped
+            if g.perm(m).tapped {
+                lose_life(g, p, 1, Some(p), "other", Some(true))?;
+            }
+        }
+        crate::impls::sheoldred::howling_mines(g, p)?; // Howling Mine: an additional card at the beginning of the draw step
+        // Necropotence and Solitary Confinement skip the whole step (no beginning-of-draw-step trigger); a dredge only
+        // replaces the draw, so the step still happens
+        let skipped = has(g, p, Tag::Necro) || cardcode::skip_draw(g, p);
+        if has(g, p, Tag::Necro) {
+            // Necropotence: skip your draw step
+        } else if loam_dredge(g, p)? || cardcode::dakmor_dredge(g, p)? || cardcode::skip_draw(g, p) {
+            // Life from the Loam, Dakmor Salvage dredged; Solitary Confinement
+        } else {
+            if crate::human::is_human(g, p) {
+                if !crate::human::cards::dredge(g, p)? {
+                    draw(g, p, 1, true)?;
+                }
+            } else {
                 draw(g, p, 1, true)?;
             }
-        } else {
-            draw(g, p, 1, true)?;
         }
-    }
-    check_state(g)?;
-    if g.over || !g.player(p).alive {
-        return Ok(());
-    }
-    if !skipped {
-        // The Theorist, Jace Beleren: its controller draws on an opponent's draw step; the trigger resolves after the
-        // active player's draw and the state-based actions that follow it
-        crate::impls::common::theorist_draws(g, p)?;
+        check_state(g)?;
         if g.over || !g.player(p).alive {
             return Ok(());
         }
-    }
-    step_priority(g, "draw", None, &[])?;
-    if g.over || !g.player(p).alive {
-        return Ok(());
+        if !skipped {
+            // The Theorist, Jace Beleren: its controller draws on an opponent's draw step; the trigger resolves after the
+            // active player's draw and the state-based actions that follow it
+            crate::impls::common::theorist_draws(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+        }
+        step_priority(g, "draw", None, &[])?;
+        if g.over || !g.player(p).alive {
+            return Ok(());
+        }
     }
     end_step_pools(g); // the draw step ends (rule 500.4): the upkeep's and draw step's mana is gone
     let drain = std::mem::take(&mut g.player_mut(p).drain_mana);

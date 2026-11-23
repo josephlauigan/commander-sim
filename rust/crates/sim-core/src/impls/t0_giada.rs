@@ -609,10 +609,10 @@ fn valkyrie_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res 
     Ok(())
 }
 
-/// as long as you have at least 7 life more than your starting life total (40), creatures you control get +2/+2
+/// as long as you have at least 7 life more than your starting life total, creatures you control get +2/+2
 fn valkyrie_pt(g: &Game, m: PermId) -> (i32, i32) {
     let p = owner(g, m);
-    if !g.is_creature(m) || g.player(p).life < 47 {
+    if !g.is_creature(m) || g.player(p).life < g.player(p).start_life + 7 {
         return (0, 0);
     }
     let k = named(g, p, "Righteous Valkyrie").len() as i32;
@@ -895,7 +895,7 @@ pub fn register_temple(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 
 // ================================================================== Speaker of the Heavens
 /// **Speaker of the Heavens**: {T}: create a 4/4 white Angel with flying. Activate only if you have at least 7 life more
-/// than your starting life total (47) and only as a sorcery. The AI taps it in its main phase whenever the life is there.
+/// than your starting life total and only as a sorcery. The AI taps it in its main phase whenever the life is there.
 fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
     if owner(g, src) != p
@@ -904,7 +904,7 @@ fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
         || !live(g, src)
         || x.tapped
         || x.sick
-        || g.player(p).life < 47
+        || g.player(p).life < g.player(p).start_life + 7
     {
         return Ok(vec![]);
     }
@@ -917,7 +917,7 @@ fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
 
 fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let x = g.perm(src);
-    if !live(g, src) || x.tapped || x.sick || g.player(p).life < 47 || g.active != Some(p) {
+    if !live(g, src) || x.tapped || x.sick || g.player(p).life < g.player(p).start_life + 7 || g.active != Some(p) {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
