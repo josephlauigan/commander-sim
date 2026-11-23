@@ -272,7 +272,7 @@ pub enum DataKey {
     /// the X a permanent spell was cast with (Int, set as it enters: `Enter::x`); absent when it did not enter from a cast
     CastX,
     /// Kyodai, Soul of Kamigawa: the controller as its enter trigger resolved, then each permanent it made indestructible
-    /// (a `Val::List` of `Val::Player` and `Val::Perm`s); read by its `grant_kw` hook
+    /// (a `Val::List` of `Val::Player` and `Val::Perm`s); read by `impls::kyodai::grants`
     Kyodai,
     /// a permanent made indestructible by a Kyodai (a `Val::List` of `Val::Perm`: each Kyodai that granted it); read in
     /// `chars::has_keyword`, live only while that Kyodai's own `DataKey::Kyodai` list still names the permanent

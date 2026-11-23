@@ -324,7 +324,8 @@ impl CardDef {
     }
 
     /// its mana symbols that count toward devotion to the colours `cols` (CR 700.5: a symbol counts once, for any
-    /// colour it has; a hybrid symbol counts for either half, `pips` holding only the first)
+    /// colour it has; a two-colour hybrid symbol counts for either half, `pips` holding only the first; {2/W} and
+    /// Phyrexian symbols are not handled)
     pub fn devotion_to(&self, cols: &str) -> usize {
         let set = Colors::from_letters(cols);
         let hy: Vec<char> = self.hybrid.chars().collect();
