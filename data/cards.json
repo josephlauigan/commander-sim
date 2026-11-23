@@ -7371,11 +7371,7 @@
        "do": "grant",
        "keyword": "double strike",
        "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
+        "sel": "event"
        }
       }
      ],

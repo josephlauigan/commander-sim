@@ -854,6 +854,17 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             .collect();
         if v.is_empty() { None } else { Some(v) }
     }),
+    // "the event creature gains double strike until end of turn" (Atarka, World Render; "it gains ..." in a "whenever a
+    // creature you control attacks" trigger is rewritten to this internal phrase, so no other Oracle text matches):
+    // the creature the trigger is about
+    (r"^the event creature gains? ([a-z, ]+?) until end of turn$", |m| {
+        let v: Fx = KW
+            .iter()
+            .filter(|k| m.gs(1).contains(*k))
+            .map(|k| obj! {"do" => "grant", "keyword" => *k, "what" => obj!{"sel" => "event"}})
+            .collect();
+        if v.is_empty() { None } else { Some(v) }
+    }),
     (r"^untap all attacking creatures$", |_| {
         Some(eff(
             obj! {"do" => "untap", "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "you"}}},
@@ -1803,8 +1814,10 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             // --- Tiers 1/2 (isshin): "whenever a creature you control attacks, it gets +2/+2" (Fervent Charge): "it"
             // is the attacking creature, not this permanent
             let each = trig.as_ref().is_some_and(|t| t.iter().any(|x| x.get("source") == Some(&J::from("you_each"))));
-            let body = match m.gs(3).strip_prefix("it gets ") {
-                Some(r) if each => format!("that creature gets {r}"),
+            // (Atarka, World Render: "it gains double strike until end of turn" is the attacking Dragon only)
+            let body = match (m.gs(3).strip_prefix("it gets "), m.gs(3).strip_prefix("it gains ")) {
+                (Some(r), _) if each => format!("that creature gets {r}"),
+                (_, Some(r)) if each => format!("the event creature gains {r}"),
                 _ => m.gs(3).to_string(),
             };
             let (e, b) = parse_effects(&body);

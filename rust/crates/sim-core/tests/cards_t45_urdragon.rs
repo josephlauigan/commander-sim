@@ -547,3 +547,21 @@ fn mox_jasper_counts_a_maskwood_nexus_creature_as_a_dragon() {
     perm(&mut g, P0, "Maskwood Nexus");
     assert_eq!(total_mana(&g, P0, false), 1, "Maskwood Nexus makes it a Dragon");
 }
+
+#[test]
+fn atarka_gives_double_strike_only_to_the_attacking_dragon() {
+    use sim_core::dsl::has_kw;
+    use sim_core::engine::combat;
+    // "Whenever a Dragon you control attacks, it gains double strike until end of turn."
+    let mut g = tbl_dragons();
+    perm(&mut g, P0, "Atarka, World Render");
+    let (d1, d2) = (perm(&mut g, P0, "Hellkite Courser"), perm(&mut g, P0, "Wrathful Red Dragon"));
+    let other = token(&mut g, P0, 2);
+    combat::attack_triggers(&mut g, P0, &[d1], P1).unwrap();
+    assert!(has_kw(&g, d1, "double strike"), "the attacking Dragon gains double strike");
+    assert!(!has_kw(&g, d2, "double strike"), "a Dragon that didn't attack doesn't");
+    assert!(!has_kw(&g, other, "double strike"), "a non-Dragon doesn't");
+    // a non-Dragon attacking doesn't trigger it
+    combat::attack_triggers(&mut g, P0, &[other], P1).unwrap();
+    assert!(!has_kw(&g, other, "double strike"), "an attacking non-Dragon doesn't gain it");
+}
