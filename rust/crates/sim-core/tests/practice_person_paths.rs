@@ -46,7 +46,7 @@ fn bins_line(g: &Game) -> String {
 }
 
 fn four_seat_game() -> Game {
-    let mut g = table(&["seph", "cloud", "kefka", "thanos"]);
+    let mut g = table(&["seph", "cloud", "kefka", "kyodai"]);
     g.log = Some(vec![]);
     g
 }
@@ -161,7 +161,7 @@ fn on_stack(g: &mut Game, p: PlayerId, name: &str) -> CardId {
 /// seat 0 holds Mindbreak Trap and four blue mana; the stack, bottom to top: P0's Opt, P2's Brainstorm, P1's Lightning
 /// Bolt
 fn trap_table() -> Game {
-    let mut g = table(&["thanos", "seph", "kefka"]);
+    let mut g = table(&["kyodai", "seph", "kefka"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     pool(&mut g, P0, &[('U', 4)]);
@@ -267,7 +267,7 @@ fn trap_cancelling_the_first_question_casts_nothing() {
 
 #[test]
 fn trap_with_one_opposing_spell_has_nothing_to_choose() {
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     pool(&mut g, P0, &[('U', 4)]);
@@ -319,7 +319,7 @@ fn item_on_stack(g: &mut Game, p: PlayerId, name: &str, kind: StackKind) {
 /// the stack, bottom to top: P0's Opt, P0's ability, P2's Brainstorm, P1's trigger, P1's Lightning Bolt, already
 /// countered. Oracle: "target spells": only Brainstorm and Opt are legal
 fn trap_table_with_non_spells() -> Game {
-    let mut g = table(&["thanos", "seph", "kefka"]);
+    let mut g = table(&["kyodai", "seph", "kefka"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     pool(&mut g, P0, &[('U', 4)]);
@@ -349,7 +349,7 @@ fn trap_the_person_is_offered_only_spells_that_are_not_countered() {
 fn trap_the_person_with_one_legal_spell_among_other_items_has_nothing_to_choose() {
     // only P1's Lightning Bolt is a spell that can be targeted: the other items are an ability, a trigger and a
     // countered spell
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     pool(&mut g, P0, &[('U', 4)]);
@@ -370,7 +370,7 @@ fn trap_the_person_with_one_legal_spell_among_other_items_has_nothing_to_choose(
 /// before the first Trap resolves, and the first Trap still exiles Brainstorm
 #[test]
 fn trap_the_chosen_further_targets_are_exiled_when_the_first_target_left_in_response() {
-    let mut g = table(&["thanos", "seph", "kefka"]);
+    let mut g = table(&["kyodai", "seph", "kefka"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     pool(&mut g, P0, &[('U', 4)]);

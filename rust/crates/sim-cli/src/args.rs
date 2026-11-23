@@ -233,7 +233,7 @@ pub fn help() -> String {
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
     s += "\nExamples\n  commander-sim --deck yoshimaru --pool t4 --profile loose --games 960\n  commander-sim --deck yoshimaru \
-          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish thanos,t5 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
+          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish kyodai,t5 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
 
@@ -494,9 +494,9 @@ mod goldfish_flag_tests {
 
     #[test]
     fn goldfish_takes_deck_keys_and_is_in_the_help() {
-        let argv: Vec<String> = "--goldfish thanos,t5 --games 50".split_whitespace().map(|x| x.to_string()).collect();
+        let argv: Vec<String> = "--goldfish kyodai,t5 --games 50".split_whitespace().map(|x| x.to_string()).collect();
         let a = parse(&argv).unwrap();
-        assert_eq!((a.goldfish.as_deref(), a.games), (Some("thanos,t5"), 50));
+        assert_eq!((a.goldfish.as_deref(), a.games), (Some("kyodai,t5"), 50));
         assert!(help().contains("--goldfish KEYS") && usage().contains("--goldfish"));
         assert_eq!(parse(&["--goldfish".to_string()]).unwrap_err().code, 2);
     }
@@ -505,15 +505,15 @@ mod goldfish_flag_tests {
     #[test]
     fn mulligan_oracle_flags_default_to_the_fast_ai() {
         let p = |s: &str| parse(&s.split_whitespace().map(|x| x.to_string()).collect::<Vec<_>>()).unwrap();
-        let a = p("--mulligan-oracle thanos,t6");
+        let a = p("--mulligan-oracle kyodai,t6");
         assert_eq!(
             (a.mulligan_oracle.as_deref(), a.hands, a.playouts, a.ai.as_str()),
-            (Some("thanos,t6"), 1000, 40, "adaptive")
+            (Some("kyodai,t6"), 1000, 40, "adaptive")
         );
         let a = p("--mulligan-oracle yoshimaru --hands 20 --playouts 8 --seed 7 --ai lookahead");
         assert_eq!((a.hands, a.playouts, a.seed, a.ai.as_str()), (20, 8, 7, "lookahead"));
         // every other mode keeps the lookahead default
-        assert_eq!(p("--goldfish thanos").ai, "lookahead");
+        assert_eq!(p("--goldfish kyodai").ai, "lookahead");
         assert!(help().contains("--mulligan-oracle KEYS") && usage().contains("--mulligan-oracle"));
     }
 }

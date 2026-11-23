@@ -805,7 +805,7 @@ fn oran_new(g: &Game, p: PlayerId) -> Vec<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| g.is_creature(m) && g.perm(m).sick && g.perm(m).cd.is_some_and(|c| g.db.get(c).pips.contains('G')))
+        .filter(|&m| g.is_creature(m) && g.perm(m).sick && g.perm(m).cd.is_some_and(|c| g.db.get(c).colors.has('G')))
         .collect()
 }
 
@@ -877,8 +877,7 @@ fn mortuary(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
 }
 
 fn is_island(g: &Game, l: PermId) -> bool {
-    let d = g.db.get(g.perm(l).card());
-    &*d.name == "Island" || d.has_subtype("island")
+    crate::engine::chars::land_types(g, l).has('U') // layer 4: Leyline of the Guildpact
 }
 
 /// enters untapped with three other Islands, then puts the best instant or sorcery from the graveyard on top

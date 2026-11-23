@@ -1213,7 +1213,7 @@ pub fn evoke_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
             let t = best_opp_creature(g, p, |m| {
                 !g.perm(m).cd.is_some_and(|cd| {
                     let d = g.db.get(cd);
-                    d.types.has(Types::ARTIFACT) || d.pips.contains('B')
+                    d.types.has(Types::ARTIFACT) || d.colors.has('B')
                 })
             });
             match t {

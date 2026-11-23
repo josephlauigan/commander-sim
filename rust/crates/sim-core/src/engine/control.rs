@@ -55,6 +55,7 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
         let x = g.perm_mut(m);
         x.owner = new;
         x.attached = None;
+        x.data.remove(DataKey::Kyodai); // Kyodai's "for as long as you control" grants end when he changes hands
         g.player_mut(new).perms.push(m);
         if land {
             g.player_mut(new).lands.push(m);
@@ -149,6 +150,7 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
             let land = g.player(p).lands.contains(&m);
             g.player_mut(p).lands.retain(|&x| x != m);
             g.perm_mut(m).owner = orig;
+            g.perm_mut(m).data.remove(DataKey::Kyodai); // Kyodai's grants end when he changes hands
             g.player_mut(orig).perms.push(m);
             if land {
                 g.player_mut(orig).lands.push(m);

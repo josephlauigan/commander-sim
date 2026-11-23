@@ -511,7 +511,7 @@ fn karn_great_creator_minus_two_takes_the_artifact_card_the_person_picks() {
 // ------------------------------------------------------------------ Teferi, Time Raveler
 #[test]
 fn teferi_minus_three_bounces_the_permanent_the_person_picks_and_draws() {
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     let t = perm(&mut g, P0, "Teferi, Time Raveler");
     lists(&mut g, t, &["+1:", "-3:"]);
     perm(&mut g, P1, "Shivan Dragon");
@@ -532,7 +532,7 @@ fn teferi_minus_three_bounces_the_permanent_the_person_picks_and_draws() {
 
 #[test]
 fn teferi_minus_three_may_have_no_target_and_still_draws() {
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     let t = perm(&mut g, P0, "Teferi, Time Raveler");
     perm(&mut g, P1, "Shivan Dragon");
     let mine = g.player(P0).hand.len();

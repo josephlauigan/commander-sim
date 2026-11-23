@@ -29,7 +29,7 @@ fn land_names(g: &Game, p: PlayerId) -> Vec<String> {
 // ------------------------------------------------------------------ the graveyard
 #[test]
 fn crucible_plays_strip_mine_from_the_graveyard() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Crucible of Worlds");
     let sm = gy_push(&mut g, P0, "Strip Mine");
     assert_eq!(legal::check_land_gy(&g, P0, sm), None);
@@ -43,7 +43,7 @@ fn crucible_plays_strip_mine_from_the_graveyard() {
 
 #[test]
 fn crucible_still_one_land_a_turn() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Crucible of Worlds");
     let sm = gy_push(&mut g, P0, "Strip Mine");
     g.player_mut(P0).lands_played = 1;
@@ -52,14 +52,14 @@ fn crucible_still_one_land_a_turn() {
 
 #[test]
 fn no_graveyard_lands_without_crucible() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     let sm = gy_push(&mut g, P0, "Strip Mine");
     assert!(legal::check_land_gy(&g, P0, sm).unwrap().contains("can't play lands from your graveyard"));
 }
 
 #[test]
 fn an_opponents_crucible_does_not_help() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P1, "Crucible of Worlds");
     let sm = gy_push(&mut g, P0, "Strip Mine");
     assert!(legal::check_land_gy(&g, P0, sm).unwrap().contains("can't play lands from your graveyard"));
@@ -67,7 +67,7 @@ fn an_opponents_crucible_does_not_help() {
 
 #[test]
 fn crucible_leaves_muldrothas_land_unused() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Crucible of Worlds");
     perm(&mut g, P0, "Muldrotha, the Gravetide");
     let sm = gy_push(&mut g, P0, "Strip Mine");
@@ -86,7 +86,7 @@ fn play_top(g: &mut Game, p: PlayerId) -> Option<String> {
 
 #[test]
 fn oracle_of_mul_daya_plays_a_land_from_the_top() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Oracle of Mul Daya");
     let f = on_top(&mut g, P0, "Forest");
     assert!(legal::top_visible(&g, P0), "Mul Daya reveals the top card");
@@ -107,7 +107,7 @@ fn oracle_of_mul_daya_plays_a_land_from_the_top() {
 fn mul_daya_is_not_an_activated_ability() {
     // playing a land is a special action, not an activated ability: an opposing Cursed Totem doesn't stop it, and
     // the Oracle offers nothing under "Activate" (no extra priority stop in combat)
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     let o = perm(&mut g, P0, "Oracle of Mul Daya");
     on_top(&mut g, P0, "Forest");
     // (before the Totem, which empties the list of every creature's abilities anyway)
@@ -120,7 +120,7 @@ fn mul_daya_is_not_an_activated_ability() {
 
 #[test]
 fn courser_of_kruphix_plays_a_land_from_the_top() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Courser of Kruphix");
     on_top(&mut g, P0, "Forest");
     assert_eq!(play_top(&mut g, P0), None);
@@ -129,7 +129,7 @@ fn courser_of_kruphix_plays_a_land_from_the_top() {
 
 #[test]
 fn a_nonland_top_is_seen_but_not_played() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Oracle of Mul Daya");
     let s = on_top(&mut g, P0, "Sol Ring");
     assert!(legal::top_visible(&g, P0));
@@ -140,7 +140,7 @@ fn a_nonland_top_is_seen_but_not_played() {
 
 #[test]
 fn no_top_lands_without_mul_daya() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     let f = on_top(&mut g, P0, "Forest");
     assert!(!legal::top_visible(&g, P0), "the top card stays hidden");
     assert!(legal::check_land_top(&g, P0, f).unwrap().contains("can't play lands from the top"));
@@ -148,7 +148,7 @@ fn no_top_lands_without_mul_daya() {
 
 #[test]
 fn top_lands_only_at_sorcery_speed() {
-    let mut g = table(&["thanos", "cloud"]);
+    let mut g = table(&["kyodai", "cloud"]);
     perm(&mut g, P0, "Oracle of Mul Daya");
     let f = on_top(&mut g, P0, "Forest");
     g.active = Some(P1); // another player's turn

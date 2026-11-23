@@ -271,6 +271,12 @@ pub enum DataKey {
     Dauthi,
     /// the X a permanent spell was cast with (Int, set as it enters: `Enter::x`); absent when it did not enter from a cast
     CastX,
+    /// Kyodai, Soul of Kamigawa: the controller as its enter trigger resolved, then each permanent it made indestructible
+    /// (a `Val::List` of `Val::Player` and `Val::Perm`s); read by `impls::kyodai::grants`
+    Kyodai,
+    /// a permanent made indestructible by a Kyodai (a `Val::List` of `Val::Perm`: each Kyodai that granted it); read in
+    /// `chars::has_keyword`, live only while that Kyodai's own `DataKey::Kyodai` list still names the permanent
+    KyodaiOn,
 }
 
 /// A value in per-card state.
@@ -1494,6 +1500,10 @@ pub struct Game {
     pub lineage: bool,
     /// partials.coat_bonus's cache: (bf_ver, each creature's bonus), as Python's `g.coat_cache`
     pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
+    /// the colours the hybrid symbols of a card were last priced at (engine::hybrid; per game, never shared)
+    pub hybrid_paid: std::cell::RefCell<std::collections::HashMap<CardId, String>>,
+    /// some seat's deck holds Leyline of the Guildpact (set in `Game::new`); false: `chars::leyline` skips its scan
+    pub leyline_deck: bool,
     /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
     pub in_rtf: bool,
     /// how deep Chatterfang's Squirrels for artifact tokens are nested (t3: a token loop stops at 10)
@@ -1533,6 +1543,8 @@ impl Game {
         rng: Rng,
     ) -> Game {
         let work_cap = settings.game_work;
+        let leyline_deck =
+            db.id("Leyline of the Guildpact").is_some_and(|c| players.iter().any(|p| p.library.contains(&c)));
         Game {
             db,
             settings,
@@ -1670,6 +1682,8 @@ impl Game {
             coat: false,
             lineage: false,
             coat_cache: std::cell::RefCell::new(None),
+            hybrid_paid: Default::default(),
+            leyline_deck,
             in_rtf: false,
             chatter_depth: 0,
             blink_depth: 0,

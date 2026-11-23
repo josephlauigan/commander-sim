@@ -2,11 +2,11 @@
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
   "fetched": "2026-11-23",
-  "deck": "thanos",
+  "deck": "kyodai",
   "commanders": [
-    "Thanos, the Mad Titan"
+    "Kyodai, Soul of Kamigawa"
   ],
-  "request_sha256": "ecda169010758b8780251fc2302c1195630db0aa5ca44642dd07566e753ec88d",
+  "request_sha256": "1b08f59faf1a789e46d870e113b929f58b31ef473224f3fad1c153c95c55cd4b",
   "identity": "WUBRG",
   "included": [
     {
@@ -1431,6 +1431,35 @@
       "popularity": 9100,
       "missing": [
         "Najeela, the Blade-Blossom"
+      ]
+    },
+    {
+      "id": "1024-5364",
+      "cards": [
+        {
+          "name": "Leyline of the Guildpact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Coalition Victory",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one land.\nYou control at least one creature.",
+      "mana": "{3}{W}{U}{B}{R}{G}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 8425,
+      "missing": [
+        "Coalition Victory"
       ]
     },
     {

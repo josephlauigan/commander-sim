@@ -98,14 +98,14 @@ fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
 // ------------------------------------------------------------------ Loran of the Third Path
 #[test]
 fn loran_is_listed_and_asks_which_opponent_draws() {
-    let mut g = table(&["yshtola", "seph", "thanos"]);
+    let mut g = table(&["yshtola", "seph", "kyodai"]);
     let l = perm(&mut g, P0, "Loran of the Third Path");
     let ls = labels(&mut g, P0, l);
     assert!(ls.iter().any(|x| x.starts_with("{T}: you and target opponent each draw a card")), "{ls:?}");
     let (mine, p1, p2) = (g.player(P0).hand.len(), g.player(P1).hand.len(), g.player(P2).hand.len());
     let h = run(&mut g, Use::Perm(l), "{T}:", |r| {
         if r.prompt.contains("Loran: which opponent draws a card?") {
-            r.choices.iter().position(|c| c.contains("Thanos"))
+            r.choices.iter().position(|c| c.contains("Kyodai"))
         } else {
             None
         }

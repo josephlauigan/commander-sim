@@ -1194,6 +1194,7 @@ pub fn phase_in_for(g: &mut Game, p: PlayerId) {
         let x = g.perm_mut(m);
         x.phased = false;
         x.data.remove(DataKey::PhaseInWith);
+        x.data.remove(DataKey::Kyodai); // Kyodai's "for as long as you control him" ended as he phased out (702.26)
     }
     if !phase_in.is_empty() {
         g.bf_ver += 1;
@@ -1591,7 +1592,7 @@ pub fn setup_game_for(
             continue;
         }
         mulligan(&mut g, p, &mut r);
-        crate::impls::card_models::caverns_opening(&mut g, p); // Gemstone Caverns: not the starting player
+        crate::impls::card_models::opening_hand_actions(&mut g, p); // Leyline, Gemstone Caverns (not the starting player)
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }

@@ -31,7 +31,7 @@ const P1: PlayerId = PlayerId(1);
 
 /// the decks with Rings of Brighthearth (karn, thanos) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
-const DECKS: &[&str] = &["karn", "alela", "cloud", "galadriel", "sheoldred", "thanos", "urdragon", "yshtola"];
+const DECKS: &[&str] = &["karn", "alela", "cloud", "galadriel", "sheoldred", "kyodai", "urdragon", "yshtola"];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -430,7 +430,7 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
 /// set the position up. An entry that is now offered (or no longer found) fails the test: take it off the list.
 const EXCEPTIONS: &[(&str, &str)] = &[
     (
-        "thanos: Basalt Monolith #0",
+        "kyodai: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
@@ -514,7 +514,7 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
 /// outright, so removing them from `DECKS` fails
 #[test]
 fn the_sweep_covers_the_decks_with_rings() {
-    assert!(DECKS.contains(&"karn") && DECKS.contains(&"thanos"));
+    assert!(DECKS.contains(&"karn") && DECKS.contains(&"kyodai"));
 }
 
 /// (scan) the permanents of the owned decks whose abilities reach a person through the AI's `options` hook (no person

@@ -165,7 +165,7 @@ fn sheoldred_t4() {
 // The decks the bot games didn't cover (2026-11-04): each on one of its own tiers (`data/my_decks.toml`)
 #[test]
 fn thanos_t5() {
-    play("thanos", "t5", 1);
+    play("kyodai", "t5", 1);
 }
 #[test]
 fn yoshimaru_t4() {

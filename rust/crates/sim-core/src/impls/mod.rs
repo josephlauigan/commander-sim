@@ -34,6 +34,7 @@ pub mod green_cards;
 pub mod karn;
 pub mod karn_cards;
 pub mod karn_engines;
+pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
 pub mod kefka;
 pub mod krrik;
 pub mod kuja;
@@ -232,5 +233,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     sorin::register(&mut r, db)?; // --- yoshimaru: Sorin, Vengeful Bloodlord
     vondam_elspeth::register(&mut r, db)?; // --- yoshimaru: Syr Vondam, Sunstar Exemplar
     yoshimaru_p7::register(&mut r, db)?; // --- yoshimaru (P7a): Takenuma's channel
+    kyodai::register(&mut r, db)?; // --- thanos: Kyodai's enter trigger
     Ok(r)
 }

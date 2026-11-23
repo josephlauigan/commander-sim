@@ -17,7 +17,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    table(&["thanos", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
+    table(&["kyodai", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
 }
 
 /// Thanos on the battlefield as P0's commander; `fresh`: he entered this turn

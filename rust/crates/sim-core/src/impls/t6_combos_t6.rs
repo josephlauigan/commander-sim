@@ -914,7 +914,7 @@ const X_TUTORS: [(&str, bool, bool); 4] =
 fn x_tutor(g: &Game, p: PlayerId, piece: &str) -> Option<(CardId, u32, String)> {
     let c = lib_card(g, p, piece)?;
     let d = g.db.get(c);
-    let (green, human) = (d.pips.contains('G'), d.has_subtype("human"));
+    let (green, human) = (d.colors.has('G'), d.has_subtype("human"));
     X_TUTORS.iter().find_map(|&(t, any, humans)| {
         if (!any && !green) || (!humans && human) {
             return None;

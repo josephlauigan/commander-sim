@@ -1306,7 +1306,7 @@ pub fn counter_ok(g: &Game, ctr: CardId, c: CardId) -> bool {
         Some("cre") => d.creature,
         Some("mv1") => d.cmc == 1,                                // Mental Misstep
         Some("cre2") => d.creature && (d.pow <= 2 || d.tgh <= 2), // Stern Scolding
-        Some("blue") => d.pips.contains('U'),                     // Pyroblast / Red Elemental Blast
+        Some("blue") => d.colors.has('U'),                        // Pyroblast / Red Elemental Blast
         Some("crleg") => d.creature || d.tag(Tag::Leg),           // Icy Reception: creature or legendary spell
         // Disrupting Shoal counters a spell only if its mana value is X. The AI always chooses X equal to the spell's
         // mana value (`counter_cost`; the pitch needs a blue card of that value, `t6_counters::shoal_pitch`).

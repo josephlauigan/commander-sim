@@ -347,7 +347,7 @@ fn flare_fodder(g: &Game, p: PlayerId, worth: f64) -> Option<PermId> {
             x.on_bf
                 && !x.token
                 && g.is_creature(m)
-                && x.cd.is_some_and(|c| g.db.get(c).pips.contains('R') && !g.player(p).is_commander(c))
+                && x.cd.is_some_and(|c| g.db.get(c).colors.has('R') && !g.player(p).is_commander(c))
                 && pval(g, m) + 1.0 < worth
         })
         .collect();

@@ -537,7 +537,7 @@ pub fn gisela_scale(g: &Game, victim: PlayerId, n: i32) -> i32 {
 /// Iroas is a 7/4 creature only while its controller's devotion to red and white is seven or more
 fn iroas_update(g: &mut Game, src: PermId) {
     let o = owner(g, src);
-    let dev = crate::impls::rules2::devotion(g, o, 'R') + crate::impls::rules2::devotion(g, o, 'W');
+    let dev = crate::impls::rules2::devotion_to(g, o, "RW"); // a {R/W} symbol counts once
     let x = g.perm_mut(src);
     (x.pow, x.tgh) = (7, 4);
     x.data.set(DataKey::Anim, Val::Bool(dev >= 7));

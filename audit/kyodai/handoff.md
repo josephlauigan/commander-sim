@@ -2,8 +2,8 @@
 
 ## Done
 - Rename: deck key `thanos` (my_decks.toml, sim-cli decks/args/poolmode/report/goldfish tests, practice catalog/setup
-  and tests, T6_KEYS in t6_plans.rs and t6stats.rs). Plan file data/plans/thanos.toml (Scion's, with its style moved
-  from ai::T6_JD_STYLES into `[style]`). data/spellbook/thanos.json refetched (scripts/spellbook-fetch.sh).
+  and tests, T6_KEYS in t6_plans.rs and t6stats.rs). Plan file data/plans/thanos.toml (now kyodai.toml; Scion's, with its style moved
+  from ai::T6_JD_STYLES into `[style]`). data/spellbook/thanos.json (now kyodai.json) refetched (scripts/spellbook-fetch.sh).
 - Scion retired: list in decklists/pool/retired/, testkit seats `scion` (its card tests: cards_scion.rs, goldfish
   card code), "scion" stays in T6_KEYS and T6_JD_STYLES as a test seat (like godo).
 - Ur-Dragon: key `urdragon` (not `ur-dragon`: cardgen `--deck` matches by prefix, and the retired pool deck is
