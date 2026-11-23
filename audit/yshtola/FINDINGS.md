@@ -216,7 +216,7 @@ meets Urza or Brago (yshtola, thanos, aragorn at t5; cloud at t2). Options: acce
 rule to keep hand-tagged entries that a pool deck plays (an export-wide change: JD's call).
 
 **Not done:** `data/printings/yshtola.txt` (JD's printings: it still lists Kitten and Teferi's Protection and has no entry
-for the new cards) and `data/spellbook/yshtola.json` (needs a network fetch; it doesn't list Oracle + Consultation yet).
+for the new cards). (`data/spellbook/yshtola.json` has listed Oracle + Consultation since its 2026-11-15 re-fetch; the 2026-11-23 re-fetch still does.)
 
 ## Baseline 2026-11-07 (after package Y; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
 **27.4%** (26.5-28.3) at t5, against 26.5% (24.6-28.5) in Baseline B (2,000 games): +0.9, inside the noise. Package Y

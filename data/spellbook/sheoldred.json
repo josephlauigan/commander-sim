@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-14",
+  "fetched": "2026-11-23",
   "deck": "sheoldred",
   "commanders": [
     "Sheoldred, the Apocalypse"
   ],
-  "request_sha256": "6e09d16f995985eb18a447fd9bd00d38ff60e7fbd0d13e959e3afa19d473880f",
+  "request_sha256": "8469122153f4ad79ec337b83b1fe6bcc1921243ea951e7157e666b949bf69287",
   "identity": "B",
   "included": [
     {
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152201
+      "popularity": 152549
     },
     {
       "id": "314-3966",
@@ -63,7 +63,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 127730
+      "popularity": 128083
     },
     {
       "id": "1561-2498",
@@ -91,7 +91,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 52184
+      "popularity": 52439
     },
     {
       "id": "1561-2720",
@@ -117,7 +117,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 36624
+      "popularity": 36849
     },
     {
       "id": "328-628-4279",
@@ -152,7 +152,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 15726
+      "popularity": 15844
     },
     {
       "id": "628-1495",
@@ -178,7 +178,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8572
+      "popularity": 8649
     }
   ],
   "included_by_changing_commanders": [],
@@ -209,7 +209,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 97102,
+      "popularity": 97526,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -240,7 +240,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 81454,
+      "popularity": 81728,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -271,7 +271,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 76921,
+      "popularity": 77157,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -302,7 +302,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62064,
+      "popularity": 62219,
       "missing": [
         "Marauding Blight-Priest"
       ]
@@ -332,7 +332,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57458,
+      "popularity": 57632,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -363,7 +363,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 47790,
+      "popularity": 47997,
       "missing": []
     },
     {
@@ -393,7 +393,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46897,
+      "popularity": 47062,
       "missing": [
         "Orcish Bowmasters"
       ]
@@ -422,7 +422,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 33579,
+      "popularity": 33774,
       "missing": []
     },
     {
@@ -450,7 +450,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 31489,
+      "popularity": 31664,
       "missing": [
         "Psychosis Crawler"
       ]
@@ -481,7 +481,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28765,
+      "popularity": 28778,
       "missing": [
         "Starscape Cleric"
       ]
@@ -518,7 +518,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 26496,
+      "popularity": 26626,
       "missing": [
         "Sensei's Divining Top"
       ]
@@ -555,7 +555,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 22830,
+      "popularity": 22968,
       "missing": [
         "Vilis, Broker of Blood"
       ]
@@ -584,7 +584,7 @@
       "mana": "{4}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 17180,
+      "popularity": 17196,
       "missing": [
         "Blood Tribute"
       ]
@@ -613,7 +613,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 17054,
+      "popularity": 17094,
       "missing": [
         "Ob Nixilis, the Hate-Twisted"
       ]
@@ -642,7 +642,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 16284,
+      "popularity": 16377,
       "missing": [
         "Bloodletter of Aclazotz"
       ]
@@ -679,7 +679,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14584,
+      "popularity": 14639,
       "missing": [
         "Nest of Scarabs"
       ]
@@ -706,7 +706,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12212,
+      "popularity": 12243,
       "missing": [
         "Walking Ballista"
       ]
@@ -737,7 +737,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11732,
+      "popularity": 11691,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -774,7 +774,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11444,
+      "popularity": 11505,
       "missing": [
         "Nest of Scarabs"
       ]
@@ -803,7 +803,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 11418,
+      "popularity": 11478,
       "missing": [
         "Alhammarret's Archive"
       ]
@@ -838,7 +838,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9674,
+      "popularity": 9708,
       "missing": [
         "Plague Belcher"
       ]
@@ -876,7 +876,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 8676,
+      "popularity": 8748,
       "missing": [
         "Ayara, First of Locthwain"
       ]
@@ -907,7 +907,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8389,
+      "popularity": 8351,
       "missing": [
         "Epicure of Blood"
       ]
@@ -936,7 +936,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7873,
+      "popularity": 7848,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -965,7 +965,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7491,
+      "popularity": 7466,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -996,7 +996,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 6775,
+      "popularity": 6840,
       "missing": [
         "Tombstone Stairwell"
       ]
@@ -1026,7 +1026,7 @@
       "mana": "{2}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 6499,
+      "popularity": 6603,
       "missing": [
         "Jaws of Defeat"
       ]
@@ -1057,7 +1057,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5677,
+      "popularity": 5673,
       "missing": [
         "Lich's Mastery"
       ]
@@ -1088,7 +1088,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5302,
+      "popularity": 5414,
       "missing": [
         "South Wind Avatar"
       ]
@@ -1126,7 +1126,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5210,
+      "popularity": 5255,
       "missing": [
         "Kokusho, the Evening Star"
       ]
@@ -1163,14 +1163,15 @@
         "Infinite lifegain",
         "Infinite lifegain triggers",
         "Infinite lifeloss",
-        "Return all creature cards from all graveyards to the battlefield under your control"
+        "Return all creature cards from all graveyards to the battlefield under your control",
+        "Each opponent loses the game"
       ],
       "requires": [],
       "prerequisites": "Your life total is 10 or greater.\nYou have at least two opponents, or your devotion to black is at least ten.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5119,
+      "popularity": 5142,
       "missing": [
         "Chainer, Dementia Master"
       ]
@@ -1207,7 +1208,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 4942,
+      "popularity": 4959,
       "missing": [
         "Skirge Familiar"
       ]
@@ -1244,7 +1245,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2949,
+      "popularity": 2982,
       "missing": [
         "Nest of Scarabs"
       ]
@@ -1278,6 +1279,7 @@
         }
       ],
       "results": [
+        "Each opponent loses the game",
         "Infinite lifegain",
         "Infinite lifegain triggers",
         "Infinite lifeloss",
@@ -1289,7 +1291,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2488,
+      "popularity": 2493,
       "missing": [
         "Chainer, Dementia Master"
       ]
@@ -1318,7 +1320,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2279,
+      "popularity": 2337,
       "missing": [
         "Platinum Angel"
       ]
@@ -1354,7 +1356,7 @@
       "mana": "{2}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2192,
+      "popularity": 2188,
       "missing": [
         "Nim Deathmantle"
       ]
@@ -1383,7 +1385,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 1943,
+      "popularity": 1954,
       "missing": [
         "Black Vise"
       ]
@@ -1416,7 +1418,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1912,
+      "popularity": 1937,
       "missing": [
         "Plague Belcher"
       ]
@@ -1448,7 +1450,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 1796,
+      "popularity": 1815,
       "missing": [
         "Feast of Sanity"
       ]
@@ -1475,7 +1477,7 @@
       "mana": "{4}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1301,
+      "popularity": 1305,
       "missing": [
         "Spawnsire of Ulamog"
       ]
@@ -1506,7 +1508,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1270,
+      "popularity": 1273,
       "missing": [
         "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant"
       ]
@@ -1550,7 +1552,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1241,
+      "popularity": 1255,
       "missing": [
         "Mortuary"
       ]
@@ -1592,7 +1594,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 862,
+      "popularity": 871,
       "missing": [
         "Mortuary"
       ]
@@ -1627,44 +1629,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 724,
+      "popularity": 727,
       "missing": [
         "Tatterkite"
-      ]
-    },
-    {
-      "id": "628-2034-4929",
-      "cards": [
-        {
-          "name": "Mikaeus, the Unhallowed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptic Trilobite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 601,
-      "missing": [
-        "Cryptic Trilobite"
       ]
     },
     {
@@ -1704,9 +1671,44 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 597,
+      "popularity": 608,
       "missing": [
         "Mortuary"
+      ]
+    },
+    {
+      "id": "628-2034-4929",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptic Trilobite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 602,
+      "missing": [
+        "Cryptic Trilobite"
       ]
     },
     {
@@ -1739,7 +1741,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 557,
+      "popularity": 555,
       "missing": [
         "Carnifex Demon"
       ]
@@ -1784,7 +1786,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 494,
+      "popularity": 493,
       "missing": [
         "Mortuary"
       ]
@@ -1820,38 +1822,9 @@
       "mana": "{1} if Cryptic Trilobite does not have a +1/+1 counter on it",
       "bracket": "S",
       "legal": true,
-      "popularity": 448,
+      "popularity": 453,
       "missing": [
         "Cryptic Trilobite"
-      ]
-    },
-    {
-      "id": "202-2498",
-      "cards": [
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lich",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 430,
-      "missing": [
-        "Lich"
       ]
     },
     {
@@ -1878,7 +1851,36 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 428,
+      "popularity": 431,
+      "missing": [
+        "Lich"
+      ]
+    },
+    {
+      "id": "202-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 429,
       "missing": [
         "Lich"
       ]
@@ -1913,7 +1915,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 420,
+      "popularity": 422,
       "missing": [
         "Cryptic Trilobite"
       ]
@@ -1948,7 +1950,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 415,
+      "popularity": 421,
       "missing": [
         "Moonshadow"
       ]
@@ -2010,7 +2012,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 354,
+      "popularity": 358,
       "missing": [
         "Platinum Emperion"
       ]
@@ -2039,7 +2041,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 349,
+      "popularity": 352,
       "missing": [
         "Nefarious Lich"
       ]
@@ -2074,7 +2076,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 332,
+      "popularity": 329,
       "missing": [
         "Chainbreaker"
       ]
@@ -2116,7 +2118,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 319,
+      "popularity": 320,
       "missing": [
         "Mortuary"
       ]
@@ -2152,9 +2154,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 318,
+      "popularity": 317,
       "missing": [
         "Crystalline Crawler"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 313,
+      "missing": [
+        "Umbilicus"
       ]
     },
     {
@@ -2179,7 +2208,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 314,
+      "popularity": 309,
       "missing": [
         "Cinderhaze Wretch"
       ]
@@ -2212,36 +2241,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 311,
+      "popularity": 309,
       "missing": [
         "Chainbreaker"
-      ]
-    },
-    {
-      "id": "131-3363",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Umbilicus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 306,
-      "missing": [
-        "Umbilicus"
       ]
     },
     {
@@ -2266,7 +2268,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 291,
+      "popularity": 298,
       "missing": [
         "Blood Clock"
       ]
@@ -2301,7 +2303,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 265,
+      "popularity": 267,
       "missing": [
         "Crystalline Crawler"
       ]
@@ -2336,7 +2338,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 265,
+      "popularity": 266,
       "missing": [
         "Workhorse"
       ]
@@ -2375,33 +2377,6 @@
       ]
     },
     {
-      "id": "2034-4640",
-      "cards": [
-        {
-          "name": "Oathkeeper, Takeno's Daisho",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You conrtol a nontoken Samurai and/or a nontoken creature with changeling.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 246,
-      "missing": [
-        "Oathkeeper, Takeno's Daisho"
-      ]
-    },
-    {
       "id": "628-2034-3108",
       "cards": [
         {
@@ -2431,9 +2406,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 246,
+      "popularity": 249,
       "missing": [
         "Grim Poppet"
+      ]
+    },
+    {
+      "id": "2034-4640",
+      "cards": [
+        {
+          "name": "Oathkeeper, Takeno's Daisho",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You conrtol a nontoken Samurai and/or a nontoken creature with changeling.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 248,
+      "missing": [
+        "Oathkeeper, Takeno's Daisho"
       ]
     },
     {
@@ -2458,7 +2460,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 209,
+      "popularity": 213,
       "missing": [
         "Mephidross Vampire"
       ]
@@ -2535,7 +2537,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 156,
+      "popularity": 158,
       "missing": [
         "Grim Poppet"
       ]
@@ -2613,7 +2615,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 151,
+      "popularity": 146,
       "missing": [
         "Cinderhaze Wretch"
       ]
@@ -2646,7 +2648,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 146,
+      "popularity": 142,
       "missing": [
         "Cinderhaze Wretch"
       ]
@@ -2673,7 +2675,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 125,
+      "popularity": 127,
       "missing": [
         "Scythe of the Wretched"
       ]
@@ -2708,7 +2710,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 118,
+      "popularity": 117,
       "missing": [
         "Soulstinger"
       ]
@@ -2741,7 +2743,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 113,
+      "popularity": 115,
       "missing": [
         "Soulstinger"
       ]
@@ -2848,7 +2850,7 @@
       "mana": "{1} each turn",
       "bracket": "E",
       "legal": true,
-      "popularity": 78,
+      "popularity": 79,
       "missing": [
         "Guardian Beast"
       ]
@@ -2883,9 +2885,42 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 76,
+      "popularity": 75,
       "missing": [
         "Monoskelion"
+      ]
+    },
+    {
+      "id": "2292-6132-6981",
+      "cards": [
+        {
+          "name": "Perigee Beckoner",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metamorphosis Fanatic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 73,
+      "missing": [
+        "Metamorphosis Fanatic"
       ]
     },
     {
@@ -2916,7 +2951,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 71,
+      "popularity": 69,
       "missing": [
         "Pith Driller"
       ]
@@ -2951,42 +2986,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 71,
+      "popularity": 69,
       "missing": [
         "Pith Driller"
-      ]
-    },
-    {
-      "id": "2292-6132-6981",
-      "cards": [
-        {
-          "name": "Perigee Beckoner",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Metamorphosis Fanatic",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{1}{B}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 70,
-      "missing": [
-        "Metamorphosis Fanatic"
       ]
     },
     {
@@ -3017,7 +3019,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 52,
+      "popularity": 53,
       "missing": [
         "Heirloom Auntie"
       ]
@@ -3052,7 +3054,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 52,
+      "popularity": 53,
       "missing": [
         "Heirloom Auntie"
       ]
