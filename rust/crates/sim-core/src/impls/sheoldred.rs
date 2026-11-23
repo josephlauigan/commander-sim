@@ -1758,15 +1758,21 @@ fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     }
     let toll = draw_toll(g, p);
     if toll > 0 {
-        let per = toll + 1;
-        // not a target whose life can't change (the drain would only hand them cards) or that can't be targeted
+        // each card costs the target our toll plus 1 for the spell, less the 2 their own Sheoldred gains them
+        let per_of = |g: &Game, q: PlayerId| toll + 1 - if sheoldred_out(g, q) { 2 } else { 0 };
+        // not a target whose life can't change (the drain would only hand them cards), that can't be targeted, or that
+        // gains as much as it loses
         let opps: Vec<PlayerId> = g
             .opps(p)
             .filter(|&q| {
-                pact_target_ok(g, p, c, q) && !g.player(q).life_locked && g.player(q).library.len() as i32 > xmax
+                pact_target_ok(g, p, c, q)
+                    && !g.player(q).life_locked
+                    && g.player(q).library.len() as i32 > xmax
+                    && per_of(g, q) >= 1
             })
             .collect();
         if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
+            let per = per_of(g, q);
             let life = g.player(q).life;
             let kills = !crate::impls::t0_giada::cant_lose(g, q) && xmax * per >= life; // Platinum Angel: no kill
             let x = if kills { ((life + per - 1) / per).max(1) } else { xmax };
@@ -1783,11 +1789,15 @@ fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     }
     // no opponent worth aiming at: draw for ourselves. With Sheoldred out each card gains 2 life and the spell costs 1,
     // so life only rises and the floor is a margin against her being answered in response (7); otherwise it is 12.
+    // An opponent's draw punishers (their Sheoldred 2, Underworld Dreams 1, Fate Unraveler 1, Orcish Bowmasters 1) cost
+    // each card of ours more life, and their triggers resolve before our gains: with any out the floor is 12 and each card
+    // counts its whole cost (the spell plus their toll), ignoring our own gain.
     // (the life the black pips cost with K'rrik out comes off first)
     let pips_life = phyrexian_life(g, p, c, &cost_of(g, p, c).1);
+    let foe = foe_toll(g, p);
     let pl = g.player(p);
-    let floor = if sheoldred_out(g, p) { 7 } else { 12 };
-    let x = xmax.min(pl.life - pips_life - floor).min(pl.library.len() as i32 / 2).min(6);
+    let floor = if foe == 0 && sheoldred_out(g, p) { 7 } else { 12 };
+    let x = xmax.min((pl.life - pips_life - floor) / (1 + foe)).min(pl.library.len() as i32 / 2).min(6);
     if x < 2 {
         return Ok(vec![]);
     }
@@ -1899,6 +1909,12 @@ fn count_named(g: &Game, p: PlayerId, name: &str) -> i32 {
 /// Fate Unraveler 1 (each copy)
 fn draw_toll(g: &Game, p: PlayerId) -> i32 {
     (if sheoldred_out(g, p) { 2 } else { 0 }) + count_named(g, p, "Underworld Dreams") + count_named(g, p, UNRAVELER)
+}
+
+/// what each card p draws costs p while the opponents' draw punishers are out (see `draw_toll`; an Orcish Bowmasters pings
+/// for an extra draw, 1 each)
+fn foe_toll(g: &Game, p: PlayerId) -> i32 {
+    g.opps(p).map(|q| draw_toll(g, q) + count_named(g, q, "Orcish Bowmasters")).sum()
 }
 
 /// one more draw would kill an opponent

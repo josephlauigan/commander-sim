@@ -6805,7 +6805,7 @@ note = "target player draws two cards, then loses 2 life; the sheoldred deck aim
 dsl = []
 tags = ""
 status = "Full"
-note = "target player draws X cards, then loses X life ({X}{B}{B}); the sheoldred deck casts it in its own main phase with the most X its spare mana allows: at the lowest-life opponent whose library is longer than X while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out (3 per card with Sheoldred; cast for a kill, or for X of 2 or more when the drain is 10 life or more), otherwise at itself only for X of 2 or more with life staying at 12 or more"
+note = "target player draws X cards, then loses X life ({X}{B}{B}); the sheoldred deck casts it in its own main phase with the most X its spare mana allows (a smaller X when that kills): at the lowest-life opponent whose library is longer than X while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out (3 a card with Sheoldred, less the 2 an opposing Sheoldred gains them; cast for a kill, or for X of 2 or more when the drain is 10 life or more), otherwise at itself for X of 2 or more (at most 6 and half the library) while life stays at 12 or more after the spell and any opposing draw punisher's toll (7 with only its own Sheoldred out); a dead or untargetable target makes it fizzle"
 
 ["Enduring Tenacity"]
 status = "Full"

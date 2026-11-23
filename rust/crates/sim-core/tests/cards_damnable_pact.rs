@@ -265,6 +265,72 @@ fn the_self_draw_keeps_life_at_twelve_or_more() {
 }
 
 #[test]
+fn the_self_draw_counts_an_opposing_sheoldreds_toll() {
+    // their Sheoldred costs each of our draws 2 life, the spell 1: 3 a card, and the floor stays 12
+    let mut g = game();
+    perm(&mut g, P1, SHEO);
+    lands(&mut g, P0, "Swamp", 7, false);
+    g.player_mut(P0).life = 18; // (18 - 12) / 3 = 2 cards
+    let o = pact_opts(&mut g, P0);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("draw 2"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(life(&g, P0), 12, "18 less 2 for the spell and 4 from their Sheoldred");
+    let mut g = game();
+    perm(&mut g, P1, SHEO);
+    lands(&mut g, P0, "Swamp", 7, false);
+    g.player_mut(P0).life = 17; // (17 - 12) / 3 = 1: below X = 2
+    assert!(pact_opts(&mut g, P0).is_empty());
+}
+
+#[test]
+fn an_opposing_underworld_dreams_and_bowmasters_count_too() {
+    let mut g = game();
+    perm(&mut g, P1, "Underworld Dreams");
+    perm(&mut g, P1, "Orcish Bowmasters");
+    lands(&mut g, P0, "Swamp", 7, false);
+    g.player_mut(P0).life = 18; // 1 + 1 + 1 = 3 a card: 2 cards
+    let o = pact_opts(&mut g, P0);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("draw 2"), "{}", o[0].label);
+}
+
+#[test]
+fn with_both_sheoldreds_out_the_floor_is_twelve_and_each_card_costs_three() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P1, SHEO);
+    lands(&mut g, P0, "Swamp", 7, false);
+    g.player_mut(P0).life = 18;
+    let o = pact_opts(&mut g, P0);
+    assert!(
+        o.iter().all(|x| !x.label.contains(&g.player(P1).name.to_string())),
+        "their own Sheoldred gains them what ours takes: no drain worth aiming"
+    );
+    assert!(o[0].label.contains("draw 2"), "{}", o[0].label);
+}
+
+#[test]
+fn an_opponents_own_sheoldred_cancels_the_toll_in_the_kill_math() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P1, SHEO);
+    lands(&mut g, P0, "Swamp", 7, false);
+    g.player_mut(P1).life = 3; // a card costs them 1 net (2 from ours, 2 gained, 1 for the spell): X = 3
+    let o = pact_opts(&mut g, P0);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("draws 3"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert!(!g.player(P1).alive, "the spell's own X life finishes them");
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    perm(&mut g, P1, SHEO);
+    lands(&mut g, P0, "Swamp", 7, false); // 40 life: 1 a card is nowhere near a drain of 10
+    let o = pact_opts(&mut g, P0);
+    assert!(o.iter().all(|x| !x.label.contains(&g.player(P1).name.to_string())), "{o:?}");
+}
+
+#[test]
 fn the_self_draw_takes_at_most_half_the_library_and_six_cards() {
     let mut g = game();
     lands(&mut g, P0, "Swamp", 10, false);
