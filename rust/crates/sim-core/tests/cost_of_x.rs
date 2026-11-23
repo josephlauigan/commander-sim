@@ -148,3 +148,25 @@ fn krrik_pays_life_only_for_a_pip_the_reduced_cost_cannot_pay_in_mana() {
     perm(&mut g, P0, "Jet Medallion");
     assert_eq!(cost_of(&g, P0, merchant), (2, "BB".into()), "the reduced cost is payable in mana: no life");
 }
+
+#[test]
+fn trinisphere_counts_a_pip_that_is_paid_with_life_and_delve_comes_after_it() {
+    // Damnable Pact X = 1 {1}{B}{B} under Trinisphere with K'rrik out and only two Swamps: the minimum of three counts both
+    // {B} symbols, so the generic part is 1; K'rrik then pays one {B} with 2 life: {1}{B} and 2 life (two mana, which the
+    // Swamps pay), not {2}{B}
+    let mut g = game();
+    perm(&mut g, P0, "K'rrik, Son of Yawgmoth");
+    perm(&mut g, P1, "Trinisphere");
+    lands(&mut g, P0, "Swamp", 2, false);
+    assert_eq!(x_cost(&g, 1), (1, "B".into()), "{{1}}{{B}} plus 2 life, not {{2}}{{B}}");
+    // Dig Through Time {6}{U}{U} with six cards in the graveyard: delve pays the whole generic part after the minimum, so
+    // the cost is {U}{U}, not raised to three
+    let mut g = game();
+    perm(&mut g, P1, "Trinisphere");
+    for _ in 0..6 {
+        let c = take(&mut g, P0, "Swamp");
+        g.player_mut(P0).gy.push(c);
+    }
+    let dig = card(&g, "Dig Through Time");
+    assert_eq!(cost_of(&g, P0, dig), (0, "UU".into()), "delve is not a reduction: the minimum does not apply to it");
+}

@@ -996,7 +996,8 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
 /// what card c costs p now when cast with X = x: the printed cost with x added to the generic part, then every
 /// reduction, tax, floor and minimum `cost_of` applies, in the same order (a generic reducer such as Jet Medallion
 /// takes its {1} off the generic part that includes X; a later tax is added after it; each step floors the generic cost
-/// at 0). The Trinisphere minimum comes last, after every reduction and tax (rule 601.2f). `cost_of` is this at x = 0.
+/// at 0). The Trinisphere minimum comes after every reduction and tax and counts every symbol (rule 601.2f); delve, a way of
+/// paying, and the choices to pay life for a Phyrexian or K'rrik {B} come after it. `cost_of` is this at x = 0.
 /// K'rrik's life payment stays with `phyrexian_life`.
 ///
 /// x is added to the generic part exactly once, whatever the card. A card without {X} must be given x = 0 (`cost_of`
@@ -1045,7 +1046,12 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
             pips = pips.replacen('U', "", 1); // Defiler of Dreams: pay 2 life for {U} less
         }
     }
-    gn = (gn + cardcode::self_cost(g, p, c) as i64).max(0); // Draco's domain, delve
+    // a card's own reduction (Draco's domain, Emry's affinity, Shadow of Mortality...) comes before the minimum; delve is a way
+    // of paying the total, not a reduction of it (702.66a), so it comes after the minimum
+    let delve = crate::impls::partials::is_delve_card(&d.name);
+    if !delve {
+        gn = (gn + cardcode::self_cost(g, p, c) as i64).max(0);
+    }
     if pl.emblems.contains(&"tamiyo") && pl.hand.contains(&c) {
         return (0, String::new());
     }
@@ -1060,16 +1066,17 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
     if pl.is_commander(c) && !pl.hand.contains(&c) && &*d.name != "Liesa, Shroud of Dusk" {
         gn += pl.tax_of(c) as i64; // no tax from hand
     }
-    if pl.agent_ids.contains(&c) {
-        // Opposition Agent: spend mana as though it were mana of any type
-        let off: String = pips.chars().filter(|&x| !pl.ident.has(x)).collect();
-        if !off.is_empty() {
-            gn += off.chars().count() as i64;
-            pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
-        }
+    if !g.hooks.is_empty() {
+        // Trinisphere: the minimum applies to the total cost, every symbol counted (the pips a player may later pay with
+        // life are part of it), after every reduction and tax (601.2f)
+        let floor = hooks::max_min_cost(g, p, c);
+        gn = gn.max(floor as i64 - pips.chars().count() as i64);
+    }
+    if delve {
+        gn = (gn + cardcode::self_cost(g, p, c) as i64).max(0);
     }
     // Paying life for a coloured pip is decided against the generic cost as it now stands, after every reduction and tax
-    // above (a reducer such as Jet Medallion may make the mana enough, so no life is paid).
+    // above (a reducer such as Jet Medallion may make the mana enough, so no life is paid) and before Opposition Agent
     let mut paid_life = 0;
     for col in d.phyrexian.chars() {
         // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
@@ -1080,10 +1087,14 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
         }
     }
     crate::impls::krrik::drop_black(g, p, c, gn.clamp(i32::MIN as i64, i32::MAX as i64) as i32, &mut pips); // K'rrik: 2 life for a {B}
-    if !g.hooks.is_empty() {
-        // Trinisphere: the minimum applies to the total after every reduction and tax (601.2f)
-        let floor = hooks::max_min_cost(g, p, c);
-        gn = gn.max(floor as i64 - pips.chars().count() as i64);
+    if pl.agent_ids.contains(&c) {
+        // Opposition Agent: spend mana as though it were mana of any type (a pip turned into generic keeps the total
+        // the same, so the minimum above is unaffected)
+        let off: String = pips.chars().filter(|&x| !pl.ident.has(x)).collect();
+        if !off.is_empty() {
+            gn += off.chars().count() as i64;
+            pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
+        }
     }
     crate::engine::hybrid::resolve(g, p, c, to_u32(gn), &mut pips); // {G/W}: the other colour when the first can't be paid
     (to_u32(gn), pips)
