@@ -4,6 +4,39 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games per tier, seed 500000)
+t3 **31.7%** (about ±2.4 at 95%, binomial arithmetic), t4 **28.9%** (±2.3): **30.3% over t3, t4**. 4-player baseline 25%; average rounds survived 9.1 (t3), 8.1 (t4). Raw (`--analyze`):
+`audit/stage3-baseline-2026-11-23/sheoldred-analyze.txt`.
+**Not comparable with the baselines below.** This is the first run on the new engine (exact X and alternative-cost pricing, hybrid mana, the Stage 2 filters) and on the current
+list (the 11-22 swaps: Damnable Pact, Enduring Tenacity, Cabal Ritual, Jet Medallion are in it; Ad Nauseam and Vito are out). The 11-07 baseline (t3 30.6%, t4 28.2%) ran on main 7c622f5f
+with the old list, so the +1.1 and +0.7 are inside the noise and cannot be assigned to any change.
+
+- **How it wins:** t3 combo 54.3% of wins, damage 45.7%; t4 damage 59.2%, combo 40.6%, timeout 0.2%. It eliminates 0.97 (t3) and 0.91 (t4) opponents a game. t3: combo 44.3%, drain 40.3%,
+  combat 7.2%, other 4.7%, triggers 3.4%. t4: drain 51.8%, combo 30.8%, other 6.9%, combat 6.4%, triggers 3.8%. Damage dealt a game: 40.9 (t3), 35.7 (t4), drain 29.6 (72%) and 26.5 (74%).
+- **How it loses:** t3 eliminated in 68.3% of games (round 8.9): Aurelia combat 13.5%, Marwyn combat 9.1% and combo 7.9%, Tergrid combat 7.7%, Atraxa poison 4.3%, Aurelia commander damage 4.2%,
+  Tergrid poison 2.1%, Atraxa combat 2.1%. t4 71.1% (round 7.8): Krenko combat 14.3% and triggers 6.0%, Edgar Markov combat 11.7%, combo 3.3% and drain 2.9%, Chulane combo 6.9%, Yuriko triggers 6.7%
+  and combat 4.1%.
+- **Plan timing** (first opponent drained by Sheoldred), t3 / t4: online by T3 13% / 15%, T4 49% / 53%, T5 70% / 71%, T6 81% / 80%, T8 88% / 86%; at all 90.3% / 87.7%. She resolves in 90.9% / 88.3%
+  of games, median turn 4.0 (mean 4.7 / 4.5). Sephiroth flips in 3.1% / 3.9% of games; creatures sacrificed a game 1.60 / 0.37.
+- **Often stuck in hand** (cast in under half the games drawn), t3 / t4: Call of the Ring 0.0% and Torment of Hailfire 0.0% (both flagged "never cast by the sim: untagged"), Yawgmoth's Will 7.2% / 3.8%,
+  Entomb 14.7% / 22.0%, Memory Jar 17.1% / 15.8%, Peer into the Abyss 21.8% / 23.6%, Ambition's Cost 29.4% / 27.6%, Phyrexian Delver 30.5% / 32.7%, Bolas's Citadel 34.1% / 25.6%, Triskelion 34.9% / 30.3%;
+  t3 only: Exsanguinate 32.7%, K'rrik 36.9%; t4 only: Animate Dead 26.0%, Reanimate 32.0%.
+- **Most removed by opponents (per game),** t3 / t4: Sheoldred 0.41 / 0.52, Yawgmoth, Thran Physician 0.03 / 0.05, then Sanguine Bond, Enduring Tenacity (0.03 each), Exquisite Blood, Leech Collector, Grave
+  Pact (0.02) at t3; Mind Stone and Jet Medallion (0.03), Sephiroth, Sanguine Bond, Enduring Tenacity, Exquisite Blood (0.02) at t4.
+
+What the numbers say (correlation, not causation):
+- **Drain is the engine, and Sheoldred is the target.** Drain is 72% (t3) and 74% (t4) of damage dealt and 40.3% / 51.8% of eliminations; she is removed 0.41 / 0.52 times a game, far above any other card.
+  Her win rate when cast is 31.8% / 29.0% (+0.2 / +0.1): in games where she is cast the deck wins at about its own average, so being cast is not what separates wins from losses here.
+- **The deck loses to fast combat.** Aurelia, Marwyn and Tergrid (t3) and Krenko and Edgar Markov (t4) combat are the biggest single losses (13.5%, 9.1%, 7.7%; 14.3%, 11.7%). The output does not say
+  what Sheoldred's life gain did in those games: unmeasured.
+- **The finishers are drain payoffs.** Exquisite Blood wins 74.4% (t3, cast in 21.1% of games) and 66.8% (t4, 17.3%); Sanguine Bond 57.5% and 60.9%; Enduring Tenacity 54.8% and 49.8%. A high win rate when
+  cast can mean the card helps or that it is only cast in games already going well (the output's own note), so the size of their effect needs a paired run.
+- **The graveyard half is still barely played.** Yawgmoth's Will is cast in 7.2% / 3.8% of the games it is drawn, Entomb 14.7% / 22.0%, Memory Jar 17.1% / 15.8%, and the sim never casts Call of the Ring or
+  Torment of Hailfire (untagged). The 11-07 note below recorded the same gap (Entomb 6-10%, Will 4-5%); Entomb is higher here, Will about the same. A different build: read it as the direction only.
+  Any win rate for the untagged cards is unmeasured.
+- **First numbers for the 11-22 swaps.** Enduring Tenacity (above) and Damnable Pact (t3: cast in 6.7% of games, wins 48.0%, +16.3) look like payoffs; Cabal Ritual is the lowest card at t4 (22.2% when cast, -6.8, cast in
+  11.1% of games); Jet Medallion 30.8% (-0.8) at t3. The creature-sacrifice count differs between the tiers (1.60 at t3, 0.37 at t4); the output does not say why: unmeasured.
+
 ## 2026-11-22: Ad Nauseam => Damnable Pact, Vito => Enduring Tenacity (JD's choice, not simulated)
 Two swaps, neither slot-for-slot. **Damnable Pact** ({X}{B}{B} sorcery: target player draws X cards and loses X life; model status Full; a proxy) takes
 Ad Nauseam's slot. Ad Nauseam put cards into the hand (not draws, so Sheoldred gave nothing) for their mana values, at instant speed; in the 11-07 analyze run it

@@ -1,0 +1,108 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  kyodai                      100 cards: Full 97, Full-auto 3, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+1,500 games (analysis, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 3 minutes
+  progress  10.0%  0m34s elapsed, ~5m09s left
+  progress  20.0%  1m11s elapsed, ~4m44s left
+  progress  30.0%  1m46s elapsed, ~4m08s left
+  progress  40.0%  2m23s elapsed, ~3m34s left
+  progress  50.0%  2m58s elapsed, ~2m58s left
+  progress  60.0%  3m37s elapsed, ~2m24s left
+  progress  70.0%  4m14s elapsed, ~1m49s left
+  progress  80.0%  4m51s elapsed, ~1m12s left
+  progress  90.0%  5m24s elapsed, ~0m36s left
+  progress 100.0%  6m14s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== kyodai analysis [loose profile, lookahead AI, 1500 games] ===========
+Win rate 15.1%   (4-player baseline 25%)   average rounds survived 8.2
+
+-- How it wins --
+  combo       84.1% of wins
+  damage      15.9% of wins
+  Opponents it eliminated: 0.44 per game, by
+    combo              81.3%
+    combat             12.5%
+    commander damage    4.4%
+    triggers            1.4%
+    decked              0.5%
+  Damage dealt per game: 8.6, from
+    combat               8.5  (100%)
+    triggers             0.0  (0%)
+
+-- How it loses --
+  Eliminated in 84.9% of games, on average in round 8.2
+    by Kinnan   via combo              16.6% of games
+    by Urza     via combo              13.9% of games
+    by Miirym   via combat             12.1% of games
+    by Zur the Enchanter via combo               8.4% of games
+    by Yawgmoth via combo               7.7% of games
+    by Miirym   via triggers            6.3% of games
+    by Kinnan   via combat              4.7% of games
+    by Yawgmoth via drain               3.4% of games
+
+-- Game plan timing --
+  Plan: first combo attempt
+  Online by turn:  T2 0%  T3 1%  T4 1%  T5 3%  T6 6%  T7 9%  T8 12%  T9 13%  T10 13%  T11 14%  T12 15%
+  Online at all: 14.9% of games
+  Commander resolves on turn: median 4.0, mean 4.3 (over the 83.8% of games it resolves)
+  Commander resolved by turn:  T4 52%  T5 68%  T6 76%  T7 79%  T8 81%
+  Breach line: Breach and a storm card held on our turn in 3.3% of games
+    dry run tried in 3.0%, passed in 0.4%, executed in 0.4%, won (table dead or decked) in 0.3%
+    last failed dry run fell short of: mana 0.3%, blue mana 0.1%, graveyard fuel 0.5%, storm count / other 1.9% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Thassa's Oracle                            cast in   7.2% of games, win rate when cast  79.6% (+64.6)
+    Tinker                                     cast in  10.5% of games, win rate when cast  32.9% (+17.8)
+    Rings of Brighthearth                      cast in  29.5% of games, win rate when cast  29.2% (+14.1)
+    Basalt Monolith                            cast in  34.8% of games, win rate when cast  26.2% (+11.2)
+    Underworld Breach                          cast in   8.1% of games, win rate when cast  25.4% (+10.3)
+    Primeval Titan                             cast in  10.1% of games, win rate when cast  25.2% (+10.1)
+    Urza, Lord High Artificer                  cast in  17.7% of games, win rate when cast  24.4% (+9.4)
+    Vampiric Tutor                             cast in  13.5% of games, win rate when cast  24.1% (+9.1)
+    Rhystic Study                              cast in  22.1% of games, win rate when cast  23.8% (+8.7)
+    Gifts Ungiven                              cast in  14.5% of games, win rate when cast  23.5% (+8.4)
+  Lowest win rate when cast:
+    Grand Abolisher                            cast in   8.5% of games, win rate when cast  11.0% (-4.0)
+    Dark Ritual                                cast in  12.5% of games, win rate when cast  12.3% (-2.8)
+    Birds of Paradise                          cast in  15.1% of games, win rate when cast  12.8% (-2.3)
+    Jeska's Will                               cast in   9.7% of games, win rate when cast  13.8% (-1.3)
+    Walking Ballista                           cast in  27.1% of games, win rate when cast  14.0% (-1.1)
+    Mox Opal                                   cast in  17.6% of games, win rate when cast  14.4% (-0.7)
+    Mana Vault                                 cast in  16.5% of games, win rate when cast  14.9% (-0.1)
+    Kyodai, Soul of Kamigawa                   cast in  84.7% of games, win rate when cast  15.0% (-0.0)
+    Mystical Tutor                             cast in  11.5% of games, win rate when cast  15.0% (-0.0)
+    Coalition Relic                            cast in  15.0% of games, win rate when cast  15.1% (+0.0)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Silence                                    cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Exsanguinate                               cast   0.4% of the games it was drawn
+    Brain Freeze                               cast   2.2% of the games it was drawn
+    Heroic Intervention                        cast   8.7% of the games it was drawn [reactive: only cast in response]
+    Blightsteel Colossus                       cast  13.1% of the games it was drawn
+    Akroma's Will                              cast  14.6% of the games it was drawn
+    Deflecting Swat                            cast  18.4% of the games it was drawn
+    Teferi's Protection                        cast  22.4% of the games it was drawn [reactive: only cast in response]
+    Ephemerate                                 cast  23.8% of the games it was drawn [reactive: only cast in response]
+    Thassa's Oracle                            cast  26.9% of the games it was drawn
+    Tainted Pact                               cast  28.1% of the games it was drawn
+    Leyline of the Guildpact                   cast  32.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Kyodai, Soul of Kamigawa                   0.24
+    Tezzeret, Cruel Captain                    0.07
+    Urza, Lord High Artificer                  0.06
+    Rhystic Study                              0.04
+    The One Ring                               0.03
+    Esper Sentinel                             0.03
+    Staff of Domination                        0.03
+    Walking Ballista                           0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, miirym-temur-dragons = Miirym, urza-mono-blue-artifacts = Urza, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(374s total)
