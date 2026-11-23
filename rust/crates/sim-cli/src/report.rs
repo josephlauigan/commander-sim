@@ -277,11 +277,55 @@ const SNAPS: [(&str, &str); 6] = [
 ];
 const DMG_KINDS: [&str; 5] = ["combat", "burn", "drain", "aether", "triggers"];
 
+/// How a run's games ended, for the "Game ends" line: three independent counts. `timeout` is `wintype == "timeout"`
+/// (the round-cap tiebreak); `step_cap` is `GameOut.stopped` (the engine ran out of work: such a game usually also
+/// ends as a timeout, but is counted on its own); `no_winner` is `winner == None` (a mutual elimination, wintype
+/// damage, never a timeout). A game can be in more than one. Read from finished games only: no RNG, no change to
+/// any game.
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
+pub struct GameEnds {
+    pub n: u64,
+    pub timeout: u64,
+    pub step_cap: u64,
+    pub no_winner: u64,
+}
+
+impl GameEnds {
+    pub fn add(&mut self, g: &GameOut) {
+        self.n += 1;
+        self.timeout += (g.wintype == Some("timeout")) as u64;
+        self.step_cap += g.stopped as u64;
+        self.no_winner += g.winner.is_none() as u64;
+    }
+
+    pub fn any(&self) -> bool {
+        self.timeout + self.step_cap + self.no_winner != 0
+    }
+
+    /// The summary line: always for a 2-seat run, for a 4-seat run only when a count is non-zero (so a Commander
+    /// report with none reads exactly as before).
+    pub fn line(&self, duel: bool) -> Option<String> {
+        (duel || self.any()).then(|| format!("Game ends: {}", self.text()))
+    }
+
+    /// the counts alone, as `line` and the paired A/B arms print them
+    pub fn text(&self) -> String {
+        format!(
+            "timeout {} ({:.1}%), engine step cap {}, no winner {}",
+            self.timeout,
+            100.0 * self.timeout as f64 / self.n.max(1) as f64,
+            self.step_cap,
+            self.no_winner
+        )
+    }
+}
+
 /// compare.analysis_record
 #[derive(Default)]
 pub struct Analysis {
     pub n: i64,
     pub win: i64,
+    pub ends: GameEnds,
     pub wintype: Counter<String>,
     pub kills: Counter<&'static str>,
     /// (who eliminated the deck, how)
@@ -320,6 +364,7 @@ impl Analysis {
         let won = g.winner == Some(mi);
         self.n += 1;
         self.win += won as i64;
+        self.ends.add(g);
         if won {
             self.wintype.add(g.wintype_or_damage().to_string(), 1);
         }
@@ -419,6 +464,9 @@ pub fn print_analysis(
         crate::duel::baseline_text(fmt.seats),
         r.survived as f64 / n
     );
+    if let Some(l) = r.ends.line(crate::duel::is_duel(fmt)) {
+        println!("{l}");
+    }
 
     println!("\n-- How it wins --");
     if r.win != 0 {
@@ -699,6 +747,53 @@ mod tests {
 
     fn s(v: &[&str]) -> Vec<String> {
         v.iter().map(|x| x.to_string()).collect()
+    }
+
+    fn ended(winner: Option<usize>, wintype: Option<&'static str>, stopped: bool) -> GameOut {
+        GameOut { winner, wintype, round: 20, stopped, players: vec![], log: None }
+    }
+
+    #[test]
+    fn game_ends_line_for_two_seats_and_four_seats() {
+        let zero = GameEnds::default();
+        let zero_text = "timeout 0 (0.0%), engine step cap 0, no winner 0";
+        assert_eq!(zero.text(), zero_text);
+        assert_eq!(zero.line(true), Some(format!("Game ends: {zero_text}")));
+        assert_eq!(zero.line(false), None);
+        // a Commander tally with only ordinary wins prints nothing extra
+        let mut plain = GameEnds::default();
+        plain.add(&ended(Some(2), Some("damage"), false));
+        assert_eq!(plain.line(false), None);
+
+        let mut e = GameEnds::default();
+        for g in [
+            ended(Some(0), Some("damage"), false),
+            // a mutual elimination: no winner, never a timeout
+            ended(None, Some("damage"), false),
+            // a step-capped game that ended as a timeout: both counts
+            ended(Some(1), Some("timeout"), true),
+            // a step-capped game that did not end as a timeout: step cap only
+            ended(Some(0), Some("damage"), true),
+            // a plain round-cap timeout
+            ended(Some(1), Some("timeout"), false),
+        ] {
+            e.add(&g);
+        }
+        assert_eq!(e, GameEnds { n: 5, timeout: 2, step_cap: 2, no_winner: 1 });
+        let want = "timeout 2 (40.0%), engine step cap 2, no winner 1";
+        assert_eq!(e.text(), want);
+        assert_eq!(e.line(true), Some(format!("Game ends: {want}")));
+        assert_eq!(e.line(false), Some(format!("Game ends: {want}")));
+        // each count on its own makes a Commander line appear
+        for g in [
+            ended(None, Some("damage"), false),
+            ended(Some(0), Some("damage"), true),
+            ended(Some(0), Some("timeout"), false),
+        ] {
+            let mut one = GameEnds::default();
+            one.add(&g);
+            assert!(one.line(false).is_some());
+        }
     }
 
     #[test]
