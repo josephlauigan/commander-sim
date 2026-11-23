@@ -1455,6 +1455,67 @@ pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
     lands + perms + drop
 }
 
+/// The mana units of p's mana permanents that `mana_units` leaves out now but p has on its next turn: a tapped Rock,
+/// Dork or Chrome Mox (it untaps) and an untapped Dork still summoning sick (it will not be). Colours and amounts as
+/// `units` makes them. A permanent with a special rule (Star Compass, Fellwar Stone, Bloom Tender, Delighted Halfling,
+/// restricted mana, a lock, no mana from artifacts) is left out, and so is a tapped permanent that will not untap
+/// (`nountap`: Mana Vault, Grim Monolith; a "frozen" lock), so the list errs towards less mana. Not handled, so it can
+/// err the other way: a stun counter, Winter Orb, Static Orb and the like keeping a permanent tapped. A pure read.
+pub fn next_turn_perm_units(g: &Game, p: PlayerId) -> Vec<Unit> {
+    let pl = g.player(p);
+    let ident = pl.ident;
+    let hooked = !g.hooks.is_empty();
+    let no_art_mana = hooked && hooks::total_count(g, Event::NoArtifactMana, p) != 0;
+    let mut u = vec![];
+    for &m in &pl.perms {
+        let x = g.perm(m);
+        let Some(c) = x.cd else { continue };
+        if x.phased || (!g.auras.is_empty() && cardcode::locked(g, m, "noact")) {
+            continue;
+        }
+        let d = g.db.get(c);
+        let t = &d.tags;
+        // the untap step's own test (engine/turn.rs): a tapped Mana Vault or a frozen permanent stays tapped
+        if x.tapped && (d.tag(Tag::Nountap) || (!g.auras.is_empty() && cardcode::locked(g, m, "frozen"))) {
+            continue;
+        }
+        if t.has(Tag::Chromemox) {
+            if x.tapped && !x.colors.is_empty() {
+                u.push(Unit::free(Source::Perm(m), x.colors, 1));
+            }
+        } else if let Some(rock) = t.str(Tag::Rock) {
+            let special = matches!(&*d.name, "Star Compass" | "Fellwar Stone");
+            if !x.tapped
+                || special
+                || d.mana_restr != Restr::None
+                || (no_art_mana && d.types.has(crate::cards::Types::ARTIFACT))
+            {
+                continue;
+            }
+            let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
+            let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1));
+            let cols = tag_colors(col, ident);
+            if amt > 0 {
+                let shape = shape_of(t, col, cols, a.parse().unwrap_or(1), amt, true);
+                u.push(Unit { src: Source::Perm(m), cols, amt, shape });
+            }
+        } else if let Some(dork) = t.str(Tag::Dork) {
+            let ahaste = || crate::impls::t6_legends1b::ability_haste(g, p);
+            let counted_now = !x.tapped && (!x.sick || ahaste());
+            let special = matches!(&*d.name, "Delighted Halfling" | "Bloom Tender");
+            if counted_now || special || d.mana_restr != Restr::None {
+                continue;
+            }
+            let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or(1);
+            let cols = tag_colors(dork, ident);
+            if amt > 0 {
+                u.push(Unit { src: Source::Perm(m), cols, amt, shape: shape_of(t, dork, cols, 1, amt, false) });
+            }
+        }
+    }
+    u
+}
+
 /// --- model-gaps-a3: Marvin, Murderous Mimic has the mana abilities of the mana creatures its controller has under
 /// another name ("{T}: Add {G}" ...): it taps for the best one (the most mana, then the most colours), as that
 /// creature would make it (`dyn_mana_perm`: the mana of Priest of Titania counts Elves ...). None if there is none.

@@ -1806,3 +1806,308 @@ fn twinflame_check_one_declined_chump_does_not_release() {
         assert!(adv_hook(&mut h).is_empty(), "seed {s}");
     }
 }
+
+// ------------------------------------------------------------------ Spark Double held until Garth is out
+use sim_core::impls::t45_urdragon_combos::{spark_garth_target, spark_hold};
+
+/// `key`'s seat with Spark Double in hand and the three pieces of the Garth line in the given zones, `extra` more cards
+/// in hand, `n` lands of all five colours first (Garth costs five) and a creature for Spark Double to copy. Garth on the battlefield is the
+/// plain card.
+fn hold_row_n(key: &str, garth: Z, season: Z, twin: Z, extra: &[&str], n: usize) -> Game {
+    let mut g = table(&[key, "seph"]);
+    for q in &mut g.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    put(&mut g, P0, SPARK, Z::Hand);
+    put(&mut g, P0, GARTH, garth);
+    put(&mut g, P0, SEASON, season);
+    put(&mut g, P0, TWIN, twin);
+    for name in extra {
+        put(&mut g, P0, name, Z::Hand);
+    }
+    // one land of each colour first (Garth is {W}{U}{B}{R}{G}), Islands for the rest
+    for (i, name) in ["Island", "Plains", "Swamp", "Mountain", "Forest"].into_iter().enumerate() {
+        if i < n {
+            lands(&mut g, P0, name, 1, false);
+        }
+    }
+    if n > 5 {
+        lands(&mut g, P0, "Island", n - 5, false);
+    }
+    perm(&mut g, P0, TERROR);
+    g
+}
+
+fn hold_row(key: &str, garth: Z, season: Z, twin: Z, extra: &[&str]) -> Game {
+    hold_row_n(key, garth, season, twin, extra, 7)
+}
+
+fn spark_offered(g: &mut Game) -> bool {
+    main_options(g, P0, false).unwrap().iter().any(|o| o.label == SPARK)
+}
+
+fn offered_spark(g: &mut Game) {
+    assert!(spark_offered(g), "Spark Double should be offered");
+}
+
+fn held_spark(g: &mut Game) {
+    assert!(!spark_offered(g), "Spark Double should be held");
+}
+
+#[test]
+fn hold_a_garth_season_and_twinflame_in_hand_holds_spark_for_urdragon_only() {
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    assert!(spark_hold(&g, P0));
+    held_spark(&mut g);
+    // the control: another seat on the same board is offered it (h)
+    let mut c = hold_row("aragorn", Z::Hand, Z::Hand, Z::Hand, &[]);
+    assert!(!spark_hold(&c, P0));
+    offered_spark(&mut c);
+}
+
+#[test]
+fn hold_b_a_tutor_in_hand_holds_for_the_piece_in_the_library() {
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Library, &["Vampiric Tutor"]);
+    held_spark(&mut g);
+    let mut g = hold_row("urdragon", Z::Hand, Z::Library, Z::Hand, &["Demonic Tutor"]);
+    held_spark(&mut g);
+    // no tutor: the line is not near, Spark Double copies the best creature
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Library, &[]);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+    // Worldly Tutor finds only Garth: it does not fetch Twinflame
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Library, &["Worldly Tutor"]);
+    offered_spark(&mut g);
+}
+
+#[test]
+fn hold_b_garth_in_the_library_needs_a_tutor_of_its_own() {
+    // Worldly Tutor fetches Garth; Doubling Season is out and Twinflame is in hand
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &["Worldly Tutor"]);
+    held_spark(&mut g);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &[]);
+    offered_spark(&mut g);
+    // one Vampiric Tutor cannot fetch both Garth and Twinflame
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Library, &["Vampiric Tutor"]);
+    offered_spark(&mut g);
+    // with a second tutor it can (the line's piece and Garth)
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Library, &["Vampiric Tutor", "Worldly Tutor"]);
+    held_spark(&mut g);
+    // Season, Twinflame and Garth all in the library: the line is not near (Spark Double's own test), no hold
+    let mut g = hold_row("urdragon", Z::Library, Z::Library, Z::Library, &["Vampiric Tutor", "Demonic Tutor"]);
+    offered_spark(&mut g);
+}
+
+#[test]
+fn hold_c_garth_out_offers_spark_and_it_copies_garth() {
+    let mut g = hold_row("urdragon", Z::Bf, Z::Hand, Z::Hand, &[]);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+    assert!(spark_garth_target(&g, P0).is_some());
+    assert_eq!(enter_spark(&mut g), GARTH);
+}
+
+#[test]
+fn hold_d_garth_dead_offers_spark() {
+    for z in [Z::Gy, Z::Exile, Z::Gone] {
+        let mut g = hold_row("urdragon", z, Z::Hand, Z::Hand, &[]);
+        assert!(!spark_hold(&g, P0), "Garth in {z:?}");
+        offered_spark(&mut g);
+    }
+    // Season or Twinflame dead
+    for (s, t) in [(Z::Gy, Z::Hand), (Z::Hand, Z::Gy), (Z::Exile, Z::Hand)] {
+        let mut g = hold_row("urdragon", Z::Hand, s, t, &[]);
+        offered_spark(&mut g);
+    }
+    // a phased-out Garth is not coming
+    let mut g = hold_row("urdragon", Z::Bf, Z::Hand, Z::Hand, &[]);
+    let garth = *g.player(P0).perms.iter().find(|&&m| &*g.perm(m).name == GARTH).unwrap();
+    g.perm_mut(garth).phased = true;
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+}
+
+#[test]
+fn hold_e_danger_releases_the_hold() {
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    held_spark(&mut g);
+    // an opposing 8/8 flier against 4 life
+    perm(&mut g, P1, BIG);
+    g.player_mut(P0).life = 4;
+    assert!(sim_core::ai::brain::Situation::new(&g, P0).danger >= 1.0);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+}
+
+#[test]
+fn hold_f_garth_not_castable_by_next_turn_releases_the_hold() {
+    // four lands and no land to play: next turn four mana, Garth costs five
+    let mut g = hold_row_n("urdragon", Z::Hand, Z::Hand, Z::Hand, &[], 4);
+    assert_eq!(sim_core::engine::mana::next_turn_mana(&g, P0), 4);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+    // a land in hand makes it five (the fifth colour, so Garth is payable)
+    put(&mut g, P0, "Forest", Z::Hand);
+    assert_eq!(sim_core::engine::mana::next_turn_mana(&g, P0), 5);
+    assert!(spark_hold(&g, P0));
+    held_spark(&mut g);
+}
+
+#[test]
+fn hold_g_ur_pick_skips_spark_when_held_and_takes_it_when_released() {
+    let g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    let spark = card(&g, SPARK);
+    assert_eq!(ur_pick(&g, P0, &[spark]), None);
+    let terror = card(&g, TERROR);
+    assert_eq!(ur_pick(&g, P0, &[spark, terror]), Some(terror));
+    for garth in [Z::Bf, Z::Gy] {
+        let g = hold_row("urdragon", garth, Z::Hand, Z::Hand, &[]);
+        let spark = card(&g, SPARK);
+        assert_eq!(ur_pick(&g, P0, &[spark]), Some(spark), "Garth {garth:?}");
+    }
+}
+
+#[test]
+fn hold_h_other_seats_are_unchanged() {
+    for key in ["aragorn", "atraxa-infect", "miirym-temur-dragons", "brago-azorius-blink-control"] {
+        let mut g = hold_row(key, Z::Hand, Z::Hand, Z::Hand, &[]);
+        assert!(!spark_hold(&g, P0), "{key}");
+        let spark = card(&g, SPARK);
+        assert_eq!(ur_pick(&g, P0, &[spark]), Some(spark), "{key}");
+        offered_spark(&mut g);
+    }
+}
+
+/// The hold and Spark Double's copy agree over 500 seeded states: whenever the hold is off with Garth out and the line
+/// near, Spark Double enters as Garth; and whenever the hold is on, Garth arriving with the same cards makes the copy
+/// Garth (the hold never waits for a Garth that would not be copied).
+#[test]
+fn hold_property_the_hold_and_the_copy_agree_over_500_seeded_states() {
+    let mut rng = Rng::from_u64(20261123);
+    let zones = [Z::Library, Z::Hand, Z::Gy, Z::Bf];
+    let (mut held, mut copied) = (0, 0);
+    for i in 0..500 {
+        let garth = *rng.choice(&zones).unwrap();
+        let season = *rng.choice(&zones).unwrap();
+        let twin = *rng.choice(&[Z::Library, Z::Hand, Z::Gy]).unwrap();
+        let tutors: Vec<&str> =
+            ["Demonic Tutor", "Vampiric Tutor", "Worldly Tutor"].into_iter().filter(|_| rng.below(2) == 0).collect();
+        let n = 3 + rng.below(6) as usize;
+        let desc = format!("state {i}: garth {garth:?} season {season:?} twin {twin:?} tutors {tutors:?} lands {n}");
+        let mut g = hold_row_n("urdragon", garth, season, twin, &tutors, n);
+        let hold = spark_hold(&g, P0);
+        if garth == Z::Bf {
+            assert!(!hold, "{desc}: held with Garth out");
+            if spark_garth_target(&g, P0).is_some() {
+                assert_eq!(enter_spark(&mut g), GARTH, "{desc}: not copying Garth with the line near");
+                copied += 1;
+            }
+        } else if hold {
+            held += 1;
+            // the hold must release into a Garth copy: Garth arrives with the same cards
+            let mut a = hold_row_n("urdragon", Z::Bf, season, twin, &tutors, n);
+            assert!(spark_garth_target(&a, P0).is_some(), "{desc}: held, but Garth's arrival is not near");
+            assert_eq!(enter_spark(&mut a), GARTH, "{desc}");
+        }
+    }
+    assert!(held > 20 && copied > 20, "the random states exercise both sides: held {held}, copied {copied}");
+}
+
+#[test]
+fn hold_s2_garth_in_the_library_is_held_only_with_doubling_season_on_the_battlefield() {
+    // the plan's wish rows send a tutor to Garth only once Doubling Season is out: with Season in hand it fetches a Dragon
+    let mut g = hold_row("urdragon", Z::Library, Z::Hand, Z::Hand, &["Worldly Tutor"]);
+    assert!(!spark_hold(&g, P0));
+    offered_spark(&mut g);
+    let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &["Worldly Tutor"]);
+    assert!(spark_hold(&g, P0));
+    held_spark(&mut g);
+    // Garth in hand: Season in hand is enough
+    let g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    assert!(spark_hold(&g, P0));
+}
+
+#[test]
+fn hold_r2_tapped_lands_still_pay_for_garth_next_turn() {
+    let mut g = hold_row("urdragon", Z::Hand, Z::Hand, Z::Hand, &[]);
+    for l in g.player(P0).lands.clone() {
+        g.perm_mut(l).tapped = true;
+    }
+    assert!(spark_hold(&g, P0), "every land tapped: they untap, Garth is payable next turn");
+}
+
+/// seven lands of four colours (no green) and a mana permanent that supplies {G}: `extra` names it
+fn no_green_row(source: &str, tapped: bool, sick: bool) -> Game {
+    let mut g = table(&["urdragon", "seph"]);
+    for q in &mut g.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    for n in [SPARK, GARTH, SEASON, TWIN] {
+        put(&mut g, P0, n, Z::Hand);
+    }
+    for name in ["Island", "Plains", "Swamp", "Mountain"] {
+        lands(&mut g, P0, name, 1, false);
+    }
+    lands(&mut g, P0, "Island", 3, false);
+    perm(&mut g, P0, TERROR);
+    let m = perm(&mut g, P0, source);
+    g.perm_mut(m).tapped = tapped;
+    g.perm_mut(m).sick = sick;
+    g
+}
+
+#[test]
+fn hold_r2_a_tapped_arcane_signet_supplies_the_missing_colour() {
+    let g = no_green_row("Arcane Signet", true, false);
+    assert!(spark_hold(&g, P0), "the Signet untaps: {{G}} next turn");
+    // the control: no source of green at all releases the hold (seven lands of four colours)
+    let mut c = table(&["urdragon", "seph"]);
+    for q in &mut c.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    for n in [SPARK, GARTH, SEASON, TWIN] {
+        put(&mut c, P0, n, Z::Hand);
+    }
+    for name in ["Island", "Plains", "Swamp", "Mountain"] {
+        lands(&mut c, P0, name, 1, false);
+    }
+    lands(&mut c, P0, "Island", 3, false);
+    perm(&mut c, P0, TERROR);
+    assert!(!spark_hold(&c, P0));
+}
+
+#[test]
+fn hold_r2_a_summoning_sick_dork_supplies_the_missing_colour() {
+    for dork in ["Elvish Mystic", "Birds of Paradise"] {
+        let g = no_green_row(dork, false, true);
+        assert!(spark_hold(&g, P0), "{dork}: untapped, summoning sick, taps for {{G}} next turn");
+        let g = no_green_row(dork, true, false);
+        assert!(spark_hold(&g, P0), "{dork}: tapped");
+    }
+}
+
+#[test]
+fn hold_c1_a_tapped_mana_vault_does_not_untap_so_it_does_not_pay_for_the_tutor() {
+    // Garth in the library, Season out, Twinflame in hand, Demonic Tutor ({1}{B}) the only tutor: one Swamp and a Vault
+    let row = |vault_tapped: bool| {
+        let mut g = table(&["urdragon", "seph"]);
+        for q in &mut g.players {
+            q.hand.clear();
+            q.gy.clear();
+        }
+        put(&mut g, P0, SPARK, Z::Hand);
+        put(&mut g, P0, GARTH, Z::Library);
+        put(&mut g, P0, SEASON, Z::Bf);
+        put(&mut g, P0, TWIN, Z::Hand);
+        put(&mut g, P0, "Demonic Tutor", Z::Hand);
+        lands(&mut g, P0, "Swamp", 1, false);
+        let v = perm(&mut g, P0, "Mana Vault");
+        g.perm_mut(v).tapped = vault_tapped;
+        g
+    };
+    assert!(spark_hold(&row(false), P0), "an untapped Vault pays the {{1}}");
+    assert!(!spark_hold(&row(true), P0), "a tapped Vault stays tapped through the untap step");
+}
