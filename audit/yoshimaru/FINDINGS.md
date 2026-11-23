@@ -45,6 +45,13 @@ What the numbers say (correlation, not causation):
 - The knob reaches only lines that go through `combos::attempt`: Heliod + Walking Ballista and Vito + Exquisite Blood. Archangel + Ballista and Restoration Angel + Felidar Guardian are not in the combo catalogue, so it does nothing for them.
 - Not measured: how often the protect step fired (the `t6_protect` counter is not printed; ticket T-S4-3); whether Silence was countered more or less.
 
+## Equipment carrier rule, paired tests 2026-11-23 (arms on seed 500000 x 1,500 games and seed 700000 x 3,000 games per tier, loose)
+Arm A = main with the Silence knob; arm B = the full carrier package (flier +2, unblocked +1.5, Yoshimaru -4, Delney -4, Boots +4 on Tymna, plus the Ballista veto and Tymna -6, free-attach pair scoring); arm C = veto only (Sword of Hearth and Home never on Walking Ballista, no +power Equipment on Tymna, nothing else scored). Raw: `audit/stage3-paired-2026-11-23/big-*`.
+- Win rate, seed 700000 x 3,000: t4 A 26.3, B 25.7, C 25.7; t5 A 22.0, B 23.0, C 22.3. Seed 500000 x 1,500: t4 A 27.6 -> B 26.5; t5 A 24.8 -> B 23.1. All inside the noise (about 0.8 per tier per arm at 3,000 games).
+- **Commander-damage eliminations by this deck, share of its eliminations (t4 / t5):** A 5.4 / 6.8, B 2.9 / 4.2, **C 5.6 / 6.7**. The halving in B replicated on both seeds and is gone in C: the guessed weights (Yoshimaru -4 and the flier stacking), not the veto or the Tymna rule, cause it. The guide's "commander damage is not a plan" (line 96) comes from an unsimulated list and is contradicted by the sim.
+- Equipment worn per game (t4 / t5): B commander 0.22 / 0.26, flier 0.15 / 0.18, other 0.54 / 0.65; C commander 0.43 / 0.48, flier 0.12 / 0.15, other 0.31 / 0.45; protection from white on Ballista 0.00 in both. Tymna cards drawn and opponents hit per Tymna turn are flat in all arms.
+- Decision: ship arm C (the guide-backed rules) with the report and Court fixes; the other weights stay out until a measured reason. No arm shows a win-rate gain, so this is rule correctness, not a measured improvement.
+
 ## What the simulator cannot do yet
 - Every card is Full or Full-auto except Delney, Streetwise Lookout (Approximate: the extra instance for leaves that run at once or inline in the
   engine is left out; see her note in `data/audit.toml`). Full-auto means compiled from Oracle text, not hand-written card code: Stroke of Midnight and
