@@ -683,7 +683,9 @@ fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
     }
     let whites = !white_cards(g, p, c).is_empty() && evoke_allowed(g, p, c);
     // a creature whose ward p cannot pay is no target (the exile would be countered and both cards lost)
-    let Some(t) = best_opp_creature(g, p, |g, m| crate::engine::ward::ward_affordable(g, p, m, 0, "")) else {
+    // (the cost increase is paid first, so the ward must be payable on top of it)
+    let tax = crate::engine::altcost::tax(g, p, c);
+    let Some(t) = best_opp_creature(g, p, |g, m| crate::engine::ward::ward_affordable(g, p, m, tax, "")) else {
         return Ok(vec![]);
     };
     if !whites || pval(g, t) < 6.0 {
