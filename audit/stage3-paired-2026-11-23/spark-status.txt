@@ -1,0 +1,7 @@
+tests exit 0
+391 binaries, passed 6855 failed 0 ignored 93
+start urdragon 09:29:15
+done urdragon exit 0 09:34:03
+start kyodai 09:34:03
+done kyodai exit 0 09:43:28
+SPARK ALL DONE

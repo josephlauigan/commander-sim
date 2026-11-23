@@ -1412,8 +1412,11 @@ fn kor_outfitter_attaches_a_loose_equipment_when_it_enters_and_a_blinked_equipme
     let t = perm(&mut g, P0, TYMNA);
     let sword = perm(&mut g, P0, SOFI);
     assert_eq!(g.perm(sword).attached, None);
-    perm(&mut g, P0, OUTFITTER);
-    assert_eq!(g.perm(sword).attached, Some(t), "attached by the enter trigger");
+    let o = perm(&mut g, P0, OUTFITTER);
+    // attached by the enter trigger; the yoshimaru seat scores the holder (`cloud::yoshimaru_attach`), and a Sword is not
+    // for Tymna (it turns off Delney's doubling for her), so it goes on the Outfitter itself, the only other creature
+    assert_ne!(g.perm(sword).attached, Some(t), "not to Tymna");
+    assert_eq!(g.perm(sword).attached, Some(o), "attached by the enter trigger, to the Outfitter");
     // blinking the Equipment does not trigger the Outfitter again: only the Outfitter entering does
     let n = blink(&mut g, sword);
     assert_eq!(g.perm(n).attached, None, "a new object, unattached, and the Outfitter on the battlefield does nothing");
@@ -1426,8 +1429,10 @@ fn blinking_kor_outfitter_attaches_again() {
     let o = perm(&mut g, P0, OUTFITTER);
     let sword = perm(&mut g, P0, SOFI);
     assert_eq!(g.perm(sword).attached, None, "the Outfitter was there first");
-    blink(&mut g, o);
-    assert_eq!(g.perm(sword).attached, Some(t));
+    let o2 = blink(&mut g, o);
+    // (the yoshimaru seat's holder scoring keeps the Sword off Tymna: it goes on the Outfitter that just came back)
+    assert_ne!(g.perm(sword).attached, Some(t));
+    assert_eq!(g.perm(sword).attached, Some(o2));
 }
 
 #[test]

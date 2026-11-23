@@ -3,6 +3,34 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games, seed 500000)
+**t5: 35.1%** (about ±2.4 at 95%, binomial arithmetic), 4-player baseline 25%, average rounds survived 8.8. Raw (`--analyze`): `audit/stage3-baseline-2026-11-23/yshtola-analyze.txt`.
+**Not comparable with the baselines below.** This is the first run on the new engine (exact X and alternative-cost pricing, hybrid mana, the Stage 2 filters) and on the
+current list (the 11-14 to 11-22 swaps, including the Doomsday / Oracle package, none of which were simulated). The 11-07 number (27.4% at t5) was run on main 7c622f5f
+with the old list, so the +7.7 gap cannot be assigned to any one change: unmeasured.
+
+- **How she wins:** combo 62.2% of wins, damage 37.6%, timeout 0.2%. She eliminates 0.98 opponents a game: combo 54.0%, drain 29.2%, triggers 11.3%, combat 5.0%. Damage dealt
+  29.8 a game: triggers 13.4 (45%), drain 9.3 (31%), combat 6.4 (21%).
+- **How she loses:** eliminated in 64.8% of games, on average in round 8.3. Urza combo 12.8%, Kinnan combo 12.2%, Miirym combat 8.9%, Zur combo 8.4%, Yawgmoth combo 6.7%,
+  Miirym triggers 4.4%, Kinnan combat 3.1%, Zur commander damage 1.4%.
+- **Plan timing** (first drain from Y'shtola's cast trigger): online by T4 12%, T5 31%, T6 43%, T8 56%, T12 62%; online at all 62.6%. She resolves in 80.0% of games, median turn 4.0
+  (mean 4.8); by T4 44%, T8 77%.
+- **Often stuck in hand** (cast in under half the games drawn): Silence 2.6%, Doomsday 13.2%, Zur the Enchanter 34.9%, Debt to the Deathless 35.6%, Austere Command 37.5%, Sphere of
+  Safety 37.7%, Exsanguinate 39.1%, Profane Tutor 42.8%, Prayer of Binding 42.9%, The Theorist 42.9%, Farewell 44.3%, Polluted Bonds 44.3%.
+- **Most removed by opponents (per game):** Y'shtola 0.20, Teferi, Time Raveler 0.09, Sanguine Bond 0.07, The Theorist 0.05, Voice of Victory 0.05, Esper Sentinel 0.04, Sheoldred 0.04, Zur 0.03.
+
+What the numbers say (correlation, not causation):
+- **The combo pieces close games when they are cast.** Thassa's Oracle wins 95.3% of the games it is cast in (cast in 15.5% of games), Demonic Consultation 75.4% (17.3%), Debt to the
+  Deathless 75.0% (9.6%). Doomsday itself is cast in only 13.2% of the games it is drawn and Silence in 2.6%; why is not in the output. Oracle and Consultation can be cast without
+  Doomsday, and a finisher cast late is partly selection, so how much the Doomsday line adds is unmeasured.
+- **The drain finishers are common.** Sanguine Bond is cast in 32.3% of games and wins 55.6% of them (+20.5); Exquisite Blood 18.3%, 60.9%. Triggers plus drain are 76% of her damage.
+- **A quarter of games end to the artifact combos, 40% to combos in all.** Urza 12.8% plus Kinnan 12.2% is 25.0% of games; with Zur 8.4% and Yawgmoth 6.7% it is 40.1% of games, 62% of
+  her 64.8% losses. The output does not show how often her stops (Counterspell, Absorb, Mindbreak Trap) answered a combo: unmeasured.
+- **She is online in 62.6% of games but wins 35.1%.** Win rate by online or not online is not in the output: unmeasured. She herself is removed 0.20 times a game, the most of any card; her win rate
+  when cast is 38.6% (+3.6), close to the deck's.
+- **First numbers for the 11-21 and 11-22 swaps.** The Theorist: cast in 10.1% of games, wins 58.6% (+23.5), but stuck (cast in 42.9% of the games drawn) and removed 0.05 a game. Expedition Map
+  37.2% (+2.2) and Sapphire Medallion 37.8% (+2.8) are cheap cards cast in 18.3% and 17.3% of games with almost no lift, which the output's own note calls the most telling kind of low number.
+
 ## 2026-11-22: Loran of the Third Path => Sapphire Medallion (JD's choice, not simulated)
 Sapphire Medallion ({2}, an artifact: blue spells cost {1} less) takes Loran of the Third Path's slot. An Opus consult advised against it:
 this is not a slot-for-slot swap (removal on a body for a cost reducer), and Loran was an answer to the artifact combos that take the most

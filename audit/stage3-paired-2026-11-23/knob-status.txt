@@ -1,0 +1,5 @@
+tests exit 0
+392 binaries, passed 6851 failed 0 ignored 93
+start yoshimaru 09:43:41
+done yoshimaru exit 0 09:57:57
+KNOB ALL DONE

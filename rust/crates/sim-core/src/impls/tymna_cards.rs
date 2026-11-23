@@ -1290,11 +1290,14 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
         .count()
 }
 
-/// what Equipment `e` is worth on creature `m` for the kraum seat (0 for any other seat): evasion Equipment goes on a
-/// creature that can't get through on its own, one point of value per opponent it newly reaches (and a loss when the
+/// what Equipment `e` is worth on creature `m` for the yoshimaru seat (`yoshimaru_holder_value`) or the kraum seat (0 for
+/// any other seat). The kraum seat: evasion Equipment goes on a creature that can't get through on its own, one point of value per opponent it newly reaches (and a loss when the
 /// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
 /// anyway, since its hit is the card Tymna draws.
 pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key == "yoshimaru" {
+        return yoshimaru_holder_value(g, e, m);
+    }
     if hand_key(g, p) != "kraum" {
         return 0.0;
     }
@@ -1327,8 +1330,102 @@ pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     v
 }
 
-/// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's)
+// ------------------------------------------------------------------ the yoshimaru seat: where Equipment goes
+const TYMNA_CARD: &str = "Tymna the Weaver";
+const BALLISTA: &str = "Walking Ballista";
+/// the holder score that stands for "never": far below any sum of the other terms
+const NEVER: f64 = -1000.0;
+
+/// the power Equipment `e` adds (its compiled `equip_bonus`; a Sword with no compiled ability counts as +2)
+fn equip_power(g: &Game, e: PermId) -> i32 {
+    let Some(cd) = g.perm(e).cd else { return 0 };
+    let d = g.db.get(cd);
+    let compiled: i32 = d
+        .abilities
+        .iter()
+        .filter_map(|a| match a {
+            crate::dsl::model::Ability::Static { kind, pow, .. } if kind == "equip_bonus" => *pow,
+            _ => None,
+        })
+        .ssum();
+    if compiled == 0 && d.tags.has(Tag::Sword) { 2 } else { compiled }
+}
+
+fn is_flier(g: &Game, m: PermId) -> bool {
+    g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")
+}
+
+/// does Equipment `e` give protection from white (a compiled `equip_protection` whose colours include W: Sword of
+/// Hearth and Home)? Sting, the Glinting Dagger does not: it is +1/+1, haste and an untap.
+fn gives_prot_white(g: &Game, e: PermId) -> bool {
+    let Some(cd) = g.perm(e).cd else { return false };
+    g.db.get(cd).abilities.iter().any(|a| {
+        matches!(a, crate::dsl::model::Ability::Static { kind, colors, .. }
+            if kind == "equip_protection" && colors.as_deref().is_some_and(|c| c.contains('W')))
+    })
+}
+
+/// protection-from-white Equipment `e` on Walking Ballista: Heliod's lifelink could no longer target it (Line B)
+pub(crate) fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
+    gives_prot_white(g, e) && name_of(g, m) == BALLISTA
+}
+
+/// what Equipment `e` is worth on creature `m` for the yoshimaru seat: the guide-backed carrier rule, two rules and
+/// nothing else (audit/yoshimaru/FINDINGS.md, "Equipment carrier rule, paired tests 2026-11-23"). Never Walking Ballista
+/// with Equipment that gives protection from white (data-driven: Sword of Hearth and Home today; Heliod's lifelink could
+/// no longer target it, which breaks Line B), and Tymna not with +power Equipment (added power switches off Delney's
+/// doubling and evasion for her; Swiftfoot Boots and Mithril Coat add none, so they are unpenalised on her). Everything
+/// else scores 0.
+/// (Swiftfoot Boots never reach `dsl::equip_options`: `pool::special_options` equips them, so this function matters to
+/// them only in the free attach paths (`cloud::yoshimaru_attach`) and to direct calls.)
+fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
+    if prot_white_on_ballista(g, e, m) {
+        return NEVER;
+    }
+    if name_of(g, m) == TYMNA_CARD && equip_power(g, e) > 0 {
+        return -6.0;
+    }
+    0.0
+}
+
+/// is `e` on `m` one of the two pairs the yoshimaru seat's rule is against: Equipment that gives protection from white
+/// on Walking Ballista, or +power Equipment on Tymna? (The free attach paths drop these pairs outright.)
+pub(crate) fn holder_penalised(g: &Game, e: PermId, m: PermId) -> bool {
+    prot_white_on_ballista(g, e, m) || (name_of(g, m) == TYMNA_CARD && equip_power(g, e) > 0)
+}
+
+/// the yoshimaru seat's equip stat and trace: who wears the Equipment once an equip has resolved (`ty_eq_commander`,
+/// `ty_eq_flier`, `ty_eq_ballista`, `ty_eq_other`, and `ty_eq_pw_ballista` for Equipment that gives protection from white on Ballista, which
+/// should stay 0), summed over the games. Any other seat: nothing. Called by `dsl::equip` and by the yoshimaru branch of
+/// Kor Outfitter and Ardenn; the Boots equip (`pool::special_options`) and Mithril Coat's own attach are not seen.
+pub fn note_equip_holder(g: &mut Game, p: PlayerId, e: PermId, m: PermId) {
+    if g.player(p).key != "yoshimaru" || g.perm(e).attached != Some(m) {
+        return;
+    }
+    let kind = if g.perm(m).is_cmd {
+        "commander"
+    } else if name_of(g, m) == BALLISTA {
+        "ballista"
+    } else if is_flier(g, m) {
+        "flier"
+    } else {
+        "other"
+    };
+    let (en, mn) = (name_of(g, e).to_string(), name_of(g, m).to_string());
+    let pw = prot_white_on_ballista(g, e, m);
+    crate::glog!(g, "    equip holder: {en} on {mn} ({kind})");
+    g.player_mut(p).stat(intern(&format!("ty_eq_{kind}")), 1);
+    if pw {
+        g.player_mut(p).stat(intern("ty_eq_pw_ballista"), 1);
+    }
+}
+
+/// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's); the yoshimaru seat
+/// only forbids Equipment that gives protection from white on Walking Ballista (no other holder was left)
 pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key == "yoshimaru" {
+        return if prot_white_on_ballista(g, e, m) { -20.0 } else { 0.0 };
+    }
     if hand_key(g, p) != "kraum" {
         return 0.0;
     }

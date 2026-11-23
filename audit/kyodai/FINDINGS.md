@@ -9,6 +9,33 @@ put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Under
 line). **No sims yet.** The findings of the artifacts-and-Dragons list are in `FINDINGS-artifacts-and-dragons-list.md`,
 those of the cEDH list in `FINDINGS-old-list.md`.
 
+## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games, seed 500000)
+**t5: 15.1%** (about ±1.8 at 95%, binomial arithmetic), 4-player baseline 25%, average rounds survived 8.2. Raw (`--analyze`): `audit/stage3-baseline-2026-11-23/kyodai-analyze.txt`.
+This is the first simulation of this list (the intro above, written before it, still says "No sims yet"). It is a baseline from the new engine (exact X and alternative-cost pricing, hybrid mana, the
+Stage 2 filters); no older number in this file is for this list or build, so none is comparable. It is also a 4-player pod at 40 life, not Cali (1v1, 30 life: see "What the simulator cannot do yet"),
+so it measures the list against the t5 table, not at the Cali format.
+
+- **How it wins:** combo 84.1% of wins, damage 15.9%. It eliminates 0.44 opponents a game: combo 81.3%, combat 12.5%, commander damage 4.4%, triggers 1.4%, decked 0.5%. Damage dealt 8.6 a game, all combat.
+- **How it loses:** eliminated in 84.9% of games, on average in round 8.2. Kinnan combo 16.6%, Urza combo 13.9%, Miirym combat 12.1%, Zur combo 8.4%, Yawgmoth combo 7.7%, Miirym triggers 6.3%, Kinnan combat 4.7%,
+  Yawgmoth drain 3.4%.
+- **Plan timing** (first combo attempt): online by T4 1%, T5 3%, T6 6%, T7 9%, T8 12%, T12 15%; at all 14.9%. Kyodai resolves in 83.8% of games, median turn 4.0 (mean 4.3); by T4 52%, T8 81%. Breach line: Breach
+  and a storm card held on our turn in 3.3% of games; dry run tried 3.0%, passed 0.4%, executed 0.4%, won 0.3%; the last failed dry run fell short of storm count / other 1.9%, graveyard fuel 0.5%, mana 0.3%, blue mana 0.1% of games.
+- **Often stuck in hand** (cast in under half the games drawn): Silence 0.0% (never cast by the sim: untagged), Exsanguinate 0.4%, Brain Freeze 2.2%, Heroic Intervention 8.7% (reactive), Blightsteel Colossus 13.1%,
+  Akroma's Will 14.6%, Deflecting Swat 18.4%, Teferi's Protection 22.4% (reactive), Ephemerate 23.8% (reactive), Thassa's Oracle 26.9%, Tainted Pact 28.1%, Leyline of the Guildpact 32.0%.
+- **Most removed by opponents (per game):** Kyodai 0.24, Tezzeret, Cruel Captain 0.07, Urza, Lord High Artificer 0.06, Rhystic Study 0.04, The One Ring, Esper Sentinel, Staff of Domination, Walking Ballista 0.03 each.
+
+What the numbers say (correlation, not causation):
+- **It wins only when the plan goes online.** The plan is online in 14.9% of games and the deck wins 15.1%; combo is 84.1% of wins, about 12.7% of games (arithmetic), and damage 15.9% of wins, about 2.4%.
+- **The plan comes late.** Online by T8 in 12% of games and by T4 in 1%, while the deck is eliminated on average in round 8.2 and in 84.9% of games. The Kinnan and Urza combos eliminate it in 30.5% of games (16.6% plus 13.9%), against about
+  12.7% of games it wins by its own combo. Why the plan is slow is not in the output (mana, pieces, interaction): unmeasured.
+- **The combo pieces are cast rarely and some sit in hand.** Thassa's Oracle wins 79.6% of the games it is cast in but is cast in 7.2% of games, and in only 26.9% of the games it is drawn; Tainted Pact 28.1%,
+  Brain Freeze 2.2%, Blightsteel Colossus 13.1%. The intro above has Blightsteel coming in through Tinker or Sneak Attack and the Oracle needing Consultation or Pact, so low cast rates may be missing partners rather than the AI holding
+  the card; the output does not separate them: unmeasured. The Breach line is live in 3.3% of games and wins 0.3%.
+- **The common route is Tinker or Monolith plus Rings.** Tinker (cast in 10.5% of games, wins 32.9%, +17.8), Rings of Brighthearth (29.5%, 29.2%) and Basalt Monolith (34.8%, 26.2%) are the highest after the Oracle.
+  Kyodai is cast in 84.7% of games at a win rate equal to the deck's (15.0%, -0.0) and is removed 0.24 times a game, the most of any card.
+- **The cheap mana cards show no lift.** Dark Ritual 12.3% (-2.8), Birds of Paradise 12.8% (-2.3), Mox Opal 14.4%, Mana Vault 14.9% when cast, all at or below the deck's 15.1%; the output's own note calls
+  low numbers on cheap cards cast early the most telling. Whether mana is the bottleneck is unmeasured.
+
 ## 2026-11-22: Kyodai and Leyline of the Guildpact modelled (Full); hybrid costs fixed; guide rules errors corrected (JD's request, not simulated)
 JD asked for both new cards to be fully modelled, the two `mulligan_hints` tests that broke on origin/main to be fixed, the guide's rules errors to be fixed, and Leyline
 to be a proxy. Four workers built it on separate branches (Kyodai, Leyline's static abilities and opening-hand clause, hybrid costs, multi-mana lands under Leyline), an Opus
