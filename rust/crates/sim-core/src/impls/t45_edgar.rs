@@ -342,8 +342,8 @@ fn tenacity_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     if !remove_card(&mut g.player_mut(o).gy, cd) {
         return Ok(()); // exiled or otherwise gone
     }
-    let n = enter(g, o, cd, Enter::default())?;
-    g.perm_mut(n).data.set(DataKey::NotCreature, Val::Bool(true));
+    // already marked as it enters: it is no creature entering for Soul Warden and the like
+    enter(g, o, cd, Enter { not_creature: true, ..Enter::default() })?;
     crate::glog!(g, "    {} returns as an enchantment (Enduring Tenacity)", g.player(o).name);
     Ok(())
 }

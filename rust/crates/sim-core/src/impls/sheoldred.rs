@@ -10,13 +10,13 @@ use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, phyrexian_life, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{epow, etgh, pval, untargetable};
+use crate::engine::values::{epow, etgh, player_hexproof_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, Zone, discard_cards, draw, enter, exile_perm, land_to_hand, leave, make_artifact_tokens, max_by, min_by,
     returns_left, to_zone_card,
@@ -1680,10 +1680,21 @@ fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), ..Ctx::default() })
 }
 
+/// can p's Damnable Pact (card c) still target q: a live player, and not one with hexproof (Shalai; p itself is always a
+/// legal target of its own spell)
+fn pact_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
+    g.player(q).alive && (q == p || !player_hexproof_from(g, q, g.db.get(c).colors))
+}
+
 /// Damnable Pact ({X}{B}{B}): target player draws X cards, then loses X life (X from `ctx.x`; the draws go through the
-/// normal draw path, so Sheoldred, Underworld Dreams and Fate Unraveler fire; a target that died on the way loses nothing)
-fn pact_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+/// normal draw path, so Sheoldred, Underworld Dreams and Fate Unraveler fire; a target that died on the way loses nothing).
+/// No `ctx.face` means the caster is the target; a named target that is dead or no longer targetable (hexproof) makes
+/// the spell fizzle: nothing happens, it goes to the graveyard (it is never redirected to the caster)
+fn pact_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !pact_target_ok(g, p, c, q) {
+        return Ok("gy");
+    }
     let x = ctx.x.max(0);
     if x > 0 {
         draw(g, q, x as u32, false)?;
@@ -1694,14 +1705,37 @@ fn pact_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+/// the sum of the cost changes on Damnable Pact (negative: a reducer such as Jet Medallion)
+fn pact_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    crate::dsl::cost_delta(g, p, c)
+        + crate::impls::t0_stella::kaza_delta(g, p, c)
+        + crate::engine::hooks::total_cost(g, p, c)
+        + crate::cardcode::self_cost(g, p, c)
+        + crate::impls::t45_urdragon::eminence(g, p, c)
+}
+
+/// what Damnable Pact costs p now with X included: (generic, coloured pips). `cost_of` prices the spell at X = 0, where a
+/// generic reducer (Jet Medallion) has nothing to take off and is clamped away; here X meets the reduction first, and the
+/// generic part is floored at 0 once
+fn pact_cost(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
+    let (g0, pips) = cost_of(g, p, c);
+    let delta = pact_delta(g, p, c);
+    // with a reducer g0 is the extras (taxes) on a floored 0
+    let gn = if delta < 0 { g0 as i32 + (x + delta).max(0) } else { g0 as i32 + x };
+    let floor = crate::engine::hooks::max_min_cost(g, p, c) - pips.chars().count() as i32; // Trinisphere
+    (gn.max(floor).max(0) as u32, pips)
+}
+
 /// the most X the spare mana allows for Damnable Pact (0 when it can't be cast at all)
 fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn, &pips, false) || !castable(g, p, c, "hand") {
+    if !castable(g, p, c, "hand") {
         return 0;
     }
-    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
-    if x >= 1 && can_pay_spell(g, p, c, gn + x as u32, &pips, false) { x } else { 0 }
+    let (g0, pips) = cost_of(g, p, c);
+    let spare = total_mana_spell(g, p, c, false) as i32 - g0 as i32 - pips.chars().count() as i32;
+    // a reducer lets X run past the spare mana by what it takes off: try the largest X first
+    let top = spare - pact_delta(g, p, c).min(0);
+    (1..=top).rev().find(|&x| can_pay_spell(g, p, c, pact_cost(g, p, c, x).0, &pips, false)).unwrap_or(0)
 }
 
 /// Damnable Pact as a main-phase play (own turn only: it is a sorcery; the deck's plan must `plays` it).
@@ -1710,8 +1744,10 @@ fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
 ///   X is the most the spare mana allows, less when a smaller X already kills. A kill scores like `x_drain_option`
 ///   (7 on top); with no kill it is cast only for X >= 2 and a total loss of 10 or more, which is a real chunk of a
 ///   40-life table and worth the cards it hands over.
-/// - No punisher out: never at an opponent (that only gives them cards). At ourselves only when safe: X >= 2, life
-///   after paying X stays at 12 or more, X no more than half the library and at most 6, so the hand stays playable.
+/// - Otherwise (no punisher out, or no opponent worth aiming at): never at an opponent (that only gives them cards).
+///   At ourselves only when safe: X >= 2, X no more than half the library and at most 6, so the hand stays playable,
+///   and life after paying X stays at 12 or more (7 with Sheoldred out: every card then gains 2 life and the spell
+///   costs 1, so life rises by X).
 fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) {
         return Ok(vec![]);
@@ -1723,25 +1759,35 @@ fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     let toll = draw_toll(g, p);
     if toll > 0 {
         let per = toll + 1;
-        let opps: Vec<PlayerId> =
-            g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() as i32 > xmax).collect();
-        let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(vec![]) };
-        let life = g.player(q).life;
-        let kills = !g.player(q).life_locked && xmax * per >= life;
-        let x = if kills { ((life + per - 1) / per).max(1) } else { xmax };
-        let total = (x * per).min(life.max(0));
-        if !kills && (x < 2 || total < 10) {
-            return Ok(vec![]);
+        // not a target whose life can't change (the drain would only hand them cards) or that can't be targeted
+        let opps: Vec<PlayerId> = g
+            .opps(p)
+            .filter(|&q| {
+                pact_target_ok(g, p, c, q) && !g.player(q).life_locked && g.player(q).library.len() as i32 > xmax
+            })
+            .collect();
+        if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
+            let life = g.player(q).life;
+            let kills = !crate::impls::t0_giada::cant_lose(g, q) && xmax * per >= life; // Platinum Angel: no kill
+            let x = if kills { ((life + per - 1) / per).max(1) } else { xmax };
+            let total = (x * per).min(life.max(0));
+            if kills || (x >= 2 && total >= 10) {
+                let u = 1.5 + 0.12 * total as f64 + if kills { 7.0 } else { 0.0 };
+                return Ok(vec![Opt {
+                    utility: u,
+                    label: format!("Damnable Pact ({} draws {x} and loses {total})", g.player(q).name),
+                    act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, q.0 as i64 + 1, x) }),
+                }]);
+            }
         }
-        let u = 1.5 + 0.12 * total as f64 + if kills { 7.0 } else { 0.0 };
-        return Ok(vec![Opt {
-            utility: u,
-            label: format!("Damnable Pact ({} draws {x} and loses {total})", g.player(q).name),
-            act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, q.0 as i64 + 1, x) }),
-        }]);
     }
+    // no opponent worth aiming at: draw for ourselves. With Sheoldred out each card gains 2 life and the spell costs 1,
+    // so life only rises and the floor is a margin against her being answered in response (7); otherwise it is 12.
+    // (the life the black pips cost with K'rrik out comes off first)
+    let pips_life = phyrexian_life(g, p, c, &cost_of(g, p, c).1);
     let pl = g.player(p);
-    let x = xmax.min(pl.life - 12).min(pl.library.len() as i32 / 2).min(6);
+    let floor = if sheoldred_out(g, p) { 7 } else { 12 };
+    let x = xmax.min(pl.life - pips_life - floor).min(pl.library.len() as i32 / 2).min(6);
     if x < 2 {
         return Ok(vec![]);
     }
@@ -1768,11 +1814,20 @@ fn pact_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         k => PlayerId((k - 1) as u8),
     };
     let x = (arg >> 32) as i32;
-    let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
+    // a plan made earlier is revalidated before anything is paid: the card, the target, a new Silence, the mana
+    if !g.player(p).hand.contains(&c) || x < 1 || !pact_target_ok(g, p, c, face) || !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
+    let (gn, pips) = pact_cost(g, p, c, x);
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
+        return Ok(false);
+    }
+    pay_spell(g, p, c, gn, &pips, false)?;
+    // K'rrik: each {B} it left out of the mana is paid with 2 life (as `do_cast_with` does)
+    let life = phyrexian_life(g, p, c, &pips);
+    if life > 0 {
+        lose_life(g, p, life, Some(p), "life", None)?;
+    }
     cast_card(g, p, c, "hand", Ctx { face: Some(face), x, ..Ctx::default() })?;
     Ok(true)
 }

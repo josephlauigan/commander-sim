@@ -126,11 +126,15 @@ fn damnable_pact_kills_through_its_own_life_loss() {
 }
 
 #[test]
-fn damnable_pact_on_a_dead_target_goes_to_the_caster() {
+fn damnable_pact_on_a_dead_target_fizzles() {
     let mut g = game3();
     g.player_mut(P1).alive = false;
     cast_pact(&mut g, P0, Some(P1), 2);
-    assert_eq!((g.player(P0).hand.len(), life(&g, P0)), (2, 38));
+    // no legal target: no draws and no life loss for anyone (it is never redirected to the caster), the card still
+    // goes to the graveyard
+    assert_eq!((g.player(P0).hand.len(), life(&g, P0)), (0, 40));
+    assert_eq!(g.player(P1).hand.len(), 0);
+    assert!(pact_in_gy(&g, P0));
 }
 
 // ------------------------------------------------------------------ the AI's options
@@ -168,7 +172,12 @@ fn the_ai_holds_damnable_pact_when_the_drain_is_small() {
     let mut g = game();
     perm(&mut g, P0, SHEO);
     lands(&mut g, P0, "Swamp", 5, false); // X = 3: 9 life, no kill
-    assert!(pact_opts(&mut g, P0).is_empty(), "less than 10 life and no kill");
+    let o = pact_opts(&mut g, P0);
+    assert!(
+        o.iter().all(|x| !x.label.contains(&g.player(P1).name.to_string())),
+        "no opponent aimed at: less than 10 life and no kill"
+    );
+    assert!(o[0].label.starts_with("Damnable Pact (draw "), "the self-draw instead: {}", o[0].label);
     let mut g = game();
     perm(&mut g, P0, SHEO);
     lands(&mut g, P0, "Swamp", 3, false); // X = 1
@@ -194,7 +203,33 @@ fn the_ai_does_not_aim_damnable_pact_at_an_opponent_whose_library_is_too_short()
     perm(&mut g, P0, SHEO);
     lands(&mut g, P0, "Swamp", 7, false);
     trim_library(&mut g, P1, 3);
-    assert!(pact_opts(&mut g, P0).is_empty(), "X = 5 would deck them; no opponent qualifies and Sheoldred is out");
+    let o = pact_opts(&mut g, P0);
+    assert!(
+        o.iter().all(|x| !x.label.contains(&g.player(P1).name.to_string())),
+        "X = 5 would deck them; no opponent qualifies"
+    );
+    assert!(o[0].label.starts_with("Damnable Pact (draw "), "the self-draw instead: {}", o[0].label);
+}
+
+#[test]
+fn with_sheoldred_out_the_self_draw_gains_life_and_has_a_small_margin() {
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 5, false); // X = 3, no opponent worth aiming at
+    let o = pact_opts(&mut g, P0);
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("draw 3"), "{}", o[0].label);
+    assert!(run_plan(&mut g, P0, &o[0]));
+    assert_eq!(life(&g, P0), 43, "three draws gain 6 under Sheoldred and the spell costs 3");
+    assert_eq!(g.player(P0).hand.len(), 3);
+    let mut g = game();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 5, false);
+    g.player_mut(P0).life = 9; // 9 - 7 = 2: X = 2
+    let o = pact_opts(&mut g, P0);
+    assert!(o[0].label.contains("draw 2"), "{}", o[0].label);
+    g.player_mut(P0).life = 8; // a margin of 1: below X = 2
+    assert!(pact_opts(&mut g, P0).is_empty());
 }
 
 #[test]
