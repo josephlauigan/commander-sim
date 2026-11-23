@@ -9,7 +9,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
@@ -570,11 +570,7 @@ const WAN_SHI_TONG: &str = "Wan Shi Tong, Librarian";
 
 /// The most X the AI can pay for Wan Shi Tong ({X}{U}{U}) with the mana it has
 fn wan_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let mut x = total_mana_spell(g, p, c, false) as i32 - 2;
-    while x >= 1 && !can_pay_spell(g, p, c, x as u32, "UU", false) {
-        x -= 1;
-    }
-    x.max(0)
+    crate::ai::brain::max_x(g, p, c, 1, false) // `cost_of_x`: a reducer applies to the generic part with X
 }
 
 fn wan_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
@@ -599,7 +595,7 @@ fn wan_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let x = wan_x(g, p, c);
-    if !g.player(p).hand.contains(&c) || x < 1 || !pay_spell(g, p, c, x as u32, "UU", false)? {
+    if !g.player(p).hand.contains(&c) || x < 1 || !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);

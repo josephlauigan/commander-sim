@@ -18,7 +18,7 @@ use super::yshtola::take_card;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of_x, pay, pay_spell, phyrexian_life, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -679,23 +679,20 @@ fn unpack_cx(a: i64) -> (CardId, u32) {
 /// X for Stargaze: the spare mana, at most 5, leaving the life and the library healthy
 fn stargaze_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
     let pl = g.player(p);
-    let mana = total_mana_spell(g, p, c, false);
-    let spare = mana.saturating_sub(2);
-    if !can_pay_spell(g, p, c, 0, "BB", false) {
-        return 0;
-    }
-    let by_life = (pl.life - 10).max(0) as u32;
+    // the most X its cost allows (`cost_of_x`: a reducer applies to the generic part with X); with K'rrik out the life for
+    // the {B} the mana leaves unpaid comes off the life the spell may spend, as the X life it loses does
+    let spare = crate::ai::brain::max_x(g, p, c, 1, false) as u32;
+    let (_, pips) = cost_of_x(g, p, c, spare as i32);
+    let by_life = (pl.life - phyrexian_life(g, p, c, &pips) - 10).max(0) as u32;
     let by_lib = (pl.library.len() / 2) as u32;
-    let _ = c;
     spare.min(5).min(by_life).min(by_lib)
 }
 
 fn stargaze_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, x) = unpack_cx(arg);
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "BB", false) {
+    if !g.player(p).hand.contains(&c) || !crate::ai::brain::pay_x(g, p, c, x as i32, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, x, "BB", false)?;
     cast_card(g, p, c, "hand", Ctx { x: x as i32, ..Ctx::default() })?;
     Ok(true)
 }
@@ -707,11 +704,10 @@ fn disintegrate_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
     if post.is_none() || !can_pay_spell(g, p, c, 0, "R", false) {
         return Ok(vec![]);
     }
-    let mana = total_mana_spell(g, p, c, false);
-    if mana < 2 {
+    let maxx = crate::ai::brain::max_x(g, p, c, 1, false) as u32; // `cost_of_x`: a reducer applies to the generic part with X
+    if maxx < 1 {
         return Ok(vec![]);
     }
-    let maxx = mana - 1;
     let mut out = vec![];
     for q in alive_opps(g, p) {
         let life = g.player(q).life;
@@ -750,7 +746,7 @@ fn disintegrate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId((arg & 0xffff) as u16);
     let x = ((arg >> 16) & 0xffff) as u32;
     let who = arg >> 32;
-    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "R", false) {
+    if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
     let mut ctx = Ctx { x: x as i32, rem_kind: Some(intern(&format!("dmg{x}"))), ..Ctx::default() };
@@ -767,7 +763,9 @@ fn disintegrate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         }
         ctx.target = Some(m);
     }
-    pay_spell(g, p, c, x, "R", false)?;
+    if !crate::ai::brain::pay_x(g, p, c, x as i32, 1, false)? {
+        return Ok(false);
+    }
     cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }

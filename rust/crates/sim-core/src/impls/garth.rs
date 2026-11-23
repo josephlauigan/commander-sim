@@ -19,7 +19,7 @@
 
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{can_pay_spell, cost_of, cost_of_x, total_mana};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::ability_window;
 use crate::engine::values::card_name;
@@ -70,8 +70,8 @@ fn card_of(g: &Game, i: usize) -> Option<CardId> {
 
 /// the mana p needs for card c as cost_of reads it, plus `x` more generic
 fn affordable(g: &Game, p: PlayerId, c: CardId, x: u32) -> bool {
-    let (gn, pips) = cost_of(g, p, c);
-    can_pay_spell(g, p, c, gn + x, &pips, false)
+    let (gn, pips) = cost_of_x(g, p, c, x as i32); // the X is part of the generic cost: a reducer applies to it
+    can_pay_spell(g, p, c, gn, &pips, false)
 }
 
 // ================================================================== the ability
@@ -142,12 +142,7 @@ pub fn cast_copy_at(
     if target.is_some_and(|t| !g.perm(t).on_bf) {
         return Ok(false);
     }
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn + x, &pips, false) {
-        return Ok(false);
-    }
-    let paid = pay_spell(g, p, c, gn + x, &pips, false);
-    if !paid? {
+    if !crate::ai::brain::pay_x(g, p, c, x as i32, 1, false)? {
         return Ok(false);
     }
     let (n_gy, n_ex) = (g.player(p).gy.len(), g.player(p).exile.len());
@@ -175,12 +170,8 @@ fn best_target(g: &Game, p: PlayerId, c: CardId) -> Option<(PermId, f64)> {
 
 /// the most X Braingeyser can be cast for with the mana p has (UU paid too), at most MAX_X and what the library lets
 fn braingeyser_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
-    let (gn, pips) = cost_of(g, p, c);
     let room = (g.player(p).library.len() as u32).saturating_sub(8).min(MAX_X);
-    (0..=room.min(total_mana_spell(g, p, c, false)))
-        .rev()
-        .find(|&x| can_pay_spell(g, p, c, gn + x, &pips, false))
-        .unwrap_or(0)
+    (crate::ai::brain::max_x(g, p, c, 1, false) as u32).min(room) // `cost_of_x`: a reducer applies to the generic part with X
 }
 
 /// would Black Lotus's three mana make a spell castable that is not castable now (a card in hand or the commander)

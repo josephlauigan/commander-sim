@@ -346,8 +346,10 @@ fn an_opponents_elesh_does_not_stop_an_aura_attaching() {
 fn an_opponents_elesh_does_not_stop_an_as_it_enters_hook() {
     let mut g = tbl();
     perm(&mut g, P1, ELESH);
-    g.entering_spent = 6;
-    let c = perm(&mut g, P0, "Chalice of the Void"); // enters with X charge counters: half the mana spent
+    let card = take(&mut g, P0, "Chalice of the Void");
+    // enters with X charge counters: the X it was cast with
+    let how = zones::Enter { sick: false, was_cast: true, x: 3, ..Default::default() };
+    let c = zones::enter(&mut g, P0, card, how).unwrap();
     assert_eq!(g.perm(c).data.get(DataKey::Charge), Some(&Val::Int(3)));
 }
 

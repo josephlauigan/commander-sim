@@ -242,9 +242,10 @@ fn cornucopia_mana(g: &Game, _p: PlayerId, m: PermId) -> u32 {
     g.perm(m).data.int(DataKey::Charge).max(0) as u32
 }
 
-/// The X the AI casts it for: all its spare mana, three per X
+/// The X the AI casts it for: the most its cost allows, three generic per X (`cost_of_x`: a reducer takes its {1} off the
+/// generic part that includes the three X)
 fn cornucopia_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
-    crate::engine::mana::total_mana_spell(g, p, c, false) / 3
+    crate::ai::brain::max_x(g, p, c, 3, false) as u32
 }
 
 /// {X}{X}{X}: the AI casts it in its main phase with the largest X its mana pays (X >= 1), as a hand option: the
@@ -274,8 +275,7 @@ pub fn cornucopia_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if x == 0 || !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    let paid = crate::engine::mana::pay_spell(g, p, c, 3 * x, "", false);
-    if !paid? {
+    if !crate::ai::brain::pay_x(g, p, c, x as i32, 3, false)? {
         return Ok(false);
     }
     crate::glog!(g, "  {} casts {CORNUCOPIA} (X = {x})", g.player(p).name);

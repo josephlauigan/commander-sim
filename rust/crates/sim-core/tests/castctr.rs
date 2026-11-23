@@ -149,7 +149,9 @@ fn chalice_enters_with_half_the_mana_paid_and_costs_twice_the_x_the_ai_chose() {
     let x = sim_core::impls::t6_stax::chalice_x(&g, P0).expect("six lands pay for it");
     assert!((0..=3).contains(&x));
     assert_eq!(cost_of(&g, P0, c).0 as i32, 2 * x);
-    cast_paid(&mut g, P0, "Chalice of the Void");
+    // the AI's cast records the X it chose (the counters are that X, not half of whatever was paid)
+    hand(&mut g, P0, &["Chalice of the Void"]);
+    assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
     let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd == Some(c)).expect("on the battlefield");
     assert_eq!(sim_core::impls::t6_stax::chalice_counters(&g, m), x, "X counters for {{X}}{{X}}");
 }

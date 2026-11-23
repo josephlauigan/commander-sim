@@ -798,8 +798,8 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
             }
         }
         if t.has(Tag::Krasis) && castable(g, p, c, "hand") {
-            // Hydroid Krasis: X = spare mana
-            let x = total_mana_spell(g, p, c, false) as i32 - 2;
+            // Hydroid Krasis: X = the most its cost allows
+            let x = super::brain::max_x(g, p, c, 1, false);
             if x >= 4 {
                 o.push(Opt {
                     utility: 1.0 + 0.6 * x as f64,
@@ -812,7 +812,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
             // Primal Might: pump and fight
             let mine: Vec<PermId> =
                 pl.perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
-            let x = total_mana_spell(g, p, c, false) as i32 - 1;
+            let x = super::brain::max_x(g, p, c, 1, false);
             if let Some(me) = max_by(&mine, |m| epow(g, m) as f64)
                 && x >= 1
             {
@@ -958,14 +958,10 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// Hydroid Krasis for X = all spare mana: draw and gain X/2, a creature with X counters
 fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
-    let mut x = total_mana_spell(g, p, c, false) as i32 - 2;
-    while x >= 1 && !can_pay_spell(g, p, c, x as u32, "GU", false) {
-        x -= 1;
-    }
-    if !g.player(p).hand.contains(&c) || x < 1 {
+    let x = super::brain::max_x(g, p, c, 1, false);
+    if !g.player(p).hand.contains(&c) || x < 1 || !super::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, x as u32, "GU", false)?;
     decks::remove_from_hand(g, p, c);
     let pl = g.player_mut(p);
     pl.cast_names.insert(c);
@@ -973,8 +969,8 @@ fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     on_cast(g, p, c)?;
     crate::engine::life::gain(g, p, x / 2)?;
     draw(g, p, (x / 2) as u32, false)?;
-    let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    repl::put_plus(g, m, x);
+    // it enters with its X counters (a 0/0 would die as it entered)
+    enter(g, p, c, Enter { was_cast: true, plus: x, ..Enter::default() })?;
     Ok(true)
 }
 
@@ -983,12 +979,11 @@ fn primal_might(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
     let me = PermId(((arg >> 16) & 0xff_ffff) as u32);
     let foe = PermId((arg >> 40) as u32);
-    let x = total_mana_spell(g, p, c, false) as i32 - 1;
-    if !g.player(p).hand.contains(&c) || x < 0 || !can_pay_spell(g, p, c, x as u32, "G", false) {
+    let x = super::brain::max_x(g, p, c, 1, false);
+    if !g.player(p).hand.contains(&c) || !super::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     decks::remove_from_hand(g, p, c);
-    pay_spell(g, p, c, x as u32, "G", false)?;
     g.player_mut(p).gy.push(c);
     on_cast(g, p, c)?;
     let pt = &mut g.perm_mut(me).eot_pt;

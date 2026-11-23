@@ -965,14 +965,43 @@ pub fn freyalise_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 // ================================================================== harmonize, bargain, improvise, transmute, cycling
+/// the part of X the mana pays for a harmonize cast, {X}{G}{G}{G}{G}: the most X' for which the generic part of
+/// `cost_of_x` at X' (the reducers and taxes apply to it) and {G}{G}{G}{G} are payable; the tapped creature's power comes
+/// off the generic cost with the other reductions, so X = X' + power (reductions all come off before a tax). None when
+/// even X' = 0 can't be paid
+fn harmonize_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    let ok = |x: i32| can_pay_spell(g, p, c, harmonize_generic(g, p, c, x), "GGGG", false);
+    (0..=crate::ai::brain::max_x(g, p, c, 1, false)).rev().find(|&x| ok(x)).or_else(|| ok(0).then_some(0))
+}
+
+/// the generic part of the harmonize cost at X = x: `cost_of_x` applies Trinisphere's minimum to the printed pips, but the
+/// alternative cost {G}{G}{G}{G} is checked against it with its own four symbols. Where the printed minimum raised the
+/// generic cost, the cost before it is read from `cost_of_x` at a much larger X (every step is {1} per X there, so it is
+/// that cost less the extra X) and the alternative's own minimum applied to it
+fn harmonize_generic(g: &Game, p: PlayerId, c: CardId, x: i32) -> u32 {
+    let gn = crate::engine::mana::cost_of_x(g, p, c, x).0;
+    if g.hooks.is_empty() {
+        return gn;
+    }
+    let floor = crate::engine::hooks::max_min_cost(g, p, c) as i64;
+    let printed_floor = floor - g.db.get(c).pips.chars().count() as i64;
+    if gn as i64 > printed_floor {
+        return gn; // the minimum did not raise it
+    }
+    let far = x + 256;
+    let before = (crate::engine::mana::cost_of_x(g, p, c, far).0 as i64 - 256).max(0);
+    before.max(floor - 4).min(gn as i64) as u32
+}
+
 /// harmonize {X}{G}{G}{G}{G} (tapping a creature reduces it by its power): cast from the graveyard, then exile it
 fn harmonize(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) {
         return Ok(vec![]);
     }
     let red = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).map(|&m| epow(g, m)).max();
-    let x = total_mana_spell(g, p, c, false) as i32 + red.unwrap_or(0) - 4;
-    if x < 3 || !can_pay_spell(g, p, c, 0, "GGGG", false) {
+    let Some(paid) = harmonize_x(g, p, c) else { return Ok(vec![]) };
+    let x = paid + red.unwrap_or(0);
+    if x < 3 {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.0 + x as f64 / 2.0, "harmonize Nature's Rhythm".into(), harmonize_go, c.0 as i64)])
@@ -990,13 +1019,13 @@ fn harmonize_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if let Some(m) = tapper {
         g.perm_mut(m).tapped = true;
     }
-    let xx = total_mana_spell(g, p, c, false) as i32 - 4 + r;
-    let gn = (xx - r).max(0) as u32;
-    if !can_pay_spell(g, p, c, gn, "GGGG", false) {
+    let Some(paid_x) = harmonize_x(g, p, c) else { return Ok(false) }; // X - r: the part of X the mana pays
+    let gn = harmonize_generic(g, p, c, paid_x);
+    if !pay_spell(g, p, c, gn, "GGGG", false)? {
         return Ok(false);
     }
+    let xx = paid_x + r;
     remove_card(&mut g.player_mut(p).gy, c);
-    pay_spell(g, p, c, gn, "GGGG", false)?;
     g.player_mut(p).exile.push(c);
     crate::glog!(g, "  {} harmonizes Nature's Rhythm (X={})", pname(g, p), xx);
     on_cast(g, p, c)?;

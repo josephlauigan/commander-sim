@@ -890,17 +890,13 @@ fn hypothesis_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
 }
 
 fn hypothesis_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let mana = crate::engine::mana::total_mana_spell(g, p, c, false) as i32;
-    (mana - 1).max(0)
+    crate::ai::brain::max_x(g, p, c, 1, false) // `cost_of_x`: a reducer applies to the generic part with X
 }
 
 fn hypothesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let x = hypothesis_x(g, p, c);
-    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, x as u32, "G", false) {
-        return Ok(false);
-    }
-    if !crate::engine::mana::pay_spell(g, p, c, x as u32, "G", false)? {
+    if !g.player(p).hand.contains(&c) || x < 1 || !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     crate::engine::cast::cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;

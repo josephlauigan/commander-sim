@@ -47,7 +47,7 @@
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay_spell};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell};
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, tutor_to_top};
 use crate::engine::values::{epow, has_type, pval, threat, untargetable};
@@ -597,12 +597,13 @@ fn agadeem_picks(g: &Game, p: PlayerId, x: i32) -> Vec<CardId> {
 }
 
 /// the X that returns the most for the mana: (X, the worth returned)
-fn agadeem_plan(g: &Game, p: PlayerId) -> Option<(i32, f64)> {
+fn agadeem_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, f64)> {
     let mut best: Option<(i32, f64)> = None;
-    for x in 0..=10 {
-        if !can_pay(g, p, x as u32, "BBB", false) {
-            break;
-        }
+    // X up to what `cost_of_x` lets the mana pay (a reducer applies to the generic part that includes X)
+    if !crate::ai::brain::can_pay_x(g, p, c, 0, 1, false) {
+        return None;
+    }
+    for x in 0..=crate::ai::brain::max_x(g, p, c, 1, false).min(10) {
         let v: f64 = agadeem_picks(g, p, x).iter().map(|&c| card_worth(g, p, c, false)).sum();
         if best.is_none_or(|b| v > b.1 + 0.01) {
             best = Some((x, v));
@@ -616,7 +617,7 @@ fn agadeem_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
     if post.is_some()
         && g.active == Some(p)
         && castable(g, p, c, "hand")
-        && let Some((x, v)) = agadeem_plan(g, p)
+        && let Some((x, v)) = agadeem_plan(g, p, c)
     {
         o.push(Opt {
             utility: 1.0 + 0.15 * v.min(40.0),
@@ -632,9 +633,8 @@ fn agadeem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    let Some((x, _)) = agadeem_plan(g, p) else { return Ok(false) };
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) || !pay_spell(g, p, c, gn + x as u32, &pips, false)? {
+    let Some((x, _)) = agadeem_plan(g, p, c) else { return Ok(false) };
+    if !crate::ai::brain::pay_x(g, p, c, x, 1, false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;

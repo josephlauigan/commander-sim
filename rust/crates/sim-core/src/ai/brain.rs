@@ -20,7 +20,8 @@ use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_af
 use crate::engine::combat::double_strike;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{
-    can_pay, can_pay_spell, cost_of, mana_units, pay_spell, phyrexian_life, seq_cost, total_mana, total_mana_spell,
+    can_pay, can_pay_spell, cost_of, cost_of_x, mana_units, pay_spell, phyrexian_life, seq_cost, total_mana,
+    total_mana_spell,
 };
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::free_counter;
@@ -583,7 +584,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
         }
     }
     let fblife = d.tags.int(Tag::Fblife);
-    let (cg, cp) = if zone == "gy" {
+    let (cg, mut cp) = if zone == "gy" {
         if let Some(l) = fblife
             && g.player(p).life <= l + 5
         {
@@ -593,42 +594,79 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     } else {
         cost_of(g, p, c)
     };
-    // --- t6-xtutor: the planner pays X = its target's mana value (set only around its cast), not all the spare mana;
-    // the X is paid with the cost
-    let plan_x = g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)).unwrap_or(0);
-    let ok = can_pay_for(g, p, c, cg + plan_x, &cp, cv);
-    let paid = if ok { pay_spell(g, p, c, cg + plan_x, &cp, cv) } else { Ok(false) };
-    if !ok || !paid? {
-        return Ok(false);
-    }
+    // an {X} spell of the AI's own choosing is priced by `cost_of_x` at the X it casts with and paid once (a generic
+    // reducer takes its {1} off the generic part that includes X; K'rrik's life comes off the pips that go unpaid):
+    // X spells of outside decks (`Tokx`: X = all the mana the cost leaves; a flashback keeps its own cost), the planner's
+    // creature X tutors (`Xtutor`: X = the planner's value, `Player::plan_x`, the mana its X is paid with; none planned: all
+    // the spare mana), and a card whose code chooses its own X as the spell is cast (`CardImpl::cast_x`)
+    let hook_x =
+        g.registry.get(c).and_then(|i| i.cast_x).filter(|_| d.xcount > 0 && !d.tag(Tag::Tokx) && !d.tag(Tag::Xtutor));
     let mut ctx = ctx0;
-    if d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) {
-        // X spells of outside decks: X = all spare mana
+    if ctx.x == 0 && zone != "gy" && d.xcount > 0 && !crate::human::is_human(g, p) {
+        // {X}{X} permanents priced by their `self_cost` at the X the AI chooses (the cost is taken at the same state): the
+        // X is recorded with the cast, so they enter with X counters and not with half of everything paid, taxes included
+        let chosen = match &*d.name {
+            "Chalice of the Void" => crate::impls::t6_stax::chalice_x(g, p).unwrap_or(0),
+            "Hangarback Walker" => crate::impls::karn_engines::hangar_x(g, p),
+            _ => 0,
+        };
+        // a cast that costs nothing (Tamiyo's emblem from the hand, Dracogenesis) has X = 0 (107.3b)
+        let free = cost_of(g, p, c) == (0, String::new());
+        ctx.x = if free { 0 } else { chosen };
+    }
+    if zone != "gy" && (d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) || hook_x.is_some()) {
+        let per = if hook_x.is_some() { d.xcount } else { 1 };
         let x = match g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)) {
-            Some(x) => x, // --- t6-xtutor: paid with the cost
+            Some(x) => x as i32, // --- t6-xtutor: paid with the cost
             None => {
-                let x = total_mana_spell(g, p, c, cv);
-                pay_spell(g, p, c, x, "", cv)?;
-                x
+                let spare = max_x(g, p, c, per, cv);
+                match hook_x {
+                    Some(f) => f(g, p, c, spare as u32).min(spare as u32) as i32,
+                    None => spare,
+                }
             }
         };
-        ctx.x = x as i32;
+        let (gx, px) = cost_of_x(g, p, c, per as i32 * x);
+        if !can_pay_for(g, p, c, gx, &px, cv) || !pay_spell(g, p, c, gx, &px, cv)? {
+            return Ok(false);
+        }
+        cp = px;
+        ctx.x = x;
         if d.tag(Tag::Xtutor) {
-            g.last_x = x as i32;
+            g.last_x = x;
         }
-    }
-    if let Some(f) = g.registry.get(c).and_then(|i| i.cast_x)
-        && d.xcount > 0
-        && !d.tag(Tag::Tokx)
-        && !d.tag(Tag::Xtutor)
-    {
-        // a card whose code chooses its own X: paid with the cost, as the spell is cast (visible on the stack)
-        let spare = total_mana_spell(g, p, c, cv) / d.xcount;
-        let x = f(g, p, c, spare).min(spare);
-        if x > 0 {
-            pay_spell(g, p, c, x * d.xcount, "", cv)?;
+    } else {
+        // --- t6-xtutor: the planner pays X = its target's mana value (set only around its cast), not all the spare mana;
+        // the X is paid with the cost
+        let plan_x = g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)).unwrap_or(0);
+        let ok = can_pay_for(g, p, c, cg + plan_x, &cp, cv);
+        let paid = if ok { pay_spell(g, p, c, cg + plan_x, &cp, cv) } else { Ok(false) };
+        if !ok || !paid? {
+            return Ok(false);
         }
-        ctx.x = x as i32;
+        if d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) {
+            // (a flashback of an X spell, its own cost paid above) X = all spare mana
+            let x = match g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)) {
+                Some(x) => x, // --- t6-xtutor: paid with the cost
+                None => {
+                    let x = total_mana_spell(g, p, c, cv);
+                    pay_spell(g, p, c, x, "", cv)?;
+                    x
+                }
+            };
+            ctx.x = x as i32;
+            if d.tag(Tag::Xtutor) {
+                g.last_x = x as i32;
+            }
+        }
+        if let Some(f) = hook_x {
+            let spare = total_mana_spell(g, p, c, cv) / d.xcount;
+            let x = f(g, p, c, spare).min(spare);
+            if x > 0 {
+                pay_spell(g, p, c, x * d.xcount, "", cv)?;
+            }
+            ctx.x = x as i32;
+        }
     }
     if d.has_dsl() {
         additional_cost(g, p, c, false)?;
@@ -638,8 +676,9 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     {
         lose_life(g, p, l, Some(p), "life", None)?;
     }
-    if matches!(zone, "hand" | "cmd") && !crate::impls::krrik::life_pips(g, p, c).is_empty() {
-        // Phyrexian symbols paid with 2 life each
+    if zone != "gy" && !crate::impls::krrik::life_pips(g, p, c).is_empty() {
+        // Phyrexian symbols paid with 2 life each (every zone priced by `cost_of`/`cost_of_x`: hand, command zone, and a
+        // graveyard card cast through Yawgmoth's Will; a flashback pays its own printed cost above)
         let life = phyrexian_life(g, p, c, &cp);
         if life > 0 {
             lose_life(g, p, life, Some(p), "life", None)?;
@@ -908,6 +947,66 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     Ok(true)
 }
 
+/// the largest X for which `cost_of_x` of the spell is payable with p's mana (0 when only X = 0, or nothing, is): `per` is
+/// the number of {X} in the cost ({X}{X} is 2), so the generic part is `per * X`. A generic reducer (Jet Medallion) takes
+/// its {1} off that generic part, so X runs past the spare mana by what it takes off (all of X, if it is a big enough pile);
+/// taxes come after it and floors apply as in `cost_of`. The cost never decreases as X grows and a payable X stays payable
+/// for every smaller X, so this is a binary search of X in 0..=(spare * per + 64): 64 is far more than any pile of generic
+/// reducers takes off. K'rrik's pips are dropped by `cost_of_x` itself, where the life allows
+pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
+    let per = per.max(1) as i32;
+    let total = total_mana_spell(g, p, c, cv) as i64;
+    // (a person's mana is the pool, which `total_mana_spell` does not count: no reducer margin for a seat the AI only
+    // estimates for, so the practice-mode hook options keep what they showed)
+    let margin = if crate::human::is_human(g, p) { 0 } else { 64 };
+    let top = (total * per as i64 + margin).min((i32::MAX / per) as i64) as i32;
+    let payable = |x: i32| {
+        let (gn, pips) = cost_of_x(g, p, c, per * x);
+        can_pay_spell(g, p, c, gn, &pips, cv)
+    };
+    let (mut lo, mut hi) = (0, top); // lo is payable or 0; the answer is in lo..=hi
+    while lo < hi {
+        let mid = lo + (hi - lo + 1) / 2;
+        if payable(mid) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    // a cast that costs the same whatever X is (Tamiyo's emblem from the hand, Dracogenesis: no mana cost) has X = 0 (107.3b)
+    if lo > 0 && cost_of_x(g, p, c, 0) == cost_of_x(g, p, c, per * top) {
+        return 0;
+    }
+    lo
+}
+
+/// `per * x` as the X the cost is priced at, or None when it does not fit (no pool pays such a cost)
+fn x_total(x: i32, per: u32) -> Option<i32> {
+    i32::try_from(per.max(1) as i64 * x.max(0) as i64).ok()
+}
+
+/// can p pay `cost_of_x` of the spell at X = x (`per` as in `max_x`); false for an X too large to price
+pub fn can_pay_x(g: &Game, p: PlayerId, c: CardId, x: i32, per: u32, cv: bool) -> bool {
+    let Some(xt) = x_total(x, per) else { return false };
+    let (gn, pips) = cost_of_x(g, p, c, xt);
+    can_pay_spell(g, p, c, gn, &pips, cv)
+}
+
+/// pay `cost_of_x` of the spell at X = x (`per` as in `max_x`) in one payment, and charge the life its unpaid Phyrexian and
+/// K'rrik pips cost (2 each, as `do_cast_with` does). False, nothing paid, if the mana can't (or X is too large to price)
+pub fn pay_x(g: &mut Game, p: PlayerId, c: CardId, x: i32, per: u32, cv: bool) -> Res<bool> {
+    let Some(xt) = x_total(x, per) else { return Ok(false) };
+    let (gn, pips) = cost_of_x(g, p, c, xt);
+    if !can_pay_spell(g, p, c, gn, &pips, cv) || !pay_spell(g, p, c, gn, &pips, cv)? {
+        return Ok(false);
+    }
+    let life = phyrexian_life(g, p, c, &pips);
+    if life > 0 {
+        lose_life(g, p, life, Some(p), "life", None)?;
+    }
+    Ok(true)
+}
+
 /// can_pay with spell c being paid for (Karn's mana is not for nonartifact spells: `Game::pay_for`)
 fn can_pay_for(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str, cv: bool) -> bool {
     let prev = g.pay_for.replace(c);
@@ -1118,12 +1217,12 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             act: Some(Action::Cast { card: c, zone: Some("gy") }),
         });
     }
-    // Crackle with Power: X = (mana - 2) / 3
+    // Crackle with Power ({X}{X}{X}{R}{R}): the most X its cost allows
     for &c in &g.player(p).hand {
         if !g.db.get(c).tag(Tag::Crackle) || !(sorcery_ok || has(g, p, Tag::Gandalf)) {
             continue;
         }
-        let x = (total_mana_spell(g, p, c, false) as i32 - 2).div_euclid(3);
+        let x = max_x(g, p, c, 3, false);
         if x < 1 {
             continue;
         }

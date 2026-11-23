@@ -17,12 +17,13 @@
 //!
 //! The person's choices (practice mode) are the `human_of` branches.
 
+use crate::ai::brain::{max_x, pay_x};
 use crate::ai::plans::wish_list;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
+use crate::engine::mana::{can_pay, pay, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -295,11 +296,7 @@ pub fn drain_kills(g: &Game, p: PlayerId, per_opp: i32, gained: i32) -> usize {
 
 /// yshtola.x_drain_option: the best X for a drain spell in hand, as (utility, label), or None
 pub fn x_drain_option(g: &Game, p: PlayerId, c: CardId) -> Option<(f64, String)> {
-    let (gn, pips) = cost_of(g, p, c);
-    if !can_pay_spell(g, p, c, gn, &pips, false) {
-        return None;
-    }
-    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let x = max_x(g, p, c, 1, false); // `cost_of_x`: a reducer applies to the generic part that includes X
     if x < 1 {
         return None;
     }
@@ -325,12 +322,10 @@ pub fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !hand_has(g, p, c) {
         return Ok(false);
     }
-    let (g2, p2) = cost_of(g, p, c);
-    let xx = total_mana_spell(g, p, c, false) as i32 - g2 as i32 - p2.chars().count() as i32;
-    if xx < 1 || !can_pay_spell(g, p, c, g2 + xx as u32, &p2, false) {
+    let xx = max_x(g, p, c, 1, false);
+    if xx < 1 || !pay_x(g, p, c, xx, 1, false)? {
         return Ok(false);
     }
-    pay_spell(g, p, c, g2 + xx as u32, &p2, false)?;
     cast_card(g, p, c, "hand", Ctx { x: xx, ..Ctx::default() })?;
     Ok(true)
 }

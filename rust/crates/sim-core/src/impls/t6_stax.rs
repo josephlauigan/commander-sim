@@ -291,10 +291,11 @@ fn chalice_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     chalice_x(g, p).map_or(99, |x| 2 * x)
 }
 
-/// enters with X charge counters, X being half the mana paid for it
+/// enters with X charge counters, X being the X it was cast with (`DataKey::CastX`, set as it enters: a cost increase is
+/// not X)
 fn chalice_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        let x = (g.entering_spent / 2) as i64;
+        let x = g.perm(src).data.int(DataKey::CastX);
         g.perm_mut(src).data.set(DataKey::Charge, Val::Int(x));
         crate::glog!(g, "    Chalice of the Void enters with {} charge counter(s)", x);
     }
@@ -304,8 +305,8 @@ fn chalice_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// **Chalice of the Void** ({X}{X} artifact): enters with X charge counters; whenever a player casts a spell with
 /// mana value equal to the number of charge counters, counter that spell (the `cast_counter` slot: the spell is cast,
 /// its triggers happen, it goes to its owner's graveyard; any player's, free alternative costs too). The AI chooses X
-/// in `chalice_x` and the card costs twice it; the counters are half the mana actually paid (`Ctx::mana_spent`, kept
-/// for the entering permanent in `Game::entering_spent`).
+/// in `chalice_x` and the card costs twice it; the counters are that X, recorded with the cast (`Ctx::x`, then
+/// `DataKey::CastX`).
 fn chalice_counter(g: &Game, src: Src, _p: PlayerId, c: CardId, _ctx: &Ctx) -> bool {
     let d = g.db.get(c);
     g.perm(src).on_bf && !d.land && d.cmc as i32 == chalice_counters(g, src)
