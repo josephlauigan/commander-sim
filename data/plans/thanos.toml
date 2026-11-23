@@ -3,8 +3,8 @@
 # 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Kyodai first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
-# into Walking Ballista. Kyodai (Partial: its enter trigger is unparsed) and Leyline of the Guildpact (Unmodeled) have no card code,
-# so the plan cannot use them. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
+# into Walking Ballista. Kyodai (impls/kyodai.rs) and Leyline of the Guildpact (engine/chars.rs, impls/card_models.rs) are card code;
+# the plan only values them: Kyodai as the commander below, Leyline by the Faeburrow Elder. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
 # Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
@@ -78,6 +78,14 @@ else = 62
 [[prio]]
 cards = ["Urza, Lord High Artificer", "Crucible of Worlds", "Coalition Relic"]
 value = 74
+
+# Leyline of the Guildpact does nothing alone: it makes the Faeburrow Elder tap for all five colours and every land tap for any
+# colour, so cast it when the Elder is out or in hand (it is free from the opening hand: the engine plays it on the battlefield then)
+[[prio]]
+cards = ["Leyline of the Guildpact"]
+when = ["have:Faeburrow Elder", "out:Faeburrow Elder"]
+value = 76
+else = 48
 
 # The combo pieces: Basalt Monolith first, Rings once it is held (or out); the Ballista is the kill, not a body
 [[prio]]
