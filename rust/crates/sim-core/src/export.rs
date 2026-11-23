@@ -3,8 +3,10 @@
 //! These are the raw records, field for field as cardgen writes them. The engine's own card type (`CardDef`, M1)
 //! is built from them; nothing here interprets tags or abilities.
 
+use crate::format::Format;
 use indexmap::IndexMap;
 use serde::Deserialize;
+use std::collections::BTreeMap;
 use std::{fs, io, path::Path};
 
 /// A tag's value: `fly` is a bare tag (true), `pow=7` has a value (always a string in the export).
@@ -107,12 +109,18 @@ pub struct RawDeck {
     /// your decks only: the opponent tiers it is simulated against (empty for pool decks)
     #[serde(default)]
     pub tiers: Vec<String>,
+    /// the key of its format in `DecksFile.formats`; absent for a Commander deck
+    #[serde(default)]
+    pub format: Option<String>,
     pub cards: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct DecksFile {
     pub version: u32,
+    /// the game formats by key (data/formats.toml); an old file without them reads as Commander only
+    #[serde(default)]
+    pub formats: BTreeMap<String, Format>,
     pub mine: Vec<RawDeck>,
     pub pool: Vec<RawDeck>,
 }

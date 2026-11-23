@@ -5,13 +5,14 @@
 use crate::cards::{CardDb, Colors};
 use crate::engine::turn::{Seat, run_rounds, setup_game};
 use crate::export::{RawDeck, load_decks};
+use crate::format::{DEFAULT_FORMAT, Format, formats_table};
 use crate::hooks::Registry;
 use crate::ids::CardId;
 use crate::settings::{AiMode, Profile, Settings};
 use crate::state::Game;
 use crate::sym::intern;
 use serde::Serialize;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -20,6 +21,8 @@ pub struct Engine {
     pub db: Arc<CardDb>,
     pub registry: Arc<Registry>,
     pub decks: HashMap<String, RawDeck>,
+    /// the game formats by key (data/decks.json `formats`); always has `commander`
+    pub formats: BTreeMap<String, Format>,
 }
 
 impl Engine {
@@ -27,8 +30,24 @@ impl Engine {
         let db = Arc::new(CardDb::load(&data.join("cards.json")).map_err(|e| e.to_string())?);
         let registry = Arc::new(crate::impls::registry(&db)?);
         let f = load_decks(&data.join("decks.json")).map_err(|e| e.to_string())?;
-        let decks = f.mine.into_iter().chain(f.pool).map(|d| (d.key.clone(), d)).collect();
-        Ok(Engine { db, registry, decks })
+        let formats = formats_table(f.formats, f.mine.iter().chain(&f.pool))?;
+        let decks: HashMap<String, RawDeck> = f.mine.into_iter().chain(f.pool).map(|d| (d.key.clone(), d)).collect();
+        Ok(Engine { db, registry, decks, formats })
+    }
+
+    /// the format this deck plays (Commander for a deck with none, and for a key that is no deck)
+    pub fn format_of(&self, deck: &str) -> &Format {
+        let k = self.decks.get(deck).map_or(DEFAULT_FORMAT, Format::key_of);
+        &self.formats[k]
+    }
+
+    /// May this deck sit at a table of the format `table` (a key of `formats`)? A key that is no deck is admitted
+    /// (nothing is known against it). `Err` carries the reasons.
+    pub fn admits(&self, deck: &str, table: &str) -> Result<(), Vec<String>> {
+        let (Some(d), Some(t)) = (self.decks.get(deck), self.formats.get(table)) else {
+            return if self.formats.contains_key(table) { Ok(()) } else { Err(vec![format!("no format {table:?}")]) };
+        };
+        t.admits(d, self.format_of(deck))
     }
 
     /// a seat from a deck key, its cards (a deck list, possibly with swaps) and its commander

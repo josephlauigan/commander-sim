@@ -11,6 +11,7 @@ use crate::play::{GameOut, Sim, ai_name, profile};
 use crate::report::{self, Analysis, Axes, CardInfo};
 use crate::stats::{Counter, paired_delta, wilson};
 use sim_core::engine::turn::Seat;
+use sim_core::format::DEFAULT_FORMAT;
 use sim_core::settings::{AiMode, Settings};
 use std::collections::HashMap;
 use std::time::Instant;
@@ -19,13 +20,33 @@ fn is_mine(key: &str) -> bool {
     MINE.contains(&key)
 }
 
+/// Why this deck cannot be seated at a Commander table: it plays another format (data/my_decks.toml `format`, via
+/// data/decks.json). None for a deck the Commander format admits.
+pub fn unseatable(sim: &Sim, deck: &str) -> Option<String> {
+    sim.engine.admits(deck, DEFAULT_FORMAT).err().map(|why| why.join("; "))
+}
+
+/// The simulator seats only 4-player Commander tables, so a deck of another format would silently be played as a
+/// Commander deck: it is refused instead, `--any-tier` or not.
+pub fn check_commander_table(sim: &Sim, deck: &str) -> Result<(), String> {
+    match unseatable(sim, deck) {
+        None => Ok(()),
+        Some(why) => Err(format!(
+            "{deck} cannot be simulated yet: {why}. The simulator seats only 4-player {} tables so far, and would \
+             otherwise play {deck} as a Commander game (--any-tier does not lift this).",
+            sim.engine.formats[DEFAULT_FORMAT].name
+        )),
+    }
+}
+
 /// the opponent tiers a deck of yours is simulated against (data/my_decks.toml via data/decks.json); every tier if
-/// the deck record carries none
-pub fn deck_tiers(sim: &Sim, deck: &str) -> Vec<String> {
-    match sim.engine.decks.get(deck) {
+/// the deck record carries none. A deck whose format the Commander format does not admit is refused.
+pub fn deck_tiers(sim: &Sim, deck: &str) -> Result<Vec<String>, String> {
+    check_commander_table(sim, deck)?;
+    Ok(match sim.engine.decks.get(deck) {
         Some(d) if !d.tiers.is_empty() => d.tiers.clone(),
         _ => TIERS.iter().map(|t| t.to_string()).collect(),
-    }
+    })
 }
 
 /// "t1-t3" for consecutive tiers, "t4, t5" style otherwise
@@ -58,17 +79,24 @@ pub fn select_tiers(deck: &str, own: &[String], pool: &str, any_tier: bool) -> R
 pub struct TierPlan {
     pub tiers: Vec<String>,
     pub per_deck: Vec<(String, Vec<String>)>,
+    /// `--all-decks` leaves out a deck the simulator cannot seat (its format): (deck, why), one line each in the run
+    pub skipped: Vec<(String, String)>,
 }
 
 /// poolmode's tier rule: every deck of yours only against its own tiers. Calibration has no deck and is unchanged.
 pub fn tier_plan(sim: &Sim, a: &Args) -> Result<TierPlan, String> {
     let (Some(pool), None) = (a.pool.as_deref(), a.calibrate.as_ref()) else {
-        return Ok(TierPlan { tiers: vec![], per_deck: vec![] });
+        return Ok(TierPlan { tiers: vec![], per_deck: vec![], skipped: vec![] });
     };
     let mut per_deck: Vec<(String, Vec<String>)> = vec![];
+    let mut skipped: Vec<(String, String)> = vec![];
     if a.all_decks {
         for d in MINE {
-            let own = deck_tiers(sim, d);
+            if let Some(why) = unseatable(sim, d) {
+                skipped.push((d.to_string(), why));
+                continue;
+            }
+            let own = deck_tiers(sim, d)?;
             // one tier given: only the decks that play it (all of them with --any-tier)
             let t = if pool == "all" || a.any_tier || own.iter().any(|t| t == pool) {
                 select_tiers(d, &own, pool, a.any_tier)?
@@ -78,14 +106,14 @@ pub fn tier_plan(sim: &Sim, a: &Args) -> Result<TierPlan, String> {
             per_deck.push((d.to_string(), t));
         }
     } else if let Some(d) = a.deck.as_deref() {
-        per_deck.push((d.to_string(), select_tiers(d, &deck_tiers(sim, d), pool, a.any_tier)?));
+        per_deck.push((d.to_string(), select_tiers(d, &deck_tiers(sim, d)?, pool, a.any_tier)?));
     }
     let tiers = TIERS
         .iter()
         .filter(|t| per_deck.iter().any(|(_, dt)| dt.iter().any(|x| x == *t)))
         .map(|t| t.to_string())
         .collect();
-    Ok(TierPlan { tiers, per_deck })
+    Ok(TierPlan { tiers, per_deck, skipped })
 }
 
 /// poolmode.run's tallies for one deck against one tier under one profile
@@ -591,6 +619,9 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     let seed0 = a.seed;
     // each of your decks runs only against its own tiers (data/my_decks.toml), unless --any-tier
     let plan = tier_plan(sim, a)?;
+    for (d, why) in &plan.skipped {
+        println!("--all-decks leaves out {d}: {why}; the simulator seats only Commander tables so far.");
+    }
     let tiers: Vec<&str> = plan.tiers.iter().map(|t| t.as_str()).collect();
     let t0 = Instant::now();
     let k = n * profiles.len() as u64;
@@ -727,7 +758,7 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     let Some(deck) = a.deck.as_deref() else { return trace_pool(sim, a) };
     let prof = a.profiles[0].clone();
     // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
-    let own = deck_tiers(sim, deck);
+    let own = deck_tiers(sim, deck)?;
     let tier = match a.pool.as_deref() {
         Some("all") | None => own[0].clone(),
         Some(t) => select_tiers(deck, &own, t, a.any_tier)?.remove(0),
@@ -814,21 +845,110 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 5] = [
-            ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
-            ("sheoldred", &["t3", "t4"]),
-            ("kyodai", &["t5"]),
-            ("urdragon", &["t5"]),
-            ("yoshimaru", &["t4", "t5"]),
+        let want: [(&str, &[&str], Option<&str>); 5] = [
+            ("yshtola", &["t5"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
+            ("sheoldred", &["t3", "t4"], None),
+            ("kyodai", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
+            ("urdragon", &["t5"], None),
+            ("yoshimaru", &["t4", "t5"], None),
         ];
         assert_eq!(f.mine.len(), want.len());
-        for (k, t) in want {
+        for (k, t, fmt) in want {
             let d = f.mine.iter().find(|d| d.key == k).unwrap_or_else(|| panic!("{k}"));
             assert_eq!(d.tiers, v(t), "{k}");
+            assert_eq!(d.format.as_deref(), fmt, "{k}");
         }
         for k in MINE {
             assert!(f.mine.iter().any(|d| d.key == k), "{k}");
         }
         assert!(f.pool.iter().all(|d| d.tiers.is_empty()));
+    }
+
+    fn sim() -> Sim {
+        Sim::load(crate::play::RunOpts { ai: AiMode::Adaptive, temp: 1.0, jobs: 2 }).unwrap()
+    }
+
+    fn args(s: &str) -> Args {
+        crate::args::parse(&s.split_whitespace().map(|x| x.to_string()).collect::<Vec<_>>()).unwrap()
+    }
+
+    /// a deck whose format the Commander table does not admit is refused wherever the tiers are chosen, whatever
+    /// the tier and with `--any-tier` too: the simulator would otherwise play kyodai as a 4-player Commander game
+    #[test]
+    fn a_deck_of_another_format_is_refused_at_every_tier() {
+        let sim = sim();
+        for pool in ["t5", "t6", "all", "t1"] {
+            for any in ["", " --any-tier"] {
+                let e = tier_plan(&sim, &args(&format!("--deck kyodai --pool {pool}{any}"))).err().unwrap();
+                assert!(e.contains("Cali Commander") && e.contains("kyodai"), "{pool}{any}: {e}");
+            }
+        }
+        let e = deck_tiers(&sim, "kyodai").unwrap_err();
+        assert!(e.contains("Cali Commander") && e.contains("--any-tier does not lift this"), "{e}");
+        assert_eq!(deck_tiers(&sim, "yoshimaru").unwrap(), v(&["t4", "t5"]));
+        assert!(select_tiers("kyodai", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
+    }
+
+    /// `--all-decks` leaves the deck out with a note and plays the other four with their tiers unchanged
+    #[test]
+    fn all_decks_skips_the_deck_and_keeps_the_others_tiers() {
+        let sim = sim();
+        let want = vec![
+            ("yshtola".to_string(), v(&["t5"])),
+            ("sheoldred".to_string(), v(&["t3", "t4"])),
+            ("urdragon".to_string(), v(&["t5"])),
+            ("yoshimaru".to_string(), v(&["t4", "t5"])),
+        ];
+        let plan = tier_plan(&sim, &args("--all-decks --pool all")).unwrap();
+        assert_eq!(plan.per_deck, want);
+        assert_eq!(plan.skipped.len(), 1);
+        assert_eq!(plan.skipped[0].0, "kyodai");
+        assert!(plan.skipped[0].1.contains("Cali Commander"), "{:?}", plan.skipped);
+        assert_eq!(plan.tiers, v(&["t3", "t4", "t5"]));
+        // one tier: the decks that play it, kyodai still out (t6 has no deck of yours left)
+        let plan = tier_plan(&sim, &args("--all-decks --pool t5")).unwrap();
+        assert_eq!(
+            plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
+            ["yshtola", "urdragon", "yoshimaru"]
+        );
+        assert!(tier_plan(&sim, &args("--all-decks --pool t6")).unwrap().per_deck.is_empty());
+        // --any-tier lifts the tier limit, not the format one
+        let plan = tier_plan(&sim, &args("--all-decks --pool all --any-tier")).unwrap();
+        assert_eq!(
+            plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
+            ["yshtola", "sheoldred", "urdragon", "yoshimaru"]
+        );
+        assert!(plan.per_deck.iter().all(|(_, t)| t.len() == 7));
+        assert_eq!(plan.skipped.len(), 1);
+    }
+
+    /// the refusal follows data/decks.json: it fires for exactly the decks whose record has a format other than
+    /// commander
+    #[test]
+    fn the_refusal_fires_exactly_for_a_format_other_than_commander() {
+        let sim = sim();
+        for key in MINE {
+            let own = sim.engine.decks[key].format.as_deref().unwrap_or("commander");
+            assert_eq!(deck_tiers(&sim, key).is_err(), own != "commander", "{key} ({own})");
+            assert_eq!(unseatable(&sim, key).is_some(), own != "commander", "{key} ({own})");
+        }
+        assert_eq!(MINE.iter().filter(|k| deck_tiers(&sim, k).is_err()).collect::<Vec<_>>(), [&"kyodai"]);
+        // a pool deck is a Commander deck
+        assert!(sim.pool.iter().all(|d| deck_tiers(&sim, &d.key).is_ok()));
+    }
+
+    /// which decks a Cali Commander table admits: its own, and Commander decks with no card on its list (among the
+    /// pool, only the Tier 6 stax deck with The Tabernacle at Pendrell Vale is kept out)
+    #[test]
+    fn a_cali_table_admits_every_deck_of_yours_and_all_but_one_pool_deck() {
+        let sim = sim();
+        for key in MINE {
+            assert!(sim.engine.admits(key, "cali").is_ok(), "{key}");
+        }
+        let kept_out: Vec<&str> =
+            sim.pool.iter().filter(|d| sim.engine.admits(&d.key, "cali").is_err()).map(|d| d.key.as_str()).collect();
+        assert_eq!(kept_out, ["dack-fayden-white-stax"]);
+        assert!(sim.engine.admits("kyodai", "commander").is_err());
+        assert!(sim.engine.admits("yoshimaru", "nowhere").is_err());
     }
 }

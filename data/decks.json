@@ -1,5 +1,41 @@
 {
  "version": 1,
+ "formats": {
+  "commander": {
+   "name": "Commander",
+   "seats": 4,
+   "life": 40,
+   "first_player_draws": true,
+   "bans": "scryfall"
+  },
+  "cali": {
+   "name": "Cali Commander",
+   "seats": 2,
+   "life": 30,
+   "first_player_draws": false,
+   "bans": "list",
+   "banned": [
+    "Ancestral Recall",
+    "Balance",
+    "Black Lotus",
+    "Channel",
+    "Erayo, Soratami Ascendant",
+    "Fastbond",
+    "Karakas",
+    "Mox Emerald",
+    "Mox Jet",
+    "Mox Pearl",
+    "Mox Ruby",
+    "Mox Sapphire",
+    "Nadu, Winged Wisdom",
+    "The Tabernacle at Pendrell Vale",
+    "Time Vault",
+    "Time Walk",
+    "Tolarian Academy",
+    "Yawgmoth's Bargain"
+   ]
+  }
+ },
  "mine": [
   {
    "key": "kyodai",
@@ -7,8 +43,10 @@
    "commander": "Kyodai, Soul of Kamigawa",
    "ident": "WUBRG",
    "tiers": [
-    "t5"
+    "t5",
+    "t6"
    ],
+   "format": "cali",
    "cards": [
     "Akroma's Will",
     "An Offer You Can't Refuse",

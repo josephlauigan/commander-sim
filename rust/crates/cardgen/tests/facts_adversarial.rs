@@ -65,6 +65,11 @@ impl Env {
         for p in ["card_overrides.toml", "my_decks.toml", "python_hooks.txt", "audit.toml"] {
             self.write(&format!("data/{p}"), "");
         }
+        // an empty my_decks.toml still needs the format table cardgen loads with it
+        self.write(
+            "data/formats.toml",
+            "[commander]\nname = \"Commander\"\nseats = 4\nlife = 40\nfirst_player_draws = true\nbans = \"scryfall\"\n",
+        );
         self.write("data/scryfall_cache.json", "{}");
         self.write("data/cards.json", r#"{"version":1,"cards":[]}"#);
         std::fs::create_dir_all(self.0.join("decklists/pool")).unwrap();

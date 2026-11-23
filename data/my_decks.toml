@@ -21,7 +21,7 @@ name = "Kyodai"
 commander = "Kyodai, Soul of Kamigawa"
 ident = "WUBRG"
 format = "cali"
-tiers = ["t5"]
+tiers = ["t5", "t6"]
 
 [urdragon]
 file = "JD/urdragon-five-colour-dragons.md"
