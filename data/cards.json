@@ -28865,6 +28865,7 @@
     "perm": false
    },
    "phyrexian": "",
+   "hybrid": [],
    "xcount": 1,
    "enters_rule": null,
    "land_types": [],
@@ -41116,6 +41117,7 @@
     "perm": true
    },
    "phyrexian": "",
+   "hybrid": [],
    "xcount": 0,
    "enters_rule": null,
    "land_types": [],
