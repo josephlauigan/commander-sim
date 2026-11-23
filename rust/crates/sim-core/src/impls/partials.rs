@@ -1828,6 +1828,12 @@ pub fn delve_count(g: &Game, p: PlayerId, c: CardId) -> i32 {
     (g.db.get(c).generic as usize).min(fodder) as i32
 }
 
+/// the cards whose `self_cost` is delve: a way of paying the total cost that comes after the Trinisphere minimum, not a cost
+/// reduction that comes before it (702.66a)
+pub(crate) fn is_delve_card(name: &str) -> bool {
+    matches!(name, "Treasure Cruise" | "Dig Through Time" | "Temporal Trespass")
+}
+
 pub(crate) fn delve_cost(g: &Game, p: PlayerId, c: CardId) -> i32 {
     -delve_count(g, p, c)
 }
