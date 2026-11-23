@@ -126,6 +126,7 @@ have = [
   "Hangarback Walker",
   "Heroic Intervention",
   "Jeska's Will",
+  "Kyodai, Soul of Kamigawa",
   "Lightning Greaves",
   "Llanowar Elves",
   "Lotus Petal",
@@ -139,7 +140,6 @@ have = [
   "Paradise Druid",
   "Primeval Titan",
   "Ragavan, Nimble Pilferer",
-  "Rhystic Study",
   "Rings of Brighthearth",
   "Sculpting Steel",
   "Silence",
@@ -162,7 +162,6 @@ have = [
   "Urza, Lord High Artificer",
   "Vampiric Tutor",
   "Walking Ballista",
-  "Watery Grave",
   "Worldly Tutor",
 ]
 proxy = [
@@ -177,6 +176,7 @@ proxy = [
   "Mox Opal",
   "Plateau",
   "Polluted Delta",
+  "Rhystic Study",
   "Savannah",
   "Scalding Tarn",
   "Scrubland",
@@ -187,12 +187,11 @@ proxy = [
   "Underground Sea",
   "Verdant Catacombs",
   "Volcanic Island",
+  "Watery Grave",
   "Windswept Heath",
   "Wooded Foothills",
 ]
-missing = [
-  "Kyodai, Soul of Kamigawa",
-]
+missing = []
 
 [deck.urdragon]
 confirmed = "2026-11-22"

@@ -2,15 +2,18 @@
 1 An Offer You Can't Refuse (fdn) 311
 1 Ancient Tomb (tmp) 315
 1 Arcane Signet (cmr) 297
+1 Arid Mesa (spg) 109
 1 Avacyn's Pilgrim (isd) 170
+1 Badlands (ced) 278
 1 Basalt Monolith (3ed) 235
+1 Bayou (ced) 279
 1 Birds of Paradise (dmr) 439
 1 Blightsteel Colossus (sld) 2223
+1 Bloodstained Mire (mh3) 352
 1 Brain Freeze (soa) 78
 1 Chaos Warp (pw24) 7
 1 Chrome Mox (2xm) 240
 1 Coalition Relic (fut) 161
-1 Staff of Domination (cmr) 343
 1 Command Tower (sld) 7030
 1 Counterspell (pf26) 5
 1 Crucible of Worlds (2x2) 393
@@ -24,9 +27,10 @@
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
 1 Esper Sentinel (mh2) 328
-1 Exsanguinate (cmm) 638
+1 Exsanguinate (som) 61
 1 Faeburrow Elder (plst) ELD-190
 1 Fellwar Stone (sld) 2557
+1 Flooded Strand (mh3) 353
 1 Force of Negation (2x2) 346
 1 Force of Will (dmr) 418
 1 Gamble (dmr) 433
@@ -37,29 +41,40 @@
 1 Hangarback Walker (plg20) 2
 1 Heroic Intervention (sld) 1750
 1 Jeska's Will (soa) 109
+1 Kyodai, Soul of Kamigawa (neo) 407
+1 Leyline of the Guildpact (mkm) 217
 1 Lightning Greaves (sld) 1662
 1 Llanowar Elves (btd) 58
 1 Lotus Petal (p30m) 2
 1 Mana Crypt (2xm) 361
 1 Mana Vault (4ed) 334
+1 Marsh Flats (spg) 110
 1 Meteor Golem (sld) 285
-1 Mind Stone (wth) 153
+1 Mind Stone (ltc) 282
+1 Misty Rainforest (spg) 111
 1 Mox Opal (2xm) 362
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
 1 Paradise Druid (pwar) 171
+1 Plateau (cei) 280
+1 Polluted Delta (mh3) 356
 1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
-1 Rhystic Study (pcy) 45
+1 Rhystic Study (wot) 71
 1 Rings of Brighthearth (ltc) 352
+1 Savannah (ced) 281
+1 Scalding Tarn (spg) 112
+1 Scrubland (cei) 282
 1 Sculpting Steel (sld) 864
 1 Silence (sld) 7003
 1 Sneak Attack (sld) 2178
 1 Sol Ring (sld) 2093
+1 Staff of Domination (cmr) 343
 1 Steam Vents (rvr) 298
 1 Strip Mine (4ed) 363
 1 Swords to Plowshares (ice) 54
+1 Taiga (cei) 283
 1 Tainted Pact (ody) 164
 1 Talisman of Hierarchy (h1r) 36
 1 Talisman of Progress (msc) 221
@@ -69,10 +84,17 @@
 1 The Mightstone and Weakstone (bro) 238
 1 The One Ring (ltr) 451
 1 Tinker (plst) ULG-45
+1 Tropical Island (ced) 284
+1 Tundra (ced) 285
+1 Underground Sea (ced) 286
 1 Underworld Breach (pza) 10
 1 Urza, Lord High Artificer (fca) 5
 1 Urza's Saga (plst) MH2-259
 1 Vampiric Tutor (soa) 100
+1 Verdant Catacombs (spg) 113
+1 Volcanic Island (cei) 287
 1 Walking Ballista (sld) 58
 1 Watery Grave (pgrn) 259p
+1 Windswept Heath (mh3) 360
+1 Wooded Foothills (mh3) 361
 1 Worldly Tutor (dmr) 442
