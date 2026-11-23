@@ -1458,7 +1458,9 @@ pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
 /// The mana units of p's mana permanents that `mana_units` leaves out now but p has on its next turn: a tapped Rock,
 /// Dork or Chrome Mox (it untaps) and an untapped Dork still summoning sick (it will not be). Colours and amounts as
 /// `units` makes them. A permanent with a special rule (Star Compass, Fellwar Stone, Bloom Tender, Delighted Halfling,
-/// restricted mana, a lock, no mana from artifacts) is left out, so the list only errs towards less mana. A pure read.
+/// restricted mana, a lock, no mana from artifacts) is left out, and so is a tapped permanent that will not untap
+/// (`nountap`: Mana Vault, Grim Monolith; a "frozen" lock), so the list errs towards less mana. Not handled, so it can
+/// err the other way: a stun counter, Winter Orb, Static Orb and the like keeping a permanent tapped. A pure read.
 pub fn next_turn_perm_units(g: &Game, p: PlayerId) -> Vec<Unit> {
     let pl = g.player(p);
     let ident = pl.ident;
@@ -1473,6 +1475,10 @@ pub fn next_turn_perm_units(g: &Game, p: PlayerId) -> Vec<Unit> {
         }
         let d = g.db.get(c);
         let t = &d.tags;
+        // the untap step's own test (engine/turn.rs): a tapped Mana Vault or a frozen permanent stays tapped
+        if x.tapped && (d.tag(Tag::Nountap) || (!g.auras.is_empty() && cardcode::locked(g, m, "frozen"))) {
+            continue;
+        }
         if t.has(Tag::Chromemox) {
             if x.tapped && !x.colors.is_empty() {
                 u.push(Unit::free(Source::Perm(m), x.colors, 1));

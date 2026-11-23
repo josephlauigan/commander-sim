@@ -1883,7 +1883,7 @@ fn hold_b_a_tutor_in_hand_holds_for_the_piece_in_the_library() {
 
 #[test]
 fn hold_b_garth_in_the_library_needs_a_tutor_of_its_own() {
-    // Worldly Tutor fetches Garth; Season and Twinflame are in hand
+    // Worldly Tutor fetches Garth; Doubling Season is out and Twinflame is in hand
     let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &["Worldly Tutor"]);
     held_spark(&mut g);
     let mut g = hold_row("urdragon", Z::Library, Z::Bf, Z::Hand, &[]);
@@ -2087,4 +2087,27 @@ fn hold_r2_a_summoning_sick_dork_supplies_the_missing_colour() {
         let g = no_green_row(dork, true, false);
         assert!(spark_hold(&g, P0), "{dork}: tapped");
     }
+}
+
+#[test]
+fn hold_c1_a_tapped_mana_vault_does_not_untap_so_it_does_not_pay_for_the_tutor() {
+    // Garth in the library, Season out, Twinflame in hand, Demonic Tutor ({1}{B}) the only tutor: one Swamp and a Vault
+    let row = |vault_tapped: bool| {
+        let mut g = table(&["urdragon", "seph"]);
+        for q in &mut g.players {
+            q.hand.clear();
+            q.gy.clear();
+        }
+        put(&mut g, P0, SPARK, Z::Hand);
+        put(&mut g, P0, GARTH, Z::Library);
+        put(&mut g, P0, SEASON, Z::Bf);
+        put(&mut g, P0, TWIN, Z::Hand);
+        put(&mut g, P0, "Demonic Tutor", Z::Hand);
+        lands(&mut g, P0, "Swamp", 1, false);
+        let v = perm(&mut g, P0, "Mana Vault");
+        g.perm_mut(v).tapped = vault_tapped;
+        g
+    };
+    assert!(spark_hold(&row(false), P0), "an untapped Vault pays the {{1}}");
+    assert!(!spark_hold(&row(true), P0), "a tapped Vault stays tapped through the untap step");
 }
