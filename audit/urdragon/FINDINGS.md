@@ -36,6 +36,11 @@ What the numbers say (correlation, not causation):
   Path, Three Visits, The One Ring, Llanowar Elves), so the list shows no card cast with a win rate below the deck's (a cast card is also a sign of a game that lasted). Rhythm of the Wild (the 11-20 swap) is cast in 11.3% of games; Nibelheim Aflame (the 11-22 swap) is cast in 35.3% of the
   games drawn.
 
+## Spark Double hold, paired test 2026-11-23 (branch urdragon-spark-hold 2c6bedd2 against main f1ffd896; same seeds, t5, loose, 1,500 games)
+Win rate **27.6% before and 27.6% after**; damage 96.6% of wins in both. Garth One-Eye cast in 34.4% -> 34.1% of the games it is drawn, Doubling Season 32.1% -> 31.7%, Twinflame 25.0% -> 25.0%. Kyodai on the same seeds is identical to its baseline apart from the elapsed-time line, so the hold does not reach other decks. Raw: `audit/stage3-paired-2026-11-23/spark-urdragon-analyze.txt`, `spark-kyodai-analyze.txt`.
+- The Garth line is a rare path here (non-damage wins are 2.9% of wins), so a headline move was not expected; the numbers agree.
+- Not measured: Spark Double's own cast rate (the `--analyze` card lists show only the extremes, and Spark Double is in neither). The sim gate "if Spark's cast rate drops by more than about 5 points add a Garth priority bump" cannot be read from this output. Two known limits stay open, unmeasured: a tutor can fetch a Dragon instead of Garth, and the hold has no timeout if the AI never casts Garth.
+
 ## 2026-11-22: Cyclonic Rift => Nibelheim Aflame (JD's choice, not simulated)
 Nibelheim Aflame ({2}{R}{R} sorcery, flashback {5}{R}{R}; model status Full; owned) takes Cyclonic Rift's slot (a proxy). It is
 not slot-for-slot: Rift was a {1}{U} instant that, overloaded at {6}{U}, bounced every nonland permanent the opponents control
