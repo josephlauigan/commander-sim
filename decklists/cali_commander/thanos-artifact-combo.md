@@ -69,8 +69,9 @@ below.
   Monolith stuck in the library, Steel is only a mana rock, so tutor for the Monolith instead.
 - **Finishers (all colourless):** **Walking Ballista** ({X}{X}) from hand with a huge X, then remove counters at the
   opponent (30 life needs X=30). If Ballista is still in the library, **Staff of Domination's** {5},{T}: draw a card,
-  untapped for {1} each time, draws to it. **Urza, Lord High Artificer** ({5}: shuffle, then play the top card free)
-  digs too, but a Ballista played free has X=0, so cast the Ballista you find with real mana.
+  untapped for {1} each time, draws to it. **Urza, Lord High Artificer** ({5}: shuffle, then exile the top card and play it free this turn)
+  digs too, but a Ballista played free has X=0 and dies, and Urza cannot cast it for mana: use the Staff to draw the
+  Ballista into your hand, and use Urza for the other pieces.
 - **Hold the pieces until both can land in one turn** with Force of Will, Force of Negation or Swat behind them. An
   opponent who destroys Rings or the Monolith in response ends the loop.
 
@@ -106,8 +107,9 @@ below.
 - **The kill:** Tinker, Greaves, attack: 11 infect damage is 11 poison counters, lethal (ten) in one hit. Blightsteel
   can't be destroyed, and if it would go to the graveyard it is shuffled into the library instead, so Tinker can find
   it again. Exile effects (Swords to Plowshares) remove it for good.
-- **It dodges artifact hate.** Null Rod and Collector Ouphe don't stop a creature, and Greaves' shroud stops targeted
-  removal. The opponent's answers are a blocker (trample carries excess damage over, but ten of Blightsteel's eleven
+- **It mostly dodges artifact hate.** Null Rod and Collector Ouphe don't stop a creature from attacking, but they stop
+  Greaves' equip, so under them Blightsteel has no haste or shroud and attacks a turn later (Sneak Attack gives haste
+  without equipping). Greaves' shroud stops targeted removal. The opponent's answers are a blocker (trample carries excess damage over, but ten of Blightsteel's eleven
   damage must reach them), a fog, a counterspell on Tinker, or a bounce or exile effect before the attack.
 - **If Blightsteel is in your hand, Tinker can't find it** (it searches the library): cast it from hand, or use Sneak
   Attack.
@@ -148,8 +150,10 @@ If the combo is stopped, the deck still has threats and a way to grind:
 ### The engines
 
 - **The One Ring** ({4}): protection from everything until your next turn when you cast it, then {T}: a burden counter
-  and that many cards. You lose 1 life per burden counter each upkeep, so draw with it two or three times, then let it
-  sit or bounce it. 30 life pays for this more easily than 40 did.
+  and that many cards. You lose 1 life per burden counter at every upkeep whether or not you keep drawing, so draw with it two or
+  three times, then stop: the counters stay and the drain continues. It is indestructible; Mystic Confluence can bounce
+  it to reset the counters, and Teferi's Protection freezes your life total for a turn. At 30 life you have less room
+  for this than at 40.
 - **Rhystic Study** (draw when the opponent casts a spell unless they pay {1}) and **Mystic Remora** (draw when the
   opponent casts a noncreature spell unless they pay {4}; cumulative upkeep). In a 1v1 game both watch one opponent.
 - **Urza, Lord High Artificer** ({2}{U}{U}): a Construct token, then every untapped artifact taps for {U}. Pays for
@@ -166,8 +170,8 @@ If the combo is stopped, the deck still has threats and a way to grind:
   4. **An opponent's rock** (Sol Ring, Mana Vault, a Signet) when you have none of your own.
   It is also a spare artifact to sacrifice to Tinker and an extra {U} under Urza. **Do not copy** The One Ring or The
   Mightstone and Weakstone (legendary: the copy and the original cannot both stay), Walking Ballista or Hangarback
-  Walker (they enter with no counters and die), Mox Opal (legendary), Chrome Mox (a copy has nothing imprinted and makes
-  no mana), Mana Crypt (the extra coin flip costs about 1.5 life a turn more, so
+  Walker (they enter with no counters and die), Mox Opal (legendary), Chrome Mox (a copy may imprint its own card, but that costs a
+  card for one mana), Mana Crypt (the extra coin flip costs about 1.5 life a turn more, so
   only when you win that turn), or an opponent's Null Rod.
 - **Tezzeret, Cruel Captain** ({3}, loyalty 4): gets a loyalty counter whenever an artifact you control enters, which
   this deck does all the time. **0:** untap target artifact or creature (an artifact creature also gets a +1/+1
@@ -177,13 +181,13 @@ If the combo is stopped, the deck still has threats and a way to grind:
   value 0 in the library). Use him to fetch the Ballista or a free rock. His -7 emblem (three +1/+1 counters on an
   artifact each combat) is rarely reached.
 - **Mox Opal** ({0}, legendary artifact): taps for one mana of any colour while you control three or more artifacts, and
-  it counts itself. It is dead on turn 1 and good from turn 2 with two other artifacts out (the deck has 25 artifacts
-  with the artifact creatures). **Chrome Mox** ({0}, a Game Changer): when it enters, exile a nonartifact, nonland card
+  it counts itself. It needs two other artifacts to work, which is possible on turn 1 with free rocks (Mana Crypt and Lotus Petal) and
+  usual from turn 2 (the deck has 25 artifacts with the artifact creatures). **Chrome Mox** ({0}, a Game Changer): when it enters, exile a nonartifact, nonland card
   from your hand; it taps for one mana of any colour of that card. Imprint the card whose colour you are missing (a
   multicolour card makes it tap for any of its colours), not a combo piece; it costs a card, so it is best on a hand
   with a spare.
 - **Esper Sentinel** ({W}) draws you a card when the opponent casts their first noncreature spell each turn and doesn't
-  pay {1}. **Mystic Confluence** ({3}{U}{U}) is a flexible counter, bounce or draw.
+  pay {X}, where X is its power (1, or more with a +1/+1 counter from Tezzeret's 0). **Mystic Confluence** ({3}{U}{U}) is a flexible counter, bounce or draw.
 
 ### Game plan
 
@@ -271,13 +275,14 @@ speed, not a new route; cast it at the end of the opponent's turn:
 
 ### Interaction
 
-- **Spot removal:** Swords to Plowshares and Chaos Warp (both answer a creature or artifact blocking or attacking),
+- **Spot removal:** Swords to Plowshares (a creature, including an artifact creature) and Chaos Warp (any permanent),
   Cyclonic Rift (overloaded at {6}{U}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game),
   and Meteor Golem (any nonland permanent).
 - **Hate pieces to expect:** Null Rod and Collector Ouphe hit the artifacts, Stony Silence, Pithing Needle and Cursed
-  Totem hit abilities, Rule of Law and Eidolon of the Great Revel hit spells. Route E (a creature) and Route O (two spells and a
-  creature) both dodge artifact hate.
-- **Remove the hate piece before the combo:** Swords, Chaos Warp or Cyclonic Rift. Ephemerate saves a creature from
+  Totem hit abilities, Rule of Law and Eidolon of the Great Revel hit spells. Route E (a creature, but without Greaves it has no haste) and Route O (two spells and a
+  creature) mostly dodge artifact hate.
+- **Remove the hate piece before the combo:** Chaos Warp or Cyclonic Rift (Swords only if it is a creature, such as Collector
+  Ouphe). Ephemerate saves a creature from
   removal and reuses an enter trigger.
 
 ### Matchups (Cali 1v1)
@@ -287,15 +292,15 @@ The matchup notes are expectations, not measured.
 | Opponent type | What to do |
 |---|---|
 | Fast combo | Race it with Route E or Route O. Hold Force of Will and Silence. You are the beatdown on turn 3-4 |
-| Stax (Null Rod, Collector Ouphe, Stony Silence, Cursed Totem) | Route O (spells and a creature) and Route E (Blightsteel is a creature). Remove the stax piece first if you must |
+| Stax (Null Rod, Collector Ouphe, Stony Silence, Cursed Totem) | Route O (spells and a creature) and Route E (Blightsteel is a creature, but Greaves' equip is stopped, so it attacks a turn later). Remove the stax piece first if you must |
 | Creature-heavy midrange | Remove the blocker (Swords, Chaos Warp, Meteor Golem) or reset the board with Cyclonic Rift, then a Blightsteel attack or Ballista. Kyodai flashes in to block |
 | Control (counters and removal) | Bait with Brain Freeze and Mystic Confluence, then go with a free counter behind it. The One Ring protects you for a turn |
 
 ### After a stopped attempt
 
 If a counterspell or removal ends the first try, count what is left before the second: Blightsteel shuffles back
-into the library, so Tinker still finds it. The Oracle in the graveyard (not in the library) is gone, so check it
-first. Keep a Force of Will for the retry, and rebuild mana with the rocks you did not sacrifice.
+into the library, so Tinker still finds it. An Oracle in the graveyard is out of reach except through Underworld Breach (escape {U}{U} plus three other cards), so check
+it first. Keep a Force of Will for the retry, and rebuild mana with the rocks you did not sacrifice.
 
 ### Life management
 

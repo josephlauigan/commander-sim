@@ -171,6 +171,7 @@ proxy = [
   "Bayou",
   "Bloodstained Mire",
   "Flooded Strand",
+  "Leyline of the Guildpact",
   "Marsh Flats",
   "Misty Rainforest",
   "Mox Opal",
@@ -191,7 +192,6 @@ proxy = [
 ]
 missing = [
   "Kyodai, Soul of Kamigawa",
-  "Leyline of the Guildpact",
 ]
 
 [deck.urdragon]

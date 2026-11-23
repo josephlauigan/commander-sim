@@ -174,7 +174,15 @@ fn kraum_colours_say_what_ad_nauseam_needs() {
 fn urdragon_one_lander_without_fast_mana_goes_back_by_its_row() {
     let (mut g, p) = game_with(
         "urdragon",
-        &["Forest", "Lightning Bolt", "Chaos Warp", "Cyclonic Rift", "Rhystic Study", "Twinflame", "Doubling Season"],
+        &[
+            "Forest",
+            "Lightning Bolt",
+            "Chaos Warp",
+            "Nibelheim Aflame",
+            "Rhystic Study",
+            "Twinflame",
+            "Doubling Season",
+        ],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
@@ -436,7 +444,7 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
             "Tundra",
             "Tropical Island",
             "Lightning Bolt",
-            "Cyclonic Rift",
+            "Nibelheim Aflame",
             "Rhystic Study",
             "Doubling Season",
         ],
