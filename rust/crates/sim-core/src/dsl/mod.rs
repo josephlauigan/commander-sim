@@ -378,7 +378,7 @@ pub fn players_from(g: &Game, p: PlayerId, w: Option<&str>, ctx: &DslCtx, cols: 
 
 fn src_colors(g: &Game, src: Option<PermId>, spell: Option<CardId>) -> Colors {
     match (spell, src) {
-        (Some(s), _) => Colors::from_letters(&g.db.get(s).pips),
+        (Some(s), _) => g.db.get(s).colors,
         (None, Some(m)) => colors_of(g, m),
         _ => Colors::NONE,
     }

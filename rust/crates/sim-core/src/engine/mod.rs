@@ -22,6 +22,7 @@ pub mod control;
 pub mod dungeon;
 pub mod exile;
 pub mod hooks;
+pub mod hybrid;
 pub mod life;
 pub mod mana;
 pub mod pool;

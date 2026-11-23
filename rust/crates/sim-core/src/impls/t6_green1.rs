@@ -405,8 +405,9 @@ thread_local! {
 }
 
 /// **Vibrance** ({3}{R/G}{R/G}, 4/4, evoke {R/G}{R/G}): when it enters, if {R}{R} was spent, 3 damage to any target;
-/// if {G}{G} was spent, search for a land card (to hand) and gain 2 life. The card data prices the hybrid as {R}{R},
-/// so a normal cast always spent {R}{R} (3 damage, no land); the evoke options below pay for one mode and sacrifice it.
+/// if {G}{G} was spent, search for a land card (to hand) and gain 2 life. A normal cast reads the colours its hybrid
+/// symbols were priced at (`engine::hybrid::priced`: {R}{R} when it can be paid, else {G}{G}, else {R}{G}, which is
+/// neither mode); the evoke options below pay for one mode and sacrifice it. Mana spent on the {3} is not counted.
 /// The AI evokes for {R}{R} when 3 damage kills a creature worth killing or finishes a player, and for {G}{G} when it
 /// wants a land from the library (Gaea's Cradle or a Gate not yet in hand or play).
 fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
@@ -414,8 +415,15 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(()); // "if {R}{R} was spent to cast it": not when it entered without being cast
     }
     let p = owner(g, src);
-    let mode = VIBRANCE_MODE.with(|c| c.replace(0));
-    if mode != 2 && trigger_window(g, p, Some(src), "3 damage to any target", None)? {
+    let mut mode = VIBRANCE_MODE.with(|c| c.replace(0));
+    if mode == 0 {
+        mode = match crate::engine::hybrid::priced(g.perm(src).card()).as_deref() {
+            None | Some("RR") => 1,
+            Some("GG") => 2,
+            Some(_) => 3,
+        };
+    }
+    if mode == 1 && trigger_window(g, p, Some(src), "3 damage to any target", None)? {
         super::t2::best_target_any(g, p, 3)?;
     }
     if mode == 2 && trigger_window(g, p, Some(src), "search for a land, gain 2 life", None)? {

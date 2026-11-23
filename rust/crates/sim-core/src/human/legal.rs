@@ -2,7 +2,7 @@
 //! legal targets of a spell, and how a target is described to the person.
 
 use super::{Target, mana};
-use crate::cards::{Colors, Types};
+use crate::cards::Types;
 use crate::engine::values::{colors_of, epow, etgh, protected_from, untargetable};
 use crate::engine::{self, cast, hooks};
 use crate::hooks::Event;
@@ -315,7 +315,7 @@ fn tgt_ok(g: &Game, kind: &str, m: PermId) -> bool {
         "a" => a,
         "cna" => cr && !a,
         "ae" => a || e,
-        "blue" => g.perm(m).cd.is_some_and(|c| g.db.get(c).pips.contains('U')),
+        "blue" => g.perm(m).cd.is_some_and(|c| g.db.get(c).colors.has('U')),
         "ac" => cr || a,
         _ => cr, // 'c' and anything unknown
     }
@@ -330,7 +330,7 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId) -> Option<Vec<Target>> {
         return None;
     }
     let tgt = t.str(Tag::Tgt).unwrap_or("c");
-    let pips = Colors::from_letters(&d.pips);
+    let pips = d.colors;
     let mut out = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
         for &m in &q.perms {

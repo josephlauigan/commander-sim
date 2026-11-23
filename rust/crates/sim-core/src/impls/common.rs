@@ -581,7 +581,7 @@ pub fn oring_exile(
     creature_only: bool,
 ) -> Res {
     let src_cd = g.perm(src).cd;
-    let pips = Colors::from_letters(src_cd.map_or("", |c| &g.db.get(c).pips));
+    let pips = src_cd.map_or(Colors::NONE, |c| g.db.get(c).colors);
     let groups: Vec<Vec<PlayerId>> =
         if per_opponent { g.opps(p).map(|q| vec![q]).collect() } else { vec![g.opps(p).collect()] };
     let mut targets = vec![];
@@ -1689,7 +1689,7 @@ fn spinner(g: &Game, src: Src, caster: PlayerId, c: CardId) -> bool {
 
 /// Allosaurus Shepherd: your green spells can't be countered (rules.py registers the same rule again)
 fn shepherd(g: &Game, src: Src, caster: PlayerId, c: CardId) -> bool {
-    caster == owner(g, src) && g.db.get(c).pips.contains('G')
+    caster == owner(g, src) && g.db.get(c).colors.has('G')
 }
 
 // ======================================================== planeswalkers (the walker framework)
@@ -3356,8 +3356,8 @@ fn trinisphere(g: &Game, src: Src, _caster: PlayerId, c: CardId) -> i32 {
 /// Grand Arbiter Augustin IV (Full): your white and blue spells cost {1} less each; opponents' spells cost {1} more
 fn gaa(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
     if caster == owner(g, src) {
-        let pips = &g.db.get(c).pips;
-        return -(pips.contains('W') as i32 + pips.contains('U') as i32);
+        let cols = g.db.get(c).colors;
+        return -(cols.has('W') as i32 + cols.has('U') as i32);
     }
     1
 }

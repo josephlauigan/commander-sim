@@ -26,6 +26,16 @@ pub fn phyrexian(cache: &Cache, cd: &Cd) -> String {
     }
 }
 
+/// the two-colour hybrid symbols of the printed cost, in cost order ("GW" for {G/W}); {2/W} and Phyrexian symbols are
+/// not listed. The card's `pips` hold the first colour of each, so the engine can try the other one when it pays.
+pub fn hybrid(cache: &Cache, cd: &Cd) -> Vec<String> {
+    let Some(rec) = rec(cache, &cd.name) else { return vec![] };
+    let (face, _) = crate::autotag::front(rec);
+    let mc = face.s("mana_cost").filter(|s| !s.is_empty()).or_else(|| rec.s("mana_cost")).unwrap_or("");
+    let mc = crate::py::first(mc, " // ");
+    crate::re::finditer(r"\{([WUBRG])/([WUBRG])\}", mc).into_iter().map(|m| format!("{}{}", m.gs(1), m.gs(2))).collect()
+}
+
 /// how many {X} symbols the printed cost has (Torment of Hailfire 1, Hangarback Walker 2): practice mode asks for X
 pub fn xcount(cache: &Cache, cd: &Cd) -> usize {
     let cost = rec(cache, &cd.name).and_then(|r| r.s("mana_cost")).unwrap_or("");

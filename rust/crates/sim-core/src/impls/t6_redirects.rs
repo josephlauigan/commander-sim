@@ -141,7 +141,7 @@ pub fn redirect_removal(
 /// Ricochet Trap's condition: an opponent of p cast a blue spell this turn
 pub fn blue_spell_this_turn(g: &Game, p: PlayerId) -> bool {
     g.opps(p).any(|q| match &g.player(q).turn_casts {
-        Some((st, cs)) if *st == g.turn_stamp() => cs.iter().any(|&c| g.db.get(c).pips.contains('U')),
+        Some((st, cs)) if *st == g.turn_stamp() => cs.iter().any(|&c| g.db.get(c).colors.has('U')),
         _ => false,
     })
 }
@@ -292,7 +292,7 @@ fn malfunction_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<
 // ================================================================== Pyrokinesis
 /// the red cards in p's hand other than `card` (Pyrokinesis exiles one instead of paying {4}{R}{R})
 pub fn red_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
-    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).pips.contains('R')).collect()
+    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).colors.has('R')).collect()
 }
 
 /// Pyrokinesis' alternative cost: exile a red card from p's hand (the least useful one). False if there is none.
@@ -639,7 +639,7 @@ fn emerald_charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
 // ================================================================== Sunscour
 /// the white cards in p's hand other than `card` (Sunscour exiles two instead of paying {5}{W}{W})
 pub fn white_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
-    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).pips.contains('W')).collect()
+    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).colors.has('W')).collect()
 }
 
 /// Sunscour's alternative cost: exile two white cards from p's hand (the two least useful). False, nothing paid, if p

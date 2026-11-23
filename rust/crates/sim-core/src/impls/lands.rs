@@ -805,7 +805,7 @@ fn oran_new(g: &Game, p: PlayerId) -> Vec<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| g.is_creature(m) && g.perm(m).sick && g.perm(m).cd.is_some_and(|c| g.db.get(c).pips.contains('G')))
+        .filter(|&m| g.is_creature(m) && g.perm(m).sick && g.perm(m).cd.is_some_and(|c| g.db.get(c).colors.has('G')))
         .collect()
 }
 

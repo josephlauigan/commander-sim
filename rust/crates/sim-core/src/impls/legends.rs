@@ -1449,7 +1449,7 @@ fn no_options(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Re
 
 /// Sol'kanar the Swamp King: you gain 1 life whenever any player casts a black spell
 fn solkanar(g: &mut Game, src: Src, _caster: PlayerId, c: CardId) -> Res {
-    if g.db.get(c).pips.contains('B') {
+    if g.db.get(c).colors.has('B') {
         let o = owner(g, src);
         gain(g, o, 1)?;
     }
@@ -1943,7 +1943,7 @@ fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
         if let Some(c) = g.perm(m).cd
             && super::mine::is_legendary(g, m)
         {
-            cols = cols.union(Colors::from_letters(&g.db.get(c).pips));
+            cols = cols.union(g.db.get(c).colors);
         }
     }
     cols

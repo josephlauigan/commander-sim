@@ -253,7 +253,7 @@ fn endurance_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
 /// the green card the AI exiles: the least wanted other green card in hand
 fn evoke_pitch(g: &Game, p: PlayerId, c: CardId) -> Option<CardId> {
     let greens: Vec<CardId> =
-        g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).pips.contains('G')).collect();
+        g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).colors.has('G')).collect();
     min_by(&greens, |x| card_worth(g, p, x, false))
 }
 

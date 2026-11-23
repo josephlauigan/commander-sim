@@ -289,6 +289,9 @@ pub struct CardDef {
     pub source: Box<str>,
     /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
     pub phyrexian: Box<str>,
+    /// its two-colour hybrid symbols, two letters each in cost order ("GWGU" for {G/W}{G/U}); `pips` hold the first
+    /// colour of each (engine::hybrid pays the other one when the first can't be paid)
+    pub hybrid: Box<str>,
     /// how many {X} symbols its printed cost has (practice mode asks the person for X when it is not 0)
     pub xcount: u32,
     /// the condition a land enters untapped under, if its text has one
@@ -360,7 +363,7 @@ impl CardDef {
             pow: r.pow,
             tgh: r.tgh,
             bomb: r.bomb,
-            colors: Colors::from_letters(&r.pips),
+            colors: Colors::from_letters(&r.pips).union(Colors::from_letters(&r.hybrid.concat())),
             identity: r.identity.as_deref().map(Colors::from_letters),
             counters_mult: repl::counters_mult_of(&abilities),
             abilities,
@@ -372,6 +375,7 @@ impl CardDef {
             game_changer: r.game_changer == Some(true),
             source: r.source.as_str().into(),
             phyrexian: r.phyrexian.as_str().into(),
+            hybrid: r.hybrid.concat().into(),
             xcount: r.xcount,
             enters_rule: match &r.enters_rule {
                 Some(v) => Some(EnterRule::from_json(v).map_err(at)?),
@@ -420,6 +424,7 @@ pub fn engine_made() -> Vec<RawCard> {
             perm: false,
         },
         phyrexian: String::new(),
+        hybrid: vec![],
         xcount: 0,
         enters_rule: None,
         land_types: vec![],

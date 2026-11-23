@@ -979,6 +979,7 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
             pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
         }
     }
+    crate::engine::hybrid::resolve(g, p, c, gn.max(0) as u32, &mut pips); // {G/W}: the other colour when the first can't be paid
     (gn.max(0) as u32, pips)
 }
 
