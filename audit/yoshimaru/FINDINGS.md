@@ -52,6 +52,11 @@ Arm A = main with the Silence knob; arm B = the full carrier package (flier +2, 
 - Equipment worn per game (t4 / t5): B commander 0.22 / 0.26, flier 0.15 / 0.18, other 0.54 / 0.65; C commander 0.43 / 0.48, flier 0.12 / 0.15, other 0.31 / 0.45; protection from white on Ballista 0.00 in both. Tymna cards drawn and opponents hit per Tymna turn are flat in all arms.
 - Decision: ship arm C (the guide-backed rules) with the report and Court fixes; the other weights stay out until a measured reason. No arm shows a win-rate gain, so this is rule correctness, not a measured improvement.
 
+## Solitude fixes, paired test 2026-11-23 (branch solitude-fix against main 47146456; seed 700000, 3,000 games per tier, loose)
+Win rate t4 25.7 -> 25.8, t5 22.3 -> 22.5 (baseline = the carrier-rule arm): no change. Mechanisms: Solitude no longer appears in the "often stuck in hand" list (it read 16.2% and 11.5% of draws; the figure was an artifact: evokes were not recorded as casts), so its counted cast rate is now above half of draws (the exact value is not printed: ticket); The Wandering Emperor cast when drawn 42.9 -> 43.3 (t4), 39.1 -> 44.0 (t5). Heliod cast 17.7 -> 18.0 / 17.6 -> 17.9. Raw: `audit/stage3-paired-2026-11-23/big-solitude-yoshimaru-analyze.txt`.
+- In 60 traces (`solitude-trace-counts.txt`): evokes that ended in `ward counters the effect` 3 -> 0; Heliod, Sun-Crowned pitched 1 -> 0. A Deflecting Swat redirect (opposing play) is not fixed.
+- Commander traces for the other decks are identical to main (sheoldred, urdragon, yshtola and the within-tier pods: 160 of 160); 4 of 80 yoshimaru games differ, as expected when evokes and flash casts are counted and the look-ahead plays the changed code.
+
 ## What the simulator cannot do yet
 - Every card is Full or Full-auto except Delney, Streetwise Lookout (Approximate: the extra instance for leaves that run at once or inline in the
   engine is left out; see her note in `data/audit.toml`). Full-auto means compiled from Oracle text, not hand-written card code: Stroke of Midnight and
