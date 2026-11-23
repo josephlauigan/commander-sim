@@ -2,7 +2,7 @@
 //! (`decklists/pool/<tier folder>/<deck>.md`, the five power tiers). A deck file's cards are its `## Import list`
 //! block ("1 Sol Ring" lines); a pool deck's commander is its `**Commander:**` line.
 
-use crate::data::{self, MyDeck, Project, read};
+use crate::data::{self, Bans, FormatDef, MyDeck, Project, front_face, read};
 use crate::json::J;
 use crate::py;
 use crate::re::{rmatch, search};
@@ -56,6 +56,8 @@ pub struct PoolDeck {
     pub title: String,
     /// the Game Changer count the file's header claims
     pub gc_claimed: Option<usize>,
+    /// the key of the format it is checked under: your decks' own (data/my_decks.toml), `commander` for a pool deck
+    pub format: String,
 }
 
 /// all pool decks, sorted by path (tier, then file name)
@@ -94,7 +96,17 @@ pub fn load_pool_deck(path: &Path) -> Result<PoolDeck, String> {
     };
     let title = py::strip(txt.lines().next().unwrap_or(""), "# ").to_string();
     let gc_claimed = search(r"\*\*Game Changers \((\d+)\)", &txt).and_then(|m| m.gs(1).parse().ok());
-    Ok(PoolDeck { path: path.to_path_buf(), tier, key, commander, commander2, cards: load(path)?, title, gc_claimed })
+    Ok(PoolDeck {
+        path: path.to_path_buf(),
+        tier,
+        key,
+        commander,
+        commander2,
+        cards: load(path)?,
+        title,
+        gc_claimed,
+        format: data::DEFAULT_FORMAT.into(),
+    })
 }
 
 /// the name logs use for a pool deck: its commander's first name part
@@ -185,6 +197,54 @@ pub fn resolved_name_ok(requested: &str, rec: &J) -> bool {
     names.contains(&key)
 }
 
+/// why a card is not legal in a format
+#[derive(Debug, Clone, PartialEq)]
+pub enum Illegal {
+    /// on the format's ban list (Scryfall's `banned` for Commander, `banned` in formats.toml for a list format)
+    Banned,
+    /// outside the format's card pool, with the reason ("Scryfall not_legal", "Scryfall restricted", "no legality data")
+    NotLegal(String),
+}
+
+/// What keeps a card out of a format (an empty list: it is legal).
+/// - `bans = "scryfall"` (Commander): `legalities.commander` `banned`, or any other value but `legal`, refuses it. A
+///   record with no legality field passes (the cache's real records always have one).
+/// - `bans = "list"` (Cali Commander): the card must be a Commander-playable card (`legal` or `banned` in Scryfall's
+///   Commander field: a card Scryfall calls `banned` is playable there, just not in Commander; `not_legal` and
+///   `restricted` are refused, and so is a record with no legality field), and then its FRONT face may not be on
+///   the format's list. Names compare by front face, lower case, for the requested name and the record's name; a back
+///   face is never matched (sim-core's `Format::admits` sees front faces only, and `Emeritus of Ideation // Ancestral
+///   Recall` must not be banned by the "Ancestral Recall" entry). A flip or double-faced card on the list is
+///   listed by its front face ("Erayo, Soratami Ascendant"); an entry naming only a back face bans nothing.
+/// `rec` is None for a name with no Scryfall record: a list format still reports it when the name is on the list.
+pub fn legality_problems(fmt: &FormatDef, requested: &str, rec: Option<&J>) -> Vec<Illegal> {
+    let mut out = vec![];
+    let scry = rec.and_then(|r| r.get("legalities")).and_then(|l| l.get("commander")).and_then(|c| c.as_str());
+    match fmt.bans {
+        Bans::Scryfall => match scry {
+            Some("banned") => out.push(Illegal::Banned),
+            Some("legal") | None => {}
+            Some(other) => out.push(Illegal::NotLegal(format!("Scryfall {other}"))),
+        },
+        Bans::List => {
+            if let Some(r) = rec {
+                match scry {
+                    Some("legal") | Some("banned") => {}
+                    Some(other) => out.push(Illegal::NotLegal(format!("Scryfall {other}"))),
+                    None => out.push(Illegal::NotLegal("no legality data".into())),
+                }
+                let names = [front_face(requested), front_face(r.s_or("name"))];
+                if fmt.banned.iter().any(|b| names.contains(&front_face(b))) {
+                    out.push(Illegal::Banned);
+                }
+            } else if fmt.banned.iter().any(|b| front_face(b) == front_face(requested)) {
+                out.push(Illegal::Banned);
+            }
+        }
+    }
+    out
+}
+
 /// what `card_problems` found out besides the problems
 pub struct DeckInfo {
     pub gcs: Vec<String>,
@@ -193,6 +253,7 @@ pub struct DeckInfo {
 
 /// Checks that need Scryfall data. `recs`: requested name -> record (Python's slim records).
 pub fn card_problems(
+    fmt: &FormatDef,
     cards: &[String],
     commanders: &[&str],
     tier: Option<&str>,
@@ -288,17 +349,23 @@ pub fn card_problems(
         }
         None => "?".to_string(),
     };
-    let banned: Vec<&str> = rec_of
+    let verdicts: Vec<(&str, Vec<Illegal>)> =
+        rec_of.iter().map(|(n, r)| (n.as_str(), legality_problems(fmt, n, r.as_ref()))).collect();
+    let banned: Vec<&str> = verdicts.iter().filter(|(_, v)| v.contains(&Illegal::Banned)).map(|(n, _)| *n).collect();
+    if !banned.is_empty() {
+        probs.push(format!("banned in {}: {}", fmt.name, banned.join(", ")));
+    }
+    let not_legal: Vec<String> = verdicts
         .iter()
-        .filter(|(_, r)| {
-            r.as_ref().is_some_and(|r| {
-                r.get("legalities").and_then(|l| l.get("commander")).and_then(|c| c.as_str()) == Some("banned")
+        .flat_map(|(n, v)| {
+            v.iter().filter_map(move |i| match i {
+                Illegal::NotLegal(why) => Some(format!("{n} ({why})")),
+                Illegal::Banned => None,
             })
         })
-        .map(|(n, _)| n.as_str())
         .collect();
-    if !banned.is_empty() {
-        probs.push(format!("banned in Commander: {}", banned.join(", ")));
+    if !not_legal.is_empty() {
+        probs.push(format!("not legal in {}: {}", fmt.name, not_legal.join(", ")));
     }
     let gcs: Vec<String> = rec_of
         .iter()
@@ -318,18 +385,27 @@ pub fn card_problems(
     (probs, DeckInfo { gcs, identity })
 }
 
-/// `cardgen validate`: every pool deck's problems (Python's `pools --validate`)
+/// the format with this key; formats.toml always has `commander` and `load_my_decks` refuses an unknown key
+pub fn format_of<'a>(formats: &'a [FormatDef], key: &str) -> Result<&'a FormatDef, String> {
+    formats.iter().find(|f| f.key == key).ok_or(format!("no format {key:?} in data/formats.toml"))
+}
+
+/// `cardgen validate`: every pool deck's problems (Python's `pools --validate`), under Commander, then each of your
+/// decks (size, singleton, commanders, colours, bans) under its own format
 pub fn validate_all(p: &Project, cache: &Cache) -> Result<Vec<(PoolDeck, Vec<String>, DeckInfo)>, String> {
+    let formats = data::load_formats(p)?;
+    let commander = format_of(&formats, data::DEFAULT_FORMAT)?;
     let mut out = vec![];
     for d in load_pool(p)? {
         let cmds: Vec<&str> = std::iter::once(d.commander.as_str()).chain(d.commander2.as_deref()).collect();
         let mut probs = structural_problems(&d.cards, &cmds, 100);
-        let (p2, info) = card_problems(&d.cards, &cmds, Some(&d.tier), d.gc_claimed, &|n| cache.get(n).cloned());
+        let (p2, info) =
+            card_problems(commander, &d.cards, &cmds, Some(&d.tier), d.gc_claimed, &|n| cache.get(n).cloned());
         probs.extend(p2);
         out.push((d, probs, info));
     }
-    // your decks with two commanders: 100 cards, both with Partner, the union of their colours
-    for m in data::load_my_decks(p)?.into_iter().filter(|m| m.commander2.is_some()) {
+    // your decks: 100 cards, the commanders (two need plain Partner; the union of their colours), each deck's format
+    for m in data::load_my_decks(p)? {
         let path = deck_path(p, &m);
         let d = PoolDeck {
             path: path.clone(),
@@ -340,12 +416,182 @@ pub fn validate_all(p: &Project, cache: &Cache) -> Result<Vec<(PoolDeck, Vec<Str
             cards: load(&path)?,
             title: String::new(),
             gc_claimed: None,
+            format: m.format.clone(),
         };
-        let cmds: Vec<&str> = vec![d.commander.as_str(), m.commander2.as_deref().unwrap()];
+        let cmds: Vec<&str> = std::iter::once(d.commander.as_str()).chain(m.commander2.as_deref()).collect();
         let mut probs = structural_problems(&d.cards, &cmds, 100);
-        let (p2, info) = card_problems(&d.cards, &cmds, None, None, &|n| cache.get(n).cloned());
+        let (p2, info) =
+            card_problems(format_of(&formats, &m.format)?, &d.cards, &cmds, None, None, &|n| cache.get(n).cloned());
         probs.extend(p2);
         out.push((d, probs, info));
     }
     Ok(out)
+}
+
+#[cfg(test)]
+mod legality_tests {
+    use super::*;
+    use crate::data::{FormatDef, load_formats};
+    use crate::jo;
+
+    fn formats() -> (FormatDef, FormatDef) {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
+        let all = load_formats(&Project::new(root)).unwrap();
+        let get = |k: &str| all.iter().find(|f| f.key == k).unwrap().clone();
+        (get("commander"), get("cali"))
+    }
+
+    /// a fabricated Scryfall record
+    fn rec(name: &str, scry: &str) -> J {
+        jo! {"name" => name, "color_identity" => J::Arr(vec![]), "legalities" => jo!{"commander" => scry}}
+    }
+
+    fn illegal(fmt: &FormatDef, name: &str, scry: &str) -> Vec<Illegal> {
+        legality_problems(fmt, name, Some(&rec(name, scry)))
+    }
+
+    /// the 18 names: the Cali Commander ban list (decklists/cali_commander/kyodai-artifact-combo.md)
+    const CALI_BANNED: [&str; 18] = [
+        "Ancestral Recall",
+        "Balance",
+        "Black Lotus",
+        "Channel",
+        "Erayo, Soratami Ascendant",
+        "Fastbond",
+        "Karakas",
+        "Mox Emerald",
+        "Mox Jet",
+        "Mox Pearl",
+        "Mox Ruby",
+        "Mox Sapphire",
+        "Nadu, Winged Wisdom",
+        "The Tabernacle at Pendrell Vale",
+        "Time Vault",
+        "Time Walk",
+        "Tolarian Academy",
+        "Yawgmoth's Bargain",
+    ];
+
+    #[test]
+    fn the_cali_ban_list_is_pinned_to_the_18_names() {
+        let (_, cali) = formats();
+        let mut got = cali.banned.clone();
+        got.sort();
+        let mut want: Vec<String> = CALI_BANNED.iter().map(|s| s.to_string()).collect();
+        want.sort();
+        assert_eq!(got, want);
+        assert_eq!(cali.bans, Bans::List);
+        assert_eq!((cali.seats, cali.life, cali.first_player_draws), (2, 30, false));
+    }
+
+    #[test]
+    fn commander_rejects_the_commander_banned_three_and_accepts_the_tabernacle() {
+        let (cmd, _) = formats();
+        for n in ["Mana Crypt", "Primeval Titan", "Tinker", "Black Lotus"] {
+            assert_eq!(illegal(&cmd, n, "banned"), [Illegal::Banned], "{n}");
+        }
+        assert!(illegal(&cmd, "The Tabernacle at Pendrell Vale", "legal").is_empty());
+    }
+
+    #[test]
+    fn cali_accepts_the_three_and_rejects_all_18() {
+        let (_, cali) = formats();
+        // Scryfall calls the three banned in Commander: the Cali list replaces that
+        for n in ["Mana Crypt", "Primeval Titan", "Tinker"] {
+            assert!(illegal(&cali, n, "banned").is_empty(), "{n}");
+        }
+        assert!(illegal(&cali, "Sol Ring", "legal").is_empty());
+        for n in CALI_BANNED {
+            // banned on the list whether Scryfall calls it legal (the Tabernacle) or banned (Black Lotus)
+            for scry in ["legal", "banned"] {
+                assert_eq!(illegal(&cali, n, scry), [Illegal::Banned], "{n} {scry}");
+            }
+            assert_eq!(illegal(&cali, &n.to_uppercase(), "legal"), [Illegal::Banned], "{n} upper case");
+        }
+        // the three are Cali-legal, so a deck holding them passes there and fails under Commander
+        let (cmd, _) = formats();
+        let cards: Vec<String> = ["Mana Crypt", "Primeval Titan", "Tinker"].map(String::from).to_vec();
+        let recs = |n: &str| Some(rec(n, "banned"));
+        let (p, _) = card_problems(&cali, &cards, &[], None, None, &recs);
+        assert!(p.is_empty(), "{p:?}");
+        let (p, _) = card_problems(&cmd, &cards, &[], None, None, &recs);
+        assert_eq!(p, ["banned in Commander: Mana Crypt, Primeval Titan, Tinker"]);
+    }
+
+    #[test]
+    fn a_card_scryfall_calls_not_legal_is_refused_in_both_formats() {
+        let (cmd, cali) = formats();
+        for scry in ["not_legal", "restricted"] {
+            assert_eq!(illegal(&cmd, "Some Joke Card", scry), [Illegal::NotLegal(format!("Scryfall {scry}"))]);
+            assert_eq!(illegal(&cali, "Some Joke Card", scry), [Illegal::NotLegal(format!("Scryfall {scry}"))]);
+        }
+        let cards = vec!["Some Joke Card".to_string()];
+        let recs = |n: &str| Some(rec(n, "not_legal"));
+        for f in [&cmd, &cali] {
+            let (p, _) = card_problems(f, &cards, &[], None, None, &recs);
+            assert_eq!(p, [format!("not legal in {}: Some Joke Card (Scryfall not_legal)", f.name)]);
+        }
+        // a record with no legality field: Commander (as before) lets it through, Cali needs the data
+        let bare = jo! {"name" => "Bare Card", "color_identity" => J::Arr(vec![])};
+        assert!(legality_problems(&cmd, "Bare Card", Some(&bare)).is_empty());
+        assert_eq!(legality_problems(&cali, "Bare Card", Some(&bare)), [Illegal::NotLegal("no legality data".into())]);
+    }
+
+    #[test]
+    fn erayos_flip_card_is_refused_in_cali_by_its_front_face_only() {
+        let (_, cali) = formats();
+        let erayo = jo! {"name" => "Erayo, Soratami Ascendant // Erayo's Essence", "layout" => "flip",
+        "color_identity" => J::Arr(vec![J::from("U")]),
+        "legalities" => jo!{"commander" => "banned"},
+        "card_faces" => J::Arr(vec![
+            jo!{"name" => "Erayo, Soratami Ascendant"}, jo!{"name" => "Erayo's Essence"}])};
+        // the list names the front face, or the whole card (front-faced): refused, asked by either name
+        for entry in ["Erayo, Soratami Ascendant", "Erayo, Soratami Ascendant // Erayo's Essence"] {
+            let mut fmt = cali.clone();
+            fmt.banned = vec![entry.to_string()];
+            for asked in ["Erayo, Soratami Ascendant", "Erayo, Soratami Ascendant // Erayo's Essence"] {
+                assert_eq!(legality_problems(&fmt, asked, Some(&erayo)), [Illegal::Banned], "{entry} / {asked}");
+            }
+        }
+        // an entry naming only the back face bans nothing: back faces are not matched (sim-core cannot see them)
+        let mut fmt = cali.clone();
+        fmt.banned = vec!["Erayo's Essence".to_string()];
+        assert!(legality_problems(&fmt, "Erayo, Soratami Ascendant", Some(&erayo)).is_empty());
+        // the shipped list names the front face
+        assert_eq!(legality_problems(&cali, "Erayo, Soratami Ascendant", Some(&erayo)), [Illegal::Banned]);
+    }
+
+    #[test]
+    fn a_double_faced_card_is_matched_by_its_front_face() {
+        let (_, cali) = formats();
+        let mut fmt = cali.clone();
+        fmt.banned = vec!["Leech Collector".into()];
+        let dfc = jo! {"name" => "Leech Collector // Bloodletting", "color_identity" => J::Arr(vec![]),
+        "legalities" => jo!{"commander" => "legal"}, "card_faces" => J::Arr(vec![
+            jo!{"name" => "Leech Collector"}, jo!{"name" => "Bloodletting"}])};
+        assert_eq!(legality_problems(&fmt, "Leech Collector // Bloodletting", Some(&dfc)), [Illegal::Banned]);
+        // a card that merely shares a word is not caught
+        assert!(illegal(&fmt, "Leech Collector Two", "legal").is_empty());
+    }
+
+    #[test]
+    fn a_banned_name_with_no_record_is_reported_banned_and_not_found() {
+        let (cmd, cali) = formats();
+        let cards = vec!["Mox Jet".to_string()];
+        let (p, _) = card_problems(&cali, &cards, &[], None, None, &|_| None);
+        assert!(p.contains(&"not found on Scryfall: Mox Jet".to_string()), "{p:?}");
+        assert!(p.contains(&"banned in Cali Commander: Mox Jet".to_string()), "{p:?}");
+        // Commander has no list to check a missing card against
+        let (p, _) = card_problems(&cmd, &cards, &[], None, None, &|_| None);
+        assert_eq!(p, ["not found on Scryfall: Mox Jet"]);
+    }
+
+    #[test]
+    fn the_commander_message_is_unchanged() {
+        let (cmd, _) = formats();
+        let cards = vec!["Black Lotus".to_string(), "Sol Ring".to_string()];
+        let recs = |n: &str| Some(rec(n, if n == "Black Lotus" { "banned" } else { "legal" }));
+        let (p, _) = card_problems(&cmd, &cards, &[], None, None, &recs);
+        assert_eq!(p, ["banned in Commander: Black Lotus"]);
+    }
 }

@@ -27,7 +27,7 @@
 //!  6. for your decks, when the list has set codes, writes data/printings/<key>.txt (even if no card changed).
 
 use crate::audit::{self, Audit, cut};
-use crate::data::{Project, read};
+use crate::data::{self, Project, read};
 use crate::decks::{self, BASICS, py_repr};
 use crate::export::Inputs;
 use crate::json::{self, J};
@@ -523,6 +523,17 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         canon.insert(n.clone(), name.clone());
         recs.insert(name, rec);
     }
+    // one of your decks (by key, or by the path of its file) is checked under its own format, anything else under
+    // Commander
+    let my_deck = inp
+        .my
+        .iter()
+        .find(|d| {
+            (d.key == which && !Path::new(which).exists())
+                || std::fs::canonicalize(decks::deck_path(project, d)).ok().as_deref() == Some(path.as_path())
+        })
+        .cloned();
+    let fmt = decks::format_of(&inp.formats, my_deck.as_ref().map_or(data::DEFAULT_FORMAT, |d| d.format.as_str()))?;
     let in_pool = path.to_string_lossy().contains(&format!("{0}pool{0}", std::path::MAIN_SEPARATOR));
     let tier = if in_pool {
         path.parent()
@@ -534,7 +545,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let cards: Vec<String> = counts.iter().flat_map(|(n, k)| std::iter::repeat_n(n.clone(), *k)).collect();
     let cmds: Vec<&str> = std::iter::once(commander.as_str()).chain(commander2.as_deref()).collect();
     problems.extend(decks::structural_problems(&cards, &cmds, 100)); // every problem at once, not only the first
-    problems.extend(decks::card_problems(&cards, &cmds, tier.as_deref(), None, &|n| recs.get(n).cloned()).0);
+    problems.extend(decks::card_problems(fmt, &cards, &cmds, tier.as_deref(), None, &|n| recs.get(n).cloned()).0);
     if !problems.is_empty() {
         say!("Not updated: the new list for {} has problems:", path.file_name().unwrap().to_string_lossy());
         for p in &problems {
@@ -576,11 +587,6 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let key = sort_key(&singles_old);
     // deck files describe the deck as it is: your decks keep their history in decklists/CHANGELOG.md, pool decks in
     // decklists/pool/CHANGELOG.md; only a deck file elsewhere gets its log line at its own top
-    let my_deck = inp
-        .my
-        .iter()
-        .find(|d| std::fs::canonicalize(decks::deck_path(project, d)).ok().as_deref() == Some(path.as_path()))
-        .cloned();
     let file_note = if my_deck.is_some() || in_pool { None } else { note.as_deref() };
     let new_text = rewrite(&text, &commander, commander2.as_deref(), &counts, &recs, commas, &today, file_note, key)?;
 

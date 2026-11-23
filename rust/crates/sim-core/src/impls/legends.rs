@@ -1901,16 +1901,22 @@ fn court(g: &mut Game, src: Src, p: PlayerId) -> Res {
     } else {
         None
     };
-    // the AI prefers a nonland card; a land card is the pick only when nothing else qualifies
-    let c = picked.unwrap_or_else(|| {
-        let nonland: Vec<CardId> = cs.iter().copied().filter(|&c| !g.db.get(c).land).collect();
-        let pool = if nonland.is_empty() { &cs } else { &nonland };
-        max_by(pool, |c| card_worth(g, o, c, false)).unwrap()
-    });
+    // the AI prefers a nonland card; a land card is the pick only when nothing else qualifies. As the monarch it never
+    // picks an X-cost card (Walking Ballista would enter with X = 0 and die); if only those qualify it returns nothing
+    let monarch = g.monarch == Some(o);
+    let ai_pick = || {
+        let ok: Vec<CardId> = cs.iter().copied().filter(|&c| !monarch || g.db.get(c).xcount == 0).collect();
+        let nonland: Vec<CardId> = ok.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+        let pool = if nonland.is_empty() { &ok } else { &nonland };
+        max_by(pool, |c| card_worth(g, o, c, false))
+    };
+    let Some(c) = picked.or_else(ai_pick) else {
+        return Ok(());
+    };
     if !remove_card(&mut g.player_mut(o).gy, c) {
         return Ok(());
     }
-    if g.monarch == Some(o) {
+    if monarch {
         if g.db.get(c).land {
             // the real land-entry path: shock-land choice, enters tapped, enters ability, landfall
             super::yoshimaru_p7::land_enters(g, o, c)?;

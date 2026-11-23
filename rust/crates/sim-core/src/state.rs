@@ -556,6 +556,9 @@ pub struct Player {
     pub lands: Vec<PermId>,
     pub perms: Vec<PermId>,
     pub life: i32,
+    /// the life total the player started with (`Settings.rules.life`, set by `Game::new`): cards and the AI that
+    /// measure against "your starting life total" read this, not a literal 40
+    pub start_life: i32,
     pub alive: bool,
     pub turns: u32,
     pub cmd_in_zone: bool,
@@ -876,6 +879,7 @@ impl Player {
             lands: vec![],
             perms: vec![],
             life: 40,
+            start_life: 40,
             alive: true,
             turns: 0,
             cmd_in_zone: true,
@@ -1539,9 +1543,13 @@ impl Game {
         db: Arc<CardDb>,
         registry: Arc<crate::hooks::Registry>,
         settings: Arc<Settings>,
-        players: Vec<Player>,
+        mut players: Vec<Player>,
         rng: Rng,
     ) -> Game {
+        for p in &mut players {
+            p.start_life = settings.rules.life;
+            p.life = settings.rules.life;
+        }
         let work_cap = settings.game_work;
         let leyline_deck =
             db.id("Leyline of the Guildpact").is_some_and(|c| players.iter().any(|p| p.library.contains(&c)));

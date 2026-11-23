@@ -354,6 +354,15 @@ pub fn draws_cards(g: &Game, c: CardId) -> bool {
 pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f64> {
     let pl = g.player(p);
     let d = g.db.get(c);
+    // The Ur-Dragon seat holds Spark Double while its Garth line is near and Garth is still to come (the seat check
+    // first: no other seat reaches the rest)
+    if crate::impls::t45_urdragon_combos::urdragon_seat(g, p)
+        && &*d.name == "Spark Double"
+        && s.danger < crate::impls::t45_urdragon_combos::SPARK_HOLD_DANGER
+        && crate::impls::t45_urdragon_combos::spark_hold_shape(g, p)
+    {
+        return None;
+    }
     let main = is_main(hand_key(g, p));
     let mut base = decks::deck_prio_f(g, p, c);
     if !main && pl.library.len() < 8 && draws_cards(g, c) {

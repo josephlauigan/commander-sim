@@ -2845,6 +2845,7 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
     }
     crate::engine::stack::equip_ability(g, p, src, target)?;
+    crate::impls::tymna_cards::note_equip_holder(g, p, src, target); // the yoshimaru seat's holder stat
     Ok(true)
 }
 

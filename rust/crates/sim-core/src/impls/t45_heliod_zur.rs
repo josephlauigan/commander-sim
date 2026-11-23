@@ -6,12 +6,12 @@
 //! gain life" triggers now fire (engine/life.rs). The rest is here.
 //!
 //! Heliod:
-//! - Cosmos Elixir: your end step, draw a card above your starting life total (40), else gain 2 life.
+//! - Cosmos Elixir: your end step, draw a card above your starting life total (40 in Commander), else gain 2 life.
 //! - Heliod's Intervention: destroy X opposing artifacts and/or enchantments, or a player gains twice X life.
 //! - Well of Lost Dreams: whenever you gain life, pay up to that much and draw that many.
 //! - Ajani, Strength of the Pride: +1 life per creature and planeswalker; -2 an Ajani's Pridemate token (a token copy
-//!   of the card, so its compiled trigger comes along); 0 at 55+ life: exile Ajani and each opposing artifact and
-//!   creature.
+//!   of the card, so its compiled trigger comes along); 0 at 15 or more life above your starting total (55 in
+//!   Commander): exile Ajani and each opposing artifact and creature.
 //! - Altar of the Pantheon: +1 devotion to each colour (rules2::devotion); tapped for mana with a God, Demigod or
 //!   legendary enchantment out: gain 1 life.
 //! - Archivist of Oghma: an opponent's library search (each shuffle after a search, tutors::shuffle_library): gain 1
@@ -60,8 +60,6 @@ use crate::impls::lands::{can_pay_without, pay_without, sac_land};
 use crate::state::{CopyExc, CopyOf, Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
 
-/// the commander starting life total
-const START_LIFE: i32 = 40;
 const ARCHIVIST: &str = "Archivist of Oghma";
 const DELNEY: &str = "Delney, Streetwise Lookout";
 const INTERVENTION: &str = "Heliod's Intervention";
@@ -157,11 +155,12 @@ fn elixir_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != owner(g, src) || !live(g, src) {
         return Ok(());
     }
-    let label = if g.player(p).life > START_LIFE { "draw a card" } else { "gain 2 life" };
+    let start = g.player(p).start_life;
+    let label = if g.player(p).life > start { "draw a card" } else { "gain 2 life" };
     if !trigger_window(g, p, Some(src), label, Some(2.0))? {
         return Ok(());
     }
-    if g.player(p).life > START_LIFE { draw(g, p, 1, false) } else { gain(g, p, 2) }
+    if g.player(p).life > start { draw(g, p, 1, false) } else { gain(g, p, 2) }
 }
 
 // ================================================================== Well of Lost Dreams
@@ -315,7 +314,7 @@ fn ajani_victims(g: &Game, p: PlayerId) -> Vec<PermId> {
 }
 
 fn ajani_zero_v(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
-    if g.player(p).life < START_LIFE + 15 {
+    if g.player(p).life < g.player(p).start_life + 15 {
         return None;
     }
     let worth: f64 = ajani_victims(g, p).iter().map(|&m| pval(g, m)).sum();
@@ -326,7 +325,7 @@ fn ajani_zero_v(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
 /// 0: with 15 or more life above your starting total, exile Ajani and each artifact and creature your opponents
 /// control
 fn ajani_zero(g: &mut Game, p: PlayerId, src: PermId) -> Res {
-    if g.player(p).life < START_LIFE + 15 {
+    if g.player(p).life < g.player(p).start_life + 15 {
         return Ok(());
     }
     crate::glog!(g, "    Ajani exiles itself and each opposing artifact and creature");

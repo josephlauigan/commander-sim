@@ -3617,7 +3617,7 @@ fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
 /// Terror of the Peaks' triggers (one per entry in `triggers`, the power of each) as `t2::best_target_any` resolves them,
 /// replayed on local life totals: the first opponent whose life is the trigger's power or less takes it; else a creature
 /// the engine would remove (an opponent's targetable creature with toughness within the power and `pval` 3 or more);
-/// else the opponent with the highest `threat`, which is the permanents' worth plus `0.05 * (life - 40)` and so follows
+/// else the opponent with the highest `threat`, which is the permanents' worth plus `0.05 * (life - start life)` and so follows
 /// the local life. Returns what each opponent takes. The replay stops, with what it has counted so far, at the first
 /// trigger whose outcome it can't follow: one that removes a creature, or one aimed at an opponent whose damage is
 /// reduced rather than prevented (`clean` is false while the opponent can be hit). An opponent that nothing can damage
@@ -3629,7 +3629,7 @@ fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)
     }
     let mut life: Vec<i64> = opps.iter().map(|&o| g.player(o).life as i64).collect();
     let mut taken = vec![0i64; opps.len()];
-    // the permanents' worth, from which the engine's `threat` differs by 0.05 * (life - 40)
+    // the permanents' worth, from which the engine's `threat` differs by 0.05 * (life - start life)
     let worth: Vec<f64> = opps
         .iter()
         .map(|&o| g.player(o).perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum())
@@ -3648,7 +3648,7 @@ fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)
                 break; // a creature goes: its worth leaves the aim, which the replay doesn't follow
             }
             let idx: Vec<usize> = (0..opps.len()).collect();
-            max_by(&idx, |i| worth[i] + (life[i] as f64 - 40.0) * 0.05).unwrap()
+            max_by(&idx, |i| worth[i] + (life[i] as f64 - g.player(opps[i]).start_life as f64) * 0.05).unwrap()
         };
         let o = opps[i];
         if g.player(o).life_locked || prevents_damage(g, o, Some(p)) {

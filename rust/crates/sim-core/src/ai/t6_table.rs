@@ -213,16 +213,51 @@ pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
 /// Cast Silence (two or more opponents could answer) or Orim's Chant (one) before the line starts, when the mana for
 /// both is there. Returns true if a protection spell was cast.
 pub fn protect_before_go(g: &mut Game, p: PlayerId, need: (u32, String)) -> Res<bool> {
+    protect_step(g, p, need, None)
+}
+
+/// --- stage4: the protection step of a plan deck that opted in (`knobs.protect_before_go`), which is not a Tier 6 deck.
+/// Two differences from `protect_before_go`, both only here: with no Orim's Chant in hand, Silence is cast against a
+/// single opponent who could answer too (such a list has no Chant for that case); and `reprice(g, card)` gives the
+/// line's mana once `card` counts as a spell cast this turn (a per-spell tax such as Damping Sphere, a cap such as Rule
+/// of Law), or None when the line could not be cast after it: a protection spell that would make the line unplayable is
+/// not cast.
+pub fn protect_before_go_opt_in(
+    g: &mut Game,
+    p: PlayerId,
+    need: (u32, String),
+    reprice: &dyn Fn(&Game, CardId) -> Option<(u32, String)>,
+) -> Res<bool> {
+    protect_step(g, p, need, Some(reprice))
+}
+
+/// `opt_in`: None for a Tier 6 player (the rules above, unchanged); Some(reprice) for a plan deck that opted in
+fn protect_step(
+    g: &mut Game,
+    p: PlayerId,
+    need: (u32, String),
+    opt_in: Option<&dyn Fn(&Game, CardId) -> Option<(u32, String)>>,
+) -> Res<bool> {
     let stops: Vec<(PlayerId, f64)> = g.opps(p).map(|q| (q, stop_chance(g, q))).filter(|x| x.1 >= 0.15).collect();
     if stops.is_empty() {
         return Ok(false);
     }
-    for c in protection(g, p) {
+    let prot = protection(g, p);
+    let chant_held = prot.iter().any(|&c| &*g.db.get(c).name == "Orim's Chant");
+    for c in prot {
         let d = g.db.get(c);
         let silence = &*d.name == "Silence";
-        if silence != (stops.len() >= 2) {
+        let want_silence = stops.len() >= 2 || (opt_in.is_some() && !chant_held);
+        if silence != want_silence {
             continue;
         }
+        let need = match opt_in {
+            Some(reprice) => match reprice(g, c) {
+                Some(n) => n,
+                None => continue,
+            },
+            None => need.clone(),
+        };
         let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
         if !can_pay(g, p, need.0 + cg, &format!("{}{cp}", need.1), false) {
             continue;

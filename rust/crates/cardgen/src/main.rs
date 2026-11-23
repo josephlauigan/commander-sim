@@ -8,7 +8,8 @@ const USAGE: &str = "usage:
   cardgen audit --paths [--deck KEY] [--md FILE]
                                                 how faithfully the cards are modeled; what is left to port;
                                                 --paths: each card's paths into the sim and its doubles
-  cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
+  cardgen validate                              check every pool deck and each of your decks, under its own format
+                                                (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
                                                 replace a deck's list (KEY: your deck key, a pool deck key, or a path)
   cardgen bulk-sync [--from-file PATH [--updated-at STAMP]] [--data-dir DIR] [--min-count N]
@@ -235,7 +236,7 @@ fn validate(project: &Project, _args: &[String]) -> Result<(), String> {
             "{} {} {:<40} {} [{}] GCs={}",
             if probs.is_empty() { "OK " } else { "ERR" },
             d.tier,
-            d.key,
+            if d.tier == "mine" { format!("{} ({})", d.key, d.format) } else { d.key.clone() },
             match &d.commander2 {
                 Some(c2) => format!("{} + {c2}", d.commander),
                 None => d.commander.clone(),

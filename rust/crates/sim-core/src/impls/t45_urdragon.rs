@@ -306,6 +306,12 @@ pub fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
     let (lands, mut rest): (Vec<CardId>, Vec<CardId>) = cs.iter().partition(|&&c| g.db.get(c).land);
     if crate::impls::t45_urdragon_combos::urdragon_seat(g, p) {
         rest.retain(|&c| &*g.db.get(c).name != TIAMAT);
+        // Spark Double put onto the battlefield now would copy something else (see `spark_hold`)
+        if rest.iter().any(|&c| &*g.db.get(c).name == "Spark Double")
+            && crate::impls::t45_urdragon_combos::spark_hold(g, p)
+        {
+            rest.retain(|&c| &*g.db.get(c).name != "Spark Double");
+        }
     }
     let best = crate::engine::zones::max_by(&rest, |c| body_worth(g, p, c));
     let land = crate::impls::t12_windgrace::pick_lands(g, p, &lands, 1, false).into_iter().next();

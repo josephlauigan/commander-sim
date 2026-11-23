@@ -535,7 +535,9 @@ pub fn ready_to_go(g: &Game, p: PlayerId, i: usize) -> bool {
 
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
-    if !crate::impls::t6_plans::is_t6(g, p) {
+    let t6 = crate::impls::t6_plans::is_t6(g, p);
+    // --- stage4: a plan deck may opt in to the protection step alone (`knobs.protect_before_go`)
+    if !t6 && !crate::ai::plan_data::protect_before_go(g, p) {
         return attempt_run(g, p, i);
     }
     // Tier 6: protection first (Silence / Orim's Chant), then every spell and ability of the line is a win step the
@@ -545,12 +547,54 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let turns = g.player(p).turns;
     if ok && playable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
         let need = mana_need(g, p, cmb, &casts);
-        crate::ai::t6_table::protect_before_go(g, p, need)?;
+        if t6 {
+            crate::ai::t6_table::protect_before_go(g, p, need)?;
+        } else {
+            // --- stage4: the opt-in deck's step: Silence also against a single answer when it holds no Orim's Chant,
+            // and only if the line is still playable and priced right with the protection spell counted as cast
+            let reprice = |g: &Game, c: CardId| line_after_cast(g, p, cmb, c);
+            crate::ai::t6_table::protect_before_go_opt_in(g, p, need, &reprice)?;
+        }
+    }
+    if !t6 {
+        return attempt_run(g, p, i);
     }
     g.t6_going = Some(p);
     let r = attempt_run(g, p, i);
     g.t6_going = None;
     r
+}
+
+/// --- stage4: the mana of line `cmb` once `spell` counts as a spell p cast this turn (a per-spell tax like Damping
+/// Sphere prices the line's first spell higher; `mana_need` on the game as it is does not see that), or None when the
+/// line could not be cast then: not ready, or a piece not castable (a lock that allows one spell a turn). Priced on a
+/// copy of the game, as `casts_castable` and `seq_cost_x` do.
+fn line_after_cast(g: &Game, p: PlayerId, cmb: &Combo, spell: CardId) -> Option<(u32, String)> {
+    let mut g2 = g.clone();
+    let st = g2.turn_stamp();
+    let mut done: Vec<CardId> = match &g2.player(p).turn_casts {
+        Some((s, cs)) if *s == st => cs.clone(),
+        _ => vec![],
+    };
+    done.push(spell);
+    g2.player_mut(p).turn_casts = Some((st, done));
+    let (ok, _, casts) = (cmb.ready)(&g2, p);
+    if !ok {
+        return None;
+    }
+    for (i, &c) in casts.iter().enumerate() {
+        let mut g3 = g2.clone();
+        let mut done = match &g3.player(p).turn_casts {
+            Some((_, cs)) => cs.clone(),
+            None => vec![],
+        };
+        done.extend_from_slice(&casts[..i]);
+        g3.player_mut(p).turn_casts = Some((st, done));
+        if !castable(&g3, p, c, "hand") {
+            return None;
+        }
+    }
+    Some(mana_need(&g2, p, cmb, &casts))
 }
 
 fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
