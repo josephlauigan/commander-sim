@@ -205,6 +205,21 @@ pub fn filt(phrase: &str) -> Obj {
     f
 }
 
+/// `filt` for the cards of a graveyard ("another target Elf card": Morcant's Loyalist), where a creature type names
+/// the cards wanted
+fn card_filt(phrase: &str) -> Obj {
+    let mut f = filt(phrase);
+    if !f.contains("subtype")
+        && let Some(m) = search(
+            r"\b(elf|goblin|zombie|human|ninja|soldier|warrior|knight|vampire|spirit|faerie|sliver|merfolk|angel|demon|dinosaur)\b",
+            &phrase.to_lowercase(),
+        )
+    {
+        f.set("subtype", m.gs(1));
+    }
+    f
+}
+
 pub fn selector(phrase: &str) -> Obj {
     let p = phrase.trim().to_lowercase();
     if matches!(p.as_str(), "~" | "it" | "this creature" | "this permanent") {
@@ -425,7 +440,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^return (target|all|each|up to one target|another target) ([^.]+?) to (?:its|their) owners?'s? hands?$", |m| {
         let ph = m.gs(2);
         if ph.contains("card") && ph.contains("graveyard") {
-            return Some(eff(obj! {"do" => "regrow", "filter" => filt(py::first(ph, "card")), "from" => "yours"}));
+            return Some(eff(obj! {"do" => "regrow", "filter" => card_filt(py::first(ph, "card")), "from" => "yours"}));
         }
         Some(eff(obj! {"do" => "bounce", "what" => selector(&format!("{} {}", m.gs(1), ph))}))
     }),
@@ -433,7 +448,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-            let mut o = obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
+            let mut o = obj! {"do" => "reanimate", "filter" => card_filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
             // --- Tiers 1/2 (kaalia-sythis): "return all enchantment cards from your graveyard to the battlefield"
             // (Resurgent Belief, Splendid Reclamation, World Shaper): every one of them, tapped if it says so
             if g1.starts_with("all ") && m.gs(2) == "your" {
@@ -449,7 +464,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^return (?:target |up to one target |up to two target )?([^.]*?)cards? from your graveyard to your hand$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "card" } else { m.gs(1) };
-            Some(eff(obj! {"do" => "regrow", "filter" => filt(g1), "from" => "yours"}))
+            Some(eff(obj! {"do" => "regrow", "filter" => card_filt(g1), "from" => "yours"}))
         },
     ),
     // search

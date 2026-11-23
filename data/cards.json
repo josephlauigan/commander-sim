@@ -83323,7 +83323,8 @@
       {
        "do": "regrow",
        "filter": {
-        "other": true
+        "other": true,
+        "subtype": "elf"
        },
        "from": "yours"
       }
