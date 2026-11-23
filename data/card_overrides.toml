@@ -6801,6 +6801,16 @@ tags = ""
 status = "Full"
 note = "target player draws two cards, then loses 2 life; the sheoldred deck aims it at the lowest-life opponent while Sheoldred is out, otherwise at itself (at more than 6 life)"
 
+["Damnable Pact"]
+dsl = []
+tags = ""
+status = "Full"
+note = "target player draws X cards, then loses X life ({X}{B}{B}); the sheoldred deck casts it in its own main phase with the most X its spare mana allows (a smaller X when that kills): at the lowest-life opponent whose library is longer than X while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out (3 a card with Sheoldred, less the 2 an opposing Sheoldred gains them; cast for a kill, or for X of 2 or more when the drain is 10 life or more), otherwise at itself for X of 2 or more (at most 6 and half the library) while life stays at 12 or more after the spell and any opposing draw punisher's toll (7 with only its own Sheoldred out); a dead or untargetable target makes it fizzle"
+
+["Enduring Tenacity"]
+status = "Full"
+note = "whenever you gain life, target opponent loses that much life (Vito's trigger and loop with Exquisite Blood or Bloodthirsty Conqueror; the opponent it kills, else the most threatening); when it dies as a creature it returns as a new object that is an enchantment and not a creature (DataKey::NotCreature, as for Enduring Vitality), keeps the trigger, and does not return again when it dies as an enchantment; exile never returns it (t45_edgar.rs)"
+
 ["Howling Mine"]
 status = "Full"
 note = "at the beginning of each player's draw step, if it is untapped, that player draws an additional card (engine/turn.rs calls sheoldred::howling_mines); the sheoldred deck casts it only while a draw punisher (Sheoldred, Underworld Dreams, Fate Unraveler) is out"

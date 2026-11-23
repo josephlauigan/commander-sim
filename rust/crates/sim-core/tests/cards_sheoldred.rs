@@ -125,6 +125,44 @@ fn cost_of_brilliance_draws_two_and_puts_a_counter() {
 }
 
 #[test]
+fn cost_of_brilliance_on_a_dead_or_hexproof_target_gives_the_counter_and_nothing_else() {
+    // the player target is illegal: no draws, no life loss, never the caster; the counter still resolves
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let t = token(&mut g, P0, 1);
+    g.player_mut(P1).alive = false;
+    let (n0, n1) = (g.player(P0).hand.len(), g.player(P1).hand.len());
+    cast_spell(&mut g, P0, "Cost of Brilliance", Ctx { face: Some(P1), host: Some(t), ..Ctx::default() });
+    assert_eq!((g.player(P0).hand.len(), g.player(P1).hand.len()), (n0, n1));
+    assert_eq!((life(&g, P0), life(&g, P1)), (40, 40));
+    assert_eq!(values::epow(&g, t), 2, "the counter still goes on the creature");
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    let t = token(&mut g, P0, 1);
+    perm(&mut g, P1, "Shalai, Voice of Plenty");
+    let n1 = g.player(P1).hand.len();
+    cast_spell(&mut g, P0, "Cost of Brilliance", Ctx { face: Some(P1), host: Some(t), ..Ctx::default() });
+    assert_eq!((g.player(P1).hand.len(), life(&g, P1), life(&g, P0)), (n1, 40, 40), "hexproof: no draws, no loss");
+    assert_eq!(values::epow(&g, t), 2);
+}
+
+#[test]
+fn a_cost_of_brilliance_plan_for_a_target_that_died_is_rejected_before_anything_is_paid() {
+    let mut g = game3();
+    perm(&mut g, P0, SHEO);
+    lands(&mut g, P0, "Swamp", 3, false);
+    token(&mut g, P0, 1);
+    g.player_mut(P1).life = 30;
+    let c = hand(&mut g, P0, &["Cost of Brilliance"])[0];
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    g.player_mut(P1).alive = false;
+    run_plan(&mut g, P0, &o[0]);
+    assert!(g.player(P0).hand.contains(&c), "the card was not cast");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 3, "no mana was spent");
+}
+
+#[test]
 fn cost_of_brilliance_aimed_at_an_opponent_with_sheoldred_drains_six() {
     let mut g = game();
     perm(&mut g, P0, SHEO);
@@ -813,6 +851,69 @@ fn painful_lesson_draws_two_then_loses_two() {
     cast::cast_card(&mut g, P0, c, "hand", Ctx { face: Some(P1), ..Ctx::default() }).unwrap();
     assert_eq!((g.player(P1).hand.len(), life(&g, P1)), (2, 38));
     assert_eq!(life(&g, P0), 40);
+}
+
+#[test]
+fn painful_lesson_with_no_named_target_hits_the_caster() {
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    cast_spell(&mut g, P0, "Painful Lesson", Ctx::default());
+    assert_eq!((g.player(P0).hand.len(), life(&g, P0)), (2, 38));
+    assert!(in_gy(&g, P0, "Painful Lesson"));
+}
+
+#[test]
+fn painful_lesson_on_a_dead_target_fizzles_and_is_never_redirected_to_the_caster() {
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    g.player_mut(P1).alive = false;
+    cast_spell(&mut g, P0, "Painful Lesson", Ctx { face: Some(P1), ..Ctx::default() });
+    assert_eq!((g.player(P0).hand.len(), life(&g, P0)), (0, 40), "no draws, no life loss for the caster");
+    assert_eq!((g.player(P1).hand.len(), life(&g, P1)), (0, 40));
+    assert_eq!(life(&g, P2), 40);
+    assert!(in_gy(&g, P0, "Painful Lesson"), "the card still goes to the graveyard");
+}
+
+#[test]
+fn painful_lesson_on_a_target_that_gained_hexproof_fizzles() {
+    let mut g = game3();
+    lands(&mut g, P0, "Swamp", 3, false);
+    perm(&mut g, P1, "Shalai, Voice of Plenty");
+    cast_spell(&mut g, P0, "Painful Lesson", Ctx { face: Some(P1), ..Ctx::default() });
+    assert_eq!((g.player(P1).hand.len(), life(&g, P1)), (0, 40));
+    assert_eq!((g.player(P0).hand.len(), life(&g, P0)), (0, 40));
+    assert!(in_gy(&g, P0, "Painful Lesson"));
+}
+
+/// Painful Lesson is not in a plan, so its option is never offered in a game; Peer into the Abyss is, and it shares
+/// `lesson_plan`, which is what this exercises
+#[test]
+fn a_lesson_plan_for_a_target_that_died_is_rejected_before_anything_is_paid() {
+    let mut g = game3();
+    perm(&mut g, P0, SHEO);
+    let ls = lands(&mut g, P0, "Swamp", 8, false);
+    let c = hand(&mut g, P0, &[PEER])[0];
+    trim_library(&mut g, P1, 10);
+    trim_library(&mut g, P2, 40);
+    g.player_mut(P1).life = 10;
+    let o = card_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("dies"), "aimed at the opponent it kills: {}", o[0].label);
+    g.player_mut(P1).alive = false;
+    assert!(!run_plan(&mut g, P0, &o[0]));
+    assert!(ls.iter().all(|&m| !g.perm(m).tapped), "no mana spent");
+    assert!(in_hand(&g, P0, PEER));
+    assert_eq!(life(&g, P0), 40);
+}
+
+#[test]
+fn peer_into_the_abyss_on_a_dead_target_fizzles_too() {
+    let mut g = game3();
+    trim_library(&mut g, P0, 20);
+    g.player_mut(P1).alive = false;
+    cast_spell(&mut g, P0, PEER, Ctx { face: Some(P1), ..Ctx::default() });
+    assert_eq!((hand_len(&g, P0), life(&g, P0)), (0, 40), "never redirected to the caster");
+    assert!(in_gy(&g, P0, PEER));
 }
 
 // the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards: removed 2026-11-07, Dark Deal left the deck

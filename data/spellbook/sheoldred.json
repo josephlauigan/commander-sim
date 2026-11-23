@@ -6,7 +6,7 @@
   "commanders": [
     "Sheoldred, the Apocalypse"
   ],
-  "request_sha256": "8469122153f4ad79ec337b83b1fe6bcc1921243ea951e7157e666b949bf69287",
+  "request_sha256": "31733212030ceffe4d8ebc3a7b5148a5a223bff175094bd0511a1961397ab2e8",
   "identity": "B",
   "included": [
     {
@@ -38,16 +38,16 @@
       "popularity": 152549
     },
     {
-      "id": "314-3966",
+      "id": "3966-5755",
       "cards": [
         {
-          "name": "Vito, Thorn of the Dusk Rose",
+          "name": "Exquisite Blood",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Exquisite Blood",
+          "name": "Enduring Tenacity",
           "zones": [
             "B"
           ]
@@ -63,7 +63,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 128083
+      "popularity": 77157
     },
     {
       "id": "1561-2498",
@@ -184,7 +184,7 @@
   "included_by_changing_commanders": [],
   "almost_included": [
     {
-      "id": "314-6191",
+      "id": "314-3966",
       "cards": [
         {
           "name": "Vito, Thorn of the Dusk Rose",
@@ -193,7 +193,7 @@
           ]
         },
         {
-          "name": "Bloodthirsty Conqueror",
+          "name": "Exquisite Blood",
           "zones": [
             "B"
           ]
@@ -209,9 +209,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 97526,
+      "popularity": 128083,
       "missing": [
-        "Bloodthirsty Conqueror"
+        "Vito, Thorn of the Dusk Rose"
       ]
     },
     {
@@ -246,16 +246,16 @@
       ]
     },
     {
-      "id": "3966-5755",
+      "id": "5755-6191",
       "cards": [
         {
-          "name": "Exquisite Blood",
+          "name": "Enduring Tenacity",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Enduring Tenacity",
+          "name": "Bloodthirsty Conqueror",
           "zones": [
             "B"
           ]
@@ -271,9 +271,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 77157,
+      "popularity": 65340,
       "missing": [
-        "Enduring Tenacity"
+        "Bloodthirsty Conqueror"
       ]
     },
     {
@@ -558,35 +558,6 @@
       "popularity": 22968,
       "missing": [
         "Vilis, Broker of Blood"
-      ]
-    },
-    {
-      "id": "314-4141",
-      "cards": [
-        {
-          "name": "Vito, Thorn of the Dusk Rose",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Tribute",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Target opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 17196,
-      "missing": [
-        "Blood Tribute"
       ]
     },
     {
@@ -913,35 +884,6 @@
       ]
     },
     {
-      "id": "314-1612",
-      "cards": [
-        {
-          "name": "Vito, Thorn of the Dusk Rose",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Shard of the Nightbringer",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Target opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{5}{B}{B}{B}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 7848,
-      "missing": [
-        "Shard of the Nightbringer"
-      ]
-    },
-    {
       "id": "690-1612",
       "cards": [
         {
@@ -1029,6 +971,35 @@
       "popularity": 6603,
       "missing": [
         "Jaws of Defeat"
+      ]
+    },
+    {
+      "id": "1612-5755",
+      "cards": [
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Tenacity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5850,
+      "missing": [
+        "Shard of the Nightbringer"
       ]
     },
     {
@@ -1294,35 +1265,6 @@
       "popularity": 2493,
       "missing": [
         "Chainer, Dementia Master"
-      ]
-    },
-    {
-      "id": "335-4591",
-      "cards": [
-        {
-          "name": "Ad Nauseam",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Platinum Angel",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 2337,
-      "missing": [
-        "Platinum Angel"
       ]
     },
     {
@@ -1828,35 +1770,6 @@
       ]
     },
     {
-      "id": "202-335",
-      "cards": [
-        {
-          "name": "Ad Nauseam",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Lich",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 431,
-      "missing": [
-        "Lich"
-      ]
-    },
-    {
       "id": "202-2498",
       "cards": [
         {
@@ -1986,35 +1899,6 @@
       "popularity": 365,
       "missing": [
         "Carnifex Demon"
-      ]
-    },
-    {
-      "id": "335-3333",
-      "cards": [
-        {
-          "name": "Ad Nauseam",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Platinum Emperion",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 358,
-      "missing": [
-        "Platinum Emperion"
       ]
     },
     {

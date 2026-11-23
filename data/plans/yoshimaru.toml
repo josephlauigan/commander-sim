@@ -35,8 +35,8 @@ turn = 1
 
 # win lines, best first: the tutors want the first missing piece
 [[line]]
-name = "Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
-combo = "Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
+name = "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
+combo = "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
 
 [[line]]
 name = "Heliod, Sun-Crowned + Walking Ballista"

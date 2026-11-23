@@ -1042,6 +1042,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     let person = crate::human::is_human(g, p);
     if has(g, p, Tag::Mikaeus)
         && d.creature
+        && g.is_creature(m) // not a returned Enduring Tenacity / Vitality (an enchantment, `DataKey::NotCreature`)
         && !d.tag(Tag::Human)
         && !d.tag(Tag::Mikaeus)
         && (person || !x.undying) // (a person's creature may come back again: undying only asks that it has no +1/+1 counter now)
@@ -1201,6 +1202,9 @@ pub struct Enter {
     /// the X the permanent spell was cast with (or a copy of that spell has): kept on the permanent as `DataKey::CastX`,
     /// where its enter trigger reads it (The Meathook Massacre). 0 for a permanent that did not enter from a cast
     pub x: i32,
+    /// it enters as a noncreature (Enduring Tenacity / Vitality's return): marked `DataKey::NotCreature` before any
+    /// "a creature enters" trigger looks at it
+    pub not_creature: bool,
 }
 
 impl Default for Enter {
@@ -1215,6 +1219,7 @@ impl Default for Enter {
             exc: None,
             token: false,
             x: 0,
+            not_creature: false,
         }
     }
 }
@@ -1306,6 +1311,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     if how.x > 0 {
         x.data.set(DataKey::CastX, Val::Int(how.x as i64));
     }
+    if how.not_creature {
+        x.data.set(DataKey::NotCreature, Val::Bool(true));
+    }
     if loyalty.is_some() {
         x.loyalty = Some(v_loy); // Doubling Season: twice the loyalty; Vorinclex
     }
@@ -1351,7 +1359,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.entered.retain(|e| e.0 == st);
     g.entered.push((st, m));
     crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
-    let creature = g.db.get(cd).creature;
+    let creature = g.db.get(cd).creature && !how.not_creature;
     // (Hushbringer silences what the creature entering triggers, not how it enters: `enter_silenced`; there is no enters
     // trigger for Tishana's Tidebinder to counter then)
     let quiet = g.skip_etb || (creature && !repl::hushed(g) && cardcode::tidebinder_response(g, p, m)?);

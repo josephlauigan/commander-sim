@@ -10,13 +10,15 @@ use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
+use crate::engine::mana::{
+    can_pay, can_pay_spell, cost_of, cost_of_x, pay, pay_spell, phyrexian_life, total_mana_spell,
+};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{epow, etgh, pval, untargetable};
+use crate::engine::values::{epow, etgh, player_hexproof_from, pval, untargetable};
 use crate::engine::zones::{
     Enter, Zone, discard_cards, draw, enter, exile_perm, land_to_hand, leave, make_artifact_tokens, max_by, min_by,
     returns_left, to_zone_card,
@@ -136,11 +138,19 @@ fn poet_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 // ------------------------------------------------------------------ Cost of Brilliance
 /// Cost of Brilliance: the AI draws two (and loses 2 life) itself and puts the counter on its best creature
-fn cost_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
-    draw(g, q, 2, false)?;
-    lose_life(g, q, 2, Some(p), "other", None)?;
-    let host = ctx.host.filter(|&m| live_creature(g, m)).or_else(|| best_creature(g, p));
+fn cost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    // two targets: a player who is dead or no longer targetable (hexproof) gets nothing (never redirected to the caster),
+    // and the counter still goes on its creature, as a spell resolves for the targets that are still legal
+    if player_target_ok(g, p, c, q) {
+        draw(g, q, 2, false)?;
+        lose_life(g, q, 2, Some(p), "other", None)?;
+    }
+    // a creature that was named and is gone is not replaced by another one; the best creature only stands in when none was named
+    let host = match ctx.host {
+        Some(m) => Some(m).filter(|&m| live_creature(g, m)),
+        None => best_creature(g, p),
+    };
     if let Some(m) = host {
         plus_counter(g, m, 1);
     }
@@ -153,12 +163,17 @@ fn best_creature(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// with Sheoldred out, the opponent a draw spell should hand cards to: the lowest life total (the drain can kill
-/// them first), who has cards left to draw
-fn drain_target(g: &Game, p: PlayerId, cards: usize) -> Option<PlayerId> {
+/// them first), who has cards left to draw. With a spell (`spell`), not one it can't target (hexproof from its colour)
+fn drain_target(g: &Game, p: PlayerId, spell: Option<CardId>, cards: usize) -> Option<PlayerId> {
     if !sheoldred_out(g, p) {
         return None;
     }
-    let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() > cards).collect();
+    let opps: Vec<PlayerId> = g
+        .opps(p)
+        .filter(|&q| {
+            g.player(q).alive && g.player(q).library.len() > cards && spell.is_none_or(|c| player_target_ok(g, p, c, q))
+        })
+        .collect();
     min_by(&opps, |q| g.player(q).life as f64)
 }
 
@@ -167,7 +182,7 @@ fn cost_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let host = best_creature(g, p);
-    if let Some(q) = drain_target(g, p, 2) {
+    if let Some(q) = drain_target(g, p, Some(c), 2) {
         // each card they draw costs them 2 life, and the spell 2 more: six in all
         let u = 5.0 + if g.player(q).life <= 6 { 3.0 } else { 0.0 } + if host.is_some() { 0.3 } else { 0.0 };
         return Ok(vec![Opt {
@@ -198,6 +213,10 @@ fn cost_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
+    // a plan made earlier: a target that died or became untargetable since is rejected before anything is paid
+    if !player_target_ok(g, p, c, face) {
+        return Ok(false);
+    }
     let host = best_creature(g, p);
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), host, ..Ctx::default() })
 }
@@ -362,7 +381,7 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         }
         return Ok(());
     }
-    let target = if let Some(q) = drain_target(g, p, 1) {
+    let target = if let Some(q) = drain_target(g, p, None, 1) {
         q // Sheoldred is out: an opponent draws and loses 3 in all
     } else if g.player(p).life > 3 && g.player(p).library.len() > 2 {
         p
@@ -1634,9 +1653,14 @@ fn dreams_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// Painful Lesson: the target player draws two cards, then loses 2 life
-fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+/// Painful Lesson: the target player draws two cards, then loses 2 life. No `ctx.face` means the caster is the target; a
+/// named target that is dead or no longer targetable (hexproof) makes the spell fizzle: nothing happens, it goes to the
+/// graveyard (it is never redirected to the caster)
+fn lesson_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !player_target_ok(g, p, c, q) {
+        return Ok("gy");
+    }
     draw(g, q, 2, false)?;
     if g.player(q).alive {
         lose_life(g, q, 2, Some(p), "other", Some(false))?;
@@ -1648,7 +1672,7 @@ fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
     if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
-    if let Some(q) = drain_target(g, p, 2) {
+    if let Some(q) = drain_target(g, p, Some(c), 2) {
         let u = 4.8 + if g.player(q).life <= 6 { 3.0 } else { 0.0 };
         return Ok(vec![Opt {
             utility: u,
@@ -1677,7 +1701,169 @@ fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
+    // a plan made earlier is revalidated before anything is paid: a target that died or became untargetable fizzles the plan
+    if !player_target_ok(g, p, c, face) {
+        return Ok(false);
+    }
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), ..Ctx::default() })
+}
+
+/// can p's spell c (Damnable Pact, Painful Lesson) still target the player q: a live player, and not one with hexproof
+/// (Shalai; p itself is always a legal target of its own spell)
+fn player_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
+    g.player(q).alive && (q == p || !player_hexproof_from(g, q, g.db.get(c).colors))
+}
+
+/// Damnable Pact ({X}{B}{B}): target player draws X cards, then loses X life (X from `ctx.x`; the draws go through the
+/// normal draw path, so Sheoldred, Underworld Dreams and Fate Unraveler fire; a target that died on the way loses nothing).
+/// No `ctx.face` means the caster is the target; a named target that is dead or no longer targetable (hexproof) makes
+/// the spell fizzle: nothing happens, it goes to the graveyard (it is never redirected to the caster)
+fn pact_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !player_target_ok(g, p, c, q) {
+        return Ok("gy");
+    }
+    let x = ctx.x.max(0);
+    if x > 0 {
+        draw(g, q, x as u32, false)?;
+        if g.player(q).alive {
+            lose_life(g, q, x, Some(p), "other", Some(false))?;
+        }
+    }
+    Ok("gy")
+}
+
+/// the most X the mana allows for Damnable Pact (0 when it can't be cast at all). The cost is `cost_of_x`; it never
+/// falls as X grows, and an X that can be paid can be paid for every smaller X, so a binary search finds the largest
+/// payable X without assuming the cost is linear in X (reducers let X run past the spare mana; Trinisphere and
+/// K'rrik's life pips bend the line). 64 above the mana is far more than generic reducers can take off.
+fn pact_max_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    if !castable(g, p, c, "hand") {
+        return 0;
+    }
+    let total = total_mana_spell(g, p, c, false) as i32;
+    let payable = |x: i32| {
+        let (gn, pips) = cost_of_x(g, p, c, x);
+        can_pay_spell(g, p, c, gn, &pips, false)
+    };
+    if !payable(1) {
+        return 0;
+    }
+    let (mut lo, mut hi) = (1, total.saturating_add(64).max(1));
+    while lo < hi {
+        let mid = lo + (hi - lo + 1) / 2;
+        if payable(mid) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    lo
+}
+
+/// Damnable Pact as a main-phase play (own turn only: it is a sorcery; the deck's plan must `plays` it).
+/// - A draw punisher out (Sheoldred, Underworld Dreams, Fate Unraveler): aim it at the lowest-life opponent whose library
+///   is longer than X. Each card costs them the toll (Sheoldred 2, Dreams 1, Unraveler 1 each) plus 1 from the spell.
+///   X is the most the spare mana allows, less when a smaller X already kills. A kill scores like `x_drain_option`
+///   (7 on top); with no kill it is cast only for X >= 2 and a total loss of 10 or more, which is a real chunk of a
+///   40-life table and worth the cards it hands over.
+/// - Otherwise (no punisher out, or no opponent worth aiming at): never at an opponent (that only gives them cards).
+///   At ourselves only when safe: X >= 2, X no more than half the library and at most 6, so the hand stays playable,
+///   and life after paying X stays at 12 or more (7 with Sheoldred out: every card then gains 2 life and the spell
+///   costs 1, so life rises by X).
+fn pact_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let xmax = pact_max_x(g, p, c);
+    if xmax < 1 {
+        return Ok(vec![]);
+    }
+    let toll = draw_toll(g, p);
+    if toll > 0 {
+        // each card costs the target our toll plus 1 for the spell, less the 2 their own Sheoldred gains them
+        let per_of = |g: &Game, q: PlayerId| toll + 1 - if sheoldred_out(g, q) { 2 } else { 0 };
+        // not a target whose life can't change (the drain would only hand them cards), that can't be targeted, or that
+        // gains as much as it loses
+        let opps: Vec<PlayerId> = g
+            .opps(p)
+            .filter(|&q| {
+                player_target_ok(g, p, c, q)
+                    && !g.player(q).life_locked
+                    && g.player(q).library.len() as i32 > xmax
+                    && per_of(g, q) >= 1
+            })
+            .collect();
+        if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
+            let per = per_of(g, q);
+            let life = g.player(q).life;
+            let kills = !crate::impls::t0_giada::cant_lose(g, q) && xmax * per >= life; // Platinum Angel: no kill
+            let x = if kills { ((life + per - 1) / per).max(1) } else { xmax };
+            let total = (x * per).min(life.max(0));
+            if kills || (x >= 2 && total >= 10) {
+                let u = 1.5 + 0.12 * total as f64 + if kills { 7.0 } else { 0.0 };
+                return Ok(vec![Opt {
+                    utility: u,
+                    label: format!("Damnable Pact ({} draws {x} and loses {total})", g.player(q).name),
+                    act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, q.0 as i64 + 1, x) }),
+                }]);
+            }
+        }
+    }
+    // no opponent worth aiming at: draw for ourselves. With Sheoldred out each card gains 2 life and the spell costs 1,
+    // so life only rises and the floor is a margin against her being answered in response (7); otherwise it is 12.
+    // An opponent's draw punishers (their Sheoldred 2, Underworld Dreams 1, Fate Unraveler 1, Orcish Bowmasters 1) cost
+    // each card of ours more life, and their triggers resolve before our gains: with any out the floor is 12 and each card
+    // counts its whole cost (the spell plus their toll), ignoring our own gain.
+    // (the life the black pips cost with K'rrik out comes off first)
+    // at the most X it could pay: the more X, the fewer {B} the mana covers, so that is the most life the pips cost
+    let pips_life = phyrexian_life(g, p, c, &cost_of_x(g, p, c, xmax).1);
+    let foe = foe_toll(g, p);
+    let pl = g.player(p);
+    let floor = if foe == 0 && sheoldred_out(g, p) { 7 } else { 12 };
+    let x = xmax.min((pl.life - pips_life - floor) / (1 + foe)).min(pl.library.len() as i32 / 2).min(6);
+    if x < 2 {
+        return Ok(vec![]);
+    }
+    let mut u = 2.0 + 0.4 * x as f64 + if pl.hand.len() <= 2 { 1.2 } else { 0.0 };
+    if pl.hand.len() >= 6 {
+        u -= 1.5;
+    }
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("Damnable Pact (draw {x})"),
+        act: Some(Action::Plan { f: pact_plan, arg: pact_pack(c, 0, x) }),
+    }])
+}
+
+/// the card (16 bits), the target (player index + 1, 0 = the caster; 16 bits) and X (the rest)
+fn pact_pack(c: CardId, face: i64, x: i32) -> i64 {
+    c.0 as i64 | (face << 16) | ((x as i64) << 32)
+}
+
+fn pact_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId((arg & 0xffff) as u16);
+    let face = match (arg >> 16) & 0xffff {
+        0 => p,
+        k => PlayerId((k - 1) as u8),
+    };
+    let x = (arg >> 32) as i32;
+    // a plan made earlier is revalidated before anything is paid: the card, the target, a new Silence, the mana
+    if !g.player(p).hand.contains(&c) || x < 1 || !player_target_ok(g, p, c, face) || !castable(g, p, c, "hand") {
+        return Ok(false);
+    }
+    let (gn, pips) = cost_of_x(g, p, c, x);
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
+        return Ok(false);
+    }
+    pay_spell(g, p, c, gn, &pips, false)?;
+    // K'rrik: each {B} it left out of the mana is paid with 2 life (as `do_cast_with` does)
+    let life = phyrexian_life(g, p, c, &pips);
+    if life > 0 {
+        lose_life(g, p, life, Some(p), "life", None)?;
+    }
+    cast_card(g, p, c, "hand", Ctx { face: Some(face), x, ..Ctx::default() })?;
+    Ok(true)
 }
 
 /// Dark Deal: each player discards their whole hand, then draws that many cards minus one (discards first, for all,
@@ -1747,6 +1933,12 @@ fn count_named(g: &Game, p: PlayerId, name: &str) -> i32 {
 /// Fate Unraveler 1 (each copy)
 fn draw_toll(g: &Game, p: PlayerId) -> i32 {
     (if sheoldred_out(g, p) { 2 } else { 0 }) + count_named(g, p, "Underworld Dreams") + count_named(g, p, UNRAVELER)
+}
+
+/// what each card p draws costs p while the opponents' draw punishers are out (see `draw_toll`; an Orcish Bowmasters pings
+/// for an extra draw, 1 each)
+fn foe_toll(g: &Game, p: PlayerId) -> i32 {
+    g.opps(p).map(|q| draw_toll(g, q) + count_named(g, q, "Orcish Bowmasters")).sum()
 }
 
 /// one more draw would kill an opponent
@@ -1970,8 +2162,11 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: PermId, loot: bool) -> Res<bool> {
 
 /// Peer into the Abyss: the target draws half their library (rounded up) and loses half their life (rounded up,
 /// worked out after the draws)
-fn peer_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let q = ctx.face.filter(|&q| g.player(q).alive).unwrap_or(p);
+fn peer_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = ctx.face.unwrap_or(p);
+    if !player_target_ok(g, p, c, q) {
+        return Ok("gy"); // the target died or became untargetable: the spell fizzles (never redirected to the caster)
+    }
     let n = g.player(q).library.len().div_ceil(2) as u32;
     draw(g, q, n, false)?;
     let life = g.player(q).life;
@@ -1993,7 +2188,8 @@ fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     }
     let toll = draw_toll(g, p);
     if toll > 0 {
-        let victims: Vec<PlayerId> = g.opps(p).filter(|&q| peer_kills(g, q, toll)).collect();
+        let victims: Vec<PlayerId> =
+            g.opps(p).filter(|&q| player_target_ok(g, p, c, q) && peer_kills(g, q, toll)).collect();
         if let Some(q) = min_by(&victims, |q| g.player(q).life as f64) {
             return Ok(vec![Opt {
                 utility: 12.0,
@@ -2051,6 +2247,10 @@ pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Painful Lesson")?;
     c.resolve = Some(lesson_resolve);
     c.hand_options = Some(lesson_options);
+    c.prio = Some(zero_prio);
+    let c = r.card(db, "Damnable Pact")?;
+    c.resolve = Some(pact_resolve);
+    c.hand_options = Some(pact_options);
     c.prio = Some(zero_prio);
     let c = r.card(db, UNRAVELER)?;
     c.draw = Some(dreams_draw);

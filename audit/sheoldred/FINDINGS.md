@@ -4,6 +4,25 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-22: Ad Nauseam => Damnable Pact, Vito => Enduring Tenacity (JD's choice, not simulated)
+Two swaps, neither slot-for-slot. **Damnable Pact** ({X}{B}{B} sorcery: target player draws X cards and loses X life; model status Full; a proxy) takes
+Ad Nauseam's slot. Ad Nauseam put cards into the hand (not draws, so Sheoldred gave nothing) for their mana values, at instant speed; in the 11-07 analyze run it
+was cast in 16.6% (t3) and 11.4% (t4) of the games it was drawn, and its swap tests (10-17, an older, lower-curve list) ran from -2.0 to +1.6 over
+t3-t5 (+1.6, for Restless Bloodseeker, was the best), all inside the noise.
+The Pact's cards are draws, so Sheoldred fires: aimed at an opponent with Sheoldred out each card costs them 3 life (2 from her and 1 from the spell, plus 1 per card
+for each Underworld Dreams and Fate Unraveler), and aimed at yourself under Sheoldred each card nets you 1 life. It is a sorcery (your own turn), it hands the
+opponent X cards when no punisher is out, and its life cost is X, not the mana values. The Game Changers go from 4 to 3 (Bolas's Citadel, Demonic Tutor, The One
+Ring); still Bracket 4 on the combos. **Enduring Tenacity** ({2}{B}{B}, a 4/3 enchantment creature with Vito's life-gain drain; when it dies as a creature it returns
+as an enchantment that is not a creature; model status Full; a proxy) takes Vito, Thorn of the Dusk Rose's slot. Vito was one of the better cards by win rate when
+cast in the 11-07 analyze run (cast in 16.3% of the games at t3, won 47.5% of them, +18.0; 41.4% at t4; correlation only, older list). Tenacity costs one more
+(four, not three, and it competes with Sheoldred for the four-mana turn), has no lifelink activation ({3}{B}{B}), and is a 4/3 body; what it gains is that creature
+removal, sacrifice and edicts only delay it (its first death brings it back as an enchantment that still drains), so only enchantment removal, exile and bounce
+answer it, and Exquisite Blood plus Tenacity is the same two-card infinite drain as Blood plus Vito. The coordinator and Opus advised keeping Vito (Opus called
+Tenacity a sidegrade); this is JD's call. How the AI plays them (no plan-file line for Tenacity, cast like Vito; the Pact is in the plan's `plays`): the Pact takes the most X the spare mana allows (a smaller X when that already kills); with a draw punisher out it aims at the lowest-life opponent whose library is longer than X, who can be targeted and whose life can change (their own Sheoldred cancels 2 a card of the toll), for a kill or a drain of 10 or more at X of 2 or more; otherwise it draws for itself when X is 2 or more (at most 6, at most half the library) and life stays at 12 or more after each card's cost (the spell plus any opposing Sheoldred, Underworld Dreams, Fate Unraveler or Orcish Bowmasters toll), or 7 or more with only our own Sheoldred out, where life rises. Counts
+after: creatures 23 (23), sorceries 14 (13), instants 7 (8), Game Changers 3 (4); devotion goes up by one (Tenacity has {B}{B}, Vito had one {B}). Not measured. To check in the first run: how
+often the Pact is cast and at whom, how often it ends a game, the opponents' cards it hands out, Tenacity's cast rate and how often it returns as an enchantment, the
+loss rate to enchantment-light removal decks, and the games where Sheoldred is out by turn 4.
+
 ## 2026-11-22: Massacre Wurm => Cabal Ritual (JD's choice, not simulated)
 Cabal Ritual ({1}{B} instant: add {B}{B}{B}, or {B}{B}{B}{B}{B} with seven or more cards in your graveyard; model status Full; a proxy) takes Massacre
 Wurm's slot. It is not slot-for-slot: a six-mana wipe and finisher is traded for a one-card burst of mana. What the deck gives up: Massacre Wurm was the guide's

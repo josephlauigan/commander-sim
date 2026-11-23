@@ -20,6 +20,7 @@ plays = [
     "Peer into the Abyss",
     "Geier Reach Sanitarium",
     "Mikokoro, Center of the Sea",
+    "Damnable Pact", # {X}{B}{B}: X draws and X life, at the lowest-life opponent with a draw punisher out (sheoldred.rs pact_options)
 ]
 
 # Sheoldred as early as the mana allows

@@ -323,10 +323,9 @@ fn vitality_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
         return Ok(());
     }
     remove_card(&mut g.player_mut(owner).gy, cd);
-    let n = enter(g, owner, cd, Enter::default())?;
-    let x = g.perm_mut(n);
-    x.data.set(DataKey::Final, Val::Bool(true));
-    x.data.set(DataKey::NotCreature, Val::Bool(true)); // --- Tiers 4/5 (chulane-kinnan): an enchantment, not a creature
+    // --- Tiers 4/5 (chulane-kinnan): an enchantment, not a creature (marked as it enters)
+    let n = enter(g, owner, cd, Enter { not_creature: true, ..Enter::default() })?;
+    g.perm_mut(n).data.set(DataKey::Final, Val::Bool(true));
     crate::glog!(g, "    {} returns as an enchantment (Enduring Vitality)", pname(g, owner));
     Ok(())
 }
