@@ -1,5 +1,4 @@
 1 Accursed Marauder (mh3) 80
-1 Ad Nauseam (soa) 25
 1 Ambition's Cost (c15) 113
 1 Animate Dead (plst) EMA-78
 1 Arcane Signet (soc) 127
@@ -10,6 +9,7 @@
 1 Bonders' Enclave (fic) 376
 1 Cabal Coffers (prm) 91393
 1 Cabal Ritual (tor) 51
+1 Damnable Pact (ncc) 245
 1 Call of the Ring (ltr) 79
 1 Cost of Brilliance (sos) 77
 1 Dark Ritual (itp) 19
@@ -17,6 +17,7 @@
 1 Demonic Tutor (cmm) 696
 1 Diabolic Tutor (sld) 721
 1 Dreadhorde Invasion (mic) 114
+1 Enduring Tenacity (dsk) 390
 1 Entomb (dmr) 426
 1 Exquisite Blood (sld) 206
 1 Exsanguinate (som) 61
@@ -64,7 +65,6 @@
 1 Underworld Dreams (thb) 121
 1 Vault Plunderer (otj) 114
 1 Viscera Seer (soc) 229
-1 Vito, Thorn of the Dusk Rose (p30a) 28
 1 Witch of the Moors (jmp) 18
 1 Yawgmoth, Thran Physician (fca) 11
 1 Yawgmoth's Will (wc99) js171

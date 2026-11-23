@@ -11,7 +11,6 @@ updated = "2026-11-22"
 confirmed = "2026-11-22"
 have = [
   "Accursed Marauder",
-  "Ad Nauseam",
   "Ambition's Cost",
   "Animate Dead",
   { card = "Arcane Signet", copies = 4 },
@@ -65,7 +64,6 @@ have = [
   "Underworld Dreams",
   "Vault Plunderer",
   "Viscera Seer",
-  "Vito, Thorn of the Dusk Rose",
   "Witch of the Moors",
   "Yawgmoth's Will",
   "Yawgmoth, Thran Physician",
@@ -74,9 +72,11 @@ have = [
 proxy = [
   "Cabal Coffers",
   "Cabal Ritual",
+  "Damnable Pact",
   "Dark Ritual",
   "Demonic Tutor",
   "Diabolic Tutor",
+  "Enduring Tenacity",
   "Exquisite Blood",
   "Grim Tutor",
   "Reanimate",
@@ -478,6 +478,8 @@ missing = []
 
 [spare]
 cards = [
+  "Ad Nauseam",
   "Massacre Wurm",
+  "Vito, Thorn of the Dusk Rose",
   "Zack Fair",
 ]

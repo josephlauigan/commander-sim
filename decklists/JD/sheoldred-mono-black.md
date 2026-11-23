@@ -9,7 +9,7 @@ punisher out, because they then just refuel the table.
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |
-| **Bracket** | 4 (4 Game Changers: Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel; Mikaeus + Triskelion infinite-damage combo; Exquisite Blood + Sanguine Bond or Vito infinite drain) |
+| **Bracket** | 4 (3 Game Changers: The One Ring, Demonic Tutor, Bolas's Citadel; Mikaeus + Triskelion infinite-damage combo; Exquisite Blood + Sanguine Bond or Enduring Tenacity infinite drain) |
 | **Simulator** | deck key `sheoldred`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -25,7 +25,7 @@ She is the deck's one big engine, and she does four jobs:
   alone. Every extra card an opponent draws (Howling Mine, Seizan, Memory Jar, Rhystic Study, Peer into the Abyss) is 2
   more.
 - **She gains life.** Every card you draw is 2 life. That pays for the deck's life costs (The One Ring, Phyrexian Arena,
-  Call of the Ring, Phyrexian Delver) and feeds the lifegain payoffs: Sanguine Bond, Vito, Foolish Fate, Leech Collector.
+  Call of the Ring, Phyrexian Delver) and feeds the lifegain payoffs: Sanguine Bond, Enduring Tenacity, Foolish Fate, Leech Collector.
 - **She blocks and attacks.** A 4/5 deathtouch body holds off nearly any attacker. Bonders' Enclave counts her as a
   creature with power 4 or more.
 - **She is the thing the table will answer.** Everything in the deck that makes the table draw is only good with her (or
@@ -60,7 +60,7 @@ Generic mana, {X} and colourless costs are not reduced.
 | Demonic Tutor, Animate Dead | {1}{B} | {1} and 2 life |
 | Yawgmoth's Will | {2}{B} | {2} and 2 life |
 | Grim Tutor | {1}{B}{B} | {1} and 4 life, plus the 3 life it costs |
-| Diabolic Tutor | {2}{B}{B} | {2} and 4 life |
+| Diabolic Tutor, Enduring Tenacity | {2}{B}{B} | {2} and 4 life |
 | Sheoldred | {2}{B}{B} | {2} and 4 life |
 | Underworld Dreams | {B}{B}{B} | 6 life, no mana |
 | Grave Pact | {1}{B}{B}{B} | {1} and 6 life |
@@ -70,8 +70,9 @@ Generic mana, {X} and colourless costs are not reduced.
 | Mikaeus, Bolas's Citadel | {3}{B}{B}{B} | {3} and 6 life |
 | Peer into the Abyss | {4}{B}{B}{B} | {4} and 6 life |
 | Exsanguinate, Torment of Hailfire | {X}{B}{B} | {X} and 4 life: X is 2 higher for the same mana |
+| Damnable Pact | {X}{B}{B} | {X} and 4 life, plus the X life it costs if you aim it at yourself |
 | Invoke Despair | {1}{B}{B}{B}{B} | {1} and 8 life |
-| Vito's lifelink ability, Yawgmoth's proliferate | {3}{B}{B}, {B}{B} | {3} and 4 life; 4 life |
+| Yawgmoth's proliferate | {B}{B} | 4 life |
 | Barad-dûr's amass | {X}{X}{B} | {X}{X} and 2 life |
 
 Not reduced: Howling Mine, Memory Jar, Triskelion, Skullclamp, The One Ring, Swiftfoot Boots and the equip cost,
@@ -79,9 +80,9 @@ Cabal Coffers' {2}.
 
 - **What it does for the plan.** A hand of Gray Merchant, Sanguine Bond and Mikaeus that three lands can't cast
   becomes castable, a rock-less turn 4 can cast Sheoldred and a Tutor in the same turn, and the kill turn needs fewer
-  lands: Exquisite Blood plus Sanguine Bond is 7 mana and 6 life instead of 10 mana, Exquisite Blood plus Vito is 6
-  mana and 4 life. Mikaeus drops to 3 mana and 6 life, but Triskelion is colourless and stays at 6.
-- **Three more jobs.** It is a lifelink body, and every point it gains is a Sanguine Bond or Vito trigger. It counts 3
+  lands: Exquisite Blood plus Sanguine Bond is 7 mana and 6 life instead of 10 mana, and Exquisite Blood plus Enduring
+  Tenacity is 6 mana and 6 life instead of 9 (every {B} paid with life). Mikaeus drops to 3 mana and 6 life, but Triskelion is colourless and stays at 6.
+- **Three more jobs.** It is a lifelink body, and every point it gains is a Sanguine Bond or Enduring Tenacity trigger. It counts 3
   toward devotion for Gray Merchant (each Phyrexian {B/P} symbol is a black symbol). Mikaeus gives it +1/+1 and
   undying (it is not a Human), but undying returns it only if it has no +1/+1 counters, and each black spell you cast
   puts one on K'rrik itself. Barad-dûr enters untapped with it out.
@@ -94,8 +95,8 @@ Cabal Coffers' {2}.
 - **When it is not.** Your life is low, the table is red or a fast aggro deck, Edgar's loop pieces are out, you are
   already paying for Phyrexian Arena, The One Ring or Grim Tutor with no Sheoldred, or the spell can be countered (life
   is paid on casting and does not come back). Peer into the Abyss halves the *target's* life, not yours, so its 6 life
-  is a plain cost, but check your total after it. Ad Nauseam and Ambition's Cost also take life, so don't stack them
-  on a K'rrik turn.
+  is a plain cost, but check your total after it. Ambition's Cost also takes life, and so does Damnable Pact aimed at
+  you with no Sheoldred out, so don't stack them on a K'rrik turn.
 - **Which {B} to pay.** Pay life only for the pips you can't pay with mana. Count your lands first, then use life to
   close the gap, not as a default.
 
@@ -105,28 +106,31 @@ Six lines, plus the slow grind. Lines 1 and 2 are the combos; 3 and 4 are one-tu
 graveyard packages. The deck has no counterspells, so every line is protected by timing and redundancy (see "Protecting
 Sheoldred and the win turn").
 
-#### Line 1: Exquisite Blood + Sanguine Bond or Vito
+#### Line 1: Exquisite Blood + Sanguine Bond or Enduring Tenacity
 
 **Exquisite Blood** ({4}{B}): *Whenever an opponent loses life, you gain that much life.* **Sanguine Bond** ({3}{B}{B}):
-*Whenever you gain life, target opponent loses that much life.* **Vito, Thorn of the Dusk Rose** ({2}{B}) has the same
-trigger as Bond on a creature body.
+*Whenever you gain life, target opponent loses that much life.* **Enduring Tenacity** ({2}{B}{B}, 4/3 enchantment
+creature) has the same trigger as Bond on a creature body. When it dies as a creature it returns as an enchantment that
+is not a creature, and it still drains.
 
-1. Get Exquisite Blood and one of Bond or Vito onto the battlefield. **Blood is required.** Bond and Vito together
-   don't loop: both only take life from the opponent, and nothing gives you life back.
-2. Any life gain or opponent life loss now starts the loop. Blood gains you N, Bond or Vito takes N from an opponent,
+1. Get Exquisite Blood and one of Bond or Tenacity onto the battlefield. **Blood is required.** Bond and Tenacity
+   together don't loop: both only take life from the opponent, and nothing gives you life back.
+2. Any life gain or opponent life loss now starts the loop. Blood gains you N, Bond or Tenacity takes N from an opponent,
    Blood gains N again. It repeats until every opponent is dead (each trigger picks a new target as they die).
 3. Cheap starters: Sheoldred's trigger in anyone's draw step; cashing in Mind Stone with Sheoldred out (a draw, 2 life);
    Sephiroth's Intervention (gain 2); any drain creature (Blood Artist, Zulaport Cutthroat, Gray Merchant); Leech Collector's Bloodletting.
 
-Mana: Blood 5, Bond 5, Vito 3. Vito plus Blood is 8 mana across two turns. With Cabal Coffers (see Line 4) both big
+Mana: Blood 5, Bond 5, Tenacity 4. Tenacity plus Blood is 9 mana across two turns. With Cabal Coffers (see Line 4) both big
 pieces come down in one turn.
 
 - **Order.** Cast Bond first if you have it. Bond is useful alone: with Sheoldred out every card you draw drains an
   opponent for 2, and it is an enchantment, which most of the table's removal can't hit. Blood goes last, as the kill
-  piece, on a turn when the table is tapped low. Vito is a creature and dies to cheap removal, so he comes down on the
-  same turn as the piece that completes the pair.
+  piece, on a turn when the table is tapped low. Creature removal, sacrifice and edicts only delay Tenacity: its first
+  death returns it as an enchantment that is not a creature, and it still drains. Enchantment removal, exile and bounce
+  are what answer it (a bounced or blinked copy is a creature again), so it comes down on the same turn as the piece
+  that completes the pair when the table shows those.
 - **One answer breaks it.** Destroy any piece while a trigger is on the stack and the loop ends after that trigger.
-  With all three out, Blood is still the single point of failure (Blood + Bond, or Blood + Vito, is a pair).
+  With all three out, Blood is still the single point of failure (Blood + Bond, or Blood + Tenacity, is a pair).
 - **Exsanguinate on top.** With Bond out, an Exsanguinate for X gains you 3X (one gain), and Bond turns that into 3X
   from one opponent.
 
@@ -186,7 +190,7 @@ so it adds one mana, not one more from Coffers.)
 - **Torment of Hailfire** ({X}{B}{B}): *Repeat X times: each opponent loses 3 life unless they sacrifice a nonland
   permanent or discard a card.* A big X either kills or strips the table of permanents and cards.
 - **Gray Merchant of Asphodel** ({3}{B}{B}): each opponent loses life equal to your devotion to black, and you gain it.
-  Sheoldred (2), Underworld Dreams (3), K'rrik (3), Phyrexian Arena (2), Seizan (2), Grave Pact (3) and the Merchant (2)
+  Sheoldred (2), Underworld Dreams (3), K'rrik (3), Phyrexian Arena (2), Seizan (2), Grave Pact (3), Enduring Tenacity (2) and the Merchant (2)
   all count, so with Sheoldred and Underworld Dreams out it is at least 7 from each, and 10 with K'rrik beside them.
 - **K'rrik** pays the {X}{B}{B} of Exsanguinate and Torment of Hailfire with 4 life, so the same mana gives an X 2
   higher (8, 12 and 16 in the table above, with rocks on top).
@@ -207,7 +211,7 @@ Creatures dying drain the table; the sacrifice outlets make them die on demand; 
 - **Grave Pact** ({1}{B}{B}{B}): each time a creature of yours dies, every opponent sacrifices a creature. Outlets
   plus Pact is an edict machine.
 - **Yawgmoth + Mikaeus + Gray Merchant** (the three-card loop named under Bracket): you need a second nontoken non-Human
-  creature (Blood Artist, Viscera Seer and Vito qualify). Pay 1 life and sacrifice the Merchant, putting a -1/-1 counter
+  creature (Blood Artist and Viscera Seer qualify). Pay 1 life and sacrifice the Merchant, putting a -1/-1 counter
   on the other creature and drawing a card. The Merchant dies and undying returns it, so it drains on entering again.
   The next activation does the same the other way round, so the -1/-1 counter on one creature cancels the +1/+1
   counter undying left on the other. Every second activation is a Gray Merchant drain; each draw is 2 life with
@@ -255,15 +259,15 @@ when cast.
 - Turn 2: a rock (Arcane Signet, Mind Stone) or Jet Medallion, or a two-drop: Blood Artist, Zulaport Cutthroat, Undercity
   Dire Rat, Dreadhorde Invasion (an Army that grows every upkeep, 1 life each), Call of the Ring.
 - Turn 3: Sheoldred off a rock, or Underworld Dreams (a good turn-3 play on its own: every card an opponent draws costs
-  them 1), Vito, Phyrexian Arena, Gix.
+  them 1), Phyrexian Arena, Gix.
 
 **Turns 4-6.** Sheoldred first if she isn't out. Then, in order: equip Swiftfoot Boots, a punisher beside her
 (Underworld Dreams, Fate Unraveler), then the draw engines (Howling Mine, Seizan, Memory Jar, the end-step lands), then
-the drain pieces (Sanguine Bond, Exquisite Blood, Vito). Mikaeus and Grave Pact arrive here too.
+the drain pieces (Sanguine Bond, Exquisite Blood, Enduring Tenacity). Mikaeus and Grave Pact arrive here too.
 K'rrik fits here once Sheoldred is out and your life is high: cast it for {4} and 6 life, and the rest of the turn's
 black spells cost life instead of mana.
 
-**Late.** Run the engines, draw with The One Ring, Bolas's Citadel and Ad Nauseam, and take the kill that fits: Line 1
+**Late.** Run the engines, draw with The One Ring, Bolas's Citadel and Damnable Pact aimed at yourself, and take the kill that fits: Line 1
 if both pieces are out, Peer into the Abyss if Sheoldred is safe, Exsanguinate off Cabal Coffers for the table. With
 K'rrik out, every {B} in the kill pieces costs 2 life instead of a mana: spend the saved mana on the second piece.
 
@@ -273,8 +277,8 @@ K'rrik out, every {B} in the kill pieces costs 2 life instead of a mana: spend t
   both, or when someone else is about to win.
 - **Hold** the symmetric draw cards (Howling Mine, Seizan, Memory Jar, Mikokoro, Geier Reach Sanitarium) until a punisher
   is out. Hold Memory Jar until she is safe; it gives every opponent seven cards for the turn.
-- **Hold mana at the end of the opponent's turn** for Ad Nauseam, Mikokoro or the Sanitarium ({2} each), or Rooftop
-  Assassin and instant removal. Ad Nauseam goes at the end of the opponent's turn before yours, with the mana untapped.
+- **Hold mana at the end of the opponent's turn** for Mikokoro or the Sanitarium ({2} each), or Rooftop
+  Assassin and instant removal.
 
 ### The cards by role
 
@@ -300,7 +304,8 @@ These turn the punishers on. Play the symmetric ones only once a punisher is out
   use it in the same turn, in your second main phase.
 - **Hand one opponent cards**: **Cost of Brilliance** (target player draws two and loses 2 life, and a +1/+1 counter
   on a creature) and **Vault Plunderer** (target player draws one and loses 1). With Sheoldred out these are 6 or 3 life
-  against the chosen opponent. **Peer into the Abyss** is the big one (Line 3).
+  against the chosen opponent. **Damnable Pact** is the same effect for X cards (see "Draw your own"): never aim it at an
+  opponent when no punisher is out. **Peer into the Abyss** is the big one (Line 3).
 
 #### Draw your own
 
@@ -318,12 +323,13 @@ pays for itself. Cast, it also gives you protection from everything until your n
 ({1}{B}) has the Ring tempt you each upkeep, and each time you choose a Ring-bearer you may pay 2 life to draw a
 card; Sheoldred gives the 2 back.
 
-**Ad Nauseam** ({3}{B}{B} instant) turns spare life into a hand: reveal the top card, put it into your hand, lose life
-equal to its mana value, repeat. Cast it at the end of the opponent's turn before yours, with your mana untapped,
-and stop at a hand you can use next turn (about seven plus a card per three mana) or while your life is still well
-above what the table could swing for. The cards are put into your hand, not drawn, so Sheoldred gains you nothing
-from them. The cost stays moderate: the 63 nonland cards in the library average 3.4 mana value and 36 of the 99 cards
-are lands (free), so a card costs about 2 life on average.
+**Damnable Pact** ({X}{B}{B} sorcery): *target player draws X cards and loses X life.* Aimed at yourself with Sheoldred
+out, each card gains you 2 and the spell costs 1, so you gain X life net and draw X cards: a big refill. The cards are
+draws, so Sheoldred fires. Cast it on your own turn with spare mana, not at the end of an opponent's turn. Without
+Sheoldred it only costs you X life. Aimed at an opponent with Sheoldred out, each card costs them 3 (2 from Sheoldred, 1
+from the spell), plus 1 a card for each Underworld Dreams and Fate Unraveler out, but it also hands them X cards, so
+never aim it at an opponent when no punisher is out. With K'rrik out the {B}{B} can be paid with 4 life; X is not
+reduced.
 
 **Bolas's Citadel** ({3}{B}{B}{B}) lets you look at the top card of your library and play it, paying life equal to
 its mana value instead of mana. The low curve keeps that cheap, and Sheoldred's lifegain keeps the life total up.
@@ -333,8 +339,8 @@ These cards are played, not drawn, so Sheoldred gains you nothing from them dire
 
 Sheoldred's lifegain turns on the payoffs: **Foolish Fate** (the target's controller loses 3 if you gained life this
 turn), **Leech Collector // Bloodletting** (the first lifegain each turn makes Bloodletting available for {B}: each
-opponent loses 2), **Sanguine Bond** and **Vito**. The life is also a resource: it pays for The One Ring's burden
-counters, Call of the Ring, Bolas's Citadel, Ad Nauseam and Phyrexian Delver.
+opponent loses 2), **Sanguine Bond** and **Enduring Tenacity**. The life is also a resource: it pays for The One Ring's burden
+counters, Call of the Ring, Bolas's Citadel and Phyrexian Delver.
 
 #### Drain creatures
 
@@ -342,13 +348,18 @@ counters, Call of the Ring, Bolas's Citadel, Ad Nauseam and Phyrexian Delver.
 Sheoldred is gone. **Ob Nixilis, the Fallen** ({3}{B}{B}, 3/3) makes a player lose 3 life each time a land enters under
 your control and grows by three +1/+1 counters: one land drop a turn is 3 to an opponent and a bigger threat.
 **Zulaport Cutthroat** drains each opponent 1 (and gains you 1) whenever a creature you control dies. Every point these
-drain creatures gain you is also a Sanguine Bond or Vito trigger. **Dreadhorde Invasion** gives you an Army body that
+drain creatures gain you is also a Sanguine Bond or Enduring Tenacity trigger. **Dreadhorde Invasion** gives you an Army body that
 grows every upkeep, a sacrifice-fodder token, and lifelink once it reaches power 6.
+
+**Enduring Tenacity** ({2}{B}{B}, 4/3 enchantment creature): whenever you gain life, target opponent loses that much
+life. When it dies as a creature it returns to the battlefield as an enchantment that is not a creature, and it still
+drains. Creature removal, sacrifice and edicts only delay it; enchantment removal, exile and bounce answer it. With
+Exquisite Blood it is a two-card infinite drain (Line 1), and it is the cheapest second piece.
 
 **Witch of the Moors** ({3}{B}{B}, 4/4 deathtouch): at the beginning of your end step, if you gained life this turn,
 each opponent sacrifices a creature and you return up to one creature card from your graveyard to your hand. With
-Sheoldred out you gain 2 on every draw, so it is a repeatable edict and a card back each turn; the drain creatures,
-Exquisite Blood and Vito turn it on without her. It is a 5-drop that the sim leaves in hand in about half the games it
+Sheoldred out you gain 2 on every draw, so it is a repeatable edict and a card back each turn; the drain creatures
+and Exquisite Blood turn it on without her. It is a 5-drop that the sim leaves in hand in about half the games it
 is drawn: cast it as soon as the mana allows, after Sheoldred.
 
 #### Remove threats
@@ -408,9 +419,9 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 | 3 | Swamp, Cabal Coffers, Phyrexian Tower, Bonders' Enclave, Peer into the Abyss, Memory Jar, Exsanguinate | Ship | One Swamp and three lands that can't make {B} without help, no play before turn 5, and Memory Jar and Peer are dead without a punisher |
 | 4 | Swamp, Swamp, Mind Stone, Dark Ritual, Viscera Seer, Zulaport Cutthroat, Gray Merchant of Asphodel | Keep (close) | Two lands, but Seer on turn 1 and Mind Stone on turn 2 mean turn 3 is two Swamps, Mind Stone and Dark Ritual: 5 mana for Sheoldred with no third land |
 | 5 | Swamp, Swamp, Swamp, Swamp, Swamp, Mikokoro, Center of the Sea, Bolas's Citadel | Ship | Six lands go back, and the one spell costs 6 |
-| 6 | Swamp, Swamp, Swamp, Barad-dûr, Vito, Thorn of the Dusk Rose, Exquisite Blood, Grim Tutor | Keep | Vito on turn 3, Sheoldred on turn 4, Blood on turn 5 (needs a fifth land): the first card an opponent draws starts the loop. Grim Tutor finds Sanguine Bond or an answer |
+| 6 | Swamp, Swamp, Swamp, Barad-dûr, Enduring Tenacity, Exquisite Blood, Grim Tutor | Keep | Sheoldred on turn 4, Tenacity on turn 5 (four mana, no fifth land needed), Blood on turn 6 once a fifth land arrives: the first card an opponent draws starts the loop. Grim Tutor finds Sanguine Bond or an answer |
 | 7 | Swamp, Swamp, Swamp, Entomb, Animate Dead, Demonic Tutor, Howling Mine | Keep | Entomb into Animate Dead is Grave Titan on turn 2 (no life), Sheoldred when the fourth land comes. The Tutor finds the next piece; the Mine waits for a punisher |
-| 8 | Swamp, Swamp, Ad Nauseam, Bolas's Citadel, Invoke Despair, Peer into the Abyss, Ambition's Cost | Ship | Two lands, no rock, and every spell costs 4 or more |
+| 8 | Swamp, Swamp, Grave Titan, Bolas's Citadel, Invoke Despair, Peer into the Abyss, Ambition's Cost | Ship | Two lands, no rock, and every spell costs 4 or more |
 
 ### What to tutor for
 
@@ -429,7 +440,7 @@ check that the mana for it is there this turn or the next.
 | Entomb | {B} | Graveyard | Any card | Instant | Useless without Reanimate, Animate Dead, Phyrexian Delver or Yawgmoth's Will to use the card. Dead to graveyard hate. It is the only tutor you can use on an opponent's turn |
 
 Other cards that find cards, none of them a choice: **Call of the Ring** (draws when you choose a Ring-bearer, 2 life
-each, and Sheoldred gives the 2 back), **Ad Nauseam** (top cards into your hand for life) and **Bolas's Citadel**
+each, and Sheoldred gives the 2 back), **Damnable Pact** (draws X cards) and **Bolas's Citadel**
 (plays the top card for life). They do not replace a tutor on a turn that needs one specific card.
 
 #### Which card, by board state
@@ -454,8 +465,8 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | Your mana and hand | Opponents | Tutor | Target | Why, and what to watch |
 |---|---|---|---|---|
 | 5 or 6 mana, Sheoldred safe, no Line 1 piece out | Tapped low or open removal | Demonic Tutor | Sanguine Bond | Bond works alone (every card you draw takes 2 from an opponent) and is an enchantment, which creature removal misses. Exquisite Blood goes last |
-| Exquisite Blood out, no Bond or Vito | Any | Demonic Tutor (5 mana for tutor plus Vito) | Vito, Thorn of the Dusk Rose | Cheapest second piece (3 mana) and the loop starts the same turn. Pick Bond instead when the table has open creature removal |
-| Bond or Vito out, no Blood | Tapped out, or one removal spell at most | Any tutor | Exquisite Blood | Blood is the loop piece (5 mana). Cast it only when they cannot respond: one answer to a piece ends it. Starters: a draw with Sheoldred out, K'rrik's lifelink, any drain creature |
+| Exquisite Blood out, no Bond or Tenacity | Any | Demonic Tutor (6 mana for tutor plus Tenacity) | Enduring Tenacity | Cheapest second piece (4 mana, against 5 for Bond) and the loop starts the same turn. Creature removal only delays it |
+| Bond or Tenacity out, no Blood | Tapped out, or one removal spell at most | Any tutor | Exquisite Blood | Blood is the loop piece (5 mana). Cast it only when they cannot respond: one answer to a piece ends it. Starters: a draw with Sheoldred out, K'rrik's lifelink, any drain creature |
 | Mikaeus out, no Triskelion, 8 mana for tutor plus Triskelion | Table tapped, or Swords or Path open | Demonic Tutor, else tutor now and cast next turn | Triskelion | Line 2 needs both. Cast Triskelion second, and if they answer it, remove the counters in response. Triskelion is colourless, so K'rrik does not reduce it |
 | Triskelion out, no Mikaeus | Table tapped | Any tutor | Mikaeus, the Unhallowed | He is a creature: bring him down when the table cannot answer. 6 mana, or 3 and 6 life with K'rrik |
 | Mikaeus and Gray Merchant out, no Yawgmoth, and you control a second nontoken non-Human creature | Any | Any tutor | Yawgmoth, Thran Physician | The three-card loop (Line 5): a Merchant drain on every second activation. Yawgmoth has protection from Humans. Stop before you draw your library |
@@ -474,7 +485,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | A wipe just resolved, Sheoldred was the only creature | Any tutor | Animate Dead, then Sheoldred | Enchantments (Dreams, Arena, Bond, Blood) are still out. Rebuild with Phyrexian Delver or Perigee Beckoner |
 | An opponent has a combo that wins next turn | Demonic Tutor, then hold three mana (four for Sephiroth's Intervention) | Foolish Fate, Overkill or Sephiroth's Intervention (all instants) | You tutor at sorcery speed, so you need the answer in hand and the mana up at the right time. Rooftop Assassin only kills a creature that has been dealt damage |
 | An opponent has graveyard hate out (Bojuka Bog, Dauthi Voidwalker, Skullsnatcher, Farewell) | Any tutor except Entomb | The card itself, hard-cast | Line 6 is off, Entomb finds nothing you can use |
-| Life 15 or less, Sheoldred out | Demonic Tutor only | Gray Merchant, Exsanguinate or Rooftop Assassin | Grim Tutor, Ad Nauseam and K'rrik's life payments are off. Merchant and Exsanguinate gain it back |
+| Life 15 or less, Sheoldred out | Demonic Tutor only | Gray Merchant, Exsanguinate or Rooftop Assassin | Grim Tutor and K'rrik's life payments are off. Merchant and Exsanguinate gain it back |
 | Life 15 or less, Sheoldred not out | Demonic Tutor | Gray Merchant or Exsanguinate | You cannot gain from draws yet. Do not pay life for a tutor or for K'rrik |
 
 **The kill**
@@ -484,7 +495,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | Sheoldred or Underworld Dreams out, 7 mana (or 4 and 6 life with K'rrik), one opponent is the threat | That player's library at least half their life total, no Teferi's Protection or counterspell mana | Demonic or Diabolic Tutor | Peer into the Abyss | Lethal on one opponent (Line 3). A sorcery that leaves the other two untouched, so it is the first kill of three |
 | Cabal Coffers plus 5 or more Swamps, table not yet at lethal | Tapped low | Demonic or Diabolic Tutor | Exsanguinate | X is mana minus 2 (6 at 6 lands, 10 at 8, 14 at 10), 2 higher with K'rrik. 3X life for you against three opponents. With Bond out it is a second drain, with Blood it starts the loop |
 | The same Coffers mana, opponents low on cards and permanents (or you want to strip a combo piece) | Few cards in hand, bare boards | Demonic or Diabolic Tutor | Torment of Hailfire | Each repeat takes 3 life or a card or a permanent, their choice. Worse than Exsanguinate against full hands and boards, and it gains you nothing |
-| Devotion (count it: Sheoldred 2, Dreams 3, K'rrik 3, Arena 2, Seizan 2, Pact 3, Mikaeus 3, Grave Titan 2, Bond 2, Gix 2, plus the Merchant's 2) reaches the lowest opponent's life, or Bond is out | Any | Any tutor | Gray Merchant | Five mana and a creature, so it dodges counterspells that only hit noncreature spells. With Bond or Blood out it is a Line 1 starter |
+| Devotion (count it: Sheoldred 2, Dreams 3, K'rrik 3, Arena 2, Seizan 2, Grave Pact 3, Tenacity 2, Mikaeus 3, Grave Titan 2, Bond 2, Gix 2, plus the Merchant's 2) reaches the lowest opponent's life, or Bond is out | Any | Any tutor | Gray Merchant | Five mana and a creature, so it dodges counterspells that only hit noncreature spells. With Bond or Blood out it is a Line 1 starter |
 | Sheoldred out and every opponent at 14 or less (21 with Underworld Dreams also out) | Libraries of 7 or more | Demonic Tutor if 7 mana | Memory Jar | Cast it and tap it the same turn: every opponent draws seven, 14 life each, and you gain 14. Never with no punisher out |
 
 **K'rrik, Son of Yawgmoth: when to find it**
@@ -492,7 +503,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | Situation | Tutor | Target | Why, and what to watch |
 |---|---|---|---|
 | Turn 4-6, 5-6 lands or rocks, hand holds two or more black spells with three or more {B} pips between them (Gray Merchant, Grave Titan, Sanguine Bond, Mikaeus), life 25 or more, Sheoldred out or lifelink available | Demonic Tutor (2 mana, K'rrik 4 and 6 life) | K'rrik | Turns the hand into mana: the next turn's spells cost 2 life per {B}. Check your life for the whole turn first |
-| Exquisite Blood and Sanguine Bond (or Vito) in hand, mana is the only thing missing, life 25 or more | Demonic Tutor | K'rrik | 7 mana and 6 life for both pieces (6 mana and 4 life with Vito). The kill is then a turn earlier. Do it only if the table cannot punish the life |
+| Exquisite Blood and Sanguine Bond (or Enduring Tenacity) in hand, mana is the only thing missing, life 25 or more | Demonic Tutor | K'rrik | 7 mana and 6 life for Blood and Bond (6 mana and 6 life for Blood and Tenacity), every {B} paid with life. The kill is then a turn earlier. Do it only if the table cannot punish the life |
 | Entomb plus Animate Dead in hand, Sheoldred in the command zone, hand full of {B} spells | Entomb | K'rrik instead of Grave Titan | Animate Dead is 3 mana in all for K'rrik, and Sheoldred is {2} and 4 life next turn. It loses 1 power to the Aura and dies if the Aura goes |
 | Cabal Coffers is online (about 10 mana) | Any tutor | The kill (Exsanguinate, Peer, Gray Merchant), not K'rrik | You already have the mana, and K'rrik is a 7-mana-value creature that dies to removal while the life is still gone |
 | Life under 20, or a red or aggro table, or Edgar's loop pieces out | Any tutor | Not K'rrik | Each {B} would cost 2 life you cannot afford to lose, and a drain that starts the table's loop is worse than the mana |
@@ -512,14 +523,14 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 
 - **Tutoring for a card you cannot cast soon.** A tutor that leaves no mana for the found card, with removal on the table,
   gives the table a turn to answer or stop you. Tutor with the mana left over.
-- **Tutoring for Exquisite Blood or Vito into untapped removal.** One answer ends the loop. Find Bond first, Blood last.
+- **Tutoring for Exquisite Blood into untapped removal.** One answer ends the loop. Find Bond or Tenacity first, Blood last.
 - **Grim Tutor at low life, without Sheoldred out, or against Edgar's Exquisite Blood pieces.** The 3 life is not given back.
 - **Entomb with nothing to reanimate it, or into graveyard hate.** The card is simply lost.
 - **Tutoring under Tergrid or Liliana of the Veil** without casting the card the same turn, so it is discarded.
 - **Tutoring while an opponent controls Opposition Agent.**
 - **Paying K'rrik life for a spell that gets countered, or at low life.** The life does not come back.
 - **Peer into the Abyss at a library that is small compared to the life total,** or into Teferi's Protection or open counters.
-- **Tutoring for a creature piece (Mikaeus, K'rrik, Vito, Merchant) into a wipe** you have seen coming. Hold it, or find
+- **Tutoring for a creature piece (Mikaeus, K'rrik, Merchant) into a wipe** you have seen coming. Hold it, or find
   an enchantment.
 
 ### Protecting Sheoldred and the win turn
@@ -543,9 +554,8 @@ spells for you, a good turn to cast a draw engine. It does not save a creature f
 **For the kill turn:** the deck's lines are mostly enchantments and sorceries, so
 - cast the kill when the blue and white players are tapped low (Yuriko, Chulane, Atraxa, Aurelia);
 - make your last piece a creature against counterspell decks (Fierce Guardianship, Dovin's Veto and Swan Song can't
-  hit creatures; Gray Merchant, Mikaeus, Vito and Triskelion are creatures);
-- keep a second line: Bond plus Blood plus Vito, Peer into the Abyss as the backup, Exsanguinate for the table;
-- cast Ad Nauseam at the end of an opponent's turn, when they have spent their mana.
+  hit creatures; Gray Merchant, Mikaeus, Enduring Tenacity and Triskelion are creatures);
+- keep a second line: Bond plus Blood plus Tenacity, Peer into the Abyss as the backup, Exsanguinate for the table.
 
 ### Interaction on opponents' turns
 
@@ -559,7 +569,6 @@ The deck's instant-speed answers. Everything else is a sorcery.
 | Rooftop Assassin | {3}{B} flash | After blocks and damage: it destroys an opposing creature that was dealt damage this turn and survived. Also a flying lifelink blocker |
 | Deadly Dispute | {1}{B} instant | In response to removal, a steal or an edict aimed at your creature: sacrifice it, draw two and make a Treasure (4 life with Sheoldred out) |
 | Viscera Seer, Ashnod's Altar, Phyrexian Tower, Yawgmoth | Free or cheap | In response to a steal effect on one of your creatures, or to get value from a creature that is about to die |
-| Ad Nauseam | {3}{B}{B} instant | The end of the opponent's turn before yours |
 | Mikokoro, Geier Reach Sanitarium | {2}, {T} | An opponent's end step: each player draws, and Sheoldred drains the opponents |
 | Entomb, Dark Ritual, Cabal Ritual | {B} instant ({1}{B} for Cabal Ritual) | Entomb at their end step to set up Animate Dead; Dark Ritual or Cabal Ritual to pay for an instant above |
 
@@ -587,7 +596,7 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Marwyn, the Nurturer (t3, mono-green elves) | A board of mana elves, then Craterhoof Behemoth once Gaea's Cradle and the elves are out (Natural Order, Green Sun's Zenith, Chord of Calling, Finale of Devastation find it). Killing Craterhoof after it enters doesn't stop its trigger | Kill the mana elves early and sweep before the swing. They draw little, so the punishers are weaker here: lean on the creatures and Exsanguinate. | Foolish Fate, Silence the Echo, Grave Pact, Nevinyrral's Disk before the swing, Sheoldred as a blocker (Craterhoof tramples over it) |
 | Tergrid, God of Fright (t3, mono-black discard and edicts) | Tergrid takes every nontoken permanent you sacrifice or discard. Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Innocent Blood), Liliana of the Veil, Waste Not (their gain when you discard), Painful Quandary. Their deck has its own Sheoldred (your draws cost you 2), Whispering One, Gray Merchant, Phyrexian Obliterator. Dauthi Voidwalker and Bojuka Bog hate the graveyard | Never sacrifice or discard a nontoken permanent while Tergrid is out (Deadly Dispute, Silence the Echo, Phyrexian Tower, Geier Reach Sanitarium, Mind Stone). Edicts take your choice of creature, so keep tokens and cheap bodies (Sheoldred's Edict can force a nontoken one). Play out your hand before Liliana. Kill their Sheoldred (Animate Dead takes it from a graveyard). Keep your hand to 7 | Zombie tokens (Grave Titan, Dreadhorde Invasion), Undercity Dire Rat, Foolish Fate, Overkill, Animate Dead, Underworld Dreams |
 | Chulane, Teller of Tales (t4, Bant value and Aluren) | Chulane draws and ramps off every creature spell. Aluren or Intruder Alarm with Shrieking Drake or Whitemane Lion loops creatures, draws the deck and wins with Thassa's Oracle, Laboratory Maniac or Craterhoof. Counterspell, Dovin's Veto, Swan Song, Fierce Guardianship; Cyclonic Rift; Drannith Magistrate (you can't cast Sheoldred from the command zone or the graveyard) | A punisher is your answer to the loop: with Sheoldred out each card they draw costs 2, so drawing the deck kills them. Cast creature spells into counterspell decks (Veto, Swan Song and Fierce can't hit creatures). Kill Chulane, the bouncers and Drannith Magistrate. You have almost no answer to their enchantments: race | Sheoldred, Underworld Dreams, Fate Unraveler, Foolish Fate, Overkill (Magistrate), creature finishers (Gray Merchant, Mikaeus) |
-| Edgar Markov (t4, Mardu Vampires) | Eminence makes a 1/1 Vampire for every Vampire spell cast, from the command zone. Wide first-strike attacks (Edgar, Drana). Their own Sanguine Bond, Vito and Exquisite Blood loops. Cheap removal (Swords, Path, Bolt, Terminate, Fatal Push, Anguished Unmaking), Damn, New Blood, Teferi's Protection | Sheoldred and Grave Pact hold the board. Do not pay life (Phyrexian Arena, The One Ring, Ad Nauseam, Grim Tutor, K'rrik's 2 life per {B}) when their Exquisite Blood or Bloodthirsty Conqueror is out beside Sanguine Bond, Vito or Marauding Blight-Priest: your life loss starts their loop. Kill Vito or Blight-Priest first | Grave Pact, Accursed Marauder, Overkill, Foolish Fate, Mikaeus (undying against their wipes), Boots |
+| Edgar Markov (t4, Mardu Vampires) | Eminence makes a 1/1 Vampire for every Vampire spell cast, from the command zone. Wide first-strike attacks (Edgar, Drana). Their own Sanguine Bond, Vito and Exquisite Blood loops. Cheap removal (Swords, Path, Bolt, Terminate, Fatal Push, Anguished Unmaking), Damn, New Blood, Teferi's Protection | Sheoldred and Grave Pact hold the board. Do not pay life (Phyrexian Arena, The One Ring, Damnable Pact aimed at yourself, Grim Tutor, K'rrik's 2 life per {B}) when their Exquisite Blood or Bloodthirsty Conqueror is out beside Sanguine Bond, Vito or Marauding Blight-Priest: your life loss starts their loop. Kill Vito or Blight-Priest first | Grave Pact, Accursed Marauder, Overkill, Foolish Fate, Mikaeus (undying against their wipes), Boots |
 | Krenko, Mob Boss (t4, mono-red goblins) | Krenko doubles the Goblins each activation; Impact Tremors, Goblin Bombardment, Purphoros, Coat of Arms; haste from Lightning Greaves and Swiftfoot Boots. Thornbite Staff + an outlet is infinite. Blood Moon turns your nonbasic lands into Mountains. The sims show Krenko ended about 12% of games | Kill Krenko before he untaps (Foolish Fate and Overkill are instants). Nevinyrral's Disk answers the whole Goblin board (and your own creatures). Keep Sheoldred home as a blocker. Under Blood Moon only the 30 Swamps make {B} (Cabal Coffers and Barad-dûr don't) | Foolish Fate, Overkill, Grave Pact, Accursed Marauder, Nevinyrral's Disk, Mikaeus (undying against Bombardment) |
 | Prosper, Tome-Bound (t4, Rakdos exile and Treasure) | Exiles cards to play them and makes a Treasure each time; Opposition Agent (steals your tutors); Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir; Underworld Breach; Toxic Deluge, Blasphemous Act, Delayed Blast Fireball. The sims show the combo ended about 9% of games | They draw less than most, so the punishers are weaker: lean on the drain creatures and Exsanguinate. Kill Opposition Agent on sight and don't tutor under it. Kill Prosper and the Treasure drainers (Marionette Master). Dauthi Voidwalker and Bojuka Bog shut off Line 6 | Foolish Fate, Overkill, Gray Merchant, Exsanguinate |
 | Yuriko, the Tiger's Shadow (t4, Dimir ninjas) | Cheap evasive attackers (Ornithopter, Faerie Seer, Spectral Sailor), then ninjutsu Yuriko or another Ninja: each Ninja hit reveals a card and you lose life equal to its mana value (Shadow of Mortality 15, Temporal Trespass 11). Counterspell, Force of Will, Fierce Guardianship, Flare of Denial, Misdirection; Cyclonic Rift; Rhystic Study. The sims show Yuriko ended about 7% of games | Keep blockers back: their evasive creatures are small, and Cover of Darkness gives fear, which black creatures like yours can block. They draw a lot (Brainstorm, Rhystic Study, Top), so punishers hit hard. Cast creatures into the counters. Pay for Rhystic Study only on the spell that matters | Sheoldred and Rooftop Assassin as blockers, Underworld Dreams, Fate Unraveler, Foolish Fate |
@@ -599,13 +608,13 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Sheoldred destroyed | Animate Dead ({1}{B}, no life) or Phyrexian Delver, or Yawgmoth's Will, if she is in the graveyard. Otherwise recast her from the command zone for {2} more per previous cast |
 | Sheoldred exiled or bounced, or a wipe | Recast her from the command zone (or from hand). Meanwhile Underworld Dreams, Fate Unraveler, Phyrexian Arena and the drain creatures carry the damage; hold the symmetric draw cards |
 | Mikaeus or Triskelion answered | Tutor for the replacement. Mikaeus's undying still has to be on the battlefield for the loop. If Triskelion was exiled, Mikaeus alone still gives undying to the rest |
-| Exquisite Blood, Bond or Vito answered | Tutor for the missing piece. Vito is the cheapest (3 mana). Cast Blood last, once the table is tapped |
+| Exquisite Blood, Bond or Tenacity answered | Tutor for the missing piece. Tenacity is the cheapest (4 mana, against 5 for Bond or Blood); creature removal on it only turns it into an enchantment, which still counts as a piece. Cast Blood last, once the table is tapped |
 | Peer into the Abyss countered or fizzled | Exsanguinate, or Gray Merchant off Animate Dead, as the table-wide finish. Peer is a sorcery: wait until the table is tapped out |
 | Board wiped | Animate Dead (Grave Titan from the graveyard, if you used Entomb), Phyrexian Delver, Perigee Beckoner. Underworld Dreams, Arena, Bond and Blood survive a creature wipe |
 | Graveyard hate (Bojuka Bog, Voidwalker, Farewell) | Switch to hard casting: tutors, Rooftop Assassin, Grave Titan; Line 6 is off |
 | Counterspell on the key piece | Hold the second piece. Cast a creature next (the counters are mostly noncreature), or wait for a turn when they tap out |
 | K'rrik answered | Costs already paid stay paid. Count your mana again before the next black spell: the {B} pips are back to mana. Recast it for {4} and 6 life if your life allows, or bring it back with Animate Dead ({1}{B}) |
-| Life too low to run the engines | Stop The One Ring, Phyrexian Arena, Ad Nauseam and the tutors that cost life. Draw with Sheoldred first, or gain with Exsanguinate or Gray Merchant |
+| Life too low to run the engines | Stop The One Ring, Phyrexian Arena, Damnable Pact aimed at you (unless Sheoldred is out) and the tutors that cost life. Draw with Sheoldred first, or gain with Exsanguinate or Gray Merchant |
 
 - A failed attempt shows the table your plan. The next try needs a second line ready.
 
@@ -621,7 +630,7 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Cost of Brilliance (aimed at you) | 2 | The 2 cards (4 with Sheoldred) |
 | Ambition's Cost | 3 | The 3 cards (6 with Sheoldred) |
 | Grim Tutor | 3 | Nothing: the card is put into your hand, not drawn |
-| Ad Nauseam | Each card's mana value (about 2 a card on average) | Nothing: put into your hand, not drawn |
+| Damnable Pact (aimed at you) | X, one per card | The X cards (2X with Sheoldred, so X net) |
 | Bolas's Citadel | The mana value of each spell played from the top | Nothing |
 | Phyrexian Delver | The mana value of the creature (Grave Titan 6, Sheoldred 4) | Sheoldred, Gray Merchant or Exsanguinate |
 | K'rrik, Son of Yawgmoth | 6 to cast it, then 2 per {B} paid with life | Lifelink on K'rrik, Gray Merchant, Exsanguinate, Sheoldred's draws |
@@ -629,10 +638,9 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Gix | 1 per card drawn off combat damage | The card (2 with Sheoldred) |
 
 Sources of life: Sheoldred (2 per draw), Exsanguinate, Gray Merchant, Blood Artist, Zulaport Cutthroat,
-Sephiroth, Sephiroth's Intervention (2), Rooftop Assassin (lifelink), Vito's lifelink ability
-({3}{B}{B}), Exquisite Blood, and the lifelink on a grown Dreadhorde Army.
+Sephiroth, Sephiroth's Intervention (2), Rooftop Assassin (lifelink), Exquisite Blood, and the lifelink on a grown Dreadhorde Army.
 
-**Rules of thumb.** Without Sheoldred, stop The One Ring, Ad Nauseam and Grim Tutor, and keep your life well above what
+**Rules of thumb.** Without Sheoldred, stop The One Ring, Damnable Pact aimed at you and Grim Tutor, and keep your life well above what
 the table can swing in one round (the sims show the t3 table can kill from about 12). Check Phyrexian Delver's cost before you
 cast it: Grave Titan is 6. Against Edgar's loop pieces, do not pay life at all. With K'rrik out, add up the life for the
 whole turn before the first spell (each {B} is 2) and leave yourself at least 15 unless the turn wins.
@@ -641,10 +649,10 @@ whole turn before the first spell (each {B} is 2) and leave yourself at least 15
 
 1. Playing Howling Mine, Seizan, Memory Jar, Mikokoro or the Sanitarium before a punisher is out. They refuel the table.
 2. Tapping out for the engines while Sheoldred is your only engine and the table has removal or a wipe. Boots first.
-3. Treating Bond + Vito as a combo. The loop needs Exquisite Blood.
-4. Casting Exquisite Blood or Vito into untapped removal. One answer breaks the loop; go when the table is tapped, and
+3. Treating Bond + Tenacity as a combo. The loop needs Exquisite Blood.
+4. Casting Exquisite Blood into untapped removal. One answer breaks the loop; go when the table is tapped, and
    keep a second line.
-5. Paying life (Arena, Ad Nauseam, Grim Tutor, The One Ring) without Sheoldred, or against Edgar's Exquisite Blood pieces.
+5. Paying life (Arena, Damnable Pact aimed at you, Grim Tutor, The One Ring) without Sheoldred, or against Edgar's Exquisite Blood pieces.
 6. Tutoring while an opponent controls Opposition Agent.
 7. Sacrificing or discarding a nontoken permanent while Tergrid is out (Deadly Dispute, the Sanitarium),
    or ending the turn with 8 cards.
@@ -672,13 +680,13 @@ Perigee Beckoner (and Mikaeus's undying).
 
 ## Bracket and Rule 0
 
-Bracket 4: four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel) and the combos named here.
+Bracket 4: three Game Changers (The One Ring, Demonic Tutor, Bolas's Citadel) and the combos named here.
 There are no extra turns and no mass land destruction, but there are infinite combos: Mikaeus + Triskelion is a
 two-card infinite-damage combo (Commander Spellbook lists it), Mikaeus + Yawgmoth + Gray Merchant of Asphodel is a
 three-card loop (it needs a second nontoken non-Human creature with toughness 2 or more), Exquisite Blood + Sanguine
-Bond (or + Vito, Thorn of the Dusk Rose) is a two-card infinite drain, and Sheoldred + Peer into the
+Bond (or + Enduring Tenacity) is a two-card infinite drain, and Sheoldred + Peer into the
 Abyss (or Underworld Dreams + Peer into the Abyss) is a near-instant kill on an opponent whose library is large
-compared with their life. Name these before the game. Tell the table about the four Game
+compared with their life. Name these before the game. Tell the table about the three Game
 Changers, and tell it that Howling Mine, Memory Jar and the other draw cards are symmetric on purpose: they make everyone
 draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cost the opponents.
 
@@ -688,21 +696,20 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Barad-dûr, Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 30 Swamp
 
-**Creatures (23).** Accursed Marauder, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, K'rrik Son of Yawgmoth, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Witch of the Moors, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (23).** Accursed Marauder, Blood Artist, Enduring Tenacity, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, K'rrik Son of Yawgmoth, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Witch of the Moors, Yawgmoth Thran Physician, Zulaport Cutthroat
 
 **Enchantments (8).** Animate Dead, Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
 **Artifacts (11).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Howling Mine, Jet Medallion, Memory Jar, Mind Stone, Nevinyrral's Disk, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (13).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
+**Sorceries (14).** Ambition's Cost, Cost of Brilliance, Damnable Pact, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
-**Instants (8).** Ad Nauseam, Cabal Ritual, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
+**Instants (7).** Cabal Ritual, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
 
 ## Import list (100)
 
 ```
 1 Accursed Marauder
-1 Ad Nauseam
 1 Ambition's Cost
 1 Animate Dead
 1 Arcane Signet
@@ -715,11 +722,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Cabal Ritual
 1 Call of the Ring
 1 Cost of Brilliance
+1 Damnable Pact
 1 Dark Ritual
 1 Deadly Dispute
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Dreadhorde Invasion
+1 Enduring Tenacity
 1 Entomb
 1 Exquisite Blood
 1 Exsanguinate
@@ -766,7 +775,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Underworld Dreams
 1 Vault Plunderer
 1 Viscera Seer
-1 Vito, Thorn of the Dusk Rose
 1 Witch of the Moors
 1 Yawgmoth's Will
 1 Yawgmoth, Thran Physician
