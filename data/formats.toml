@@ -10,6 +10,8 @@
 #                        "list": `banned` REPLACES that ban list (the card must still be a Commander-playable card:
 #                        Scryfall `legal` or `banned`, never `not_legal` or `restricted`)
 #   banned               the ban list, one front-face name per entry (names compared by front face, lower case)
+#                        Only the FRONT face is matched, in both readers (cardgen and sim-core): a double-faced or flip card
+#                        is listed by its front face ("Erayo, Soratami Ascendant"); an entry naming only a back face bans nothing.
 #
 # [commander] must keep exactly the values the engine has always played (40 life, first player draws, 4 seats); the
 # loader refuses anything else, so editing this file cannot change every 4-player game.

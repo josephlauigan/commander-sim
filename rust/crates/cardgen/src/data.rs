@@ -238,8 +238,11 @@ pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
         if seats != 2 && seats != 4 {
             return Err(format!("{ctx}: seats must be 2 or 4 (the pod builders' table shapes), not {seats}"));
         }
-        if life < 1 {
-            return Err(format!("{ctx}: life must be at least 1, not {life}"));
+        if life < 1 || life > i32::MAX as i64 {
+            return Err(format!(
+                "{ctx}: life must be at least 1 and at most {} (sim-core reads an i32), not {life}",
+                i32::MAX
+            ));
         }
         let first_player_draws =
             get("first_player_draws")?.as_bool().ok_or(format!("{ctx}: first_player_draws must be true or false"))?;
@@ -497,6 +500,8 @@ mod format_tests {
         assert!(with("seats = 2", "seats = 4").is_ok());
         assert!(with("life = 30", "life = 0").unwrap_err().contains("life must be at least 1"));
         assert!(with("life = 30", "life = 1").is_ok());
+        assert!(with("life = 30", "life = 2147483647").is_ok());
+        assert!(with("life = 30", "life = 2147483648").unwrap_err().contains("life must be at least 1 and at most"));
         assert!(with("bans = \"list\"", "bans = \"all\"").unwrap_err().contains("bans must be"));
         assert!(with("bans = \"list\"\n", "").unwrap_err().contains("missing bans"));
         assert!(with("seats = 2", "seat = 2").unwrap_err().contains("unknown key \"seat\""));

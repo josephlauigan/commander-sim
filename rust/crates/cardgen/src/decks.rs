@@ -211,9 +211,11 @@ pub enum Illegal {
 ///   record with no legality field passes (the cache's real records always have one).
 /// - `bans = "list"` (Cali Commander): the card must be a Commander-playable card (`legal` or `banned` in Scryfall's
 ///   Commander field: a card Scryfall calls `banned` is playable there, just not in Commander; `not_legal` and
-///   `restricted` are refused, and so is a record with no legality field), and then no face of it may be on the
-///   format's list. Names compare by front face, lower case, for the requested name, the record's name and each of
-///   its faces (a list may name the face that is the card's identity: "Erayo's Essence" is Erayo's back face).
+///   `restricted` are refused, and so is a record with no legality field), and then its FRONT face may not be on
+///   the format's list. Names compare by front face, lower case, for the requested name and the record's name; a back
+///   face is never matched (sim-core's `Format::admits` sees front faces only, and `Emeritus of Ideation // Ancestral
+///   Recall` must not be banned by the "Ancestral Recall" entry). A flip or double-faced card on the list is
+///   listed by its front face ("Erayo, Soratami Ascendant"); an entry naming only a back face bans nothing.
 /// `rec` is None for a name with no Scryfall record: a list format still reports it when the name is on the list.
 pub fn legality_problems(fmt: &FormatDef, requested: &str, rec: Option<&J>) -> Vec<Illegal> {
     let mut out = vec![];
@@ -231,10 +233,7 @@ pub fn legality_problems(fmt: &FormatDef, requested: &str, rec: Option<&J>) -> V
                     Some(other) => out.push(Illegal::NotLegal(format!("Scryfall {other}"))),
                     None => out.push(Illegal::NotLegal("no legality data".into())),
                 }
-                let mut names = vec![front_face(requested), front_face(r.s_or("name"))];
-                if let Some(f) = r.get("card_faces").and_then(|f| f.as_arr()) {
-                    names.extend(f.iter().map(|x| front_face(x.s_or("name"))));
-                }
+                let names = [front_face(requested), front_face(r.s_or("name"))];
                 if fmt.banned.iter().any(|b| names.contains(&front_face(b))) {
                     out.push(Illegal::Banned);
                 }
@@ -539,26 +538,26 @@ mod legality_tests {
     }
 
     #[test]
-    fn erayos_flip_card_is_refused_in_cali_by_any_of_its_names() {
+    fn erayos_flip_card_is_refused_in_cali_by_its_front_face_only() {
         let (_, cali) = formats();
         let erayo = jo! {"name" => "Erayo, Soratami Ascendant // Erayo's Essence", "layout" => "flip",
         "color_identity" => J::Arr(vec![J::from("U")]),
         "legalities" => jo!{"commander" => "banned"},
         "card_faces" => J::Arr(vec![
             jo!{"name" => "Erayo, Soratami Ascendant"}, jo!{"name" => "Erayo's Essence"}])};
-        // the list names the front face, the whole card or the back face
-        for entry in ["Erayo, Soratami Ascendant", "Erayo's Essence"] {
+        // the list names the front face, or the whole card (front-faced): refused, asked by either name
+        for entry in ["Erayo, Soratami Ascendant", "Erayo, Soratami Ascendant // Erayo's Essence"] {
             let mut fmt = cali.clone();
             fmt.banned = vec![entry.to_string()];
             for asked in ["Erayo, Soratami Ascendant", "Erayo, Soratami Ascendant // Erayo's Essence"] {
                 assert_eq!(legality_problems(&fmt, asked, Some(&erayo)), [Illegal::Banned], "{entry} / {asked}");
             }
         }
-        // an entry written as the full name is front-faced too
+        // an entry naming only the back face bans nothing: back faces are not matched (sim-core cannot see them)
         let mut fmt = cali.clone();
-        fmt.banned = vec!["Erayo, Soratami Ascendant // Erayo's Essence".into()];
-        assert_eq!(legality_problems(&fmt, "Erayo, Soratami Ascendant", Some(&erayo)), [Illegal::Banned]);
-        // the shipped list catches it too
+        fmt.banned = vec!["Erayo's Essence".to_string()];
+        assert!(legality_problems(&fmt, "Erayo, Soratami Ascendant", Some(&erayo)).is_empty());
+        // the shipped list names the front face
         assert_eq!(legality_problems(&cali, "Erayo, Soratami Ascendant", Some(&erayo)), [Illegal::Banned]);
     }
 

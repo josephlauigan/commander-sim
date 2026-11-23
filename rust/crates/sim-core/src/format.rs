@@ -92,6 +92,9 @@ impl Format {
     /// `[commander]` is exactly Commander
     pub fn validate(&self) -> Result<(), String> {
         let k = &self.key;
+        if self.name.trim().is_empty() {
+            return Err(format!("format {k:?}: name must not be empty"));
+        }
         if self.seats != 2 && self.seats != 4 {
             return Err(format!("format {k:?}: seats must be 2 or 4, not {}", self.seats));
         }
@@ -294,6 +297,7 @@ mod format_data_tests {
             f(&mut x);
             x.validate().unwrap_err()
         };
+        assert!(bad(&|f| f.name = " ".into()).contains("name must not be empty"));
         assert!(bad(&|f| f.seats = 3).contains("seats must be 2 or 4"));
         assert!(bad(&|f| f.seats = 0).contains("seats must be 2 or 4"));
         assert!(bad(&|f| f.life = 0).contains("life must be at least 1"));
