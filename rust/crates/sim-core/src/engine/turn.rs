@@ -1194,6 +1194,7 @@ pub fn phase_in_for(g: &mut Game, p: PlayerId) {
         let x = g.perm_mut(m);
         x.phased = false;
         x.data.remove(DataKey::PhaseInWith);
+        x.data.remove(DataKey::Kyodai); // Kyodai's "for as long as you control him" ended as he phased out (702.26)
     }
     if !phase_in.is_empty() {
         g.bf_ver += 1;

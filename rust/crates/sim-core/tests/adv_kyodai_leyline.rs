@@ -40,7 +40,6 @@ fn choose(g: &mut Game, p: PlayerId, word: &'static str) -> Arc<ScriptHuman> {
 }
 /// Kyodai's target must be announced before anyone responds to the triggered ability.
 #[test]
-#[ignore = "FAILS: trigger chooses target after the response window"]
 fn kyodai_announces_target_before_priority() {
     let mut g = game();
     perm(&mut g, P0, "Llanowar Elves");
@@ -66,7 +65,6 @@ fn kyodai_announces_target_before_priority() {
 }
 /// A chosen target leaving makes the ability fizzle, without selecting a replacement on resolution.
 #[test]
-#[ignore = "FAILS: departed target is replaced on resolution"]
 fn kyodai_removed_target_does_not_retarget() {
     let mut g = game();
     let elf = perm(&mut g, P0, "Llanowar Elves");
@@ -100,7 +98,6 @@ fn kyodai_removed_target_does_not_retarget() {
 }
 /// A resolved grant depends on controlling Kyodai, not on Kyodai retaining its abilities.
 #[test]
-#[ignore = "FAILS: ability loss incorrectly ends an already resolved grant"]
 fn kyodai_ability_loss_keeps_resolved_grant() {
     let mut g = game();
     let elf = perm(&mut g, P0, "Llanowar Elves");
@@ -111,7 +108,6 @@ fn kyodai_ability_loss_keeps_resolved_grant() {
 }
 /// Losing control ends the original duration permanently even if control is regained.
 #[test]
-#[ignore = "FAILS: ended grant resumes after control is regained"]
 fn kyodai_control_round_trip_does_not_revive_grant() {
     let mut g = game();
     let elf = perm(&mut g, P0, "Llanowar Elves");
@@ -681,7 +677,6 @@ fn additive_land_types_all_orderings() {
 }
 /// An opponent gaining hexproof in response invalidates the chosen target; the trigger cannot retarget a different permanent.
 #[test]
-#[ignore = "FAILS: illegal hexproof target is replaced on resolution"]
 fn kyodai_hexproof_response_does_not_retarget() {
     let mut g = game();
     let ring = perm(&mut g, P0, "Sol Ring");
@@ -725,7 +720,6 @@ fn kyodai_hexproof_response_does_not_retarget() {
 }
 /// Blinking Kyodai in response creates a second trigger; the original announced target remains an announced target even though its duration ends.
 #[test]
-#[ignore = "FAILS: original trigger never announces a target before blink response"]
 fn kyodai_blink_in_response_has_two_announcements_one_grant() {
     let mut g = game();
     let elf = perm(&mut g, P0, "Llanowar Elves");
@@ -912,7 +906,6 @@ fn departed_ballista_keeps_last_known_leyline_colours() {
 
 /// Phasing out makes the tracked Kyodai absent; an ended for-as-long-as duration cannot restart on phase-in.
 #[test]
-#[ignore = "FAILS: ended duration resumes when source phases in"]
 fn kyodai_phase_in_does_not_restart_ended_duration() {
     let mut g = game();
     let elf = perm(&mut g, P0, "Llanowar Elves");
@@ -920,7 +913,8 @@ fn kyodai_phase_in_does_not_restart_ended_duration() {
     assert!(indestructible(&g, elf));
     g.perm_mut(k).phased = true;
     assert!(!indestructible(&g, elf));
-    g.perm_mut(k).phased = false;
+    sim_core::engine::turn::phase_in_for(&mut g, P0); // the engine's one phase-in site (the untap step)
+    assert!(!g.perm(k).phased);
     assert!(!indestructible(&g, elf), "phasing in cannot restart an ended duration");
 }
 /// A grant already resolved on a target survives that target gaining hexproof/protection or changing controller.

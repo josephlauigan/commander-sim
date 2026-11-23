@@ -133,10 +133,11 @@ fn ends_when_control_of_kyodai_changes() {
 
 #[test]
 fn kyodai_removed_in_response_grants_nothing() {
-    // the trigger is on the stack; in response the person exiles Kyodai: "for as long as you control Kyodai" had
-    // already ended, so the ability does nothing (CR 611.2b) and no target is chosen
+    // the target is chosen as the trigger goes on the stack; in response the person exiles Kyodai: "for as long as you
+    // control Kyodai" had already ended, so the ability does nothing (CR 611.2b, 608.2b) and the target is not re-picked
     let mut g = tbl();
     let elf = perm(&mut g, P0, "Llanowar Elves");
+    perm(&mut g, P0, "Sol Ring"); // a second choice, so the person is asked
     let swords = hand(&mut g, P0, &["Swords to Plowshares"])[0];
     pool(&mut g, P0, &[('W', 1)]);
     let mut cast_it = false;
@@ -155,7 +156,7 @@ fn kyodai_removed_in_response_grants_nothing() {
     assert!(g.player(P0).exile.contains(&swords) || g.player(P0).gy.contains(&swords), "Swords was cast");
     assert!(!live(&g, k), "Kyodai was exiled in response");
     assert!(!indestructible(&g, elf), "nothing was granted");
-    assert!(asked_kyodai(&h).is_empty(), "no target was chosen for an ability that does nothing");
+    assert_eq!(asked_kyodai(&h).len(), 1, "the target was chosen once, before the response, and never re-picked");
 }
 
 #[test]
@@ -330,20 +331,56 @@ fn recast_from_command_zone_new_grant() {
 
 // ------------------------------------------------------------------ phasing (Teferi's Protection)
 #[test]
-fn kyodai_phasing_out_turns_the_grant_off_while_he_is_gone() {
-    // the engine reads a static ability only from a permanent that is phased in, so the grant is off while Kyodai is
-    // phased out (a phased-out permanent is treated as though it doesn't exist) and is back when he phases in
+fn kyodai_phasing_out_ends_the_grant_for_good() {
+    // CR 702.26: a phased-out permanent is treated as though it doesn't exist, so "for as long as you control Kyodai"
+    // ends when he phases out and does not start again when he phases in (the untap step: `phase_in_for`)
     let mut g = tbl();
     let elf = perm(&mut g, P0, "Llanowar Elves");
     let k = perm(&mut g, P0, KYODAI);
     assert!(indestructible(&g, elf));
     g.perm_mut(k).phased = true;
     assert!(!indestructible(&g, elf), "while Kyodai is phased out");
-    g.perm_mut(k).phased = false;
-    assert!(
-        indestructible(&g, elf),
-        "phased back in: the grant resumes (see the report: the rule may end it for good)"
-    );
+    sim_core::engine::turn::phase_in_for(&mut g, P0);
+    assert!(!g.perm(k).phased, "he phased in");
+    assert!(!indestructible(&g, elf), "phased back in: the ended duration does not restart");
+}
+
+#[test]
+fn kyodai_loses_abilities_the_grant_stays() {
+    // a resolved duration effect depends on controlling Kyodai, not on his abilities (Darksteel Mutation, Humility)
+    let mut g = tbl();
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    let k = perm(&mut g, P0, KYODAI);
+    g.perm_mut(k).neutered = true;
+    assert!(indestructible(&g, elf), "still indestructible");
+    zones::exile_perm(&mut g, k).unwrap();
+    assert!(!indestructible(&g, elf), "but not once he has left");
+}
+
+#[test]
+fn kyodai_target_gone_in_response_nothing_is_re_picked() {
+    // the chosen Elves are exiled in response: the trigger does nothing, the Sol Ring is not given the grant instead
+    let mut g = tbl();
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    let ring = perm(&mut g, P0, "Sol Ring");
+    hand(&mut g, P0, &["Swords to Plowshares"]);
+    pool(&mut g, P0, &[('W', 1)]);
+    let mut cast_it = false;
+    let h = person(&mut g, &["Elves"], move |r| {
+        if &*r.kind == "priority" && !cast_it {
+            cast_it = true;
+            return Some(Answer::Action(json!({"do": "cast", "card": 0})));
+        }
+        if &*r.kind == "target" && r.prompt.contains("Swords") {
+            return Some(Answer::Pick(r.choices.iter().position(|c| c.contains("Elves")).unwrap()));
+        }
+        None
+    });
+    h.set_autopass("all");
+    perm(&mut g, P0, KYODAI);
+    assert!(!g.perm(elf).on_bf, "the target left");
+    assert!(!indestructible(&g, ring), "no replacement target");
+    assert_eq!(asked_kyodai(&h).len(), 1);
 }
 
 // ------------------------------------------------------------------ flash, flying and the pump
@@ -433,4 +470,18 @@ fn pump_paid_by_elder_under_leyline_gives_8_8() {
     assert!(pump(&mut g, P0, k), "the Elder's five mana pay the pump");
     assert_eq!((epow(&g, k), etgh(&g, k)), (8, 8));
     assert!(g.perm(elder).tapped, "the Elder was tapped for the mana");
+}
+
+// ------------------------------------------------------------------ the Leyline hot-path guard
+#[test]
+fn leyline_scan_is_skipped_when_no_deck_holds_one() {
+    // `chars::leyline` scans every hooked permanent; `Game::leyline_deck` (some seat's deck holds Leyline of the
+    // Guildpact) keeps games without one from ever doing it
+    let mut g = table(&["sheoldred", "yshtola"]);
+    assert!(!g.leyline_deck, "no Leyline in either deck");
+    let l = perm(&mut g, P0, "Leyline of the Guildpact"); // conjured outside any deck, and it is in `hooks`
+    assert!(g.hooks.contains(&l), "the scan would find it");
+    assert!(!sim_core::engine::chars::leyline(&g, P0), "the scan did not run");
+    let g = tbl();
+    assert!(g.leyline_deck, "thanos plays Leyline");
 }

@@ -230,6 +230,9 @@ fn is_land_perm(g: &Game, m: PermId) -> bool {
 /// p controls a Leyline of the Guildpact that is on the battlefield, phased in, with its abilities on. A copy of it is
 /// found through the copy's card (`cd`). Scans `g.hooks` only: Leyline has card code, so it is listed there.
 pub fn leyline(g: &Game, p: PlayerId) -> bool {
+    if !g.leyline_deck {
+        return false; // no deck holds a Leyline (a copy needs one too): skip the scan of every hooked permanent
+    }
     g.hooks.iter().any(|&h| {
         let x = g.perm(h);
         x.owner == p && x.on_bf && !x.phased && !x.neutered && is_fx(g, h, NamedFx::AllColors)
@@ -289,6 +292,9 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     }
     if !g.hooks.is_empty() && crate::cardcode::granted_kw(g, m, kw) {
         return true;
+    }
+    if kw == "indestructible" && crate::impls::kyodai::grants(g, m) {
+        return true; // Kyodai: a resolved duration effect, which neither ability loss nor phasing out of a hook ends
     }
     if !dsl::active(g) {
         return false;
