@@ -33,7 +33,7 @@
 //! - Temporal Trespass: delve (partials' delve); an extra turn, exiled.
 //! - Scheming Symmetry: you and the least threatening opponent each put a card from the library on top (the tutors'
 //!   own choice, Yuriko's reveal list for you).
-//! - Shadow of Mortality: costs {1} less per life below 40.
+//! - Shadow of Mortality: costs {1} less per life below your starting life total.
 //! - Agadeem's Awakening // Agadeem, the Undercrypt: X picks the best creature card of each mana value up to X in
 //!   your graveyard; or played as a land ({B}, 3 life for untapped).
 //! - Sea Gate Restoration // Sea Gate, Reborn: draw cards equal to your hand plus one, no maximum hand size for the
@@ -564,9 +564,9 @@ fn prio_0(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ======================================================== Shadow of Mortality
-/// {X} less, X: the life below the starting 40
+/// {X} less, X: the life below the starting life total
 fn mortality_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    -(40 - g.player(p).life).max(0)
+    -(g.player(p).start_life - g.player(p).life).max(0)
 }
 
 // ======================================================== spell // land cards

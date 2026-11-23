@@ -179,6 +179,8 @@ pub struct Settings {
     pub xtutor: bool,
     /// --- t5-hold: keep the held-mana counters (`holdstats`, stats only; off: the test that they change nothing)
     pub hold_trace: bool,
+    /// the format's rules: starting life and whether the starting player draws on turn 1 (`format::Rules`)
+    pub rules: crate::format::Rules,
 }
 
 impl Settings {
@@ -205,6 +207,7 @@ impl Settings {
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
             xtutor: xtutor_default(),   // --- t6-xtutor
             hold_trace: true,
+            rules: crate::format::Rules::COMMANDER,
         }
     }
 

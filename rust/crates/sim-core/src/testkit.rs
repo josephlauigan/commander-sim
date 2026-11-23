@@ -9,6 +9,7 @@
 
 use crate::cards::CardDb;
 use crate::export::{RawDeck, load_decks};
+use crate::format::Rules;
 use crate::hooks::Registry;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::rng::Rng;
@@ -255,12 +256,21 @@ pub fn table(keys: &[&str]) -> Game {
 }
 
 pub fn table_with(keys: &[&str], seed: u64, life: i32) -> Game {
+    let mut g = table_in(keys, seed, Rules::COMMANDER);
+    for p in &mut g.players {
+        p.life = life; // the life total only; `start_life` stays the rules'
+    }
+    g
+}
+
+/// `table` under these format rules: every seat starts at `rules.life` with `start_life` the same
+pub fn table_in(keys: &[&str], seed: u64, rules: Rules) -> Game {
     let db = db();
     let players = keys.iter().enumerate().map(|(i, k)| seat(&db, i, k, seed)).collect();
-    let settings = Arc::new(Settings::new(Profile::Conservative, AiMode::Adaptive, 1.0));
-    let mut g = Game::new(db, registry(), settings, players, Rng::named(&format!("play:{seed}")));
+    let mut settings = Settings::new(Profile::Conservative, AiMode::Adaptive, 1.0);
+    settings.rules = rules;
+    let mut g = Game::new(db, registry(), Arc::new(settings), players, Rng::named(&format!("play:{seed}")));
     for p in &mut g.players {
-        p.life = life;
         p.turns = 1;
     }
     g.round = 1;
@@ -341,8 +351,15 @@ pub fn play(keys: &[&str], seed: u64, trace: bool) -> Game {
 
 /// a whole game as `play`, with this AI
 pub fn play_with(keys: &[&str], seed: u64, trace: bool, ai: AiMode) -> Game {
+    play_in(keys, seed, trace, ai, Rules::COMMANDER)
+}
+
+/// `play_with` under these format rules
+pub fn play_in(keys: &[&str], seed: u64, trace: bool, ai: AiMode, rules: Rules) -> Game {
     let seats: Vec<_> = keys.iter().map(|k| seat_spec(k)).collect();
-    let settings = Arc::new(Settings::new(Profile::Loose, ai, 1.0));
+    let mut settings = Settings::new(Profile::Loose, ai, 1.0);
+    settings.rules = rules;
+    let settings = Arc::new(settings);
     let mut g = crate::engine::turn::setup_game(db(), registry(), settings, seed, &seats, trace);
     crate::engine::turn::run_rounds(&mut g, 20);
     g
