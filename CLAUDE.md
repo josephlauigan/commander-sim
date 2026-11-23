@@ -79,6 +79,13 @@ Sonnet; Sonnet fails twice → Sol competing attempt; both fail → Opus root-ca
   queue script and stops; the coordinator runs the queue as a background script with a watcher on its "all done"
   line, and a new short agent reads the outputs and writes the results. An agent whose work is done or blocked
   reports and ends; resume it only for a short follow-up. Never keep an agent open as a monitor.
+- **When Sol is out of usage** (JD, 2026-11-23): `sol-run` ends within about two minutes with `SOL EXIT 1` and a
+  "You've hit your usage limit" line in its log, with the date it resets. Do not wait for the reset and do not skip the
+  step: give the same brief to a fresh Sonnet agent (`model: "sonnet"`, `effort: "high"`), a new instance and never the
+  author of the code under test, opening with "You are an independent adversarial reviewer, not the author", with the
+  same scope and handoff path. The Opus final review stays and its brief says the adversarial pass was Sonnet's. Tell
+  JD in the next report that Sol was out of usage and who did the pass. A competing attempt after Sonnet failed twice
+  goes to Opus root-cause, not back to Sonnet. Full rule: ROUTING.md §3.
 
 ## Checking subagents' work
 
