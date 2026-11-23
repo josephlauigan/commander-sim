@@ -1,8 +1,8 @@
-# Kyodai, Soul of Kamigawa (key `thanos`): findings
+# Kyodai, Soul of Kamigawa (key `kyodai`, `thanos` until 2026-11-22): findings
 
 The deck's living list of strengths and weaknesses and what was tested.
 
-**List:** `decklists/cali_commander/thanos-artifact-combo.md`, built 2026-11-13 for Cali Commander (1v1, 30 life) from
+**List:** `decklists/cali_commander/kyodai-artifact-combo.md`, built 2026-11-13 for Cali Commander (1v1, 30 life) from
 the previous Thanos list, the Aragorn deck and cards taken from the other decks. Routes: Basalt Monolith + Rings of
 Brighthearth, Staff of Domination + Faeburrow Elder, Tinker into Blightsteel Colossus (Sneak Attack as a second way to
 put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Underworld Breach with Brain Freeze as a storm
@@ -27,7 +27,7 @@ JD's tiers, so baselines could shift slightly (nothing has been re-run). Vibranc
 a restricted land (Cavern of Souls, Mishra's Workshop) keeps its restriction on the any-colour mana; a phased-out Kyodai turns the grant off and it returns when he phases back in (rules: it ends for good), a control
 change away and back resumes it, and losing Kyodai's abilities stops it (rules: it continues); Ward on an opponent's target is paid by a person only; a hybrid card cast by a path that prices from the printed pips (graveyard casts and some AI look-ahead) is paid at the printed colours;
 devotion-style pip counts count a hybrid symbol once; {2/W} and Phyrexian symbols are untouched. The AI has no line for Staff of Domination + Faeburrow Elder or for holding a flash Kyodai to answer removal;
-`data/plans/thanos.toml` only values Leyline (high when the Elder is in hand or out).
+`data/plans/kyodai.toml` only values Leyline (high when the Elder is in hand or out).
 **Engine drift to disclose before the next sims** (nothing re-run): hybrid cards now count for both colours in devotion (CR 700.5), so the sythis pool deck's Privileged Position adds +3 white devotion for Heliod and the zur pool deck's Steel of the Godhead adds +2 blue devotion for Thassa's Oracle (zur is a t5 seat, so it touches the baseline of every deck that faces t5); hybrid payment and colours change for Blade Historian (aurelia, t3) and Steel of the Godhead (zur, t5); Iroas with an Altar of the Pantheon now counts the Altar once, not twice; the person's Pyroblast-style target filter and O-Ring read current permanent colours. Re-measure the t3 and t5 baselines before any deck decision.
 **Guide corrections** (the guide was wrong; the 11-22 entry below repeats two of them): Urza's {5} plays the card free, so a Ballista found that way has X=0 (use the Staff to draw it); Collector Ouphe and Null Rod stop Lightning
 Greaves' equip, so under them Blightsteel attacks a turn later; a Sculpting Steel copy of Chrome Mox may imprint its own card (the 11-22 entry said it could not); The One Ring keeps draining after you stop drawing; Swords to Plowshares only targets
@@ -40,7 +40,7 @@ protected, Akroma's Will's second mode gives protection from each colour, Leylin
 A commander change, a one-card fix for the Staff of Domination and Faeburrow Elder route, and a land-for-land mana-base rebuild. Nothing was
 simulated: the engine has no Cali mode, and it has no hand-written card code for Kyodai or Leyline (`cardgen find --full` after `cardgen export`: Kyodai
 is Partial, its flash, flying and +5/+5 compiled from the Oracle text but its enter trigger not; Leyline is Unmodeled, all three abilities unparsed, and its exported
-cost is `GGBR`, not the hybrid `{G/W}{G/U}{B/G}{R/G}`; JD took the plan with no engine work). The key stays `thanos`; `data/my_decks.toml` names the deck "Kyodai" and its commander
+cost is `GGBR`, not the hybrid `{G/W}{G/U}{B/G}{R/G}`; JD took the plan with no engine work). The deck key was renamed from `thanos` to `kyodai` the same day (guide, plan, printings, spellbook, ownership and this folder moved with it); `data/my_decks.toml` names the deck "Kyodai" and its commander
 Kyodai, Soul of Kamigawa. The engine still plays the old commander's card code (impls/t6_thanos.rs) for any deck that seats Thanos.
 **Kyodai** ({3}{W}, 3/3 flash flier; enter: another permanent gains indestructible while he stays; {W}{U}{B}{R}{G}: +5/+5) takes Thanos's place. Why
 JD chose it: one white source and three generic cast him, so Sol Ring, Mana Crypt, Mana Vault and Ancient Tomb help (they could not pay for
@@ -71,7 +71,7 @@ Counts after: creatures 15 (16), enchantments 5 (4), Game Changers unchanged (Ky
 artifacts unchanged. An Opus consult picked the cut and the land list and found the Leyline blast exposure. Checks: Kyodai, Leyline and the 20 lands are
 Commander-legal and fit WUBRG (Scryfall and `cardgen find`); the fetchlands and duals are Full (mana only).
 **Open:** (1) superseded the same day: JD then asked for both cards to be fully modelled; see the next entry. (2) `data/ownership.toml` records Kyodai as have (JD bought it; the list JD sent on 2026-11-22 also makes Rhystic Study and Watery Grave proxies in this deck) and Leyline as a proxy, and the 20 lands as proxies; the replaced lands and Thanos and Windborn Muse are in `[spare]`.
-(3) `data/printings/thanos.txt` now holds JD's 100 printings (checked against Scryfall: every set and number exists and matches its card; six are Japanese-language Mystical Archive printings). (4) `data/spellbook/thanos.json` still lists
+(3) `data/printings/kyodai.txt` now holds JD's 100 printings (checked against Scryfall: every set and number exists and matches its card; six are Japanese-language Mystical Archive printings). (4) `data/spellbook/kyodai.json` still lists
 Thanos as the commander and was not re-fetched; its five included combos do not use the commander or Windborn Muse, but check them before trusting its
 "almost included" list. (5) Cali ban list: the guide's list (Black Lotus, the five Moxen and the rest) does not include any of the 20 lands, Kyodai or Leyline;
 whether proxies are allowed at JD's events is still open. (6) Local blast density (Pyroblast, Red Elemental Blast, Hydroblast) decides how much Leyline
@@ -93,7 +93,7 @@ three artifacts are out (the deck has 25 with the five artifact creatures, 24 be
 Bauble) was left out (JD took three). Engine status: Mox Opal, Tezzeret and Chrome Mox are Full (`cardgen find --full`). The plan file's
 turn<=4 rock priority now lists Mox Opal and Chrome Mox in place of Thought Vessel; Tezzeret has no plan line yet. Sculpting Steel must not copy
 Mox Opal (legendary) or Chrome Mox (the copy has nothing imprinted). Staff of Domination stays (a proxy, printing cmr 343). Route A2 is unchanged.
-`data/spellbook/thanos.json` was re-fetched on 2026-11-23 (after the two entries that used Fiery Emancipation had been removed): the five
+`data/spellbook/kyodai.json` was re-fetched on 2026-11-23 (after the two entries that used Fiery Emancipation had been removed): the five
 included combos are unchanged, so the new artifacts add none. Three combos are now "almost included": Tidespout Tyrant + Mox Opal and
 Hullbreaker Horror (with any {0} permanent, which Mox Opal and Chrome Mox now supply; both one card away, no result listed), and Time Vault + Tezzeret, Cruel Captain (infinite turns; Time Vault is not Commander-legal,
 so Spellbook marks the combo illegal; not in the list).
@@ -112,7 +112,7 @@ Grim, Gamble, Diabolic Intent) and Tinker. What it costs: Triple Triad ({R}{R}{R
 nonland mana value of 2.53 before the swap, 2.50 after (it went to the Ur-Dragon, where the Dragons cost 5 to 7). Not measured. An Opus consult rated Gifts the weaker of its two
 adds for this deck (Mindbreak Trap went to Y'shtola); Fiery Emancipation, the other {R}{R}{R} six-drop, was its next cut (it went out on 2026-11-22, above). In
 the simulator the AI builds Gifts piles from tutor value and graveyard worth (`engine/tutors.rs` `pile_tutor`), not from
-the combo, and the Oracle line, Tinker and Sneak Attack have no card code or plan lines for `thanos`, so a sim number
+the combo, and the Oracle line, Tinker and Sneak Attack have no card code or plan lines for `kyodai`, so a sim number
 would understate it. Check the blue count when a run exists: 12 land sources make {U}, 14 counting Exotic Orchard (blue
 only if an opponent's land makes it) and Plaza of Heroes (which cannot pay for Gifts).
 
@@ -127,7 +127,7 @@ Meteor Golem, Primeval Titan and The Mightstone and Weakstone, and stopped the o
 against an opposing Thassa's Oracle), so those go too. An Opus consult (Dockside Extortionist, not Steel, was the question
 then) ranked Mana Drain, Chrome Mox and Imperial Seal first and advised cutting Fiery Emancipation, the weakest card,
 rather than Elesh Norn; Fiery Emancipation went out on 2026-11-22 (above). The engine models Sculpting Steel (Full: it enters as a copy of the best artifact on the
-battlefield, `card_overrides.toml`), but `thanos` has no plan line for it and Tinker, Sneak Attack and the Rings loop are
+battlefield, `card_overrides.toml`), but `kyodai` has no plan line for it and Tinker, Sneak Attack and the Rings loop are
 not modelled, so a sim number would not reflect the Rings and Blightsteel lines. Not measured. Commander
 Spellbook lists no combo with Sculpting Steel for this list.
 
@@ -140,7 +140,7 @@ Spellbook lists no combo with Sculpting Steel for this list.
 - **Cards not modelled:** Tinker, Sneak Attack, Mana Crypt, Staff of Domination and the Oracle line (Thassa's Oracle
   with Demonic Consultation or Tainted Pact) need card code or catalogue combos; Haunted Ridge and An Offer You Can't
   Refuse are new.
-- **Plan file:** `data/plans/thanos.toml` still describes the previous list and is rewritten with the engine work.
+- **Plan file:** `data/plans/kyodai.toml` still describes the previous list and is rewritten with the engine work.
 
 ## Open questions
 

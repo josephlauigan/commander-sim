@@ -1,5 +1,5 @@
-# JD's Kyodai, Soul of Kamigawa Cali Commander artifact-combo deck (decklists/cali_commander/thanos-artifact-combo.md, key
-# `thanos`; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `thanos` is not a Tier
+# JD's Kyodai, Soul of Kamigawa Cali Commander artifact-combo deck (decklists/cali_commander/kyodai-artifact-combo.md, key
+# `kyodai`, `thanos` until 2026-11-22; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `kyodai` is not a Tier
 # 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Kyodai first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
@@ -10,7 +10,7 @@
 # Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
 # Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander values below are
 # placeholders for a {3}{W} flash flier, not tuned.
-deck = "thanos"
+deck = "kyodai"
 default = "plan"
 engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 

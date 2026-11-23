@@ -458,7 +458,7 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
 }
 
 fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc: Sc, want: &str) -> Outcome {
-    let mut g: Game = table(&[key, "seph", "thanos"]);
+    let mut g: Game = table(&[key, "seph", "kyodai"]);
     g.log = Some(vec![]);
     g.active = Some(P0);
     g.step = Step::Main1;
@@ -941,7 +941,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "sacrificing a permanent gives Korvold a +1/+1 counter and draws a card, both mandatory with no target or choice. The separate enters/attacks sacrifice asks the person which other permanent to sacrifice",
     ),
     (
-        "thanos: Tezzeret, Cruel Captain (Activate(2))",
+        "kyodai: Tezzeret, Cruel Captain (Activate(2))",
         "the -7 only gives the emblem, with no choice at that moment; the person is asked which artifact gets the three +1/+1 counters at every beginning of combat (`t6_godo::tez_emblem`, `human::cards::pick_perm`)",
     ),
 ];

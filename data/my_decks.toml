@@ -15,8 +15,8 @@ commander = "Sheoldred, the Apocalypse"
 ident = "B"
 tiers = ["t3", "t4"]
 
-[thanos]
-file = "cali_commander/thanos-artifact-combo.md"
+[kyodai]
+file = "cali_commander/kyodai-artifact-combo.md"
 name = "Kyodai"
 commander = "Kyodai, Soul of Kamigawa"
 ident = "WUBRG"

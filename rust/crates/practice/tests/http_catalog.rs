@@ -19,7 +19,7 @@ fn test_your_decks() {
     let o = s.client().get("/api/options").json();
     let d: std::collections::BTreeMap<&str, &serde_json::Value> =
         o["decks"].as_array().unwrap().iter().map(|x| (x["key"].as_str().unwrap(), x)).collect();
-    assert_eq!(d.keys().copied().collect::<Vec<_>>(), ["sheoldred", "thanos", "urdragon", "yoshimaru", "yshtola"]);
+    assert_eq!(d.keys().copied().collect::<Vec<_>>(), ["kyodai", "sheoldred", "urdragon", "yoshimaru", "yshtola"]);
     assert_eq!(d["sheoldred"]["name"], "Sheoldred, the Apocalypse"); // the deck file's commander line
     assert_eq!(d["sheoldred"]["commander"], "Sheoldred, the Apocalypse"); // the card the engine (and image) uses
     assert_eq!(d["sheoldred"]["bracket"], 4);

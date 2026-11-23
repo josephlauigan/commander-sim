@@ -1,4 +1,4 @@
-//! Kyodai, Soul of Kamigawa, the `thanos` deck's commander. Oracle text (data/scryfall_cache.json):
+//! Kyodai, Soul of Kamigawa, the `kyodai` deck's commander. Oracle text (data/scryfall_cache.json):
 //!
 //! - {3}{W} Legendary Creature - Dragon Spirit 3/3. "Flash. Flying. When Kyodai enters, another target permanent gains
 //!   indestructible for as long as you control Kyodai. {W}{U}{B}{R}{G}: Kyodai gets +5/+5 until end of turn."

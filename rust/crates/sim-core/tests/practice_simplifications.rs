@@ -416,7 +416,7 @@ fn the_garth_loop_leaves_every_new_garth_to_attack_when_the_person_says_none() {
 fn ragavan_hit() -> (Game, CardId) {
     use sim_core::engine::hooks::run_hook;
     use sim_core::hooks::{Call, Event};
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     let rag = perm(&mut g, P0, "Ragavan, Nimble Pilferer");
     g.player_mut(P0).hand.clear();
     hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
@@ -463,7 +463,7 @@ fn sea_gate_restoration_draws_for_the_real_hand_and_the_hand_size_ignores_ragava
 
 #[test]
 fn a_hand_without_exiled_cards_counts_as_before() {
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     g.player_mut(P0).hand.clear();
     hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Island"]);
     assert_eq!(sim_core::engine::values::hand_count(&g, P0), 3);

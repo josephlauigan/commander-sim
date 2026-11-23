@@ -12,13 +12,13 @@ use std::path::{Path, PathBuf};
 pub const FILES: [(&str, &str, &str); 5] = [
     ("yshtola", "JD", "yshtola-esper-drain.md"),
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
-    ("thanos", "cali_commander", "thanos-artifact-combo.md"),
+    ("kyodai", "cali_commander", "kyodai-artifact-combo.md"),
     ("urdragon", "JD", "urdragon-five-colour-dragons.md"),
     ("yoshimaru", "JD", "yoshimaru-tymna-blink.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 5] = ["yshtola", "sheoldred", "thanos", "urdragon", "yoshimaru"];
+pub const MINE: [&str; 5] = ["yshtola", "sheoldred", "kyodai", "urdragon", "yoshimaru"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 

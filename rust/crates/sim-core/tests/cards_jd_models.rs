@@ -188,7 +188,7 @@ fn baleful_mastery_with_the_mana_pays_full_and_nobody_draws() {
 // ======================================================== Thanos: Orim's Chant
 /// Thanos at a t6 table
 fn thanos_table() -> Game {
-    table(&["thanos", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
+    table(&["kyodai", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
 }
 
 fn chant(g: &mut Game, kicks: u32, turn: PlayerId) {
@@ -305,7 +305,7 @@ fn ojutai_digs_three_on_combat_damage() {
 // ======================================================== Thanos: Gemstone Caverns
 #[test]
 fn gemstone_caverns_begins_on_the_battlefield_when_not_starting() {
-    let mut g = table(&["kraum-tymna-blue-breach-midrange", "thanos", "sisay-legends-toolbox"]);
+    let mut g = table(&["kraum-tymna-blue-breach-midrange", "kyodai", "sisay-legends-toolbox"]);
     let c = hand(&mut g, P1, &["Gemstone Caverns", "Sol Ring", "Island"])[0];
     let (hand, exiled) = (g.player(P1).hand.len(), g.player(P1).exile.cards().len());
     sim_core::impls::card_models::caverns_opening(&mut g, P1);
@@ -318,7 +318,7 @@ fn gemstone_caverns_begins_on_the_battlefield_when_not_starting() {
 
 #[test]
 fn gemstone_caverns_stays_in_the_starting_players_hand() {
-    let mut g = table(&["thanos", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"]);
+    let mut g = table(&["kyodai", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"]);
     let c = hand(&mut g, P0, &["Gemstone Caverns"])[0];
     sim_core::impls::card_models::caverns_opening(&mut g, P0);
     assert!(g.player(P0).hand.contains(&c));

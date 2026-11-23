@@ -15,7 +15,7 @@ fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
 
 /// a table with the library holding exactly these cards (the search finds them), P0 holding the fetch land
 fn setup(fetch: &str, library: &[&str]) -> Game {
-    let mut g = table(&["thanos", "seph"]);
+    let mut g = table(&["kyodai", "seph"]);
     g.active = Some(P0);
     g.step = Step::Main1;
     hand(&mut g, P0, &[fetch]);

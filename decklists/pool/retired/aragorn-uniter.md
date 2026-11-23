@@ -1,7 +1,7 @@
 # Aragorn, the Uniter — Four-Colour Spell Burn
 
 **Retired 2026-11-13 (JD).** The deck is broken up: 29 of its cards went to the Cali Commander Thanos list
-(`decklists/cali_commander/thanos-artifact-combo.md`), the rest to the new Ur-Dragon list and the binder. This guide moved here
+(`decklists/cali_commander/kyodai-artifact-combo.md` (it was `thanos-artifact-combo.md` until 2026-11-22)), the rest to the new Ur-Dragon list and the binder. This guide moved here
 from `decklists/JD/` on 2026-11-14. The `aragorn` key left the simulator on 2026-11-15; the list is kept here only as the
 testkit seat of its card code (`testkit::retired_decks`). Findings: `audit/retired/aragorn/FINDINGS.md`.
 

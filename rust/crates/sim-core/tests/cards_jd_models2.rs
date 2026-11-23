@@ -12,7 +12,7 @@ const P1: PlayerId = PlayerId(1);
 
 /// Thanos at a t6 table
 fn thanos_table() -> Game {
-    let mut g = table(&["thanos", "rograkh-thrasios-creature-combo", "sisay-legends-toolbox"]);
+    let mut g = table(&["kyodai", "rograkh-thrasios-creature-combo", "sisay-legends-toolbox"]);
     g.active = Some(P0);
     g
 }

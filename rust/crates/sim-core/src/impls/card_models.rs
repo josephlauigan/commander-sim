@@ -107,7 +107,7 @@ fn ojutai_hit(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg
     Ok(())
 }
 
-// ------------------------------------------------------------------ Leyline of the Guildpact (Thanos)
+// ------------------------------------------------------------------ Leyline of the Guildpact (Kyodai deck)
 const LEYLINE: &str = "Leyline of the Guildpact";
 
 /// Leyline has no ability of its own that fires: the statics ("each nonland permanent you control is all colors",

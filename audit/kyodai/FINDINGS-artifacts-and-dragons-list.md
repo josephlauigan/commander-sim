@@ -1,12 +1,12 @@
 # Thanos, the Mad Titan: findings of the artifacts-and-Dragons list (retired 2026-11-13)
 
-The list was replaced on 2026-11-13 by the Cali Commander artifact-combo list (`audit/thanos/FINDINGS.md`); this file is its history.
+The list was replaced on 2026-11-13 by the Cali Commander artifact-combo list (`audit/kyodai/FINDINGS.md`; this folder was `audit/thanos/` and the deck key `thanos` until 2026-11-22); this file is its history.
 
 The deck's living list of strengths and weaknesses and what was tested.
 
 **List:** `decklists/JD/thanos-artifacts-and-dragons.md`, built 2026-11-05 from the Thanos, Karn and Ur-Dragon decks (The
 Ur-Dragon in the 99; Basalt Monolith + Rings of Brighthearth and Astral Dragon + Cursed Mirror as the two infinite
-combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Plan:** `data/plans/thanos.toml`
+combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Plan:** `data/plans/thanos.toml` (now `data/plans/kyodai.toml`)
 (PROVISIONAL: written from the deck document's pilot guide, not from a paired test). **No sims yet.** The findings of the
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
@@ -76,7 +76,7 @@ build ef343cc1: **19.7%** (95% CI 18.0-21.5) over t5, 1,978 games counted (22 hi
 online in only 9.9% of games, yet combo is 47% of the wins. Deaths by opponent: Miirym 18.4%, Kinnan 19.0%, Zur 15.0%, Urza 14.9%,
 Yawgmoth 12.5%; won when seated: Kinnan 32.0%, Miirym 29.4%, Urza 26.4%, Zur 25.5%, Yawgmoth 20.2%.
 No old-build comparison: the old list played t6 and has no 11/05 run at t5 (its numbers are in `FINDINGS-old-list.md`).
-**The plan file `data/plans/thanos.toml` is PROVISIONAL**: written from the deck document's pilot guide, not from a paired test, so this
+**The plan file `data/plans/kyodai.toml` is PROVISIONAL**: written from the deck document's pilot guide, not from a paired test, so this
 number measures list plus provisional plan together. Engine changes that can touch the deck: C2 Maelstrom (t5 Miirym) and Forensic
 Gadgeteer (t5 Urza) change two opponents; C3 opponents cast their commander on time (+1.5). The rewire (#270) is the list itself.
 **Re-run after the crash fix:** the 22 skipped games panicked in the look-ahead's `cast_counter` (a colourless counterspell cast

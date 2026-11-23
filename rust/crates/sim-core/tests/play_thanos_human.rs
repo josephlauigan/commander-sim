@@ -56,7 +56,7 @@ fn lib_to(g: &mut Game, p: PlayerId, top: &[&str]) {
 fn primeval_titan_person_can_find_zero_one_or_two_lands_on_enter_and_attack() {
     for attack in [false, true] {
         for count in 0..=2 {
-            let mut g = table(&["thanos", "urza-mono-blue-artifacts"]);
+            let mut g = table(&["kyodai", "urza-mono-blue-artifacts"]);
             let titan = perm(&mut g, P0, "Primeval Titan");
             let forest = card(&g, "Forest");
             let tower = card(&g, "Command Tower");
@@ -103,7 +103,7 @@ fn primeval_titan_person_can_find_zero_one_or_two_lands_on_enter_and_attack() {
 
 #[test]
 fn primeval_titan_probe_does_not_ask_search_shuffle_or_put_lands() {
-    let mut g = table(&["thanos", "urza-mono-blue-artifacts"]);
+    let mut g = table(&["kyodai", "urza-mono-blue-artifacts"]);
     let titan = perm(&mut g, P0, "Primeval Titan");
     let forest = card(&g, "Forest");
     g.player_mut(P0).library = vec![forest, forest];

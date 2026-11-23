@@ -15,7 +15,7 @@ use sim_core::state::Game;
 /// a game whose seat 0 is `deck`, with exactly this hand (taken from the library; the rest stays shuffled)
 fn game_with(deck: &str, hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
+    let others = ["sheoldred", "urdragon", "kyodai", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -129,7 +129,7 @@ fn kraum_six_lands_fit_no_row_and_are_sent_back() {
 #[test]
 fn thanos_zero_lander_is_sent_back_and_the_hint_says_what_it_holds() {
     let (mut g, p) = game_with(
-        "thanos",
+        "kyodai",
         &[
             "Sol Ring",
             "Mana Vault",
@@ -203,7 +203,7 @@ fn urdragon_one_lander_without_fast_mana_goes_back_by_its_row() {
 #[test]
 fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
     let (mut g, p) = game_with(
-        "thanos",
+        "kyodai",
         &[
             "Command Tower",
             "Sol Ring",
@@ -230,7 +230,7 @@ fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
 /// Cloud's retired test seat (`testkit::retired_decks`: its real list and its retired plan file): the practice setup no
 /// longer offers the deck, so the seat is built the way the engine tests build theirs
 fn cloud_game_with(hand: &[&str]) -> (Game, PlayerId) {
-    let mut g = sim_core::testkit::table(&["cloud", "sheoldred", "urdragon", "thanos"]);
+    let mut g = sim_core::testkit::table(&["cloud", "sheoldred", "urdragon", "kyodai"]);
     let p = PlayerId(0);
     for n in hand {
         let i = g
@@ -314,8 +314,8 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["thanos", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
-        let others = ["sheoldred", "urdragon", "thanos", "yshtola"];
+    for deck in ["kyodai", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
+        let others = ["sheoldred", "urdragon", "kyodai", "yshtola"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
         for seed in 0..12u64 {

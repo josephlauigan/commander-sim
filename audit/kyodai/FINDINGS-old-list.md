@@ -1,5 +1,7 @@
 # Thanos, the Mad Titan (deck key `thanos`, Tier 6)
 
+(This folder was `audit/thanos/` and the deck key `thanos` until 2026-11-22; `audit/kyodai/FINDINGS.md` is the current list.)
+
 The list is Scion v1 minus Scion, Ancient Copper Dragon, Korvold and Prismari, plus Fierce Guardianship, Deflecting
 Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos took Scion's seat, plan file and tests on
 2026-10-30. Scion's history is in `audit/scion/`.
