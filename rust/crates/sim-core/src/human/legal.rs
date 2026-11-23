@@ -315,7 +315,7 @@ fn tgt_ok(g: &Game, kind: &str, m: PermId) -> bool {
         "a" => a,
         "cna" => cr && !a,
         "ae" => a || e,
-        "blue" => g.perm(m).cd.is_some_and(|c| g.db.get(c).colors.has('U')),
+        "blue" => colors_of(g, m).has('U'),
         "ac" => cr || a,
         _ => cr, // 'c' and anything unknown
     }

@@ -1497,6 +1497,8 @@ pub struct Game {
     pub lineage: bool,
     /// partials.coat_bonus's cache: (bf_ver, each creature's bonus), as Python's `g.coat_cache`
     pub coat_cache: std::cell::RefCell<Option<(u64, Vec<(PermId, i32)>)>>,
+    /// the colours the hybrid symbols of a card were last priced at (engine::hybrid; per game, never shared)
+    pub hybrid_paid: std::cell::RefCell<std::collections::HashMap<CardId, String>>,
     /// Return the Favor is being cast (it doesn't copy itself): Python's `g.in_rtf`
     pub in_rtf: bool,
     /// how deep Chatterfang's Squirrels for artifact tokens are nested (t3: a token loop stops at 10)
@@ -1673,6 +1675,7 @@ impl Game {
             coat: false,
             lineage: false,
             coat_cache: std::cell::RefCell::new(None),
+            hybrid_paid: Default::default(),
             in_rtf: false,
             chatter_depth: 0,
             blink_depth: 0,

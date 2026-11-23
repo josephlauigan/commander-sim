@@ -398,7 +398,7 @@ fn devotion(g: &Game, p: PlayerId) -> i32 {
         .iter()
         .filter(|&&m| g.perm(m).on_bf)
         .filter_map(|&m| g.perm(m).cd)
-        .map(|c| g.db.get(c).pips.matches('B').count() as i32)
+        .map(|c| g.db.get(c).devotion_to("B") as i32)
         .ssum()
 }
 

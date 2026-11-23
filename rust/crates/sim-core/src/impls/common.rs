@@ -19,7 +19,9 @@ use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{epow, etgh, has_type, once_per_turn, protected_from, pval, stopped, untargetable};
+use crate::engine::values::{
+    colors_of, epow, etgh, has_type, once_per_turn, protected_from, pval, stopped, untargetable,
+};
 use crate::engine::zones::{
     Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, exiled_from_bf, leave, make_tokens, max_by,
     mill, min_by, sac_worth, searchable, to_zone_card,
@@ -581,7 +583,7 @@ pub fn oring_exile(
     creature_only: bool,
 ) -> Res {
     let src_cd = g.perm(src).cd;
-    let pips = src_cd.map_or(Colors::NONE, |c| g.db.get(c).colors);
+    let pips = colors_of(g, src); // Leyline of the Guildpact recolours the Ring
     let groups: Vec<Vec<PlayerId>> =
         if per_opponent { g.opps(p).map(|q| vec![q]).collect() } else { vec![g.opps(p).collect()] };
     let mut targets = vec![];
@@ -3261,7 +3263,7 @@ fn devotion(g: &Game, p: PlayerId, col: char) -> u32 {
         .perms
         .iter()
         .filter(|&&m| !g.perm(m).phased && def(g, m).is_some_and(|d| d.perm))
-        .map(|&m| def(g, m).unwrap().pips.chars().filter(|&ch| ch == col).count() as u32)
+        .map(|&m| def(g, m).unwrap().devotion_to(&col.to_string()) as u32)
         .sum()
 }
 

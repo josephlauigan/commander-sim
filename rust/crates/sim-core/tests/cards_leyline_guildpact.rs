@@ -241,8 +241,8 @@ fn urborg_adds_to_leyline() {
 }
 
 #[test]
-fn blood_moon_interaction() {
-    // Policy: the engine has no timestamps, so Blood Moon always wins over Leyline for a nonbasic land. By the rules the
+fn blood_moon_interaction_pins_a_known_limit() {
+    // Pins a known limit (Opus review finding 12), not Oracle behaviour. Policy: the engine has no timestamps, so Blood Moon always wins over Leyline for a nonbasic land. By the rules the
     // later of the two would. A basic land is not touched by Blood Moon and keeps Leyline's types.
     let (mut g, _) = with_leyline();
     let mine = lands(&mut g, P0, "Strip Mine", 1, false)[0];

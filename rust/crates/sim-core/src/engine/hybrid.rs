@@ -6,14 +6,6 @@
 use crate::engine::mana::can_pay_spell;
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
-use std::cell::RefCell;
-use std::collections::HashMap;
-
-thread_local! {
-    /// the colours the hybrid symbols of a card were last priced at ("RG" for Vibrance paid {R}{G}): a card that
-    /// cares which colours were spent on it (Vibrance) reads them when it enters
-    static PRICED: RefCell<HashMap<CardId, String>> = RefCell::new(HashMap::new());
-}
 
 /// the hybrid symbols of a card as (first colour, other colour)
 fn pairs(hybrid: &str) -> Vec<(char, char)> {
@@ -56,19 +48,21 @@ pub fn resolve(g: &Game, p: PlayerId, c: CardId, gn: u32, pips: &mut String) {
         tried.push(key);
         let cand: String = if m == 0 { pips.clone() } else { rest.chars().chain(chosen.iter().copied()).collect() };
         if can_pay_spell(g, p, c, gn, &cand, false) {
-            record(c, &mut chosen);
+            record(g, c, &mut chosen);
             *pips = cand;
             return;
         }
     }
 }
 
-fn record(c: CardId, chosen: &mut [char]) {
+/// the colours the hybrid symbols of a card were last priced at ("RG" for Vibrance paid {R}{G}) are kept in the game
+/// (`Game::hybrid_paid`): a card that cares which colours were spent on it (Vibrance) reads them when it enters
+fn record(g: &Game, c: CardId, chosen: &mut [char]) {
     chosen.sort();
-    PRICED.with(|m| m.borrow_mut().insert(c, chosen.iter().collect()));
+    g.hybrid_paid.borrow_mut().insert(c, chosen.iter().collect());
 }
 
-/// the colours the hybrid symbols of c were last priced at, sorted ("GG", "GR"); None when it never was
-pub fn priced(c: CardId) -> Option<String> {
-    PRICED.with(|m| m.borrow().get(&c).cloned())
+/// the colours the hybrid symbols of c were last priced at in this game, sorted ("GG", "GR"); None when it never was
+pub fn priced(g: &Game, c: CardId) -> Option<String> {
+    g.hybrid_paid.borrow().get(&c).cloned()
 }

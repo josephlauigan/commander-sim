@@ -471,12 +471,17 @@ pub fn casts_isc(g: &Game, p: PlayerId) -> i32 {
 
 /// rules2.devotion: the coloured pips of `col` among p's permanents
 pub fn devotion(g: &Game, p: PlayerId, col: char) -> usize {
+    devotion_to(g, p, &col.to_string())
+}
+
+/// devotion to the colours `cols` together ("RW" for Iroas): a symbol that has two of them counts once
+pub fn devotion_to(g: &Game, p: PlayerId, cols: &str) -> usize {
     g.player(p)
         .perms
         .iter()
         .filter(|&&m| !g.perm(m).phased)
         .filter_map(|&m| g.perm(m).cd)
-        .map(|c| g.db.get(c).pips.chars().filter(|&x| x == col).count())
+        .map(|c| g.db.get(c).devotion_to(cols))
         .sum::<usize>()
         + crate::impls::t45_heliod_zur::devotion_bonus(g, p) // --- Tiers 4/5 (heliod-zur): Altar of the Pantheon
 }

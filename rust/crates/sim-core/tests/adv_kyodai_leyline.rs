@@ -252,7 +252,6 @@ fn elder_pt_and_mana_on_both_seats() {
 }
 /// Permanent recolouring never changes devotion; Leyline's GU symbol contributes one blue.
 #[test]
-#[ignore = "FAILS: Leyline GU hybrid contributes zero blue devotion"]
 fn leyline_devotion_is_printed_symbols_only() {
     let mut g = game();
     perm(&mut g, P0, "Serra Angel");
@@ -264,7 +263,6 @@ fn leyline_devotion_is_printed_symbols_only() {
 }
 /// A hybrid symbol contributes devotion to each of its colours, regardless of payment.
 #[test]
-#[ignore = "FAILS: devotion ignores second half of hybrid symbols"]
 fn hybrid_devotion_counts_both_halves() {
     let mut g = game();
     perm(&mut g, P0, "Kitchen Finks");
@@ -419,7 +417,6 @@ fn vibrance_generic_colours_can_trigger_both_abilities() {
 }
 /// Pricing another game/search branch cannot alter an already-paid spell's resolution.
 #[test]
-#[ignore = "FAILS: cost estimate in another game overwrites actual paid colours"]
 fn vibrance_pricing_other_game_does_not_rewrite_paid_cast() {
     let mut g = game();
     lands(&mut g, P0, "Mountain", 5, false);
@@ -437,7 +434,6 @@ fn vibrance_pricing_other_game_does_not_rewrite_paid_cast() {
 }
 /// Moving a paid game state to a new thread must not change its meaning.
 #[test]
-#[ignore = "FAILS: paid colours are thread-local rather than part of the game"]
 fn vibrance_paid_state_is_thread_independent() {
     let mut g = game();
     lands(&mut g, P0, "Forest", 5, false);
@@ -938,7 +934,6 @@ fn kyodai_resolved_grant_does_not_recheck_target_legality() {
 
 /// A person casting REB can target a permanent that Leyline has made blue, just as the AI can.
 #[test]
-#[ignore = "FAILS: human target filter ignores Leyline permanent colours"]
 fn person_red_elemental_blast_sees_leyline_blue_permanent() {
     let mut g = game();
     leyline(&mut g, P0);
@@ -953,7 +948,6 @@ fn person_red_elemental_blast_sees_leyline_blue_permanent() {
 }
 /// Leyline makes Oblivion Ring green too, so it cannot target an opponent's pro-green permanent.
 #[test]
-#[ignore = "FAILS: O-Ring reads printed source colours instead of Leyline colours"]
 fn leyline_oblivion_ring_source_respects_protection_from_green() {
     let mut g = game();
     leyline(&mut g, P0);

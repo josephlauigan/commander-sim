@@ -323,6 +323,15 @@ impl CardDef {
         self.kws.iter().any(|k| &**k == kw)
     }
 
+    /// its mana symbols that count toward devotion to the colours `cols` (CR 700.5: a symbol counts once, for any
+    /// colour it has; a hybrid symbol counts for either half, `pips` holding only the first)
+    pub fn devotion_to(&self, cols: &str) -> usize {
+        let set = Colors::from_letters(cols);
+        let hy: Vec<char> = self.hybrid.chars().collect();
+        self.pips.chars().filter(|&c| set.has(c)).count()
+            + hy.chunks_exact(2).filter(|w| !set.has(w[0]) && set.has(w[1])).count()
+    }
+
     pub fn has_subtype(&self, s: &str) -> bool {
         self.subtypes.iter().any(|k| &**k == s)
     }

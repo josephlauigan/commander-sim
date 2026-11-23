@@ -175,7 +175,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .iter()
             .filter_map(|&m| g.perm(m).cd)
             .filter(|&c| g.db.get(c).perm)
-            .map(|c| g.db.get(c).pips.chars().filter(|&x| x == 'B').count() as i32)
+            .map(|c| g.db.get(c).devotion_to("B") as i32)
             .ssum()
             .min(10),
         "target_power" => ctx.snapshot.map_or(2, |s| s.0),
@@ -1373,7 +1373,7 @@ fn run(
                 .filter(|&&m| !g.perm(m).phased)
                 .filter_map(|&m| g.perm(m).cd)
                 .filter(|&c| g.db.get(c).perm)
-                .map(|c| g.db.get(c).pips.chars().filter(|&ch| ch == 'U').count())
+                .map(|c| g.db.get(c).devotion_to("U"))
                 .sum();
             if x >= g.player(p).library.len() {
                 return crate::ai::win(g, p, "combo", Some(false)); // an alternate win

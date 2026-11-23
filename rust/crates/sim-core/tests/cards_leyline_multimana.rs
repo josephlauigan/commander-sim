@@ -218,8 +218,9 @@ fn gaeas_cradle_gets_the_any_colour_alternative() {
 }
 
 #[test]
-fn karoo_and_lotus_are_left_as_they_were() {
-    // an "each colour" land has no alternative modelled (see the report): unchanged
+fn karoo_and_lotus_are_left_as_they_were_a_known_limit() {
+    // Pins a known limit, not Oracle behaviour (the Karoo should gain Leyline's alternative): an "each colour" land has
+    // no alternative modelled (see the report), so it is unchanged
     let mut g = with_leyline();
     let karoo = lands(&mut g, P0, "Golgari Rot Farm", 1, false)[0];
     let u = unit_of(&g, karoo);

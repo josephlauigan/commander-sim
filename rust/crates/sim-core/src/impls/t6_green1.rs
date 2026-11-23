@@ -417,7 +417,7 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let p = owner(g, src);
     let mut mode = VIBRANCE_MODE.with(|c| c.replace(0));
     if mode == 0 {
-        mode = match crate::engine::hybrid::priced(g.perm(src).card()).as_deref() {
+        mode = match crate::engine::hybrid::priced(g, g.perm(src).card()).as_deref() {
             None | Some("RR") => 1,
             Some("GG") => 2,
             Some(_) => 3,

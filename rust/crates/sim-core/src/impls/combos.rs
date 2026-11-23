@@ -1312,7 +1312,7 @@ pub(crate) fn oracle_devotion(g: &Game, p: PlayerId) -> usize {
         .filter(|&&m| !g.perm(m).phased)
         .filter_map(|&m| g.perm(m).cd)
         .filter(|&c| g.db.get(c).perm)
-        .map(|c| g.db.get(c).pips.matches('U').count())
+        .map(|c| g.db.get(c).devotion_to("U"))
         .sum()
 }
 

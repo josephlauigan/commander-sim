@@ -278,7 +278,7 @@ fn vibrance_paid_with_red_deals_3() {
     let mut g = tbl();
     let life = g.player(P1).life;
     let c = vibrance_cast_with(&mut g, "Mountain");
-    assert_eq!(sim_core::engine::hybrid::priced(c).as_deref(), Some("RR"));
+    assert_eq!(sim_core::engine::hybrid::priced(&g, c).as_deref(), Some("RR"));
     assert_eq!(g.player(P1).life, life - 3, "{{R}}{{R}} was spent: 3 damage");
 }
 
@@ -287,7 +287,56 @@ fn vibrance_paid_with_green_finds_a_land_and_gains_2() {
     let mut g = tbl();
     let (life, opp) = (g.player(P0).life, g.player(P1).life);
     let c = vibrance_cast_with(&mut g, "Forest");
-    assert_eq!(sim_core::engine::hybrid::priced(c).as_deref(), Some("GG"), "no red: the hybrid is paid with green");
+    assert_eq!(sim_core::engine::hybrid::priced(&g, c).as_deref(), Some("GG"), "no red: the hybrid is paid with green");
     assert_eq!(g.player(P0).life, life + 2, "{{G}}{{G}} was spent: 2 life");
     assert_eq!(g.player(P1).life, opp, "and no damage");
+}
+
+// ======================================================== the paid-colour record belongs to its game
+#[test]
+fn the_paid_colour_record_is_per_game() {
+    let mut g = tbl();
+    let c = vibrance_cast_with(&mut g, "Mountain");
+    assert_eq!(sim_core::engine::hybrid::priced(&g, c).as_deref(), Some("RR"));
+    let mut other = tbl();
+    lands(&mut other, P0, "Forest", 5, false);
+    let _ = cost_of(&other, P0, c); // another game prices the same card id at GG
+    assert_eq!(sim_core::engine::hybrid::priced(&other, c).as_deref(), Some("GG"));
+    assert_eq!(sim_core::engine::hybrid::priced(&g, c).as_deref(), Some("RR"), "the first game's record is its own");
+    assert_eq!(sim_core::engine::hybrid::priced(&tbl(), c), None, "a fresh game has no record");
+}
+
+// ======================================================== devotion counts both halves of a hybrid symbol (CR 700.5)
+#[test]
+fn blade_historian_counts_once_for_red_and_white_together_and_in_full_for_each() {
+    use sim_core::impls::rules2::{devotion, devotion_to};
+    let mut g = tbl();
+    perm(&mut g, P0, "Blade Historian"); // {2}{R/W}{R/W}{R/W}{R/W}
+    assert_eq!(devotion(&g, P0, 'R'), 4);
+    assert_eq!(devotion(&g, P0, 'W'), 4, "the second half counts too");
+    assert_eq!(devotion_to(&g, P0, "RW"), 4, "devotion to red and white together counts each symbol once (Iroas)");
+    assert_eq!(devotion_to(&g, P0, "WR"), 4);
+    assert_eq!(devotion_to(&g, P0, "G"), 0);
+    perm(&mut g, P0, "Goblin Guide"); // {R}
+    assert_eq!(devotion_to(&g, P0, "RW"), 5);
+    assert_eq!(devotion(&g, P0, 'W'), 4);
+}
+
+#[test]
+fn devotion_to_a_card_counts_hybrid_pairs_by_either_half() {
+    let g = tbl();
+    let finks = g.db.get(card(&g, "Kitchen Finks"));
+    assert_eq!(
+        (finks.devotion_to("G"), finks.devotion_to("W"), finks.devotion_to("GW"), finks.devotion_to("U")),
+        (2, 2, 2, 0)
+    );
+    let leyline = g.db.get(card(&g, "Leyline of the Guildpact"));
+    assert_eq!(
+        (leyline.devotion_to("U"), leyline.devotion_to("W"), leyline.devotion_to("B"), leyline.devotion_to("R")),
+        (1, 1, 1, 1)
+    );
+    assert_eq!(leyline.devotion_to("G"), 4, "G is in every one of the four symbols");
+    assert_eq!(leyline.devotion_to("WUBRG"), 4, "four symbols, each counted once");
+    let bolt = g.db.get(card(&g, "Lightning Bolt"));
+    assert_eq!((bolt.devotion_to("R"), bolt.devotion_to("RW")), (1, 1));
 }
