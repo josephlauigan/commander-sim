@@ -75,7 +75,7 @@ fn hearth_and_home_never_chooses_ballista_while_another_holder_exists() {
 
 #[test]
 fn the_veto_beats_any_other_holder() {
-    // Ballista against Yoshimaru as the only candidates: Yoshimaru (value 0 in arm C) takes it over the veto (-1000)
+    // Ballista against Yoshimaru as the only candidates: Yoshimaru (value 0) takes it over the veto (-1000)
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let b = ballista(&mut g);
@@ -120,7 +120,7 @@ fn tymna_is_not_a_holder_for_a_sword_but_is_for_swiftfoot_boots() {
     let sword = perm(&mut g, P0, SOFI);
     let boots = perm(&mut g, P0, BOOTS);
     assert_eq!(target_of(&g, sword), Some(ground), "the Sword goes on the other creature");
-    // arm C: Boots add no power and score 0 on her (no Boots bonus), the Sword takes the six-point penalty
+    // Boots add no power and score 0 on her (no Boots bonus), the Sword takes the six-point penalty
     let (vb, vs) = (tc::equip_holder_value(&g, P0, boots, t), tc::equip_holder_value(&g, P0, sword, t));
     assert_eq!((vb, vs), (0.0, -6.0), "Boots {vb}, Sword {vs}");
     // Yoshimaru is not penalised any more: any Equipment scores 0 on him
@@ -131,7 +131,7 @@ fn tymna_is_not_a_holder_for_a_sword_but_is_for_swiftfoot_boots() {
 
 #[test]
 fn a_flier_still_wins_on_the_generic_score_and_the_arm_adds_nothing() {
-    // arm C: no flier or connect term in the arm (the generic equip score's own +2 for a flier still picks it)
+    // no flier or connect term in the arm (the generic equip score's own +2 for a flier still picks it)
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let ground = token(&mut g, P0, 3);
@@ -144,7 +144,7 @@ fn a_flier_still_wins_on_the_generic_score_and_the_arm_adds_nothing() {
 
 #[test]
 fn the_arm_scores_yoshimaru_like_any_other_creature() {
-    // arm C: no Yoshimaru penalty; the generic score still prefers the flier here
+    // no Yoshimaru penalty; the generic score still prefers the flier here
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let y = perm(&mut g, P0, YOSHI);
@@ -155,8 +155,8 @@ fn the_arm_scores_yoshimaru_like_any_other_creature() {
 }
 
 #[test]
-fn delney_changes_nothing_in_arm_c() {
-    // arm C: the Delney term is removed; every probe scores 0 with and without Delney out
+fn delney_changes_nothing() {
+    // there is no Delney term; every probe scores 0 with and without Delney out
     let mut g = tbl();
     let (two, one, big, cloud) =
         (token(&mut g, P0, 2), token(&mut g, P0, 1), token(&mut g, P0, 3), perm(&mut g, P0, CLOUD));
@@ -395,4 +395,37 @@ fn another_seat_keeps_the_old_free_attach_choice() {
     let e = perm(&mut g, P0, SOHH);
     perm(&mut g, P0, "Kor Outfitter");
     assert_eq!(g.perm(e).attached, Some(b));
+}
+
+// ------------------------------------------------------------------ a worn piece moves only off a penalised holder
+const ARDENN: &str = "Ardenn, Intrepid Archaeologist";
+
+#[test]
+fn free_attach_never_moves_a_worn_piece_between_two_unpenalised_holders() {
+    // a Sword on a ground creature; a better-scoring flier arrives; Ardenn leaves the Sword where it is
+    let mut g = tbl();
+    let ground = token(&mut g, P0, 2);
+    let sword = perm(&mut g, P0, SOFI);
+    g.perm_mut(sword).attached = Some(ground);
+    perm(&mut g, P0, "Serra Angel");
+    perm(&mut g, P0, ARDENN);
+    combat_start(&mut g);
+    assert_eq!(g.perm(sword).attached, Some(ground));
+}
+
+#[test]
+fn free_attach_moves_a_sword_off_tymna_and_hearth_and_home_off_ballista() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, TYMNA);
+    let sword = perm(&mut g, P0, SOFI);
+    g.perm_mut(sword).attached = Some(t);
+    let b = ballista_counters(&mut g, P0, 4);
+    let sohh = perm(&mut g, P0, SOHH);
+    g.perm_mut(sohh).attached = Some(b);
+    let flier = perm(&mut g, P0, "Serra Angel");
+    perm(&mut g, P0, ARDENN);
+    combat_start(&mut g);
+    // both are moved to the creature that scores best among the unpenalised holders for both pieces
+    assert_eq!(g.perm(sword).attached, Some(flier), "off Tymna");
+    assert_eq!(g.perm(sohh).attached, Some(flier), "off Ballista");
 }

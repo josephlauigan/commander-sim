@@ -1290,8 +1290,8 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
         .count()
 }
 
-/// what Equipment `e` is worth on creature `m` for the kraum seat (0 for any other seat): evasion Equipment goes on a
-/// creature that can't get through on its own, one point of value per opponent it newly reaches (and a loss when the
+/// what Equipment `e` is worth on creature `m` for the yoshimaru seat (`yoshimaru_holder_value`) or the kraum seat (0 for
+/// any other seat). The kraum seat: evasion Equipment goes on a creature that can't get through on its own, one point of value per opponent it newly reaches (and a loss when the
 /// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
 /// anyway, since its hit is the card Tymna draws.
 pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
@@ -1370,12 +1370,12 @@ pub(crate) fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
     gives_prot_white(g, e) && name_of(g, m) == BALLISTA
 }
 
-/// what Equipment `e` is worth on creature `m` for the yoshimaru seat. THE VETO-ONLY EXPERIMENT (arm C, program-decisions
-/// 2026-11-23): only the two rules the guide supports. Never Walking Ballista with Equipment that gives protection from
-/// white (data-driven: Sword of Hearth and Home today; Heliod's lifelink could no longer target it, which breaks Line
-/// B), and Tymna not with +power Equipment (added power switches off Delney's doubling and evasion for her; Swiftfoot
-/// Boots and Mithril Coat add none, so they are unpenalised on her). Everything else scores 0: the earlier flier,
-/// connect, Yoshimaru, Delney and Boots terms were guessed weights and are removed.
+/// what Equipment `e` is worth on creature `m` for the yoshimaru seat: the guide-backed carrier rule, two rules and
+/// nothing else (audit/yoshimaru/FINDINGS.md, "Equipment carrier rule, paired tests 2026-11-23"). Never Walking Ballista
+/// with Equipment that gives protection from white (data-driven: Sword of Hearth and Home today; Heliod's lifelink could
+/// no longer target it, which breaks Line B), and Tymna not with +power Equipment (added power switches off Delney's
+/// doubling and evasion for her; Swiftfoot Boots and Mithril Coat add none, so they are unpenalised on her). Everything
+/// else scores 0.
 /// (Swiftfoot Boots never reach `dsl::equip_options`: `pool::special_options` equips them, so this function matters to
 /// them only in the free attach paths (`cloud::yoshimaru_attach`) and to direct calls.)
 fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {

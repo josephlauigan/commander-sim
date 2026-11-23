@@ -505,15 +505,16 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 // ------------------------------------------------------------------ Kor Outfitter, Brass Squire, Auriok Steelshaper
 const STEELSHAPER: &str = "Auriok Steelshaper";
 
-/// the yoshimaru seat's free attach (Kor Outfitter, Ardenn; the veto-only experiment: `equip_holder_value` is just the
-/// veto and Tymna's no-power rule, so the pieces' values are 0 and `holder_score` picks the creature): the creature that wears the Equipment it can pull, and
-/// that Equipment (best first: highest `tymna_cards::equip_holder_value`, a loose piece before a worn one on a tie).
-/// Each (Equipment, creature) pair is scored with `equip_holder_value`; a pair the seat's rule is against
-/// (`holder_penalised`: protection from white on Walking Ballista, +power Equipment on Tymna) is dropped, and so is a worn piece unless the new holder beats its current one. A creature
-/// scores `holder_score` plus (value + 2) for each kept piece: all of them with `single = false` (Ardenn moves every
-/// piece to one target, so the creature that can wear the most wins), the best one with `single = true` (Kor Outfitter
-/// attaches one). Loose Swiftfoot Boots are never kept while Tymna is another legal target. Nothing is returned when no
-/// creature keeps a piece.
+/// the yoshimaru seat's free attach (Kor Outfitter, Ardenn), under the guide-backed carrier rule: the creature that
+/// wears the Equipment it can pull, and that Equipment (best first: highest `tymna_cards::equip_holder_value`, a loose
+/// piece before a worn one on a tie). Each (Equipment, creature) pair is scored with `equip_holder_value`, which is
+/// only the rule (the veto and Tymna's no-power rule), so the values are 0 and `holder_score` picks the creature. A
+/// pair the rule is against (`holder_penalised`: protection from white on Walking Ballista, +power Equipment on Tymna)
+/// is dropped, and so is a worn piece unless the new holder scores strictly higher than its current one, so a worn
+/// piece moves only off a penalised holder. A creature scores `holder_score` plus (value + 2) for each kept piece: all
+/// of them with `single = false` (Ardenn moves every piece to one target, so the creature that can wear the most
+/// wins), the best one with `single = true` (Kor Outfitter attaches one). Loose Swiftfoot Boots are never kept while
+/// Tymna is another legal target. Nothing is returned when no creature keeps a piece.
 pub(crate) fn yoshimaru_attach(
     g: &Game,
     p: PlayerId,

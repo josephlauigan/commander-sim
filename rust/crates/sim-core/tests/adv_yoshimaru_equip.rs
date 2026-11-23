@@ -3,7 +3,6 @@
 //! (`tymna_cards::equip_holder_value` / `equip_utility_value`), the holder stat (`note_equip_holder`, called from
 //! `dsl::equip`) and the Court of Ardenvale AI pick. Hand-built boards; no games are played.
 
-use sim_core::engine::values::epow;
 use sim_core::engine::zones::{Enter, enter};
 use sim_core::hooks::{Action, Call, Event};
 use sim_core::ids::{PermId, PlayerId};
@@ -23,7 +22,6 @@ const BUSTER: &str = "Buster Sword";
 const COAT: &str = "Mithril Coat";
 const BOOTS: &str = "Swiftfoot Boots";
 const BALLISTA: &str = "Walking Ballista";
-const YOSHI: &str = "Yoshimaru, Ever Faithful";
 const DELNEY: &str = "Delney, Streetwise Lookout";
 
 fn tbl() -> Game {
@@ -171,123 +169,33 @@ fn the_real_equip_action_for_another_seat_counts_nothing() {
 
 // ------------------------------------------------------------------ scoring edges
 
+/// There is no Delney (or flier, connect or Yoshimaru) term in the carrier rule: every probe scores 0.0 whether or not
+/// a Delney is out for us, out for an opponent, phased out or dead, for every +power piece and for the Equipment that
+/// adds none, on a power-2 creature, on Delney herself, on a worn piece, and for Equipment we control but do not own.
 #[test]
-#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
-fn yoshimaru_who_flies_scores_flier_plus_connect_minus_four() {
-    let mut g = tbl();
-    for q in [P1, P2] {
-        // remove the blockers so he connects
-        let ps: Vec<PermId> = g.player(q).perms.clone();
-        for m in ps {
-            sim_core::engine::zones::leave(&mut g, m).unwrap();
-        }
-    }
-    let y = perm(&mut g, P0, YOSHI);
-    let e = perm(&mut g, P0, STING);
-    let base = tc::equip_holder_value(&g, P0, e, y);
-    g.perm_mut(y).fly = true;
-    let fly = tc::equip_holder_value(&g, P0, e, y);
-    assert!((fly - base - 2.0).abs() < 1e-9, "a flying Yoshimaru gains exactly the flier bonus: {base} -> {fly}");
-    assert!((base - (1.5 - 4.0)).abs() < 1e-9, "unblocked +1.5, Yoshimaru -4: got {base}");
-}
-
-#[test]
-fn an_opponents_delney_does_not_penalise_us() {
+fn the_delney_rule_does_not_exist() {
     let mut g = tbl();
     let two = token(&mut g, P0, 2);
-    let sword = perm(&mut g, P0, SOFI);
-    let before = tc::equip_holder_value(&g, P0, sword, two);
-    perm(&mut g, P1, DELNEY);
-    assert_eq!(tc::equip_holder_value(&g, P0, sword, two), before);
-}
-
-#[test]
-#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
-fn a_phased_out_or_dead_delney_does_not_penalise() {
-    let mut g = tbl();
-    let two = token(&mut g, P0, 2);
-    let sword = perm(&mut g, P0, SOFI);
-    let before = tc::equip_holder_value(&g, P0, sword, two);
+    let other = token(&mut g, P0, 2);
+    let gear: Vec<PermId> =
+        [BUSTER, SOFI, SOFF, SOHH, STING, BOOTS, COAT].iter().map(|n| perm(&mut g, P0, n)).collect();
+    g.perm_mut(gear[1]).orig = P1; // owned by P1, controlled by P0
+    g.perm_mut(gear[2]).attached = Some(other); // worn
+    let probe = |g: &Game, holder: PermId| -> Vec<f64> {
+        gear.iter().map(|&e| tc::equip_holder_value(g, P0, e, holder)).collect()
+    };
+    assert_eq!(probe(&g, two), vec![0.0; gear.len()], "no Delney out");
+    perm(&mut g, P1, DELNEY); // an opponent's
+    assert_eq!(probe(&g, two), vec![0.0; gear.len()], "an opponent's Delney");
     let d = perm(&mut g, P0, DELNEY);
-    assert!(tc::equip_holder_value(&g, P0, sword, two) < before, "Delney out: the penalty applies");
+    assert_eq!(probe(&g, two), vec![0.0; gear.len()], "our Delney out");
+    assert_eq!(probe(&g, d), vec![0.0; gear.len()], "Delney herself as the holder");
+    assert_eq!(probe(&g, other), vec![0.0; gear.len()], "the holder of a worn piece");
     g.perm_mut(d).phased = true;
-    assert_eq!(tc::equip_holder_value(&g, P0, sword, two), before, "phased out");
+    assert_eq!(probe(&g, two), vec![0.0; gear.len()], "phased out");
     g.perm_mut(d).phased = false;
     sim_core::engine::zones::leave(&mut g, d).unwrap();
-    assert_eq!(tc::equip_holder_value(&g, P0, sword, two), before, "dead");
-}
-
-/// Delney herself wears the Sword: her own doubling and unblockability stop applying to her as soon as she is over
-/// power 2, exactly like any other power-2 creature. The code skips the penalty for `d == m`.
-#[test]
-fn delney_herself_as_the_holder_is_penalised_like_any_power_two_creature() {
-    let mut g = tbl();
-    let d = perm(&mut g, P0, DELNEY);
-    let other = token(&mut g, P0, 2);
-    let sword = perm(&mut g, P0, SOFI);
-    println!("Delney power {} / other power {}", epow(&g, d), epow(&g, other));
-    assert!(epow(&g, d) <= 2, "this test needs Delney at power 2 or less");
-    // all else equal (neither flies, both blocked by the 2-power blockers): the two holders must score alike
-    let (vd, vo) = (tc::equip_holder_value(&g, P0, sword, d), tc::equip_holder_value(&g, P0, sword, other));
-    assert_eq!(vd, vo, "Delney as holder {vd}, a power-2 token {vo}");
-}
-
-#[test]
-fn equipment_without_a_power_bonus_never_triggers_the_delney_rule() {
-    let mut g = tbl();
-    let two = token(&mut g, P0, 2);
-    let probes: Vec<PermId> = [BOOTS, COAT].iter().map(|n| perm(&mut g, P0, n)).collect();
-    let before: Vec<f64> = probes.iter().map(|&e| tc::equip_holder_value(&g, P0, e, two)).collect();
-    perm(&mut g, P0, DELNEY);
-    let after: Vec<f64> = probes.iter().map(|&e| tc::equip_holder_value(&g, P0, e, two)).collect();
-    assert_eq!(before, after);
-}
-
-#[test]
-#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
-fn buster_sword_and_the_other_swords_are_all_penalised_on_a_power_two_creature_under_delney() {
-    let mut g = tbl();
-    let two = token(&mut g, P0, 2);
-    let gear: Vec<(&str, PermId)> =
-        [BUSTER, SOFI, SOFF, SOHH, STING].iter().map(|n| (*n, perm(&mut g, P0, n))).collect();
-    let before: Vec<f64> = gear.iter().map(|&(_, e)| tc::equip_holder_value(&g, P0, e, two)).collect();
-    perm(&mut g, P0, DELNEY);
-    for (i, &(n, e)) in gear.iter().enumerate() {
-        let after = tc::equip_holder_value(&g, P0, e, two);
-        println!("{n}: {} -> {after}", before[i]);
-        assert!((after - before[i] + 4.0).abs() < 1e-9, "{n}: before {} after {after}", before[i]);
-    }
-}
-
-/// a worn Equipment is already inside the creature's power: scoring the current holder must not count its bonus twice
-/// (a base-power-0 holder with a +2 Sword is at power 2; the code adds the bonus again and docks the Delney rule)
-#[test]
-fn a_worn_equipment_is_not_counted_twice_for_its_current_holder() {
-    let mut g = tbl();
-    let spec =
-        sim_core::engine::zones::Tokens { sick: false, tgh: Some(3), ..sim_core::engine::zones::Tokens::new(1, 0) };
-    let zero = sim_core::engine::zones::make_tokens(&mut g, P0, spec).unwrap()[0];
-    let sword = perm(&mut g, P0, SOFI);
-    g.perm_mut(sword).attached = Some(zero);
-    assert_eq!(epow(&g, zero), 2, "the Sword is on: power 2");
-    let before = tc::equip_holder_value(&g, P0, sword, zero);
-    perm(&mut g, P0, DELNEY);
-    let after = tc::equip_holder_value(&g, P0, sword, zero);
-    assert_eq!(before, after, "the worn Sword stays at power 2; Delney changes nothing for it ({before} -> {after})");
-}
-
-/// `Perm.owner` is the CONTROLLER in this engine (`orig` is the owner), so `yoshimaru_holder_value`'s
-/// `g.perm(e).owner` is the seat; a stolen Equipment (orig = another seat) scores like our own. Expected to hold.
-#[test]
-fn equipment_we_control_but_do_not_own_is_scored_against_our_board() {
-    let mut g = tbl();
-    let two = token(&mut g, P0, 2);
-    perm(&mut g, P0, DELNEY);
-    let sword = perm(&mut g, P0, SOFI);
-    let ours = tc::equip_holder_value(&g, P0, sword, two);
-    g.perm_mut(sword).orig = P1; // owned by P1, controlled by P0
-    let stolen = tc::equip_holder_value(&g, P0, sword, two);
-    assert_eq!(ours, stolen, "ours {ours}, stolen {stolen}");
+    assert_eq!(probe(&g, two), vec![0.0; gear.len()], "dead");
 }
 
 #[test]

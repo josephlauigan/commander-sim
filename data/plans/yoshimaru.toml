@@ -16,13 +16,12 @@
 # Equipment package (the Equipment, its carriers and enablers; the guide's "The Equipment package"): the rows below are
 # COPIED from data/plans/cloud.toml's tuned rules (the same cards and values, Cloud's commander row aside), not measured on
 # this list, so they are provisional. Deliberately left out: Cloud's `[equip] holder = "commander"` (it would put the
-# Swords on Yoshimaru or Tymna; the guide wants fliers and Tymna only with Swiftfoot Boots, because +power turns off
-# Delney's doubling for her), Flawless Maneuver in response to our own Wrath of God, and blinking the Equipment instead
-# of the carrier: the generic policy decides these, so a weak result may be the AI and not the list. The carrier choice
-# (fliers and creatures that connect; not Yoshimaru; Tymna only with Swiftfoot Boots; never Equipment that gives
-# protection from white, which is Sword of Hearth and Home and not Sting, on Walking Ballista; no +power over power 2
-# under Delney) is card code, `tymna_cards::equip_holder_value`, and
-# Court of Ardenvale never returns Walking Ballista to the battlefield (`legends.rs` `court`).
+# Swords on Yoshimaru or Tymna; the guide keeps +power Equipment off Tymna, because it turns off Delney's doubling for
+# her), Flawless Maneuver in response to our own Wrath of God, and blinking the Equipment instead of the carrier: the
+# generic policy decides these, so a weak result may be the AI and not the list. The carrier rule is card code,
+# `tymna_cards::equip_holder_value`, and has two parts: Equipment that gives protection from white (Sword of Hearth and
+# Home, not Sting) never goes on Walking Ballista, and +power Equipment never goes on Tymna (Swiftfoot Boots and Mithril
+# Coat may). Court of Ardenvale never returns Walking Ballista to the battlefield (`legends.rs` `court`).
 deck = "yoshimaru"
 default = "plan"
 # card engines the tutors want once no line wants a card
