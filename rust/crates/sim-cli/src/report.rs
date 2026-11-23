@@ -56,6 +56,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "cloud" => "first attack by an equipped Cloud",
         "kyodai" => "first combo attempt",
         "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
+        "yoshimaru" => "first Tymna draw, or a combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -85,11 +86,13 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "sheoldred" => ms("sheoldred"),
         "sephfs" => ms("sephfs"),
         "cloud" => ms("cloud"),
-        // the Tymna partner decks: Tymna's first draw, or the Basalt + Rings combo going off, whichever is first
-        "thrasios" | "kraum" => match (ms("tymna").filter(|&t| t != 0), ms("combo").filter(|&t| t != 0)) {
-            (Some(a), Some(b)) => Some(a.min(b)),
-            (a, b) => a.or(b),
-        },
+        // the Tymna partner decks: Tymna's first draw, or the deck's combo going off, whichever is first
+        "thrasios" | "kraum" | "yoshimaru" => {
+            match (ms("tymna").filter(|&t| t != 0), ms("combo").filter(|&t| t != 0)) {
+                (Some(a), Some(b)) => Some(a.min(b)),
+                (a, b) => a.or(b),
+            }
+        }
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)
@@ -519,6 +522,18 @@ pub fn print_analysis(
             get("ty_opps_hit") / get("ty_tymna_turns").max(1.0)
         );
         println!("  Thrasios activations per game {:.2}", get("ty_thrasios_acts") / n);
+        let worn = ["commander", "flier", "ballista", "other"].map(|k| get(&format!("ty_eq_{k}")));
+        if worn.iter().sum::<f64>() > 0.0 {
+            // the yoshimaru seat only: who wears each Equipment as an equip resolves
+            println!(
+                "  Equipment worn per game (as equipped): commander {:.2}, flier {:.2}, Walking Ballista {:.2}, other {:.2}; protection from white on Ballista {:.2}",
+                worn[0] / n,
+                worn[1] / n,
+                worn[2] / n,
+                worn[3] / n,
+                get("ty_eq_pw_ballista") / n
+            );
+        }
         let mut th: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("ty_th_")).collect();
         th.sort();
         for (k, v) in th {
@@ -555,9 +570,11 @@ pub fn print_analysis(
     let mut cum = 0;
     let pn = r.plan.total();
     let mut line = vec![];
-    for t in 2..13u32 {
-        cum += r.plan.get(&t);
-        line.push(format!("T{t} {:.0}%", (100 * cum) as f64 / n));
+    for t in 0..13u32 {
+        cum += r.plan.get(&t); // from turn 0, so a turn-1 plan counts
+        if t >= 2 {
+            line.push(format!("T{t} {:.0}%", (100 * cum) as f64 / n));
+        }
     }
     println!("  Online by turn:  {}", line.join("  "));
     println!("  Online at all: {:.1}% of games", (100 * pn) as f64 / n);
@@ -695,6 +712,16 @@ mod tests {
     }
 
     #[test]
+    fn commander_resolved_by_turn_counts_early_casts() {
+        let mut c = crate::stats::Counter::<u32>::default();
+        c.add(1, 90); // cast on turn 1 in 90 of 100 games
+        c.add(4, 5);
+        c.add(7, 3);
+        // 2 games never resolve it
+        assert_eq!(resolved_by_turn(&c, 100), ["T4 95%", "T5 95%", "T6 95%", "T7 98%", "T8 98%"]);
+    }
+
+    #[test]
     fn python_float_formatting() {
         // f'{x:.1f}' and f'{x:+.1f}' in Python: exact decimal value, ties to even
         let xs = [0.25, 0.35, 2.5, -0.04, 1.05, 0.125, 12.345, 100.0 * 0.0125];
@@ -716,6 +743,20 @@ fn median(v: &[u32]) -> f64 {
     }
 }
 
+/// the "Commander resolved by turn" entries (T4..T8): the share of all `n` games in which the commander resolved on
+/// that turn or earlier. The running total starts at turn 0, so a turn-1 cast counts.
+fn resolved_by_turn(cmd: &crate::stats::Counter<u32>, n: i64) -> Vec<String> {
+    let mut cum = 0;
+    let mut line = vec![];
+    for t in 0..9u32 {
+        cum += cmd.get(&t);
+        if t >= 4 {
+            line.push(format!("T{t} {:.0}%", (100 * cum) as f64 / n as f64));
+        }
+    }
+    line
+}
+
 /// the commander timing lines (every deck) and the Army growth lines (Sauron)
 fn print_speed(r: &Analysis) {
     let n = r.n as f64;
@@ -731,15 +772,7 @@ fn print_speed(r: &Analysis) {
             mean,
             (100 * resolved) as f64 / n
         );
-        let mut cum = 0;
-        let mut line = vec![];
-        for t in 2..9u32 {
-            cum += r.cmd.get(&t);
-            if t >= 4 {
-                line.push(format!("T{t} {:.0}%", (100 * cum) as f64 / n));
-            }
-        }
-        println!("  Commander resolved by turn:  {}", line.join("  "));
+        println!("  Commander resolved by turn:  {}", resolved_by_turn(&r.cmd, r.n).join("  "));
     } else {
         println!("  Commander never resolved");
     }

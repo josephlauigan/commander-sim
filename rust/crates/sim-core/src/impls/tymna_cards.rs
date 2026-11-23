@@ -1295,6 +1295,9 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
 /// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
 /// anyway, since its hit is the card Tymna draws.
 pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key == "yoshimaru" {
+        return yoshimaru_holder_value(g, e, m);
+    }
     if hand_key(g, p) != "kraum" {
         return 0.0;
     }
@@ -1327,8 +1330,108 @@ pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     v
 }
 
-/// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's)
+// ------------------------------------------------------------------ the yoshimaru seat: where Equipment goes
+const YOSHIMARU: &str = "Yoshimaru, Ever Faithful";
+const TYMNA_CARD: &str = "Tymna the Weaver";
+const BALLISTA: &str = "Walking Ballista";
+const DELNEY: &str = "Delney, Streetwise Lookout";
+const CLOUD_CARD: &str = "Cloud, Midgar Mercenary";
+const BOOTS: &str = "Swiftfoot Boots";
+/// the Equipment that gives protection from white: its carrier can't be targeted by the deck's own white effects
+const PROT_WHITE: [&str; 2] = ["Sting, the Glinting Dagger", "Sword of Hearth and Home"];
+/// the holder score that stands for "never": far below any sum of the other terms
+const NEVER: f64 = -1000.0;
+
+/// the power Equipment `e` adds (its compiled `equip_bonus`; a Sword with no compiled ability counts as +2)
+fn equip_power(g: &Game, e: PermId) -> i32 {
+    let Some(cd) = g.perm(e).cd else { return 0 };
+    let d = g.db.get(cd);
+    let compiled: i32 = d
+        .abilities
+        .iter()
+        .filter_map(|a| match a {
+            crate::dsl::model::Ability::Static { kind, pow, .. } if kind == "equip_bonus" => *pow,
+            _ => None,
+        })
+        .ssum();
+    if compiled == 0 && d.tags.has(Tag::Sword) { 2 } else { compiled }
+}
+
+fn is_flier(g: &Game, m: PermId) -> bool {
+    g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")
+}
+
+/// Equipment `e` (protection from white) on Walking Ballista: Heliod's lifelink could no longer target it (Line B)
+fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
+    PROT_WHITE.contains(&name_of(g, e)) && name_of(g, m) == BALLISTA
+}
+
+/// what Equipment `e` is worth on creature `m` for the yoshimaru seat: fliers and creatures that connect anyway (their
+/// hit is a card for Tymna and the Swords' triggers); not Yoshimaru, and Tymna only with Swiftfoot Boots (added power
+/// switches off Delney's doubling and evasion for her, and she draws when any creature connects); never Walking
+/// Ballista with Equipment that has protection from white; and not +power Equipment that takes a creature over power 2
+/// while Delney is out (Cloud excepted: the guide's best carrier for Sword of Hearth and Home).
+fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
+    if prot_white_on_ballista(g, e, m) {
+        return NEVER;
+    }
+    let p = g.perm(e).owner;
+    let mut v = 0.0;
+    if is_flier(g, m) {
+        v += 2.0;
+    }
+    if blocked_by(g, p, None, m) == 0 {
+        v += 1.5; // it connects now
+    }
+    match name_of(g, m) {
+        YOSHIMARU => v -= 4.0, // a 1/1 that grows with the legends; the Equipment is wasted on him
+        TYMNA_CARD if name_of(g, e) != BOOTS => v -= 6.0,
+        _ => {}
+    }
+    let bonus = equip_power(g, e);
+    if bonus > 0 && name_of(g, m) != CLOUD_CARD && epow(g, m) <= 2 && epow(g, m) + bonus > 2 {
+        let delney = g.player(p).perms.iter().any(|&d| {
+            let x = g.perm(d);
+            x.on_bf && !x.phased && !x.neutered && name_of(g, d) == DELNEY && d != m
+        });
+        if delney {
+            v -= 4.0;
+        }
+    }
+    v
+}
+
+/// the yoshimaru seat's equip stat and trace: who wears the Equipment once an equip has resolved (`ty_eq_commander`,
+/// `ty_eq_flier`, `ty_eq_ballista`, `ty_eq_other`, and `ty_eq_pw_ballista` for protection from white on Ballista, which
+/// should stay 0), summed over the games. Any other seat: nothing.
+pub fn note_equip_holder(g: &mut Game, p: PlayerId, e: PermId, m: PermId) {
+    if g.player(p).key != "yoshimaru" || g.perm(e).attached != Some(m) {
+        return;
+    }
+    let kind = if g.perm(m).is_cmd {
+        "commander"
+    } else if name_of(g, m) == BALLISTA {
+        "ballista"
+    } else if is_flier(g, m) {
+        "flier"
+    } else {
+        "other"
+    };
+    let (en, mn) = (name_of(g, e).to_string(), name_of(g, m).to_string());
+    let pw = prot_white_on_ballista(g, e, m);
+    crate::glog!(g, "    equip holder: {en} on {mn} ({kind})");
+    g.player_mut(p).stat(intern(&format!("ty_eq_{kind}")), 1);
+    if pw {
+        g.player_mut(p).stat(intern("ty_eq_pw_ballista"), 1);
+    }
+}
+
+/// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's); the yoshimaru seat
+/// only forbids the Equipment that has protection from white on Walking Ballista (no other holder was left)
 pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
+    if g.player(p).key == "yoshimaru" {
+        return if prot_white_on_ballista(g, e, m) { -20.0 } else { 0.0 };
+    }
     if hand_key(g, p) != "kraum" {
         return 0.0;
     }
