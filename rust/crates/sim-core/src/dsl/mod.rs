@@ -383,7 +383,13 @@ pub fn card_matches_except(g: &Game, c: CardId, f: Option<&Filter>, except: Opti
         return false;
     }
     if let Some(st) = f.subtype.as_deref().filter(|s| !s.is_empty()) {
-        let has = |t: &str| d.has_subtype(t) || (d.creature && d.kws.iter().any(|k| &**k == "changeling"));
+        // a changeling (a Kindred card too) is every creature type, never a land, artifact or enchantment type
+        let changeling = d.kws.iter().any(|k| &**k == "changeling");
+        let creature_type = |t: &str| {
+            !crate::engine::chars::NONCREATURE_TYPES.contains(&t)
+                && !["plains", "island", "swamp", "mountain", "forest", "basic", "snow"].contains(&t)
+        };
+        let has = |t: &str| d.has_subtype(t) || (changeling && creature_type(t));
         let ok = match st.strip_prefix("non-") {
             Some(t) => !has(t),
             None => has(st),
