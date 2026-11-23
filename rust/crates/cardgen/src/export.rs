@@ -4,7 +4,7 @@
 
 use crate::cardinfo;
 use crate::cd::{Cd, strs};
-use crate::data::{self, Hooks, MyDeck, Project};
+use crate::data::{self, FormatDef, Hooks, MyDeck, Project};
 use crate::decks::{self, PoolDeck};
 use crate::json::{self, J, Obj};
 use crate::obj;
@@ -19,6 +19,7 @@ pub struct Inputs {
     pub overrides: Vec<(String, data::Entry)>,
     pub hooks: BTreeMap<String, Hooks>,
     pub my: Vec<MyDeck>,
+    pub formats: Vec<FormatDef>,
     pub my_cards: Vec<(String, Vec<String>)>,
     pub pool: Vec<PoolDeck>,
     pub cache: Cache,
@@ -27,6 +28,7 @@ pub struct Inputs {
 impl Inputs {
     pub fn load(project: &Project) -> Result<Inputs, String> {
         let my = data::load_my_decks(project)?;
+        let formats = data::load_formats(project)?;
         let mut my_cards = vec![];
         for d in &my {
             my_cards.push((d.key.clone(), decks::load(&decks::deck_path(project, d))?));
@@ -37,6 +39,7 @@ impl Inputs {
             overrides: data::load_overrides(project)?,
             hooks: data::load_hooks(project)?,
             my,
+            formats,
             my_cards,
             pool: decks::load_pool(project)?,
             cache: Cache::load(&project.data("scryfall_cache.json"))?,
@@ -184,6 +187,25 @@ fn ident_of(colors: impl Iterator<Item = char> + Clone) -> String {
     "WUBRG".chars().filter(|c| colors.clone().any(|x| x == *c)).collect()
 }
 
+/// the decks.json `formats` object: every format of data/formats.toml by key (the key is not repeated inside it).
+/// `banned` is written only for a format whose bans are a list.
+pub fn formats_doc(formats: &[FormatDef]) -> J {
+    J::Obj(Obj(formats
+        .iter()
+        .map(|f| {
+            let mut o = obj! {"name" => f.name.as_str(), "seats" => f.seats, "life" => f.life,
+            "first_player_draws" => f.first_player_draws, "bans" => f.bans.as_str()};
+            if f.bans == data::Bans::List {
+                o.0.push((
+                    "banned".to_string(),
+                    J::from(f.banned.iter().map(|b| J::from(b.as_str())).collect::<Vec<J>>()),
+                ));
+            }
+            (f.key.clone(), J::Obj(o))
+        })
+        .collect()))
+}
+
 /// the decks.json document
 pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
     let mut mine = vec![];
@@ -197,6 +219,9 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
         }
         o.0.push(("ident".to_string(), J::from(ident_of(d.ident.chars()))));
         o.0.push(("tiers".to_string(), J::from(d.tiers.iter().map(|t| J::from(t.as_str())).collect::<Vec<J>>())));
+        if d.format != data::DEFAULT_FORMAT {
+            o.0.push(("format".to_string(), J::from(d.format.as_str()))); // only a deck outside Commander carries it
+        }
         o.0.push(("cards".to_string(), J::from(sorted_strs(cards))));
         mine.push(J::Obj(o));
     }
@@ -219,7 +244,7 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
         o.0.push(("cards".to_string(), J::from(sorted_strs(&d.cards))));
         pool.push(J::Obj(o));
     }
-    Ok(J::Obj(obj! {"version" => 1, "mine" => mine, "pool" => pool}))
+    Ok(J::Obj(obj! {"version" => 1, "formats" => formats_doc(&inp.formats), "mine" => mine, "pool" => pool}))
 }
 
 pub struct Exported {

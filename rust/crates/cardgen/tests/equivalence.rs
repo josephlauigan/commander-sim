@@ -140,7 +140,8 @@ fn the_deck_check_counts_hand_tagged_game_changers() {
     let inp = Inputs::load(&p).unwrap();
     let cards: Vec<String> = ["Gifts Ungiven", "Demonic Tutor", "Sol Ring", "Swamp"].map(String::from).to_vec();
     let recs = |n: &str| inp.cache.get(n).cloned();
-    let (probs, info) = cardgen::decks::card_problems(&cards, &[], Some("t1"), None, &recs);
+    let (probs, info) =
+        cardgen::decks::card_problems(&cardgen::data::FormatDef::commander(), &cards, &[], Some("t1"), None, &recs);
     assert_eq!(info.gcs, ["Demonic Tutor", "Gifts Ungiven"]);
     assert!(probs.iter().any(|p| p.contains("2 Game Changers, tier t1 allows 0-0")), "{probs:?}");
 }

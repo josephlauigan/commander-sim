@@ -1,5 +1,5 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
-# plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). Extracted once from the old Python code; this file is now the source.
+# plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). `format` (optional, default "commander") names a table in data/formats.toml. Extracted once from the old Python code; this file is now the source.
 
 [yshtola]
 file = "JD/yshtola-esper-drain.md"
@@ -20,6 +20,7 @@ file = "cali_commander/kyodai-artifact-combo.md"
 name = "Kyodai"
 commander = "Kyodai, Soul of Kamigawa"
 ident = "WUBRG"
+format = "cali"
 tiers = ["t5"]
 
 [urdragon]

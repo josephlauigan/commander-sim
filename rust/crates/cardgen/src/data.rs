@@ -1,4 +1,5 @@
-//! The hand-edited data files in `data/`: `carddb.txt`, `card_overrides.toml`, `my_decks.toml`, `python_hooks.txt`.
+//! The hand-edited data files in `data/`: `carddb.txt`, `card_overrides.toml`, `my_decks.toml`, `formats.toml`,
+//! `python_hooks.txt`.
 
 use crate::json::{J, Obj};
 use std::collections::BTreeMap;
@@ -161,6 +162,154 @@ pub fn load_overrides(p: &Project) -> Result<Vec<(String, Entry)>, String> {
     Ok(out)
 }
 
+/// the format a deck plays when `my_decks.toml` names none
+pub const DEFAULT_FORMAT: &str = "commander";
+
+/// how a format decides which cards are banned
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Bans {
+    /// Scryfall's `legalities.commander`: `banned` and every value but `legal` are refused
+    Scryfall,
+    /// the format's own `banned` list replaces Commander's ban list
+    List,
+}
+
+impl Bans {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Bans::Scryfall => "scryfall",
+            Bans::List => "list",
+        }
+    }
+}
+
+/// a game format in data/formats.toml
+#[derive(Debug, Clone, PartialEq)]
+pub struct FormatDef {
+    pub key: String,
+    /// what messages call it ("Cali Commander")
+    pub name: String,
+    /// 2 or 4: the table shapes the pod builders support
+    pub seats: i64,
+    pub life: i64,
+    /// false: the starting player skips its first draw step
+    pub first_player_draws: bool,
+    pub bans: Bans,
+    /// the ban list when `bans` is `List`, one name per entry (a front-face name)
+    pub banned: Vec<String>,
+}
+
+impl FormatDef {
+    /// Commander as the engine has always played it (what `[commander]` in formats.toml must say)
+    pub fn commander() -> FormatDef {
+        FormatDef {
+            key: DEFAULT_FORMAT.into(),
+            name: "Commander".into(),
+            seats: 4,
+            life: 40,
+            first_player_draws: true,
+            bans: Bans::Scryfall,
+            banned: vec![],
+        }
+    }
+}
+
+/// a card name's front face, lower case: how ban lists and the Scryfall cache compare names
+pub fn front_face(name: &str) -> String {
+    name.split(" // ").next().unwrap_or("").trim().to_lowercase()
+}
+
+const FORMAT_KEYS: [&str; 6] = ["name", "seats", "life", "first_player_draws", "bans", "banned"];
+
+/// the formats of formats.toml, in file order (`src` is the text, `path` only names it in errors)
+pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
+    let t: toml::Table = src.parse().map_err(|e| format!("{}: {e}", path.display()))?;
+    let mut out: Vec<FormatDef> = vec![];
+    for (key, v) in &t {
+        let ctx = format!("{} [{key}]", path.display());
+        let tbl = v.as_table().ok_or(format!("{ctx}: a format must be a table"))?;
+        if let Some(k) = tbl.keys().find(|k| !FORMAT_KEYS.contains(&k.as_str())) {
+            return Err(format!("{ctx}: unknown key {k:?} (one of {})", FORMAT_KEYS.join(", ")));
+        }
+        let get = |f: &str| tbl.get(f).ok_or(format!("{ctx}: missing {f}"));
+        let name = get("name")?.as_str().filter(|s| !s.trim().is_empty()).ok_or(format!("{ctx}: name must be text"))?;
+        let int = |f: &str| get(f)?.as_integer().ok_or(format!("{ctx}: {f} must be a whole number"));
+        let (seats, life) = (int("seats")?, int("life")?);
+        if seats != 2 && seats != 4 {
+            return Err(format!("{ctx}: seats must be 2 or 4 (the pod builders' table shapes), not {seats}"));
+        }
+        if life < 1 {
+            return Err(format!("{ctx}: life must be at least 1, not {life}"));
+        }
+        let first_player_draws =
+            get("first_player_draws")?.as_bool().ok_or(format!("{ctx}: first_player_draws must be true or false"))?;
+        let bans = match get("bans")?.as_str() {
+            Some("scryfall") => Bans::Scryfall,
+            Some("list") => Bans::List,
+            _ => return Err(format!("{ctx}: bans must be \"scryfall\" or \"list\"")),
+        };
+        let mut banned: Vec<String> = vec![];
+        if let Some(b) = tbl.get("banned") {
+            for n in b.as_array().ok_or(format!("{ctx}: banned must be a list of names"))? {
+                let n = n.as_str().ok_or(format!("{ctx}: banned must be a list of names"))?;
+                if n.trim().is_empty() {
+                    return Err(format!("{ctx}: a banned name is empty"));
+                }
+                if n.contains("//") {
+                    return Err(format!("{ctx}: banned name {n:?} has `//`: list the front face only"));
+                }
+                if banned.iter().any(|o| front_face(o) == front_face(n)) {
+                    return Err(format!("{ctx}: banned name {n:?} is listed twice"));
+                }
+                banned.push(n.trim().to_string());
+            }
+        }
+        match bans {
+            Bans::List if banned.is_empty() => {
+                return Err(format!("{ctx}: bans = \"list\" needs a non-empty banned list"));
+            }
+            Bans::Scryfall if !banned.is_empty() => {
+                return Err(format!("{ctx}: banned only applies to bans = \"list\" (this format uses Scryfall's)"));
+            }
+            _ => {}
+        }
+        out.push(FormatDef {
+            key: key.clone(),
+            name: name.trim().to_string(),
+            seats,
+            life,
+            first_player_draws,
+            bans,
+            banned,
+        });
+    }
+    // [commander] stays what the engine plays: editing the data cannot change every 4-player game
+    match out.iter().find(|f| f.key == DEFAULT_FORMAT) {
+        None => return Err(format!("{}: no [{DEFAULT_FORMAT}] format", path.display())),
+        Some(c) => {
+            let rules = sim_core::format::Rules::COMMANDER;
+            let same = c.seats == 4
+                && c.life == rules.life as i64
+                && c.first_player_draws == rules.first_player_draws
+                && c.bans == Bans::Scryfall;
+            if !same {
+                return Err(format!(
+                    "{} [{DEFAULT_FORMAT}]: must stay 4 seats, {} life, first player draws, bans = \"scryfall\" \
+                     (the engine's Commander)",
+                    path.display(),
+                    rules.life
+                ));
+            }
+        }
+    }
+    Ok(out)
+}
+
+pub fn load_formats(p: &Project) -> Result<Vec<FormatDef>, String> {
+    let path = p.data("formats.toml");
+    parse_formats(&read(&path)?, &path)
+}
+
 /// a deck of yours in my_decks.toml
 #[derive(Debug, Clone)]
 pub struct MyDeck {
@@ -175,19 +324,42 @@ pub struct MyDeck {
     pub ident: String,
     /// the opponent tiers it is simulated against ("t1".."t5"), at least one
     pub tiers: Vec<String>,
+    /// the key of its format in formats.toml ("commander" when my_decks.toml names none)
+    pub format: String,
 }
+
+const MY_DECK_KEYS: [&str; 7] = ["file", "name", "commander", "commander2", "ident", "tiers", "format"];
 
 pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
     let path = p.data("my_decks.toml");
     let t: toml::Table = read(&path)?.parse().map_err(|e| format!("{}: {e}", path.display()))?;
+    let formats = load_formats(p)?;
     let mut out = vec![];
     for (key, v) in &t {
+        // a misspelt field (`fromat`) would otherwise be ignored and the deck would play Commander
+        let tbl = v.as_table().ok_or(format!("{} [{key}]: a deck must be a table", path.display()))?;
+        if let Some(k) = tbl.keys().find(|k| !MY_DECK_KEYS.contains(&k.as_str())) {
+            return Err(format!("{} [{key}]: unknown key {k:?} (one of {})", path.display(), MY_DECK_KEYS.join(", ")));
+        }
         let get = |f: &str| -> Result<String, String> {
             v.get(f)
                 .and_then(|x| x.as_str())
                 .map(|s| s.to_string())
                 .ok_or(format!("{} [{key}]: missing {f}", path.display()))
         };
+        let format = match v.get("format") {
+            None => DEFAULT_FORMAT.to_string(),
+            Some(f) => {
+                f.as_str().map(str::to_string).ok_or(format!("{} [{key}]: format must be text", path.display()))?
+            }
+        };
+        if !formats.iter().any(|f| f.key == format) {
+            return Err(format!(
+                "{} [{key}]: unknown format {format:?} (one of {}; data/formats.toml)",
+                path.display(),
+                formats.iter().map(|f| f.key.as_str()).collect::<Vec<_>>().join(", ")
+            ));
+        }
         out.push(MyDeck {
             key: key.clone(),
             file: get("file")?,
@@ -196,6 +368,7 @@ pub fn load_my_decks(p: &Project) -> Result<Vec<MyDeck>, String> {
             commander2: v.get("commander2").and_then(|x| x.as_str()).map(|s| s.to_string()),
             ident: get("ident")?,
             tiers: get_tiers(v, key, &path)?,
+            format,
         });
     }
     Ok(out)
@@ -268,5 +441,87 @@ mod tier_tests {
         assert!(tiers("[d]\ntiers = [\"t7\"]").unwrap_err().contains("unknown tier"));
         assert!(tiers("[d]\ntiers = [\"t1\", \"t1\"]").unwrap_err().contains("twice"));
         assert!(tiers("[d]\ntiers = [1]").unwrap_err().contains("strings"));
+    }
+}
+
+#[cfg(test)]
+mod format_tests {
+    use super::*;
+
+    const COMMANDER: &str =
+        "[commander]\nname = \"Commander\"\nseats = 4\nlife = 40\nfirst_player_draws = true\nbans = \"scryfall\"\n";
+
+    fn parse(extra: &str) -> Result<Vec<FormatDef>, String> {
+        parse_formats(&format!("{COMMANDER}{extra}"), Path::new("formats.toml"))
+    }
+
+    fn list(fields: &str) -> String {
+        format!("[x]\nname = \"X\"\nseats = 2\nlife = 30\nfirst_player_draws = false\nbans = \"list\"\n{fields}")
+    }
+
+    #[test]
+    fn the_shipped_formats_load_and_commander_is_what_the_engine_plays() {
+        let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
+        let f = load_formats(&Project::new(root)).unwrap();
+        assert_eq!(f.iter().map(|f| f.key.as_str()).collect::<Vec<_>>(), ["commander", "cali"]);
+        assert_eq!(f[0], FormatDef::commander());
+        assert_eq!(
+            (f[1].name.as_str(), f[1].seats, f[1].life, f[1].first_player_draws),
+            ("Cali Commander", 2, 30, false)
+        );
+        assert_eq!(f[1].banned.len(), 18);
+    }
+
+    #[test]
+    fn a_list_format_needs_a_list_and_a_scryfall_format_has_none() {
+        let ok = parse(&list("banned = [\"A\", \"B // C\"]\n").replace("B // C", "B")).unwrap();
+        assert_eq!(ok[1].banned, ["A", "B"]);
+        assert!(parse(&list("")).unwrap_err().contains("non-empty banned list"));
+        assert!(parse(&list("banned = []\n")).unwrap_err().contains("non-empty banned list"));
+        assert!(
+            parse(&list("banned = [\"A\", \"a\"]\n")).unwrap_err().contains("listed twice"),
+            "duplicates compare by lower-case front face"
+        );
+        assert!(parse(&list("banned = [\"A // B\"]\n")).unwrap_err().contains("front face only"));
+        assert!(parse(&list("banned = [\"\"]\n")).unwrap_err().contains("empty"));
+        assert!(parse(&list("banned = [1]\n")).unwrap_err().contains("list of names"));
+        let scry = list("banned = [\"A\"]\n").replace("\"list\"", "\"scryfall\"");
+        assert!(parse(&scry).unwrap_err().contains("only applies to bans = \"list\""));
+    }
+
+    #[test]
+    fn the_numbers_and_names_are_checked() {
+        let with = |from: &str, to: &str| parse(&list("banned = [\"A\"]\n").replace(from, to));
+        assert!(with("seats = 2", "seats = 3").unwrap_err().contains("seats must be 2 or 4"));
+        assert!(with("seats = 2", "seats = 1").unwrap_err().contains("seats must be 2 or 4"));
+        assert!(with("seats = 2", "seats = 4").is_ok());
+        assert!(with("life = 30", "life = 0").unwrap_err().contains("life must be at least 1"));
+        assert!(with("life = 30", "life = 1").is_ok());
+        assert!(with("bans = \"list\"", "bans = \"all\"").unwrap_err().contains("bans must be"));
+        assert!(with("bans = \"list\"\n", "").unwrap_err().contains("missing bans"));
+        assert!(with("seats = 2", "seat = 2").unwrap_err().contains("unknown key \"seat\""));
+        assert!(
+            with("first_player_draws = false", "first_player_draws = \"no\"").unwrap_err().contains("true or false")
+        );
+        assert!(with("name = \"X\"", "name = \" \"").unwrap_err().contains("name must be text"));
+    }
+
+    #[test]
+    fn commander_cannot_be_edited_away_from_what_the_engine_plays() {
+        for (from, to) in [
+            ("seats = 4", "seats = 2"),
+            ("life = 40", "life = 30"),
+            ("first_player_draws = true", "first_player_draws = false"),
+        ] {
+            let src = COMMANDER.replace(from, to);
+            let e = parse_formats(&src, Path::new("formats.toml")).unwrap_err();
+            assert!(e.contains("must stay 4 seats, 40 life"), "{from}: {e}");
+        }
+        let e = parse_formats(
+            "[cali]\nname = \"C\"\nseats = 2\nlife = 30\nfirst_player_draws = false\nbans = \"scryfall\"\n",
+            Path::new("f"),
+        )
+        .unwrap_err();
+        assert!(e.contains("no [commander] format"), "{e}");
     }
 }

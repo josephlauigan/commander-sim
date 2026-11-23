@@ -1,0 +1,52 @@
+# Game formats. A deck without `format` in data/my_decks.toml plays `commander`. cardgen reads `bans` and `banned`
+# (the per-deck legality check); `cardgen export` writes this file into data/decks.json ("formats"), where sim-core
+# reads life, first_player_draws and seats and sim-cli refuses a deck at a table its format does not admit.
+#
+#   name                 what messages call the format
+#   seats                2 or 4: the only table shapes the pod builders support
+#   life                 every player's starting life total (at least 1)
+#   first_player_draws   false: the starting player skips its first draw step (CR 103.8a)
+#   bans                 "scryfall": Scryfall's `legalities.commander` decides (banned and not_legal are refused);
+#                        "list": `banned` REPLACES that ban list (the card must still be a Commander-playable card:
+#                        Scryfall `legal` or `banned`, never `not_legal` or `restricted`)
+#   banned               the ban list, one front-face name per entry (names compared by front face, lower case)
+#
+# [commander] must keep exactly the values the engine has always played (40 life, first player draws, 4 seats); the
+# loader refuses anything else, so editing this file cannot change every 4-player game.
+
+[commander]
+name = "Commander"
+seats = 4
+life = 40
+first_player_draws = true
+bans = "scryfall"
+
+# Cali Commander: 1v1, 30 life. The ban list is copied from decklists/cali_commander/kyodai-artifact-combo.md
+# ("Format and Rule 0"); it is NOT verified against an official list (no web check was made), so
+# check it against the format's own page before relying on a new card.
+[cali]
+name = "Cali Commander"
+seats = 2
+life = 30
+first_player_draws = false
+bans = "list"
+banned = [
+  "Ancestral Recall",
+  "Balance",
+  "Black Lotus",
+  "Channel",
+  "Erayo, Soratami Ascendant",
+  "Fastbond",
+  "Karakas",
+  "Mox Emerald",
+  "Mox Jet",
+  "Mox Pearl",
+  "Mox Ruby",
+  "Mox Sapphire",
+  "Nadu, Winged Wisdom",
+  "The Tabernacle at Pendrell Vale",
+  "Time Vault",
+  "Time Walk",
+  "Tolarian Academy",
+  "Yawgmoth's Bargain",
+]
