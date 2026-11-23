@@ -107,6 +107,47 @@ fn ojutai_hit(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg
     Ok(())
 }
 
+// ------------------------------------------------------------------ Leyline of the Guildpact (Thanos)
+const LEYLINE: &str = "Leyline of the Guildpact";
+
+/// Leyline has no ability of its own that fires: the statics ("each nonland permanent you control is all colors",
+/// "lands you control are every basic land type") are read by `chars::leyline` and `mana::granted_cols_for`. A card with
+/// code is listed in `g.hooks`, which is what those reads scan; this slot answers "no" to every keyword
+fn leyline_inert(_g: &Game, _src: Src, _m: PermId, _kw: Sym) -> bool {
+    false
+}
+
+/// "If this card is in your opening hand, you may begin the game with it on the battlefield": it leaves the hand and
+/// enters without being cast. False if p has no Leyline in hand.
+fn begin_with_leyline(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(c) = g.db.id(LEYLINE).filter(|c| g.player(p).hand.contains(c)) else { return Ok(false) };
+    g.player_mut(p).hand.retain(|&x| x != c);
+    crate::engine::zones::enter(g, p, c, Enter { sick: false, ..Default::default() })?;
+    g.player_mut(p).stat("jr_leyline_opening", 1);
+    crate::glog!(g, "  {} begins the game with Leyline of the Guildpact on the battlefield", g.player(p).name);
+    Ok(true)
+}
+
+/// The "opening hand" clauses of the cards that have one, for an AI seat once its mulligans are done (`turn::setup_game`,
+/// the mulligan oracle). The AI always begins with Leyline of the Guildpact (a free permanent that fixes every colour);
+/// Gemstone Caverns follows. A person is asked by `opening_hand_person`.
+pub fn opening_hand_actions(g: &mut Game, p: PlayerId) {
+    let _ = begin_with_leyline(g, p);
+    caverns_opening(g, p);
+}
+
+/// A person who kept an opening hand with Leyline of the Guildpact in it is asked whether to begin with it on the
+/// battlefield (practice mode, right after the mulligan). Gemstone Caverns is not offered: a person plays it from hand.
+pub fn opening_hand_person(g: &mut Game, p: PlayerId) -> Res {
+    if !crate::human::is_human(g, p) || !g.db.id(LEYLINE).is_some_and(|c| g.player(p).hand.contains(&c)) {
+        return Ok(());
+    }
+    if crate::human::choices::yes_no(g, p, "Leyline of the Guildpact: begin the game with it on the battlefield?")? {
+        begin_with_leyline(g, p)?;
+    }
+    Ok(())
+}
+
 // ------------------------------------------------------------------ Gemstone Caverns (Thanos)
 const CAVERNS: &str = "Gemstone Caverns";
 
@@ -291,6 +332,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(ojutai_hexproof);
     c.combat_damage = Some(ojutai_hit);
     r.card(db, BUSTER)?.combat_damage = Some(buster_hit);
+    r.card(db, LEYLINE)?.grant_kw = Some(leyline_inert);
     r.card(db, RAVAGER)?.options = Some(bolas_options);
     r.card(db, TINDER)?.blocks = Some(tinder_blocks);
     Ok(())

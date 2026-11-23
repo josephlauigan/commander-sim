@@ -62,10 +62,7 @@ pub fn islands(g: &Game, p: PlayerId) -> Vec<PermId> {
         .lands
         .iter()
         .copied()
-        .filter(|&l| {
-            let d = g.db.get(g.perm(l).card());
-            &*d.name == "Island" || d.has_subtype("island")
-        })
+        .filter(|&l| crate::engine::chars::land_types(g, l).has('U')) // layer 4: Leyline of the Guildpact
         .collect()
 }
 

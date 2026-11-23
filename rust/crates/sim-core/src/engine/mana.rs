@@ -165,12 +165,27 @@ fn granted_cols(g: &Game) -> Colors {
     c
 }
 
+/// `granted_cols` plus what p's own Leyline of the Guildpact gives its lands: every basic land type, so one mana of any
+/// colour. Not to a land that is a plain Mountain under Blood Moon (`plain`: the engine has no timestamps, so the moon
+/// wins; `granted_cols` is empty then, as `lands_are` skips such lands).
+fn granted_cols_for(g: &Game, p: PlayerId, granted: Colors, plain: bool) -> Colors {
+    if !plain && !g.hooks.is_empty() && crate::engine::chars::leyline(g, p) {
+        granted.union(Colors::from_letters("WUBRG"))
+    } else {
+        granted
+    }
+}
+
 /// the colours p's land L taps for now (Fellwar Stone reads opponents' lands)
 pub fn land_colors_now(g: &Game, p: PlayerId, l: PermId) -> Colors {
     let moon = !g.hooks.is_empty() && cardcode::blood_moon(g);
     let dryad = !g.hooks.is_empty() && cardcode::dryad_colors(g, p);
     let cols = land_cols(g, p, l, false, moon, dryad);
-    if g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1) == 1 { cols.union(granted_cols(g)) } else { cols }
+    if g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1) == 1 {
+        cols.union(granted_cols_for(g, p, granted_cols(g), moon_land(g, l)))
+    } else {
+        cols
+    }
 }
 
 /// every mana unit p can use now (Python's `mana_units`)
@@ -220,7 +235,8 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         }
         let mut cols = land_cols(g, p, l, anyc, moon, dryad);
         if one {
-            cols = cols.union(granted); // Urborg / Yavimaya: also {B} / {G} (see granted_cols)
+            // Urborg / Yavimaya: also {B} / {G} (see granted_cols); Leyline of the Guildpact: any colour
+            cols = cols.union(granted_cols_for(g, p, granted, plain));
         }
         if hooked && amt >= 2 && hooks::land_colorless(g, p, l, amt as u32) {
             cols = Colors::NONE; // Damping Sphere: one {C} instead of any other type and amount
@@ -1241,7 +1257,10 @@ pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
     let t = &g.db.get(c).tags;
     let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
     let letters = t.str(Tag::C).unwrap_or("C");
-    let cols = tag_colors(letters, g.player(p).ident);
+    let mut cols = tag_colors(letters, g.player(p).ident);
+    if amt == 1 {
+        cols = cols.union(granted_cols_for(g, p, Colors::NONE, false)); // Leyline of the Guildpact: any colour
+    }
     Unit { src: Source::float(Kind::Any), cols, amt, shape: shape_of(t, letters, cols, amt, amt, true) }
 }
 

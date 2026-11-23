@@ -203,6 +203,11 @@ pub fn has_subtype(g: &Game, m: PermId, t: &str) -> bool {
 /// a permanent's colours (cards: coloured mana symbols in the cost; tokens: their token colour)
 pub fn colors(g: &Game, m: PermId) -> Colors {
     let x = g.perm(m);
+    // Leyline of the Guildpact (layer 5, after any copy exception of layer 1): a nonland permanent you control is every
+    // colour. Lands (manlands and a land's other face too) keep theirs. Only a game with hooked cards pays for the scan
+    if !g.hooks.is_empty() && !is_land_perm(g, m) && leyline(g, x.owner) {
+        return Colors::from_letters("WUBRG");
+    }
     if let Some(c) = x.exc.colors {
         return c;
     }
@@ -214,6 +219,21 @@ pub fn colors(g: &Game, m: PermId) -> Colors {
         Some(c) => g.db.get(c).colors,
         None => x.colors,
     }
+}
+
+/// m is a land (the card's type, or a land's other face): Leyline's colours skip it
+fn is_land_perm(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.data.truthy(DataKey::LandFace) || x.cd.is_some_and(|c| g.db.get(c).land)
+}
+
+/// p controls a Leyline of the Guildpact that is on the battlefield, phased in, with its abilities on. A copy of it is
+/// found through the copy's card (`cd`). Scans `g.hooks` only: Leyline has card code, so it is listed there.
+pub fn leyline(g: &Game, p: PlayerId) -> bool {
+    g.hooks.iter().any(|&h| {
+        let x = g.perm(h);
+        x.owner == p && x.on_bf && !x.phased && !x.neutered && is_fx(g, h, NamedFx::AllColors)
+    })
 }
 
 // ================================================================== layer 6: ability
@@ -501,6 +521,9 @@ pub enum NamedFx {
     AllCreatureTypes,
     /// layer 4: every land is this basic land type too (WUBRG letter: Yavimaya G, Urborg B)
     LandsAre(char),
+    /// layers 4 and 5: its controller's nonland permanents are all colours and their lands every basic land type
+    /// (Leyline of the Guildpact; read through `leyline`)
+    AllColors,
     /// layer 6: the creature it equips loses this keyword (Colossus Hammer: flying)
     EquippedLoses(&'static str),
     /// layer 7b: the creature it equips has this base power and toughness (Wrecking Ball Arm, Hulkbuster Armor)
@@ -521,10 +544,11 @@ pub struct Named {
 }
 
 /// The cards whose characteristic-changing effect is read by name (each was a name check at its use site).
-pub const NAMED: [Named; 8] = [
+pub const NAMED: [Named; 9] = [
     Named { name: "Maskwood Nexus", layer: "4", fx: NamedFx::AllCreatureTypes },
     Named { name: "Yavimaya, Cradle of Growth", layer: "4", fx: NamedFx::LandsAre('G') },
     Named { name: "Urborg, Tomb of Yawgmoth", layer: "4", fx: NamedFx::LandsAre('B') },
+    Named { name: "Leyline of the Guildpact", layer: "4/5", fx: NamedFx::AllColors },
     Named { name: "Colossus Hammer", layer: "6", fx: NamedFx::EquippedLoses("flying") },
     Named { name: "Wrecking Ball Arm", layer: "7b", fx: NamedFx::EquippedBase(7, 7) },
     Named { name: "Hulkbuster Armor", layer: "7b", fx: NamedFx::EquippedBase(9, 9) },
@@ -563,12 +587,16 @@ pub fn lands_are(g: &Game, ch: char) -> bool {
 }
 
 /// layer 4: land l's basic land types (WUBRG letters: Plains, Island, Swamp, Mountain, Forest). Blood Moon makes a
-/// nonbasic land a Mountain only (its printed types go); Yavimaya and Urborg add Forest and Swamp to every land.
+/// nonbasic land a Mountain only (its printed types go); Yavimaya and Urborg add Forest and Swamp to every land, and
+/// Leyline of the Guildpact every basic type to its controller's lands (Blood Moon wins: the engine has no timestamps).
 pub fn land_types(g: &Game, l: PermId) -> Colors {
     if crate::engine::mana::moon_land(g, l) {
         return Colors::from_letters("R");
     }
     let mut t = g.perm(l).cd.map_or(Colors::NONE, |c| g.db.get(c).land_types);
+    if !g.hooks.is_empty() && leyline(g, g.perm(l).owner) {
+        t = t.union(Colors::from_letters("WUBRG")); // Leyline of the Guildpact: every basic land type
+    }
     for (ch, s) in [('G', "G"), ('B', "B")] {
         if lands_are(g, ch) {
             t = t.union(Colors::from_letters(s));
