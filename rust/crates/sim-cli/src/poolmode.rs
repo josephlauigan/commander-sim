@@ -887,6 +887,10 @@ fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
         Some("all") | None => return Err("--trace needs --deck, or --pool with one tier".into()),
         Some(t) => t,
     };
+    // the deck-less trace draws four pool decks at a Commander table
+    if let Some(f) = sim.requested_format().filter(|f| duel::is_duel(f)) {
+        return Err(duel::refuse("--trace without --deck", None, f));
+    }
     let prof = a.profiles[0].clone();
     let st = sim.settings_in(profile(&prof)?, Some(tier));
     let game = a.trace.unwrap();

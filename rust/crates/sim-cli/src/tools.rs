@@ -196,6 +196,10 @@ pub fn searchtest(argv: &[String]) -> i32 {
             crate::poolmode::select_tiers(me, &crate::poolmode::deck_tiers(&sim, me)?, tier, any_tier)?;
         }
         let fmt = sim.format_for(me);
+        // an AI-measurement tool: until the format AI profile exists (C4) a 2-seat number means nothing
+        if crate::duel::is_duel(fmt) {
+            return Err(crate::duel::refuse("searchtest", Some(me), fmt));
+        }
         let opp = sim.opponents(tier, fmt);
         if opp.is_empty() {
             return Err(format!("no tier {tier:?}"));

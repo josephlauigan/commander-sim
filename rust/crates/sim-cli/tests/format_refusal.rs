@@ -95,6 +95,30 @@ fn the_four_seat_modes_are_refused_at_a_cali_table() {
     }
 }
 
+/// `searchtest` measures the AI, and the 2-seat AI is the 4-player one until C4: refused for kyodai, no game
+#[test]
+fn searchtest_is_refused_for_a_cali_deck() {
+    for tier in ["t5", "t6"] {
+        refused(
+            &["searchtest", "kyodai", tier, "1"],
+            &["searchtest", "kyodai", "Cali Commander", "is not available for Cali Commander yet"],
+        );
+    }
+}
+
+/// the deck-less `--trace` is a Commander table: `--format cali` is refused with it. `--pool tN --trace` alone already needs
+/// `--deck`; the one deck-less trace is `--calibrate within --pool tN --trace`, which `check_modes` refuses first (the
+/// guard in `poolmode::trace_pool` is the second line of defence).
+#[test]
+fn a_deckless_trace_refuses_a_cali_format() {
+    refused(
+        &["--format", "cali", "--calibrate", "within", "--pool", "t5", "--trace", "0", "--quiet"],
+        &["--calibrate", "Cali Commander", "is not available for Cali Commander yet"],
+    );
+    let err = refused(&["--format", "cali", "--pool", "t5", "--trace", "0", "--quiet"], &["--deck is required"]);
+    assert!(!err.contains("Play-by-play"), "{err}");
+}
+
 /// `--format` takes a format of data/decks.json, and not with `--all-decks`
 #[test]
 fn the_format_flag_is_checked() {

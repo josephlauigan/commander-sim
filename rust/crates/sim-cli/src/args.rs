@@ -246,7 +246,7 @@ pub fn help() -> String {
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
     s += "\nExamples\n  commander-sim --deck yoshimaru --pool t4 --profile loose --games 960\n  commander-sim --deck yoshimaru \
-          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish kyodai,t5 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
+          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish kyodai,t6 --games 2000   (kyodai alone against one inert seat at 30 life, the six Tier 6 decks against three at 40)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
 
