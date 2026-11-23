@@ -3,6 +3,16 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-22: Loran of the Third Path => Sapphire Medallion (JD's choice, not simulated)
+Sapphire Medallion ({2}, an artifact: blue spells cost {1} less) takes Loran of the Third Path's slot. An Opus consult advised against it:
+this is not a slot-for-slot swap (removal on a body for a cost reducer), and Loran was an answer to the artifact combos that take the most
+games (Urza 13.2%, Kinnan 12.9% in the 11/07 run); with the blink pieces gone since the B swap, Loran's value was one destroy trigger and
+a symmetrical draw. What it gains: {1} off the blue spells with generic mana in their cost (Rhystic Study, Mindbreak Trap, Zur, Teferi, Time
+Raveler, Notion Thief and others); Counterspell, Absorb and Thassa's Oracle get nothing, and Doomsday is black. Triggers are unchanged:
+Loran was a creature, and the Medallion has mana value 2. Counts: 12 creatures plus Y'shtola (13), artifacts 8 (7), two-drops 12 (11), three-drops 19
+(20). The deck's artifact and enchantment answers are now Skyclave Apparition, Anguished Unmaking, Generous Gift, Prayer of Binding, and Austere Command and Farewell in their artifact and enchantment modes.
+Model status: Full-auto before this change; now Full, with its own test (`sapphire_medallion_cuts_one_generic_from_blue_spells_only`). Not measured.
+
 ## 2026-11-18: Venat, Heart of Hydaelyn // Hydaelyn => Absorb (JD's choice, not simulated)
 Absorb ({W}{U}{U} instant, counter target spell and you gain 3 life; mana value 3; not a Game Changer, so the list stays
 at 16 and Bracket 4) takes Venat's slot. Why: Venat is a creature, so it never triggers Y'shtola, and its draw needs a

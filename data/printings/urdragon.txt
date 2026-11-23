@@ -25,6 +25,7 @@
 1 Elvish Mystic (hoc) 205
 1 Exotic Orchard (brc) 185
 1 Fact or Fiction (cmm) 631
+1 Field of the Dead (spg) 28
 1 Fierce Guardianship (cmm) 694
 1 Flooded Strand (mh3) 353
 1 Forest (mdd) 301
@@ -76,7 +77,6 @@
 1 Stomping Ground (clu) 281
 1 Sulfurous Springs (prm) 103478
 1 Summon: Bahamut (fin) 356
-1 Swamp (mdd) 296
 1 Swords to Plowshares (cst) 54
 1 Taiga (3ed) 287
 1 Teferi's Protection (sta) 74

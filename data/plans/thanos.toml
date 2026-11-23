@@ -6,8 +6,8 @@
 # into Walking Ballista. Thanos's power-up is card code (impls/t6_thanos.rs), not this plan.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
-# Staff of Domination + Faeburrow Elder, and Thassa's Oracle with Demonic Consultation or Tainted Pact (the plan has no
-# lines for them), and the 1v1, 30-life Cali rules themselves. The schema can't express the choice of odd or even for
+# Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
+# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The schema can't express the choice of odd or even for
 # the power-up.
 deck = "thanos"
 default = "plan"
@@ -63,7 +63,7 @@ score = 76
 [[prio]]
 cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Mind Stone", "Birds of Paradise",
     "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Hierarchy", "Talisman of Progress",
-    "Thought Vessel", "Fellwar Stone"]
+    "Mox Opal", "Chrome Mox", "Fellwar Stone"]
 when = ["turn<=4"]
 value = 86
 else = 46

@@ -52,6 +52,23 @@ fn the_medallions_cut_exactly_one_from_their_colour() {
 }
 
 #[test]
+fn sapphire_medallion_cuts_one_generic_from_blue_spells_only() {
+    let mut g = tbl("urza-mono-blue-artifacts");
+    let rhystic = card(&g, "Rhystic Study"); // {2}{U}
+    let counterspell = card(&g, "Counterspell"); // {U}{U}: no generic part to cut
+    let wurm = card(&g, "Wurmcoil Engine"); // {6}, colourless
+    assert_eq!(cost_of(&g, P0, rhystic).0, 2, "Rhystic Study before the Medallion");
+    let m = perm(&mut g, P0, "Sapphire Medallion");
+    assert!(!rule_slot(&g, "Sapphire Medallion", |i| i.cost.is_some()), "no cost hook");
+    assert_eq!(cost_of(&g, P0, rhystic).0, 1, "a blue spell costs exactly {{1}} less");
+    assert_eq!(cost_of(&g, P0, counterspell), (0, "UU".to_string()), "the coloured part is never reduced");
+    assert_eq!(cost_of(&g, P0, wurm).0, 6, "a colourless spell pays full");
+    assert_eq!(cost_of(&g, P1, rhystic).0, 2, "only its controller's spells");
+    zones::leave(&mut g, m).unwrap();
+    assert_eq!(cost_of(&g, P0, rhystic).0, 2, "Rhystic Study after the Medallion leaves");
+}
+
+#[test]
 fn foundry_inspector_and_etherium_sculptor_cut_one_each_from_artifacts() {
     let mut g = tbl("urza-mono-blue-artifacts");
     let wurm = card(&g, "Wurmcoil Engine"); // {6}

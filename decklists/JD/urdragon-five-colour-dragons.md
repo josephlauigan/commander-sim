@@ -7,13 +7,13 @@ damage, and Miirym and Lathliss double the Dragons. Beside those sits one four-c
 Double + Twinflame + Doubling Season**, which makes mana and hasty tokens without limit. Around them sit the top-end
 Dragons (Utvara Hellkite, Steel Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lightning Bolt, Decimate,
 Fact or Fiction, Austere Command, Young Pyromancer) and Triple Triad. The deck is weak to board wipes and mass bounce after it
-has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (two basic lands). Nothing in this document has been simulated yet.
+has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (one basic land). Nothing in this document has been simulated yet.
 
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10 flier); all five colours. Eminence: other Dragon spells you cast cost {1} less while it is in the command zone or on the battlefield |
-| **Bracket** | 4: 10 Game Changers and one four-card combo. Played against Tier 5 (High Bracket 4) |
-| **Game Changers (10)** | Ancient Tomb, Cyclonic Rift, Demonic Tutor, Fierce Guardianship, Mana Vault, Rhystic Study, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
+| **Bracket** | 4: 11 Game Changers and one four-card combo. Played against Tier 5 (High Bracket 4) |
+| **Game Changers (11)** | Ancient Tomb, Cyclonic Rift, Demonic Tutor, Field of the Dead, Fierce Guardianship, Mana Vault, Rhystic Study, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
 | **Simulator** | Deck key `urdragon`, tier T5; findings in `audit/urdragon/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/urdragon.toml`. No sims yet |
 | **Buys** | None: every card not owned is proxied |
 
@@ -229,7 +229,7 @@ The matchup notes are expectations, not measured.
 | Board wipes | Keep Dragons in hand until you hold Teferi's Protection; Rivaz and Tiamat rebuild |
 | Creature-heavy midrange | Glorybringer, Thundermaw and the Dragon-enters damage clear blockers; Crux of Fate (non-Dragon mode) clears their board but not yours |
 | Artifact decks (Thanos, Urza, Kinnan) | Hellkite Tyrant takes their artifacts; Decimate, Austere Command and Chaos Warp answer the key one |
-| Stax / Blood Moon | Fetch the basics (Forest, Swamp) first; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
+| Stax / Blood Moon | Fetch the basic (Forest) first; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
 
 ### Life management
 
@@ -251,25 +251,26 @@ already have.
 
 ## Mana
 
-33 lands: 31 nonbasic and 2 basics (Forest, Swamp). Ten original duals (Tundra, Underground Sea, Badlands,
+33 lands: 32 nonbasic and 1 basic (Forest). Ten original duals (Tundra, Underground Sea, Badlands,
 Taiga, Savannah, Scrubland, Volcanic Island, Bayou, Plateau, Tropical Island), seven fetches, five shocks (Blood Crypt,
 Steam Vents, Stomping Ground, Overgrown Tomb, Sacred Foundry), Command Tower, City of Brass, Path of Ancestry (enters
 tapped, any colour, scries when it pays for a Dragon creature spell), Maelstrom of the Spirit Dragon (any colour for
 Dragon spells; {4}, {T}, sacrifice it to fetch a Dragon), Sokenzan, Crucible of Defiance ({R}; channel it for two hasty
 1/1s), Sulfurous Springs ({B} or {R} for 1 damage), Exotic Orchard (any colour an opponent's land could produce),
-Cavern of Souls and Ancient Tomb. A fetch finds any dual or basic that shares a type, so every colour is reachable
+Cavern of Souls, Ancient Tomb and Field of the Dead (enters tapped, makes {C}, and creates a 2/2 Zombie whenever a land
+enters while you control seven or more lands with different names; almost every land here has its own name). A fetch finds any dual or basic that shares a type, so every colour is reachable
 (Springs, Orchard and the other nonbasics without a land type cannot be fetched): land sources by colour are white 15,
-blue 15, black 18, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
+blue 15, black 17, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
 Maelstrom adding one more of each for Dragon spells and Orchard adding what the table's lands make. Red is the heaviest
 colour (RR on most Dragons, RRR on Scourge of Valkas and Triple Triad), then green and black; white and blue are the thinnest, for
 Niv-Mizzet ({U}{U}), Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks: Arcane Signet, Birds, Mox Jasper (with a
 Dragon out) and Delighted Halfling make any colour, and Treasures from Goldspan, Ganax, Smaug, Ancient Copper Dragon and
-Old Gnawbone fix the rest. The fetches also count as sacrifices for Korvold. The two basics are the answer to Blood
-Moon (fetch them first).
+Old Gnawbone fix the rest. The fetches also count as sacrifices for Korvold. The one basic is thin protection against Blood
+Moon (fetch it first; it makes only green).
 
 ## Bracket and Rule 0
 
-Bracket 4 (High): 10 Game Changers and one four-card combo (Garth One-Eye + Spark Double + Twinflame + Doubling Season,
+Bracket 4 (High): 11 Game Changers and one four-card combo (Garth One-Eye + Spark Double + Twinflame + Doubling Season,
 unbounded mana and tokens at sorcery speed). No mass land destruction, no extra turns, no fast-mana turbo (no Mana Crypt
 or Jeweled Lotus). Tell the table about the combo before the game.
 
@@ -287,7 +288,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Sorceries (7).** Austere Command, Crux of Fate, Decimate, Demonic Tutor, Nature's Lore, Three Visits, Twinflame
 
-**Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest, 1 Swamp
+**Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Field of the Dead, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest
 
 ## Import list (100)
 
@@ -319,6 +320,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Elvish Mystic
 1 Exotic Orchard
 1 Fact or Fiction
+1 Field of the Dead
 1 Fierce Guardianship
 1 Flooded Strand
 1 Ganax, Astral Hunter
@@ -391,5 +393,4 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Worldly Tutor
 1 Young Pyromancer
 1 Forest
-1 Swamp
 ```

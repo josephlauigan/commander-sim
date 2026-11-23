@@ -940,6 +940,10 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "urdragon: Korvold, Fae-Cursed King (SacOwn (state only))",
         "sacrificing a permanent gives Korvold a +1/+1 counter and draws a card, both mandatory with no target or choice. The separate enters/attacks sacrifice asks the person which other permanent to sacrifice",
     ),
+    (
+        "thanos: Tezzeret, Cruel Captain (Activate(2))",
+        "the -7 only gives the emblem, with no choice at that moment; the person is asked which artifact gets the three +1/+1 counters at every beginning of combat (`t6_godo::tez_emblem`, `human::cards::pick_perm`)",
+    ),
 ];
 
 /// cards with a triggered choice the probe could not drive (or whose trigger never fired), each with why; a new one

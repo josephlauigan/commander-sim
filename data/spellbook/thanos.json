@@ -4927,42 +4927,6 @@
       ]
     },
     {
-      "id": "2942-3693-4120",
-      "cards": [
-        {
-          "name": "Vigor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Walking Ballista",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Fiery Emancipation",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage",
-        "Infinite +1/+1 counters on creatures you control"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 72,
-      "missing": [
-        "Vigor"
-      ]
-    },
-    {
       "id": "1878-2634-3593",
       "cards": [
         {
@@ -5459,42 +5423,6 @@
       "popularity": 0,
       "missing": [
         "Black Lotus"
-      ]
-    },
-    {
-      "id": "791-2942-3693",
-      "cards": [
-        {
-          "name": "Walking Ballista",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Unspeakable Symbol",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Fiery Emancipation",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Walking Ballista lifelink.\nWalking Ballista has at least two +1/+1 counters on it, or your life total is at least 4.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 0,
-      "missing": [
-        "Unspeakable Symbol"
       ]
     }
   ]
