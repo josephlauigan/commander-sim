@@ -8540,7 +8540,7 @@ types = "I"
 tags = "ctr=any ctrexile"
 dsl = []
 status = "Full"
-note = "exile target spell, and every other opposing spell on the stack; cast for {2}{U}{U}, or for free (plus cost increases) when an opponent has cast three or more spells this turn (alternative-cost slot); the AI takes the free mode whenever it is open"
+note = "exile any number of target spells: a person chooses them (any spells on the stack, their own included); the AI exiles every opposing spell on the stack; cast for {2}{U}{U}, or for free (plus cost increases) when an opponent has cast three or more spells this turn (alternative-cost slot); the AI takes the free mode whenever it is open"
 
 ["Misdirection"]
 status = "Full"

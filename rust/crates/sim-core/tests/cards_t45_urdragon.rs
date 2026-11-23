@@ -395,7 +395,7 @@ fn tiamat_finds_five_dragons_with_different_names_if_cast() {
             "Klauth, Unrivaled Ancient",
         ],
     );
-    let t = perm(&mut g, P0, "Tiamat");
+    let t = perm(&mut g, P0, "Dragonlord Ojutai");
     assert!(g.player(P0).hand.is_empty(), "put onto the battlefield, not cast: nothing");
     g.last_cast_etb = true;
     (imp(&g, "Tiamat").etb.unwrap())(&mut g, t, P0, t).unwrap();
@@ -546,4 +546,20 @@ fn mox_jasper_counts_a_maskwood_nexus_creature_as_a_dragon() {
     assert_eq!(total_mana(&g, P0, false), 0, "a non-Dragon creature: no mana");
     perm(&mut g, P0, "Maskwood Nexus");
     assert_eq!(total_mana(&g, P0, false), 1, "Maskwood Nexus makes it a Dragon");
+}
+
+#[test]
+fn atarka_gives_double_strike_to_each_attacking_dragon_and_no_one_else() {
+    use sim_core::dsl::has_kw;
+    use sim_core::engine::combat;
+    // "Whenever a Dragon you control attacks, it gains double strike until end of turn."
+    let mut g = tbl_dragons();
+    perm(&mut g, P0, "Atarka, World Render");
+    let (d1, d2) = (perm(&mut g, P0, "Hellkite Courser"), perm(&mut g, P0, "Wrathful Red Dragon"));
+    let (other, idle_dragon) = (token(&mut g, P0, 2), perm(&mut g, P0, "Dragonlord Ojutai"));
+    combat::attack_triggers(&mut g, P0, &[d1, d2, other], P1).unwrap();
+    assert!(has_kw(&g, d1, "double strike"), "an attacking Dragon gains double strike");
+    assert!(has_kw(&g, d2, "double strike"), "so does the second attacking Dragon");
+    assert!(!has_kw(&g, other, "double strike"), "an attacking non-Dragon doesn't");
+    assert!(!has_kw(&g, idle_dragon, "double strike"), "a Dragon that didn't attack doesn't");
 }

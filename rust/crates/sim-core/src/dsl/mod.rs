@@ -317,6 +317,14 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
 
 /// does card c (in a library, hand or graveyard) satisfy filter f?
 pub fn card_matches(g: &Game, c: CardId, f: Option<&Filter>) -> bool {
+    card_matches_except(g, c, f, None)
+}
+
+/// `card_matches` for a filter that says "another" (`other`): `except` is the source's own card, which is not
+/// another card (Morcant's Loyalist does not return itself). Every field of the filter is read: a field that names a
+/// state only a permanent has (`tapped`, `attacking`) matches no card in a library, hand or graveyard; `nontoken` is
+/// true of every card; `controller` is the zone the caller searches (your library or graveyard, theirs)
+pub fn card_matches_except(g: &Game, c: CardId, f: Option<&Filter>, except: Option<CardId>) -> bool {
     let d = g.db.get(c);
     let empty = Filter::default();
     let f = f.unwrap_or(&empty);
@@ -347,10 +355,50 @@ pub fn card_matches(g: &Game, c: CardId, f: Option<&Filter>) -> bool {
     if f.max_mv.is_some_and(|v| d.cmc > v)
         || f.min_mv.is_some_and(|v| d.cmc < v)
         || f.max_pow.is_some_and(|v| d.pow > v)
+        || f.min_pow.is_some_and(|v| d.pow < v)
     {
         return false;
     }
-    !(f.nonlegendary == Some(true) && d.tag(Tag::Leg))
+    if f.other == Some(true) && except == Some(c) {
+        return false;
+    }
+    if f.tapped == Some(true) || f.attacking == Some(true) {
+        return false;
+    }
+    if f.nonlegendary == Some(true) && d.tag(Tag::Leg) {
+        return false;
+    }
+    if f.legendary == Some(true) && !d.tag(Tag::Leg) {
+        return false;
+    }
+    if let Some(kw) = f.keyword.as_ref().or(f.kw.as_ref())
+        && !d.kws.iter().any(|k| **k == **kw)
+    {
+        return false;
+    }
+    // one of these colours (the printed colours of the card)
+    if let Some(cols) = f.color.as_deref().filter(|c| !c.is_empty())
+        && !cols.chars().any(|ch| d.colors.has(ch))
+    {
+        return false;
+    }
+    if let Some(st) = f.subtype.as_deref().filter(|s| !s.is_empty()) {
+        // a changeling (a Kindred card too) is every creature type, never a land, artifact or enchantment type
+        let changeling = d.kws.iter().any(|k| &**k == "changeling");
+        let creature_type = |t: &str| {
+            !crate::engine::chars::NONCREATURE_TYPES.contains(&t)
+                && !["plains", "island", "swamp", "mountain", "forest", "basic", "snow"].contains(&t)
+        };
+        let has = |t: &str| d.has_subtype(t) || (changeling && creature_type(t));
+        let ok = match st.strip_prefix("non-") {
+            Some(t) => !has(t),
+            None => has(st),
+        };
+        if !ok {
+            return false;
+        }
+    }
+    true
 }
 
 /// the players a 'who' names
@@ -952,10 +1000,11 @@ fn run(
                 return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
             }
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
+            let own = spell.or_else(|| src.and_then(|m| g.perm(m).cd)); // "another" card: not the source itself
             if e.all == Some(true) {
                 // --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield"
                 let cs: Vec<CardId> =
-                    g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).collect();
+                    g.player(p).gy.iter().copied().filter(|&c| card_matches_except(g, c, Some(&f), own)).collect();
                 let tapped = e.tapped == Some(true);
                 let mut lands = 0;
                 for c in cs {
@@ -978,12 +1027,23 @@ fn run(
                 }
                 return Ok(());
             }
-            let mut pool: Vec<(CardId, PlayerId)> =
-                g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, p)).collect();
+            let mut pool: Vec<(CardId, PlayerId)> = g
+                .player(p)
+                .gy
+                .iter()
+                .copied()
+                .filter(|&c| card_matches_except(g, c, Some(&f), own))
+                .map(|c| (c, p))
+                .collect();
             if e.from.as_deref() == Some("any") {
                 for q in g.opps(p).collect::<Vec<_>>() {
                     pool.extend(
-                        g.player(q).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, q)),
+                        g.player(q)
+                            .gy
+                            .iter()
+                            .copied()
+                            .filter(|&c| card_matches_except(g, c, Some(&f), own))
+                            .map(|c| (c, q)),
                     );
                 }
             }
@@ -1025,8 +1085,9 @@ fn run(
             }
         }
         "regrow" => {
+            let own = spell.or_else(|| src.and_then(|m| g.perm(m).cd)); // "another" card: not the source itself
             let cs: Vec<CardId> =
-                g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, e.filter.as_ref())).collect();
+                g.player(p).gy.iter().copied().filter(|&c| card_matches_except(g, c, e.filter.as_ref(), own)).collect();
             // practice mode: the person picks the card (a target of the spell: no way out)
             let pick = if crate::human::is_human(g, p) && !cs.is_empty() {
                 let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {

@@ -117,6 +117,30 @@ fn sorted_strs(v: &[String]) -> J {
     J::Arr(s.into_iter().map(|x| J::from(x.as_str())).collect())
 }
 
+/// Scryfall's record of a hand-tagged card: by name, or by front face for a double-faced card
+fn scryfall_of<'a>(cd: &Cd, cache: &'a Cache) -> Option<&'a J> {
+    cache.get(&cd.name).or_else(|| cache.get(cd.name.split(" // ").next().unwrap_or(&cd.name)))
+}
+
+/// the Game Changer flag: a card built from Scryfall carries it; a hand-tagged card (or a pool card made from one) has
+/// none, so it takes Scryfall's, and stays null only when Scryfall has no record of it
+fn game_changer(cd: &Cd, cache: &Cache) -> J {
+    match (cd.game_changer, scryfall_of(cd, cache)) {
+        (Some(g), _) => J::from(g),
+        (None, Some(r)) => J::from(r.get("game_changer").is_some_and(|g| g.truthy())),
+        (None, None) => J::Null,
+    }
+}
+
+/// the colour identity: the same fallback to Scryfall's (its colours in its own order, as for the other cards)
+fn identity(cd: &Cd, cache: &Cache) -> J {
+    match (&cd.identity, scryfall_of(cd, cache)) {
+        (Some(i), _) => J::from(i.as_str()),
+        (None, Some(r)) => J::from(r.strs("color_identity").concat()),
+        (None, None) => J::Null,
+    }
+}
+
 /// one card's record in cards.json
 pub fn card_record(cd: &Cd, cache: &Cache, hooks: Option<&Hooks>) -> J {
     let land = cd.land();
@@ -138,8 +162,8 @@ pub fn card_record(cd: &Cd, cache: &Cache, hooks: Option<&Hooks>) -> J {
         "subtypes" => strs(&cd.subtypes),
         "protfrom" => cd.protfrom.as_str(),
         "ward" => cd.ward,
-        "identity" => cd.identity.clone(),
-        "game_changer" => cd.game_changer,
+        "identity" => identity(cd, cache),
+        "game_changer" => game_changer(cd, cache),
         "source" => cd.source.as_str(),
         "unparsed" => J::Arr(cd.unparsed.iter().map(|s| J::from(s.as_str())).collect()),
         "derived" => obj! {"cmc" => cd.cmc, "land" => land, "creature" => cd.creature(), "instant" => cd.instant(),

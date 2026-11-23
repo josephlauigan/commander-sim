@@ -3,8 +3,8 @@
 //!
 //! Gifts Ungiven: "Search your library for up to four cards with different names and reveal them. Target opponent
 //! chooses two of those cards. Put the chosen cards into your graveyard and the rest into your hand. Then shuffle."
-//! (the sim's version: the opponent's choice puts two in the hand and two in the graveyard, the engine's convention
-//! for the card since the AI's own pick is scored that way). With one opponent there is nothing to choose.
+//! (a pile of four: two in the hand, two in the graveyard; tests/pile_tutor_split.rs covers smaller piles). With one
+//! opponent there is nothing to choose.
 
 mod parity_common;
 mod play_common;

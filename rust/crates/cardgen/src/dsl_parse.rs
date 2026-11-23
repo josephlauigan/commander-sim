@@ -205,6 +205,21 @@ pub fn filt(phrase: &str) -> Obj {
     f
 }
 
+/// `filt` for the cards of a graveyard ("another target Elf card": Morcant's Loyalist), where a creature type names
+/// the cards wanted
+fn card_filt(phrase: &str) -> Obj {
+    let mut f = filt(phrase);
+    if !f.contains("subtype")
+        && let Some(m) = search(
+            r"\b(elf|goblin|zombie|human|ninja|soldier|warrior|knight|vampire|spirit|faerie|sliver|merfolk|angel|demon|dinosaur)\b",
+            &phrase.to_lowercase(),
+        )
+    {
+        f.set("subtype", m.gs(1));
+    }
+    f
+}
+
 pub fn selector(phrase: &str) -> Obj {
     let p = phrase.trim().to_lowercase();
     if matches!(p.as_str(), "~" | "it" | "this creature" | "this permanent") {
@@ -425,7 +440,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^return (target|all|each|up to one target|another target) ([^.]+?) to (?:its|their) owners?'s? hands?$", |m| {
         let ph = m.gs(2);
         if ph.contains("card") && ph.contains("graveyard") {
-            return Some(eff(obj! {"do" => "regrow", "filter" => filt(py::first(ph, "card")), "from" => "yours"}));
+            return Some(eff(obj! {"do" => "regrow", "filter" => card_filt(py::first(ph, "card")), "from" => "yours"}));
         }
         Some(eff(obj! {"do" => "bounce", "what" => selector(&format!("{} {}", m.gs(1), ph))}))
     }),
@@ -433,7 +448,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-            let mut o = obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
+            let mut o = obj! {"do" => "reanimate", "filter" => card_filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
             // --- Tiers 1/2 (kaalia-sythis): "return all enchantment cards from your graveyard to the battlefield"
             // (Resurgent Belief, Splendid Reclamation, World Shaper): every one of them, tapped if it says so
             if g1.starts_with("all ") && m.gs(2) == "your" {
@@ -449,7 +464,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^return (?:target |up to one target |up to two target )?([^.]*?)cards? from your graveyard to your hand$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "card" } else { m.gs(1) };
-            Some(eff(obj! {"do" => "regrow", "filter" => filt(g1), "from" => "yours"}))
+            Some(eff(obj! {"do" => "regrow", "filter" => card_filt(g1), "from" => "yours"}))
         },
     ),
     // search
@@ -851,6 +866,17 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             .iter()
             .filter(|k| m.gs(1).contains(*k))
             .map(|k| obj! {"do" => "grant", "keyword" => *k, "what" => obj!{"sel" => "all", "filter" => obj!{"type" => "creature", "controller" => "you"}}})
+            .collect();
+        if v.is_empty() { None } else { Some(v) }
+    }),
+    // "the event creature gains double strike until end of turn" (Atarka, World Render; "it gains ..." in a "whenever a
+    // creature you control attacks" trigger is rewritten to this internal phrase, so no other Oracle text matches):
+    // the creature the trigger is about
+    (r"^the event creature gains? ([a-z, ]+?) until end of turn$", |m| {
+        let v: Fx = KW
+            .iter()
+            .filter(|k| m.gs(1).contains(*k))
+            .map(|k| obj! {"do" => "grant", "keyword" => *k, "what" => obj!{"sel" => "event"}})
             .collect();
         if v.is_empty() { None } else { Some(v) }
     }),
@@ -1803,8 +1829,10 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             // --- Tiers 1/2 (isshin): "whenever a creature you control attacks, it gets +2/+2" (Fervent Charge): "it"
             // is the attacking creature, not this permanent
             let each = trig.as_ref().is_some_and(|t| t.iter().any(|x| x.get("source") == Some(&J::from("you_each"))));
-            let body = match m.gs(3).strip_prefix("it gets ") {
-                Some(r) if each => format!("that creature gets {r}"),
+            // (Atarka, World Render: "it gains double strike until end of turn" is the attacking Dragon only)
+            let body = match (m.gs(3).strip_prefix("it gets "), m.gs(3).strip_prefix("it gains ")) {
+                (Some(r), _) if each => format!("that creature gets {r}"),
+                (_, Some(r)) if each => format!("the event creature gains {r}"),
                 _ => m.gs(3).to_string(),
             };
             let (e, b) = parse_effects(&body);
@@ -1829,6 +1857,9 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             if g1.contains('{') || g1.contains("sacrifice") || g1.contains("pay") || g1.contains("discard") {
                 let cost = parse_cost(g1);
                 let body = sub(r"\.? ?activate (only|this ability only)[^.]*", "", m.gs(2));
+                // --- Tiers 1/2 (windgrace): "Tap ~. It gains indestructible until end of turn" (Seasoned Hallowblade):
+                // "it" is this permanent, not every creature you control
+                let body = sub(r"^(tap ~)\. it gains ", r"\1. ~ gains ", &body);
                 let (mut e, mut b) = parse_effects(&body);
                 // --- Tiers 1/2 (windgrace): "~ gains ... Tap it." (Soul of Windgrace): "it" is ~
                 if body.starts_with("~ ") && b.iter().any(|x| x == "tap it") {
