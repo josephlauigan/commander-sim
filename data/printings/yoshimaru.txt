@@ -49,6 +49,7 @@
 1 Restoration Angel (2x2) 421
 1 Scrubland (3ed) 286
 1 Silence (m14) 35
+1 Skrelv, Defector Mite (one) 33
 1 Skyclave Apparition (blc) 154
 1 Sol Ring (fdc) 286
 1 Solitude (h2r) 3
@@ -69,7 +70,7 @@
 1 The One Ring (ltr) 246
 1 The Wandering Emperor (neo) 316
 1 Tymna the Weaver (fca) 18
-1 Urborg, Tomb of Yawgmoth (tsr) 287
+1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Vampiric Tutor (dmr) 430
 1 Vault of Champions (cmm) 667
 1 Vito, Thorn of the Dusk Rose (j25) 71
