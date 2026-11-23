@@ -51,7 +51,7 @@
 1 Niv-Mizzet, the Firemind (p30a) 14
 1 Old Gnawbone (afr) 197
 1 Overgrown Tomb (trk) 289
-1 Path of Ancestry (p30a) 25
+1 Path of Ancestry (cmm) 661
 1 Path to Exile (blc) 147
 1 Plateau (3ed) 284
 1 Polluted Delta (mh3) 356

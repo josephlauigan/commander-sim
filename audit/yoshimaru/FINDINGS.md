@@ -14,6 +14,20 @@ The findings of the retired Tymna/Thrasios Doomsday deck are in `audit/retired/t
   It leaves out the Archangel of Thune + Walking Ballista line and the guide's Restoration Angel + Felidar Guardian line (Spellbook
   1090-2781, listed in `KNOWN_GAPS` in `tests/spellbook.rs`).
 
+## 2026-11-22: Zack Fair => Skrelv, Defector Mite (JD's choice, not simulated)
+Skrelv ({W}, a legendary artifact creature 1/1 with toxic 1 that can't block; {W/P}, {T}: another creature we control gains toxic 1 and hexproof from a
+chosen colour and can't be blocked by creatures of that colour until end of turn; model status Full; a proxy) takes Zack Fair's slot. Opus recommended it over
+Giada, Selfless Spirit, Mother of Runes and Karlov of the Ghost Council as the closest slot-for-slot card; JD chose it. Both are one-mana legendary white creatures:
+the count of legendary permanents that give Yoshimaru a counter stays at 21, Mox Amber still turns on with it, and Elas, Haliya, Ranger-Captain of Eos
+and Recruiter of the Guard find or reward it the same way. What it gains: protection against targeted removal of one colour (exile, bounce and -X/-X as
+well as destroy), and unblockability plus toxic for the creature it helps, which can feed Tymna's draws; the AI uses it in response to removal on a commander or a creature worth 4 or more, and before combat on the best attacker against the colour of the blockers that matter. What it gives up: Zack Fair's {1} sacrifice worked the
+turn he came down and saved one creature from a destroy wrath, and moved one Equipment (Skrelv needs {T}, so it does nothing the turn it lands, can't
+block and moves no Equipment). Counts after: artifacts 18 (17), so the chance of metalcraft (three artifacts) in the first 12 cards goes from 34.5% to
+38.4%; Chrome Mox can imprint 46 cards (47), because Skrelv is an artifact; legendary permanents 21 (21); one-drops, protection (6) and creatures (28)
+unchanged. The plan file gives Skrelv Zack Fair's cast priority (66 once a commander is out, else 54). Not measured. To check in the first run: how often
+Skrelv's ability is used and what it answers, whether the creature it makes unblockable connects for Tymna, and whether the missing Equipment mover and
+destroy-wrath save matter against sweeper tables.
+
 ## 2026-11-21: the Equipment package (22 swaps, not simulated)
 What changed and why is in `decklists/CHANGELOG.md`; the guide's "The Equipment package" describes the cards. **Nothing has been simulated:
 every statement below is a claim to test, not a result.**
@@ -30,9 +44,9 @@ every statement below is a claim to test, not a result.**
   4.1 mana on turn 4, 4.8 on turn 5, 5.3 on turn 6 and 6.3 on turn 8 (on the play; not the simulator). Compare with the simulator's turn-by-turn mana and with
   `--goldfish yoshimaru,t5`.
 - **Delney conflicts.** Cloud, Stoneforge Mystic, Kor Outfitter and Puresteel Paladin have power 2 or less, so Delney doubles their enter and combat
-  triggers (Zack Fair has no triggered ability); any Sword on them removes that. A Sword on Cloud (equipped, so his own doubling applies) is the intended exception.
+  triggers (Skrelv has no triggered ability); any Sword on them removes that. A Sword on Cloud (equipped, so his own doubling applies) is the intended exception.
 - **Protection from white.** Sword of Hearth and Home's carrier cannot be targeted by our white spells and abilities (Ephemerate, Restoration Angel, Felidar Guardian,
-  Flickerwisp, Teleportation Circle, Eerie Interlude, Giver of Runes, Heliod's lifelink, Zack Fair's sacrifice, Kor Outfitter's and Ardenn's attach); Equipment's own
+  Flickerwisp, Teleportation Circle, Eerie Interlude, Giver of Runes, Heliod's lifelink, Skrelv's ability, Kor Outfitter's and Ardenn's attach); Equipment's own
   equip abilities, Puresteel Paladin's equip {0}, Forge Anew and Mithril Coat's attach trigger still work.
 
 ### Costs accepted by JD with the list (11/21)
