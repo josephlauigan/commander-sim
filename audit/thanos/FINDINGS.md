@@ -27,7 +27,7 @@ turn<=4 rock priority now lists Mox Opal and Chrome Mox in place of Thought Vess
 Mox Opal (legendary) or Chrome Mox (the copy has nothing imprinted). Staff of Domination stays (a proxy, printing cmr 343). Route A2 is unchanged.
 `data/spellbook/thanos.json` was re-fetched on 2026-11-23 (after the two entries that used Fiery Emancipation had been removed): the five
 included combos are unchanged, so the new artifacts add none. Three combos are now "almost included": Tidespout Tyrant + Mox Opal and
-Hullbreaker Horror (both one card away, no result listed), and Time Vault + Tezzeret, Cruel Captain (infinite turns; Time Vault is not Commander-legal,
+Hullbreaker Horror (with any {0} permanent, which Mox Opal and Chrome Mox now supply; both one card away, no result listed), and Time Vault + Tezzeret, Cruel Captain (infinite turns; Time Vault is not Commander-legal,
 so Spellbook marks the combo illegal; not in the list).
 
 ## 2026-11-15: Triple Triad => Gifts Ungiven (JD's choice, not simulated)
