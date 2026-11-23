@@ -132,6 +132,8 @@ Spellbook lists no combo with Sculpting Steel for this list.
 
 ## What the simulator cannot do yet
 
+*Superseded 2026-11-23 by the Cali work (C1 rules, C2 format data, C3 sim-cli 1v1 tables): kyodai now plays Cali Commander (1v1, 30 life, no first-player draw) and its Cali ban list is in `data/formats.toml`; the card-model and plan-file items below are still open.*
+
 - **No Cali mode:** the engine plays 4-player pods at 40 life. Cali is 1v1 at 30 life, and the player on the play skips
   their first draw.
 - **No Cali ban list:** `cardgen deck` rejects Mana Crypt, Tinker and Primeval Titan as banned in Commander; Cali allows

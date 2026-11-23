@@ -71,13 +71,16 @@ pub fn ai_rules(
     seed0: u64,
 ) -> Result<Vec<AiRule>, String> {
     let vseat = sim.seat(deck, var)?;
-    let settings = Arc::new(Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp));
+    let fmt = sim.format_for(deck);
+    let mut settings = Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp);
+    settings.rules = fmt.rules();
+    let settings = Arc::new(settings);
     let mut best: Vec<i32> = vec![i32::MIN; ins.len()];
     let mut generic: Vec<i32> = vec![i32::MIN; ins.len()];
     let mut deck_differs = vec![false; ins.len()];
     for seed in [seed0, seed0 + 1] {
         for rounds in [4u32, 7] {
-            let seats = sim.seats_for(seed, Some(deck), Some(&vseat), opp_keys, 3);
+            let seats = sim.table_for(seed, Some(deck), Some(&vseat), opp_keys, fmt);
             let mut g =
                 setup_game(sim.engine.db.clone(), sim.engine.registry.clone(), settings.clone(), seed, &seats, false);
             run_rounds(&mut g, rounds);
@@ -182,7 +185,8 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     let Some(deck) = a.deck.as_deref() else { return Ok(Outcome::Continue) };
     let plan = tier_plan(sim, a)?;
     let Some(tier) = plan.tiers.first().cloned() else { return Ok(Outcome::Continue) };
-    let keys = sim.pool_keys(&tier);
+    let fmt = sim.format_for(deck);
+    let keys = sim.opponents(&tier, fmt);
     let ins: Vec<String> = swaps.iter().map(|s| s.1.clone()).collect();
     println!("Preflight (--no-preflight skips it): is each swapped-in card ever cast by {deck}'s AI?");
     let rules = ai_rules(sim, deck, var, &ins, &keys, a.seed)?;
@@ -208,6 +212,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
         sim.prog.lock().unwrap().label = format!("preflight {tier} / {prof}");
         let mut st = Settings::new(profile(prof)?, AiMode::Adaptive, sim.opts.temp);
         sim.tune(&mut st, Some(tier.as_str())); // the dry run plays the knobs in force
+        st.rules = fmt.rules(); // and the deck's format
         analyses.push(ctx.analyze_with(deck, &seat, &keys, st, DRY_GAMES, a.seed));
     }
     println!(

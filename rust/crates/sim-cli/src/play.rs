@@ -6,6 +6,7 @@ use crate::progress::Progress;
 use crate::pyrand::draw_seats;
 use sim_core::engine::turn::Seat;
 use sim_core::export::RawCard;
+use sim_core::format::Format;
 use sim_core::run::Engine;
 use sim_core::settings::{AiMode, Profile, Settings};
 use sim_core::state::Game;
@@ -155,6 +156,8 @@ pub struct Sim {
     pub knobs: Option<crate::knobs::Knobs>,
     /// the fitted knobs that are the defaults (data/knobs; `--knobs builtin` empties them)
     pub defaults: crate::knobs::Defaults,
+    /// `--format KEY`: play every deck of the run in this format instead of its own (`set_format` checks the key)
+    format: Option<String>,
     seats: HashMap<String, Seat>,
     /// the exported card records (data/cards.json), by name
     raw: HashMap<String, RawCard>,
@@ -179,6 +182,7 @@ impl Sim {
             errors: Mutex::new(vec![]),
             knobs: None,
             defaults: crate::knobs::Defaults::builtin(),
+            format: None,
             seats: HashMap::new(),
             raw,
         };
@@ -258,6 +262,64 @@ impl Sim {
         self.settings_in(profile, self.table_tier(opp_keys).as_deref())
     }
 
+    /// `--format KEY`: every deck of the run is played in this format instead of its own. The key must be a format of
+    /// data/decks.json; whether each deck is admitted is checked per deck (`check_format`).
+    pub fn set_format(&mut self, key: &str) -> Result<(), String> {
+        if !self.engine.formats.contains_key(key) {
+            let known: Vec<&str> = self.engine.formats.keys().map(|k| k.as_str()).collect();
+            return Err(format!("--format {key}: no such format (data/decks.json formats: {})", known.join(", ")));
+        }
+        self.format = Some(key.to_string());
+        Ok(())
+    }
+
+    /// the format `--format` named, if any
+    pub fn requested_format(&self) -> Option<&Format> {
+        self.format.as_ref().map(|k| &self.engine.formats[k])
+    }
+
+    /// the format `deck` is played in: `--format`, else the deck's own (data/my_decks.toml `format`, Commander if none)
+    pub fn format_for(&self, deck: &str) -> &Format {
+        match &self.format {
+            Some(k) => &self.engine.formats[k],
+            None => self.engine.format_of(deck),
+        }
+    }
+
+    /// The format `deck` is played in, if the format admits the deck: a Cali deck is not Commander-legal (a Commander
+    /// table refuses it, `--format commander` or not), and a Commander deck sits at a Cali table only if no card of
+    /// it is on the Cali ban list. The error names the deck, the format and why.
+    pub fn check_format(&self, deck: &str) -> Result<&Format, String> {
+        let fmt = self.format_for(deck);
+        match self.engine.admits(deck, &fmt.key) {
+            Ok(()) => Ok(fmt),
+            Err(why) => Err(format!(
+                "{deck} cannot be played at a {} table: {}{}",
+                fmt.name,
+                why.join("; "),
+                if self.format.is_some() { " (--format)" } else { "" }
+            )),
+        }
+    }
+
+    /// the pool decks of a tier that a table of `fmt` admits, in file order (every pool deck for Commander; Cali Commander
+    /// leaves out the Tier 6 stax deck with The Tabernacle at Pendrell Vale)
+    pub fn opponents(&self, tier: &str, fmt: &Format) -> Vec<String> {
+        self.pool_keys(tier).into_iter().filter(|k| self.engine.admits(k, &fmt.key).is_ok()).collect()
+    }
+
+    /// `settings_in` for a table of this format: its rules (starting life, the starting player's first draw)
+    pub fn settings_in_for(&self, profile: Profile, table_tier: Option<&str>, fmt: &Format) -> Settings {
+        let mut st = self.settings_in(profile, table_tier);
+        st.rules = fmt.rules();
+        st
+    }
+
+    /// `settings_vs` for a table of this format
+    pub fn settings_vs_for(&self, profile: Profile, opp_keys: &[String], fmt: &Format) -> Settings {
+        self.settings_in_for(profile, self.table_tier(opp_keys).as_deref(), fmt)
+    }
+
     /// the tier most of these pool decks belong to (their `[table]` default knobs apply to the whole table)
     pub fn table_tier(&self, opp_keys: &[String]) -> Option<String> {
         crate::knobs::majority_tier(
@@ -313,13 +375,36 @@ impl Sim {
         opp_keys: &[String],
         k: usize,
     ) -> Vec<Seat> {
-        draw_seats(seed, opp_keys, me, k)
-            .iter()
+        self.seats_of(&draw_seats(seed, opp_keys, me, k), me, my_seat)
+    }
+
+    /// the seats of these deck keys in this order: `me` with my_seat's cards if given, the others as loaded
+    fn seats_of(&self, keys: &[String], me: Option<&str>, my_seat: Option<&Seat>) -> Vec<Seat> {
+        keys.iter()
             .map(|s| match (me, my_seat) {
                 (Some(m), Some(seat)) if m == s => seat.clone(),
                 _ => self.seats[s].clone(),
             })
             .collect()
+    }
+
+    /// The table of this seed for a game of format `fmt`: the deck (with my_seat's cards) and the opponents drawn from
+    /// opp_keys. A 4-seat format is exactly `seats_for(.., 3)` (4 pool decks when `me` is None), so Commander is
+    /// byte-identical to before; a 2-seat format is the deck against one opponent, alternating who is on the play by
+    /// seed (`duel::duel_seats`). A 2-seat table needs `me`.
+    pub fn table_for(
+        &self,
+        seed: u64,
+        me: Option<&str>,
+        my_seat: Option<&Seat>,
+        opp_keys: &[String],
+        fmt: &Format,
+    ) -> Vec<Seat> {
+        if crate::duel::is_duel(fmt) {
+            let me = me.expect("a 2-seat table is the deck against an opponent");
+            return self.seats_of(&crate::duel::duel_seats(seed, me, opp_keys), Some(me), my_seat);
+        }
+        self.seats_for(seed, me, my_seat, opp_keys, if me.is_some() { fmt.seats - 1 } else { fmt.seats })
     }
 
     pub fn play(&self, seed: u64, seats: &[Seat], settings: &Settings, trace: bool) -> Game {

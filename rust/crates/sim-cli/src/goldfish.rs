@@ -1,7 +1,10 @@
-//! Goldfish mode (`--goldfish KEYS`): each deck plays alone against three inert seats (`sim_core::goldfish`: 40 life,
-//! 99 Wastes, they never cast, activate, attack, block or respond; their turns still pass, so a round is real). The
-//! deck under test is always seat 1, so its own turn number is the round. Same seeds and seed streams as pool mode
-//! (`lib:{seed}:{key}` for the shuffles), so the same seed gives the same game.
+//! Goldfish mode (`--goldfish KEYS`): each deck plays alone against inert seats (`sim_core::goldfish`: the format's
+//! life, 99 Wastes, they never cast, activate, attack, block or respond; their turns still pass, so a round is real):
+//! three of them at a Commander table (40 life), one at a 2-seat table (Cali Commander, 30 life). At a Commander table
+//! the deck under test is always seat 1; at a 2-seat table it sits first on even seeds (on the play: it skips its first
+//! draw under Cali rules) and second on odd ones (on the draw), as `duel::duel_seats` alternates. Either way its own
+//! turn number is the round. Same seeds and seed streams as pool mode (`lib:{seed}:{key}` for the shuffles), so the
+//! same seed gives the same game.
 //!
 //! Per deck: the kill turn (median and mean, the share of games won by turn 1 ... 8, no kill by the round cap), how
 //! it won, the mulligans, the turn a line was first ready, the protection held on the kill turn, the lines it went
@@ -9,9 +12,11 @@
 
 use crate::args::Args;
 use crate::decks::MINE;
+use crate::duel;
 use crate::play::{GameOut, Sim, ai_name, profile};
 use crate::stats::Counter;
 use sim_core::engine::turn::Seat;
+use sim_core::format::Format;
 use sim_core::ids::PlayerId;
 use std::collections::BTreeMap;
 use std::time::Instant;
@@ -27,7 +32,6 @@ pub fn deck_keys(sim: &Sim, spec: &str) -> Result<Vec<String>, String> {
         let add: Vec<String> = if k == "t6" {
             t6.clone()
         } else if MINE.contains(&k) || t6.iter().any(|x| x == k) {
-            crate::poolmode::check_commander_table(sim, k).map_err(|e| format!("--goldfish: {e}"))?;
             vec![k.to_string()]
         } else {
             return Err(format!(
@@ -44,6 +48,11 @@ pub fn deck_keys(sim: &Sim, spec: &str) -> Result<Vec<String>, String> {
     }
     if out.is_empty() {
         return Err("--goldfish needs at least one deck key".into());
+    }
+    // every deck must be admitted by the format it is played in (its own, or --format): a Cali deck at a Commander table
+    // (`--format commander`), or a pool deck with a card banned in Cali at a Cali table (`--format cali`), is refused
+    for k in &out {
+        sim.check_format(k).map_err(|e| format!("--goldfish: {e}"))?;
     }
     Ok(out)
 }
@@ -67,6 +76,8 @@ pub struct GfGame {
     pub go: Vec<String>,
     /// the own turn the commander first resolved
     pub cmd_turn: Option<u32>,
+    /// the deck sat first (on the play, skipping its first draw under Cali rules); always true at a Commander table
+    pub play: bool,
     /// deck-specific counters (`scion|...`: Scion of the Ur-Dragon's activations by Dragon)
     pub extra: Vec<(String, i64)>,
     /// --- ai-audit: own turns taken, and the loss accounting (gf_audit)
@@ -78,12 +89,14 @@ pub struct GfGame {
 
 impl GfGame {
     pub fn read(g: &sim_core::state::Game) -> GfGame {
-        let me = PlayerId(0);
+        // the deck is the one seat that is not inert: seat 0 at a Commander table, seat 0 or 1 at a 2-seat table
+        let seat = (0..g.players.len()).find(|&i| !sim_core::goldfish::is_inert(g, PlayerId(i as u8))).unwrap_or(0);
+        let me = PlayerId(seat as u8);
         let out = GameOut::from_game(g, false);
-        let p = &out.players[0];
-        let won = out.winner == Some(0) && out.wintype != Some("timeout");
+        let p = &out.players[seat];
+        let won = out.winner == Some(seat) && out.wintype != Some("timeout");
         let kill = won.then_some(p.turns);
-        let route = if won { crate::t6report::win_route(&out, 0) } else { None };
+        let route = if won { crate::t6report::win_route(&out, seat) } else { None };
         let stat = |k: &str| p.stats.get(k).copied();
         let prot = won.then(|| match (stat("gf|prot"), stat("gf|go_turn")) {
             // a combo win: what the deck held as it went for the line; a damage win: what it holds as it lands
@@ -117,6 +130,7 @@ impl GfGame {
             prot,
             go,
             cmd_turn: p.milestone.get("cmd_cast").copied(),
+            play: seat == 0,
             extra,
             own_turns: p.turns,                        // --- ai-audit
             audit: sim_core::gf_audit::report(g, won), // --- ai-audit
@@ -126,10 +140,22 @@ impl GfGame {
     }
 }
 
-/// the seats of a goldfish game: the deck, then the three inert seats
+/// the seats of a Commander goldfish game: the deck, then the three inert seats
 pub fn seats(sim: &Sim, deck: &Seat) -> Result<Vec<Seat>, String> {
+    seats_in(sim, deck, &sim.engine.formats[sim_core::format::DEFAULT_FORMAT], 0)
+}
+
+/// The seats of a goldfish game at a table of this format: the deck and the format's other seats inert (three for
+/// Commander, one for a 2-seat format). At a 2-seat table the deck sits first on even seeds (on the play) and second on
+/// odd ones, as `duel::duel_seats` alternates; at a Commander table it is always seat 1.
+pub fn seats_in(sim: &Sim, deck: &Seat, fmt: &Format, seed: u64) -> Result<Vec<Seat>, String> {
+    let inert = sim_core::goldfish::inert_seats(&sim.engine.db, fmt.seats - 1)?;
     let mut v = vec![deck.clone()];
-    v.extend(sim_core::goldfish::inert_seats(&sim.engine.db)?);
+    if duel::is_duel(fmt) && !duel::on_the_play(seed) {
+        v.insert(0, inert[0].clone());
+    } else {
+        v.extend(inert);
+    }
     Ok(v)
 }
 
@@ -144,16 +170,21 @@ pub(crate) fn list_of(sim: &Sim, key: &str) -> Result<Vec<String>, String> {
 /// A goldfish has no table: a pool deck plays with its own tier's default knobs (style and [table]), one of your decks
 /// with the built-in table knobs (and its own built-in style).
 pub(crate) fn settings_of(sim: &Sim, key: &str, prof: sim_core::settings::Profile) -> sim_core::settings::Settings {
-    sim.settings_in(prof, sim.pool.iter().find(|d| d.key == key).map(|d| d.tier.as_str()))
+    sim.settings_in_for(prof, sim.pool.iter().find(|d| d.key == key).map(|d| d.tier.as_str()), sim.format_for(key))
 }
 
 /// play n goldfish games of `key` from seed0
 pub fn run_deck(sim: &Sim, key: &str, prof: &str, n: u64, seed0: u64) -> Result<Vec<GfGame>, String> {
     let deck = sim.seat(key, &list_of(sim, key)?)?;
-    let seats = seats(sim, &deck)?;
+    let fmt = sim.format_for(key);
+    // the two seat orders (a Commander table has one); a seed picks its own
+    let orders = [seats_in(sim, &deck, fmt, 0)?, seats_in(sim, &deck, fmt, 1)?];
     let st = settings_of(sim, key, profile(prof)?);
     let seeds: Vec<u64> = (seed0..seed0 + n).collect();
-    let games = sim.run_seeds(&seeds, |s| GfGame::read(&sim.play(s, &seats, &st, false)));
+    let games = sim.run_seeds(&seeds, |s| {
+        let seats = &orders[usize::from(duel::is_duel(fmt) && !duel::on_the_play(s))];
+        GfGame::read(&sim.play(s, seats, &st, false))
+    });
     Ok(games.into_iter().map(|x| x.1).collect())
 }
 
@@ -232,10 +263,18 @@ fn protection_cards(sim: &Sim, key: &str) -> Vec<String> {
 pub fn render(sim: &Sim, key: &str, games: &[GfGame], ai: &str, seed0: u64) -> String {
     let n = games.len();
     let s = summarize(games);
+    let fmt = sim.format_for(key);
     let mut o = String::new();
+    let inert = match fmt.seats - 1 {
+        1 => "one inert seat".to_string(),
+        3 => "three inert seats".to_string(),
+        k => format!("{k} inert seats"),
+    };
+    let label = duel::ai_label(fmt).map(|l| format!("; {l}")).unwrap_or_default();
     o += &format!(
-        "\n=== {} ({key}) goldfish [{ai} AI, {n} games from seed {seed0}; three inert seats at 40 life; round cap {ROUNDS}] ===\n",
-        sim.name_of(key)
+        "\n=== {} ({key}) goldfish [{ai} AI, {n} games from seed {seed0}; {inert} at {} life; round cap {ROUNDS}{label}] ===\n",
+        sim.name_of(key),
+        fmt.life
     );
     o += &format!(
         "Kill turn (own turn): median {}, mean {} (over the {} kills)\n",
@@ -245,6 +284,21 @@ pub fn render(sim: &Sim, key: &str, games: &[GfGame], ai: &str, seed0: u64) -> S
     );
     let by: Vec<String> = s.by.iter().enumerate().map(|(t, b)| format!("T{} {b:.1}%", t + 1)).collect();
     o += &format!("  won by turn: {}\n", by.join("  "));
+    if duel::is_duel(fmt) {
+        // the starting player skips its first draw: the kill turn on the play and on the draw
+        for (side, play) in [("on the play", true), ("on the draw", false)] {
+            let sub: Vec<GfGame> = games.iter().filter(|g| g.play == play).cloned().collect();
+            let t = summarize(&sub);
+            o += &format!(
+                "  {side} ({} games): median {}, mean {}; won by turn 4 {:.1}%; no kill {:.1}%\n",
+                sub.len(),
+                fmt_opt(t.median, "none"),
+                fmt_opt(t.mean, "n/a"),
+                t.by[3],
+                t.no_kill
+            );
+        }
+    }
     let lost = games.iter().filter(|g| g.lost).count();
     o += &format!(
         "  no kill by round {ROUNDS}: {:.1}% (of which the deck itself lost: {:.1}% of games)\n",
@@ -377,10 +431,14 @@ pub fn main(sim: &Sim, a: &Args) -> Result<(), String> {
         let key = &keys[0];
         let seed = a.seed + game;
         let deck = sim.seat(key, &list_of(sim, key)?)?;
-        let seats = seats(sim, &deck)?;
+        let fmt = sim.format_for(key);
+        let seats = seats_in(sim, &deck, fmt, seed)?;
         let st = settings_of(sim, key, profile(&prof)?);
         let g = crate::play::catch_game(|| sim.play(seed, &seats, &st, true))?;
         println!("Play-by-play of goldfish game {game} (seed {seed}): {} alone, {ai} AI", sim.name_of(key));
+        if let Some(line) = duel::describe(fmt) {
+            println!("{line}; {} the play", if duel::on_the_play(seed) { "on" } else { "on the draw: not on" });
+        }
         println!("{}", g.log.clone().unwrap_or_default().join("\n"));
         let gf = GfGame::read(&g);
         println!(
@@ -538,16 +596,61 @@ mod tests {
 
     #[test]
     fn the_deck_keys_are_yours_and_the_tier_6_pool() {
-        let sim = sim();
+        let mut sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
         assert_eq!(deck_keys(&sim, "yoshimaru,t6,yoshimaru").unwrap().len(), 7);
-        // kyodai plays Cali Commander: refused, alone or among decks that are fine
+        // kyodai plays Cali Commander: a goldfish of it is played at its own table, alone or among others
+        assert_eq!(deck_keys(&sim, "kyodai").unwrap(), ["kyodai"]);
+        assert_eq!(deck_keys(&sim, "yoshimaru,kyodai,t6").unwrap().len(), 8);
+        assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
+        assert!(deck_keys(&sim, "").is_err());
+        // at a Commander table (`--format commander`) it is refused, alone or among decks that are fine
+        sim.set_format("commander").unwrap();
         for spec in ["kyodai", "yoshimaru,kyodai", "kyodai,t6"] {
             let e = deck_keys(&sim, spec).unwrap_err();
             assert!(e.contains("Cali Commander") && e.starts_with("--goldfish: kyodai"), "{spec}: {e}");
         }
-        assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
-        assert!(deck_keys(&sim, "").is_err());
+        assert_eq!(deck_keys(&sim, "yoshimaru,t6").unwrap().len(), 7);
+    }
+
+    /// a Commander goldfish is the deck then three inert seats at 40 life, whatever the seed; a Cali goldfish is the deck
+    /// and one inert seat at 30 life, the deck first on even seeds and second on odd ones
+    #[test]
+    fn the_goldfish_table_follows_the_format() {
+        let sim = sim();
+        let deck = sim.seat("kyodai", &list_of(&sim, "kyodai").unwrap()).unwrap();
+        let (cmd, cali) = (&sim.engine.formats["commander"], &sim.engine.formats["cali"]);
+        let keys = |s: &[Seat]| s.iter().map(|x| x.key.to_string()).collect::<Vec<_>>();
+        for seed in 500000..500006u64 {
+            assert_eq!(
+                keys(&seats_in(&sim, &deck, cmd, seed).unwrap()),
+                ["kyodai", "goldfish-2", "goldfish-3", "goldfish-4"]
+            );
+            let want = if seed % 2 == 0 { ["kyodai", "goldfish-2"] } else { ["goldfish-2", "kyodai"] };
+            assert_eq!(keys(&seats_in(&sim, &deck, cali, seed).unwrap()), want, "seed {seed}");
+        }
+        assert_eq!(keys(&seats(&sim, &deck).unwrap()), keys(&seats_in(&sim, &deck, cmd, 0).unwrap()));
+        // every seat of the game starts at the format's life (settings carry the rules), the deck is found on either seat,
+        // and a game set up (not played) says which side it is on
+        for (fmt, life) in [(cmd, 40), (cali, 30)] {
+            for seed in [500000u64, 500001] {
+                let seats = seats_in(&sim, &deck, fmt, seed).unwrap();
+                let st = std::sync::Arc::new(sim.settings_in_for(profile("loose").unwrap(), None, fmt));
+                let g = sim_core::engine::turn::setup_game(
+                    sim.engine.db.clone(),
+                    sim.engine.registry.clone(),
+                    st,
+                    seed,
+                    &seats,
+                    false,
+                );
+                assert_eq!(g.players.len(), fmt.seats);
+                assert!(g.players.iter().all(|p| p.life == life && p.start_life == life), "{} life", fmt.name);
+                let me = g.players.iter().position(|p| p.key == "kyodai").unwrap();
+                assert_eq!(GfGame::read(&g).play, me == 0);
+                assert_eq!(me == 0, !duel::is_duel(fmt) || duel::on_the_play(seed));
+            }
+        }
     }
 
     #[test]
@@ -561,6 +664,7 @@ mod tests {
             prot: k.map(|_| prot),
             go: vec![],
             cmd_turn: None,
+            play: true,
             extra: vec![],
             own_turns: 0, // --- ai-audit
             audit: None,

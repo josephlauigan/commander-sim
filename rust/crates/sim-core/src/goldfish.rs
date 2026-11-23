@@ -1,11 +1,12 @@
-//! Goldfish games (`commander-sim --goldfish`): the deck under test plays alone against three inert seats. An inert
-//! seat has 40 life and a library of 99 Wastes (it draws one card a turn, so the library outlasts 20 rounds); its
-//! commander is a vanilla creature it never casts. Its turns pass in the normal order (untap, upkeep, draw, combat
+//! Goldfish games (`commander-sim --goldfish`): the deck under test plays alone against inert seats (three at a Commander
+//! table, one at a 2-seat table). An inert seat has the format's starting life (`Settings.rules`) and a library of 99
+//! Wastes (it draws one card a turn, so the library outlasts 20 rounds); its commander is a vanilla creature it never
+//! casts. Its turns pass in the normal order (untap, upkeep, draw, combat
 //! and end steps happen, so round counting and "each upkeep / each draw" triggers of the deck are real), but it never
 //! plays a land, casts, activates, attacks, blocks or responds: it keeps its seven cards (no mulligan), skips its main
 //! phases, combat and the end-of-turn window, and has no mana and no spells for any priority window.
 //!
-//! Inert seats are recognised by their deck key (`goldfish-2`, `goldfish-3`, `goldfish-4`), as the rest of the AI
+//! Inert seats are recognised by their deck key (`goldfish-2` ... `goldfish-4`), as the rest of the AI
 //! keys on the seat key. Nothing here runs in a game without an inert seat.
 
 use crate::cards::{CardDb, Colors};
@@ -45,7 +46,7 @@ pub fn is_goldfish(g: &Game) -> bool {
     g.players.iter().any(|q| is_inert_key(q.key))
 }
 
-/// inert seat number `n` (2, 3 or 4): key `goldfish-n`, name `Goldfish n`
+/// inert seat number `n` (2 to 4): key `goldfish-n`, name `Goldfish n`
 pub fn inert_seat(db: &CardDb, n: usize) -> Result<Seat, String> {
     let commander = COMMANDERS
         .iter()
@@ -64,9 +65,9 @@ pub fn inert_seat(db: &CardDb, n: usize) -> Result<Seat, String> {
     })
 }
 
-/// the three inert seats that follow the deck under test (seat 1)
-pub fn inert_seats(db: &CardDb) -> Result<Vec<Seat>, String> {
-    (2..=4).map(|n| inert_seat(db, n)).collect()
+/// the `n` inert seats of a goldfish table (`goldfish-2` ...): three at a Commander table, one at a 2-seat table
+pub fn inert_seats(db: &CardDb, n: usize) -> Result<Vec<Seat>, String> {
+    (2..2 + n).map(|k| inert_seat(db, k)).collect()
 }
 
 /// a card that counts as protection when held on the kill turn: a counterspell or protection spell by its tags

@@ -1,6 +1,10 @@
 // written by an independent reviewer
 //! Adversarial tests for C2 (the sim-cli refusal of a deck whose format the simulator cannot seat). Written by a reviewer,
 //! not the author. Only paths that exit before any game is played run here.
+//!
+//! C3 plays kyodai at its own (Cali) table, so the Commander-table refusals these tests pinned now need `--format
+//! commander` to be reached (a Cali deck is refused at a Commander table); each call below passes it. The `searchtest`
+//! refusals are gone: `searchtest kyodai` plays a Cali game.
 
 use std::process::Command;
 
@@ -26,36 +30,70 @@ fn refused(args: &[&str]) {
     no_game(&out);
 }
 
-/// every `--deck kyodai --pool ...` mode that would seat the deck: swap, analyze, preflight, each tier, with --any-tier
+/// every `--deck kyodai --pool ...` mode that would seat the deck at a Commander table: swap, analyze, preflight, each
+/// tier, with --any-tier
 #[test]
-fn every_pool_mode_refuses_kyodai() {
+fn every_pool_mode_refuses_kyodai_at_a_commander_table() {
     let swap = "Sol Ring=>Swiftfoot Boots";
     for pool in ["t5", "t6", "all", "t3"] {
-        refused(&["--deck", "kyodai", "--pool", pool, "--analyze", "--quiet", "--games", "1"]);
-        refused(&["--deck", "kyodai", "--pool", pool, "--swap", swap, "--no-explain", "--quiet", "--games", "1"]);
-        refused(&["--deck", "kyodai", "--pool", pool, "--swap", swap, "--no-preflight", "--no-explain", "--quiet", "--games", "1"]);
-        refused(&["--deck", "kyodai", "--pool", pool, "--swap", swap, "--preflight-only", "--no-explain", "--quiet"]);
-        refused(&["--deck", "kyodai", "--pool", pool, "--any-tier", "--brief", "--quiet", "--games", "1"]);
-        refused(&["--deck", "kyodai", "--pool", pool, "--profiles", "conservative,loose", "--quiet", "--games", "1"]);
+        let c = ["--format", "commander"];
+        refused(&[&c[..], &["--deck", "kyodai", "--pool", pool, "--analyze", "--quiet", "--games", "1"]].concat());
+        refused(
+            &[&c[..], &["--deck", "kyodai", "--pool", pool, "--swap", swap, "--no-explain", "--quiet", "--games", "1"]]
+                .concat(),
+        );
+        refused(
+            &[
+                &c[..],
+                &[
+                    "--deck",
+                    "kyodai",
+                    "--pool",
+                    pool,
+                    "--swap",
+                    swap,
+                    "--no-preflight",
+                    "--no-explain",
+                    "--quiet",
+                    "--games",
+                    "1",
+                ],
+            ]
+            .concat(),
+        );
+        refused(
+            &[
+                &c[..],
+                &["--deck", "kyodai", "--pool", pool, "--swap", swap, "--preflight-only", "--no-explain", "--quiet"],
+            ]
+            .concat(),
+        );
+        refused(
+            &[&c[..], &["--deck", "kyodai", "--pool", pool, "--any-tier", "--brief", "--quiet", "--games", "1"]]
+                .concat(),
+        );
+        refused(
+            &[
+                &c[..],
+                &["--deck", "kyodai", "--pool", pool, "--profiles", "conservative,loose", "--quiet", "--games", "1"],
+            ]
+            .concat(),
+        );
     }
 }
 
-#[test]
-fn searchtest_refuses_kyodai_at_every_tier() {
-    for t in ["t5", "t6", "t1"] {
-        refused(&["searchtest", "kyodai", t, "1"]);
-        refused(&["searchtest", "kyodai", t, "1", "--any-tier"]);
-    }
-}
-
-/// `--goldfish` and `--mulligan-oracle` take a list: kyodai anywhere in it refuses the whole run, with spaces too
+/// `--goldfish` and `--mulligan-oracle` take a list: kyodai anywhere in it refuses the whole run (a Commander table for
+/// `--goldfish`; the oracle is 4-seat by construction), with spaces too
 #[test]
 fn goldfish_and_oracle_lists_refuse_kyodai_anywhere() {
     for spec in ["kyodai", "yoshimaru,kyodai", "kyodai,yoshimaru", "yoshimaru , kyodai", "t6,kyodai", "kyodai,kyodai"] {
-        refused(&["--goldfish", spec, "--quiet"]);
+        refused(&["--goldfish", spec, "--format", "commander", "--quiet"]);
         let (code, out, err) = sim(&["--mulligan-oracle", spec, "--quiet"]);
         assert_eq!(code, 1, "{spec}\n{out}\n{err}");
-        assert!(err.contains("Cali Commander") && err.contains("--mulligan-oracle"), "{spec}: {err}");
+        assert!(
+            err.contains("Cali Commander") && err.contains("--mulligan-oracle") && err.contains("not available"),
+            "{spec}: {err}"
+        );
         no_game(&out);
     }
     let (code, _, err) = sim(&["--mulligan-oracle", "yoshimaru,kyodai", "--vs-tier", "--quiet"]);
@@ -66,7 +104,12 @@ fn goldfish_and_oracle_lists_refuse_kyodai_anywhere() {
 /// non-game uses of the deck keep working: the card list, with and without a pool, with a swap
 #[test]
 fn cards_listing_still_works_for_kyodai() {
-    for extra in [&[][..], &["--pool", "t5"][..], &["--pool", "t6", "--any-tier"][..], &["--swap", "Sol Ring=>Swiftfoot Boots", "--no-explain"][..]] {
+    for extra in [
+        &[][..],
+        &["--pool", "t5"][..],
+        &["--pool", "t6", "--any-tier"][..],
+        &["--swap", "Sol Ring=>Swiftfoot Boots", "--no-explain"][..],
+    ] {
         let mut args = vec!["--deck", "kyodai", "--cards"];
         args.extend_from_slice(extra);
         let (code, out, err) = sim(&args);
@@ -104,6 +147,6 @@ fn flag_order_and_spelling() {
     let (code, _, err) = sim(&["--deck", "Kyodai", "--pool", "t5", "--quiet"]);
     assert_ne!(code, 0);
     assert!(!err.is_empty());
-    refused(&["--quiet", "--games", "1", "--pool", "t5", "--deck", "kyodai"]);
-    refused(&["--trace", "0", "--pool", "t6", "--deck", "kyodai", "--quiet", "--any-tier"]);
+    refused(&["--quiet", "--games", "1", "--pool", "t5", "--deck", "kyodai", "--format", "commander"]);
+    refused(&["--trace", "0", "--pool", "t6", "--deck", "kyodai", "--quiet", "--any-tier", "--format=commander"]);
 }

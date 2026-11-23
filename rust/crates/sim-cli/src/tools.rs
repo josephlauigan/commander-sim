@@ -127,7 +127,8 @@ pub fn swaptest(argv: &[String]) -> i32 {
         let jobs = if argv.len() > 4 { arg(argv, 4, "jobs")? } else { cores() };
         let sim = load(AiMode::Adaptive, jobs)?;
         let deck = sim.pool.iter().find(|d| d.key == me).ok_or_else(|| format!("no pool deck {me:?}"))?.clone();
-        let opp = sim.pool_keys(tier);
+        let fmt = sim.format_for(me);
+        let opp = sim.opponents(tier, fmt);
         if opp.is_empty() {
             return Err(format!("no tier {tier:?}"));
         }
@@ -137,12 +138,12 @@ pub fn swaptest(argv: &[String]) -> i32 {
             return Err(format!("variant list fails validation: {}", probs.join("; ")));
         }
         let vseat = sim.seat(me, &cards)?;
-        let st = sim.settings_vs(Profile::Loose, &opp); // loose only (JD 2026-10-19)
+        let st = sim.settings_vs_for(Profile::Loose, &opp, fmt); // loose only (JD 2026-10-19)
         sim.prog.lock().unwrap().on = false;
         let seeds: Vec<u64> = (500000..500000 + n).collect();
         let res = sim.run_seeds(&seeds, |s| {
             let won = |seat: Option<&sim_core::engine::turn::Seat>| {
-                let seats = sim.seats_for(s, Some(me), seat, &opp, 3);
+                let seats = sim.table_for(s, Some(me), seat, &opp, fmt);
                 let g = GameOut::from_game(&sim.play(s, &seats, &st, false), false);
                 g.winner.is_some_and(|w| g.players[w].key == me)
             };
@@ -194,13 +195,15 @@ pub fn searchtest(argv: &[String]) -> i32 {
         if sim.mine.contains_key(me) {
             crate::poolmode::select_tiers(me, &crate::poolmode::deck_tiers(&sim, me)?, tier, any_tier)?;
         }
-        let opp = sim.pool_keys(tier);
+        let fmt = sim.format_for(me);
+        let opp = sim.opponents(tier, fmt);
         if opp.is_empty() {
             return Err(format!("no tier {tier:?}"));
         }
-        let heur = sim.settings_vs(Profile::Conservative, &opp);
+        let heur = sim.settings_vs_for(Profile::Conservative, &opp, fmt);
         let mut srch = sim_core::settings::Settings::new(Profile::Conservative, AiMode::Lookahead, 1.0);
         sim.tune(&mut srch, sim.table_tier(&opp).as_deref()); // both sides play the same knobs
+        srch.rules = fmt.rules();
         if argv.len() > 3 {
             srch.search.rollouts = arg(argv, 3, "rollouts")?;
         }
@@ -221,7 +224,7 @@ pub fn searchtest(argv: &[String]) -> i32 {
         }
         let seeds: Vec<u64> = (500000..500000 + n).collect();
         let res = sim.run_seeds(&seeds, |s| {
-            let seats = sim.seats_for(s, Some(me), None, &opp, 3);
+            let seats = sim.table_for(s, Some(me), None, &opp, fmt);
             let won = |g: &sim_core::state::Game| g.winner.is_some_and(|w| g.player(w).key == me);
             let g0 = sim.play(s, &seats, &heur, false);
             let before = search::stats();
