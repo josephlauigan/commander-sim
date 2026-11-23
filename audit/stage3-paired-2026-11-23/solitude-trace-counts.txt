@@ -1,0 +1,11 @@
+Solitude traces: 60 Yoshimaru games (t5 pool, loose, seed 700000, --trace 0..59), before and after the Solitude fix.
+before = main with the carrier rule (binary 2fbf7d94); after = solitude-fix (binary cd306fa5; engine = 24c260f7).
+                                              before   after
+evokes                                         12       10
+ward counters the effect within 3 lines after  3        0
+an evoke (a count of log lines)
+Heliod, Sun-Crowned pitched to pay an evoke    1        0
+pitched cards after: Silence x2, The Wandering Emperor, Teleportation Circle, Teferi's Protection, Swords to Plowshares,
+                     Restoration Angel, Haliya Guided by Light, Ephemerate, Court of Ardenvale
+The games diverge once the AI plays differently: the two sets are not the same 60 games from the first evoke on.
+Not counted: a Deflecting Swat redirect onto our own creature (one of the four failed evokes in the 'before' set).

@@ -20,8 +20,8 @@ below stay untested except where named here.
   triggers 4.2%. t5 75.5% (round 8.0): Kinnan combo 14.8% and combat 3.2%, Urza combo 14.1%, Miirym combat 10.1% and triggers 5.7%, Zur combo 9.9% and commander damage 2.1%, Yawgmoth combo 8.7%.
 - **Plan timing** (the plan line prints blank), t4 / t5: online by T4 1% / 1%, T5 4% / 3%, T6 7% / 4%, T8 14% / 10%, T12 19% / 16%; at all 19.5% / 17.5%. The commander lines disagree: "resolves on turn" gives median 1.0
   (mean 1.5 / 1.6) over 99.1% / 99.5% of games, but "resolved by turn" gives T4 33% / 35% and T8 35% / 38%. The output does not explain it: unmeasured, and worth a check before anyone uses either line.
-- **Often stuck in hand** (cast in under half the games drawn), t4 / t5: Silence 1.4% / 0.7%, Eerie Interlude 5.5% / 5.3%, Solitude 13.8% / 7.6%, Restoration Angel 15.1% / 16.6% (reactive), Teferi's Protection 17.1% / 16.7%
-  (reactive), Conjurer's Closet 21.1% / 19.2%, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%, Flawless Maneuver 37.9% / 33.2%, The Wandering Emperor 39.5% / 40.4%, Gandalf the White 43.1% / 35.0%; t4 only:
+- **Often stuck in hand** (cast in under half the games drawn), t4 / t5: Silence 1.4% / 0.7%, Eerie Interlude 5.5% / 5.3%, Solitude 13.8% / 7.6% (undercounted: evokes were not recorded as casts; fixed in the solitude-fix PR), Restoration Angel 15.1% / 16.6% (reactive), Teferi's Protection 17.1% / 16.7%
+  (reactive), Conjurer's Closet 21.1% / 19.2%, Teleportation Circle 24.6% / 20.3%, Forge Anew 26.0% / 24.7%, Flawless Maneuver 37.9% / 33.2%, The Wandering Emperor 39.5% / 40.4% (undercounted: flash casts were not recorded as casts; fixed in the solitude-fix PR), Gandalf the White 43.1% / 35.0%; t4 only:
   Court of Ardenvale 42.1%; t5 only: Wrath of God 34.0%.
 - **Most removed by opponents (per game),** t4 / t5: Yoshimaru 0.47 / 0.48, Tymna 0.14 / 0.18, Sword of Fire and Ice 0.08 / 0.05, Sting 0.05 / 0.02, Sword of Hearth and Home 0.04 / 0.02, Skrelv 0.04 / 0.04, Mana Vault 0.04 (t4),
   Exquisite Blood 0.04 (t4), Adeline 0.03 (t5), Elesh Norn, Mother of Machines 0.02 (t5).
@@ -51,6 +51,11 @@ Arm A = main with the Silence knob; arm B = the full carrier package (flier +2, 
 - **Commander-damage eliminations by this deck, share of its eliminations (t4 / t5):** A 5.4 / 6.8, B 2.9 / 4.2, **C 5.6 / 6.7**. The halving in B replicated on both seeds and is gone in C: the guessed weights (Yoshimaru -4 and the flier stacking), not the veto or the Tymna rule, cause it. The guide says commander damage "is not a plan" (line 96), from an unsimulated list; a 5-7% share of eliminations does not contradict that, but the weights cost it for nothing measurable in return.
 - Equipment worn per game (t4 / t5): B commander 0.22 / 0.26, flier 0.15 / 0.18, other 0.54 / 0.65; C commander 0.43 / 0.48, flier 0.12 / 0.15, other 0.31 / 0.45; protection from white on Ballista 0.00 in both. Tymna cards drawn and opponents hit per Tymna turn are flat in all arms.
 - Decision: ship arm C (the guide-backed rules) with the report and Court fixes; the other weights stay out until a measured reason. No arm shows a win-rate gain, so this is rule correctness, not a measured improvement.
+
+## Solitude fixes, paired test 2026-11-23 (branch solitude-fix against main 47146456; seed 700000, 3,000 games per tier, loose)
+Win rate t4 25.7 -> 25.8, t5 22.3 -> 22.5 (baseline = the carrier-rule arm): no change. Mechanisms: Solitude no longer appears in the "often stuck in hand" list (it read 16.2% and 11.5% of draws; the figure was an artifact: evokes were not recorded as casts), so its counted cast rate is now above half of draws (the exact value is not printed: ticket); The Wandering Emperor cast when drawn 42.9 -> 43.3 (t4), 39.1 -> 44.0 (t5). Heliod cast 17.7 -> 18.0 / 17.6 -> 17.9. Raw: `audit/stage3-paired-2026-11-23/big-solitude-yoshimaru-analyze.txt`.
+- In 60 traces (`solitude-trace-counts.txt`): evokes that ended in `ward counters the effect` 3 -> 0; Heliod, Sun-Crowned pitched 1 -> 0. A Deflecting Swat redirect (opposing play) is not fixed.
+- Commander traces for the other decks are identical to main (sheoldred, urdragon, yshtola and the within-tier pods: 160 of 160); 4 of 80 yoshimaru games differ, as expected when evokes and flash casts are counted and the look-ahead plays the changed code.
 
 ## What the simulator cannot do yet
 - Every card is Full or Full-auto except Delney, Streetwise Lookout (Approximate: the extra instance for leaves that run at once or inline in the

@@ -3523,14 +3523,16 @@ fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         }
         return Ok(());
     }
-    let t = best_opp_creature(g, o, |_| true);
+    // a creature whose ward o cannot pay is no target
+    let t = best_opp_creature(g, o, |m| crate::engine::ward::ward_affordable(g, o, m, 0, ""));
     if t.is_none_or(|t| pval(g, t) < 2.0) {
         return Ok(());
     }
     if !trigger_window(g, o, Some(src), "exile a creature", Some(6.0))? {
         return Ok(());
     }
-    if let Some(t) = best_opp_creature(g, o, |_| true).filter(|&t| pval(g, t) >= 2.0) {
+    let pick = best_opp_creature(g, o, |m| crate::engine::ward::ward_affordable(g, o, m, 0, ""));
+    if let Some(t) = pick.filter(|&t| pval(g, t) >= 2.0) {
         solitude_exile(g, src, o, t)?;
     }
     Ok(())

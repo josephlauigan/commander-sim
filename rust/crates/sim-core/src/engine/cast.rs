@@ -395,6 +395,15 @@ pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
 }
 
 // ------------------------------------------------------------------ casting triggers
+/// p casts c by a route other than the normal cast path (an evoke, a flash cast in combat): it counts as a spell cast
+/// this turn, in the `spells_cast` stat and in `cast_names`, exactly as the normal path records it
+pub fn record_cast(g: &mut Game, p: PlayerId, c: CardId) {
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+}
+
 /// what happens when p casts c (cast triggers of tagged cards, magecraft, copies). Python's `on_cast`.
 pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     crate::t6stats::cast(g, p, c);
