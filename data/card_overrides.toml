@@ -9728,6 +9728,12 @@ note = "deathtouch, lifelink; the power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}
 
 ["Kyodai, Soul of Kamigawa"]
 paths_ok = "compiled: flash, flying and the {W}{U}{B}{R}{G} +5/+5 pump; card code: the enter trigger (another target permanent gains indestructible for as long as you control Kyodai) and its grant_kw hook (impls/kyodai.rs)"
+status = "Full"
+note = "flash, flying, the {W}{U}{B}{R}{G} +5/+5 pump (compiled); the enter trigger is a stack trigger (impls/kyodai.rs): another target permanent (not hexproof/shroud/protected from Kyodai's colours, ward paid), indestructible while Kyodai stays on the battlefield under the same controller (a blink or recast is a new object; Elesh Norn blanks it, Panharmonicon doubles it); a person picks the target, the AI picks its own engine, then its best permanent, then a land. Limits: a phased-out Kyodai turns the grant off and it returns when he phases in (rules: it ends for good); a control change away and back resumes it; losing his abilities stops it (rules: it continues). tests/cards_kyodai.rs"
+
+["Leyline of the Guildpact"]
+status = "Full"
+note = "each nonland permanent you control is all five colours (engine/chars.rs: layer 5, before copy exceptions; lands and manlands are excluded; devotion unaffected); lands you control are every basic land type (layer 4) so each taps for any one colour, and a multi-mana land such as Ancient Tomb gets Shape::Alt (engine/mana.rs: {C}{C} with its damage or one mana of any colour, never both); the opening-hand clause (impls/card_models.rs: the AI always begins with it, a person is asked); the hybrid cost {G/W}{G/U}{B/G}{R/G} is paid by GGGG, WUBR or any mix (engine/hybrid.rs). Limits: Blood Moon always beats it on a nonbasic land (the engine has no timestamps); Karoos and Lotus Field get no any-colour alternative; a restricted land (Cavern of Souls, Mishra's Workshop) keeps its restriction on the any-colour mana; a person is not offered Gemstone Caverns's opening clause. tests/cards_leyline_guildpact.rs, cards_leyline_multimana.rs, cards_hybrid_cost.rs"
 
 ["Kindred Dominance"]
 tags = "wipe=dominance"

@@ -9,6 +9,32 @@ put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Under
 line). **No sims yet.** The findings of the artifacts-and-Dragons list are in `FINDINGS-artifacts-and-dragons-list.md`,
 those of the cEDH list in `FINDINGS-old-list.md`.
 
+## 2026-11-22: Kyodai and Leyline of the Guildpact modelled (Full); hybrid costs fixed; guide rules errors corrected (JD's request, not simulated)
+JD asked for both new cards to be fully modelled, the two `mulligan_hints` tests that broke on origin/main to be fixed, the guide's rules errors to be fixed, and Leyline
+to be a proxy. Four workers built it on separate branches (Kyodai, Leyline's static abilities and opening-hand clause, hybrid costs, multi-mana lands under Leyline), an Opus
+design consult came first, and the full cargo suite passes; no sims were run (the engine has no Cali mode), so nothing here is measured.
+**Kyodai** (`impls/kyodai.rs`): the enter trigger is a stack trigger (the table can respond; Elesh Norn blanks it, Panharmonicon doubles it): another target permanent that is
+a legal target (no hexproof or shroud, not protected from Kyodai's colours, ward paid) gains indestructible while Kyodai stays on the battlefield under the same controller. A blink or recast is a new object
+(the old target loses it, the new trigger makes its own). A person is asked for the target; the AI picks its own engine, then its best permanent, then a land, never an opponent's permanent.
+Flash, flying and the {W}{U}{B}{R}{G} +5/+5 pump are compiled and tested. **Leyline** (`engine/chars.rs`, `engine/mana.rs`, `impls/card_models.rs`): nonland permanents are all five colours (layer 5,
+before copy exceptions; devotion is unchanged; lands and manlands are excluded), lands are every basic land type (layer 4), so each taps for any one colour; a multi-mana land such as Ancient Tomb gets
+`Shape::Alt` (its own {C}{C} with the 2 damage, or one mana of any colour with none, never both); the opening-hand clause (the AI always begins with it; a person is asked yes or no after keeping).
+**Hybrid costs** (`engine/hybrid.rs`, the export's `hybrid` field): a card's colours are its pips plus its hybrid pairs, and `cost_of` pays the other colour of a hybrid symbol when the printed first colour cannot be paid,
+so Leyline is paid by GGGG, WUBR or any mix. Behaviour is unchanged for non-hybrid cards and for a hybrid card whose printed colours are payable. 31 catalog cards have hybrid symbols; the ones in decks are Leyline (thanos) and,
+in the opponent pools, Blade Historian (t3), Deathrite Shaman and Fiend Artisan (t2), Privileged Position and Strength of the Harvest (t2), Steel of the Godhead (t5), Yorion (t2) and Vibrance (t6); only the t3 and t5 ones fall in
+JD's tiers, so baselines could shift slightly (nothing has been re-run). Vibrance now reads the colours it was paid with.
+**Limits for JD (each is in the card's note):** Blood Moon always beats Leyline on a nonbasic land (the engine has no timestamps; Blood Moon is in no t5 deck); Karoos and Lotus Field get no any-colour alternative under Leyline;
+a restricted land (Cavern of Souls, Mishra's Workshop) keeps its restriction on the any-colour mana; a phased-out Kyodai turns the grant off and it returns when he phases back in (rules: it ends for good), a control
+change away and back resumes it, and losing Kyodai's abilities stops it (rules: it continues); Ward on an opponent's target is paid by a person only; a hybrid card cast by a path that prices from the printed pips (graveyard casts and some AI look-ahead) is paid at the printed colours;
+devotion-style pip counts count a hybrid symbol once; {2/W} and Phyrexian symbols are untouched. The AI has no line for Staff of Domination + Faeburrow Elder or for holding a flash Kyodai to answer removal;
+`data/plans/thanos.toml` only values Leyline (high when the Elder is in hand or out).
+**Guide corrections** (the guide was wrong; the 11-22 entry below repeats two of them): Urza's {5} plays the card free, so a Ballista found that way has X=0 (use the Staff to draw it); Collector Ouphe and Null Rod stop Lightning
+Greaves' equip, so under them Blightsteel attacks a turn later; a Sculpting Steel copy of Chrome Mox may imprint its own card (the 11-22 entry said it could not); The One Ring keeps draining after you stop drawing; Swords to Plowshares only targets
+creatures; Mox Opal can work on turn 1 with free rocks; an Oracle in the graveyard can return through Underworld Breach; Esper Sentinel's tax is X (its power). Also fixed in the new text: Ephemerate on Kyodai does not keep the first target
+protected, Akroma's Will's second mode gives protection from each colour, Leyline affects nonland permanents only, three (not four) one-mana green dorks, Crucible does not give an extra land drop, Silence costs {W}.
+**Tests touched:** `land_hint` and `mulligan_hints` (practice) use the Ur-Dragon list; the Loran test finds the seat by "Kyodai"; Kyodai is off every allow list and `TO_FIX`; `enters_inventory.txt` has a Kyodai row. Added: `cards_kyodai`, `cards_leyline_guildpact`,
+`cards_leyline_multimana`, `cards_hybrid_cost` and a practice session test for the opening-hand prompt.
+
 ## 2026-11-22: Thanos => Kyodai as commander; Windborn Muse => Leyline of the Guildpact; mana base rebuilt (JD's choice, not simulated)
 A commander change, a one-card fix for the Staff of Domination and Faeburrow Elder route, and a land-for-land mana-base rebuild. Nothing was
 simulated: the engine has no Cali mode, and it has no hand-written card code for Kyodai or Leyline (`cardgen find --full` after `cardgen export`: Kyodai
@@ -43,8 +69,7 @@ than the painland base. The land count stays 27 (26 is arguable with 20 rocks an
 Counts after: creatures 15 (16), enchantments 5 (4), Game Changers unchanged (Kyodai and Leyline are not Game Changers); 15 rocks and rituals, 5 dorks and 25
 artifacts unchanged. An Opus consult picked the cut and the land list and found the Leyline blast exposure. Checks: Kyodai, Leyline and the 20 lands are
 Commander-legal and fit WUBRG (Scryfall and `cardgen find`); the fetchlands and duals are Full (mana only).
-**Open:** (1) Kyodai is Partial (enter trigger unparsed) and Leyline is Unmodeled, with a wrong exported cost (`GGBR`: neither `GGGG` nor `WUBR` pays it in the engine); JD took the plan with no engine work. Three engine tests list Kyodai as a known gap (`enters_census_allow.txt`, `enters_census_double_allow.txt`, `TO_FIX` in `practice_choice_probe.rs`). (2) `data/ownership.toml` records Kyodai (JD is buying it)
-and Leyline (not owned yet; buy or proxy to be decided) as missing, and the 20 lands as proxies; the replaced lands and Thanos and Windborn Muse are in `[spare]`.
+**Open:** (1) superseded the same day: JD then asked for both cards to be fully modelled; see the next entry. (2) `data/ownership.toml` records Kyodai (JD is buying it) as missing and Leyline (JD: proxy) as a proxy, and the 20 lands as proxies; the replaced lands and Thanos and Windborn Muse are in `[spare]`.
 (3) `data/printings/thanos.txt` has no printing lines for the 22 new cards (JD supplies them; the 22 old lines are removed). (4) `data/spellbook/thanos.json` still lists
 Thanos as the commander and was not re-fetched; its five included combos do not use the commander or Windborn Muse, but check them before trusting its
 "almost included" list. (5) Cali ban list: the guide's list (Black Lotus, the five Moxen and the rest) does not include any of the 20 lands, Kyodai or Leyline;
