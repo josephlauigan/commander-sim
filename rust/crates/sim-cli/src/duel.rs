@@ -7,12 +7,12 @@
 //! on the play and once on the draw. Why `seed / 2` and not `seed % n`: with an even number of opponents, `seed % n`
 //! and the seed's parity would meet each opponent only on the play or only on the draw.
 //!
-//! The opponents are 4-player pool lists playing 1v1 (a Cali pool is a later decision), and until the format AI profile
-//! exists (C4) the AI is the 4-player AI: every Cali report says so (`ai_label`).
+//! The opponents are 4-player pool lists playing 1v1 (a Cali pool is a later decision). The AI reads the format's profile
+//! (`Format.ai`, C4); every Cali report names it, and the env switch `TABLE_AI` (an arm) (`ai_label`).
 
 use crate::args::Args;
 use crate::play::Sim;
-use sim_core::format::Format;
+use sim_core::format::{Format, GoRules, TableAi};
 
 /// The index (into the sorted opponent keys) of the opponent seed `seed` meets: the opponent is `sorted_keys[(seed / 2) % n]`,
 /// so adding or removing a pool deck in a tier re-deals the opponents of nearly every seed: Cali numbers from before and
@@ -86,10 +86,42 @@ pub fn is_duel(fmt: &Format) -> bool {
     fmt.seats == 2
 }
 
-/// What every report of a 2-seat run says about its AI: until the format AI profile exists, the 4-player AI plays 1v1.
-/// None for a 4-seat format.
+/// The env switch for measurement arms: `commander` turns every field of the format's AI profile off, or a comma list of
+/// `TableAi::FIELDS` turns those off (back to Commander's value). Unset or empty: the format's profile as it is.
+pub const TABLE_AI: &str = "TABLE_AI";
+
+fn table_ai_env() -> Option<String> {
+    std::env::var(TABLE_AI).ok().map(|v| v.trim().to_string()).filter(|v| !v.is_empty())
+}
+
+/// the AI profile a table of `fmt` plays under `spec` (env `TABLE_AI`)
+pub fn table_for_spec(fmt: &Format, spec: Option<&str>) -> Result<TableAi, String> {
+    fmt.ai.turned_off(spec.unwrap_or(""))
+}
+
+/// the AI profile a table of `fmt` plays: the format's, with env `TABLE_AI`'s fields turned off. A bad `TABLE_AI` stops
+/// the run, as every env switch does.
+pub fn table_for(fmt: &Format) -> TableAi {
+    table_for_spec(fmt, table_ai_env().as_deref()).unwrap_or_else(|e| panic!("{e}"))
+}
+
+/// the label text of a 2-seat run's AI under `spec` (env `TABLE_AI`)
+pub fn ai_label_for(fmt: &Format, spec: Option<&str>) -> String {
+    let base = match table_for_spec(fmt, spec) {
+        Ok(t) if (t.learned_eval, t.go_rules, t.duel) == (true, GoRules::T6, false) => "4-player AI".to_string(),
+        Ok(t) => format!("AI profile: {}", t.describe()),
+        Err(e) => e,
+    };
+    match spec {
+        Some(s) => format!("{}, {base} (TABLE_AI={s})", fmt.name),
+        None => format!("{}, {base}", fmt.name),
+    }
+}
+
+/// What every report of a 2-seat run says about its AI: the format's AI profile (learned evaluation, go rules, duel
+/// cover) and the `TABLE_AI` arm if one is set. None for a 4-seat format.
 pub fn ai_label(fmt: &Format) -> Option<String> {
-    is_duel(fmt).then(|| format!("{}, 4-player AI, no format AI profile yet (C4)", fmt.name))
+    is_duel(fmt).then(|| ai_label_for(fmt, table_ai_env().as_deref()))
 }
 
 /// The line a 2-seat run prints before it plays: the format, its rules, and what the opponents are. None for a 4-seat
@@ -299,6 +331,11 @@ mod tests {
         );
         assert_eq!(sim.settings_vs_for(Profile::Loose, &keys, cmd).rules, Rules::COMMANDER);
         assert_eq!(sim.settings_in_for(Profile::Loose, None, cali).rules.life, 30);
+        // the AI profile follows the format; the default settings and a Commander table keep Commander's
+        assert_eq!(sim.settings_vs_for(Profile::Loose, &keys, cali).table, cali.ai);
+        assert!(sim.settings_vs_for(Profile::Loose, &keys, cali).table.duel);
+        assert_eq!(sim.settings_vs_for(Profile::Loose, &keys, cmd).table, TableAi::COMMANDER);
+        assert_eq!(sim.settings_vs(Profile::Loose, &keys).table, TableAi::COMMANDER);
         // the default settings are untouched
         assert_eq!(sim.settings_vs(Profile::Loose, &keys).rules, Rules::COMMANDER);
         // a deck plays its own format unless `--format` says another
@@ -306,7 +343,11 @@ mod tests {
         assert_eq!(sim.format_for("yoshimaru").key, "commander");
         assert_eq!(sim.format_for("dack-fayden-white-stax").key, "commander");
         assert!(describe(cali).unwrap().contains("30 life") && describe(cmd).is_none());
-        assert_eq!(ai_label(cali).unwrap(), "Cali Commander, 4-player AI, no format AI profile yet (C4)");
+        assert!(ai_label(cali).unwrap().starts_with("Cali Commander, "));
+        // TABLE_AI=commander plays the 4-player AI: the label says so, and shows the switch
+        assert_eq!(ai_label_for(cali, Some("commander")), "Cali Commander, 4-player AI (TABLE_AI=commander)");
+        assert_eq!(table_for_spec(cali, Some("commander")).unwrap(), TableAi::COMMANDER);
+        assert!(table_for_spec(cali, Some("duel,nonsense")).is_err());
         assert!(ai_label(cmd).is_none() && !is_duel(cmd));
     }
 

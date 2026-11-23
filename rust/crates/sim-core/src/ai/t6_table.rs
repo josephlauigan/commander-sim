@@ -174,8 +174,11 @@ pub fn go_risk_covered(g: &Game, p: PlayerId, covered: bool) -> f64 {
         miss *= 1.0 - stop_chance(g, q);
     }
     let mut risk = 1.0 - miss;
+    // cover counts only when p will cast it before the line: a Tier 6 seat or a plan deck with the opt-in knob (the two
+    // protection branches of `combos::attempt`). Under `go_rules = all` another seat holding Silence casts none
+    let casts_cover = t6_plans::is_t6(g, p) || crate::ai::plan_data::protect_before_go(g, p);
     let prot = protection(g, p);
-    if prot.iter().any(|&c| can_pay_spell(g, p, c, 0, "W", false)) || covered {
+    if (casts_cover && prot.iter().any(|&c| can_pay_spell(g, p, c, 0, "W", false))) || covered {
         risk *= 0.2; // Silence / Chant first
     }
     let mine_free = g.player(p).hand.iter().filter(|&&c| is_free_ctr(g, p, c)).count().min(2);
@@ -200,6 +203,23 @@ pub fn go_threshold(g: &Game, p: PlayerId) -> f64 {
         thr = 1.0;
     }
     thr
+}
+
+/// --- cali-c4: the per-seat counters of the go gates: stats only (no log line, no random draw), kept only when the
+/// table's `go_rules` is `all` so that a Commander game's stats are exactly what they were. `go_held`: turns on which a
+/// ready line was held back (`go_ok` false: the table could still stop it), once a turn; `go_went`: lines gone for
+/// under the rules (counted in `combos::attempt`); `t6_protect` (protection spells cast) is counted in `protect_step`.
+pub fn note_go_held(g: &mut Game, p: PlayerId) {
+    if g.settings.table.go_rules != crate::format::GoRules::All {
+        return;
+    }
+    let st = g.turn_stamp();
+    let key = crate::sym::intern("go_held_turn");
+    if g.player(p).flag_turn.get(key) != Some(&st) {
+        let pl = g.player_mut(p);
+        pl.flag_turn.insert(key, st);
+        pl.stat("go_held", 1);
+    }
 }
 
 /// Should p go for combo `cmb` (index into `combos::all()`) now? The plan slot decides first.
@@ -247,7 +267,9 @@ fn protect_step(
     for c in prot {
         let d = g.db.get(c);
         let silence = &*d.name == "Silence";
-        let want_silence = stops.len() >= 2 || (opt_in.is_some() && !chant_held);
+        // one opponent: an opt-in deck, or a duel table (`table.duel`, from the format's seats), casts Silence when it
+        // holds no Orim's Chant
+        let want_silence = stops.len() >= 2 || ((opt_in.is_some() || g.settings.table.duel) && !chant_held);
         if silence != want_silence {
             continue;
         }

@@ -74,6 +74,7 @@ pub fn ai_rules(
     let fmt = sim.format_for(deck);
     let mut settings = Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp);
     settings.rules = fmt.rules();
+    settings.table = crate::duel::table_for(fmt);
     let settings = Arc::new(settings);
     let mut best: Vec<i32> = vec![i32::MIN; ins.len()];
     let mut generic: Vec<i32> = vec![i32::MIN; ins.len()];
@@ -213,6 +214,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
         let mut st = Settings::new(profile(prof)?, AiMode::Adaptive, sim.opts.temp);
         sim.tune(&mut st, Some(tier.as_str())); // the dry run plays the knobs in force
         st.rules = fmt.rules(); // and the deck's format
+        st.table = crate::duel::table_for(fmt);
         analyses.push(ctx.analyze_with(deck, &seat, &keys, st, DRY_GAMES, a.seed));
     }
     println!(

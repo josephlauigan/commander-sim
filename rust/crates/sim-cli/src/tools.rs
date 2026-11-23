@@ -208,6 +208,7 @@ pub fn searchtest(argv: &[String]) -> i32 {
         let mut srch = sim_core::settings::Settings::new(Profile::Conservative, AiMode::Lookahead, 1.0);
         sim.tune(&mut srch, sim.table_tier(&opp).as_deref()); // both sides play the same knobs
         srch.rules = fmt.rules();
+        srch.table = crate::duel::table_for(fmt);
         if argv.len() > 3 {
             srch.search.rollouts = arg(argv, 3, "rollouts")?;
         }

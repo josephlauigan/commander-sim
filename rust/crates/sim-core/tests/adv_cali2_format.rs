@@ -103,7 +103,7 @@ fn bad_format_records_are_refused_at_load() {
     assert!(bad("blank", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("  "))).contains("front-face"));
     assert!(bad("scry_list", &|f| f["cali"]["bans"] = json!("scryfall")).contains("needs bans"));
     assert!(bad("bans_word", &|f| f["cali"]["bans"] = json!("everything")).contains("unknown variant"));
-    assert!(bad("unknown_field", &|f| f["cali"]["ai"] = json!(1)).contains("unknown field"));
+    assert!(bad("unknown_field", &|f| f["cali"]["speed"] = json!(1)).contains("unknown field"));
     assert!(bad("cmd_life", &|f| f["commander"]["life"] = json!(30)).contains("must stay"));
     assert!(bad("cmd_seats", &|f| f["commander"]["seats"] = json!(2)).contains("must stay"));
     assert!(bad("cmd_draw", &|f| f["commander"]["first_player_draws"] = json!(false)).contains("must stay"));

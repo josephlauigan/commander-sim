@@ -48,6 +48,14 @@ pub fn is_t6(g: &Game, p: PlayerId) -> bool {
     is_t6_key(g.player(p).key)
 }
 
+/// Do the hold-up-or-go gates and the win-attempt flag (`t6_going`) apply to player `p`'s catalogued lines? A Tier 6
+/// seat always; every seat when the table's profile says so (`TableAi::go_rules`, Cali). Under the Commander profile
+/// this is `is_t6`. Only these gates move: the protection step (`combos::attempt`), the deck-identity rules and the
+/// counter rules stay on `is_t6`.
+pub fn go_rules(g: &Game, p: PlayerId) -> bool {
+    is_t6(g, p) || g.settings.table.go_rules == crate::format::GoRules::All
+}
+
 macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
         match crate::ai::hand_key($g, $p) { // --- phase4-hand-off

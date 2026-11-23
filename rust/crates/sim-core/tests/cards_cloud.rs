@@ -569,6 +569,7 @@ fn unfinished_business_returns_cloud_with_two_equipment() {
 fn the_deck_plays_a_game_to_the_end() {
     let g = play(&["cloud", "seph"], 3, false);
     assert!(g.over || g.round > 0);
+    assert!(!g.settings.table.duel, "a 2-seat Commander game is not a duel table: the format decides, not the count");
 }
 
 // ------------------------------------------------------------------ White Mage's Staff, Veteran's Powerblade
