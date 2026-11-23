@@ -74,8 +74,8 @@ fn hearth_and_home_never_chooses_ballista_while_another_holder_exists() {
 }
 
 #[test]
-fn the_veto_beats_even_the_penalised_holders() {
-    // Ballista against Yoshimaru (penalised) as the only candidates: Yoshimaru takes it
+fn the_veto_beats_any_other_holder() {
+    // Ballista against Yoshimaru as the only candidates: Yoshimaru (value 0 in arm C) takes it over the veto (-1000)
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let b = ballista(&mut g);
@@ -120,38 +120,43 @@ fn tymna_is_not_a_holder_for_a_sword_but_is_for_swiftfoot_boots() {
     let sword = perm(&mut g, P0, SOFI);
     let boots = perm(&mut g, P0, BOOTS);
     assert_eq!(target_of(&g, sword), Some(ground), "the Sword goes on the other creature");
-    // Boots: a four-point bonus on Tymna (the guide's carrier piece for her), the six-point penalty on a Sword
+    // arm C: Boots add no power and score 0 on her (no Boots bonus), the Sword takes the six-point penalty
     let (vb, vs) = (tc::equip_holder_value(&g, P0, boots, t), tc::equip_holder_value(&g, P0, sword, t));
-    assert!((vb - vs - 10.0).abs() < 1e-9, "Boots {vb}, Sword {vs}");
-    // and with the Boots she beats Yoshimaru, who is penalised for any Equipment
+    assert_eq!((vb, vs), (0.0, -6.0), "Boots {vb}, Sword {vs}");
+    // Yoshimaru is not penalised any more: any Equipment scores 0 on him
     let y = perm(&mut g, P0, YOSHI);
-    assert!(tc::equip_holder_value(&g, P0, boots, t) > tc::equip_holder_value(&g, P0, boots, y));
+    assert_eq!(tc::equip_holder_value(&g, P0, boots, y), 0.0);
+    assert_eq!(tc::equip_holder_value(&g, P0, sword, y), 0.0);
 }
 
 #[test]
-fn a_flier_beats_a_bigger_ground_creature() {
+fn a_flier_still_wins_on_the_generic_score_and_the_arm_adds_nothing() {
+    // arm C: no flier or connect term in the arm (the generic equip score's own +2 for a flier still picks it)
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let ground = token(&mut g, P0, 3);
     let flier = perm(&mut g, P0, "Serra Angel");
     let e = perm(&mut g, P0, SOFI);
     assert_eq!(target_of(&g, e), Some(flier));
-    assert!(tc::equip_holder_value(&g, P0, e, flier) > tc::equip_holder_value(&g, P0, e, ground));
+    assert_eq!(tc::equip_holder_value(&g, P0, e, flier), 0.0);
+    assert_eq!(tc::equip_holder_value(&g, P0, e, ground), 0.0);
 }
 
 #[test]
-fn yoshimaru_is_not_chosen_when_a_flier_is_there() {
+fn the_arm_scores_yoshimaru_like_any_other_creature() {
+    // arm C: no Yoshimaru penalty; the generic score still prefers the flier here
     let mut g = tbl();
     lands(&mut g, P0, "Plains", 6, false);
     let y = perm(&mut g, P0, YOSHI);
     let flier = perm(&mut g, P0, "Serra Angel");
     let e = perm(&mut g, P0, SOFI);
     assert_eq!(target_of(&g, e), Some(flier));
-    assert!(tc::equip_holder_value(&g, P0, e, y) < tc::equip_holder_value(&g, P0, e, flier));
+    assert_eq!(tc::equip_holder_value(&g, P0, e, y), 0.0);
 }
 
 #[test]
-fn delney_penalises_power_that_takes_a_creature_over_two() {
+fn delney_changes_nothing_in_arm_c() {
+    // arm C: the Delney term is removed; every probe scores 0 with and without Delney out
     let mut g = tbl();
     let (two, one, big, cloud) =
         (token(&mut g, P0, 2), token(&mut g, P0, 1), token(&mut g, P0, 3), perm(&mut g, P0, CLOUD));
@@ -167,14 +172,9 @@ fn delney_penalises_power_that_takes_a_creature_over_two() {
         ]
     };
     assert_eq!(epow(&g, cloud), 2, "the test relies on Cloud being a power-2 creature");
-    let before = probe(&g);
+    assert_eq!(probe(&g), [0.0; 5]);
     perm(&mut g, P0, DELNEY);
-    let after = probe(&g);
-    assert!((after[0] - before[0] + 4.0).abs() < 1e-9, "a Sword on power 2 loses Delney's doubling");
-    assert_eq!(after[1], before[1], "power 3 is already past the limit");
-    assert_eq!(after[2], before[2], "Cloud is the exception (the guide's best carrier)");
-    assert_eq!(after[3], before[3], "Sting on a power-1 creature leaves power 2");
-    assert!((after[4] - before[4] + 4.0).abs() < 1e-9, "Sting on power 2 takes it to 3");
+    assert_eq!(probe(&g), [0.0; 5]);
 }
 
 #[test]

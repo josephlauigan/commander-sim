@@ -172,6 +172,7 @@ fn the_real_equip_action_for_another_seat_counts_nothing() {
 // ------------------------------------------------------------------ scoring edges
 
 #[test]
+#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
 fn yoshimaru_who_flies_scores_flier_plus_connect_minus_four() {
     let mut g = tbl();
     for q in [P1, P2] {
@@ -201,6 +202,7 @@ fn an_opponents_delney_does_not_penalise_us() {
 }
 
 #[test]
+#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
 fn a_phased_out_or_dead_delney_does_not_penalise() {
     let mut g = tbl();
     let two = token(&mut g, P0, 2);
@@ -242,6 +244,7 @@ fn equipment_without_a_power_bonus_never_triggers_the_delney_rule() {
 }
 
 #[test]
+#[ignore = "arm C: weight removed, see program-decisions 2026-11-23"]
 fn buster_sword_and_the_other_swords_are_all_penalised_on_a_power_two_creature_under_delney() {
     let mut g = tbl();
     let two = token(&mut g, P0, 2);
