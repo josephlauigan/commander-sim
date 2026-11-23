@@ -506,11 +506,20 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 const STEELSHAPER: &str = "Auriok Steelshaper";
 
 /// the yoshimaru seat's free attach (Kor Outfitter, Ardenn): the creature that wears the Equipment it can pull, and
-/// that Equipment. A creature is scored by `holder_score` plus the best `tymna_cards::equip_holder_value` of the
-/// Equipment it could take, plus 2 for each Equipment it can take at all (Ardenn moves every one to a single target, so
-/// a creature that can wear them all beats Ballista, which can't wear the protection-from-white one); Equipment that gives protection from white never goes on Walking Ballista (a pair
-/// `equip_holder_value` vetoes is no candidate), so with only Ballista left the attach does not happen.
-pub(crate) fn yoshimaru_attach(g: &Game, p: PlayerId, source: crate::cards::Colors) -> Option<(PermId, Vec<PermId>)> {
+/// that Equipment (best first: highest `tymna_cards::equip_holder_value`, a loose piece before a worn one on a tie).
+/// Each (Equipment, creature) pair is scored with `equip_holder_value`; a pair the seat's rule is against
+/// (`holder_penalised`: protection from white on Walking Ballista, Yoshimaru, Tymna with +power Equipment, +power that
+/// ends Delney's doubling) is dropped, and so is a worn piece unless the new holder beats its current one. A creature
+/// scores `holder_score` plus (value + 2) for each kept piece: all of them with `single = false` (Ardenn moves every
+/// piece to one target, so the creature that can wear the most wins), the best one with `single = true` (Kor Outfitter
+/// attaches one). Nothing is returned when no creature keeps a piece.
+pub(crate) fn yoshimaru_attach(
+    g: &Game,
+    p: PlayerId,
+    source: crate::cards::Colors,
+    single: bool,
+) -> Option<(PermId, Vec<PermId>)> {
+    use super::tymna_cards::{equip_holder_value as value, holder_penalised};
     let cands: Vec<PermId> = g
         .player(p)
         .perms
@@ -518,22 +527,31 @@ pub(crate) fn yoshimaru_attach(g: &Game, p: PlayerId, source: crate::cards::Colo
         .copied()
         .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk && !protected_from(g, m, source))
         .collect();
-    let plans: Vec<(PermId, Vec<PermId>, f64)> = cands
-        .into_iter()
-        .filter_map(|to| {
-            let es: Vec<PermId> = pullable(g, p, to)
-                .into_iter()
-                .filter(|&e| g.perm(e).attached != Some(to) && !super::tymna_cards::prot_white_on_ballista(g, e, to))
-                .collect();
-            let best = es.iter().map(|&e| super::tymna_cards::equip_holder_value(g, p, e, to)).fold(f64::MIN, f64::max);
-            (!es.is_empty()).then(|| {
-                let n = es.len() as f64;
-                (to, es, holder_score(g, to) + best + 2.0 * n)
+    let mut best: Option<(PermId, Vec<PermId>, f64)> = None;
+    for to in cands {
+        let mut kept: Vec<(PermId, f64, bool)> = pullable(g, p, to)
+            .into_iter()
+            .filter(|&e| g.perm(e).attached != Some(to) && !holder_penalised(g, e, to))
+            .filter_map(|e| {
+                let v = value(g, p, e, to);
+                match g.perm(e).attached.filter(|&t| live(g, t)) {
+                    Some(t) if v <= value(g, p, e, t) => None, // a worn piece moves only to a better holder
+                    Some(_) => Some((e, v, false)),
+                    None => Some((e, v, true)),
+                }
             })
-        })
-        .collect();
-    let (to, es, _) = max_by(&plans.iter().collect::<Vec<_>>(), |x| x.2).map(|x| x.clone())?;
-    Some((to, es))
+            .collect();
+        if kept.is_empty() {
+            continue;
+        }
+        kept.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal).then(b.2.cmp(&a.2)));
+        let score =
+            holder_score(g, to) + if single { kept[0].1 + 2.0 } else { kept.iter().map(|k| k.1 + 2.0).sum::<f64>() };
+        if best.as_ref().is_none_or(|b| score > b.2) {
+            best = Some((to, kept.iter().map(|k| k.0).collect(), score));
+        }
+    }
+    best.map(|(to, es, _)| (to, es))
 }
 
 /// the Equipment p most wants moved onto `to`: a loose one first
@@ -559,9 +577,8 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     // the Equipment and the creature: the yoshimaru seat scores the pair (no protection from white on Walking Ballista)
     let pick = |g: &Game| -> Option<(PermId, PermId)> {
         if g.player(o).key == "yoshimaru" {
-            let (to, es) = yoshimaru_attach(g, o, cols)?;
-            let loose = |e: &PermId| g.perm(*e).attached.is_none_or(|t| !live(g, t));
-            return es.iter().copied().find(loose).or_else(|| es.first().copied()).map(|e| (e, to));
+            let (to, es) = yoshimaru_attach(g, o, cols, true)?;
+            return es.first().map(|&e| (e, to));
         }
         let to = best_holder_from(g, o, cols)?;
         best_pull(g, o, to).map(|e| (e, to))
@@ -572,6 +589,7 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     // targets are chosen again as it resolves: the same choice, if still legal
     if let Some((e, to)) = pick(g) {
         attach(g, e, to);
+        super::tymna_cards::note_equip_holder(g, o, e, to); // the yoshimaru seat's holder stat (any other seat: nothing)
     }
     Ok(())
 }

@@ -1375,12 +1375,13 @@ pub(crate) fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
 }
 
 /// what Equipment `e` is worth on creature `m` for the yoshimaru seat: fliers and creatures that connect anyway (their
-/// hit is a card for Tymna and the Swords' triggers); not Yoshimaru, and Tymna only with Swiftfoot Boots (added power
-/// switches off Delney's doubling and evasion for her, and she draws when any creature connects); never Walking
-/// Ballista with Equipment that gives protection from white (data-driven: Sword of Hearth and Home today); and not +power Equipment that takes a creature over power 2
-/// while Delney is out (Cloud excepted: the guide's best carrier for Sword of Hearth and Home).
-/// (Swiftfoot Boots never reach `dsl::equip_options`: `pool::special_options` equips them, to a commander, so the Boots
-/// exception for Tymna only matters to this function when called directly.)
+/// hit is a card for Tymna and the Swords' triggers); not Yoshimaru; Tymna only with Equipment that adds no power
+/// (Swiftfoot Boots, which also get a bonus on her, and Mithril Coat: added power switches off Delney's doubling and
+/// evasion for her, and she draws when any creature connects); never Walking Ballista with Equipment that gives
+/// protection from white (data-driven: Sword of Hearth and Home today); and not +power Equipment that takes a creature
+/// over power 2 while Delney is out (Cloud excepted: the guide's best carrier for Sword of Hearth and Home).
+/// (Swiftfoot Boots never reach `dsl::equip_options`: `pool::special_options` equips them, to a commander, so their
+/// Tymna terms matter to the free attach paths (`cloud::yoshimaru_attach`) and to direct calls.)
 fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
     if prot_white_on_ballista(g, e, m) {
         return NEVER;
@@ -1395,26 +1396,49 @@ fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
     }
     match name_of(g, m) {
         YOSHIMARU => v -= 4.0, // a 1/1 that grows with the legends; the Equipment is wasted on him
-        TYMNA_CARD if name_of(g, e) != BOOTS => v -= 6.0,
+        TYMNA_CARD if equip_power(g, e) > 0 => v -= 6.0, // added power ends Delney's doubling and evasion for her
+        TYMNA_CARD if name_of(g, e) == BOOTS => v += 4.0, // the guide's carrier piece for her: haste and hexproof
         _ => {}
     }
-    let bonus = equip_power(g, e);
-    // (a worn piece is already in the creature's power: only an Equipment about to be added can take it over 2)
-    if bonus > 0 && g.perm(e).attached != Some(m) && name_of(g, m) != CLOUD_CARD && epow(g, m) <= 2 && epow(g, m) + bonus > 2 {
-        let delney = g.player(p).perms.iter().any(|&d| {
-            let x = g.perm(d);
-            x.on_bf && !x.phased && !x.neutered && name_of(g, d) == DELNEY
-        });
-        if delney {
-            v -= 4.0;
-        }
+    if delney_loss(g, e, m) {
+        v -= 4.0;
     }
     v
 }
 
+/// +power Equipment `e` that would take `m` over power 2 while our Delney is out (Cloud excepted: the guide's best
+/// carrier). A worn piece is already in the creature's power, so only an Equipment about to be added counts.
+fn delney_loss(g: &Game, e: PermId, m: PermId) -> bool {
+    let bonus = equip_power(g, e);
+    if bonus <= 0
+        || g.perm(e).attached == Some(m)
+        || name_of(g, m) == CLOUD_CARD
+        || epow(g, m) > 2
+        || epow(g, m) + bonus <= 2
+    {
+        return false;
+    }
+    let p = g.perm(e).owner;
+    g.player(p).perms.iter().any(|&d| {
+        let x = g.perm(d);
+        x.on_bf && !x.phased && !x.neutered && name_of(g, d) == DELNEY
+    })
+}
+
+/// is `e` on `m` one of the pairs the yoshimaru seat's rule is against: Walking Ballista with protection from white,
+/// Yoshimaru, Tymna with +power Equipment, or +power that ends Delney's doubling? (The free attach paths drop these
+/// pairs outright; a flier or connect bonus in the holder value can't buy them back.)
+pub(crate) fn holder_penalised(g: &Game, e: PermId, m: PermId) -> bool {
+    prot_white_on_ballista(g, e, m)
+        || name_of(g, m) == YOSHIMARU
+        || (name_of(g, m) == TYMNA_CARD && equip_power(g, e) > 0)
+        || delney_loss(g, e, m)
+}
+
 /// the yoshimaru seat's equip stat and trace: who wears the Equipment once an equip has resolved (`ty_eq_commander`,
 /// `ty_eq_flier`, `ty_eq_ballista`, `ty_eq_other`, and `ty_eq_pw_ballista` for Equipment that gives protection from white on Ballista, which
-/// should stay 0), summed over the games. Any other seat: nothing.
+/// should stay 0), summed over the games. Any other seat: nothing. Called by `dsl::equip` and by the yoshimaru branch of
+/// Kor Outfitter and Ardenn; the Boots equip (`pool::special_options`) and Mithril Coat's own attach are not seen.
 pub fn note_equip_holder(g: &mut Game, p: PlayerId, e: PermId, m: PermId) {
     if g.player(p).key != "yoshimaru" || g.perm(e).attached != Some(m) {
         return;

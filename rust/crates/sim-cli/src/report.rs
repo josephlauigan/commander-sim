@@ -524,7 +524,8 @@ pub fn print_analysis(
         println!("  Thrasios activations per game {:.2}", get("ty_thrasios_acts") / n);
         let worn = ["commander", "flier", "ballista", "other"].map(|k| get(&format!("ty_eq_{k}")));
         if worn.iter().sum::<f64>() > 0.0 {
-            // the yoshimaru seat only: who wears each Equipment as an equip resolves
+            // the yoshimaru seat only: who wears each Equipment as an equip or a free attach (Kor Outfitter, Ardenn) resolves;
+            // the Swiftfoot Boots equip (pool.rs) and Mithril Coat's own attach are not counted
             println!(
                 "  Equipment worn per game (as equipped): commander {:.2}, flier {:.2}, Walking Ballista {:.2}, other {:.2}; protection from white on Ballista {:.2}",
                 worn[0] / n,

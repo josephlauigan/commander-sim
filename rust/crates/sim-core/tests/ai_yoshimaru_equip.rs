@@ -120,9 +120,9 @@ fn tymna_is_not_a_holder_for_a_sword_but_is_for_swiftfoot_boots() {
     let sword = perm(&mut g, P0, SOFI);
     let boots = perm(&mut g, P0, BOOTS);
     assert_eq!(target_of(&g, sword), Some(ground), "the Sword goes on the other creature");
-    // Boots: no penalty on Tymna, the six-point penalty on a Sword
+    // Boots: a four-point bonus on Tymna (the guide's carrier piece for her), the six-point penalty on a Sword
     let (vb, vs) = (tc::equip_holder_value(&g, P0, boots, t), tc::equip_holder_value(&g, P0, sword, t));
-    assert!((vb - vs - 6.0).abs() < 1e-9, "Boots {vb}, Sword {vs}");
+    assert!((vb - vs - 10.0).abs() < 1e-9, "Boots {vb}, Sword {vs}");
     // and with the Boots she beats Yoshimaru, who is penalised for any Equipment
     let y = perm(&mut g, P0, YOSHI);
     assert!(tc::equip_holder_value(&g, P0, boots, t) > tc::equip_holder_value(&g, P0, boots, y));
@@ -301,18 +301,68 @@ fn ballista_counters(g: &mut Game, p: PlayerId, n: i32) -> PermId {
     enter(g, p, c, Enter { sick: false, x: n, plus: n, ..Enter::default() }).unwrap()
 }
 
+fn combat_start(g: &mut Game) {
+    sim_core::engine::hooks::fire_trigger(g, Event::CombatStart, Call::Player { p: P0 }).unwrap();
+}
+
 #[test]
-fn ardenn_keeps_hearth_and_home_off_ballista_and_still_attaches_the_rest() {
+fn ardenn_keeps_hearth_and_home_off_ballista_and_moves_exactly_the_kept_pieces() {
     let mut g = tbl();
     let b = ballista_counters(&mut g, P0, 4); // the biggest creature: Cloud's holder_score alone would pick it
     let ground = token(&mut g, P0, 1);
     let (sohh, sofi) = (perm(&mut g, P0, SOHH), perm(&mut g, P0, SOFI));
+    let ardenn = perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+    combat_start(&mut g);
+    // a creature that can wear both beats Ballista (which can wear only the Sword of Fire and Ice)
+    assert_eq!(g.perm(sohh).attached, Some(ardenn));
+    assert_eq!(g.perm(sofi).attached, Some(ardenn));
+    assert_eq!((g.perm(b).attached, g.perm(ground).attached), (None, None));
+}
+
+#[test]
+fn a_sword_is_not_put_on_tymna_by_ardenn_or_kor_outfitter() {
+    // loose Boots and Sword of Feast and Famine; Tymna is the commander-type holder, a flier is there
+    for outfitter in [false, true] {
+        let mut g = tbl();
+        let t = perm(&mut g, P0, TYMNA);
+        let flier = perm(&mut g, P0, "Serra Angel");
+        let (boots, sword) = (perm(&mut g, P0, BOOTS), perm(&mut g, P0, "Sword of Feast and Famine"));
+        if outfitter {
+            perm(&mut g, P0, "Kor Outfitter");
+        } else {
+            perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+            combat_start(&mut g);
+        }
+        assert_ne!(g.perm(sword).attached, Some(t), "outfitter={outfitter}: no Sword on Tymna");
+        if !outfitter {
+            assert_eq!(g.perm(sword).attached, Some(flier), "the flier takes the Sword");
+            assert_eq!(g.perm(boots).attached, Some(flier), "Ardenn moves both pieces to the one target");
+        }
+    }
+}
+
+#[test]
+fn boots_worn_by_tymna_stay_on_her_when_ardenn_could_move_them_to_a_flier() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, TYMNA);
+    perm(&mut g, P0, "Serra Angel");
+    let boots = perm(&mut g, P0, BOOTS);
+    g.perm_mut(boots).attached = Some(t);
     perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
-    sim_core::engine::hooks::fire_trigger(&mut g, Event::CombatStart, Call::Player { p: P0 }).unwrap();
-    assert_ne!(g.perm(sohh).attached, Some(b), "no protection from white on Ballista");
-    assert!(g.perm(sohh).attached.is_some(), "it still goes on another creature");
-    assert!(g.perm(sofi).attached.is_some(), "the other Equipment is attached as before");
-    let _ = ground;
+    combat_start(&mut g);
+    assert_eq!(g.perm(boots).attached, Some(t));
+}
+
+#[test]
+fn mithril_coat_is_not_penalised_on_tymna_but_a_sword_is() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, TYMNA);
+    let (coat, sword, buster) =
+        (perm(&mut g, P0, "Mithril Coat"), perm(&mut g, P0, SOFI), perm(&mut g, P0, "Buster Sword"));
+    g.perm_mut(coat).attached = None;
+    let v = |e| tc::equip_holder_value(&g, P0, e, t);
+    assert!((v(coat) - v(sword) - 6.0).abs() < 1e-9, "Coat {} vs Sword {}", v(coat), v(sword));
+    assert!((v(coat) - v(buster) - 6.0).abs() < 1e-9);
 }
 
 #[test]

@@ -1385,7 +1385,7 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     let cols = crate::engine::values::colors_of(g, src);
     let (to, es) = if g.player(p).key == "yoshimaru" {
         // the yoshimaru seat scores creature and Equipment together (no protection from white on Walking Ballista)
-        let Some(x) = super::cloud::yoshimaru_attach(g, p, cols) else { return Ok(vec![]) };
+        let Some(x) = super::cloud::yoshimaru_attach(g, p, cols, false) else { return Ok(vec![]) };
         x
     } else {
         let Some(to) = super::cloud::best_holder_from(g, p, cols) else {
@@ -1398,6 +1398,7 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     }
     for e in es {
         super::cloud::attach(g, e, to);
+        super::tymna_cards::note_equip_holder(g, p, e, to); // the yoshimaru seat's holder stat (any other seat: nothing)
     }
     Ok(vec![])
 }
