@@ -582,7 +582,7 @@ pub fn check_args(sim: &Sim, a: &Args) -> Result<Vec<(String, Vec<String>)>, Str
             return Err(format!("--mulligan-oracle --vs-tier: {k:?} is not one of your decks ({})", MINE.join(", ")));
         }
         if !out.iter().any(|(d, _)| d == k) {
-            out.push((k.to_string(), select_tiers(k, &deck_tiers(sim, k), pool, false)?));
+            out.push((k.to_string(), select_tiers(k, &deck_tiers(sim, k)?, pool, false)?));
         }
     }
     if out.is_empty() {
@@ -702,7 +702,7 @@ mod tests {
         let sim = sim();
         let e = &sim.engine;
         for key in ["yoshimaru", "sheoldred"] {
-            let tier = &deck_tiers(&sim, key)[0];
+            let tier = &deck_tiers(&sim, key).unwrap()[0];
             let ctx = TierCtx::new(&sim, key, tier, "loose", 2, false).unwrap();
             for seed in 500000..500006u64 {
                 let th = &ctx.tries(seed)[0];

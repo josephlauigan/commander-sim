@@ -27,6 +27,7 @@ pub fn deck_keys(sim: &Sim, spec: &str) -> Result<Vec<String>, String> {
         let add: Vec<String> = if k == "t6" {
             t6.clone()
         } else if MINE.contains(&k) || t6.iter().any(|x| x == k) {
+            crate::poolmode::check_commander_table(sim, k).map_err(|e| format!("--goldfish: {e}"))?;
             vec![k.to_string()]
         } else {
             return Err(format!(
@@ -540,6 +541,11 @@ mod tests {
         let sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
         assert_eq!(deck_keys(&sim, "yoshimaru,t6,yoshimaru").unwrap().len(), 7);
+        // kyodai plays Cali Commander: refused, alone or among decks that are fine
+        for spec in ["kyodai", "yoshimaru,kyodai", "kyodai,t6"] {
+            let e = deck_keys(&sim, spec).unwrap_err();
+            assert!(e.contains("Cali Commander") && e.starts_with("--goldfish: kyodai"), "{spec}: {e}");
+        }
         assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
         assert!(deck_keys(&sim, "").is_err());
     }

@@ -47,6 +47,7 @@ fn retired_decks() -> Vec<RawDeck> {
         commander2: c2.map(String::from),
         ident: Some(ident.into()),
         tiers: vec![],
+        format: None,
         cards: lib(&[c1, c2.unwrap_or("")][..if c2.is_some() { 2 } else { 1 }], basics),
     };
     vec![
@@ -208,6 +209,7 @@ fn listed(key: &str, name: &str, commander: &str, ident: &str, file: &str) -> Ra
         commander2: None,
         ident: Some(ident.into()),
         tiers: vec![],
+        format: None,
         cards,
     }
 }

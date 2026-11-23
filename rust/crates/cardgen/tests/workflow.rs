@@ -221,3 +221,115 @@ fn audit_never_overwrites_a_decklist() {
     assert!(run(&["--mine"]).status.success());
     assert_eq!(std::fs::read_to_string(&doc).unwrap(), before);
 }
+
+/// the cards of one of your decks, as `cardgen deck` takes them
+fn list_of(p: &Project, key: &str) -> (PathBuf, Vec<String>) {
+    let inp = Inputs::load(p).unwrap();
+    let d = inp.my.iter().find(|d| d.key == key).unwrap().clone();
+    let path = cardgen::decks::deck_path(p, &d);
+    let cards = cardgen::decks::load(&path).unwrap();
+    (path, cards)
+}
+
+fn dry(p: &Project, which: &str, cards: &[String]) -> cardgen::update_deck::Outcome {
+    run(p, which, &cards.join("\n"), &Options { dry: true, log: None, offline: true }).unwrap()
+}
+
+#[test]
+fn cardgen_deck_checks_a_deck_under_its_own_format() {
+    let p = scratch("deck_format");
+    // kyodai plays Cali Commander: Mana Crypt, Primeval Titan and Tinker are legal there
+    let (path, cards) = list_of(&p, "kyodai");
+    for c in ["Mana Crypt", "Primeval Titan", "Tinker"] {
+        assert!(cards.iter().any(|x| x == c), "{c}");
+    }
+    let o = dry(&p, "kyodai", &cards);
+    assert!(o.ok, "{}", o.text);
+    // the same deck named by its file path takes the same format
+    let o = dry(&p, path.to_str().unwrap(), &cards);
+    assert!(o.ok, "a path to a deck of yours takes its format: {}", o.text);
+    // a card on the Cali list is refused for it: the Tabernacle in for Tinker
+    let mut bad = cards.clone();
+    let i = bad.iter().position(|c| c == "Tinker").unwrap();
+    bad[i] = "The Tabernacle at Pendrell Vale".into();
+    let o = dry(&p, "kyodai", &bad);
+    assert!(!o.ok);
+    assert!(o.text.contains("banned in Cali Commander: The Tabernacle at Pendrell Vale"), "{}", o.text);
+    // under Commander the same list fails on exactly the three
+    let toml = std::fs::read_to_string(p.data("my_decks.toml")).unwrap();
+    std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"\n", "")).unwrap();
+    let o = dry(&p, "kyodai", &cards);
+    assert!(!o.ok);
+    assert!(o.text.contains("banned in Commander: Mana Crypt, Primeval Titan, Tinker"), "{}", o.text);
+}
+
+#[test]
+fn a_commander_deck_with_mana_crypt_swapped_in_is_refused() {
+    let p = scratch("deck_commander_ban");
+    let (_, mut cards) = list_of(&p, "yshtola");
+    let o = dry(&p, "yshtola", &cards);
+    assert!(o.ok, "{}", o.text);
+    let i = cards.iter().position(|c| c == "Sol Ring").expect("Sol Ring in the list");
+    cards[i] = "Mana Crypt".into();
+    let o = dry(&p, "yshtola", &cards);
+    assert!(!o.ok);
+    assert!(o.text.contains("banned in Commander: Mana Crypt"), "{}", o.text);
+}
+
+#[test]
+fn validate_covers_each_of_your_decks_under_its_own_format() {
+    let real = Project::new(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../.."));
+    let cache = cardgen::scryfall::Cache::load(&real.data("scryfall_cache.json")).unwrap();
+    let report = cardgen::decks::validate_all(&real, &cache).unwrap();
+    for (d, probs, _) in &report {
+        assert!(probs.is_empty(), "{} {}: {probs:?}", d.tier, d.key);
+    }
+    let mut mine: Vec<(&str, &str)> =
+        report.iter().filter(|(d, ..)| d.tier == "mine").map(|(d, ..)| (d.key.as_str(), d.format.as_str())).collect();
+    mine.sort();
+    assert_eq!(
+        mine,
+        [
+            ("kyodai", "cali"),
+            ("sheoldred", "commander"),
+            ("urdragon", "commander"),
+            ("yoshimaru", "commander"),
+            ("yshtola", "commander")
+        ]
+    );
+}
+
+#[test]
+fn a_typo_or_an_unknown_format_in_my_decks_is_an_error() {
+    let p = scratch("my_decks_format");
+    let toml = std::fs::read_to_string(p.data("my_decks.toml")).unwrap();
+    std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"", "fromat = \"cali\"")).unwrap();
+    let e = cardgen::data::load_my_decks(&p).unwrap_err();
+    assert!(e.contains("[kyodai]") && e.contains("unknown key \"fromat\""), "{e}");
+    std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"", "format = \"calli\"")).unwrap();
+    let e = cardgen::data::load_my_decks(&p).unwrap_err();
+    assert!(e.contains("[kyodai]") && e.contains("unknown format \"calli\""), "{e}");
+    std::fs::write(p.data("my_decks.toml"), &toml).unwrap();
+    let decks = cardgen::data::load_my_decks(&p).unwrap();
+    let fmt: Vec<(&str, &str)> = decks.iter().map(|d| (d.key.as_str(), d.format.as_str())).collect();
+    assert!(fmt.contains(&("kyodai", "cali")) && fmt.contains(&("yshtola", "commander")), "{fmt:?}");
+}
+
+#[test]
+fn export_writes_the_formats_and_only_kyodai_carries_one() {
+    let p = scratch("export_formats");
+    let e = export(&Inputs::load(&p).unwrap()).unwrap();
+    let doc = json::parse(&e.decks_json).unwrap();
+    let fmts = doc.get("formats").and_then(|f| f.as_obj()).expect("a formats object");
+    assert_eq!(fmts.keys().collect::<Vec<_>>(), ["commander", "cali"]);
+    let cali = fmts.get("cali").unwrap();
+    assert_eq!(cali.s("name"), Some("Cali Commander"));
+    assert_eq!(cali.s("bans"), Some("list"));
+    assert_eq!(cali.get("banned").unwrap().as_arr().unwrap().len(), 18);
+    assert!(fmts.get("commander").unwrap().get("banned").is_none());
+    for m in doc.get("mine").unwrap().as_arr().unwrap() {
+        let key = m.s_or("key");
+        assert_eq!(m.s("format"), (key == "kyodai").then_some("cali"), "{key}");
+    }
+    assert!(doc.get("pool").unwrap().as_arr().unwrap().iter().all(|d| d.get("format").is_none()));
+}

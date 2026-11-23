@@ -192,7 +192,7 @@ pub fn searchtest(argv: &[String]) -> i32 {
             return Err(format!("no deck {me:?}"));
         }
         if sim.mine.contains_key(me) {
-            crate::poolmode::select_tiers(me, &crate::poolmode::deck_tiers(&sim, me), tier, any_tier)?;
+            crate::poolmode::select_tiers(me, &crate::poolmode::deck_tiers(&sim, me)?, tier, any_tier)?;
         }
         let opp = sim.pool_keys(tier);
         if opp.is_empty() {

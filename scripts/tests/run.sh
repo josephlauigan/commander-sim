@@ -393,6 +393,27 @@ mktree "$tmp/renv" envdump
 tr_rec --mode l2 --tree "$tmp/renv" --out "$tmp/rec/env" --seeds 1 --decks yshtola >/dev/null 2>&1
 has "record l2: the environment is scrubbed (AI_SEARCH does not reach the game)" "R2  env AI_SEARCH=unset ROOT=$tmp/renv" "$tmp/rec/env/logs/yshtola-t5-0.log"
 expect "record l2: --decks restricts to one deck" 0 test "$(wc -l <"$tmp/rec/env/records.jsonl")" -eq 1
+# a deck of another format (kyodai, Cali Commander) is left out of the default deck list, which the game would refuse
+cali_toml="$decks_toml"'
+[kyodai]
+tiers = ["t5", "t6"]
+format = "cali"
+
+[urdragon]
+tiers = ["t5"]
+format = "commander"
+'
+mktree "$tmp/rcali" base "$cali_toml"
+for m in l2 l3; do
+  expect "record $m: a default recording with a non-Commander deck in my_decks.toml" 0 tr_rec --mode $m --tree "$tmp/rcali" --out "$tmp/rec/cali-$m" --seeds 1 -P 2
+  dt=$(python3 -I -c 'import json,sys;print(" ".join(json.load(open(sys.argv[1]))["deck_tiers"]))' "$tmp/rec/cali-$m/meta.json")
+  hasnt "record $m: the default deck list leaves out kyodai" "kyodai" <(echo "$dt")
+  has "record $m: it keeps the other decks (explicit commander format too)" "aragorn/t4 aragorn/t5 yshtola/t5 urdragon/t5" <(echo "$dt")
+  hasnt "record $m: no record names kyodai" '"deck": "kyodai"' "$tmp/rec/cali-$m/records.jsonl"
+done
+dt=$(python3 -I -c 'import json,sys;print(" ".join(json.load(open(sys.argv[1]))["deck_tiers"]))' "$tmp/rec/cali-l2/meta.json")
+has "record l2: the within-tier pods are still in the default list" "within/t1 .*within/t6" <(echo "$dt")
+expect "record l2: asking for only kyodai selects nothing" 2 tr_rec --mode l2 --tree "$tmp/rcali" --out "$tmp/rec/cali-only" --seeds 1 --decks kyodai
 expect "record: refuses an existing recording" 2 tr_rec --mode l2 --tree "$tmp/rb" --out "$tmp/rec/base" --seeds 1
 echo x >"$tmp/rb/dirty.txt"
 expect "record: refuses a dirty tree" 2 tr_rec --mode l2 --tree "$tmp/rb" --out "$tmp/rec/dirty" --seeds 1
