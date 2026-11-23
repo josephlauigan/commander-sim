@@ -76,7 +76,7 @@ fn tapped_out_the_evoke_aims_past_a_warded_creature() {
         hand(&mut g, P0, &["Swords to Plowshares"]);
         assert!(ai_evokes(&mut g, s), "{key}: the evoke is offered");
         assert!(!g.perm(b).on_bf, "{key}: the unwarded creature is exiled");
-        assert!(g.perm(m).on_bf, "{key}: Miirym is left alone");
+        assert!(g.perm(m).on_bf, "{key}: the warded creature is left alone");
     }
 }
 
@@ -245,6 +245,8 @@ fn an_evoke_the_opponent_counters_still_counts_as_a_cast() {
     assert!(countered > 0, "no seed had the opponent counter the evoke");
 }
 
+/// a regression guard: the lock already read `turn_casts` (set by `on_cast`), so this passes on the old code too; it
+/// shows that `record_cast` leaves the lock and `casts_this_turn` unchanged
 #[test]
 fn rule_of_law_locks_the_next_spell_after_an_evoke() {
     let (mut g, s) = tbl(YOSHI);
@@ -258,13 +260,17 @@ fn rule_of_law_locks_the_next_spell_after_an_evoke() {
     assert_eq!(sim_core::engine::cast::casts_this_turn(&g, P0), 1);
 }
 
+/// Solitude and a white card in hand but no opposing creature: no evoke is offered, and asking records nothing
 #[test]
 fn a_seat_that_evokes_nothing_records_nothing() {
-    let (mut g, _s) = tbl(YOSHI);
+    let (mut g, s) = tbl(YOSHI);
     hand(&mut g, P0, &["Swords to Plowshares"]);
+    assert!(evoke_opts(&mut g, s).is_empty(), "no target: no evoke");
+    assert!(!ai_evokes(&mut g, s));
     assert_eq!(g.player(P0).spells_this_turn, 0);
     assert_eq!(spells_cast(&g, P0), 0);
     assert!(g.player(P0).cast_names.is_empty());
+    assert!(g.player(P0).hand.contains(&s) && g.player(P0).exile.is_empty(), "nothing was spent");
 }
 
 // ------------------------------------------------------------------ (a) the Emperor's flash

@@ -1,4 +1,5 @@
 // written by an independent reviewer
+// (assertions tightened by the coordinator's request after the Opus review)
 //! Adversarial: the ward predicate (b) of the Solitude evoke and enters trigger.
 
 use sim_core::ai::act::perform;
@@ -49,12 +50,9 @@ fn tax_and_ward_compete_for_the_last_mana() {
     perm(&mut g, P1, "Sphere of Resistance");
     lands(&mut g, P0, "Plains", 2, false);
     let offered = !evoke_opts(&mut g, s).is_empty();
-    println!("offered with tax 1 + ward 2 on 2 lands: {offered}");
-    if offered {
-        assert!(ai_evokes(&mut g, s));
-        println!("miirym on bf after: {}, tapped lands {}", g.perm(m).on_bf, tapped_lands(&g, P0));
-        assert!(!g.perm(m).on_bf, "the evoke was offered into a ward it could not pay after the tax: Miirym survived");
-    }
+    assert!(!offered, "tax {{1}} plus ward {{2}} on two lands: the ward could not be paid after the tax, so no evoke");
+    assert!(g.perm(m).on_bf && g.player(P0).hand.contains(&s), "nothing was spent");
+    assert_eq!(tapped_lands(&g, P0), 0);
 }
 
 /// the same with 3 lands: it is fine
@@ -146,9 +144,9 @@ fn extra_generic_adds_to_the_ward() {
     assert!(!ward_affordable(&g, P0, m, 2, ""));
 }
 
-/// Controller semantics: a creature P1 stole (it sits in P0's perms, owner P0) is not an opposing target at all
+/// a permanent of the actor's own never wards (it only checks the owner field; no steal is performed here)
 #[test]
-fn perm_owner_is_the_controller() {
+fn the_actors_own_permanent_never_wards() {
     let (mut g, _s) = tbl("yoshimaru");
     let m = perm(&mut g, P0, MIIRYM);
     assert_eq!(g.perm(m).owner, P0);

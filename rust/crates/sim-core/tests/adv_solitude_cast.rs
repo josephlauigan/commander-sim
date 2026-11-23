@@ -1,4 +1,5 @@
 // written by an independent reviewer
+// (assertions tightened by the coordinator's request after the Opus review)
 //! Adversarial: the evoke / Emperor flash count as casts (a): no double count, nothing counted when nothing is paid,
 //! readers of `spells_this_turn` fire once.
 
@@ -127,4 +128,5 @@ fn a_countered_emperor_flash_still_counts() {
     }
     println!("flashed in {counted} seeds, countered in {countered}");
     assert!(counted > 0);
+    assert!(countered > 0, "no seed had the attacker counter the flash ({counted} flashed in)");
 }

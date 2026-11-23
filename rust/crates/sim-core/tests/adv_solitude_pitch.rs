@@ -1,4 +1,5 @@
 // written by an independent reviewer
+// (assertions tightened by the coordinator's request after the Opus review)
 //! Adversarial: the yoshimaru pitch rule (c). Which white cards of the yoshimaru list count as line pieces, and which
 //! card is exiled in various hands.
 
@@ -66,11 +67,14 @@ fn probe_line_pieces_of_the_yoshimaru_white_cards() {
     assert_eq!(pieces, vec!["Heliod, Sun-Crowned".to_string()], "white pieces: {pieces:?}");
 }
 
-/// the rule is gated on the key, and `is_line_piece` is keyed to the seat's own deck: another seat sees no Heliod line
+/// `is_line_piece` is keyed to the seat's own deck: the yoshimaru seat sees Heliod as a piece, the brago seat does not
+/// (the pitch gate is the seat key either way)
 #[test]
-fn heliod_is_not_a_piece_for_a_seat_without_ballista() {
+fn heliod_is_a_piece_for_the_yoshimaru_seat_and_not_for_a_seat_without_ballista() {
+    let g = table(&["yoshimaru", "seph"]);
+    assert!(is_line_piece(&g, P0, "Heliod, Sun-Crowned"));
     let g = table(&["brago-azorius-blink-control", "seph"]);
-    println!("brago heliod piece: {}", is_line_piece(&g, P0, "Heliod, Sun-Crowned"));
+    assert!(!is_line_piece(&g, P0, "Heliod, Sun-Crowned"));
 }
 
 /// {Heliod, Court}: Court pitched; and it must fail on a rule with no exclusion (precondition: Heliod is the cheaper)
@@ -120,18 +124,16 @@ fn heliod_is_never_pitched_over_any_other_white_card_of_the_list() {
     assert!(bad.is_empty(), "{bad:?}");
 }
 
-/// the key check: a seat with key yoshimaru is the only gated one; seat 1 (not P0) with key yoshimaru also gets the rule
+/// the key check: only the key yoshimaru is gated; a seat with another key (thrasios, retired) keeps the old rule
 #[test]
-fn the_second_seat_with_key_yoshimaru_also_applies_the_rule_but_others_do_not() {
-    // solitude_go reads `g.player(p).key`; a test seat with another key (thrasios, retired) is unchanged
+fn a_seat_with_another_key_keeps_the_old_pitch_rule() {
     let (mut g, s) = tbl("thrasios");
     hand(&mut g, P0, &["Heliod, Sun-Crowned", "Court of Ardenvale"]);
     let (h, c) = (card(&g, "Heliod, Sun-Crowned"), card(&g, "Court of Ardenvale"));
     let (wh, wc) = (card_worth(&g, P0, h, false), card_worth(&g, P0, c, false));
-    if ai_evokes(&mut g, s) {
-        let exp = if wh < wc { "Heliod, Sun-Crowned" } else { "Court of Ardenvale" };
-        assert_eq!(pitched(&g, &["Heliod, Sun-Crowned", "Court of Ardenvale"]), vec![exp.to_string()]);
-    }
+    assert!(ai_evokes(&mut g, s), "the evoke is offered");
+    let exp = if wh < wc { "Heliod, Sun-Crowned" } else { "Court of Ardenvale" };
+    assert_eq!(pitched(&g, &["Heliod, Sun-Crowned", "Court of Ardenvale"]), vec![exp.to_string()]);
 }
 
 /// Heliod with the combo already half built still pitches Court; Heliod on the battlefield (not in hand) is irrelevant;
