@@ -183,5 +183,7 @@ and those files are read only with their hand AI off, so the default play of eve
 - **Knobs**: `commander_chumps_to_live = true` (the commander chump-blocks only when the attack would otherwise kill,
   `combat.rs`); `adnaus_main2 = true` (Ad Nauseam also in the deck's own second main phase with room for four cards,
   `plans::adnaus_cast_now`); `protect_before_go = true` (Stage 4: the deck casts Silence / Orim's Chant before a line goes,
-  as a Tier 6 deck does: `t6_table::protect_before_go`, gated in `combos::attempt`; off by default, and the Tier 6
-  `[[go_now]]` / `[[hold_up]]` slots stay Tier 6 only).
+  `t6_table::protect_before_go_opt_in`, called from `combos::attempt`; off by default. It is the Tier 6 step with two
+  differences: Silence is also cast against a single opponent who could answer when no Orim's Chant is held, and the
+  step is skipped when the line is unplayable or priced out once the protection spell counts as cast (Damping Sphere,
+  Rule of Law: `combos::line_after_cast`). The Tier 6 `[[go_now]]` / `[[hold_up]]` slots stay Tier 6 only).

@@ -1,6 +1,8 @@
 //! Stage 4: the opt-in plan knob `knobs.protect_before_go`. A plan deck that sets it casts Silence / Orim's Chant from
-//! hand before a line goes, the step `t6_table::protect_before_go` gives a Tier 6 player (`combos::attempt`). Off, every
-//! deck plays as before; the Tier 6 slots (`go_now`, `hold_up`) stay Tier 6 only.
+//! hand before a line goes (`t6_table::protect_before_go_opt_in`, called from `combos::attempt`): the Tier 6 step with
+//! two differences, Silence against a single stopper when no Orim's Chant is held, and no cast when the line is
+//! unplayable or re-priced out once the protection spell counts as cast (Damping Sphere, Rule of Law). Off, every deck
+//! plays as before; a Tier 6 seat keeps `protect_before_go`; the Tier 6 slots (`go_now`, `hold_up`) stay Tier 6 only.
 
 use sim_core::ai::{plan_data, t6_table};
 use sim_core::ids::PlayerId;
@@ -155,7 +157,7 @@ fn tier_6_under_damping_sphere_is_unchanged_and_a_knob_deck_keeps_silence() {
     perm(&mut g, P1, "Damping Sphere");
     go_heliod(&mut g);
     assert!(in_gy(&g, P0, "Silence"), "Tier 6 still casts Silence first");
-    assert_ne!(g.winner, Some(P0), "and the line is not played: the known Tier 6 flaw, a ticket, not changed here");
+    assert_ne!(g.winner, Some(P0), "and the line is not played: the known Tier 6 flaw, ticket T-S4-1; flip this assertion when Tier 6 is fixed");
     let mut g = heliod("yoshimaru", 2, 3, 2);
     perm(&mut g, P1, "Damping Sphere");
     go_heliod(&mut g);

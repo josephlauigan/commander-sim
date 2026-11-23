@@ -204,7 +204,7 @@ fn one_opponent_who_could_answer_silence_is_cast_for_a_deck_without_chant() {
 
 #[test]
 fn silence_uncastable_for_colour_does_not_spend_line_mana() {
-    // no white source beyond the line's own, plus an extra colourless land: the line is payable, Silence is not
+    // no white source beyond the line's own, plus an extra Swamp: the line is payable, Silence is not
     let mut g = heliod_position(1, 5, 2);
     let n = g.player(P0).lands.len();
     assert_eq!(n, 6);
@@ -308,6 +308,7 @@ fn silence_does_not_make_the_line_unaffordable_under_damping_sphere() {
 /// say true when the turn state changed
 #[test]
 fn a_countered_silence_leaves_a_consistent_state() {
+    let mut hits = 0;
     for seed in 1..40u64 {
         let mut g = table_with(&["yoshimaru", "sisay-legends-toolbox", "yshtola", "sauron"], seed, 40);
         g.active = Some(P0);
@@ -323,9 +324,11 @@ fn a_countered_silence_leaves_a_consistent_state() {
         let r = combos::attempt(&mut g, P0, i).unwrap();
         let silence_cast = !in_hand(&g, P0, "Silence");
         if silence_cast && g.winner != Some(P0) {
+            hits += 1;
             assert!(r, "seed {seed}: Silence was cast (state changed) but attempt returned false");
         }
         assert_eq!(g.t6_going, None);
     }
+    assert!(hits > 0, "no seed reached the branch the assertions above guard (Silence cast, line not won)");
 }
 
