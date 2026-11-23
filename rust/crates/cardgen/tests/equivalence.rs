@@ -71,3 +71,76 @@ fn deck_guard_fixture_is_current() {
     let want = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
     assert_eq!(cardgen::update_deck::fixture_json(&inp).unwrap(), want);
 }
+
+/// a hand-tagged card has no Game Changer flag or colour identity of its own: the export takes Scryfall's (by full
+/// name, or by front face for a double-faced card), and a card Scryfall does not flag stays false
+#[test]
+fn hand_tagged_cards_take_their_game_changer_flag_and_identity_from_scryfall() {
+    let p = project();
+    let e = export(&Inputs::load(&p).unwrap()).unwrap();
+    let cards = json::parse(&e.cards_json).unwrap();
+    let card = |name: &str| {
+        let c = cards.get("cards").unwrap().as_arr().unwrap().iter().find(|c| c.s_or("name") == name).unwrap();
+        assert_eq!(c.s_or("source"), "manual", "{name} is a hand-tagged card");
+        c.clone()
+    };
+    for (name, id) in [("Gifts Ungiven", "U"), ("Demonic Tutor", "B"), ("Rhystic Study", "U")] {
+        let c = card(name);
+        assert_eq!(c.get("game_changer"), Some(&J::from(true)), "{name} is a Game Changer");
+        assert_eq!(c.s_or("identity"), id, "{name}'s colour identity");
+    }
+    let tergrid = card("Tergrid, God of Fright // Tergrid's Lantern");
+    assert_eq!(tergrid.get("game_changer"), Some(&J::from(true)), "a double-faced card by its front face");
+    assert_eq!(tergrid.s_or("identity"), "B");
+    let ring = card("Sol Ring");
+    assert_eq!(ring.get("game_changer"), Some(&J::from(false)), "not a Game Changer");
+    assert_eq!(ring.s_or("identity"), "");
+}
+
+/// every exported card that Scryfall knows agrees with it on the Game Changer flag and the colour identity; the cards it
+/// does not know have neither
+#[test]
+fn every_exported_card_matches_scryfall_on_game_changer_and_identity() {
+    let p = project();
+    let inp = Inputs::load(&p).unwrap();
+    let e = export(&inp).unwrap();
+    let cards = json::parse(&e.cards_json).unwrap();
+    let (mut known, mut unknown) = (0, vec![]);
+    for c in cards.get("cards").unwrap().as_arr().unwrap() {
+        let name = c.s_or("name");
+        let rec = inp.cache.get(name).or_else(|| inp.cache.get(name.split(" // ").next().unwrap()));
+        match rec {
+            Some(r) => {
+                known += 1;
+                assert_eq!(
+                    c.get("game_changer"),
+                    Some(&J::from(r.get("game_changer").is_some_and(|g| g.truthy()))),
+                    "{name}: game_changer"
+                );
+                assert_eq!(c.s_or("identity"), r.strs("color_identity").concat(), "{name}: identity");
+            }
+            None => unknown.push(name.to_string()),
+        }
+    }
+    assert!(known > 3000, "{known} cards checked");
+    for n in &unknown {
+        let c = cards.get("cards").unwrap().as_arr().unwrap().iter().find(|c| c.s_or("name") == n).unwrap();
+        assert!(
+            c.get("game_changer").is_some_and(|g| g.is_null()) && c.get("identity").is_some_and(|g| g.is_null()),
+            "{n}"
+        );
+    }
+    eprintln!("not in the Scryfall cache, so null: {unknown:?}");
+}
+
+/// the deck check counts a hand-tagged Game Changer (it reads Scryfall's record, as the export now does)
+#[test]
+fn the_deck_check_counts_hand_tagged_game_changers() {
+    let p = project();
+    let inp = Inputs::load(&p).unwrap();
+    let cards: Vec<String> = ["Gifts Ungiven", "Demonic Tutor", "Sol Ring", "Swamp"].map(String::from).to_vec();
+    let recs = |n: &str| inp.cache.get(n).cloned();
+    let (probs, info) = cardgen::decks::card_problems(&cards, &[], Some("t1"), None, &recs);
+    assert_eq!(info.gcs, ["Demonic Tutor", "Gifts Ungiven"]);
+    assert!(probs.iter().any(|p| p.contains("2 Game Changers, tier t1 allows 0-0")), "{probs:?}");
+}
