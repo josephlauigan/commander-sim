@@ -44,7 +44,7 @@ const SWAPTEST: &str = "Test proposed list changes for an opponent-pool deck wit
 
     commander-sim swaptest <deck key> <tier the deck plays against> <games> \"Out Card>In Card; Out>In; ...\" [jobs]
 
-Runs the deck alone against three decks of that tier, paired (same seeds, seats and opponents' draws), once with
+Runs the deck alone against the opponents of its format's table drawn from that tier (three decks for Commander), paired (same seeds, seats and opponents' draws), once with
 the list as written and once with the swaps, and reports both win rates (adaptive AI, loose profile). The
 variant list is checked as the real lists are: 100 cards, singleton, every card in data/cards.json, colour identity
 and the tier's Game Changer limit (Scryfall's legality data isn't exported, so bans aren't checked).";
@@ -167,7 +167,7 @@ pub fn swaptest(argv: &[String]) -> i32 {
 
 // ------------------------------------------------------------------ searchtest
 const SEARCHTEST: &str =
-    "Paired test of the look-ahead AI: a pool deck alone against three decks of a tier, the same seeds
+    "Paired test of the look-ahead AI: a pool deck alone against the opponents of its format's table drawn from a tier (three decks for Commander), the same seeds
 played with the heuristic AI and with search.
 
     commander-sim searchtest <deck key> <tier> <games> [rollouts] [top_k] [jobs] [--any-tier]

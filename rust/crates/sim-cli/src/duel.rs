@@ -14,7 +14,9 @@ use crate::args::Args;
 use crate::play::Sim;
 use sim_core::format::Format;
 
-/// the index (into the sorted opponent keys) of the opponent seed `seed` meets
+/// The index (into the sorted opponent keys) of the opponent seed `seed` meets: the opponent is `sorted_keys[(seed / 2) % n]`,
+/// so adding or removing a pool deck in a tier re-deals the opponents of nearly every seed: Cali numbers from before and
+/// after a pool change are not comparable seed for seed (paired comparisons with the same list in both arms are fine).
 pub fn opponent_index(seed: u64, opponents: usize) -> usize {
     ((seed / 2) % opponents as u64) as usize
 }
@@ -39,7 +41,7 @@ pub fn duel_seats(seed: u64, me: &str, opp_keys: &[String]) -> Vec<String> {
 /// `seed0 .. seed0 + n`
 pub fn play_draw_counts(seed0: u64, n: u64, opponents: usize) -> Vec<(u64, u64)> {
     let mut v = vec![(0u64, 0u64); opponents];
-    for s in seed0..seed0 + n {
+    for s in seed0..seed0.saturating_add(n) {
         let e = &mut v[opponent_index(s, opponents)];
         if on_the_play(s) {
             e.0 += 1;
@@ -63,7 +65,7 @@ pub fn balance_note(seed0: u64, n: u64, opponents: usize) -> Option<String> {
     Some(format!(
         "note: seeds {seed0}..{} do not put the deck on the play and on the draw equally often against every opponent \
          ({opponents} opponents: start from an even seed and play a multiple of {} games for an exact balance)",
-        seed0 + n.saturating_sub(1),
+        seed0.saturating_add(n.saturating_sub(1)),
         2 * opponents.max(1)
     ))
 }
@@ -370,6 +372,18 @@ mod tests {
             assert!(sim.check_format(k).is_ok(), "{k}");
         }
         assert!(sim.check_format("dack-fayden-white-stax").unwrap_err().contains("Tabernacle"));
+    }
+
+    /// seeds near u64::MAX do not overflow the balance check (the release profile has overflow checks)
+    #[test]
+    fn seeds_near_the_top_of_u64_do_not_panic() {
+        let top = u64::MAX - 3;
+        let c = play_draw_counts(top, 10, 5);
+        assert_eq!(c.iter().map(|(p, d)| p + d).sum::<u64>(), 3, "only the seeds that exist are counted");
+        assert!(balance_note(top, 10, 5).is_some());
+        assert!(balance_note(u64::MAX - 1, 5, 5).unwrap().contains(&u64::MAX.to_string()));
+        assert!(balance_note(u64::MAX, u64::MAX, 5).is_none(), "no seeds, nothing unbalanced");
+        let _ = is_balanced(top, 1, 3);
     }
 
     #[test]

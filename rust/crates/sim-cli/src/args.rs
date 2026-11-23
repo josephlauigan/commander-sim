@@ -87,7 +87,7 @@ const OPTS: [Opt; 39] = [
         false,
         &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
-        "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
+        "play --deck against the opponents of the format's table (three outside decks for Commander, one for Cali) drawn from this tier (see decklists/pool/); all = the deck's own tiers
          (data/my_decks.toml: e.g. yoshimaru t4-t5, sheoldred t3-t4). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
@@ -226,7 +226,7 @@ pub fn usage() -> &'static str {
 pub fn help() -> String {
     let mut s = String::new();
     s += usage();
-    s += "\n\nCommander pod simulator: one of your decks against three outside decks drawn from a tier of \
+    s += "\n\nCommander pod simulator: one of your decks against the opponents of the format's table (three outside decks for Commander) drawn from a tier of \
           decklists/pool/ (pool mode)\n\noptions:\n  -h, --help            show this help and exit\n";
     for o in &OPTS {
         let mut left = o.name.to_string();
