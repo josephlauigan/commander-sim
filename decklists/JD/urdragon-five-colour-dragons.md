@@ -12,8 +12,8 @@ has committed its Dragons, to decks that win before turn 5, and to Blood Moon ef
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10 flier); all five colours. Eminence: other Dragon spells you cast cost {1} less while it is in the command zone or on the battlefield |
-| **Bracket** | 4: 11 Game Changers and one four-card combo. Played against Tier 5 (High Bracket 4) |
-| **Game Changers (11)** | Ancient Tomb, Cyclonic Rift, Demonic Tutor, Field of the Dead, Fierce Guardianship, Mana Vault, Rhystic Study, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
+| **Bracket** | 4: 10 Game Changers and one four-card combo. Played against Tier 5 (High Bracket 4) |
+| **Game Changers (10)** | Ancient Tomb, Demonic Tutor, Field of the Dead, Fierce Guardianship, Mana Vault, Rhystic Study, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
 | **Simulator** | Deck key `urdragon`, tier T5; findings in `audit/urdragon/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/urdragon.toml`. No sims yet |
 | **Buys** | None: every card not owned is proxied |
 
@@ -140,7 +140,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Lightning Bolt, Decimate, Austere Command, Young Pyromancer:** the spells package. Bolt is
   cheap removal or reach; Decimate destroys an artifact, a creature, an enchantment and a land at once (all four need
   a legal target); Young Pyromancer turns each instant or sorcery into a 1/1 Elemental, but the
-  deck holds only seventeen of them (ten instants and seven sorceries).
+  deck holds only seventeen of them (nine instants and eight sorceries).
 - **Triple Triad** ({3}{R}{R}{R}, enchantment): at the beginning of your upkeep each player exiles the top card of their
   library, and this turn you may play your own exiled card and every other exiled card with a lower mana value without
   paying their mana costs. About a third of the 99 are lands (a land flip gives no free spell, but you may play it as your
@@ -212,12 +212,18 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 ### Interaction
 
 - **Removal:** Swords to Plowshares, Path to Exile, Lightning Bolt (3 damage to any target), Decimate (an artifact, a
-  creature, an enchantment and a land), Chaos Warp (any permanent, random replacement), Cyclonic Rift (overloaded at {6}{U}: bounces
-  every nonland permanent opponents control, a one-sided reset).
+  creature, an enchantment and a land), Chaos Warp (any permanent, random replacement).
 - **On bodies:** Glorybringer (4 damage each exert), Dragonlord Silumgar (steals a creature or planeswalker), Terror of
   the Peaks and the Dragon-enters pingers (damage to any target), Thundermaw Hellkite (taps and damages fliers), Garth's
   Terror and Disenchant copies.
-- **Wipes:** Crux of Fate (non-Dragon mode), Austere Command, Cyclonic Rift overloaded, Steel Hellkite.
+- **Wipes:** Crux of Fate (non-Dragon mode), Austere Command, Nibelheim Aflame, Steel Hellkite.
+- **Nibelheim Aflame** ({2}{R}{R} sorcery): choose a creature you control; it deals damage equal to its power to each
+  other creature, yours included, and takes none itself. It is not a Dragon-safe wipe like Crux of Fate: every Dragon
+  whose toughness is at or below the chosen creature's power dies too. Cast it when the table's board is the problem
+  and yours is small, or when the chosen creature is your only one. The game picks your highest-power creature, which
+  at 10 power for The Ur-Dragon kills every other creature you have. Smaug the Impenetrable (indestructible)
+  survives it as a bystander and turns the damage into Treasures. Its flashback ({5}{R}{R}) discards your hand and draws four: use it late, when the hand is empty or only
+  holds cards you can't cast.
 
 ### Matchups (Tier 5)
 
@@ -270,7 +276,7 @@ Moon (fetch it first; it makes only green).
 
 ## Bracket and Rule 0
 
-Bracket 4 (High): 11 Game Changers and one four-card combo (Garth One-Eye + Spark Double + Twinflame + Doubling Season,
+Bracket 4 (High): 10 Game Changers and one four-card combo (Garth One-Eye + Spark Double + Twinflame + Doubling Season,
 unbounded mana and tokens at sorcery speed). No mass land destruction, no extra turns, no fast-mana turbo (no Mana Crypt
 or Jeweled Lotus). Tell the table about the combo before the game.
 
@@ -284,9 +290,9 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Enchantments (5).** Doubling Season, Dragon Tempest, Rhystic Study, Rhythm of the Wild, Triple Triad
 
-**Instants (10).** Chaos Warp, Cyclonic Rift, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (9).** Chaos Warp, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (7).** Austere Command, Crux of Fate, Decimate, Demonic Tutor, Nature's Lore, Three Visits, Twinflame
+**Sorceries (8).** Austere Command, Crux of Fate, Decimate, Demonic Tutor, Nature's Lore, Nibelheim Aflame, Three Visits, Twinflame
 
 **Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Field of the Dead, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest
 
@@ -308,7 +314,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Command Tower
 1 Crux of Fate
 1 Cursed Mirror
-1 Cyclonic Rift
 1 Decimate
 1 Delighted Halfling
 1 Demonic Tutor
@@ -341,6 +346,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Morophon, the Boundless
 1 Mox Jasper
 1 Nature's Lore
+1 Nibelheim Aflame
 1 Nicol Bolas, the Ravager
 1 Niv-Mizzet, the Firemind
 1 Old Gnawbone
