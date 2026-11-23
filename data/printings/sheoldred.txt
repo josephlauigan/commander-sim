@@ -9,6 +9,7 @@
 1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Cabal Coffers (prm) 91393
+1 Cabal Ritual (tor) 51
 1 Call of the Ring (ltr) 79
 1 Cost of Brilliance (sos) 77
 1 Dark Ritual (itp) 19
@@ -32,7 +33,6 @@
 1 Jet Medallion (mh3) 346
 1 K'rrik, Son of Yawgmoth (sld) 1204
 1 Leech Collector // Bloodletting (sos) 88
-1 Massacre Wurm (m21) 316
 1 Memory Jar (ulg) 129
 1 Mikaeus, the Unhallowed (cmm) 1061
 1 Mikokoro, Center of the Sea (dmc) 217

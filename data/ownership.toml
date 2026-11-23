@@ -38,7 +38,6 @@ have = [
   "Jet Medallion",
   "K'rrik, Son of Yawgmoth",
   "Leech Collector // Bloodletting",
-  "Massacre Wurm",
   "Memory Jar",
   "Mikaeus, the Unhallowed",
   "Mikokoro, Center of the Sea",
@@ -74,6 +73,7 @@ have = [
 ]
 proxy = [
   "Cabal Coffers",
+  "Cabal Ritual",
   "Dark Ritual",
   "Demonic Tutor",
   "Diabolic Tutor",
@@ -485,6 +485,7 @@ cards = [
   "Caves of Koilos",
   "Exotic Orchard",
   "Haunted Ridge",
+  "Massacre Wurm",
   "Overgrown Tomb",
   "Path of Ancestry",
   "Plaza of Heroes",

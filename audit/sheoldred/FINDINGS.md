@@ -4,6 +4,23 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-22: Massacre Wurm => Cabal Ritual (JD's choice, not simulated)
+Cabal Ritual ({1}{B} instant: add {B}{B}{B}, or {B}{B}{B}{B}{B} with seven or more cards in your graveyard; model status Full; a proxy) takes Massacre
+Wurm's slot. It is not slot-for-slot: a six-mana wipe and finisher is traded for a one-card burst of mana. What the deck gives up: Massacre Wurm was the guide's
+answer to go-wide boards (Krenko, Edgar Markov, Marwyn, Aurelia, Chatterfang; its -2/-2 on entering, and 2 life for each creature that dies) and a drain piece
+(three devotion for Gray Merchant). In the 11-07 analyze run, on an older list, it won 48.2% of the games it was cast in at t3 (cast in 6.8%) and 64.9% at t4
+(7.5%): among the best cards by win rate when cast (correlation only); the swap run that added it (11-07 package S, Vanquish the Weak => Massacre Wurm) had it cast in
+40% / 45% of the games it was drawn and winning 40.5% / 52.1% of those. Krenko ended 13.9% of t4 games by combat and 5.3% by triggers in the 11-07 baseline, and combat decks are the deck's third weakness; the guide now sends go-wide
+boards to Nevinyrral's Disk (it kills your own creatures too) and single targets to Foolish Fate and Overkill; Grave Pact's edict takes only one token at a time,
+and the list has no one-sided sweeper. What it gains: a second ritual beside Dark Ritual. Three
+lands plus Cabal Ritual is four mana, Sheoldred on turn 3 with nothing spare (Dark Ritual leaves one spare), and six mana with threshold; two lands make
+three mana on turn 2. Rituals cost a card, and the deck resolved Sheoldred on turn 6.0 on average in the 10-15 run (weakness 2). With K'rrik out it costs {1} and
+2 life; with Jet Medallion out it costs {B} and nets two mana (four with threshold). Counts after: creatures 23 (24), instants 8 (7), rituals 2 (1); Game Changers 4 (unchanged); the 63 nonland cards still average 3.4 mana value (3.43 to
+3.37), so Ad Nauseam still costs about 2 life a card. The plan file has no line for either card: the engine uses Cabal Ritual as extra mana only when a spell
+would otherwise be short, and whether the AI sets up a turn-3 Sheoldred with it was not checked. Not measured. To check in the first run: how often Sheoldred is
+out by turn 3 or 4 against 6.0 on average, how often Cabal Ritual is cast and how often the graveyard has seven cards for threshold, and the loss rates to Krenko,
+Edgar Markov and the other go-wide decks against the 11-07 baseline.
+
 ## 2026-11-22: Fellwar Stone => Jet Medallion (JD's choice, not simulated)
 Jet Medallion ({2}, an artifact: black spells cost {1} less; model status Full, with its own test) takes Fellwar Stone's slot. Fellwar Stone
 made only a colour an opposing land could produce, so it was a weak rock in a mono-black deck. The Medallion cuts only the generic part of a
