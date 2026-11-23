@@ -50,7 +50,7 @@ use crate::engine::repl;
 use crate::engine::stack::counter_window;
 use crate::engine::zones::{TOKEN_CAP, Tokens, enter_token_copy_with, make_tokens};
 use crate::flow::Res;
-use crate::ids::{PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{CopyExc, Ctx, Game, Step as TurnStep};
 
 const ASTRAL: &str = "Astral Dragon";
@@ -123,15 +123,99 @@ pub fn spark_garth_target(g: &Game, p: PlayerId) -> Option<PermId> {
     if !urdragon_seat(g, p) {
         return None;
     }
-    let garth = g.player(p).perms.iter().copied().find(|&m| {
-        live(g, m) && nm(g, m) == GARTH && !g.perm(m).token && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK)
-    })?;
+    let garth = card_garth(g, p)?;
+    line_near(g, p).then_some(garth)
+}
+
+/// the rest of the Garth line is near (Garth aside): Doubling Season on the battlefield or in hand and Twinflame in
+/// hand, or a tutor in hand (Demonic or Vampiric) for whichever of the two is still in the library. The one test of
+/// `spark_garth_target` (what Spark Double copies) and `spark_hold_shape` (when it waits for Garth).
+fn line_near(g: &Game, p: PlayerId) -> bool {
     let season_out = bf(g, p, SEASON).is_some() || in_hand(g, p, SEASON).is_some();
     let twin_hand = in_hand(g, p, TWINFLAME).is_some();
     let tutor = in_hand(g, p, "Demonic Tutor").is_some() || in_hand(g, p, "Vampiric Tutor").is_some();
-    let near = (season_out && twin_hand)
-        || (tutor && ((season_out && in_lib(g, p, TWINFLAME)) || (twin_hand && in_lib(g, p, SEASON))));
-    near.then_some(garth)
+    (season_out && twin_hand)
+        || (tutor && ((season_out && in_lib(g, p, TWINFLAME)) || (twin_hand && in_lib(g, p, SEASON))))
+}
+
+/// the Garth Spark Double can copy for the Garth line: on the battlefield, not phased out, not a token and not Spark
+/// Double's own copy
+fn card_garth(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| {
+        live(g, m) && nm(g, m) == GARTH && !g.perm(m).token && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK)
+    })
+}
+
+/// incoming damage over life from which the Spark Double hold is off (the Twinflame hold's number, `mine::twinflame`)
+pub const SPARK_HOLD_DANGER: f64 = 1.0;
+
+/// Everything about the Spark Double hold except the table's danger (`spark_hold`): the Garth line is near
+/// (`line_near`, the test Spark Double's copy uses) with Garth still to come, so a Spark Double now would copy
+/// something else and cost the line its non-legendary Garth. Garth must be in hand (castable by next turn,
+/// `next_turn_mana`) or in the library with a tutor of its own, never on the battlefield (then `spark_garth_target`
+/// decides, with the same near test, so the hold never outlives Garth's arrival).
+pub fn spark_hold_shape(g: &Game, p: PlayerId) -> bool {
+    if !urdragon_seat(g, p) || card_garth(g, p).is_some() || !line_near(g, p) {
+        return false;
+    }
+    let garth_hand = in_hand(g, p, GARTH);
+    if garth_hand.is_none() {
+        // Garth must still be fetchable: in the library, with a tutor in hand that p can cast by next turn and that the
+        // line's other piece does not use (Demonic or Vampiric Tutor fetch anything, Worldly Tutor only Garth)
+        let tutor = |name: &str| in_hand(g, p, name).is_some_and(|c| payable_next_turn(g, p, c));
+        let any = u32::from(tutor("Demonic Tutor")) + u32::from(tutor("Vampiric Tutor"));
+        let worldly = u32::from(tutor("Worldly Tutor"));
+        let other_missing = u32::from(in_hand(g, p, TWINFLAME).is_none())
+            + u32::from(bf(g, p, SEASON).is_none() && in_hand(g, p, SEASON).is_none());
+        // The plan's wish rows send a tutor to Garth only once Doubling Season is out (`out:`, data/plans/urdragon.toml;
+        // the Terror and Goldspan row comes before the line), so with Season only in hand the tutor fetches a Dragon.
+        if !in_lib(g, p, GARTH) || bf(g, p, SEASON).is_none() || other_missing + 1 > any + worldly {
+            return false; // Garth is dead (graveyard, exile, phased out, elsewhere) or no castable tutor is left for it
+        }
+    }
+    if let Some(c) = garth_hand
+        && !payable_next_turn(g, p, c)
+    {
+        return false; // Garth cannot be cast by next turn: the hold waits for nothing
+    }
+    true
+}
+
+/// Can p pay for card `c` on its next turn? Its price now (`cost_of`, taxes included), the count of mana
+/// (`next_turn_mana`: lands, mana permanents, one land drop) and the colours: the mana units now (untapped lands and
+/// mana permanents, `mana_units`) plus every tapped land (it untaps) as `land_card_unit` reads it, plus at most one
+/// land from the hand, must pay it (`units_pay_with_rituals`, so rituals in hand count as they do for the combos). The
+/// mana permanents `mana_units` leaves out now (tapped, or a summoning-sick dork) come from `next_turn_perm_units`;
+/// the few with special rules are left out, so the answer can only err towards "not payable".
+fn payable_next_turn(g: &Game, p: PlayerId, c: CardId) -> bool {
+    use crate::engine::mana::{cost_of, land_card_unit, mana_units, next_turn_mana, units_pay_with_rituals};
+    let (gn, pips) = cost_of(g, p, c);
+    if next_turn_mana(g, p) < gn + pips.len() as u32 {
+        return false;
+    }
+    let pl = g.player(p);
+    let mut u = mana_units(g, p, false);
+    for &l in &pl.lands {
+        if g.perm(l).on_bf && g.perm(l).tapped {
+            u.push(land_card_unit(g, p, g.perm(l).card()));
+        }
+    }
+    u.extend(crate::engine::mana::next_turn_perm_units(g, p));
+    let skip = [c];
+    if units_pay_with_rituals(g, p, &u, gn, &pips, &skip) {
+        return true;
+    }
+    pl.hand.iter().copied().filter(|&h| g.db.get(h).land).any(|h| {
+        let mut v = u.clone();
+        v.push(land_card_unit(g, p, h));
+        units_pay_with_rituals(g, p, &v, gn, &pips, &skip)
+    })
+}
+
+/// The Ur-Dragon seat holds Spark Double (cast or free-dropped) while `spark_hold_shape` says the Garth line is near
+/// and Garth is still to come, unless the table can kill p (`SPARK_HOLD_DANGER`).
+pub fn spark_hold(g: &Game, p: PlayerId) -> bool {
+    spark_hold_shape(g, p) && crate::ai::brain::Situation::new(g, p).danger < SPARK_HOLD_DANGER
 }
 
 fn present(v: &[Option<PermId>]) -> Vec<PermId> {

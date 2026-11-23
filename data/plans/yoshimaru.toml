@@ -38,6 +38,13 @@ equipment = ["Buster Sword", "Mithril Coat", "Sting, the Glinting Dagger", "Swif
 prio = 92
 turn = 1
 
+# Silence / Orim's Chant before a line goes (`t6_table::protect_before_go_opt_in`); opt-in knob, measured on this deck only
+# (Stage 4). Unlike the Tier 6 step it casts Silence against one possible answerer when no Orim's Chant is held, and skips
+# the step if the line is unplayable or re-priced out once the protection spell counts as cast (Damping Sphere, Rule of
+# Law). The Tier 6 table's other slots stay closed to this deck.
+[knobs]
+protect_before_go = true
+
 # win lines, best first: the tutors want the first missing piece
 [[line]]
 name = "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
