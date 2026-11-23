@@ -320,8 +320,9 @@ fn ardenn_keeps_hearth_and_home_off_ballista_and_moves_exactly_the_kept_pieces()
 }
 
 #[test]
-fn a_sword_is_not_put_on_tymna_by_ardenn_or_kor_outfitter() {
-    // loose Boots and Sword of Feast and Famine; Tymna is the commander-type holder, a flier is there
+fn a_sword_is_not_put_on_tymna_by_ardenn_or_kor_outfitter_and_loose_boots_wait_for_her() {
+    // loose Boots (first in the list) and Sword of Feast and Famine; Tymna is a legal target, a flier is there. The old
+    // choice (best holder, first loose piece) put the Boots on the flier and left the Sword loose.
     for outfitter in [false, true] {
         let mut g = tbl();
         let t = perm(&mut g, P0, TYMNA);
@@ -333,12 +334,31 @@ fn a_sword_is_not_put_on_tymna_by_ardenn_or_kor_outfitter() {
             perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
             combat_start(&mut g);
         }
-        assert_ne!(g.perm(sword).attached, Some(t), "outfitter={outfitter}: no Sword on Tymna");
-        if !outfitter {
-            assert_eq!(g.perm(sword).attached, Some(flier), "the flier takes the Sword");
-            assert_eq!(g.perm(boots).attached, Some(flier), "Ardenn moves both pieces to the one target");
-        }
+        assert_eq!(g.perm(sword).attached, Some(flier), "outfitter={outfitter}: the Sword goes on the flier");
+        assert_eq!(g.perm(boots).attached, None, "outfitter={outfitter}: the Boots wait for Tymna's equip");
+        assert_ne!(g.perm(sword).attached, Some(t));
     }
+}
+
+#[test]
+fn loose_boots_do_move_to_the_flier_when_tymna_is_not_a_target() {
+    // Tymna gone
+    let mut g = tbl();
+    let flier = perm(&mut g, P0, "Serra Angel");
+    let boots = perm(&mut g, P0, BOOTS);
+    perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+    combat_start(&mut g);
+    assert_eq!(g.perm(boots).attached, Some(flier));
+    // Tymna wearing Sword of Hearth and Home: protection from white, so Ardenn (white) can't target her
+    let mut g = tbl();
+    let t = perm(&mut g, P0, TYMNA);
+    let sohh = perm(&mut g, P0, SOHH);
+    g.perm_mut(sohh).attached = Some(t);
+    let flier = perm(&mut g, P0, "Serra Angel");
+    let boots = perm(&mut g, P0, BOOTS);
+    perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+    combat_start(&mut g);
+    assert_eq!(g.perm(boots).attached, Some(flier));
 }
 
 #[test]

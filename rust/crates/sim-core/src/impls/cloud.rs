@@ -512,7 +512,8 @@ const STEELSHAPER: &str = "Auriok Steelshaper";
 /// ends Delney's doubling) is dropped, and so is a worn piece unless the new holder beats its current one. A creature
 /// scores `holder_score` plus (value + 2) for each kept piece: all of them with `single = false` (Ardenn moves every
 /// piece to one target, so the creature that can wear the most wins), the best one with `single = true` (Kor Outfitter
-/// attaches one). Nothing is returned when no creature keeps a piece.
+/// attaches one). Loose Swiftfoot Boots are never kept while Tymna is another legal target. Nothing is returned when no
+/// creature keeps a piece.
 pub(crate) fn yoshimaru_attach(
     g: &Game,
     p: PlayerId,
@@ -528,10 +529,17 @@ pub(crate) fn yoshimaru_attach(
         .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk && !protected_from(g, m, source))
         .collect();
     let mut best: Option<(PermId, Vec<PermId>, f64)> = None;
-    for to in cands {
+    for &to in &cands {
         let mut kept: Vec<(PermId, f64, bool)> = pullable(g, p, to)
             .into_iter()
             .filter(|&e| g.perm(e).attached != Some(to) && !holder_penalised(g, e, to))
+            // loose Swiftfoot Boots stay loose for Tymna's {1} equip (`pool::special_options` equips only unattached
+            // Boots, and nothing pulls them back off a better-scoring creature) while she is a target other than `to`
+            .filter(|&e| {
+                !(g.perm(e).name == "Swiftfoot Boots"
+                    && g.perm(e).attached.is_none_or(|t| !live(g, t))
+                    && cands.iter().any(|&c| c != to && g.perm(c).name == "Tymna the Weaver"))
+            })
             .filter_map(|e| {
                 let v = value(g, p, e, to);
                 match g.perm(e).attached.filter(|&t| live(g, t)) {
