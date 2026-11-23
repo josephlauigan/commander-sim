@@ -602,6 +602,15 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     let hook_x =
         g.registry.get(c).and_then(|i| i.cast_x).filter(|_| d.xcount > 0 && !d.tag(Tag::Tokx) && !d.tag(Tag::Xtutor));
     let mut ctx = ctx0;
+    if ctx.x == 0 && zone != "gy" && d.xcount > 0 && !crate::human::is_human(g, p) {
+        // {X}{X} permanents priced by their `self_cost` at the X the AI chooses (the cost is taken at the same state): the
+        // X is recorded with the cast, so they enter with X counters and not with half of everything paid, taxes included
+        match &*d.name {
+            "Chalice of the Void" => ctx.x = crate::impls::t6_stax::chalice_x(g, p).unwrap_or(0),
+            "Hangarback Walker" => ctx.x = crate::impls::karn_engines::hangar_x(g, p),
+            _ => {}
+        }
+    }
     if zone != "gy" && (d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) || hook_x.is_some()) {
         let per = if hook_x.is_some() { d.xcount } else { 1 };
         let x = match g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)) {
@@ -664,8 +673,9 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     {
         lose_life(g, p, l, Some(p), "life", None)?;
     }
-    if matches!(zone, "hand" | "cmd") && !crate::impls::krrik::life_pips(g, p, c).is_empty() {
-        // Phyrexian symbols paid with 2 life each
+    if zone != "gy" && !crate::impls::krrik::life_pips(g, p, c).is_empty() {
+        // Phyrexian symbols paid with 2 life each (every zone priced by `cost_of`/`cost_of_x`: hand, command zone, and a
+        // graveyard card cast through Yawgmoth's Will; a flashback pays its own printed cost above)
         let life = phyrexian_life(g, p, c, &cp);
         if life > 0 {
             lose_life(g, p, life, Some(p), "life", None)?;
@@ -936,33 +946,50 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
 
 /// the largest X for which `cost_of_x` of the spell is payable with p's mana (0 when only X = 0, or nothing, is): `per` is
 /// the number of {X} in the cost ({X}{X} is 2), so the generic part is `per * X`. A generic reducer (Jet Medallion) takes
-/// its {1} off that generic part, so X runs past the spare mana by what it takes off; taxes come after it and floors apply
-/// as in `cost_of`. The cost is never below the line `per * X + k` (k: what `cost_of_x` adds or takes off once the floors
-/// no longer bite, read at a large X), so the search starts at the X that line would just pay and goes down to the first
-/// payable X. K'rrik's pips are dropped by `cost_of_x` itself, where the life allows
+/// its {1} off that generic part, so X runs past the spare mana by what it takes off (all of X, if it is a big enough pile);
+/// taxes come after it and floors apply as in `cost_of`. The cost never decreases as X grows and a payable X stays payable
+/// for every smaller X, so this is a binary search of X in 0..=(spare * per + 64): 64 is far more than any pile of generic
+/// reducers takes off. K'rrik's pips are dropped by `cost_of_x` itself, where the life allows
 pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
     let per = per.max(1) as i32;
-    let total = total_mana_spell(g, p, c, cv) as i32;
-    let k = cost_of_x(g, p, c, total * per).0 as i32 - total * per;
-    (0..=(total - k).div_euclid(per).max(0))
-        .rev()
-        .find(|&x| {
-            let (gn, pips) = cost_of_x(g, p, c, per * x);
-            can_pay_spell(g, p, c, gn, &pips, cv)
-        })
-        .unwrap_or(0)
+    let total = total_mana_spell(g, p, c, cv) as i64;
+    // (a person's mana is the pool, which `total_mana_spell` does not count: no reducer margin for a seat the AI only
+    // estimates for, so the practice-mode hook options keep what they showed)
+    let margin = if crate::human::is_human(g, p) { 0 } else { 64 };
+    let top = (total * per as i64 + margin).min((i32::MAX / per) as i64) as i32;
+    let payable = |x: i32| {
+        let (gn, pips) = cost_of_x(g, p, c, per * x);
+        can_pay_spell(g, p, c, gn, &pips, cv)
+    };
+    let (mut lo, mut hi) = (0, top); // lo is payable or 0; the answer is in lo..=hi
+    while lo < hi {
+        let mid = lo + (hi - lo + 1) / 2;
+        if payable(mid) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    lo
 }
 
-/// can p pay `cost_of_x` of the spell at X = x (`per` as in `max_x`)
+/// `per * x` as the X the cost is priced at, or None when it does not fit (no pool pays such a cost)
+fn x_total(x: i32, per: u32) -> Option<i32> {
+    i32::try_from(per.max(1) as i64 * x.max(0) as i64).ok()
+}
+
+/// can p pay `cost_of_x` of the spell at X = x (`per` as in `max_x`); false for an X too large to price
 pub fn can_pay_x(g: &Game, p: PlayerId, c: CardId, x: i32, per: u32, cv: bool) -> bool {
-    let (gn, pips) = cost_of_x(g, p, c, per.max(1) as i32 * x.max(0));
+    let Some(xt) = x_total(x, per) else { return false };
+    let (gn, pips) = cost_of_x(g, p, c, xt);
     can_pay_spell(g, p, c, gn, &pips, cv)
 }
 
 /// pay `cost_of_x` of the spell at X = x (`per` as in `max_x`) in one payment, and charge the life its unpaid Phyrexian and
-/// K'rrik pips cost (2 each, as `do_cast_with` does). False, nothing paid, if the mana can't
+/// K'rrik pips cost (2 each, as `do_cast_with` does). False, nothing paid, if the mana can't (or X is too large to price)
 pub fn pay_x(g: &mut Game, p: PlayerId, c: CardId, x: i32, per: u32, cv: bool) -> Res<bool> {
-    let (gn, pips) = cost_of_x(g, p, c, per.max(1) as i32 * x.max(0));
+    let Some(xt) = x_total(x, per) else { return Ok(false) };
+    let (gn, pips) = cost_of_x(g, p, c, xt);
     if !can_pay_spell(g, p, c, gn, &pips, cv) || !pay_spell(g, p, c, gn, &pips, cv)? {
         return Ok(false);
     }

@@ -3376,6 +3376,16 @@ pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spel
     v
 }
 
+/// what Twinflame costs for n targets: the printed {1}{R} and {2}{R} for each target beyond the first, plus what the cost
+/// pipeline adds over the printed generic {1} (a spell tax: `cost_of` is the printed cost less reductions, plus taxes).
+/// A reduction is not applied (the cost stays the printed one when `cost_of` is below it: conservative by what the
+/// reducer takes off, never too little)
+fn twinflame_cost(g: &Game, p: PlayerId, c: CardId, n: usize) -> (u32, String) {
+    let (gn, pips) = cost_of(g, p, c);
+    let extra = n.saturating_sub(1);
+    (1 + 2 * extra as u32 + gn.saturating_sub(1), format!("{pips}{}", "R".repeat(extra)))
+}
+
 /// the best number of Twinflame targets: (their total value, the targets)
 fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, Vec<PermId>)> {
     let mana = total_mana_spell(g, p, c, false) as i64;
@@ -3389,9 +3399,10 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
     rest.sort();
     let mut best: Option<(f64, Vec<PermId>)> = None;
     for n in 1..6usize {
-        // n targets: {1}{R} + {2}{R} per extra one
-        let cost = 2 + 3 * (n as i64 - 1);
-        if !can_pay_spell(g, p, c, 1 + 2 * (n as u32 - 1), &"R".repeat(n), false) {
+        // n targets: {1}{R} + {2}{R} per extra one, and what the cost pipeline adds (a spell tax)
+        let (cgn, cpips) = twinflame_cost(g, p, c, n);
+        let cost = cgn as i64 + cpips.chars().count() as i64;
+        if !can_pay_spell(g, p, c, cgn, &cpips, false) {
             break;
         }
         let (mut left, mut spells) = (mana - cost, 0usize);
@@ -3428,7 +3439,10 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
 /// exiled at the next end step. The AI copies the creatures worth copying that it can pay for, in its main phases.
 pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let Some(post) = post else { return Ok(vec![]) };
-    if g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
+    if g.active != Some(p) || !g.player(p).hand.contains(&c) || {
+        let (gn, pips) = twinflame_cost(g, p, c, 1);
+        !can_pay_spell(g, p, c, gn, &pips, false)
+    } {
         return Ok(vec![]);
     }
     let Some((total, tg)) = twinflame_best(g, p, c, post) else { return Ok(vec![]) };
@@ -3859,13 +3873,12 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || targets.is_empty() {
         return Ok(false);
     }
-    let extra = targets.len() as u32 - 1;
-    let pips = "R".repeat(extra as usize + 1);
-    if !can_pay_spell(g, p, c, 1 + 2 * extra, &pips, false) {
+    let (gn, pips) = twinflame_cost(g, p, c, targets.len());
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay_spell(g, p, c, 1 + 2 * extra, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);

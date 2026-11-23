@@ -969,8 +969,8 @@ fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     on_cast(g, p, c)?;
     crate::engine::life::gain(g, p, x / 2)?;
     draw(g, p, (x / 2) as u32, false)?;
-    let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    repl::put_plus(g, m, x);
+    // it enters with its X counters (a 0/0 would die as it entered)
+    enter(g, p, c, Enter { was_cast: true, plus: x, ..Enter::default() })?;
     Ok(true)
 }
 

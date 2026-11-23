@@ -970,8 +970,27 @@ pub fn freyalise_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 /// off the generic cost with the other reductions, so X = X' + power (reductions all come off before a tax). None when
 /// even X' = 0 can't be paid
 fn harmonize_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let ok = |x: i32| can_pay_spell(g, p, c, crate::engine::mana::cost_of_x(g, p, c, x).0, "GGGG", false);
+    let ok = |x: i32| can_pay_spell(g, p, c, harmonize_generic(g, p, c, x), "GGGG", false);
     (0..=crate::ai::brain::max_x(g, p, c, 1, false)).rev().find(|&x| ok(x)).or_else(|| ok(0).then_some(0))
+}
+
+/// the generic part of the harmonize cost at X = x: `cost_of_x` applies Trinisphere's minimum to the printed pips, but the
+/// alternative cost {G}{G}{G}{G} is checked against it with its own four symbols. Where the printed minimum raised the
+/// generic cost, the cost before it is read from `cost_of_x` at a much larger X (every step is {1} per X there, so it is
+/// that cost less the extra X) and the alternative's own minimum applied to it
+fn harmonize_generic(g: &Game, p: PlayerId, c: CardId, x: i32) -> u32 {
+    let gn = crate::engine::mana::cost_of_x(g, p, c, x).0;
+    if g.hooks.is_empty() {
+        return gn;
+    }
+    let floor = crate::engine::hooks::max_min_cost(g, p, c) as i64;
+    let printed_floor = floor - g.db.get(c).pips.chars().count() as i64;
+    if gn as i64 > printed_floor {
+        return gn; // the minimum did not raise it
+    }
+    let far = x + 256;
+    let before = (crate::engine::mana::cost_of_x(g, p, c, far).0 as i64 - 256).max(0);
+    before.max(floor - 4).min(gn as i64) as u32
 }
 
 /// harmonize {X}{G}{G}{G}{G} (tapping a creature reduces it by its power): cast from the graveyard, then exile it
@@ -1001,7 +1020,7 @@ fn harmonize_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.perm_mut(m).tapped = true;
     }
     let Some(paid_x) = harmonize_x(g, p, c) else { return Ok(false) }; // X - r: the part of X the mana pays
-    let gn = crate::engine::mana::cost_of_x(g, p, c, paid_x).0;
+    let gn = harmonize_generic(g, p, c, paid_x);
     if !pay_spell(g, p, c, gn, "GGGG", false)? {
         return Ok(false);
     }
