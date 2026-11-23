@@ -13,7 +13,6 @@
 1 Command Tower (plst) MIC-170
 1 Crux of Fate (fic) 275
 1 Cursed Mirror (mh3) 279
-1 Cyclonic Rift (rvr) 313
 1 Decimate (sld) 140
 1 Delighted Halfling (pltr) 402s
 1 Demonic Tutor (cmm) 150
@@ -47,6 +46,7 @@
 1 Morophon, the Boundless (m3c) 157
 1 Mox Jasper (tdm) 325
 1 Nature's Lore (fic) 311
+1 Nibelheim Aflame (fin) 339
 1 Nicol Bolas, the Ravager (sld) 1158
 1 Niv-Mizzet, the Firemind (p30a) 14
 1 Old Gnawbone (afr) 197
