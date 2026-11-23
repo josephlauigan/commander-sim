@@ -1370,7 +1370,7 @@ fn gives_prot_white(g: &Game, e: PermId) -> bool {
 }
 
 /// protection-from-white Equipment `e` on Walking Ballista: Heliod's lifelink could no longer target it (Line B)
-fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
+pub(crate) fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
     gives_prot_white(g, e) && name_of(g, m) == BALLISTA
 }
 
@@ -1399,10 +1399,11 @@ fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
         _ => {}
     }
     let bonus = equip_power(g, e);
-    if bonus > 0 && name_of(g, m) != CLOUD_CARD && epow(g, m) <= 2 && epow(g, m) + bonus > 2 {
+    // (a worn piece is already in the creature's power: only an Equipment about to be added can take it over 2)
+    if bonus > 0 && g.perm(e).attached != Some(m) && name_of(g, m) != CLOUD_CARD && epow(g, m) <= 2 && epow(g, m) + bonus > 2 {
         let delney = g.player(p).perms.iter().any(|&d| {
             let x = g.perm(d);
-            x.on_bf && !x.phased && !x.neutered && name_of(g, d) == DELNEY && d != m
+            x.on_bf && !x.phased && !x.neutered && name_of(g, d) == DELNEY
         });
         if delney {
             v -= 4.0;

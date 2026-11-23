@@ -505,6 +505,37 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 // ------------------------------------------------------------------ Kor Outfitter, Brass Squire, Auriok Steelshaper
 const STEELSHAPER: &str = "Auriok Steelshaper";
 
+/// the yoshimaru seat's free attach (Kor Outfitter, Ardenn): the creature that wears the Equipment it can pull, and
+/// that Equipment. A creature is scored by `holder_score` plus the best `tymna_cards::equip_holder_value` of the
+/// Equipment it could take, plus 2 for each Equipment it can take at all (Ardenn moves every one to a single target, so
+/// a creature that can wear them all beats Ballista, which can't wear the protection-from-white one); Equipment that gives protection from white never goes on Walking Ballista (a pair
+/// `equip_holder_value` vetoes is no candidate), so with only Ballista left the attach does not happen.
+pub(crate) fn yoshimaru_attach(g: &Game, p: PlayerId, source: crate::cards::Colors) -> Option<(PermId, Vec<PermId>)> {
+    let cands: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).noatk && !protected_from(g, m, source))
+        .collect();
+    let plans: Vec<(PermId, Vec<PermId>, f64)> = cands
+        .into_iter()
+        .filter_map(|to| {
+            let es: Vec<PermId> = pullable(g, p, to)
+                .into_iter()
+                .filter(|&e| g.perm(e).attached != Some(to) && !super::tymna_cards::prot_white_on_ballista(g, e, to))
+                .collect();
+            let best = es.iter().map(|&e| super::tymna_cards::equip_holder_value(g, p, e, to)).fold(f64::MIN, f64::max);
+            (!es.is_empty()).then(|| {
+                let n = es.len() as f64;
+                (to, es, holder_score(g, to) + best + 2.0 * n)
+            })
+        })
+        .collect();
+    let (to, es, _) = max_by(&plans.iter().collect::<Vec<_>>(), |x| x.2).map(|x| x.clone())?;
+    Some((to, es))
+}
+
 /// the Equipment p most wants moved onto `to`: a loose one first
 fn best_pull(g: &Game, p: PlayerId, to: PermId) -> Option<PermId> {
     let es: Vec<PermId> = pullable(g, p, to).into_iter().filter(|&e| g.perm(e).attached != Some(to)).collect();
@@ -525,14 +556,21 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return crate::human::cloud::outfitter(g, src); // the person chooses the Equipment and the creature
     }
     let cols = colors_of(g, src); // Kor Outfitter is white: protection from white stops its target
-    let Some(to) = best_holder_from(g, o, cols) else { return Ok(()) };
-    if best_pull(g, o, to).is_none() || !may_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
+    // the Equipment and the creature: the yoshimaru seat scores the pair (no protection from white on Walking Ballista)
+    let pick = |g: &Game| -> Option<(PermId, PermId)> {
+        if g.player(o).key == "yoshimaru" {
+            let (to, es) = yoshimaru_attach(g, o, cols)?;
+            let loose = |e: &PermId| g.perm(*e).attached.is_none_or(|t| !live(g, t));
+            return es.iter().copied().find(loose).or_else(|| es.first().copied()).map(|e| (e, to));
+        }
+        let to = best_holder_from(g, o, cols)?;
+        best_pull(g, o, to).map(|e| (e, to))
+    };
+    if pick(g).is_none() || !may_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(());
     }
     // targets are chosen again as it resolves: the same choice, if still legal
-    if let Some(to) = best_holder_from(g, o, cols)
-        && let Some(e) = best_pull(g, o, to)
-    {
+    if let Some((e, to)) = pick(g) {
         attach(g, e, to);
     }
     Ok(())

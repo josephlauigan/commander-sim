@@ -294,3 +294,35 @@ fn court_without_the_crown_still_returns_ballista_to_hand() {
     assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == BALLISTA));
     assert!(!on(&g, BALLISTA));
 }
+
+// ------------------------------------------------------------------ the free attach paths in the list (Kor Outfitter, Ardenn)
+fn ballista_counters(g: &mut Game, p: PlayerId, n: i32) -> PermId {
+    let c = take(g, p, BALLISTA);
+    enter(g, p, c, Enter { sick: false, x: n, plus: n, ..Enter::default() }).unwrap()
+}
+
+#[test]
+fn ardenn_keeps_hearth_and_home_off_ballista_and_still_attaches_the_rest() {
+    let mut g = tbl();
+    let b = ballista_counters(&mut g, P0, 4); // the biggest creature: Cloud's holder_score alone would pick it
+    let ground = token(&mut g, P0, 1);
+    let (sohh, sofi) = (perm(&mut g, P0, SOHH), perm(&mut g, P0, SOFI));
+    perm(&mut g, P0, "Ardenn, Intrepid Archaeologist");
+    sim_core::engine::hooks::fire_trigger(&mut g, Event::CombatStart, Call::Player { p: P0 }).unwrap();
+    assert_ne!(g.perm(sohh).attached, Some(b), "no protection from white on Ballista");
+    assert!(g.perm(sohh).attached.is_some(), "it still goes on another creature");
+    assert!(g.perm(sofi).attached.is_some(), "the other Equipment is attached as before");
+    let _ = ground;
+}
+
+#[test]
+fn another_seat_keeps_the_old_free_attach_choice() {
+    // the cloud seat: Kor Outfitter puts Hearth and Home on the best `holder_score` creature, Ballista included
+    let mut g = table(&["cloud", "seph", "sauron"]);
+    g.active = Some(P0);
+    let b = ballista_counters(&mut g, P0, 4);
+    token(&mut g, P0, 1);
+    let e = perm(&mut g, P0, SOHH);
+    perm(&mut g, P0, "Kor Outfitter");
+    assert_eq!(g.perm(e).attached, Some(b));
+}

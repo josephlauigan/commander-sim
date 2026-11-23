@@ -685,6 +685,10 @@ pub fn print_analysis(
 }
 
 #[cfg(test)]
+#[path = "adv_yoshimaru_report.rs"]
+mod adv_yoshimaru_report; // independent reviewer's tests (test-only declaration)
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

@@ -212,6 +212,10 @@ pub fn print_explain(
 }
 
 #[cfg(test)]
+#[path = "adv_yoshimaru_explain.rs"]
+mod adv_yoshimaru_explain; // independent reviewer's tests (test-only declaration)
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
