@@ -19,8 +19,9 @@
 # Swords on Yoshimaru or Tymna; the guide wants fliers and Tymna only with Swiftfoot Boots, because +power turns off
 # Delney's doubling for her), Flawless Maneuver in response to our own Wrath of God, and blinking the Equipment instead
 # of the carrier: the generic policy decides these, so a weak result may be the AI and not the list. The carrier choice
-# (fliers and creatures that connect; not Yoshimaru; Tymna only with Swiftfoot Boots; never Sting or Sword of Hearth and
-# Home on Walking Ballista; no +power over power 2 under Delney) is card code, `tymna_cards::equip_holder_value`, and
+# (fliers and creatures that connect; not Yoshimaru; Tymna only with Swiftfoot Boots; never Equipment that gives
+# protection from white, which is Sword of Hearth and Home and not Sting, on Walking Ballista; no +power over power 2
+# under Delney) is card code, `tymna_cards::equip_holder_value`, and
 # Court of Ardenvale never returns Walking Ballista to the battlefield (`legends.rs` `court`).
 deck = "yoshimaru"
 default = "plan"

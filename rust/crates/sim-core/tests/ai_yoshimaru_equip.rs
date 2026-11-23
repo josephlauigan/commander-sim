@@ -61,8 +61,8 @@ fn utility_of(g: &Game, e: PermId) -> Option<f64> {
 }
 
 #[test]
-fn sting_and_hearth_and_home_never_choose_ballista_while_another_holder_exists() {
-    for sword in [STING, SOHH] {
+fn hearth_and_home_never_chooses_ballista_while_another_holder_exists() {
+    for sword in [SOHH] {
         let mut g = tbl();
         lands(&mut g, P0, "Plains", 6, false);
         let b = ballista(&mut g);
@@ -80,14 +80,14 @@ fn the_veto_beats_even_the_penalised_holders() {
     lands(&mut g, P0, "Plains", 6, false);
     let b = ballista(&mut g);
     let y = perm(&mut g, P0, YOSHI);
-    let e = perm(&mut g, P0, STING);
+    let e = perm(&mut g, P0, SOHH);
     assert_eq!(target_of(&g, e), Some(y));
     assert!(tc::equip_holder_value(&g, P0, e, y) > tc::equip_holder_value(&g, P0, e, b));
 }
 
 #[test]
-fn ballista_alone_gets_no_worthwhile_equip_option_for_sting_or_hearth_and_home() {
-    for sword in [STING, SOHH] {
+fn ballista_alone_gets_no_worthwhile_equip_option_for_hearth_and_home() {
+    for sword in [SOHH] {
         let mut g = tbl();
         lands(&mut g, P0, "Plains", 6, false);
         ballista(&mut g);
@@ -99,13 +99,16 @@ fn ballista_alone_gets_no_worthwhile_equip_option_for_sting_or_hearth_and_home()
 
 #[test]
 fn ballista_still_takes_equipment_without_protection_from_white() {
-    let mut g = tbl();
-    lands(&mut g, P0, "Plains", 6, false);
-    let b = ballista(&mut g);
-    let e = perm(&mut g, P0, SOFI);
-    assert_eq!(target_of(&g, e), Some(b));
-    assert!(tc::equip_holder_value(&g, P0, e, b) > -100.0);
-    assert!(utility_of(&g, e).unwrap() > 0.0);
+    // Sting (+1/+1, haste, untap) has no protection from white: Ballista is an ordinary holder for it, as for a Sword
+    for gear in [SOFI, STING] {
+        let mut g = tbl();
+        lands(&mut g, P0, "Plains", 6, false);
+        let b = ballista(&mut g);
+        let e = perm(&mut g, P0, gear);
+        assert_eq!(target_of(&g, e), Some(b), "{gear}");
+        assert!(tc::equip_holder_value(&g, P0, e, b) > -100.0, "{gear}");
+        assert!(utility_of(&g, e).unwrap() > 0.0, "{gear}");
+    }
 }
 
 #[test]
@@ -212,8 +215,12 @@ fn the_holder_stat_counts_who_wears_the_equipment_for_the_yoshimaru_seat_only() 
         tc::note_equip_holder(&mut g, P0, e, m);
         assert_eq!(stat(&g, key), 1, "{key}");
     }
-    assert_eq!(stat(&g, "ty_eq_pw_ballista"), 0, "a Sword of Fire and Ice is not protection from white");
-    let s = perm(&mut g, P0, STING);
+    assert_eq!(stat(&g, "ty_eq_pw_ballista"), 0, "Sword of Fire and Ice gives no protection from white");
+    let sting = perm(&mut g, P0, STING);
+    g.perm_mut(sting).attached = Some(b);
+    tc::note_equip_holder(&mut g, P0, sting, b);
+    assert_eq!(stat(&g, "ty_eq_pw_ballista"), 0, "Sting has no protection from white");
+    let s = perm(&mut g, P0, SOHH);
     g.perm_mut(s).attached = Some(b);
     tc::note_equip_holder(&mut g, P0, s, b);
     assert_eq!(stat(&g, "ty_eq_pw_ballista"), 1);

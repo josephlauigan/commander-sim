@@ -117,9 +117,9 @@ fn row(label: &str, b: Option<f64>, v: Option<f64>, d: usize) {
     println!("    {label:44} {} {} {diff}", f(b), f(v));
 }
 
-/// by-turn cumulative share of games with the plan online / the commander out
+/// by-turn cumulative share of games with the plan online / the commander out (from turn 0, so a turn-1 cast counts)
 fn by_turn(c: &crate::stats::Counter<u32>, t: u32, n: i64) -> f64 {
-    (2..=t).map(|x| c.get(&x)).sum::<i64>() as f64 * 100.0 / n.max(1) as f64
+    (0..=t).map(|x| c.get(&x)).sum::<i64>() as f64 * 100.0 / n.max(1) as f64
 }
 
 fn shares(c: &crate::stats::Counter<String>, total: i64, take: usize) -> String {
@@ -214,6 +214,17 @@ pub fn print_explain(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn by_turn_counts_turn_one() {
+        let mut c = crate::stats::Counter::<u32>::default();
+        c.add(1, 90);
+        c.add(4, 5);
+        c.add(6, 3);
+        assert_eq!(by_turn(&c, 4, 100), 95.0);
+        assert_eq!(by_turn(&c, 6, 100), 98.0);
+        assert_eq!(by_turn(&c, 0, 100), 0.0);
+    }
 
     #[test]
     fn preflight_warns_on_partial_and_unmodeled_only() {

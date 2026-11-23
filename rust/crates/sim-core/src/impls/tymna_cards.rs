@@ -1337,8 +1337,6 @@ const BALLISTA: &str = "Walking Ballista";
 const DELNEY: &str = "Delney, Streetwise Lookout";
 const CLOUD_CARD: &str = "Cloud, Midgar Mercenary";
 const BOOTS: &str = "Swiftfoot Boots";
-/// the Equipment that gives protection from white: its carrier can't be targeted by the deck's own white effects
-const PROT_WHITE: [&str; 2] = ["Sting, the Glinting Dagger", "Sword of Hearth and Home"];
 /// the holder score that stands for "never": far below any sum of the other terms
 const NEVER: f64 = -1000.0;
 
@@ -1361,16 +1359,28 @@ fn is_flier(g: &Game, m: PermId) -> bool {
     g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")
 }
 
-/// Equipment `e` (protection from white) on Walking Ballista: Heliod's lifelink could no longer target it (Line B)
+/// does Equipment `e` give protection from white (a compiled `equip_protection` whose colours include W: Sword of
+/// Hearth and Home)? Sting, the Glinting Dagger does not: it is +1/+1, haste and an untap.
+fn gives_prot_white(g: &Game, e: PermId) -> bool {
+    let Some(cd) = g.perm(e).cd else { return false };
+    g.db.get(cd).abilities.iter().any(|a| {
+        matches!(a, crate::dsl::model::Ability::Static { kind, colors, .. }
+            if kind == "equip_protection" && colors.as_deref().is_some_and(|c| c.contains('W')))
+    })
+}
+
+/// protection-from-white Equipment `e` on Walking Ballista: Heliod's lifelink could no longer target it (Line B)
 fn prot_white_on_ballista(g: &Game, e: PermId, m: PermId) -> bool {
-    PROT_WHITE.contains(&name_of(g, e)) && name_of(g, m) == BALLISTA
+    gives_prot_white(g, e) && name_of(g, m) == BALLISTA
 }
 
 /// what Equipment `e` is worth on creature `m` for the yoshimaru seat: fliers and creatures that connect anyway (their
 /// hit is a card for Tymna and the Swords' triggers); not Yoshimaru, and Tymna only with Swiftfoot Boots (added power
 /// switches off Delney's doubling and evasion for her, and she draws when any creature connects); never Walking
-/// Ballista with Equipment that has protection from white; and not +power Equipment that takes a creature over power 2
+/// Ballista with Equipment that gives protection from white (data-driven: Sword of Hearth and Home today); and not +power Equipment that takes a creature over power 2
 /// while Delney is out (Cloud excepted: the guide's best carrier for Sword of Hearth and Home).
+/// (Swiftfoot Boots never reach `dsl::equip_options`: `pool::special_options` equips them, to a commander, so the Boots
+/// exception for Tymna only matters to this function when called directly.)
 fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
     if prot_white_on_ballista(g, e, m) {
         return NEVER;
@@ -1402,7 +1412,7 @@ fn yoshimaru_holder_value(g: &Game, e: PermId, m: PermId) -> f64 {
 }
 
 /// the yoshimaru seat's equip stat and trace: who wears the Equipment once an equip has resolved (`ty_eq_commander`,
-/// `ty_eq_flier`, `ty_eq_ballista`, `ty_eq_other`, and `ty_eq_pw_ballista` for protection from white on Ballista, which
+/// `ty_eq_flier`, `ty_eq_ballista`, `ty_eq_other`, and `ty_eq_pw_ballista` for Equipment that gives protection from white on Ballista, which
 /// should stay 0), summed over the games. Any other seat: nothing.
 pub fn note_equip_holder(g: &mut Game, p: PlayerId, e: PermId, m: PermId) {
     if g.player(p).key != "yoshimaru" || g.perm(e).attached != Some(m) {
@@ -1427,7 +1437,7 @@ pub fn note_equip_holder(g: &mut Game, p: PlayerId, e: PermId, m: PermId) {
 }
 
 /// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's); the yoshimaru seat
-/// only forbids the Equipment that has protection from white on Walking Ballista (no other holder was left)
+/// only forbids Equipment that gives protection from white on Walking Ballista (no other holder was left)
 pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
     if g.player(p).key == "yoshimaru" {
         return if prot_white_on_ballista(g, e, m) { -20.0 } else { 0.0 };
