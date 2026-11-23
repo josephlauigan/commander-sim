@@ -123,15 +123,67 @@ pub fn spark_garth_target(g: &Game, p: PlayerId) -> Option<PermId> {
     if !urdragon_seat(g, p) {
         return None;
     }
-    let garth = g.player(p).perms.iter().copied().find(|&m| {
-        live(g, m) && nm(g, m) == GARTH && !g.perm(m).token && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK)
-    })?;
+    let garth = card_garth(g, p)?;
+    line_near(g, p).then_some(garth)
+}
+
+/// the rest of the Garth line is near (Garth aside): Doubling Season on the battlefield or in hand and Twinflame in
+/// hand, or a tutor in hand (Demonic or Vampiric) for whichever of the two is still in the library. The one test of
+/// `spark_garth_target` (what Spark Double copies) and `spark_hold_shape` (when it waits for Garth).
+fn line_near(g: &Game, p: PlayerId) -> bool {
     let season_out = bf(g, p, SEASON).is_some() || in_hand(g, p, SEASON).is_some();
     let twin_hand = in_hand(g, p, TWINFLAME).is_some();
     let tutor = in_hand(g, p, "Demonic Tutor").is_some() || in_hand(g, p, "Vampiric Tutor").is_some();
-    let near = (season_out && twin_hand)
-        || (tutor && ((season_out && in_lib(g, p, TWINFLAME)) || (twin_hand && in_lib(g, p, SEASON))));
-    near.then_some(garth)
+    (season_out && twin_hand)
+        || (tutor && ((season_out && in_lib(g, p, TWINFLAME)) || (twin_hand && in_lib(g, p, SEASON))))
+}
+
+/// the Garth Spark Double can copy for the Garth line: on the battlefield, not phased out, not a token and not Spark
+/// Double's own copy
+fn card_garth(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| {
+        live(g, m) && nm(g, m) == GARTH && !g.perm(m).token && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK)
+    })
+}
+
+/// incoming damage over life from which the Spark Double hold is off (the Twinflame hold's number, `mine::twinflame`)
+pub const SPARK_HOLD_DANGER: f64 = 1.0;
+
+/// Everything about the Spark Double hold except the table's danger (`spark_hold`): the Garth line is near
+/// (`line_near`, the test Spark Double's copy uses) with Garth still to come, so a Spark Double now would copy
+/// something else and cost the line its non-legendary Garth. Garth must be in hand (castable by next turn,
+/// `next_turn_mana`) or in the library with a tutor of its own, never on the battlefield (then `spark_garth_target`
+/// decides, with the same near test, so the hold never outlives Garth's arrival).
+pub fn spark_hold_shape(g: &Game, p: PlayerId) -> bool {
+    if !urdragon_seat(g, p) || card_garth(g, p).is_some() || !line_near(g, p) {
+        return false;
+    }
+    let garth_hand = in_hand(g, p, GARTH);
+    if garth_hand.is_none() {
+        // Garth must still be fetchable: in the library, with a tutor in hand that the line's other piece does not use
+        // (Demonic or Vampiric Tutor fetch anything, Worldly Tutor only Garth)
+        let any =
+            u32::from(in_hand(g, p, "Demonic Tutor").is_some()) + u32::from(in_hand(g, p, "Vampiric Tutor").is_some());
+        let worldly = u32::from(in_hand(g, p, "Worldly Tutor").is_some());
+        let other_missing = u32::from(in_hand(g, p, TWINFLAME).is_none())
+            + u32::from(bf(g, p, SEASON).is_none() && in_hand(g, p, SEASON).is_none());
+        if !in_lib(g, p, GARTH) || other_missing + 1 > any + worldly {
+            return false; // Garth is dead (graveyard, exile, phased out, elsewhere) or no tutor is left for it
+        }
+    }
+    if let Some(c) = garth_hand {
+        let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+        if crate::engine::mana::next_turn_mana(g, p) < gn + pips.len() as u32 {
+            return false; // Garth is not castable by next turn: the hold waits for nothing
+        }
+    }
+    true
+}
+
+/// The Ur-Dragon seat holds Spark Double (cast or free-dropped) while `spark_hold_shape` says the Garth line is near
+/// and Garth is still to come, unless the table can kill p (`SPARK_HOLD_DANGER`).
+pub fn spark_hold(g: &Game, p: PlayerId) -> bool {
+    spark_hold_shape(g, p) && crate::ai::brain::Situation::new(g, p).danger < SPARK_HOLD_DANGER
 }
 
 fn present(v: &[Option<PermId>]) -> Vec<PermId> {

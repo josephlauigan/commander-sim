@@ -38,9 +38,14 @@
 # defence effect out (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz), even where the engine would kill; the check's
 # blocks are the engine's heuristic ones (three samples, each must kill), not an opponent's block search; the check
 # follows the engine where the engine departs from the rules (Chalice, a disabled Opposition); and the AI's real attack,
-# chosen afterwards, may not be the killing one. Still
-# open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
-# line (nothing holds it back yet).
+# chosen afterwards, may not be the killing one.
+# Spark Double is held (`t45_urdragon_combos::spark_hold`, read by `brain::card_utility` and `ur_pick`) while Garth is not
+# on the battlefield and the rest of the line is near (the same near test as the copy above: Doubling Season out or in
+# hand and Twinflame in hand, or a Demonic or Vampiric Tutor for the missing one) with Garth in hand and castable by
+# next turn (`next_turn_mana` at least its five), or in the library with a tutor of its own (Worldly Tutor fetches
+# only Garth). It is released when a piece is dead, Garth is out (then the copy decides), Garth cannot be cast by next
+# turn, or the table's danger (incoming damage over life) reaches 1.0. While it is held Twinflame is held too (the
+# line stays alive). Not done: releasing the hold for a better copy target.
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
 # Rhythm of the Wild (in the list since 2026-11-20, for Temur Ascendancy) is not in it: it does nothing on its own.
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
