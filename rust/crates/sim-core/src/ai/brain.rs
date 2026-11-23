@@ -605,11 +605,14 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     if ctx.x == 0 && zone != "gy" && d.xcount > 0 && !crate::human::is_human(g, p) {
         // {X}{X} permanents priced by their `self_cost` at the X the AI chooses (the cost is taken at the same state): the
         // X is recorded with the cast, so they enter with X counters and not with half of everything paid, taxes included
-        match &*d.name {
-            "Chalice of the Void" => ctx.x = crate::impls::t6_stax::chalice_x(g, p).unwrap_or(0),
-            "Hangarback Walker" => ctx.x = crate::impls::karn_engines::hangar_x(g, p),
-            _ => {}
-        }
+        let chosen = match &*d.name {
+            "Chalice of the Void" => crate::impls::t6_stax::chalice_x(g, p).unwrap_or(0),
+            "Hangarback Walker" => crate::impls::karn_engines::hangar_x(g, p),
+            _ => 0,
+        };
+        // a cast that costs nothing (Tamiyo's emblem from the hand, Dracogenesis) has X = 0 (107.3b)
+        let free = cost_of(g, p, c) == (0, String::new());
+        ctx.x = if free { 0 } else { chosen };
     }
     if zone != "gy" && (d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) || hook_x.is_some()) {
         let per = if hook_x.is_some() { d.xcount } else { 1 };
@@ -969,6 +972,10 @@ pub fn max_x(g: &Game, p: PlayerId, c: CardId, per: u32, cv: bool) -> i32 {
         } else {
             hi = mid - 1;
         }
+    }
+    // a cast that costs the same whatever X is (Tamiyo's emblem from the hand, Dracogenesis: no mana cost) has X = 0 (107.3b)
+    if lo > 0 && cost_of_x(g, p, c, 0) == cost_of_x(g, p, c, per * top) {
+        return 0;
     }
     lo
 }

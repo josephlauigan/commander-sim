@@ -712,8 +712,9 @@ fn white_suns_twilight() {
 
 #[test]
 fn mockingbird() {
-    // {X}{U}: a mana value 6 creature to copy needs X = 5: five Islands pay for it only with Sapphire Medallion
-    for (reducer, lands_n, has_option) in [(false, 5, false), (false, 6, true), (true, 5, true)] {
+    // {X}{U}: the copy's mana value may not exceed the mana spent, so a mana value 6 creature needs six mana spent: X = 5
+    // with six Islands, and with Sapphire Medallion (one less) X = 6, which five Islands cannot pay
+    for (reducer, lands_n, expect) in [(false, 5, None), (false, 6, Some(5)), (true, 5, None), (true, 6, Some(6))] {
         let mut g = game();
         if reducer {
             perm(&mut g, P0, "Sapphire Medallion");
@@ -722,10 +723,10 @@ fn mockingbird() {
         let ls = lands(&mut g, P0, "Island", lands_n, false);
         let c = hand(&mut g, P0, &["Mockingbird"])[0];
         let opts = hopts(&mut g, c, Some(false));
-        assert_eq!(!opts.is_empty(), has_option, "reducer: {reducer}, {lands_n} lands");
-        if has_option {
+        assert_eq!(!opts.is_empty(), expect.is_some(), "reducer: {reducer}, {lands_n} lands");
+        if let Some(x) = expect {
             let o = only(opts);
-            assert_eq!(o.label, "Mockingbird (X = 5, copy Grave Titan)");
+            assert_eq!(o.label, format!("Mockingbird (X = {x}, copy Grave Titan)"));
             assert!(go(&mut g, &o));
             assert_eq!(tapped(&g, &ls), lands_n);
         }
@@ -821,4 +822,25 @@ fn meathook_priority_counts_the_x_the_reducer_allows() {
         let prio = g.registry.get(c).and_then(|i| i.prio).expect("a priority");
         assert_eq!(prio(&g, P0, c), want, "reducer: {reducer}");
     }
+}
+
+#[test]
+fn a_cast_that_costs_nothing_whatever_x_is_has_x_zero() {
+    // Tamiyo's emblem makes every spell in hand free: X = 0, not the top of the search (107.3b)
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 5, false);
+    let c = hand(&mut g, P0, &["Damnable Pact"])[0];
+    assert_eq!(brain::max_x(&g, P0, c, 1, false), 3, "five Swamps pay X = 3 plus {{B}}{{B}}");
+    g.player_mut(P0).emblems.push("tamiyo");
+    assert_eq!(brain::max_x(&g, P0, c, 1, false), 0, "free: X = 0");
+}
+
+#[test]
+fn a_copy_of_a_hangarback_walker_spell_keeps_the_copied_x() {
+    // the copy enters with the X it copied (`was_cast` is false for a copy); every other entry has x = 0
+    let g = game();
+    let hb = card(&g, "Hangarback Walker");
+    assert_eq!(sim_core::impls::karn_engines::hangar_counters(&g, hb, false, 3), 3);
+    assert_eq!(sim_core::impls::karn_engines::hangar_counters(&g, hb, false, 0), 0);
+    assert_eq!(sim_core::impls::karn_engines::hangar_counters(&g, card(&g, "Grave Titan"), true, 3), 0);
 }

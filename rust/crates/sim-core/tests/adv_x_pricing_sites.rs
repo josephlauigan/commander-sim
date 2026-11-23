@@ -526,6 +526,18 @@ fn selected_x_for_smashing_disintegrate_mockingbird_and_agadeem_is_paid_once() {
                 } else {
                     perm(&mut g, Q, "Shivan Dragon");
                 }
+                // Mockingbird copies a creature whose mana value is at most the mana spent: its X is the smallest one whose
+                // whole cost (generic and pips) reaches the mana value 6 of the Grave Titan, whatever reducer is out
+                let want = if name == "Mockingbird" {
+                    (0..=20)
+                        .find(|&x| {
+                            let (gn, pp) = mana::cost_of_x(&g, P, c, x);
+                            gn + pp.chars().count() as u32 >= 6
+                        })
+                        .unwrap()
+                } else {
+                    want
+                };
                 let (gn, paid_pips) = mana::cost_of_x(&g, P, c, want);
                 let payable = mana::can_pay_spell(&g, P, c, gn, &paid_pips, false);
                 let life = mana::phyrexian_life(&g, P, c, &paid_pips);

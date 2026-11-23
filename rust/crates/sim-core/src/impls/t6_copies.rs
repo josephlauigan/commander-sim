@@ -182,7 +182,8 @@ fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 // ------------------------------------------------------------------ Mockingbird
 const MOCKINGBIRD: &str = "Mockingbird";
 
-/// the cheapest X that reaches the best creature: (X, the creature, its value). The mana spent is X + {U}.
+/// the cheapest X that reaches the best creature: (X, the creature, its value). The mana spent is the whole cost at X (X + {U}
+/// without a reducer or tax).
 fn mockingbird_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, PermId, f64)> {
     // priced by `cost_of_x`: a reducer applies to the generic part that includes X, a tax after it
     let payable = |x: u32| {
@@ -193,9 +194,15 @@ fn mockingbird_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, PermId, f6
         return None;
     }
     let most = crate::ai::brain::max_x(g, p, c, 1, false) as u32;
-    let (t, v) = best_copy(g, p, Kind::Creature, None, Some(most + 1))?;
+    // the mana spent (generic and pips, taxes included) is what a copy's mana value may not exceed
+    let spent = |x: u32| {
+        let (gn, pips) = cost_of_x(g, p, c, x as i32);
+        gn + pips.chars().count() as u32
+    };
+    let (t, v) = best_copy(g, p, Kind::Creature, None, Some(spent(most)))?;
     let mv = g.db.get(g.perm(t).cd?).cmc;
-    let x = mv.saturating_sub(1);
+    // the smallest X whose whole cost reaches it, which a reducer makes larger than mv - 1 and a tax smaller
+    let x = (0..=most).find(|&x| spent(x) >= mv)?;
     if v < 3.0 || !payable(x) {
         return None;
     }

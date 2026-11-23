@@ -891,8 +891,9 @@ pub fn enters_with(g: &Game, cd: CardId, was_cast: bool) -> i32 {
 
 /// Hangarback Walker enters with X +1/+1 counters, X being the X it was cast with (`Enter::x`, not half the mana paid:
 /// a cost increase is not X); read in `zones::enter` before the creature check, as `enters_with`
-pub fn hangar_counters(g: &Game, cd: CardId, was_cast: bool, x: i32) -> i32 {
-    if was_cast && &*g.db.get(cd).name == "Hangarback Walker" { x.max(0) } else { 0 }
+pub fn hangar_counters(g: &Game, cd: CardId, _was_cast: bool, x: i32) -> i32 {
+    // (a copy of the spell carries the copied X with `was_cast` false; every other entry has x = 0)
+    if &*g.db.get(cd).name == "Hangarback Walker" { x.max(0) } else { 0 }
 }
 
 /// When it dies, create a 1/1 colorless Thopter artifact creature token with flying for each +1/+1 counter on it.
