@@ -63,9 +63,11 @@ fn spellbook_cards(key: &str, id: &str) -> Option<BTreeSet<String>> {
 fn every_plan_file_fits_its_deck() {
     let all = plan_data::all();
     assert!(!all.is_empty(), "no plan files embedded");
+    let db = sim_core::testkit::db();
     let mut errs = vec![];
     for (key, l) in all.iter() {
         let deck = deck_cards(key, l.plan.retired);
+        errs.extend(plan_data::hold_problems(l, &db).into_iter().map(|e| format!("{key}: {e}")));
         for n in plan_data::named_cards(l) {
             if !deck.contains(&n) {
                 errs.push(format!("{key}: {n:?} is not in the deck"));

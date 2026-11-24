@@ -363,6 +363,12 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     {
         return None;
     }
+    // --- b1a: a card the plan holds (a `[[hold]]` row whose `when` holds) is cast in response, never proactively. Only
+    // a card with a DSL is affected: it gets the DSL-value fallback below, the source of the proactive casts; a card
+    // without one has no such value (every row of the plan files today: Teferi's Protection, Eerie Interlude)
+    if d.has_dsl() && super::plan_data::held_back(g, p, c) {
+        return None;
+    }
     let main = is_main(hand_key(g, p));
     let mut base = decks::deck_prio_f(g, p, c);
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
