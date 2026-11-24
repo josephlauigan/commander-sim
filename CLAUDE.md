@@ -113,6 +113,35 @@ systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>
 
 Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 
+## Keep the drive from filling
+
+(JD, 2026-11-23: the root volume reached 100% and halted builds, tests and agents mid-run.) Every worktree has its own
+`rust/target`, and a release build is 40-90 GB: about 25 worktrees held over 1.2 TB.
+
+1. **Check before you build.** Before creating a worktree, or starting a build, a test run, a sim queue or a batch of
+   agents, run `df -BG --output=avail /`. Start only if free space is at least 100 GB plus 60 GB for each new
+   `rust/target` that will build at the same time (yours and any already building): about 400 GB for the usual 4-6.
+   Short of that, free space first (rules 2-4) or run fewer at once. Below 150 GB: start nothing new and tell JD;
+   running jobs may finish unless a write fails. Agent briefs that build say to run this check first and to report
+   instead of building when it fails.
+2. **Remove build directories when done.** Delete a worktree's `rust/target` when its PR is merged or abandoned; an
+   adversarial copy deletes its target once its review is written. Reuse the open worktree for follow-up fixes to the
+   same branch. Before `git worktree remove` on a merged worktree, check `git status --short --ignored`: it must list
+   only `rust/target/` and regenerable views (no `data/saves/`, `.jsonl`, reports or logs), because ignored files are
+   deleted with the tree. Then run `git worktree prune`.
+3. **Scratch space belongs to its author.** A `CARGO_TARGET_DIR` or cache directory (for example
+   `~/.cache/<name>-target`) that an agent or session creates is deleted by it when its work ends; briefs that set one
+   say so. Trace sets, gate recordings (`/tmp/handoff/gates`) and logs under `/tmp/handoff` are removed by their author
+   once the PR they support is merged and their results are logged (decisions log, FINDINGS or the PR text).
+4. **Making room.** You may delete regenerable build output: a `rust/target` or `~/.cache/*-target` that no running
+   session, agent or queue uses (check `pgrep -af 'cargo|rustc'` and the worktree's owner). Never delete source,
+   branches, unmerged work, `data/saves/`, sim or LLM outputs, the main checkout's data, or another author's logs and
+   recordings without JD's yes. Tell JD what was deleted and how much was freed.
+5. **A full disk is not a test result.** "No space left on device", an empty or truncated log, a missing handoff or gate
+   file, or exit 101 with no test counts is an infrastructure failure: stop, free space, and re-run the failed step. If
+   the re-run gives link or "file truncated" errors, delete that target and rebuild. Check `git status` for files the
+   failed write truncated. Never report a result from a run that overlapped a full disk; tell JD which runs were lost.
+
 ## Opponent tiers
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,

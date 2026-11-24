@@ -308,7 +308,7 @@ impl Hub {
         let deck = deck.as_str().unwrap_or("").to_string();
         let tokens: HashMap<String, String> =
             [(lb.host.clone(), lb.deck.clone()), (token.to_string(), deck.clone())].into();
-        let r = match lb.session {
+        let r = match &lb.session {
             None => {
                 let mut o = obj(&lb.opts);
                 o.insert("partner".into(), json!(deck));
@@ -317,10 +317,19 @@ impl Hub {
             Some(s) => {
                 let o =
                     json!({"tools": lb.opts["tools"], "images": lb.opts.get("images").cloned().unwrap_or(json!(true))});
-                self.new_game(&o, Some(s), tokens)
+                self.new_game(&o, Some(s.clone()), tokens)
             }
         };
-        r.err()
+        let why = r.err()?;
+        // refused after the lobby was taken (`new_game` can still refuse): put it back, so the host keeps the
+        // waiting game and its code. Not over a lobby or game that replaced it meanwhile, and not a lobby that held
+        // a session (`new_game` may have closed it with `quit()` before refusing)
+        let mut st = self.lock();
+        if st.lobby.is_none() && st.session.is_none() && lb.session.is_none() {
+            st.lobby = Some(lb);
+            self.cond.notify_all();
+        }
+        Some(why)
     }
 
     /// the waiting game as a page sees it: the host also gets the code and the address to give
