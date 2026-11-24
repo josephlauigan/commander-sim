@@ -70062,20 +70062,7 @@
    "pow": 5,
    "tgh": 5,
    "bomb": 5,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "X",
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "trample",
@@ -70088,7 +70075,7 @@
    "ward": 0,
    "identity": "BGRUW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 10,

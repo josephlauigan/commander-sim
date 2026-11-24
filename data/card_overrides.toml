@@ -2626,6 +2626,11 @@ dsl = [] # a land isn't a permanent in `perms`, so its compiled proliferate neve
 status = "Full"
 note = "{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter on Summon: Bahamut)"
 
+["Karn, Gilded Guardian"]
+dsl = [] # the compiled "draw X" trigger counted artifacts, not colours; impls/karn_gilded.rs draws the colours. No cost line: the {2/X} symbols stay (cardinfo::hybrid)
+status = "Full"
+note = "{2/W}{2/U}{2/B}{2/R}{2/G} (each {2/X} is paid with that colour or with {2}, chosen before any reduction or tax; engine::hybrid) 5/5 vigilance trample Golem. The enter trigger (impls/karn_gilded.rs) is a stack trigger (the table may respond, an opposing Elesh Norn blanks it, Gandalf the White and your own Elesh Norn add triggers, each instance counting at its own resolution): draw a card for each colour among the other artifacts you control, counted as it resolves (CR 608.2h): the union of chars::colors over your artifacts (a Transguild Courier is five colours, a token has its token colour, a Cursed Mirror copy of Karn counts the original), not the number of artifacts; Karn himself, phased-out and face-down permanents are not counted; Treasure, Food, Clue and Blood are colourless counters; 0 draws nothing. AI (PROVISIONAL, never tuned by a sim): a hand-written cast priority, 40 plus 8 for each colour among your artifacts now (80 at five), no plan row. tests/cards_karn_gilded.rs"
+
 ["Karn, the Great Creator"]
 tags = "leg"
 dsl = []
