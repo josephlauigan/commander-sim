@@ -275,12 +275,12 @@
     "deck": "sheoldred",
     "partner": "urdragon",
     "replay": {
-      "events": 91,
-      "game_hash": "0ec7f7988f6cc7f1",
-      "hash": "c7f37fa87fbc5961",
-      "live_answers": 30,
+      "events": 95,
+      "game_hash": "90d8466a59bbadc0",
+      "hash": "af4f70df0aee9c0a",
+      "live_answers": 32,
       "live_by_seat": {
-        "sheoldred": 15,
+        "sheoldred": 17,
         "urdragon": 15
       },
       "over": {
@@ -316,7 +316,7 @@
         "urdragon",
         "urdragon",
         "urdragon",
-        "sheoldred",
+        "urdragon",
         "sheoldred",
         "sheoldred",
         "sheoldred",
@@ -332,7 +332,7 @@
           "do": "pass"
         },
         {
-          "card": 2,
+          "card": 0,
           "do": "land"
         },
         {
@@ -384,9 +384,10 @@
           "do": "pass"
         },
         {
-          "card": 2,
+          "card": 0,
           "do": "land"
         },
+        0,
         {
           "do": "tap",
           "source": 0
@@ -415,9 +416,6 @@
         {
           "do": "tap",
           "source": 0
-        },
-        {
-          "do": "pass"
         }
       ],
       "autopass": {
@@ -4385,14 +4383,14 @@
       "tier": "t4"
     },
     {
-      "answers": 36,
+      "answers": 37,
       "answers_by_seat": {
-        "urdragon": 36
+        "urdragon": 37
       },
       "deck": "urdragon",
-      "events": 94,
-      "game_hash": "77027736e05e1c50",
-      "hash": "fa718258616865c5",
+      "events": 96,
+      "game_hash": "1aefb0e13fe965b6",
+      "hash": "d1a3b1943aa89671",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -4409,14 +4407,14 @@
       "tier": "t5"
     },
     {
-      "answers": 37,
+      "answers": 36,
       "answers_by_seat": {
-        "urdragon": 37
+        "urdragon": 36
       },
       "deck": "urdragon",
-      "events": 99,
-      "game_hash": "ab45003af62e2bca",
-      "hash": "2bfd8bb1330e909e",
+      "events": 97,
+      "game_hash": "00400795fd2e5b0a",
+      "hash": "81697ff40e2eba7f",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -4529,15 +4527,15 @@
       "tier": "t5"
     },
     {
-      "answers": 63,
+      "answers": 64,
       "answers_by_seat": {
         "sheoldred": 31,
-        "urdragon": 32
+        "urdragon": 33
       },
       "deck": "sheoldred",
-      "events": 124,
-      "game_hash": "bffcefa0da886892",
-      "hash": "b26b283fcf9b4717",
+      "events": 126,
+      "game_hash": "263d3b10a7dc15b5",
+      "hash": "1ba3074462cb8bd7",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
