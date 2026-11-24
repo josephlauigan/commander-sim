@@ -140,6 +140,14 @@ fn siege_gang_commander_does_not_start_aiming_its_pings_at_a_battle() {
     // the AI's options for Siege-Gang
     let f = g.registry.get(g.perm(sg).cd.unwrap()).and_then(|i| i.options).expect("options");
     let opts = f(&mut g, sg, P0, Some(false)).unwrap();
+    eprintln!(
+        "SIEGE battle pval={:.2} etgh={} loyalty={:?} legal_for_ping={} opts={:?}",
+        sim_core::engine::values::pval(&g, battle),
+        sim_core::engine::values::etgh(&g, battle),
+        g.perm(battle).loyalty,
+        sim_core::impls::model_gaps_a4::ping_legal(&g, P0, sg, Tgt::Perm(battle)),
+        opts.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
     let hit_battle = opts.iter().any(|o| o.label.contains("Invasion of Ikoria"));
     assert!(!hit_battle, "Siege-Gang should not ping a battle: {:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
     let _ = before;
