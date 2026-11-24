@@ -1,5 +1,11 @@
 # Y'shtola, Night's Blessed — Esper Drain
 
+**Retired 2026-11-24 (JD).** The deck is dismantled: its drain and Doomsday cards moved into the Karn, Gilded Guardian deck,
+`decklists/JD/karn-gilded-guardian.md`. This guide moved here from `decklists/JD/` on 2026-11-24. The `yshtola` key left
+the simulator and practice catalog the same day and stays only as a testkit seat of its card code (`testkit::retired_decks`),
+seated with this guide's Import list, so that list is frozen: the tests read it (`include_str!`), and editing or moving this
+file changes or breaks them. Findings: `audit/retired/yshtola/FINDINGS.md`.
+
 Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate and Debt to the Deathless finish the game, with Cabal Coffers and Urborg paying for a big X. Exquisite Blood with Sanguine Bond is the two-card kill the tutors look for. A faster line now sits beside it: Thassa's Oracle with Demonic Consultation wins on the spot for three mana, and Doomsday is a second route to the same Oracle win. The drain itself still wins slowly, so when those cards are not in hand the deck is weak to fast creature pressure and to fast combo decks that win before the drain gets there, and it has no protection against a wipe.
 
 | | |

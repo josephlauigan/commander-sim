@@ -1,0 +1,54 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Karn, Gilded Guardian deck (key `karn_gilded`, tiers t4-t5, registered 2026-11-24:
+# decklists/JD/karn-gilded-guardian.md, five-colour artifacts and blink). The plan: coloured artifacts first, Karn once
+# his draw is worth it, the blink spells to enter him again, and the lines below to end the game (Thassa's Oracle with
+# Demonic Consultation or Doomsday, Exquisite Blood with Sanguine Bond or Vito). Karn's cast priority, his draw, the blink
+# choosers and the decking and hand-size guards are CARD CODE (impls/karn_gilded.rs, the blink choosers): there is NO
+# [[prio]] row for Karn here, on purpose, because his card-code prio decides (a plan row would override it).
+# PROVISIONAL: nothing here has been measured; no sim has run on this list. The keep rule and the tutor order are the
+# generic ones. Left out (the schema can't express it): the Oracle outlet when Karn's draw would empty the library
+# (card code), Cabal Coffers + Urborg + Exsanguinate (no catalogue line), the combat line with Karn and a Sword, and the
+# guide's mulligan table. Doomsday's pile builder and its play are card code (impls/doomsday.rs), keyed on a deck key
+# that is not this one: the Doomsday line below only steers the tutors.
+deck = "karn_gilded"
+default = "plan"
+# card engines the tutors want once no line wants a card: the five-colour artifacts that make Karn's draw big, the doublers
+# and the card-flow engines
+engines = ["Transguild Courier", "Infinite Guideline Station", "Gandalf the White", "Elesh Norn, Mother of Machines", "Rhystic Study", "Necropotence"]
+
+# win lines, best first: the tutors want the first missing piece. The first names are the combo catalogue's (they must match)
+[[line]]
+name = "Thassa's Oracle + Demonic Consultation / Tainted Pact"
+combo = "Thassa's Oracle + Demonic Consultation / Tainted Pact"
+
+[[line]]
+name = "Vito / Sanguine Bond + Exquisite Blood"
+combo = "Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror"
+
+[[line]]
+name = "Doomsday + Thassa's Oracle"
+combo = "Doomsday + Thassa's Oracle"
+
+# free and cheap mana early, the rest later
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Coalition Relic"]
+when = ["turn<=5"]
+value = 82
+else = 30
+
+# held: the card's own options cast it (a plain cast priority would cast it as a sorcery whenever the mana is there)
+[[prio]]
+cards = ["Doomsday"]
+value = 0
+
+# tutors, first the two-card line: Consultation with the Oracle held, the Oracle with Consultation held. `have:` is the hand
+# or the battlefield, so an Oracle already on the battlefield is excluded where it matters: the line needs it in hand
+[[wish]]
+cards = ["Demonic Consultation"]
+when = ["have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation"]
+score = 88
+
+[[wish]]
+cards = ["Thassa's Oracle"]
+when = ["have:Demonic Consultation & not have:Thassa's Oracle"]
+score = 88

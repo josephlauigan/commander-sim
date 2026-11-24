@@ -1,0 +1,44 @@
+# Karn, Gilded Guardian (key `karn_gilded`): findings
+
+The deck's living list of strengths and weaknesses and what was tested.
+
+**List:** `decklists/JD/karn-gilded-guardian.md`, registered 2026-11-24 (Karn, Gilded Guardian, WUBRG; 64 spells and 35 lands, no basics;
+15 Game Changers, Bracket 4). **Tiers:** t4 and t5 (`data/my_decks.toml`). **No sims yet.** The deck replaces the Y'shtola and Yoshimaru/Tymna
+decks, whose findings are in `audit/retired/yshtola/` and `audit/retired/yoshimaru/`.
+
+## Plan (what the deck is meant to do)
+- **Engine:** Karn draws a card for each colour among the other artifacts we control, up to five; coloured artifacts (13 in the list; the
+  Transguild Courier and Infinite Guideline Station are five colours alone) and blink effects (Ephemerate, Cloudshift, Restoration Angel,
+  Flickerwisp, Felidar Guardian, Teleportation Circle, the harnessed The Mind Stone) enter him again; Gandalf the White and Elesh Norn,
+  Mother of Machines add triggers.
+- **Wins:** Thassa's Oracle with Demonic Consultation or Doomsday; Exquisite Blood with Sanguine Bond or Vito (Haliya and The Wind Crystal
+  as the starters); Exsanguinate off Cabal Coffers and Urborg; combat with Karn and Buster Sword or Sword of Feast and Famine.
+
+## Strengths (by design, not measured)
+- Many ways to draw and to find a line: seven tutors and the Karn draw.
+- Counter and stop suite for the win turn: Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Ranger-Captain of Eos.
+- Four independent finishes.
+
+## Weaknesses and limits (by design and from the engine work; none measured)
+- **Karn is slow and fragile:** a real cost of 5 to 10 and {2} more per recast; an opponent's Flickerwisp or any removal sends him to the command zone.
+- **Hand size at our own end step:** Teleportation Circle and the harnessed The Mind Stone return Karn in our end step, he draws before cleanup and
+  the excess is discarded unless Thought Vessel or Reliquary Tower is out (they give no maximum hand size).
+- **The draw is mandatory:** the library can empty; Thassa's Oracle is the outlet, `death_kind decked` is the stat to watch.
+- **Blood Moon effects:** no basic lands.
+- **Mana:** nine shocks, five fetches, three pain lands, City of Brass and Mana Confluence cost life next to Necropotence and Doomsday; red and green sources are thin (17 and 16).
+- **Engine limits (JD-accepted or open):** The Mind Stone and Shorikai are Approximate (the stone never picks Infinite Guideline Station or The One
+  Ring; Crew is not modelled); Teferi's Protection is Approximate (JD waived the Full requirement 2026-11-24); an opponent's Flickerwisp on
+  Karn goes to the command zone without asking; Cursed Mirror never copies a commander; the AI does not cast Karn at instant speed under Gandalf;
+  Breya's 3-damage mode takes a player only; the AI numbers for Station, Breya, Herd Heirloom, Twitching Doll and Karn's own priority are
+  provisional and untuned. The full lists are in the E3, E4 and E5 handoffs.
+- **Deck-key gates that do not run for this key:** Solitude's pitch spares line pieces (`rules2.rs`), equipment holder scoring for Buster Sword and
+  the Sword (`bulk_white.rs`, `cloud.rs`, `tymna_cards.rs`) and commander importance 7.0 (`cast.rs`) are keyed on the retired decks; Karn gets the generic paths.
+  Doomsday's pile builder is keyed on the retired `thrasios` key, so the Doomsday line only steers the tutors.
+
+## To check in the first runs
+Goldfish first (`trace-record.sh --mode goldfish`), then `--analyze` at t4 and t5: the turn Karn is cast and how many colours he counts on entry;
+`flicker <card> -> Karn, Gilded Guardian` in the stats; `death_kind decked`; `protection_used`; the Oracle and Consultation line's go rate; hand size at
+cleanup after an end-step blink; how often Akroma's Will and Deflecting Swat are cast with a commander on the battlefield; the life lost to the lands.
+
+## Tested
+No sims yet.

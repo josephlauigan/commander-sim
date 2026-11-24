@@ -9,7 +9,7 @@ Before proposing, testing, modeling or buy-advising a card, check all three and 
 
 1. **Commander legality.** `legalities.commander` must be `legal` (in `data/scryfall_cache.json`, or
    `https://api.scryfall.com/cards/named?exact=<name>`). Banned or not legal: don't propose it.
-2. **Colour identity.** The card's `color_identity` must fit the deck's `ident` in `data/decks.json` (Y'shtola is WUB).
+2. **Colour identity.** The card's `color_identity` must fit the deck's `ident` in `data/decks.json` (Sheoldred is mono-B; Karn is WUBRG).
 3. **The cut is in the current list.** Fetch `origin/main` first and check that the card going out is in the deck's
    `cards` in `data/decks.json`. FINDINGS files can name cards that have since left.
 
@@ -24,8 +24,10 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 
 | Decks | Tiers |
 | --- | --- |
-| yshtola, arzakon | t5 |
+| urdragon | t5 |
+| arzakon | t5-t6 |
 | sheoldred | t3-t4 |
+| karn_gilded | t4-t5 |
 
 `--pool all`, `--all-decks`, `--analyze`, swap runs and `searchtest` use only these tiers; `--deck X --pool tN` outside
 them is refused. Report averages over the deck's own tiers and label them ("over t3-t4"). `--any-tier` lifts the

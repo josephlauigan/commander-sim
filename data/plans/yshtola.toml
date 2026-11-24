@@ -17,7 +17,10 @@
 # Teferi's Protection held up (`teferis_first`).
 # 2026-11-14: Restoration Angel, Teferi's Protection (the `yshtola_protect` cards named above) and Champion's Helm (the
 # `[equip]` section named above) left the list with the Doomsday package; their rules were removed from this file.
+# 2026-11-24: the deck was retired (JD) and the key left the simulator: the guide is decklists/pool/retired/yshtola-esper-drain.md,
+# and this plan stays only because the card and plan tests seat the key as a testkit seat (`retired = true`).
 deck = "yshtola"
+retired = true
 default = "plan"
 # card engines the tutors want once no line wants a card
 engines = ["Sanguine Bond", "Rhystic Study", "Necropotence"]

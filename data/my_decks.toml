@@ -1,13 +1,6 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
 # plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). `format` (optional, default "commander") names a table in data/formats.toml. Extracted once from the old Python code; this file is now the source.
 
-[yshtola]
-file = "JD/yshtola-esper-drain.md"
-name = "Y'shtola"
-commander = "Y'shtola, Night's Blessed"
-ident = "WUB"
-tiers = ["t5"]
-
 [sheoldred]
 file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
@@ -30,11 +23,9 @@ commander = "The Ur-Dragon"
 ident = "WUBRG"
 tiers = ["t5"]
 
-# Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
-[yoshimaru]
-file = "JD/yoshimaru-tymna-blink.md"
-name = "Yoshimaru/Tymna"
-commander = "Yoshimaru, Ever Faithful"
-commander2 = "Tymna the Weaver"
-ident = "WB"
+[karn_gilded]
+file = "JD/karn-gilded-guardian.md"
+name = "Karn, Gilded Guardian"
+commander = "Karn, Gilded Guardian"
+ident = "WUBRG"
 tiers = ["t4", "t5"]

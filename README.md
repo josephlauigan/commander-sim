@@ -32,15 +32,15 @@ decks). They run from anywhere inside the repository and find `data/` and `deckl
 ## Main commands
 
 ```
-commander-sim --deck yoshimaru --pool all                                       # the deck against each of its own tiers
-commander-sim --deck yoshimaru --pool t4 --games 1500                           # one of its tiers
-commander-sim --deck yoshimaru --pool t4 --swap "Arcane Signet=>Prismatic Lens" # paired A/B: the list and the variant
-commander-sim --deck yoshimaru --pool t4 --swap "A=>B" --ai adaptive            # the same, a quick read (seconds)
-commander-sim --deck yoshimaru --pool t5 --analyze                              # how it wins and loses there
-commander-sim --deck yoshimaru --pool t4 --trace 7                              # play-by-play of game 7
+commander-sim --deck karn_gilded --pool all                                     # the deck against each of its own tiers
+commander-sim --deck karn_gilded --pool t4 --games 1500                         # one of its tiers
+commander-sim --deck karn_gilded --pool t4 --swap "Arcane Signet=>Prismatic Lens" # paired A/B: the list and the variant
+commander-sim --deck karn_gilded --pool t4 --swap "A=>B" --ai adaptive          # the same, a quick read (seconds)
+commander-sim --deck karn_gilded --pool t5 --analyze                            # how it wins and loses there
+commander-sim --deck karn_gilded --pool t4 --trace 7                            # play-by-play of game 7
 commander-sim --all-decks --pool all                                            # every deck against its own tiers
 commander-sim --goldfish arzakon,t5 --games 2000                                 # each deck alone against three inert seats
-commander-sim --deck yoshimaru --cards                                          # every card: tags, abilities, Game Changers
+commander-sim --deck karn_gilded --cards                                        # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                                  # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml           # the same with the AI's values from a file
 commander-sim --fit --pool t6 --ai adaptive --games 2000                        # search the knobs for the closest fit
@@ -50,10 +50,10 @@ commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"                  
 commander-sim searchtest <deck> <tier> 240                                      # a deck with and without the look-ahead
 
 commander-practice                                                              # practice mode at http://127.0.0.1:8765
-commander-practice --text --deck yoshimaru --tier t4                            # the same game in the terminal
+commander-practice --text --deck karn_gilded --tier t4                          # the same game in the terminal
 
-cardgen deck yoshimaru new-list.txt --dry-run                                   # check a new list, show what would change
-cardgen deck yoshimaru new-list.txt --log "Why."                                # write it, and log it in the changelog
+cardgen deck karn_gilded new-list.txt --dry-run                                 # check a new list, show what would change
+cardgen deck karn_gilded new-list.txt --log "Why."                                # write it, and log it in the changelog
 cardgen export                                                                  # rebuild data/cards.json and data/decks.json
 cardgen audit --mine                                                            # JD's cards that aren't fully modeled
 cardgen validate                                                                # check the pool decklists
@@ -61,7 +61,7 @@ cardgen validate                                                                
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `yshtola`, `sheoldred`, `arzakon`, `urdragon` or `yoshimaru`.
+- `--deck`: `sheoldred`, `arzakon`, `urdragon` or `karn_gilded`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -98,9 +98,10 @@ the same opponents and draws.
 
 | JD's decks | Tiers |
 | --- | --- |
-| yshtola, arzakon | t5 |
+| urdragon | t5 |
+| arzakon | t5-t6 |
 | sheoldred | t3-t4 |
-| yoshimaru | t4-t5 |
+| karn_gilded | t4-t5 |
 
 ## The realism loop
 
@@ -123,10 +124,10 @@ To change a list, edit the file or give `cardgen deck` the whole new list, as co
 card per line:
 
 ```
-cardgen deck yoshimaru new-list.txt --dry-run  # check it and show what would change
-cardgen deck yoshimaru new-list.txt            # write it
-cardgen deck yoshimaru -                       # or paste the list, then Ctrl-D
-cardgen deck yoshimaru new-list.txt --log "Why." # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
+cardgen deck karn_gilded new-list.txt --dry-run  # check it and show what would change
+cardgen deck karn_gilded new-list.txt            # write it
+cardgen deck karn_gilded -                       # or paste the list, then Ctrl-D
+cardgen deck karn_gilded new-list.txt --log "Why." # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
 cardgen export                                 # then rebuild the card data
 ```
 
@@ -148,7 +149,7 @@ isn't legal, and why. After the game, a review shows where your choices and the 
 ```
 commander-practice                                  # opens http://127.0.0.1:8765
 commander-practice --port 9000 --no-browser         # another port; open it yourself
-commander-practice --text --deck yoshimaru --tier t4  # the terminal client
+commander-practice --text --deck karn_gilded --tier t4  # the terminal client
 commander-practice --lan                            # a friend on your network can take a seat
 ```
 

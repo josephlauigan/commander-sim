@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` (and of the retired ones, now in `de
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Sheoldred, Thanos, Ur-Dragon, Yoshimaru/Tymna, Y'shtola (Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
+JD's decks: Sheoldred, Thanos, Ur-Dragon, Karn, Gilded Guardian (Y'shtola, Yoshimaru/Tymna, Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
@@ -14,6 +14,7 @@ Aragorn was retired as a deck (its key stays in the simulator until the engine w
 On 2026-11-14 a new Yoshimaru and Tymna blink deck was written (registered in the simulator as key `yoshimaru`, t4-t5, on 2026-11-21) and the Tymna/Thrasios Doomsday list was retired;
 on 2026-11-14 its guide and the Aragorn guide moved to `decklists/pool/retired/`, and the `thrasios` key kept playing the retired list until it left the simulator on 2026-11-21
 (the `aragorn` key left on 2026-11-15). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them. Cloud was retired as a deck on 2026-11-21: its Equipment package went into the Yoshimaru/Tymna deck, its guide and findings moved to the retired folders, and the `cloud` key left the simulator the same day.
+On 2026-11-24 a new Karn, Gilded Guardian deck (key `karn_gilded`, t4-t5) was added and the Y'shtola and Yoshimaru/Tymna decks were retired: their guides and findings moved to the retired folders and the `yshtola` and `yoshimaru` keys left the simulator and practice mode the same day.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
@@ -108,6 +109,14 @@ Deck key `godo` (removed), `decklists/JD/godo-cedh-equipment.md` (removed).
 - **2026-10-17.** Added. JD's first cEDH (Bracket 5) deck, an off-meta Godo + Helm of the Host turbo list built from
   the EDHREC average of 35 tournament Godo decks, checked against 2026 top finishes. Mana Crypt, Jeweled Lotus and
   Dockside Extortionist are banned and not in it. Not simulated.
+
+## Karn, Gilded Guardian — Colour-Draw Blink (WUBRG, High Bracket 4)
+
+Deck key `karn_gilded`, `decklists/JD/karn-gilded-guardian.md`. Tiers t4-t5. Not simulated yet.
+
+### Changes
+
+- **2026-11-24.** Registered (JD): a new Karn, Gilded Guardian deck built from the Y'shtola and Yoshimaru/Tymna decks, the spare cards and new cards (The Mind Stone, The Soul Stone, The Wind Crystal, Gold-Forged Thopteryx, Shorikai, Baleful Strix, Twitching Doll, Herd Heirloom, The Reaper, Transguild Courier, Infinite Guideline Station, Breya, Thought Vessel, Reliquary Tower, Cloudshift and Karn himself); 64 spells and 35 lands, no basics. The Y'shtola and Yoshimaru/Tymna decks were retired the same day. Not simulated.
 
 ## Karn, Legacy Reforged — Colourless Urza and Mishra Artifacts
 
@@ -674,10 +683,11 @@ Deck key `veyran` (until 2026-11-01), `decklists/JD/veyran-izzet-spellslinger.md
 
 ## Y'shtola, Night's Blessed — Esper Drain
 
-Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
+Deck key `yshtola`, `decklists/pool/retired/yshtola-esper-drain.md`. Tier t5 (retired 2026-11-24).
 
 ### Changes
 
+- **2026-11-24.** Retired (JD): the deck is dismantled and its drain and Doomsday cards moved to the Karn, Gilded Guardian deck (`decklists/JD/karn-gilded-guardian.md`). The guide moved to `decklists/pool/retired/` with a "Retired" banner and the findings to `audit/retired/yshtola/`. The key left `data/my_decks.toml`, the simulator and practice mode; the card code stays and `yshtola` remains a testkit seat (`testkit::retired_decks`).
 - **2026-11-24.** Paired test of the Gleaming Splendor swap (main 654db206, t5, loose, 1,500 games, seed 500000): new 32.4% against the old Esper Sentinel list's 31.3% (new minus old +1.1, paired noise ±2.1), a tie (`audit/yshtola/FINDINGS.md`).
 - **2026-11-23.** Out: Esper Sentinel. In: Gleaming Splendor. JD's choice (11/23), not simulated. Gleaming Splendor ({1}{W} enchantment: you create a Treasure whenever an opponent draws their second card each turn; {2}{W}: two target players each draw a card; model status Full) takes Esper Sentinel's slot (a proxy).
 - **2026-11-22.** Out: Loran of the Third Path. In: Sapphire Medallion. Sapphire Medallion takes Loran of the Third Path's slot: blue spells cost {1} less (JD's choice, not simulated).
@@ -757,10 +767,11 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ## Yoshimaru, Ever Faithful & Tymna the Weaver — Blink and Enter-the-Battlefield Value (W/B)
 
-Deck key `yoshimaru`, `decklists/JD/yoshimaru-tymna-blink.md`. Tiers t4-t5. Not simulated yet.
+Deck key `yoshimaru`, `decklists/pool/retired/yoshimaru-tymna-blink.md`. Tiers t4-t5 (retired 2026-11-24). Not simulated yet.
 
 ### Changes
 
+- **2026-11-24.** Retired (JD): the deck is dismantled and its blink package moved to the Karn, Gilded Guardian deck (`decklists/JD/karn-gilded-guardian.md`). The guide moved to `decklists/pool/retired/` with a "Retired" banner and the findings to `audit/retired/yoshimaru/`. The key left `data/my_decks.toml`, the simulator and practice mode; the card code stays and `yoshimaru` remains a testkit seat with both commanders (`testkit::retired_decks`).
 - **2026-11-24.** Paired test of the Akroma's Will swap (main 654db206, loose, 1,500 games per tier, seed 500000): t4 new 27.3% against the old Teferi's Protection list's 26.6% (new minus old +0.7), t5 23.7% against 24.1% (-0.3), both within the paired noise of ±1.5 (`audit/yoshimaru/FINDINGS.md`).
 - **2026-11-23.** Out: Teferi's Protection. In: Akroma's Will. JD's choice (11/23), not simulated. Akroma's Will ({3}{W} instant, flying, vigilance and double strike or lifelink, indestructible and protection from each colour for your creatures; the engine casts it only on its own turn after blockers; with a commander out it has both modes) takes Teferi's Protection's slot (a proxy; the card comes from the Arzakon deck).
 - **2026-11-22.** Out: Zack Fair. In: Skrelv, Defector Mite. JD's choice, not simulated. Skrelv, Defector Mite ({W}, a legendary artifact creature 1/1 with toxic 1 that can't block; {W/P}, {T}: another creature we control gains toxic 1 and hexproof from a chosen colour and can't be blocked by creatures of that colour until end of turn; model status Full; a proxy) takes Zack Fair's slot. Both are one-mana legendary white creatures, so the count of legendary permanents that give Yoshimaru a counter stays at 21 and Mox Amber still turns on with it. What it gains: protection against targeted removal of the chosen colour (exile, bounce, -X/-X as well as destroy), and evasion plus toxic for the creature it helps, which can feed Tymna's draws. What it gives up: Zack Fair's {1} sacrifice worked the turn he came down and saved one creature from a destroy wrath (Skrelv needs to be untapped and not summoning sick, so it does nothing the turn it lands), and the deck's Equipment mover (Zack moved one Equipment to another creature). Not measured.
