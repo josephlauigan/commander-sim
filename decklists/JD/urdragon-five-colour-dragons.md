@@ -5,9 +5,10 @@ Dragon and drops a permanent from your hand onto the battlefield free, so each a
 seven-drop into play. Terror of the Peaks, Scourge of Valkas and Dragon Tempest turn every Dragon that enters into
 damage, and Miirym and Lathliss double the Dragons. Beside those sits one four-card combo, **Garth One-Eye + Spark
 Double + Twinflame + Doubling Season**, which makes mana and hasty tokens without limit. Around them sit the top-end
-Dragons (Utvara Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lightning Bolt, Decimate,
-Fact or Fiction, Austere Command, Young Pyromancer) and Triple Triad. A speed package (Sylvan Library, Urza's Incubator,
-Talisman of Hierarchy, Deflecting Swat and Jeska's Will) gets the commander and its engine out earlier. The deck is weak to board wipes and mass bounce after it
+Dragons (Utvara Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lightning Bolt, Fact or Fiction). A speed package
+(Urza's Incubator, Dragonspeaker Shaman, Sapphire Medallion, the two Talismans, Sylvan Library, Jeska's Will and Hellkite Courser) gets the commander and its
+engine out earlier, and a protection and draw package (Mithril Coat, Giver of Runes, The Theorist and Tymna the Weaver) keeps the key permanent alive and refills the
+hand. The deck is weak to board wipes and mass bounce after it
 has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (one basic land). Nothing in this document has been simulated yet.
 
 | | |
@@ -39,7 +40,8 @@ What it does once it attacks:
   Dragon makes a 6/6 flying Dragon, so the next attack is far bigger.
 - **Protection** from the deck: **Scion of Draco** gives every creature of a colour vigilance, hexproof, lifelink, first
   strike or trample, and The Ur-Dragon is all five. **Dragonlord Ojutai** has hexproof while it is untapped.
-  **Fierce Guardianship** and **Deflecting Swat** are free while you control a commander. **Delighted Halfling** and
+  **Fierce Guardianship** is free while you control a commander. **Mithril Coat** makes a legendary creature
+  indestructible and **Giver of Runes** gives one creature protection from a colour (both below). **Delighted Halfling** and
   **Cavern of Souls** (name Dragon) make the Dragons uncounterable.
 - **Kyodai, Soul of Kamigawa** ({3}{W}, a 3/3 flash flier, a Dragon Spirit): when he enters, another target permanent gains
   indestructible for as long as you control him. Flash him in at an opponent's end step, or in response to a destroy effect
@@ -53,21 +55,42 @@ What it does once it attacks:
 
 #### Getting The Ur-Dragon out earlier
 
-The deck's weakness is reaching its commander, so five cards work on speed. Cost reducers remove only generic mana.
+The deck's weakness is reaching its commander, so a package of cards works on speed. Cost reducers remove only generic mana
+(the Ur-Dragon's {4} is the only generic part of its cost), and Eminence does not discount The Ur-Dragon itself.
 
 - **Urza's Incubator** ({3} artifact, naming Dragon): Dragon creature spells cost {2} less. The Ur-Dragon
   ({4}{W}{U}{B}{R}{G}) goes from nine to seven, and every other Dragon costs two less on top of Eminence's one. With
   Morophon as well, The Ur-Dragon costs {2}. Cast it on turn 3 or 4, before the Dragons, and name Dragon.
-- **Talisman of Hierarchy** ({2} artifact): taps for {C}, or for {W} or {B} and deals 1 damage to you. A turn-2 rock that
-  pays for a turn-3 four-drop and makes white or black, the thinnest colours in the list.
+- **Dragonspeaker Shaman** ({1}{R}{R}, a 2/2): Dragon spells you cast cost {2} less. It does the Incubator's job from a creature body, and the two stack: The Ur-Dragon
+  with both costs {W}{U}{B}{R}{G} (five mana), and a five-drop Dragon with both and Eminence costs only its two red pips. It needs {R}{R} on turn 3, and a removal spell on it
+  loses the discount; it is not a Dragon, so it triggers no Dragon payoff.
+- **Hellkite Courser** ({4}{R}{R}, a 6/5 flying Dragon): when it enters you may put your commander from the command zone onto the battlefield; it gains haste and returns to
+  the command zone at the next end step. The Ur-Dragon then attacks the turn Courser comes down, so the attack draws a card per attacking Dragon and drops a permanent from the new
+  hand onto the battlefield; the commander is not cast, so it carries no commander tax and Eminence still works from the command zone. Courser costs five with Eminence, three with the
+  Incubator or the Shaman added, and two ({R}{R}) with both, so it is the bridge to a hasty Ur-Dragon on turn 5 or 6. With The Ur-Dragon already on the battlefield it is a plain 6/5 flier.
+- **Talisman of Hierarchy** ({2} artifact): taps for {C}, or for {W} or {B} and deals 1 damage to you. **Talisman of Curiosity** ({2} artifact): taps for {C}, or for {G} or {U} and deals 1
+  damage to you. A turn-2 rock that pays for a turn-3 four-drop and makes white, black, green or blue, the thinner colours in the list.
+- **Sapphire Medallion** ({2} artifact): blue spells you cast cost {1} less. The Ur-Dragon, Rhystic Study, Fact or Fiction, Niv-Mizzet, Miirym, Dragonlord Ojutai, Garth, Tiamat and The Theorist (any
+  spell that is blue, alone or with other colours) get cheaper, and the generic part of The Ur-Dragon's cost drops by one more. It makes no mana itself, so it is a turn-2 play only with another rock behind it.
 - **Sylvan Library** ({1}{G}): at your draw step you may draw two extra cards, then for each of two cards drawn this turn
   pay 4 life or put it on top of the library. A Library on turn 2 draws up to two extra cards a turn, to find the ramp and the Dragons. At 40 life
   pay only for a card you will cast; the life adds to the fetches, the shocks and The One Ring.
 - **Jeska's Will** ({2}{R}, sorcery): add {R} for each card in an opponent's hand, or exile your top three cards and play
   them this turn. With a commander on the battlefield you get both modes, a burst of mana and three extra cards on a turn
   when the commander is out.
-- **Deflecting Swat** ({2}{R}, free while you control a commander): choose new targets for a spell or ability that targets.
-  It protects the key piece from targeted removal or moves a counterspell, but it does nothing against a wipe that does not target.
+
+#### Protecting and refilling
+
+- **Mithril Coat** ({3}, flash Equipment, itself indestructible): when it enters, attach it to a legendary creature you control; the equipped creature has indestructible. Equip {3} to
+  move it. Flash it in at an opponent's end step or in response to a destroy effect or a destroy wipe aimed at a legendary creature (The Ur-Dragon on the battlefield, Garth, Lathliss, Miirym,
+  Niv-Mizzet, Old Gnawbone, either Smaug, Kura, Ganax, Kyodai, Tiamat, Tymna) and that creature survives. It does nothing against exile, bounce, -X/-X, a sacrifice or a counterspell, and Terror of the Peaks, Goldspan Dragon and
+  the other non-legendary Dragons cannot be the target of its enter trigger (they take the {3} equip).
+- **Giver of Runes** ({W}, a 1/2): {T}: another target creature you control gains protection from colorless or from a colour of your choice until end of turn. It needs a turn without summoning
+  sickness first. It stops targeted removal and damage of one colour (and blockers of that colour) on the key Dragon, but not a wipe that does not target.
+- **The Theorist, Jace Beleren** ({2}{U}{U} planeswalker, loyalty 3): at the beginning of each opponent's draw step you draw a card (about three extra cards a round at a four-player table, and each is a
+  Niv-Mizzet ping). +1 makes a 1/1 Illusion to defend him; -2 returns up to one artifact or creature from each opponent to its owner's hand (a tempo play before an attack or against a combo piece); -6 draws three and grows the creatures. Opponents will attack him: keep a blocker.
+- **Tymna the Weaver** ({1}{W}{B}, a 2/2 lifelink; here a plain creature in the 99, not a commander): at the beginning of each of your postcombat main phases you may pay X life, where X is the number of opponents dealt combat damage this turn,
+  to draw X cards. When attackers connect she draws a card for each opponent hit, at 1 life per card. She is legendary, so Mithril Coat can protect her.
 
 ### How the deck wins
 
@@ -88,7 +111,7 @@ protection up.
   trigger happens twice. **Lathliss, Dragon Queen** ({4}{R}{R}) makes a 5/5 flying Dragon for each nontoken Dragon,
   which feeds every one of those triggers again. **Doubling Season** doubles Lathliss's tokens.
 - **Ganax, Astral Hunter** ({4}{R}) makes a Treasure whenever it or another Dragon enters. **Niv-Mizzet, the Firemind**
-  ({2}{U}{U}{R}{R}) pings any target for every card you draw (every Ur-Dragon attack, Rhystic Study, The One Ring, Relic of Sauron's loot,
+  ({2}{U}{U}{R}{R}) pings any target for every card you draw (every Ur-Dragon attack, Rhystic Study, The One Ring, The Theorist, Tymna's postcombat draw, Relic of Sauron's loot,
   its own {T}: draw).
   **Utvara Hellkite** ({6}{R}{R}) makes a 6/6 flying Dragon for each Dragon that attacks, and each of those Dragons
   feeds the enters triggers above.
@@ -128,18 +151,16 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Tiamat** (cast it) fetches five Dragons to hand
   and refuels the Ur-Dragon trigger.
 - **Crux of Fate** is a one-sided wrath: destroy all non-Dragon creatures. It also kills your own dorks, Rivaz,
-  Garth, Young Pyromancer and Spark Double (unless it copies a Dragon), so use it before the combo is set up or when the board is mostly Dragons. **Austere Command** ({4}{W}{W}) picks two modes: only
-  "creatures with mana value 3 or less" leaves every Dragon alone (it still kills your dorks, Rivaz and Young
-  Pyromancer); the artifact mode also kills your rocks, The One Ring, Urza's Incubator and Scion of Draco, and the
-  enchantment mode kills Doubling Season, Rhystic Study and Summon: Bahamut.
+  Garth, Dragonspeaker Shaman, Giver of Runes, Tymna and Spark Double (unless it copies a Dragon), so use it before the combo is set up or when the board is mostly Dragons. Mithril Coat on a legendary creature
+  saves that one creature from it.
 
 ### The Dragons
 
 | Cost | Dragons | Role |
 |---|---|---|
 | 4 | Smaug the Magnificent, Nicol Bolas the Ravager, Kyodai, Soul of Kamigawa | Early hasty flier with a Treasure every upkeep; discard and a flip into a planeswalker; a flash flier that protects one permanent (see Protection) |
-| 5 | Terror of the Peaks, Goldspan Dragon, Glorybringer, Thundermaw Hellkite, Scourge of Valkas, Ganax, Kura, Dragonlord Ojutai, Scion of the Ur-Dragon | The core: damage, haste, removal, Treasures, card selection |
-| 6 | Lathliss, Miirym, Dragonlord Dromoka, Hellkite Tyrant, Shivan Dragon, Niv-Mizzet | Engines and finishers |
+| 5 | Terror of the Peaks, Goldspan Dragon, Glorybringer, Thundermaw Hellkite, Scourge of Valkas, Ganax, Kura, Dragonlord Ojutai | The core: damage, haste, removal, Treasures, card selection |
+| 6 | Lathliss, Miirym, Dragonlord Dromoka, Hellkite Courser, Hellkite Tyrant, Shivan Dragon, Niv-Mizzet | Engines and finishers; Hellkite Courser puts the commander onto the battlefield for a turn (see Getting The Ur-Dragon out earlier) |
 | 7 | Tiamat, Old Gnawbone, Smaug the Impenetrable, Morophon | The seven-drops The Ur-Dragon drops in free; Morophon is a Dragon (changeling) and makes the commander cost {4}; Smaug the Impenetrable is hasty and indestructible, so it survives a destroy wipe, and turns noncombat damage dealt to it into Treasures |
 | 8-9 | Utvara Hellkite (8), Summon: Bahamut (9) | The finishers: a Dragon-attack engine and a slow four-chapter removal, card draw and burn |
 | Varies | Scion of Draco | Costs {12} minus {2} per basic land type among your lands: about {2} with five types, {1} less than that with Eminence |
@@ -148,9 +169,8 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 
 - **Mana Vault, Sol Ring, Arcane Signet** (and Ancient Tomb): the fast start. Cast on turn 1 and left
   untapped, Mana Vault gives {C}{C}{C} on turn 2: two lands and the Vault pay for a five-drop. **Mox Jasper** makes any
-  colour once you control a Dragon, so it is a dead card before one lands. **Cursed Mirror** ({2}{R}) taps for {R}, or
-  enters as a hasty copy of the best creature on the table for a turn. **Talisman of Hierarchy** ({2}) taps for {C}, or for {W} or {B}
-  at 1 damage.
+  colour once you control a Dragon, so it is a dead card before one lands. **Talisman of Hierarchy** ({2}) taps for {C}, or for {W} or {B}
+  at 1 damage; **Talisman of Curiosity** ({2}) taps for {C}, or for {G} or {U} at 1 damage. **Sapphire Medallion** ({2}) makes no mana but takes {1} off every blue spell.
 - **Relic of Sauron** ({4}): taps for two mana in any mix of blue, black and red, which pays for a seven-drop and fixes
   the blue and black the elves don't make. Later, {3} and a tap draws two cards and discards one. Its own mana can't pay
   for the loot.
@@ -160,22 +180,12 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
   basic types for Scion of Draco.
 - **Rivaz of the Claw** ({1}{B}{R}): taps for two mana for Dragon spells, and lets you cast one Dragon from the
   graveyard each turn.
-- **Rhystic Study, Sylvan Library, The One Ring, Fact or Fiction:** the draw engines. Rhystic makes the table pay for casting into you;
+- **Rhystic Study, Sylvan Library, The One Ring, Fact or Fiction, The Theorist, Tymna the Weaver:** the draw engines. The Theorist draws a card in each opponent's draw step and Tymna one per opponent hit by combat damage, and both feed Niv-Mizzet's pings. Rhystic makes the table pay for casting into you;
   Sylvan Library lets you draw up to two extra cards in the draw step for 4 life each (or put them back);
   The One Ring protects you for a turn and draws more each turn (it costs 1 life per burden counter each upkeep); Fact
   or Fiction is a four-mana instant for a pile of cards.
-- **Lightning Bolt, Decimate, Austere Command, Young Pyromancer:** the spells package. Bolt is
-  cheap removal or reach; Decimate destroys an artifact, a creature, an enchantment and a land at once (all four need
-  a legal target); Young Pyromancer turns each instant or sorcery into a 1/1 Elemental, but the
-  deck holds only eighteen of them (nine instants and nine sorceries).
-- **Triple Triad** ({3}{R}{R}{R}, enchantment): at the beginning of your upkeep each player exiles the top card of their
-  library, and this turn you may play your own exiled card and every other exiled card with a lower mana value without
-  paying their mana costs. About a third of the 99 are lands (a land flip gives no free spell, but you may play it as your
-  land drop) and 25 are Dragons (counting Morophon), mostly costing 5 to 7, so a flip is a free Dragon about one time in four, and the
-  higher the card you flip, the more of the opponents' exiled cards qualify. It needs three red sources.
-- **Rhythm of the Wild** ({1}{R}{G}, enchantment): your creature spells can't be countered, and your nontoken creatures
-  have riot, so each enters with a +1/+1 counter or haste, your choice (the Dragons The Ur-Dragon puts in included). Tokens
-  get no haste from it.
+- **Lightning Bolt, Fact or Fiction:** the spells package. Bolt is cheap removal or reach; Fact or Fiction is the four-mana instant for a pile of cards.
+- **Dragonspeaker Shaman, Hellkite Courser, Mithril Coat, Giver of Runes:** the bodies and tools of the speed and protection packages (see Getting The Ur-Dragon out earlier).
 
 ### Game plan
 
@@ -183,8 +193,8 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 the dual that fixes your colours. A turn-1 dork or Sol Ring into a turn-2 four-drop (Smaug), or Mana Vault into a turn-2 five-drop, is the
 strongest start. Sylvan Library is a good turn-2 play when the hand has no ramp.
 
-**Turns 3-4.** The cheap Dragons (Smaug the Magnificent, Bolas, Ganax) and an engine (Rhystic Study, The One Ring), or Urza's
-Incubator naming Dragon before the big Dragons and The Ur-Dragon. Keep
+**Turns 3-4.** Dragonspeaker Shaman or Urza's Incubator (naming Dragon) first, before the big Dragons and The Ur-Dragon, then the cheap Dragons (Smaug the Magnificent, Bolas, Ganax)
+and an engine (Rhystic Study, The One Ring, The Theorist). Keep
 mana for Fierce Guardianship or a free spell on the opponent's turn when you hold protection.
 
 **Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. Win
@@ -192,8 +202,8 @@ through the combat route or the Garth loop once the pieces are there.
 
 **Hold up or go?** Go when the table has no sweeper in sight and you hold protection, or when an opponent is about to win.
 Hold the Dragons in hand when an opponent has shown a board wipe, and rely on Fierce Guardianship (it counters a
-noncreature wipe), Smaug the Impenetrable (indestructible, so it survives a destroy wipe) and the cheap haste
-Dragons. Deflecting Swat only redirects a spell or ability that targets, so it does not stop a wipe.
+noncreature wipe), Smaug the Impenetrable (indestructible, so it survives a destroy wipe), Mithril Coat flashed onto a legendary creature and the cheap haste
+Dragons.
 
 ### Mulligans
 
@@ -226,14 +236,15 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 | Seven mana and no Dragon | Terror of the Peaks or Goldspan Dragon | Demonic Tutor or Vampiric Tutor (to the top) |
 | Opponent about to wipe | Fierce Guardianship | Vampiric Tutor, hold the mana (it is free only with a commander out) and the card |
 | The Ur-Dragon is about to attack | A seven-drop to put in free | Tutor for Old Gnawbone or Utvara Hellkite and leave it in hand |
-| A creature with the table's best card | Swords, Path or Decimate | Any tutor |
+| A creature with the table's best card | Swords, Path or Chaos Warp | Any tutor |
 
 ### Protecting the key turn
 
 - **Free spells:** Fierce Guardianship (counter a noncreature spell) costs nothing while you control a commander, which
   is any turn after The Ur-Dragon lands.
-- **Deflecting Swat** (free while you control a commander) moves a targeted removal spell or counterspell onto another
-  target. A wipe that does not target goes through it: answer a wipe with Fierce Guardianship, or do not commit the Dragons.
+- **Mithril Coat** (flash) makes a legendary creature indestructible: in response to a destroy effect or a destroy wipe, or at an opponent's end step. It does not stop exile, bounce, -X/-X or
+  a sacrifice. Answer a wipe that does not destroy with Fierce Guardianship, or do not commit the Dragons.
+- **Giver of Runes** ({T}) gives another creature protection from a colour until end of turn: held up on an opponent's turn it answers a targeted removal spell or a block. A wipe that does not target goes through it.
 - **Dragonlord Ojutai** has hexproof while it is untapped (itself only). **Scion of Draco** gives your blue creatures
   hexproof, and The Ur-Dragon is all five colours.
 - **Cavern of Souls** (name Dragon) and **Delighted Halfling** make the key Dragon or Garth uncounterable.
@@ -241,12 +252,11 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 
 ### Interaction
 
-- **Removal:** Swords to Plowshares, Path to Exile, Lightning Bolt (3 damage to any target), Decimate (an artifact, a
-  creature, an enchantment and a land), Chaos Warp (any permanent, random replacement).
+- **Removal:** Swords to Plowshares, Path to Exile, Lightning Bolt (3 damage to any target), Chaos Warp (any permanent, random replacement).
 - **On bodies:** Glorybringer (4 damage each exert), Terror of
   the Peaks and the Dragon-enters pingers (damage to any target), Thundermaw Hellkite (taps and damages fliers), Garth's
   Terror and Disenchant copies.
-- **Wipes:** Crux of Fate (non-Dragon mode), Austere Command, Nibelheim Aflame.
+- **Wipes:** Crux of Fate (non-Dragon mode), Nibelheim Aflame.
 - **Nibelheim Aflame** ({2}{R}{R} sorcery): choose a creature you control; it deals damage equal to its power to each
   other creature, yours included, and takes none itself. It is not a Dragon-safe wipe like Crux of Fate: every Dragon
   whose toughness is at or below the chosen creature's power dies too. Cast it when the table's board is the problem
@@ -262,15 +272,15 @@ The matchup notes are expectations, not measured.
 | Opponent type | What to do |
 |---|---|
 | Fast combo (Kinnan, Yawgmoth, Zur) | Hold Fierce Guardianship; kill the commander with Swords or Path; go over the top with a hasty Dragon on turn 5 |
-| Board wipes | Keep Dragons in hand and hold Fierce Guardianship; Smaug the Impenetrable survives a destroy wipe, and Kyodai, flashed in, saves one other permanent from it; Rivaz and Tiamat rebuild. Swat does not stop a wipe |
+| Board wipes | Keep Dragons in hand and hold Fierce Guardianship; Smaug the Impenetrable survives a destroy wipe, and Kyodai, flashed in, saves one other permanent from it; Rivaz and Tiamat rebuild; Mithril Coat, flashed in on a legendary creature, saves that one from a destroy wipe |
 | Creature-heavy midrange | Glorybringer, Thundermaw and the Dragon-enters damage clear blockers; Crux of Fate (non-Dragon mode) clears their board but not yours |
-| Artifact decks (Thanos, Urza, Kinnan) | Hellkite Tyrant takes their artifacts; Decimate, Austere Command and Chaos Warp answer the key one |
+| Artifact decks (Thanos, Urza, Kinnan) | Hellkite Tyrant takes their artifacts; Chaos Warp answers the key one |
 | Stax / Blood Moon | Fetch the basic (Forest) first; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
 
 ### Life management
 
 You start at 40 and pay life for the mana base (seven fetches, five shocks, City of Brass, Sulfurous Springs, Ancient Tomb), Mana Vault,
-Vampiric Tutor, The One Ring and Sylvan Library (4 life per card kept in hand). Dromoka gives
+Vampiric Tutor, The One Ring, the Talismans (1 damage per coloured tap), Tymna the Weaver (1 life per card drawn) and Sylvan Library (4 life per card kept in hand). Dromoka gives
 lifelink, and Scion of Draco gives it to The Ur-Dragon and every other black creature. Don't fetch for a colour you
 already have.
 
@@ -298,8 +308,8 @@ enters while you control seven or more lands with different names; almost every 
 (Springs, Orchard and the other nonbasics without a land type cannot be fetched): land sources by colour are white 15,
 blue 15, black 17, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
 Maelstrom adding one more of each for Dragon spells and Orchard adding what the table's lands make. Red is the heaviest
-colour (RR on most Dragons, RRR on Scourge of Valkas and Triple Triad), then green and black; white and blue are the thinnest, for
-Niv-Mizzet ({U}{U}), Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks (Talisman of Hierarchy makes {W} or {B}): Arcane Signet, Birds, Mox Jasper (with a
+colour (RR on most Dragons, RRR on Scourge of Valkas), then green and black; white and blue are the thinnest, for
+Niv-Mizzet and The Theorist ({U}{U}), Fact or Fiction, Tymna and Giver of Runes. Add the mana creatures and rocks (Talisman of Hierarchy makes {W} or {B}, Talisman of Curiosity {G} or {U}): Arcane Signet, Birds, Mox Jasper (with a
 Dragon out) and Delighted Halfling make any colour, and Treasures from Goldspan, Ganax, Smaug and
 Old Gnawbone fix the rest. The one basic is thin protection against Blood
 Moon (fetch it first; it makes only green).
