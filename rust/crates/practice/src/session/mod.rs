@@ -135,7 +135,9 @@ pub(crate) struct State {
     pub answers: Vec<Answer>,
     pub marks: Vec<usize>,
     pub answer_seats: Vec<String>,
-    pub replay: VecDeque<Answer>,
+    /// the answers a replay gives back, each with the seat that gave it (None: not known, a save from before saves
+    /// carried them): a decision asked of another seat means the replay went a different way
+    pub replay: VecDeque<(Answer, Option<String>)>,
     pub replaying: bool,
     pub current: Option<Current>,
     pub finished: bool,
@@ -456,6 +458,18 @@ impl Session {
         if abort.load(Ordering::Relaxed) {
             return self.closed();
         }
+        {
+            // answers still left: the game ended before the replay did
+            let mut s = self.st.lock().unwrap();
+            if !s.replay.is_empty() {
+                s.replay.clear();
+                s.replaying = false;
+                let n = s.answers.len();
+                s.events.push(replay_went_another_way(n));
+                drop(s);
+                self.cv.notify_all();
+            }
+        }
         if self.compare {
             // the comparisons not yet worked out, before the review
             let jobs: Vec<&Arc<Shadow>> = self.shadows.values().filter(|s| s.pending() > 0).collect();
@@ -543,7 +557,7 @@ impl Session {
         let Some(e) = self.try_entry(n, seat) else { return Some("That decision has no AI choice to try.".into()) };
         let then = e.ai_answer();
         let info = json!({"tryit": {"n": e.n, "ai": e.ai_text(), "applied": then.is_some(), "by": seat}});
-        self.rewind(Some(e.n), then, info)
+        self.rewind(Some(e.n), then.map(|a| (a, seat.to_string())), info)
     }
 
     /// a rewind to answer `to`: the replay keeps the settings it had; the setting now applies from there on
@@ -560,7 +574,7 @@ impl Session {
 
     /// restart the game and replay your first `to` answers (then `then`, if given, as your answer to decision `to`);
     /// the decisions after are live again. None, or why not
-    pub fn rewind(self: &Arc<Self>, to: Option<usize>, then: Option<Answer>, info: Value) -> Option<String> {
+    pub fn rewind(self: &Arc<Self>, to: Option<usize>, then: Option<(Answer, String)>, info: Value) -> Option<String> {
         let (to, handle) = {
             let mut st = self.st.lock().unwrap();
             let to = match to {
@@ -587,7 +601,8 @@ impl Session {
         }
         {
             let mut st = self.st.lock().unwrap();
-            let keep: Vec<Answer> = st.answers[..to].to_vec();
+            let keep: Vec<(Answer, Option<String>)> =
+                st.answers[..to].iter().cloned().zip(st.answer_seats[..to].iter().cloned().map(Some)).collect();
             let cut = st.marks.get(to).copied().unwrap_or_else(|| self.tape.lock().unwrap().entries.len());
             self.tape.lock().unwrap().cut(cut);
             for sh in self.shadows.values() {
@@ -596,7 +611,7 @@ impl Session {
             st.answers.clear();
             st.marks.clear();
             st.answer_seats.clear();
-            st.replay = keep.into_iter().chain(then).collect();
+            st.replay = keep.into_iter().chain(then.map(|(a, seat)| (a, Some(seat)))).collect();
             st.finished = false;
             st.outcome = None;
             st.current = None;
@@ -772,14 +787,25 @@ impl Session {
                     .collect()
             })
             .unwrap_or_default();
-        st.replay =
+        let answers: Vec<Answer> =
             data.get("answers").and_then(Value::as_array).ok_or_else(damaged)?.iter().map(answer_from_json).collect();
-        if let Some(a) = data.get("answer_seats").and_then(Value::as_array) {
-            // (a two-player save knows whose answer each one is; replay re-derives it, so this only checks the shape)
-            if a.len() != st.replay.len() {
-                return Err(damaged());
+        // whose answer each one is: a one-person save has only the deck's; a two-player save writes them; one without
+        // them (an older one) is replayed unchecked
+        let seats: Vec<Option<String>> = match data.get("answer_seats") {
+            Some(a) => {
+                let a = a.as_array().ok_or_else(damaged)?;
+                if a.len() != answers.len() {
+                    return Err(damaged());
+                }
+                a.iter()
+                    .map(|x| x.as_str().filter(|k| sess.humans.iter().any(|h| h == k)).map(|k| Some(k.to_string())))
+                    .collect::<Option<_>>()
+                    .ok_or_else(damaged)?
             }
-        }
+            None if sess.partner.is_none() => vec![Some(sess.deck.clone()); answers.len()],
+            None => vec![None; answers.len()],
+        };
+        st.replay = answers.into_iter().zip(seats).collect();
         st.replaying = !st.replay.is_empty();
         drop(st);
         Ok(sess)
@@ -814,6 +840,12 @@ impl Session {
         let st = self.st.lock().unwrap();
         st.thread.as_ref().is_some_and(|h| !h.is_finished()) || self.shadows.values().any(|s| s.workers_running() > 0)
     }
+}
+
+/// the message when a replay stops: its recorded answers no longer fit the game (a saved game that was edited, or
+/// changed rules), so the game goes on live from decision `n`
+pub(crate) fn replay_went_another_way(n: usize) -> Value {
+    json!({"kind": "warn", "text": format!("The replay of this game went a different way at decision {n}: it goes on from here.")})
 }
 
 fn autopass_of(st: &State, seat: &str, at: Option<usize>) -> String {

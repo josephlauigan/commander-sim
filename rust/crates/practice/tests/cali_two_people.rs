@@ -102,6 +102,10 @@ impl Bot {
     }
 }
 
+fn is_guard_warning(t: &str) -> bool {
+    t.starts_with("The replay of this game went a different way at decision ")
+}
+
 /// A session driven by hand: the events seen, the request waiting, and every answer given (seat, answer)
 struct Table {
     s: Arc<Session>,
@@ -178,6 +182,11 @@ impl Table {
         while self.live() {
             self.step(None);
         }
+    }
+
+    /// how many times the replay's seat guard stopped a replay (it must never, on a game nobody edited)
+    fn guard_warns(&self) -> usize {
+        self.evs.iter().filter(|e| e["kind"] == "warn" && e["text"].as_str().is_some_and(is_guard_warning)).count()
     }
 
     /// the log texts after the last reset (all of them, with none)
@@ -355,6 +364,7 @@ fn undo_case(
     assert_eq!(t.given, f.given);
     let on = f.given.len() - to;
     assert_eq!(tape_len(&t.s) + tape_len(&f.s), 0);
+    assert_eq!(t.guard_warns() + f.guard_warns(), 0, "the seat guard fired on a game nobody edited");
     t.s.close(Duration::from_secs(10));
     f.s.close(Duration::from_secs(10));
     Some(format!(
@@ -424,6 +434,7 @@ fn undo_takes_back_the_other_persons_later_answers() {
         assert!(t.live() && t.seat() == *other);
         assert!(t.evs.last().unwrap().get("replay").is_none(), "{}", t.evs.last().unwrap());
         assert_eq!(point(&t).answer_seats, vec![first.clone()]);
+        assert_eq!(t.guard_warns(), 0);
         eprintln!(
             "RECORD seed {seed}: first seat {first}: Undo of the first seat's mulligan took back the other person's too; the other was asked again live"
         );
@@ -489,6 +500,7 @@ fn try_it_from_the_second_seat_applies_the_ai_choice() {
     assert_eq!(after.answer_seats, fresh.answer_seats);
     assert_eq!(after.saved, fresh.saved);
     assert_eq!(tape_len(&t.s) + tape_len(&f.s), 0);
+    assert_eq!(t.guard_warns() + f.guard_warns(), 0, "the seat guard fired on a game nobody edited");
     eprintln!(
         "RECORD seed {seed}: Try it from the guest at decision {n} (AI: {ai_text:?}, differs {differs}): applied, the game is at decision {} \
          as a fresh session given the same answers is; tape length {} / {}",
@@ -532,6 +544,7 @@ fn a_two_person_cali_save_has_no_tier_and_loads_to_the_same_point() {
     );
     let lt = Table::open(l);
     assert_eq!(point(&lt), here);
+    assert_eq!(lt.guard_warns(), 0);
     lt.s.close(Duration::from_secs(10));
 
     // a tier in it is ignored (a table of people only has none); null or not a string is damaged; one person needs one
@@ -582,4 +595,129 @@ fn the_tape_stays_empty_without_ai_seats() {
     assert!(hints > 0);
     eprintln!("RECORD seed 5: a whole game with compare on and {hints} hints: tape length {}", tape_len(&t.s));
     t.s.close(Duration::from_secs(30));
+}
+
+// ------------------------------------------------------------------------------------------------ the seat guard
+
+#[test]
+fn the_seat_guard_stops_a_replay_whose_seats_do_not_match() {
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    let seed = seed_with_first(&e, &deck, &guest, &deck, 1);
+    let mut t = Table::open(Session::new(options(&e, &deck, &guest, seed)).unwrap());
+    t.run_to(8, None);
+    assert!(t.live());
+    let saved = t.s.saved();
+    let seats: Vec<String> =
+        saved["answer_seats"].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect();
+    assert_eq!(seats.len(), 8);
+    t.s.close(Duration::from_secs(10));
+    let other = |k: &str| if k == deck { guest.clone() } else { deck.clone() };
+    let load = |f: &dyn Fn(&mut Value)| {
+        let mut v = saved.clone();
+        f(&mut v);
+        Session::load(e.clone(), &v, true, false)
+    };
+    let same = |a: &Table, b: &Table| {
+        assert_eq!((a.at["request"].clone(), a.at["seat"].clone()), (b.at["request"].clone(), b.at["seat"].clone()));
+    };
+
+    // an untouched save: the guard does not fire
+    let ok = Table::open(load(&|_| {}).unwrap());
+    assert_eq!((ok.guard_warns(), ok.s.answers_len()), (0, 8));
+
+    // every seat swapped: the first decision is asked of one seat, its recorded answer is the other's: a live ask at
+    // decision 0, one seat-less warning, nothing replayed
+    let swapped: Vec<String> = seats.iter().map(|k| other(k)).collect();
+    let g = Table::open(load(&|v| v["answer_seats"] = json!(swapped)).unwrap());
+    assert!(g.live());
+    assert_eq!(g.guard_warns(), 1, "{:?}", g.evs.iter().filter(|e| e["kind"] == "warn").collect::<Vec<_>>());
+    let w = g.evs.iter().find(|e| e["kind"] == "warn").unwrap();
+    assert_eq!(w["text"], "The replay of this game went a different way at decision 0: it goes on from here.");
+    assert!(w.get("seat").is_none() && w.get("replay").is_none(), "{w}");
+    assert_eq!(g.s.answers_len(), 0);
+    assert_eq!(g.seat(), seats[0], "the first decision is live, asked of its own seat");
+    // it is the decision the unedited game starts with
+    let fresh = Table::open(Session::new(options(&e, &deck, &guest, seed)).unwrap());
+    same(&g, &fresh);
+    eprintln!("RECORD guard: all seats swapped: 1 warning at decision 0, live ask of {}", g.seat());
+    g.s.close(Duration::from_secs(10));
+    fresh.s.close(Duration::from_secs(10));
+
+    // two answers' seats swapped in the middle: the replay runs to the first and stops there
+    let at = (1..seats.len()).find(|&i| seats[i] != seats[i - 1]).unwrap() + 2;
+    let at = at.min(seats.len() - 2);
+    let k = (at..seats.len() - 1).find(|&i| seats[i] != seats[i + 1]).expect("two answers by different seats");
+    let mut mid = seats.clone();
+    mid.swap(k, k + 1);
+    let g = Table::open(load(&|v| v["answer_seats"] = json!(mid)).unwrap());
+    assert!(g.live());
+    assert_eq!(g.guard_warns(), 1);
+    assert!(
+        g.evs.iter().any(|e| e["text"]
+            == format!("The replay of this game went a different way at decision {k}: it goes on from here."))
+    );
+    assert_eq!(g.s.answers_len(), k);
+    assert_eq!(point(&g).answer_seats, seats[..k].to_vec());
+    eprintln!(
+        "RECORD guard: seats of answers {k} and {} swapped: 1 warning at decision {k}, {k} answers kept, live from there",
+        k + 1
+    );
+    g.s.close(Duration::from_secs(10));
+
+    // answers the game never asks: left over at the end, one warning
+    let mut t = Table::open(Session::new(options(&e, &deck, &guest, seed)).unwrap());
+    t.run_out();
+    assert_eq!(t.at["kind"], "over");
+    let done = t.s.saved();
+    let n = t.given.len();
+    t.s.close(Duration::from_secs(10));
+    let mut v = done.clone();
+    v["answers"].as_array_mut().unwrap().extend([json!({"do": "pass"}), json!({"do": "pass"})]);
+    v["answer_seats"].as_array_mut().unwrap().extend([json!(deck), json!(guest)]);
+    let g = Table::open(Session::load(e.clone(), &v, true, false).unwrap());
+    assert_eq!(g.at["kind"], "over", "{}", g.at);
+    assert_eq!(g.guard_warns(), 1);
+    assert!(
+        g.evs.iter().any(|e| e["text"]
+            == format!("The replay of this game went a different way at decision {n}: it goes on from here."))
+    );
+    // the untouched finished save: no warning
+    let g2 = Table::open(Session::load(e.clone(), &done, true, false).unwrap());
+    assert_eq!((g2.at["kind"].clone(), g2.guard_warns()), (json!("over"), 0));
+    eprintln!(
+        "RECORD guard: 2 left-over answers after a finished game of {n}: 1 warning at decision {n}; the untouched finished save: 0"
+    );
+
+    // a save whose answer_seats cannot be right is damaged: a non-player, the wrong length, not a list, not a string
+    for (what, bad) in [
+        ("a non-player", {
+            let mut b = seats.clone();
+            b[3] = "nobody".into();
+            json!(b)
+        }),
+        ("too short", json!(seats[..7].to_vec())),
+        ("too long", json!([seats.clone(), vec![deck.clone()]].concat())),
+        ("null", Value::Null),
+        ("a number", json!(5)),
+        ("a number in the list", {
+            let mut b: Vec<Value> = seats.iter().map(|s| json!(s)).collect();
+            b[2] = json!(7);
+            json!(b)
+        }),
+    ] {
+        let why = load(&|v| v["answer_seats"] = bad.clone()).err().unwrap_or_else(|| panic!("{what}: loaded"));
+        assert_eq!(why, "a damaged saved game", "{what}");
+    }
+    // a two-player save without answer_seats is replayed unchecked
+    let g = Table::open(
+        load(&|v| {
+            v.as_object_mut().unwrap().remove("answer_seats");
+        })
+        .unwrap(),
+    );
+    assert_eq!((g.guard_warns(), g.s.answers_len()), (0, 8));
+    g.s.close(Duration::from_secs(10));
+    ok.s.close(Duration::from_secs(10));
+    g2.s.close(Duration::from_secs(10));
 }
