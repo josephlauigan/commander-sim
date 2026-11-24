@@ -50,6 +50,9 @@ pub struct GameOut {
     pub winner: Option<usize>,
     pub wintype: Option<Sym>,
     pub round: u32,
+    /// the engine ran out of work and cut the game short (`Game::stopped`); such a game usually also ends as a
+    /// timeout, but is counted on its own
+    pub stopped: bool,
     pub players: Vec<PlayerOut>,
     pub log: Option<Vec<String>>,
 }
@@ -63,6 +66,7 @@ impl GameOut {
             winner: g.winner.map(|p| p.0 as usize),
             wintype: g.wintype,
             round: g.round,
+            stopped: g.stopped,
             players: g
                 .players
                 .iter()
