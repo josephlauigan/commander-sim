@@ -133,6 +133,7 @@ Syr Vondam, Sunstar Exemplar | SelfDies | T
 Syr Vondam, Sunstar Exemplar | SelfExiled | T
 Teysa, Orzhov Scion | Dies | T
 The Gitrog Monster | LandGy | T
+The Reaper, King No More | Dies | T | | 'Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may put that card onto the battlefield under your control': a trigger
 Tireless Tracker | Sacrifice | N | | 'whenever you sacrifice': a sacrifice is not a leaving
 Tishana's Tidebinder | Leaves | S | | 'for as long as this creature remains on the battlefield': a duration ending
 Titania, Protector of Argoth | LandGy | T

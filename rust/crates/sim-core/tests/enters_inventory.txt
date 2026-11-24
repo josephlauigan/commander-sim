@@ -59,6 +59,7 @@ Boughside Wanderers | Etb | T
 Braids's Frightful Return | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 Branchloft Pathway // Boulderloft Pathway | LandEtb | S |  | a face choice as it enters
 Breath of Fury | Etb | S
+Breya, Etherium Shaper | Etb | T | | a triggered ability on the stack: two blue Thopter artifact creature tokens
 Bronze Guardian | Etb | S |  | a state registration (size rule)
 Burglar Rat | Etb | T
 Cacophony Unleashed | Etb | T
@@ -212,6 +213,7 @@ Impact Tremors | Etb | T
 Impact Tremors | TokensEnter | T |  | a trigger that runs at once (marked enter_trigger)
 Inferno Titan | Etb | T
 Infestation Expert | Etb | T
+Infinite Guideline Station | Etb | T | | a triggered ability on the stack: a tapped Robot for each multicolored permanent, counted as it resolves
 Intellect Devourer | Etb | T
 Intruder Alarm | Etb | T
 Iroas, God of Victory | Etb | S |  | a state registration (devotion)
@@ -422,6 +424,7 @@ The Mending of Dominaria | Etb | N |  | chapter I triggers on the lore counter (
 The Mightstone and Weakstone | Etb | T
 The Mind Stone | Etb | S |  | indestructible, a static
 The One Ring | Etb | T
+The Reaper, King No More | Etb | T | | a triggered ability on the stack: a -1/-1 counter on each of up to two target creatures
 The Seriema | Etb | T
 The Soul Stone | Etb | S |  | indestructible, a static
 The Wasp, Winsome Avenger | Etb | T
