@@ -676,6 +676,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-11-24.** Paired test of the Gleaming Splendor swap (main 654db206, t5, loose, 1,500 games, seed 500000): new 32.4% against the old Esper Sentinel list's 31.3% (new minus old +1.1, paired noise ±2.1), a tie (`audit/yshtola/FINDINGS.md`).
 - **2026-11-23.** Out: Esper Sentinel. In: Gleaming Splendor. JD's choice (11/23), not simulated. Gleaming Splendor ({1}{W} enchantment: you create a Treasure whenever an opponent draws their second card each turn; {2}{W}: two target players each draw a card; model status Full) takes Esper Sentinel's slot (a proxy).
 - **2026-11-22.** Out: Loran of the Third Path. In: Sapphire Medallion. Sapphire Medallion takes Loran of the Third Path's slot: blue spells cost {1} less (JD's choice, not simulated).
 - **2026-11-21.** Out: Grand Arbiter Augustin IV, Urza's Cave. In: The Theorist, Jace Beleren, Expedition Map. JD's choice (11/21), not simulated: Jace ({2}{U}{U} planeswalker, a noncreature spell of mana value 4 that triggers Y'shtola, counts two blue devotion for Oracle, and draws a card in each opponent's draw step) takes Augustin's slot (Opus: Augustin is a creature and never triggers her); Expedition Map ({1}; {2}, {T}, sacrifice: a land card to hand) takes Urza's Cave's slot, a near-sidegrade since the Cave already fetched a land (the Map was in the list 11/04-11/14 with no clear effect, win rate when cast 34.9% in the 11/07 analysis; Opus called it marginal). Lands 37 -> 36, Game Changers 16 -> 15.
