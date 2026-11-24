@@ -128,6 +128,8 @@ pub struct RunTally {
     pub play_seeds: HashSet<u64>,
     pub axes: Axes,
     pub wintype: Counter<String>,
+    /// how the games ended: timeouts, engine step cap stops, no winner
+    pub ends: report::GameEnds,
     /// Tier 6 report counters, filled only when `me` is a Tier 6 deck (the per-deck block of `--deck X --pool t6`)
     pub t6: crate::t6report::T6Tally,
 }
@@ -151,6 +153,7 @@ impl RunTally {
             play_seeds: HashSet::new(),
             axes: Axes::new(),
             wintype: Counter::new(),
+            ends: Default::default(),
             t6: Default::default(),
         }
     }
@@ -165,6 +168,7 @@ impl RunTally {
         }
         self.n += 1;
         self.win += won as u64;
+        self.ends.add(g);
         self.by_seed.insert(seed, won);
         let side = if pi == 0 {
             self.play_seeds.insert(seed);
@@ -409,6 +413,9 @@ impl Ctx<'_> {
             duel::even_share_pct(fmt.seats),
             100.0 * (w as f64 / nf - 1.0 / fmt.seats as f64)
         );
+        if let Some(l) = r.ends.line(duel) {
+            println!("{l}");
+        }
         if duel {
             let side = |(g, won): (u64, u64)| {
                 if g == 0 { "n/a".to_string() } else { format!("{:.1}% ({won}/{g})", (100 * won) as f64 / g as f64) }
@@ -485,6 +492,10 @@ impl Ctx<'_> {
                 .map(|k| format!("{} {:.1}%", sim.name_of(k), (100 * v.killed_me.get(k)) as f64 / v.n as f64))
                 .collect();
             println!("{:15}eliminated by (variant): {}", "", opp.join("  "));
+            if duel::is_duel(fmt) || b.ends.any() || v.ends.any() {
+                println!("{:15}game ends (baseline): {}", "", b.ends.text());
+                println!("{:15}game ends (variant):  {}", "", v.ends.text());
+            }
             if duel::is_duel(fmt) {
                 // the same seed gives the same opponent in the same order for both lists
                 for (side, play) in [("on the play", true), ("on the draw", false)] {

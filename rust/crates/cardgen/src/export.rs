@@ -191,7 +191,7 @@ fn ident_of(colors: impl Iterator<Item = char> + Clone) -> String {
 }
 
 /// the decks.json `formats` object: every format of data/formats.toml by key (the key is not repeated inside it).
-/// `banned` is written only for a format whose bans are a list.
+/// `banned` is written only for a format whose bans are a list; `ai` for every format.
 pub fn formats_doc(formats: &[FormatDef]) -> J {
     J::Obj(Obj(formats
         .iter()
@@ -204,6 +204,12 @@ pub fn formats_doc(formats: &[FormatDef]) -> J {
                     J::from(f.banned.iter().map(|b| J::from(b.as_str())).collect::<Vec<J>>()),
                 ));
             }
+            // the AI profile, every format's (Commander's too); `duel` is derived from the seats by the reader
+            let go = match f.ai.go_rules {
+                sim_core::format::GoRules::T6 => "t6",
+                sim_core::format::GoRules::All => "all",
+            };
+            o.0.push(("ai".to_string(), J::Obj(obj! {"learned_eval" => f.ai.learned_eval, "go_rules" => go})));
             (f.key.clone(), J::Obj(o))
         })
         .collect()))

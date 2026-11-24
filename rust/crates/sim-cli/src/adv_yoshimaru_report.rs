@@ -27,7 +27,7 @@ fn player(deck: &'static str, ms: &[(&'static str, u32)]) -> PlayerOut {
 }
 
 fn game(p: PlayerOut) -> GameOut {
-    GameOut { winner: None, wintype: None, round: 10, players: vec![p], log: None }
+    GameOut { winner: None, wintype: None, round: 10, stopped: false, players: vec![p], log: None }
 }
 
 /// the pre-change loop, verbatim, for comparison

@@ -50,6 +50,9 @@ pub struct GameOut {
     pub winner: Option<usize>,
     pub wintype: Option<Sym>,
     pub round: u32,
+    /// the engine ran out of work and cut the game short (`Game::stopped`); such a game usually also ends as a
+    /// timeout, but is counted on its own
+    pub stopped: bool,
     pub players: Vec<PlayerOut>,
     pub log: Option<Vec<String>>,
 }
@@ -63,6 +66,7 @@ impl GameOut {
             winner: g.winner.map(|p| p.0 as usize),
             wintype: g.wintype,
             round: g.round,
+            stopped: g.stopped,
             players: g
                 .players
                 .iter()
@@ -320,6 +324,7 @@ impl Sim {
     pub fn settings_in_for(&self, profile: Profile, table_tier: Option<&str>, fmt: &Format) -> Settings {
         let mut st = self.settings_in(profile, table_tier);
         st.rules = fmt.rules();
+        st.table = crate::duel::table_for(fmt);
         st
     }
 
