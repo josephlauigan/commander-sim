@@ -928,6 +928,15 @@ pub fn yawg_cleanup(g: &mut Game, p: PlayerId) {
     }
 }
 
+/// does p have no maximum hand size now (Thought Vessel, Reliquary Tower, a turn-long effect, the Stella flag)? The
+/// cleanup step's discard to seven reads it, and so does the AI's valuing of a draw at the end step (`karn_gilded`)
+pub fn no_max_hand(g: &Game, p: PlayerId) -> bool {
+    has(g, p, Tag::Nomax)
+        || g.player(p).lands.iter().any(|&l| g.db.get(g.perm(l).card()).tag(Tag::Nomax))
+        || g.player(p).nomax_turn == Some(g.player(p).turns)
+        || g.player(p).t0s.nomax
+}
+
 /// p's end step. Python's `ais.end_step`.
 pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     // Capture delayed triggers at the beginning: an activation during this step waits for the next end step.
@@ -1064,12 +1073,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             }
         }
     }
-    let nomax = |g: &Game| {
-        has(g, p, Tag::Nomax)
-            || g.player(p).lands.iter().any(|&l| g.db.get(g.perm(l).card()).tag(Tag::Nomax))
-            || g.player(p).nomax_turn == Some(g.player(p).turns)
-            || g.player(p).t0s.nomax
-    };
+    let nomax = |g: &Game| no_max_hand(g, p);
     let held = |g: &Game| -> Vec<CardId> {
         crate::engine::values::hand_proper(g, p) // (also leaves out the exiled cards held in the hand: impulse, Prosper)
     };

@@ -19,6 +19,23 @@
 //!
 //! AI (PROVISIONAL, never tuned by a sim; no plan row is added): the cast priority below, read by the generic cast logic.
 //! A 5/5 vigilance trample body is worth casting with no draw, and each colour among the controller's artifacts adds to it.
+//!
+//! Blinking him (E4): `reenter_bonus` is what re-entering is worth to the AI, read at the top of every blink chooser
+//! (`t2::blink_value`, `common::blink_worth`, `mine::blink_worth`, the Cloudshift DSL blink, Flickerwisp's `wisp_worth`) and
+//! by the protection pool. It returns None for every permanent that is not p's own Karn card (so every other card, deck and
+//! copy of Karn keeps today's value), Some(0.0) when a blink gains nothing (no colour, an opposing Elesh Norn, Doomsday's
+//! pile is being played) and Some(negative) when it is harmful (it would deck p: `DECKING`; a stolen Karn goes back to his
+//! owner, who draws: `STOLEN`). The value replaces the generic "has an enters hook" value (it is not added to it):
+//! `PER_CARD` for each card that stays in hand and `PER_DISCARD` for each one that would be discarded at the cleanup step
+//! (only when the draw is at p's own end step and p has a maximum hand size). The draws are counted before the blink, with
+//! `enters_trigger_times` (Gandalf, a Norn of p's own double it, an opposing one blanks it). The guard leaves
+//! `LIBRARY_FLOOR` cards in the library, except in p's own main phase with Thassa's Oracle castable in hand and the draws
+//! no larger than the library, and the library within the Oracle's reach: the draw then does not lose first (`oracle_prio`
+//! casts the Oracle once the library is that low).
+//!
+//! Limits: a Cursed Mirror or Metamorph never copies a commander, so there is no copy to blink; the AI does not cast him
+//! at instant speed under Gandalf; the Oracle exception is only for p's own main phase (at an end step the next draw comes
+//! before any Oracle can be cast); an opponent's Flickerwisp on him still sends him to the command zone.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::chars::{card_types, colors};
@@ -26,7 +43,7 @@ use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{DataKey, Game};
+use crate::state::{DataKey, Game, Step};
 
 pub const KARN_GILDED: &str = "Karn, Gilded Guardian";
 
@@ -89,6 +106,70 @@ fn karn_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let n = colours_among_other_artifacts(g, o, src);
     crate::glog!(g, "  Karn, Gilded Guardian: {} colours among the other artifacts", n);
     draw(g, o, n, false)
+}
+
+/// cards that must stay in the library after the draws (more would leave the next draw step with too little margin)
+pub const LIBRARY_FLOOR: usize = 3;
+/// the value of a blink that would deck p: far below any gain
+pub const DECKING: f64 = -20.0;
+/// the value of blinking a Karn p controls but does not own: he returns to his owner, who draws
+pub const STOLEN: f64 = -5.0;
+/// what a card that stays in hand is worth (`mine::etb_value`'s Draw rate)
+pub const PER_CARD: f64 = 1.5;
+/// what a card that would be discarded at the cleanup step is worth (the worst card is thrown away, but it was a choice)
+pub const PER_DISCARD: f64 = 0.25;
+/// cards in hand p keeps at the cleanup step
+const HAND_SIZE: usize = 7;
+
+/// what blinking p's permanent `m` is worth to p's AI when it is p's own Karn (by the physical card, so a copy of Karn is
+/// not one), None when it is not (the caller keeps its own value): see the module doc for the three-way result.
+/// `own_end_step`: the draw lands in p's own end step, before the cleanup step's discard. Reads the game only (no RNG).
+pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Option<f64> {
+    let x = g.perm(m);
+    if x.token || x.owner != p {
+        return None;
+    }
+    let (cd, card) = (x.cd?, x.phys.or(x.cd)?);
+    if &*g.db.get(cd).name != KARN_GILDED || &*g.db.get(card).name != KARN_GILDED {
+        return None;
+    }
+    if x.orig != p {
+        return Some(STOLEN);
+    }
+    if crate::impls::doomsday::active(g, p) {
+        return Some(0.0); // the pile is planned
+    }
+    let n = colours_among_other_artifacts(g, p, m) as usize
+        * crate::engine::hooks::enters_trigger_times(g, p, None, Some(m)) as usize;
+    if n == 0 {
+        return Some(0.0);
+    }
+    let library = g.player(p).library.len();
+    if library <= n + LIBRARY_FLOOR && !oracle_covers(g, p, n, library) {
+        return Some(DECKING);
+    }
+    let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
+    let kept = if capped { n.min(HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len())) } else { n };
+    Some(PER_CARD * kept as f64 + PER_DISCARD * (n - kept) as f64)
+}
+
+/// `reenter_bonus` with the timing read from the game: the draw is in p's own end step now
+pub fn reenter_now(g: &Game, p: PlayerId, m: PermId) -> Option<f64> {
+    reenter_bonus(g, p, m, g.active == Some(p) && g.step == Step::End)
+}
+
+/// the Oracle line: p's own main phase, Thassa's Oracle in hand and castable now, the `n` draws no larger than the
+/// library (a draw from an empty library loses at the next state check, before any Oracle), and the library within the
+/// Oracle's reach after them (`combos::oracle_prio`: devotion plus the Oracle's own two)
+fn oracle_covers(g: &Game, p: PlayerId, n: usize, library: usize) -> bool {
+    if g.active != Some(p) || !matches!(g.step, Step::Main1 | Step::Main2) || n > library {
+        return false;
+    }
+    let Some(o) = g.db.id("Thassa's Oracle").filter(|c| g.player(p).hand.contains(c)) else { return false };
+    let d = g.db.get(o);
+    crate::engine::cast::castable(g, p, o, "hand")
+        && crate::engine::mana::can_pay_spell(g, p, o, d.generic, &d.pips, false)
+        && library - n <= crate::impls::combos::oracle_devotion(g, p) + 2
 }
 
 /// the AI's cast priority (see the module doc)
