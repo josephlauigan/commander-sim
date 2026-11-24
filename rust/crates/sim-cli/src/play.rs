@@ -316,6 +316,7 @@ impl Sim {
     pub fn settings_in_for(&self, profile: Profile, table_tier: Option<&str>, fmt: &Format) -> Settings {
         let mut st = self.settings_in(profile, table_tier);
         st.rules = fmt.rules();
+        st.table = crate::duel::table_for(fmt);
         st
     }
 

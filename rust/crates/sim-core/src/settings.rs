@@ -181,6 +181,9 @@ pub struct Settings {
     pub hold_trace: bool,
     /// the format's rules: starting life and whether the starting player draws on turn 1 (`format::Rules`)
     pub rules: crate::format::Rules,
+    /// what the shared AI reads of the table's format (`format::TableAi`): the learned evaluation, whose lines the
+    /// hold-up-or-go gates cover, the one-opponent cover. Commander's values are today's play
+    pub table: crate::format::TableAi,
 }
 
 impl Settings {
@@ -208,6 +211,7 @@ impl Settings {
             xtutor: xtutor_default(),   // --- t6-xtutor
             hold_trace: true,
             rules: crate::format::Rules::COMMANDER,
+            table: crate::format::TableAi::COMMANDER,
         }
     }
 

@@ -13,8 +13,15 @@
 #                        Only the FRONT face is matched, in both readers (cardgen and sim-core): a double-faced or flip card
 #                        is listed by its front face ("Erayo, Soratami Ascendant"); an entry naming only a back face bans nothing.
 #
+#   [<key>.ai]           (optional) what the shared AI reads of the table (sim-core `TableAi`); a missing key keeps
+#                        Commander's value; no other key is allowed (`duel`, one opponent, follows `seats == 2`)
+#     learned_eval       true: the look-ahead scores generic decks with the learned evaluation (fitted on 4-seat,
+#                        40-life games); false: today's hand-written evaluation
+#     go_rules           "t6": a ready catalogue line waits for the table to be unable to stop it for Tier 6 seats
+#                        only; "all": for every seat
+#
 # [commander] must keep exactly the values the engine has always played (40 life, first player draws, 4 seats); the
-# loader refuses anything else, so editing this file cannot change every 4-player game.
+# loader refuses anything else (an [commander.ai] included), so editing this file cannot change every 4-player game.
 
 [commander]
 name = "Commander"
@@ -53,3 +60,10 @@ banned = [
   "Tolarian Academy",
   "Yawgmoth's Bargain",
 ]
+
+# The AI profile of a Cali table: the learned evaluation was fitted on 4-seat, 40-life games and a missing seat reads as
+# zeros, so it is off; every seat plays Tier 6's hold-up-or-go gates. Duel cover (Silence covers one opponent) follows
+# seats = 2.
+[cali.ai]
+learned_eval = false
+go_rules = "all"
