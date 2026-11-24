@@ -32,13 +32,17 @@ fn pair(e: &Engine) -> (String, String) {
 
 /// a two-person table with no tier
 fn options(e: &Arc<Engine>, deck: &str, guest: &str, seed: u64) -> Options {
+    options_rounds(e, deck, guest, seed, 3)
+}
+
+fn options_rounds(e: &Arc<Engine>, deck: &str, guest: &str, seed: u64, rounds: u32) -> Options {
     let mut o = Options::new(e.clone(), deck, "");
     o.partner = Some(guest.into());
     o.seed = Some(seed);
     o.ai = "adaptive".into();
     o.compare = false;
     o.views = true;
-    o.max_rounds = 3;
+    o.max_rounds = rounds;
     o
 }
 
@@ -49,29 +53,49 @@ fn seed_with_first(e: &Arc<Engine>, deck: &str, guest: &str, first: &str, from: 
         .expect("a seed with that seat order")
 }
 
-/// keep every hand, decline yes/no, play a land and tap a mana source in your main phase, otherwise pass
+/// keep every hand, decline yes/no, play a land and tap a mana source in your main phase, otherwise pass. A casting bot
+/// (the policy of play_bot_games.rs) also casts what is in its hand (and its commander) once a turn each, and takes the
+/// first choice or target it is offered; one with `mulls` mulligans that many times (first seat only)
 #[derive(Default)]
 struct Bot {
     played: Vec<(String, i64)>,
     streak: usize,
+    cast: bool,
+    /// (the seat that mulligans, how many times)
+    mulls: Option<(String, i64)>,
+    /// a spell tried this turn by this seat (round, seat, name): not again this turn
+    tried: Vec<(i64, String, String)>,
 }
 
 impl Bot {
-    fn answer(&mut self, req: &Value) -> Value {
-        let a = self.pick(req);
+    fn casting() -> Bot {
+        Bot { cast: true, ..Bot::default() }
+    }
+
+    fn answer(&mut self, seat: &str, req: &Value) -> Value {
+        let a = self.pick(seat, req);
         self.streak = if a["do"] == "pass" || !a.is_object() { 0 } else { self.streak + 1 };
         a
     }
 
-    fn pick(&mut self, req: &Value) -> Value {
+    fn pick(&mut self, seat: &str, req: &Value) -> Value {
         if req["choices"] == json!(["yes", "no"]) {
             return json!(1);
         }
         match req["kind"].as_str().unwrap_or("") {
             "priority" => {}
-            "mulligan" => return json!("keep"),
+            "mulligan" => {
+                if let Some((who, n)) = &self.mulls
+                    && who == seat
+                    && req["data"]["mulligans"].as_i64().unwrap_or(0) < *n
+                {
+                    return json!("mulligan");
+                }
+                return json!("keep");
+            }
             "attack" => return json!([]),
             "choose" | "target" | "block" | "search" => return json!(0),
+            "mode" if self.cast => return json!(0),
             _ => return json!(true),
         }
         let pass = json!({"do": "pass"});
@@ -97,6 +121,23 @@ impl Bot {
             if let Some(src) = me["mana_sources"].as_array().and_then(|a| a.first()) {
                 return json!({"do": "tap", "source": src["id"]});
             }
+            if self.cast {
+                let names = me["hand"].as_array().cloned().unwrap_or_default();
+                let lands = me["hand_land"].as_array().cloned().unwrap_or_default();
+                for (i, n) in names.iter().enumerate() {
+                    let name = n.as_str().unwrap_or("").to_string();
+                    let t = (round, key.clone(), name);
+                    if lands.get(i) == Some(&json!(false)) && !self.tried.contains(&t) {
+                        self.tried.push(t);
+                        return json!({"do": "cast", "card": i});
+                    }
+                }
+                let t = (round, key, "<commander>".to_string());
+                if me["commander_in_zone"] == true && !self.tried.contains(&t) {
+                    self.tried.push(t);
+                    return json!({"do": "cast", "zone": "cmd"});
+                }
+            }
         }
         pass
     }
@@ -113,6 +154,8 @@ struct Table {
     evs: Vec<Value>,
     bot: Bot,
     given: Vec<(String, Value)>,
+    /// the request each decision was asked with: asked[i] was waiting when i answers were given
+    asked: Vec<Value>,
     /// the request waiting, or the `over` / `error` event that ended the game
     at: Value,
 }
@@ -120,7 +163,8 @@ struct Table {
 impl Table {
     fn open(s: Arc<Session>) -> Table {
         s.start();
-        let mut t = Table { s, cursor: 0, evs: vec![], bot: Bot::default(), given: vec![], at: Value::Null };
+        let mut t =
+            Table { s, cursor: 0, evs: vec![], bot: Bot::default(), given: vec![], asked: vec![], at: Value::Null };
         t.at = t.wait();
         t
     }
@@ -164,8 +208,10 @@ impl Table {
                 assert_eq!(*s, seat, "answer {}: the script's seat is not the one the game asks", self.given.len());
                 a.clone()
             }
-            None => self.bot.answer(&self.at["request"]),
+            None => self.bot.answer(&seat, &self.at["request"]),
         };
+        self.asked.truncate(self.given.len());
+        self.asked.push(self.at["request"].clone());
         self.given.push((seat.clone(), a.clone()));
         self.s.answer(&seat, &a);
         self.at = self.wait();
@@ -312,19 +358,55 @@ fn a_two_person_table_of_a_two_seat_format_has_no_ai_seat() {
 
 // ------------------------------------------------------------------------------------------------ Undo
 
+/// how a game is played: the rounds it runs, and the bot (casting or not, whether the first seat mulligans)
+#[derive(Clone, Copy)]
+struct Cfg {
+    rounds: u32,
+    cast: bool,
+    mulls: i64,
+}
+
+const PLAIN: Cfg = Cfg { rounds: 3, cast: false, mulls: 0 };
+/// the policy of play_bot_games.rs: casts and targets, six rounds
+const CASTING: Cfg = Cfg { rounds: 6, cast: true, mulls: 0 };
+
+impl Cfg {
+    /// a table of this game, with its bot (the first seat of the table is the one that mulligans)
+    fn table(self, e: &Arc<Engine>, deck: &str, guest: &str, seed: u64) -> Table {
+        let mut o = options_rounds(e, deck, guest, seed, self.rounds);
+        o.compare = false;
+        self.table_of(o)
+    }
+
+    fn table_of(self, o: Options) -> Table {
+        let mut t = Table::open(Session::new(o).unwrap());
+        t.bot = self.bot(&t.s.seats[0]);
+        t
+    }
+
+    fn bot(self, first: &str) -> Bot {
+        let mut b = if self.cast { Bot::casting() } else { Bot::default() };
+        if self.mulls > 0 {
+            b.mulls = Some((first.to_string(), self.mulls));
+        }
+        b
+    }
+}
+
 /// One Undo case: play `stop` answers with the bot, take back `n` of `seat`'s answers, and compare the game that asks
 /// again with a fresh session given the same answers up to there (and `more` answers on from there). Returns the record.
 fn undo_case(
     e: &Arc<Engine>,
     deck: &str,
     guest: &str,
+    cfg: Cfg,
     seed: u64,
     stop: usize,
     seat: &str,
     n: i64,
     more: usize,
 ) -> Option<String> {
-    let mut t = Table::open(Session::new(options(e, deck, guest, seed)).unwrap());
+    let mut t = cfg.table(e, deck, guest, seed);
     t.run_to(stop, None);
     if !t.live() {
         return None; // the game ended first
@@ -345,7 +427,7 @@ fn undo_case(
     );
     let dropped = original.len() - to;
 
-    let mut f = Table::open(Session::new(options(e, deck, guest, seed)).unwrap());
+    let mut f = cfg.table(e, deck, guest, seed);
     f.run_to(to, Some(&original));
     let fresh = point(&f);
     assert_eq!(after.logs, fresh.logs, "seed {seed} stop {stop} {seat} n {n}: the log after the reset");
@@ -356,8 +438,8 @@ fn undo_case(
     assert_eq!(after, fresh);
 
     // and on from there, the same bot (fresh in both) answering: the same game
-    t.bot = Bot::default();
-    f.bot = Bot::default();
+    t.bot = cfg.bot(&first);
+    f.bot = cfg.bot(&first);
     t.run_to(to + more, None);
     f.run_to(to + more, None);
     assert_eq!(point(&t), point(&f), "seed {seed} stop {stop} {seat} n {n}: {more} answers on");
@@ -380,7 +462,11 @@ fn undo_case(
 
 /// how many answers a whole game takes with the bot
 fn game_length(e: &Arc<Engine>, deck: &str, guest: &str, seed: u64) -> usize {
-    let mut t = Table::open(Session::new(options(e, deck, guest, seed)).unwrap());
+    game_length_cfg(e, PLAIN, deck, guest, seed)
+}
+
+fn game_length_cfg(e: &Arc<Engine>, cfg: Cfg, deck: &str, guest: &str, seed: u64) -> usize {
+    let mut t = cfg.table(e, deck, guest, seed);
     t.run_out();
     assert_eq!(t.at["kind"], "over", "{}", t.at);
     let n = t.given.len();
@@ -402,7 +488,7 @@ fn undo_from_either_seat_replays_to_the_game_a_fresh_session_reaches() {
         for stop in [2, len / 2] {
             for who in [&deck, &guest] {
                 for n in [1, 3] {
-                    if let Some(r) = undo_case(&e, &deck, &guest, seed, stop, who, n, 10) {
+                    if let Some(r) = undo_case(&e, &deck, &guest, PLAIN, seed, stop, who, n, 10) {
                         eprintln!("RECORD {r}");
                         cases += 1;
                     }
@@ -442,56 +528,283 @@ fn undo_takes_back_the_other_persons_later_answers() {
     }
 }
 
-// ------------------------------------------------------------------------------------------------ Try it
+/// the spells cast in a game, from its log (a casting bot must really cast, or the test proves less)
+fn casts_in(t: &Table) -> usize {
+    t.evs
+        .iter()
+        .filter(|e| e["kind"] == "log")
+        .filter_map(|e| e["text"].as_str())
+        .filter(|x| x.contains(" casts "))
+        .count()
+}
 
 #[test]
-fn try_it_from_the_second_seat_applies_the_ai_choice() {
+fn undo_with_a_casting_bot_from_either_seat_at_every_fourth_decision_replays_to_the_fresh_game() {
     let e = engine();
     let (deck, guest) = pair(&e);
-    // a decision of the guest where the AI's choice is one action
+    let mut cases = 0;
+    for first in [&deck, &guest] {
+        let seed = seed_with_first(&e, &deck, &guest, first, 1);
+        let mut g = CASTING.table(&e, &deck, &guest, seed);
+        g.run_out();
+        assert_eq!(g.at["kind"], "over", "{}", g.at);
+        let len = g.given.len();
+        let casts = casts_in(&g);
+        let targets = g.asked.iter().filter(|r| matches!(r["kind"].as_str(), Some("target" | "choose"))).count();
+        g.s.close(Duration::from_secs(10));
+        eprintln!(
+            "RECORD seed {seed}: first seat {first}: a casting game of {len} answers, max_rounds 6; spells cast (log lines with \" casts \"): {casts}; {targets} target/choose decisions"
+        );
+        assert!(casts > 0, "the casting bot cast nothing");
+        assert!(len > 40, "a game of {len} answers is too short");
+        let mut mine = 0;
+        for stop in (4..len).step_by(4) {
+            for who in [&deck, &guest] {
+                if undo_case(&e, &deck, &guest, CASTING, seed, stop, who, 1, 6).is_some() {
+                    mine += 1;
+                }
+            }
+        }
+        eprintln!(
+            "RECORD seed {seed}: first seat {first}: Undo n=1 from each seat at decisions 4, 8, ..: {mine} cases, each equal to a fresh session given the same answers (log, request and view, answer_seats, saved(), 6 answers on), 0 guard warnings, tape 0"
+        );
+        cases += mine;
+    }
+    assert!(cases >= 40, "{cases} cases ran");
+}
+
+#[test]
+fn the_first_seat_mulligans_and_undo_goes_back_across_the_mulligan_and_the_bottom_choice() {
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    for first in [&deck, &guest] {
+        let seed = seed_with_first(&e, &deck, &guest, first, 1);
+        let other = if first == &deck { &guest } else { &deck };
+        for mulls in [1, 2] {
+            let cfg = Cfg { rounds: 3, cast: true, mulls };
+            let mut t = cfg.table(&e, &deck, &guest, seed);
+            t.run_to(mulls as usize + 3, None);
+            // the first seat: `mulls` mulligans, the keep, a bottom choice when more than one card goes; then the other's keep
+            let kinds: Vec<String> = t.asked.iter().map(|r| r["kind"].as_str().unwrap().to_string()).collect();
+            let seats: Vec<&str> = t.given.iter().map(|g| g.0.as_str()).collect();
+            let bottom = kinds.iter().position(|k| k == "choose");
+            eprintln!(
+                "RECORD seed {seed}, first seat {first}, {mulls} mulligan(s): decisions {kinds:?} by {seats:?}; the bottom choice at {bottom:?}"
+            );
+            assert_eq!(&t.given[..mulls as usize], &vec![(first.clone(), json!("mulligan")); mulls as usize][..]);
+            assert!(
+                seats[..=mulls as usize].iter().all(|k| k == first),
+                "the first seat mulligans before the other is asked"
+            );
+            assert_eq!(bottom.is_some(), mulls >= 2, "a bottom choice follows a second mulligan: {kinds:?}");
+            t.s.close(Duration::from_secs(10));
+            let len = game_length_cfg(&e, cfg, &deck, &guest, seed);
+            let first_answers = mulls as usize + 1 + usize::from(mulls >= 2);
+            for stop in [first_answers - 1, first_answers, first_answers + 1, first_answers + 3, len / 2] {
+                for n in [1, 2, 3, 4] {
+                    if let Some(r) = undo_case(&e, &deck, &guest, cfg, seed, stop, first, n, 8) {
+                        eprintln!("RECORD {r}");
+                    }
+                }
+                // the other person undoes their own answer while the first seat's mulligan stands
+                if let Some(r) = undo_case(&e, &deck, &guest, cfg, seed, stop, other, 1, 8) {
+                    eprintln!("RECORD {r}");
+                }
+            }
+        }
+    }
+}
+
+/// One case of auto-pass: `setter` sets `mode` after `set_at` answers, the game plays on to `stop`, `undoer` takes back
+/// `n` answers; the game that asks again equals a fresh session given the same answers and the same setting (made at
+/// the same point of the answers), and it plays on the same
+#[allow(clippy::too_many_arguments)]
+fn autopass_case(
+    e: &Arc<Engine>,
+    deck: &str,
+    guest: &str,
+    seed: u64,
+    setter: &str,
+    mode: &str,
+    set_at: usize,
+    stop: usize,
+    undoer: &str,
+    n: i64,
+) -> Option<String> {
+    let cfg = Cfg { rounds: 4, cast: true, mulls: 0 };
+    let mut t = cfg.table(e, deck, guest, seed);
+    let first = t.s.seats[0].clone();
+    t.run_to(set_at, None);
+    assert!(t.s.set_autopass(setter, mode).is_none());
+    t.run_to(stop, None);
+    if !t.live() {
+        return None;
+    }
+    let to = t.s.undo_point(n, undoer)?;
+    let original = t.given.clone();
+    assert!(t.s.undo(n, undoer).is_none());
+    t.at = t.wait();
+    t.given.truncate(to);
+    let after = point(&t);
+    // the setting the rewound game keeps: [answers given when it applies from + 1, seat, mode]
+    let log: Vec<(usize, String, String)> = after.saved["autopass_log"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|x| {
+            (x[0].as_u64().unwrap() as usize, x[1].as_str().unwrap().to_string(), x[2].as_str().unwrap().to_string())
+        })
+        .collect();
+    assert!(!log.is_empty(), "the setting is kept");
+    assert!(log.iter().all(|l| l.1 == setter && l.2 == mode), "{log:?}");
+    let applies_from = log[0].0;
+
+    let mut f = cfg.table(e, deck, guest, seed);
+    loop {
+        for (k, who, m) in &log {
+            if *k == f.given.len() + 1 {
+                assert!(f.s.set_autopass(who, m).is_none());
+            }
+        }
+        if f.given.len() >= to || !f.live() {
+            break;
+        }
+        f.step(Some(&original));
+    }
+    let fresh = point(&f);
+    assert_eq!(after.logs, fresh.logs, "seed {seed}: {setter} sets {mode} at {set_at}, {undoer} undoes {n}: the log");
+    assert_eq!(after.request, fresh.request, "seed {seed}: the waiting request");
+    assert_eq!(after.seat, fresh.seat);
+    assert_eq!(after.answer_seats, fresh.answer_seats);
+    assert_eq!(after.saved, fresh.saved);
+    t.bot = cfg.bot(&first);
+    f.bot = cfg.bot(&first);
+    t.run_to(to + 10, None);
+    f.run_to(to + 10, None);
+    assert_eq!(point(&t), point(&f), "seed {seed}: 10 answers on");
+    assert_eq!(t.given, f.given);
+    assert_eq!(t.guard_warns() + f.guard_warns(), 0, "the seat guard fired on a game nobody edited");
+    assert_eq!(tape_len(&t.s) + tape_len(&f.s), 0);
+    t.s.close(Duration::from_secs(10));
+    f.s.close(Duration::from_secs(10));
+    Some(format!(
+        "seed {seed}, first seat {}: {} sets auto-pass {mode} after {set_at} answers, the game plays to decision {stop}, {} undoes {n}: back to decision {to} ({}), the setting applies from answer {applies_from}; equal to a fresh session given the same answers and setting; 10 answers on equal; guard 0; tape 0",
+        if first == deck { "the Cali deck" } else { "the guest" },
+        if setter == deck { "the Cali deck" } else { "the guest" },
+        if undoer == deck { "the Cali deck" } else { "the guest" },
+        if to < set_at { "before the setting was made" } else { "after the setting was made" },
+    ))
+}
+
+#[test]
+fn the_other_person_changes_auto_pass_mid_game_and_undo_still_replays_to_the_fresh_game() {
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    let cfg = Cfg { rounds: 4, cast: true, mulls: 0 };
+    let (mut before, mut after) = (0, 0);
+    for first in [&deck, &guest] {
+        let seed = seed_with_first(&e, &deck, &guest, first, 1);
+        // the setting changes how many decisions the game asks: the whole game with and without it
+        let mut base = cfg.table(&e, &deck, &guest, seed);
+        base.run_out();
+        let plain = base.given.len();
+        base.s.close(Duration::from_secs(10));
+        for mode in ["all", "stack"] {
+            let mut t = cfg.table(&e, &deck, &guest, seed);
+            for who in [&deck, &guest] {
+                assert!(t.s.set_autopass(who, mode).is_none());
+            }
+            t.run_out();
+            eprintln!(
+                "RECORD seed {seed}, first seat {first}: a casting game of 4 rounds asks {plain} decisions with auto-pass respond, {} with {mode} for both",
+                t.given.len()
+            );
+            t.s.close(Duration::from_secs(10));
+        }
+        for (setter, undoer) in [(&guest, &deck), (&deck, &guest)] {
+            let set_at = plain / 3;
+            let stop = plain * 2 / 3;
+            // the undoer's answers made since the setting: n of them go back to the setting or just after it
+            let mut probe = cfg.table(&e, &deck, &guest, seed);
+            probe.run_to(stop, None);
+            let since = probe.given[set_at..].iter().filter(|g| g.0 == *undoer).count() as i64;
+            probe.s.close(Duration::from_secs(10));
+            assert!(since >= 2, "{since} answers by the undoer since the setting");
+            for mode in ["all", "stack"] {
+                for n in [1, since, since + 1] {
+                    if let Some(r) = autopass_case(&e, &deck, &guest, seed, setter, mode, set_at, stop, undoer, n) {
+                        if r.contains("before the setting") {
+                            before += 1;
+                        } else {
+                            after += 1;
+                        }
+                        eprintln!("RECORD {r}");
+                    }
+                }
+            }
+        }
+    }
+    assert!(before > 0 && after > 0, "Undo went back to before the setting {before} times and after it {after} times");
+}
+
+// ------------------------------------------------------------------------------------------------ Try it
+
+/// Which seat tries it
+#[derive(Clone, Copy, PartialEq, Debug)]
+enum Who {
+    Guest,
+    First,
+}
+
+/// Try it by `who` at a decision where the AI's choice is one action and not what they answered, on the first of
+/// `seeds` that has one (the game played whole with the comparison on): applied, and the game is at the point a fresh
+/// session given the same answers and then the AI's is at. Returns the record.
+fn try_it_case(e: &Arc<Engine>, cfg: Cfg, deck: &str, guest: &str, who: Who, seeds: &[u64]) -> String {
     let mut found = None;
-    for seed in 1..=8u64 {
-        let mut o = options(&e, &deck, &guest, seed);
+    for &seed in seeds {
+        let mut o = options_rounds(e, deck, guest, seed, cfg.rounds);
         o.compare = true;
-        let mut t = Table::open(Session::new(o).unwrap());
+        let mut t = cfg.table_of(o);
+        let seat = if who == Who::Guest { guest.to_string() } else { t.s.seats[0].clone() };
         t.run_out();
         assert_eq!(t.at["kind"], "over", "{}", t.at);
-        let review = t.s.review(&guest).unwrap();
+        let review = t.s.review(&seat).unwrap();
         let hit = review["decisions"].as_array().unwrap().iter().find_map(|d| {
             let n = d["n"].as_u64()? as usize;
-            let en = t.s.try_entry(&json!(n), &guest)?;
-            // one that is not what the guest answered there, so that applying it changes the game
+            let en = t.s.try_entry(&json!(n), &seat)?;
+            // one that is not what they answered there, so that applying it changes the game
             en.ai_answer()
                 .filter(|a| t.given.get(n).is_some_and(|g| g.1 != answer_to_json(a)))
                 .map(|a| (n, a, d["differs"].clone(), en.ai_text()))
         });
         if let Some(h) = hit {
-            found = Some((seed, t, h));
+            found = Some((seed, seat, t, h));
             break;
         }
         t.s.close(Duration::from_secs(10));
     }
-    let (seed, mut t, (n, then, differs, ai_text)) = found.expect("a guest decision whose AI choice is one action");
+    let (seed, seat, mut t, (n, then, differs, ai_text)) = found.expect("a decision whose AI choice is one action");
+    let first = t.s.seats[0].clone();
     let original = t.given.clone();
-    assert_eq!(original[n].0, guest, "decision {n} is the guest's");
+    assert_eq!(original[n].0, seat, "decision {n} is {who:?}'s");
     let seats_before = point(&t).answer_seats;
-    assert!(t.s.try_it(&json!(n), &guest).is_none());
+    assert!(t.s.try_it(&json!(n), &seat).is_none());
     t.at = t.wait();
     t.given.truncate(n);
-    t.given.push((guest.clone(), answer_to_json(&then)));
+    t.given.push((seat.clone(), answer_to_json(&then)));
     let after = masked(point(&t));
     assert_eq!(after.answer_seats[..n], seats_before[..n]);
-    assert_eq!(after.answer_seats.len(), n + 1, "the AI's answer stands as the guest's answer {n}");
-    assert_eq!(after.answer_seats[n], guest);
+    assert_eq!(after.answer_seats.len(), n + 1, "the AI's answer stands as {who:?}'s answer {n}");
+    assert_eq!(after.answer_seats[n], seat);
     let applied = t.evs.iter().rev().find(|e| e["kind"] == "reset").unwrap()["tryit"].clone();
-    assert_eq!((applied["applied"].clone(), applied["by"].clone()), (json!(true), json!(guest)));
+    assert_eq!((applied["applied"].clone(), applied["by"].clone()), (json!(true), json!(seat)));
 
     // a fresh session given the first n answers, then the AI's, is at the same point
-    let mut o = options(&e, &deck, &guest, seed);
+    let mut o = options_rounds(e, deck, guest, seed, cfg.rounds);
     o.compare = true;
-    let mut f = Table::open(Session::new(o).unwrap());
+    let mut f = cfg.table_of(o);
     let mut script = original[..n].to_vec();
-    script.push((guest.clone(), answer_to_json(&then)));
+    script.push((seat.clone(), answer_to_json(&then)));
     f.run_to(n + 1, Some(&script));
     let fresh = masked(point(&f));
     assert_eq!(after.logs, fresh.logs);
@@ -501,15 +814,106 @@ fn try_it_from_the_second_seat_applies_the_ai_choice() {
     assert_eq!(after.saved, fresh.saved);
     assert_eq!(tape_len(&t.s) + tape_len(&f.s), 0);
     assert_eq!(t.guard_warns() + f.guard_warns(), 0, "the seat guard fired on a game nobody edited");
-    eprintln!(
-        "RECORD seed {seed}: Try it from the guest at decision {n} (AI: {ai_text:?}, differs {differs}): applied, the game is at decision {} \
-         as a fresh session given the same answers is; tape length {} / {}",
+    let r = format!(
+        "seed {seed}, first seat {}: Try it from {who:?} ({}) at decision {n} of {} (AI: {ai_text:?}, differs {differs}): applied, the game is at decision {} \
+         as a fresh session given the same answers is; tape length {} / {}; rounds {}, {} bot",
+        if first == deck { "the Cali deck" } else { "the guest" },
+        if seat == deck { "the Cali deck" } else { "the guest" },
+        original.len(),
         n + 1,
         tape_len(&t.s),
-        tape_len(&f.s)
+        tape_len(&f.s),
+        cfg.rounds,
+        if cfg.cast { "casting" } else { "plain" },
     );
     t.s.close(Duration::from_secs(10));
     f.s.close(Duration::from_secs(10));
+    r
+}
+
+#[test]
+fn try_it_from_the_second_seat_applies_the_ai_choice() {
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    let seeds: Vec<u64> = (1..=8).collect();
+    eprintln!("RECORD {}", try_it_case(&e, PLAIN, &deck, &guest, Who::Guest, &seeds));
+}
+
+#[test]
+fn try_it_from_the_first_seat_applies_the_ai_choice_with_a_casting_bot() {
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    // both seat orders: the first seat is the Cali deck, then the guest
+    for first in [&deck, &guest] {
+        let seeds: Vec<u64> = (1..=60u64)
+            .filter(|&s| Session::new(options(&e, &deck, &guest, s)).unwrap().seats[0] == *first)
+            .take(8)
+            .collect();
+        assert!(!seeds.is_empty());
+        eprintln!("RECORD {}", try_it_case(&e, CASTING, &deck, &guest, Who::First, &seeds));
+    }
+}
+
+// ------------------------------------------------------------------------------------------------ a Commander pair
+
+#[test]
+fn undo_at_a_commander_table_for_two_replays_with_no_guard_warning() {
+    let e = engine();
+    let c = *MY_DECKS.iter().find(|k| e.format_of(k).seats == 4).expect("a four-seat deck in my decks");
+    let cg = *MY_DECKS
+        .iter()
+        .find(|k| **k != c && e.admits(k, &e.format_of(c).key).is_ok())
+        .expect("a second deck the format admits");
+    let tier = e.decks[c].tiers[0].clone();
+    let mk = |seed: u64, ai: &str| {
+        let mut o = Options::new(e.clone(), c, &tier);
+        o.partner = Some(cg.into());
+        o.seed = Some(seed);
+        o.ai = ai.into();
+        o.compare = false;
+        o.views = true;
+        o.max_rounds = 2;
+        let mut t = Table::open(Session::new(o).unwrap());
+        t.bot = Bot::casting();
+        t
+    };
+    let mut cases = 0;
+    // the AI that plays the other two seats: the faster one, and the look-ahead one (it writes the tape)
+    for (ai, seed) in [("adaptive", 1u64), ("adaptive", 2), ("lookahead", 1)] {
+        for who in [c, cg] {
+            for n in [1, 2] {
+                let mut t = mk(seed, ai);
+                assert_eq!(t.s.seats.len(), 4);
+                t.run_to(16, None);
+                assert!(t.live());
+                let first = t.s.seats[0].clone();
+                let to = t.s.undo_point(n, who).expect("the seat has answers");
+                let original_at_to = t.asked[to].clone();
+                let seat_at_to = t.given[to].0.clone();
+                let tape_before = tape_len(&t.s);
+                assert!(t.s.undo(n, who).is_none());
+                t.at = t.wait();
+                assert!(t.live());
+                assert_eq!(
+                    t.at["request"], original_at_to,
+                    "seed {seed} {who} n {n}: the request after the replay is the original at {to}"
+                );
+                assert_eq!(t.seat(), seat_at_to);
+                assert_eq!(t.guard_warns(), 0);
+                t.given.truncate(to);
+                // and it plays on without a warning
+                t.run_to(to + 6, None);
+                assert_eq!(t.guard_warns(), 0);
+                eprintln!(
+                    "RECORD Commander pair, {ai} AI, seed {seed}, first seat {first}: Undo n={n} of {who} from decision 16: back to decision {to}, the request equals the original (view and all), 0 guard warnings, 6 answers on; tape length {tape_before} before, {} after",
+                    tape_len(&t.s)
+                );
+                t.s.close(Duration::from_secs(30));
+                cases += 1;
+            }
+        }
+    }
+    assert_eq!(cases, 12);
 }
 
 // ------------------------------------------------------------------------------------------------ the save
