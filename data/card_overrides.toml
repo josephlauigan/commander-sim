@@ -261,6 +261,11 @@ dsl = []
 status = "Full"
 note = "Aura: the creature can't attack or block, and its activated abilities can't be activated (mana abilities too)"
 
+["Arzakon"]
+dsl = []
+status = "Full"
+note = "Legendary planeswalker commander (loyalty 4; the engine casts, taxes and returns any commander card, and a planeswalker deals no commander damage); card code in impls/arzakon.rs on the walker framework: +2: 3 damage to any other target (player, creature, planeswalker or battle: model_gaps_a4::ping, the target committed on activation and re-checked as it resolves; the AI takes an opponent at 3 life or less, else a creature 3 damage kills or a planeswalker at 3 loyalty or less when worth 3+, else the lowest-life opponent's face; a battle is a legal target for a person and loses defense counters, the AI never aims at one); -3: a Black Lotus token (the Garth One-Eye token: three mana of one colour, sacrificed as it taps; the AI scores what the mana enables this turn via brain::extra_mana_play, else banks it while loyalty allows); -7: Timetwister's resolution (t6_blue::twister_all; the AI wheels only against no draw punisher, with at most 2 nonland cards and a hand 3+ smaller than an opponent's); a person is asked the +2's target before the loyalty is paid (human/walkers.rs). Accepted limits: Rings of Brighthearth does not copy its abilities for the AI (a person's copy asks again); planeswalker attacks are assigned after blockers; generic burn never aims at planeswalkers; damage to planeswalkers skips prevention and ward; opponents over-value it (the symmetric -7 reads as a game-ending ultimate); the Lotus token is spent like a Lotus Petal (nothing saves it for the combo turn); the AI rules and the commander priority are provisional, never tuned by a sim"
+
 ["Ashnod's Altar"]
 status = "Full"
 note = "sacrifice a creature: {C}{C} (spent this turn)"

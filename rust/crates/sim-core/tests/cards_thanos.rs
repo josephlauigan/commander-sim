@@ -155,6 +155,7 @@ fn sneak_stolen_phased_blinked_and_commander_creatures() {
         turn, zones,
     };
     let mut g = tbl();
+    set_commander(&mut g, P0, "Kyodai, Soul of Kamigawa"); // a creature commander: the deck's is Arzakon, a planeswalker
     let stolen = sneak_hand(&mut g, "Llanowar Elves");
     gain_control(&mut g, P1, stolen, Duration::Permanent);
     let phased = sneak_hand(&mut g, "Birds of Paradise");
