@@ -130298,7 +130298,9 @@
    "identity": "W",
    "game_changer": true,
    "source": "scryfall",
-   "unparsed": [],
+   "unparsed": [
+    "Exile ~."
+   ],
    "derived": {
     "cmc": 3,
     "land": false,

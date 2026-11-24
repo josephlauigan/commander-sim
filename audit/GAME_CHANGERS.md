@@ -53,7 +53,7 @@ Opposition Agent) are held for the end of the turn before yours; Force of Will n
 ## Known approximations left
 
 Jeska's Will's red mana floats to the end of the turn rather than the step; Teferi's Protection taps lands instead of
-phasing them; The One Ring's tap decision considers only your life; Tergrid's deck doesn't hold edicts for Tergrid.
+phasing them (Approximate, JD's waiver 2026-11-24); The One Ring's tap decision considers only your life; Tergrid's deck doesn't hold edicts for Tergrid.
 
 ## Pool balance after the fixes (heuristic AI, conservative, 1,000 games)
 
