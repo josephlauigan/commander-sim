@@ -17,7 +17,7 @@ simulator has no Cali mode yet, so the plan and the keep rule are a pilot's guid
 |---|---|
 | **Commander** | Kyodai, Soul of Kamigawa ({3}{W}, 3/3 flash flier; {W}{U}{B}{R}{G}: +5/+5); a white card with a five-colour identity |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
-| **Simulator** | Deck key `kyodai`, played from `data/plans/kyodai.toml`; findings in `audit/kyodai/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine has no 1v1, 30-life or Cali ban-list mode yet, Kyodai and Leyline of the Guildpact are modelled (Full) |
+| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine has no 1v1, 30-life or Cali ban-list mode yet, Kyodai and Leyline of the Guildpact are modelled (Full) |
 | **Buys** | None. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination, Rhystic Study and Watery Grave |
 
 ## Strategy

@@ -1,8 +1,10 @@
-# Kyodai, Soul of Kamigawa (key `kyodai`, `thanos` until 2026-11-22): findings
+# Kyodai, Soul of Kamigawa (key `arzakon`): findings
+
+Key `arzakon` since 2026-11-23; it was `kyodai` (and `thanos` until 2026-11-22)
 
 The deck's living list of strengths and weaknesses and what was tested.
 
-**List:** `decklists/cali_commander/kyodai-artifact-combo.md`, built 2026-11-13 for Cali Commander (1v1, 30 life) from
+**List:** `decklists/cali_commander/arzakon-artifact-combo.md`, built 2026-11-13 for Cali Commander (1v1, 30 life) from
 the previous Thanos list, the Aragorn deck and cards taken from the other decks. Routes: Basalt Monolith + Rings of
 Brighthearth, Staff of Domination + Faeburrow Elder, Tinker into Blightsteel Colossus (Sneak Attack as a second way to
 put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Underworld Breach with Brain Freeze as a storm

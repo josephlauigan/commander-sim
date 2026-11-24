@@ -24,7 +24,7 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 
 | Decks | Tiers |
 | --- | --- |
-| yshtola, kyodai | t5 |
+| yshtola, arzakon | t5 |
 | sheoldred | t3-t4 |
 
 `--pool all`, `--all-decks`, `--analyze`, swap runs and `searchtest` use only these tiers; `--deck X --pool tN` outside

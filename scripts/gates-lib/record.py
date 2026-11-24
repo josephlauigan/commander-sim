@@ -120,7 +120,7 @@ def first_line(b):
 
 
 def deck_tiers(tree):
-    # a deck whose `format` is set and is not commander (kyodai: cali) is left out: the simulator refuses it at a Commander table
+    # a deck whose `format` is set and is not commander (arzakon: cali) is left out: the simulator refuses it at a Commander table
     with open(os.path.join(tree, "data/my_decks.toml"), "rb") as f:
         return {k: v["tiers"] for k, v in tomllib.load(f).items()
                 if isinstance(v, dict) and "tiers" in v and v.get("format", "commander") == "commander"}
