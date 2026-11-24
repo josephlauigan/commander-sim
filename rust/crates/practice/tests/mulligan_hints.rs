@@ -207,7 +207,7 @@ fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
         &[
             "Command Tower",
             "Sol Ring",
-            "Mind Stone",
+            "Fellwar Stone",
             "Vampiric Tutor",
             "Basalt Monolith",
             "Rings of Brighthearth",
@@ -223,7 +223,7 @@ fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
         "{rule}"
     );
     assert!(rule.contains("Sol Ring"), "the counted fast-mana piece is named: {rule}");
-    assert!(has(&h, "Mind Stone (needs two lands to cast it)"), "{h}");
+    assert!(has(&h, "Fellwar Stone (needs two lands to cast it)"), "{h}");
     assert!(has(&h, "Line:") && has(&h, "Basalt Monolith"), "{h}");
 }
 

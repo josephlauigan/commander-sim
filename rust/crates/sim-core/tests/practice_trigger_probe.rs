@@ -937,10 +937,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "attacking or becoming the target of a spell creates a Treasure with no choice; \"target\" is a trigger condition. Choosing mana when spending the Treasure is a separate ability",
     ),
     (
-        "urdragon: Korvold, Fae-Cursed King (SacOwn (state only))",
-        "sacrificing a permanent gives Korvold a +1/+1 counter and draws a card, both mandatory with no target or choice. The separate enters/attacks sacrifice asks the person which other permanent to sacrifice",
-    ),
-    (
         "arzakon: Tezzeret, Cruel Captain (Activate(2))",
         "the -7 only gives the emblem, with no choice at that moment; the person is asked which artifact gets the three +1/+1 counters at every beginning of combat (`t6_godo::tez_emblem`, `human::cards::pick_perm`)",
     ),
