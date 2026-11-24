@@ -37,7 +37,11 @@ fn symbols_that_are_not_a_two_hybrid_are_unchanged() {
     assert_eq!(conv_cost("{R/G}{R/G}"), "RR");
     assert_eq!(conv_cost("{1}{W} // {2/U}"), "1W", "only the front face of a split cost");
     assert!(hybrid_of_cost("{W/P}{G/W/P}{C}{S}{X}").is_empty());
-    assert_eq!(hybrid_of_cost("{1}{W} // {2/U}"), ["U2"], "(hybrid_of_cost reads whatever it is given; `hybrid` strips the face)");
+    assert_eq!(
+        hybrid_of_cost("{1}{W} // {2/U}"),
+        ["U2"],
+        "(hybrid_of_cost reads whatever it is given; `hybrid` strips the face)"
+    );
 }
 
 #[test]
