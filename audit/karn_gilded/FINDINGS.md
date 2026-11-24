@@ -38,7 +38,10 @@ decks, whose findings are in `audit/retired/yshtola/` and `audit/retired/yoshima
 ## To check in the first runs
 Goldfish first (`trace-record.sh --mode goldfish`), then `--analyze` at t4 and t5: the turn Karn is cast and how many colours he counts on entry;
 `flicker <card> -> Karn, Gilded Guardian` in the stats; `death_kind decked`; `protection_used`; the Oracle and Consultation line's go rate; hand size at
-cleanup after an end-step blink; how often Akroma's Will and Deflecting Swat are cast with a commander on the battlefield; the life lost to the lands.
+cleanup after an end-step blink; how often Akroma's Will has both modes (a commander on the battlefield); what Ranger-Captain of Eos fetches (Yoshimaru or Giver of Runes), how big Yoshimaru gets, and how often Giver of Runes protects Karn; the life lost to the lands.
+
+## List change 2026-11-24 (JD's choice, not simulated)
+Out: Deflecting Swat, Generous Gift. In: Yoshimaru, Ever Faithful, Giver of Runes. The two are the deck's only creatures with mana value 1 or less, so Ranger-Captain of Eos (whose search found nothing) now has two targets; Giver of Runes protects Karn from one colour (or colourless) each turn, and Yoshimaru gets a +1/+1 counter for each other legendary permanent that enters. Job lost: Swat's free redirect (it needs a commander on the battlefield, so it was mostly a hard cast at {2}{R}), Generous Gift's answer to a noncreature permanent (Anguished Unmaking, Skyclave Apparition and Farewell remain). Counts after (before): creatures 21 (19) without Karn; instants 14 (16); curve 1: 14 (12), 3: 16 (18), average 2.86 (2.92); pips W38 U17 B23 R3 G3 (W37, R4); Game Changers 15 (15); land sources unchanged. Both new cards are Full.
 
 ## Tested
 No sims yet.

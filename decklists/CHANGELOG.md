@@ -116,6 +116,7 @@ Deck key `karn_gilded`, `decklists/JD/karn-gilded-guardian.md`. Tiers t4-t5. Not
 
 ### Changes
 
+- **2026-11-24.** Out: Deflecting Swat, Generous Gift. In: Yoshimaru, Ever Faithful, Giver of Runes. JD's choice, not simulated: the only two creatures with mana value 1 or less, so Ranger-Captain of Eos fetches one of them (Giver of Runes protects Karn; Yoshimaru grows with the deck's legendary permanents). Gleaming Splendor stays. Lost: Swat's free redirect and Generous Gift's answer to a noncreature permanent.
 - **2026-11-24.** Registered (JD): a new Karn, Gilded Guardian deck built from the Y'shtola and Yoshimaru/Tymna decks, the spare cards and new cards (The Mind Stone, The Soul Stone, The Wind Crystal, Gold-Forged Thopteryx, Shorikai, Baleful Strix, Twitching Doll, Herd Heirloom, The Reaper, Transguild Courier, Infinite Guideline Station, Breya, Thought Vessel, Reliquary Tower, Cloudshift and Karn himself); 64 spells and 35 lands, no basics. The Y'shtola and Yoshimaru/Tymna decks were retired the same day. Not simulated.
 
 ## Karn, Legacy Reforged — Colourless Urza and Mishra Artifacts

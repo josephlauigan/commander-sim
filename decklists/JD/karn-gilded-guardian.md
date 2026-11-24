@@ -83,12 +83,17 @@ Karn triggers per entry. With the Courier out as well, one entry is fifteen card
 **Tutors.** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Enlightened Tutor (an artifact or enchantment), Imperial Seal,
 Ringsight (a card that shares a colour with a legendary creature we control: with Karn out that is any coloured card;
 without a legendary creature it finds nothing) and Expedition Map (a land: Cabal Coffers, Urborg or Reliquary Tower).
-Ranger-Captain of Eos finds no creature with mana value 1 or less in this list, so it is a blinkable body and a
-sacrifice that stops the table's noncreature spells for a turn.
+Ranger-Captain of Eos fetches one of the deck's two creatures with mana value 1 or less, Yoshimaru, Ever Faithful or
+Giver of Runes, and is also a blinkable body (each blink fetches again) and a sacrifice that stops the table's
+noncreature spells for a turn. **Yoshimaru** ({W}, 1/1) gets a +1/+1 counter whenever another legendary permanent we
+control enters (Karn, The Mind Stone, The Wind Crystal, The Soul Stone, Shorikai, Breya, The Reaper, Infinite Guideline
+Station, Haliya, Vito, Gandalf, Elesh Norn), so he grows with the deck; he is a legendary creature that Ringsight can
+match. **Giver of Runes** ({W}, 1/1) is protection for Karn: {T}, another target creature we control gains protection from
+colorless or from a colour of our choice until end of turn.
 
-**Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Deflecting
-Swat and Akroma's Will (both need "you control a commander", so they are mostly hard-cast here: Karn lands around turn
-6-7), Swords to Plowshares, Path to Exile, Anguished Unmaking, Generous Gift (for a noncreature permanent), Skyclave
+**Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
+(for Karn), Akroma's Will ("if you control a commander" gives both modes, so it is mostly a single mode here: Karn lands
+around turn 6-7), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
 Apparition, Solitude, Farewell (a sweeper that also exiles our own artifacts: choose the modes).
 
 **Card flow and mana.** Rhystic Study, Smothering Tithe, Necropotence, Consecrated Sphinx, The One Ring, Gleaming
@@ -116,8 +121,7 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
   simply returns.
 - **Restoration Angel and Felidar Guardian blink each other without end** (both are "may"): with Haliya and a drain card
   that wins, and aimed at Karn it draws without end: stop before the library is empty, or have Thassa's Oracle ready.
-- **Akroma's Will and Deflecting Swat** need a commander on the battlefield: before Karn is out they are hard-cast
-  (Swat for {2}{R}).
+- **Akroma's Will** gives both modes only with a commander on the battlefield: before Karn is out it is a single mode.
 
 ### How the deck wins
 
@@ -209,29 +213,29 @@ Coffers, Mistrise Village and Reliquary Tower.
 - **Blood Moon** turns every nonbasic land into a Mountain and leaves the deck with red mana only: there is no basic to
   fetch or play.
 
-**Pips.** The 64 spells have **white 37, blue 17, black 23, red 4 and green 3** coloured pips, plus The Reaper's
-{2/B}{2/R}{2/G}. Red comes from Cursed Mirror, Deflecting Swat, Breya and Station; green from Twitching Doll, Herd
+**Pips.** The 64 spells have **white 38, blue 17, black 23, red 3 and green 3** coloured pips, plus The Reaper's
+{2/B}{2/R}{2/G}. Red comes from Cursed Mirror, Breya and Station; green from Twitching Doll, Herd
 Heirloom and Station. White is the heavy colour, with 20 sources; red and green are thin, and almost all of that load is
 Station and The Reaper.
 
-**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.92 (187 over 64).
+**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.86 (183 over 64).
 
-- **1 (12):** Cloudshift, Demonic Consultation, Enlightened Tutor, Ephemerate, Expedition Map, Imperial Seal, Mystical
-  Tutor, Path to Exile, Silence, Sol Ring, Swords to Plowshares, Vampiric Tutor
+- **1 (14):** Cloudshift, Demonic Consultation, Enlightened Tutor, Ephemerate, Expedition Map, Giver of Runes, Imperial
+  Seal, Mystical Tutor, Path to Exile, Silence, Sol Ring, Swords to Plowshares, Vampiric Tutor, Yoshimaru
 - **2 (14):** Arcane Signet, Baleful Strix, Counterspell, Demonic Tutor, Exsanguinate (X), Gleaming Splendor,
   Gold-Forged Thopteryx, Herd Heirloom, Orcish Bowmasters, Thassa's Oracle, The Mind Stone, The Soul Stone, Thought
   Vessel, Twitching Doll
-- **3 (18):** Anguished Unmaking, Buster Sword, Coalition Relic, Cursed Mirror, Deflecting Swat, Doomsday, Flickerwisp,
-  Generous Gift, Haliya, Necropotence, Ranger-Captain of Eos, Rhystic Study, Ringsight, Skyclave Apparition, Sword of
-  Feast and Famine, Teferi's Protection, Teferi, Time Raveler, Vito
+- **3 (16):** Anguished Unmaking, Buster Sword, Coalition Relic, Cursed Mirror, Doomsday, Flickerwisp, Haliya,
+  Necropotence, Ranger-Captain of Eos, Rhystic Study, Ringsight, Skyclave Apparition, Sword of Feast and Famine,
+  Teferi's Protection, Teferi, Time Raveler, Vito
 - **4 (10):** Akroma's Will, Breya, Felidar Guardian, Restoration Angel, Shorikai, Smothering Tithe, Teleportation
   Circle, The One Ring, The Wind Crystal, Transguild Courier
 - **5 (7):** Elesh Norn, Exquisite Blood, Force of Will, Gandalf the White, Infinite Guideline Station, Sanguine Bond,
   Solitude
 - **6 (3):** Consecrated Sphinx, Farewell, The Reaper, King No More
 
-**Card types** (the 64 spells): 15 artifacts, 6 artifact creatures, 13 other creatures, 16 instants, 6 sorceries,
-7 enchantments and 1 planeswalker; 21 artifacts in all and 19 creatures, without Karn.
+**Card types** (the 64 spells): 15 artifacts, 6 artifact creatures, 15 other creatures, 14 instants, 6 sorceries,
+7 enchantments and 1 planeswalker; 21 artifacts in all and 21 creatures, without Karn.
 
 ## Bracket and Rule 0
 
@@ -246,8 +250,9 @@ Disclose before the game:
 - **Infinite or game-ending lines:** Thassa's Oracle with Demonic Consultation or Doomsday; Exquisite Blood with Sanguine
   Bond or Vito (with Haliya or a lifelink source as the starter); Restoration Angel with Felidar Guardian (infinite
   blink, and with Karn an infinite draw).
-- **Tutors:** Demonic, Vampiric, Mystical, Enlightened, Imperial Seal, Ringsight and Expedition Map.
-- **Free spells:** Force of Will (exile a blue card), Solitude (exile a white card), Deflecting Swat (with a commander).
+- **Tutors:** Demonic, Vampiric, Mystical, Enlightened, Imperial Seal, Ringsight, Expedition Map and Ranger-Captain of Eos
+  (a creature with mana value 1 or less: Yoshimaru or Giver of Runes).
+- **Free spells:** Force of Will (exile a blue card) and Solitude (exile a white card).
 - **Fast mana:** Sol Ring and no more.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
@@ -256,13 +261,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Karn, Gilded Guardian
 
-**Creatures (19).** Baleful Strix, Breya, Etherium Shaper, Consecrated Sphinx, Elesh Norn, Mother of Machines, Felidar Guardian, Flickerwisp, Gandalf the White, Gold-Forged Thopteryx, Haliya, Guided by Light, Orcish Bowmasters, Ranger-Captain of Eos, Restoration Angel, Skyclave Apparition, Solitude, Thassa's Oracle, The Reaper, King No More, Transguild Courier, Twitching Doll, Vito, Thorn of the Dusk Rose
+**Creatures (21).** Baleful Strix, Breya, Etherium Shaper, Consecrated Sphinx, Elesh Norn, Mother of Machines, Felidar Guardian, Flickerwisp, Gandalf the White, Giver of Runes, Gold-Forged Thopteryx, Haliya, Guided by Light, Orcish Bowmasters, Ranger-Captain of Eos, Restoration Angel, Skyclave Apparition, Solitude, Thassa's Oracle, The Reaper, King No More, Transguild Courier, Twitching Doll, Vito, Thorn of the Dusk Rose, Yoshimaru, Ever Faithful
 
 **Enchantments (7).** Exquisite Blood, Gleaming Splendor, Necropotence, Rhystic Study, Sanguine Bond, Smothering Tithe, Teleportation Circle
 
 **Artifacts (15).** Arcane Signet, Buster Sword, Coalition Relic, Cursed Mirror, Expedition Map, Herd Heirloom, Infinite Guideline Station, Shorikai, Genesis Engine, Sol Ring, Sword of Feast and Famine, The Mind Stone, The One Ring, The Soul Stone, The Wind Crystal, Thought Vessel
 
-**Instants (16).** Akroma's Will, Anguished Unmaking, Cloudshift, Counterspell, Deflecting Swat, Demonic Consultation, Enlightened Tutor, Ephemerate, Force of Will, Generous Gift, Mystical Tutor, Path to Exile, Silence, Swords to Plowshares, Teferi's Protection, Vampiric Tutor
+**Instants (14).** Akroma's Will, Anguished Unmaking, Cloudshift, Counterspell, Demonic Consultation, Enlightened Tutor, Ephemerate, Force of Will, Mystical Tutor, Path to Exile, Silence, Swords to Plowshares, Teferi's Protection, Vampiric Tutor
 
 **Sorceries (6).** Demonic Tutor, Doomsday, Exsanguinate, Farewell, Imperial Seal, Ringsight
 
@@ -295,7 +300,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Consecrated Sphinx
 1 Counterspell
 1 Cursed Mirror
-1 Deflecting Swat
 1 Demonic Consultation
 1 Demonic Tutor
 1 Doomsday
@@ -311,7 +315,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Flooded Strand
 1 Force of Will
 1 Gandalf the White
-1 Generous Gift
+1 Giver of Runes
 1 Gleaming Splendor
 1 Godless Shrine
 1 Gold-Forged Thopteryx
@@ -373,4 +377,5 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Volcanic Island
 1 Watery Grave
 1 Wooded Foothills
+1 Yoshimaru, Ever Faithful
 ```

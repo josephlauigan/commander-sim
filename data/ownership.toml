@@ -12,6 +12,7 @@
 # deck or the Sheoldred deck, and every new card, is `proxy` there (JD: "they will be proxies"). The retired decks' other owned cards are spares.
 # Mithril Coat, Giver of Runes, Tymna, Deadly Rollick, The Theorist and Sapphire Medallion (entered as proxy in the Ur-Dragon and Sheoldred decks while
 # their donor decks lived) are now `have` there. The Karn deck is unconfirmed: JD has not marked its cards one by one.
+# 2026-11-24 (JD): Karn deck list change: Deflecting Swat and Generous Gift out (owned, now spares), Yoshimaru, Ever Faithful and Giver of Runes in as `have`.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -218,7 +219,7 @@ have = [
   "Field of the Dead",
   "Fierce Guardianship",
   "Garth One-Eye",
-  "Giver of Runes",
+  { card = "Giver of Runes", copies = 2 },
   "Glorybringer",
   "Hellkite Tyrant",
   "Jeska's Will",
@@ -327,14 +328,13 @@ have = [
   "Consecrated Sphinx",
   { card = "Counterspell", copies = 2 },
   "Cursed Mirror",
-  "Deflecting Swat",
   "Doomsday",
   "Elesh Norn, Mother of Machines",
   "Expedition Map",
   { card = "Exsanguinate", copies = 3 },
   "Farewell",
   "Gandalf the White",
-  "Generous Gift",
+  { card = "Giver of Runes", copies = 2 },
   "Gleaming Splendor",
   "Imperial Seal",
   "Mistrise Village",
@@ -356,6 +356,7 @@ have = [
   "Temple Garden",
   "Urborg, Tomb of Yawgmoth",
   "Vito, Thorn of the Dusk Rose",
+  "Yoshimaru, Ever Faithful",
 ]
 proxy = [
   "Arid Mesa",
@@ -433,12 +434,14 @@ cards = [
   "Court of Ardenvale",
   "Debt to the Deathless",
   "Decimate",
+  "Deflecting Swat",
   "Diabolic Tutor",
   "Disdainful Stroke",
   "Exotic Orchard",
   "Fatal Push",
   "Flawless Maneuver",
   "Forge Anew",
+  "Generous Gift",
   "Go for the Throat",
   "Haunted Ridge",
   "Kor Outfitter",
@@ -485,7 +488,6 @@ cards = [
   "Wrath of God",
   "Y'shtola, Night's Blessed",
   "Yavimaya Coast",
-  "Yoshimaru, Ever Faithful",
   "Young Pyromancer",
   "Your Fate Ends Here",
   "Zack Fair",
