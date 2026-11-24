@@ -16,6 +16,7 @@
 1 Dragon Tempest (fdc) 150
 1 Dragonlord Dromoka (2x2) 376
 1 Dragonlord Ojutai (slc) 2015
+1 Dragonspeaker Shaman (afc) 330
 1 Elvish Mystic (hoc) 205
 1 Exotic Orchard (brc) 185
 1 Fact or Fiction (cmm) 631
@@ -76,6 +77,7 @@
 1 Swords to Plowshares (cst) 54
 1 Sylvan Library (dmr) 179
 1 Taiga (3ed) 287
+1 Talisman of Curiosity (mkc) 241
 1 Talisman of Hierarchy (h1r) 36
 1 Terror of the Peaks (pspl) 1
 1 The One Ring (hoc) 44
