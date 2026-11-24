@@ -10,6 +10,8 @@ pub struct Args {
     /// --format KEY: play the run's decks in this format (a key of data/decks.json formats) instead of their own
     pub format: Option<String>,
     pub swap: Vec<String>,
+    /// --swap-commander "OLD=>NEW": the variant of a paired run has another commander (swapcmd.rs)
+    pub swap_commander: Option<String>,
     pub pool: Option<String>,
     pub all_decks: bool,
     pub calibrate: Option<String>,
@@ -69,7 +71,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 39] = [
+const OPTS: [Opt; 40] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt(
         "--format",
@@ -82,6 +84,18 @@ const OPTS: [Opt; 39] = [
          are not available for a 2-seat format yet",
     ),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
+    opt(
+        "--swap-commander",
+        false,
+        &[],
+        "\"OLD=>NEW\"",
+        "\"Old Commander=>New Commander\" (once): a paired A/B run whose variant has another commander. OLD must be \
+         the deck's commander; NEW is checked like a swapped-in card plus Commander legality, \"can be your commander\", \
+         the format's bans and the deck's colours. NEW takes OLD's slot in the list, so both lists get the same library \
+         from the same seed. Combines with --swap (applied to the 99 of the variant afterwards; the old commander may \
+         come in as a card). The explain breakdown, preflight and --no-explain / --no-preflight / --preflight-only work \
+         as for --swap",
+    ),
     opt(
         "--pool",
         false,
@@ -182,21 +196,21 @@ const OPTS: [Opt; 39] = [
         true,
         &[],
         "",
-        "with --swap: skip the paired breakdown (the swapped cards' model status before the run; their drawn / cast / stuck numbers and the game shape of both lists after it). It is on by default and costs no extra games",
+        "with --swap or --swap-commander: skip the paired breakdown (the swapped cards' and the new commander's model status before the run; their drawn / cast / stuck numbers and the game shape of both lists after it). It is on by default and costs no extra games",
     ),
     opt(
         "--no-preflight",
         true,
         &[],
         "",
-        "with --swap: skip the two-step preflight that runs before the long run: (1) the AI-rule check (does the deck's priority function rank each swapped-in card above 0, or is it an instant or removal the AI casts as a response) and (2) a quick adaptive dry run (200 games per profile on the first tier) that stops with exit code 3 when a swapped-in card was drawn in 20+ games and cast in under 5% of them.",
+        "with --swap or --swap-commander: skip the two-step preflight that runs before the long run: (1) the AI-rule check (does the deck's priority function rank each swapped-in card above 0, or is it an instant or removal the AI casts as a response) and (2) a quick adaptive dry run (200 games per profile on the first tier) that stops with exit code 3 when a swapped-in card was drawn in 20+ games and cast in under 5% of them.",
     ),
     opt(
         "--preflight-only",
         true,
         &[],
         "",
-        "with --swap: run the preflight (AI-rule check and dry run), print it and exit without the main run",
+        "with --swap or --swap-commander: run the preflight (AI-rule check and dry run), print it and exit without the main run",
     ),
     opt(
         "--ai",
@@ -214,7 +228,7 @@ const OPTS: [Opt; 39] = [
 ];
 
 pub fn usage() -> &'static str {
-    "usage: commander-sim [-h] [--deck KEY] [--format KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
+    "usage: commander-sim [-h] [--deck KEY] [--format KEY] [--swap \"OUT=>IN\"] [--swap-commander \"OLD=>NEW\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
      \x20                    [--goldfish KEYS] [--mulligan-oracle KEYS [--hands N] [--playouts M] [--vs-tier [--recheck K] [--out FILE]]]\n\
      \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
@@ -285,6 +299,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         deck: None,
         format: None,
         swap: vec![],
+        swap_commander: None,
         pool: None,
         all_decks: false,
         calibrate: None,
@@ -357,6 +372,14 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--deck" => a.deck = Some(val),
             "--format" => a.format = Some(val),
             "--swap" => a.swap.push(val),
+            "--swap-commander" => {
+                if a.swap_commander.is_some() {
+                    return Err(usage_err(
+                        "argument --swap-commander: given twice (one commander change per run)".into(),
+                    ));
+                }
+                a.swap_commander = Some(val);
+            }
             "--pool" => a.pool = Some(val),
             "--all-decks" => a.all_decks = true,
             "--any-tier" => a.any_tier = true,
@@ -542,6 +565,43 @@ mod calibrate_pool_tests {
         let argv: Vec<String> = "--calibrate within --pool t2".split_whitespace().map(|x| x.to_string()).collect();
         let a = parse(&argv).unwrap();
         assert_eq!((a.calibrate.as_deref(), a.pool.as_deref()), (Some("within"), Some("t2")));
+    }
+}
+
+#[cfg(test)]
+mod swap_commander_flag_tests {
+    use super::*;
+
+    fn p(a: &[&str]) -> Result<Args, Exit> {
+        parse(&a.iter().map(|s| s.to_string()).collect::<Vec<_>>())
+    }
+
+    #[test]
+    fn swap_commander_takes_one_pair_with_spaces_and_combines_with_swap() {
+        assert_eq!(p(&["--deck", "arzakon"]).unwrap().swap_commander, None);
+        let a = p(&["--deck", "arzakon", "--swap-commander", "Kyodai, Soul of Kamigawa=>Arzakon", "--swap", "A=>B"])
+            .unwrap();
+        assert_eq!(a.swap_commander.as_deref(), Some("Kyodai, Soul of Kamigawa=>Arzakon"));
+        assert_eq!(a.swap, ["A=>B"]);
+        let a = p(&["--swap-commander=A=>B"]).unwrap();
+        assert_eq!(a.swap_commander.as_deref(), Some("A=>B"));
+        // --swap is still exact, a shorter prefix is now ambiguous
+        assert_eq!(p(&["--swap", "A=>B"]).unwrap().swap, ["A=>B"]);
+        assert!(p(&["--sw", "A=>B"]).unwrap_err().msg.contains("ambiguous"));
+        assert!(p(&["--swap-comm", "A=>B"]).unwrap().swap_commander.is_some());
+    }
+
+    #[test]
+    fn swap_commander_given_twice_or_without_a_value_is_a_usage_error() {
+        let e = p(&["--swap-commander", "A=>B", "--swap-commander", "C=>D"]).unwrap_err();
+        assert_eq!(e.code, 2);
+        assert!(e.msg.contains("given twice"), "{}", e.msg);
+        assert_eq!(p(&["--swap-commander"]).unwrap_err().code, 2);
+    }
+
+    #[test]
+    fn swap_commander_is_in_the_usage_and_the_help() {
+        assert!(usage().contains("--swap-commander") && help().contains("--swap-commander \"OLD=>NEW\""));
     }
 }
 

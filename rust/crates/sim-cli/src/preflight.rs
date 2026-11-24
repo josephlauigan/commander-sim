@@ -62,6 +62,9 @@ impl AiRule {
 
 /// The deck's priority for each swapped-in card on mid-game boards of the swapped list (rounds 4 and 7 of two games
 /// against the first tier's decks, adaptive AI): the best value seen, since a rule may wait for a graveyard or mana.
+/// `commander`: the variant's commander when a `--swap-commander` run changes it. The priority function ranks a
+/// commander too (the seat's own, cast from the command zone from its second turn), so the new commander is read
+/// like any swapped-in card.
 pub fn ai_rules(
     sim: &Sim,
     deck: &str,
@@ -69,8 +72,9 @@ pub fn ai_rules(
     ins: &[String],
     opp_keys: &[String],
     seed0: u64,
+    commander: Option<&str>,
 ) -> Result<Vec<AiRule>, String> {
-    let vseat = sim.seat(deck, var)?;
+    let vseat = sim.seat_with_commander(deck, var, commander)?;
     let fmt = sim.format_for(deck);
     let mut settings = Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp);
     settings.rules = fmt.rules();
@@ -119,6 +123,8 @@ pub struct DryRow {
     pub games: i64,
     pub drawn: i64,
     pub cast: i64,
+    /// the new commander of a `--swap-commander` run: it starts in the command zone, so it counts as drawn in every game
+    pub commander: bool,
 }
 
 impl DryRow {
@@ -135,6 +141,19 @@ impl DryRow {
     }
 
     pub fn line(&self) -> String {
+        if self.commander {
+            return if self.warns() {
+                format!(
+                    "WARNING: commander {} cast in {} of {} games ({:.1}%): the deck's AI rarely casts it",
+                    self.card,
+                    self.cast,
+                    self.games,
+                    self.cast_pct()
+                )
+            } else {
+                format!("dry run: commander {}: cast in {:.1}% of games ({})", self.card, self.cast_pct(), self.cast)
+            };
+        }
         if self.warns() {
             format!(
                 "WARNING: {} drawn {}, cast {} ({:.1}%): the deck's AI rarely casts it",
@@ -169,7 +188,7 @@ pub fn dry_rows(analyses: &[Analysis], cards: &[String]) -> Vec<DryRow> {
                 drawn += s.max(k);
                 cast += k;
             }
-            DryRow { card: c.clone(), games, drawn, cast }
+            DryRow { card: c.clone(), games, drawn, cast, commander: false }
         })
         .collect()
 }
@@ -182,6 +201,7 @@ pub enum Outcome {
 
 /// Both steps for a `--swap` run; prints their lines. `var` is the swapped list.
 pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> Result<Outcome, String> {
+    let cmd = crate::swapcmd::new_commander(a, swaps);
     let Some(deck) = a.deck.as_deref() else { return Ok(Outcome::Continue) };
     let plan = tier_plan(sim, a)?;
     let Some(tier) = plan.tiers.first().cloned() else { return Ok(Outcome::Continue) };
@@ -189,7 +209,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     let keys = sim.opponents(&tier, fmt);
     let ins: Vec<String> = swaps.iter().map(|s| s.1.clone()).collect();
     println!("Preflight (--no-preflight skips it): is each swapped-in card ever cast by {deck}'s AI?");
-    let rules = ai_rules(sim, deck, var, &ins, &keys, a.seed)?;
+    let rules = ai_rules(sim, deck, var, &ins, &keys, a.seed, cmd)?;
     let mut bad = false;
     for r in &rules {
         println!("  {}", r.line());
@@ -197,7 +217,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     }
     sim.prog.lock().unwrap().on = !a.quiet;
     let ctx = Ctx { sim, verbose: false };
-    let seat = sim.seat(deck, var)?;
+    let seat = sim.seat_with_commander(deck, var, cmd)?;
     let mut analyses = vec![];
     {
         let mut pr = sim.prog.lock().unwrap();
@@ -221,9 +241,12 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
         crate::decks::tier_label(&tier)
     );
     let mut stop = false;
-    for (row, r) in dry_rows(&analyses, &ins).iter().zip(&rules) {
+    for (mut row, r) in dry_rows(&analyses, &ins).into_iter().zip(&rules) {
         if r.land {
             continue;
+        }
+        if cmd == Some(row.card.as_str()) {
+            (row.commander, row.drawn) = (true, row.games); // in the command zone from the start: never "drawn"
         }
         println!("  {}", row.line());
         stop |= row.warns();
@@ -268,7 +291,7 @@ mod tests {
     fn rules_at(sim: &Sim, deck: &str, out: &str, inn: &str, tier: &str, seed: u64) -> AiRule {
         let swaps = vec![(out.to_string(), inn.to_string())];
         let var = crate::swap_in_place(&sim.mine[deck], &swaps);
-        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), seed).unwrap().remove(0)
+        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), seed, None).unwrap().remove(0)
     }
 
     fn args(extra: &[&str]) -> Args {

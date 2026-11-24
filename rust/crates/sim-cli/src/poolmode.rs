@@ -752,9 +752,9 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     } else if a.analyze {
         let deck = a.deck.as_deref().unwrap();
         let cards = if swaps.is_empty() { base } else { var };
-        let seat = sim.seat(deck, cards)?;
+        let seat = sim.seat_with_commander(deck, cards, crate::swapcmd::new_commander(a, swaps))?;
         if !swaps.is_empty() {
-            println!("Analyzing the variant list: {}", swap_text(swaps));
+            println!("Analyzing the variant list: {}", swap_text(a, swaps));
         }
         let infos = card_infos(sim, cards);
         let fmt = sim.format_for(deck);
@@ -772,7 +772,8 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     } else if !swaps.is_empty() {
         let deck = a.deck.as_deref().unwrap();
         let bseat = sim.seat(deck, base)?;
-        let vseat = sim.seat(deck, var)?;
+        let new_cmd = crate::swapcmd::new_commander(a, swaps);
+        let vseat = sim.seat_with_commander(deck, var, new_cmd)?;
         let explain = !a.no_explain;
         let commanders: Vec<String> = sim
             .engine
@@ -780,6 +781,7 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
             .get(deck)
             .map(|d| std::iter::once(d.commander.clone()).chain(d.commander2.clone()).collect())
             .unwrap_or_default();
+        let var_commanders = crate::swapcmd::commanders_of(&commanders, new_cmd);
         let fmt = sim.format_for(deck);
         for tier in &tiers {
             let mut pairs = vec![];
@@ -802,10 +804,12 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
                 }
                 pairs.push((b, v));
             }
-            println!("Swaps: {}", swap_text(swaps));
+            println!("Swaps: {}", swap_text(a, swaps));
             ctx.print_ab(deck, tier, &pairs);
             for (prof, ba, va) in &analyses {
-                crate::explain::print_explain(deck, &commanders, swaps, ba, va, prof, &|k| sim.name_of(k));
+                crate::explain::print_explain(deck, (&commanders, &var_commanders), swaps, ba, va, prof, &|k| {
+                    sim.name_of(k)
+                });
             }
         }
     } else {
@@ -826,8 +830,15 @@ pub fn main(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], va
     Ok(())
 }
 
-pub fn swap_text(swaps: &[(String, String)]) -> String {
-    swaps.iter().map(|(o, i)| format!("{o} -> {i}")).collect::<Vec<_>>().join("; ")
+pub fn swap_text(a: &Args, swaps: &[(String, String)]) -> String {
+    swaps
+        .iter()
+        .enumerate()
+        .map(|(n, (o, i))| {
+            format!("{}{o} -> {i}", if n == 0 && a.swap_commander.is_some() { "commander " } else { "" })
+        })
+        .collect::<Vec<_>>()
+        .join("; ")
 }
 
 /// the card report's view of a deck's cards: unique names in list order, land or not, reactive or not
@@ -849,7 +860,7 @@ fn card_infos(sim: &Sim, cards: &[String]) -> Vec<CardInfo> {
 
 /// poolmode.trace: a play-by-play of one pool game (seed = --seed + GAME); without --deck, a game of four decks of
 /// the --pool tier seated as `--calibrate within` seats them
-pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
+pub fn trace(sim: &Sim, a: &Args, cards: &[String], commander: Option<&str>) -> Result<(), String> {
     let Some(deck) = a.deck.as_deref() else { return trace_pool(sim, a) };
     let prof = a.profiles[0].clone();
     // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
@@ -863,7 +874,7 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     let st = sim.settings_in_for(profile(&prof)?, Some(tier), fmt); // the table is the tier's: its default [table] knobs
     let game = a.trace.unwrap();
     let seed = a.seed + game;
-    let seat = sim.seat(deck, cards)?;
+    let seat = sim.seat_with_commander(deck, cards, commander)?;
     let seats = sim.table_for(seed, Some(deck), Some(&seat), &sim.opponents(tier, fmt), fmt);
     let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
     println!(

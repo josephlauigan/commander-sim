@@ -210,7 +210,11 @@ pub fn pool_run(
             if a.deck.as_deref() == Some(d.as_str()) && !base.is_empty() { base.to_vec() } else { sim.mine[d].clone() };
         out.push(Entry::Deck(deck_list(sim, d, &list, None)));
         if !swaps.is_empty() && a.deck.as_deref() == Some(d.as_str()) {
-            out.push(Entry::Deck(deck_list(sim, d, var, Some(format!("{d} (swapped)")))));
+            let mut dl = deck_list(sim, d, var, Some(format!("{d} (swapped)")));
+            if let Some(c) = crate::swapcmd::new_commander(a, swaps) {
+                dl.commanders = vec![c.to_string()]; // --swap-commander: the variant's commander
+            }
+            out.push(Entry::Deck(dl));
         }
     }
     for t in &plan.tiers {
