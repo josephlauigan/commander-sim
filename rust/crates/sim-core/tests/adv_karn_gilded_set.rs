@@ -469,8 +469,9 @@ fn c2_breya_sacrifices_only_two_other_artifacts_never_a_nonartifact_nor_herself(
     assert!(on(&g, b), "never herself");
     assert!(on(&g, elves), "never a nonartifact permanent");
     assert_eq!(g.player(P0).life, 10);
-    let arts_left = g.player(P0).perms.iter().filter(|&&m| on(&g, m) && values::ptypes(&g, m).has(Types::ARTIFACT)).count()
-        + tokens_of(&g, P0, "thopter").len();
+    let arts_left =
+        g.player(P0).perms.iter().filter(|&&m| on(&g, m) && values::ptypes(&g, m).has(Types::ARTIFACT)).count()
+            + tokens_of(&g, P0, "thopter").len();
     assert!(arts_left >= 1, "{arts_left}");
 }
 
@@ -699,7 +700,11 @@ fn e6_the_returned_creature_is_the_reapers_controllers_with_its_enter_effects() 
     g.perm_mut(t).plus = -1;
     zones::die(&mut g, t, "destroy").unwrap();
     assert!(has_perm(&g, P0, "Grave Titan"));
-    assert_eq!(perms_named(&g, P0, "Token").len(), 2, "Grave Titan's enter trigger makes its two Zombies for the Reaper's side");
+    assert_eq!(
+        perms_named(&g, P0, "Token").len(),
+        2,
+        "Grave Titan's enter trigger makes its two Zombies for the Reaper's side"
+    );
     assert_eq!(perms_named(&g, P1, "Token").len(), 2, "and the two it made for P1 as it first entered stay P1's");
 }
 
@@ -776,7 +781,10 @@ fn g2_a_summoning_sick_doll_makes_no_mana_and_no_counter() {
     let mut g = tbl();
     let d = perm(&mut g, P0, DOLL);
     g.perm_mut(d).sick = true;
-    assert!(!can_pay(&g, P0, 1, "", false), "a creature's {{T}} ability needs it to be under control since the turn began");
+    assert!(
+        !can_pay(&g, P0, 1, "", false),
+        "a creature's {{T}} ability needs it to be under control since the turn began"
+    );
     assert_eq!(g.perm(d).data.int(DataKey::Counters), 0);
 }
 
@@ -859,10 +867,12 @@ fn h2_the_pilot_token_is_a_colourless_nonartifact_creature() {
     assert!(!sim_core::impls::karn_cards::is_art(&g, pilots[0]), "a Pilot creature token is not an artifact");
     assert!(chars::colors(&g, pilots[0]).is_empty());
     // activating again needs {T}: Shorikai is tapped now
-    assert!(sim_core::dsl::ability_options(&mut g, P0, true)
-        .unwrap()
-        .iter()
-        .all(|o| !matches!(o.act, Some(Action::Dsl { src, .. }) if src == s)));
+    assert!(
+        sim_core::dsl::ability_options(&mut g, P0, true)
+            .unwrap()
+            .iter()
+            .all(|o| !matches!(o.act, Some(Action::Dsl { src, .. }) if src == s))
+    );
 }
 
 // ============================================================ I. data
