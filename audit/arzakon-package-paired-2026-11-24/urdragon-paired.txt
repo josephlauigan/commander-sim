@@ -1,0 +1,152 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dragonlord Silumgar [scryfall] C 4UB :: leg pow=3 tgh=5 dt fly
+      not modeled: When ~ enters, gain control of target creature or planeswalker for as long as you control ~.
+   Teferi's Protection [scryfall] I 2W :: prot=phase
+   Steel Hellkite [pool] AC 6 :: pow=5 bomb=5 fly
+   Ancient Copper Dragon [scryfall] C 4RR :: pow=6 tgh=5 bomb=6 fly
+      not modeled: Whenever ~ deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.
+   Korvold, Fae-Cursed King [pool] C 2BRG :: leg pow=4 fly
+   Klauth, Unrivaled Ancient [scryfall] C 5RG :: leg pow=4 fly haste
+      not modeled: Whenever ~ attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end.
+Model status of the swapped-in cards (cardgen audit):
+  Dragonlord Silumgar: Full (flying, deathtouch; enters: gain control of target creature or planeswalker for as long as you control this Silumgar (t45_urdragon.rs, control::WhileControls). Returns immediately when the anchor leaves or changes hands or its controller leaves the game; phasing out the anchor ends the steal permanently, while phasing out only the stolen permanent does not. A creature that returns while phased out phases in at the untap step of the player it phased out under (CR 502.1); if that player has left the game, it phases in at its controller's untap step, which the rules text does not cover. A person chooses a legal target after the trigger window; AI chooses the most valuable opposing target; ward is paid. Two control-model approximations remain (return_borrowed returns to the owner): a previous controller who owns the creature keeps it after temporarily taking it back; a third player taking and later losing it returns it to its owner instead of Silumgar's controller)
+  Teferi's Protection: Full (until your next turn your life can't change and you have protection from everything (damage, drains and damage/drain combo wins are stopped; Thassa's Oracle, mill and Revel in Riches aren't); everything you control phases out, lands too; exiled. Cast against wipes, removal of key permanents, lethal combat damage and lethal combos)
+  Steel Hellkite: Full ({X}: destroy each nonland permanent with mana value X controlled by a player it dealt combat damage to this turn (once a turn; the AI picks the X that hits most); {2}: +1/+0 until end of turn: the AI pumps an unblocked attacking Hellkite after blockers when the pumps it can pay make the attack lethal (karn_cards::hellkite_pump_lethal); a person pumps from the ability menu)
+  Ancient Copper Dragon: Full (hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, that many Treasures)
+  Korvold, Fae-Cursed King: Full (enters/attacks: sacrifice the least valuable permanent; every sacrifice (Treasure / Food / Clue spending included): +1/+1 counter and a card)
+  Klauth, Unrivaled Ancient: Full (flying, haste; hand-written (impls/t45_urdragon.rs): attacks: X mana in any combination of colours, where X is the attacking creatures' total power on resolution; only to cast spells, kept through steps and phases until end of turn. AI and person preserve the restriction and duration, spend it before unrestricted mana, and cannot use it for abilities, ward or triggered taxes (engine/pool.rs, engine/mana.rs, human/mana.rs))
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  urdragon                    100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  urdragon (swapped)          100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by urdragon's AI?
+  AI: Dragonlord Silumgar: priority 68 (generic)
+  AI: Teferi's Protection: priority 0 (generic), cast as a response / removal only
+  AI: Steel Hellkite: priority 74 (generic)
+  AI: Ancient Copper Dragon: priority 78 (generic)
+  AI: Korvold, Fae-Cursed King: priority 88 (generic)
+  AI: Klauth, Unrivaled Ancient: priority 71 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Dragonlord Silumgar: drawn in 20.0% of games (40), cast in 55.0% of those (22)
+  dry run: Teferi's Protection: drawn in 24.5% of games (49), cast in 18.4% of those (9)
+  dry run: Steel Hellkite: drawn in 22.0% of games (44), cast in 54.5% of those (24)
+  dry run: Ancient Copper Dragon: drawn in 24.0% of games (48), cast in 54.2% of those (26)
+  dry run: Korvold, Fae-Cursed King: drawn in 26.5% of games (53), cast in 66.0% of those (35)
+  dry run: Klauth, Unrivaled Ancient: drawn in 25.5% of games (51), cast in 41.2% of those (21)
+
+3,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 7 minutes
+  progress 100.0%  9m51s elapsed, ~0m00s left
+Swaps: Sylvan Library -> Dragonlord Silumgar; Deflecting Swat -> Teferi's Protection; Talisman of Hierarchy -> Steel Hellkite; Urza's Incubator -> Ancient Copper Dragon; Jeska's Will -> Korvold, Fae-Cursed King; Kyodai, Soul of Kamigawa -> Klauth, Unrivaled Ancient
+
+=== Ur-Dragon vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.2% ->  28.9%  (delta +2.7 pts, noise ±2.6, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 11.8%  Miirym 17.5%  Yawgmoth 11.7%  Kinnan 16.0%  Urza 14.1%
+               game ends (baseline): timeout 3 (0.2%), engine step cap 0, no winner 2
+               game ends (variant):  timeout 2 (0.1%), engine step cap 0, no winner 0
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (urdragon) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for urdragon: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.2% ->  28.9%  +2.7pt   ±3.3 
+    Rounds survived (or game length)                   8.44 ->   8.45   +0.02  ±0.19 
+
+  Mana & consistency
+    Extra mulligans per game                           0.32 ->   0.36   +0.04  ±0.06 
+    Missed land drops, turns 1-5                       0.75 ->   0.78   +0.03  ±0.07 
+    Mana available on your turn 4                      4.85 ->   4.69   -0.16  ±0.10*
+    Mana available on your turn 6                      6.75 ->   6.62   -0.13  ±0.23 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  7.25 ->   7.31   +0.06  ±0.22 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.02 ->  14.96   -0.06  ±0.85 
+    Tutors resolved per game                           0.35 ->   0.35   -0.01  ±0.04 
+    Spells cast per game                              10.08 ->   9.86   -0.22  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.10 ->   0.10   -0.00  ±0.02 
+    Spot removal cast                                  0.62 ->   0.64   +0.01  ±0.05 
+    Board wipes cast                                   0.20 ->   0.19   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.62 ->   0.64   +0.02  ±0.07 
+    Your spells countered                              0.55 ->   0.52   -0.03  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                42.78 ->  43.71   +0.93  ±4.36 
+      ...of which combat damage                       31.11 ->  31.39   +0.28  ±3.06 
+      ...of which magecraft / burn                     0.29 ->   0.30   +0.01  ±0.20 
+      ...of which drain triggers                       0.02 ->   0.07   +0.05  ±0.06 
+      ...of which other triggers                      11.37 ->  11.96   +0.59  ±2.32 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 4 (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dragonlord Silumgar                   20.9      43.6         6.5     56.4       51.1      0.01
+    Teferi's Protection                   21.8      22.0         8.4     78.0       33.3      0.00
+    Steel Hellkite                        21.5      47.1         6.7     52.9       47.4      0.01
+    Ancient Copper Dragon                 22.5      55.6         6.7     44.4       48.9      0.02
+    Korvold, Fae-Cursed King              20.9      74.1         6.5     25.9       44.8      0.03
+    Klauth, Unrivaled Ancient             21.3      49.1         6.8     50.9       59.9      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Sylvan Library                        20.9      68.7         5.5     31.3       37.7      0.01
+    Deflecting Swat                       21.4      12.8         8.9     87.2       56.1      0.00
+    Talisman of Hierarchy                 23.4      70.7         4.2     29.3       28.6      0.00
+    Urza's Incubator                      20.6      68.0         5.2     32.0       32.4      0.02
+    Jeska's Will                          19.9      63.1         5.5     36.9       39.9      0.00
+    Kyodai, Soul of Kamigawa              23.1      63.7         5.6     36.3       35.3      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.2      28.9     +2.7
+    rounds survived                                   8.44      8.45    +0.02
+    eliminated, % of games                            73.8      71.1     -2.7
+    opponents it eliminated, per game                 0.79      0.86    +0.08
+    damage dealt, per game                            42.8      43.7     +0.9
+    commander resolved by turn 4, %                    1.7       1.7     -0.1
+    commander resolved by turn 6, %                   19.4      18.7     -0.7
+    commander removals, per game                      0.14      0.13    -0.00
+    lands on the battlefield, turn 4                  3.74      3.72    -0.02
+    lands on the battlefield, turn 8                  6.33      6.15    -0.17
+    mana available, turn 4                            4.85      4.69    -0.16
+    mana available, turn 8                            9.14      8.49    -0.64
+    cards in hand after the land drop, turn 4         5.30      5.49    +0.19
+    cards in hand after the land drop, turn 8         4.75      4.90    +0.15
+    wins by (current):  damage 96%, alt 3%, timeout 1%
+    wins by (swapped):  damage 96%, alt 4%, timeout 0%
+    eliminated by (current): Urza via combo 13.5%, Kinnan via combo 13.4%, Miirym via combat 9.5%, Zur the Enchanter via combo 9.5%
+    eliminated by (swapped): Kinnan via combo 12.7%, Urza via combo 12.5%, Zur the Enchanter via combo 9.1%, Miirym via combat 8.5%
+
+(592s total)

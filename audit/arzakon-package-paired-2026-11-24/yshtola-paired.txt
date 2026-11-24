@@ -1,0 +1,121 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Esper Sentinel [pool] AC W :: human pow=1
+Model status of the swapped-in cards (cardgen audit):
+  Esper Sentinel: Full (opponents pay X for their first noncreature spell only when they can spare it; otherwise you draw)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  yshtola (swapped)           100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by yshtola's AI?
+  AI: Esper Sentinel: priority 49 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Esper Sentinel: drawn in 25.5% of games (51), cast in 74.5% of those (38)
+
+3,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 7 minutes
+  progress 100.0%  10m49s elapsed, ~0m00s left
+Swaps: Gleaming Splendor -> Esper Sentinel
+
+=== Y'shtola vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.4% ->  31.3%  (delta -1.1 pts, noise ±2.1, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 12.1%  Miirym 16.1%  Yawgmoth 10.3%  Kinnan 16.9%  Urza 13.3%
+               game ends (baseline): timeout 6 (0.4%), engine step cap 0, no winner 0
+               game ends (variant):  timeout 6 (0.4%), engine step cap 0, no winner 0
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          32.4% ->  31.3%  -1.1pt   ±3.4 
+    Rounds survived (or game length)                   8.86 ->   8.88   +0.02  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.58 ->   0.56   -0.03  ±0.06 
+    Mana available on your turn 4                      4.16 ->   4.18   +0.01  ±0.09 
+    Mana available on your turn 6                      5.91 ->   5.94   +0.03  ±0.15 
+
+  Speed
+    Games where the game plan came online             62.4% ->  61.6%  -0.8pt   ±3.5 
+    Turn the game plan came online                     5.93 ->   5.88   -0.05  ±0.17 
+    Turn the commander first resolved                  4.75 ->   4.73   -0.02  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.52 ->  16.23   +0.71  ±0.79 
+    Tutors resolved per game                           0.70 ->   0.69   -0.01  ±0.06 
+    Spells cast per game                              10.02 ->  10.22   +0.20  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.69 ->   0.71   +0.02  ±0.06 
+    Spot removal cast                                  1.17 ->   1.17   -0.00  ±0.08 
+    Board wipes cast                                   0.29 ->   0.30   +0.00  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.02 ->   0.02   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.35 ->   0.38   +0.03  ±0.05 
+    Your spells countered                              0.78 ->   0.81   +0.02  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                29.92 ->  29.72   -0.20  ±2.29 
+      ...of which combat damage                        6.36 ->   6.55   +0.19  ±0.56 
+      ...of which magecraft / burn                     0.71 ->   0.73   +0.02  ±0.14 
+      ...of which drain triggers                       9.57 ->   9.21   -0.36  ±1.32 
+      ...of which other triggers                      13.28 ->  13.24   -0.05  ±1.05 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Esper Sentinel                        24.7      70.3         4.9     29.7       42.7      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gleaming Splendor                     24.3      56.6         5.0     43.4       41.3      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.4      31.3     -1.1
+    rounds survived                                   8.86      8.88    +0.02
+    eliminated, % of games                            67.6      68.6     +1.0
+    opponents it eliminated, per game                 0.94      0.92    -0.02
+    damage dealt, per game                            29.9      29.7     -0.2
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                        11.7      11.7     +0.0
+      plan online by turn 6, %                        44.3      44.6     +0.3
+      plan online by turn 8, %                        56.5      55.9     -0.6
+      plan online by turn 12, %                       61.9      61.1     -0.7
+      plan online at all, %                           62.4      61.6     -0.8
+    commander resolved by turn 4, %                   44.3      44.1     -0.3
+    commander resolved by turn 6, %                   69.4      68.7     -0.7
+    commander removals, per game                      0.20      0.21    +0.00
+    lands on the battlefield, turn 4                  3.68      3.70    +0.02
+    lands on the battlefield, turn 8                  6.55      6.67    +0.12
+    mana available, turn 4                            4.16      4.18    +0.01
+    mana available, turn 8                            7.70      7.79    +0.10
+    cards in hand after the land drop, turn 4         5.45      5.59    +0.15
+    cards in hand after the land drop, turn 8         6.48      6.52    +0.04
+    wins by (current):  combo 61%, damage 38%, timeout 1%
+    wins by (swapped):  combo 63%, damage 37%, timeout 0%
+    eliminated by (current): Kinnan via combo 12.6%, Urza via combo 12.1%, Zur the Enchanter via combo 8.3%, Miirym via combat 8.3%
+    eliminated by (swapped): Kinnan via combo 12.9%, Urza via combo 11.9%, Zur the Enchanter via combo 8.7%, Miirym via combat 8.4%
+
+(649s total)
