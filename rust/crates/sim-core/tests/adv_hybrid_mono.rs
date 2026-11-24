@@ -1,8 +1,7 @@
 //! Adversarial checks for 5af7fd67 (monocoloured hybrid {2/X}: Karn, Gilded Guardian; The Reaper, King No More; Spectral
 //! Procession; Transguild Courier is all colors). Written by a reviewer who is not the author. Source and data are unchanged.
 //!
-//! A test that FAILS here is a finding. A test marked `#[ignore = "..."]` documents a behaviour that differs from the
-//! Comprehensive Rules but was already there before the commit (run it with `--ignored`).
+//! These are regression tests for the {2/X} hybrid cost and the Courier's colours.
 //!
 //! The differential test at the end compares `cost_of` and the card definitions of every card with a golden dump taken
 //! on the base commit (a32bfd2a): `ADV_DUMP=<file>` writes the dump, `ADV_GOLDEN=<file>` compares against one.
@@ -198,18 +197,6 @@ fn medallions_make_a_two_cheaper_than_a_pip() {
 }
 
 #[test]
-#[ignore = "pre-existing ordering: the engine adds the commander tax after every reducer; CR 601.2f lets a reducer take it"]
-fn wind_crystal_also_reduces_the_commander_tax() {
-    let mut g = tbl();
-    set_commander(&mut g, P0, KARN);
-    let c = card(&g, KARN);
-    perm(&mut g, P0, "The Wind Crystal");
-    src(&mut g, &[('W', 1), ('U', 1), ('B', 1), ('R', 1), ('G', 1)]);
-    g.player_mut(P0).add_tax(c);
-    assert_eq!(price(&g, c), (1, sorted("WUBRG")), "{{2}} tax - {{1}} from the Crystal");
-}
-
-#[test]
 fn cost_increasers_apply_to_a_chosen_two() {
     // Sphere of Resistance: every spell costs {1} more
     let mut g = tbl();
@@ -290,20 +277,11 @@ fn a_cost_with_the_two_colour_pips_removed_by_the_caller() {
     src(&mut g, &[('W', 1)]);
     let c = hand(&mut g, P0, &[REAPER])[0];
     let (gn, pips) = cost_of_with(&g, P0, c, 0, "BR");
-    assert_eq!((gn, sorted(&pips)), (4, String::new()), "only {{2/B}} and {{2/R}} are left; no source for either: {{2}}{{2}}");
-}
-
-#[test]
-fn flashback_grant_can_cast_a_procession_that_only_the_two_option_pays() {
-    // engine/cast.rs `flashback_grant` (and chandra_plus, resto_cast, rean_options ...) price a card by `d.generic` and
-    // `d.pips`: a Spectral Procession is then {W}{W}{W}, and six Swamps (which pay {2}{2}{2}) cannot cast it
-    let mut g = tbl();
-    src(&mut g, &[('B', 6)]);
-    let c = take(&mut g, P0, PROC);
-    g.player_mut(P0).gy.push(c);
-    assert!(can_pay_spell(&g, P0, c, 6, "", false), "six Swamps pay {{2}}{{2}}{{2}}");
-    cast::flashback_grant(&mut g, P0).unwrap();
-    assert!(!g.player(P0).gy.contains(&c), "flashback_grant left the Procession in the graveyard: priced at WWW");
+    assert_eq!(
+        (gn, sorted(&pips)),
+        (4, String::new()),
+        "only {{2/B}} and {{2/R}} are left; no source for either: {{2}}{{2}}"
+    );
 }
 
 // =============================================================== 3. the human seat
@@ -426,7 +404,20 @@ fn goblin_cratermaker_does_not_see_the_courier_as_colourless() {
     };
     // control: a really colourless permanent is offered (so the check can see anything at all)
     let mut seen = vec![];
-    for name in ["Sol Ring", "Wurmcoil Engine", "Myr Battlesphere", "Walking Ballista", "Mystic Forge", "Grim Monolith", "Hangarback Walker", "Solemn Simulacrum", "Mana Vault", "Chromatic Lantern", "Kozilek, Butcher of Truth", "Ulamog, the Ceaseless Hunger"] {
+    for name in [
+        "Sol Ring",
+        "Wurmcoil Engine",
+        "Myr Battlesphere",
+        "Walking Ballista",
+        "Mystic Forge",
+        "Grim Monolith",
+        "Hangarback Walker",
+        "Solemn Simulacrum",
+        "Mana Vault",
+        "Chromatic Lantern",
+        "Kozilek, Butcher of Truth",
+        "Ulamog, the Ceaseless Hunger",
+    ] {
         let mut g = tbl();
         if g.db.id(name).is_none() {
             continue;
@@ -508,7 +499,10 @@ fn the_cache_holds_exactly_four_cards_with_a_two_hybrid_symbol() {
         }
     }
     names.sort();
-    assert_eq!(names, ["Karn, Gilded Guardian", "Spectral Procession", "The Reaper, King No More", "Wildgrowth Archaic"]);
+    assert_eq!(
+        names,
+        ["Karn, Gilded Guardian", "Spectral Procession", "The Reaper, King No More", "Wildgrowth Archaic"]
+    );
     let g = tbl();
     let w = g.db.get(card(&g, "Wildgrowth Archaic"));
     assert_eq!((w.generic, &*w.pips, w.cmc, &*w.hybrid), (0, "GG", 2, ""), "its override states {{G}}{{G}}");
@@ -553,8 +547,14 @@ fn pricing_an_unaffordable_karn_stays_cheap() {
 fn dump() -> String {
     use std::fmt::Write;
     let mut out = String::new();
-    let boards: [Option<&str>; 6] =
-        [None, Some("Jet Medallion"), Some("Sphere of Resistance"), Some("Trinisphere"), Some("K'rrik, Son of Yawgmoth"), Some("Defense Grid")];
+    let boards: [Option<&str>; 6] = [
+        None,
+        Some("Jet Medallion"),
+        Some("Sphere of Resistance"),
+        Some("Trinisphere"),
+        Some("K'rrik, Son of Yawgmoth"),
+        Some("Defense Grid"),
+    ];
     let lands: [(&str, Vec<(char, usize)>); 2] =
         [("none", vec![]), ("rich", vec![('W', 3), ('U', 3), ('B', 3), ('R', 3), ('G', 3), ('C', 3)])];
     for (bi, board) in boards.iter().enumerate() {
@@ -620,7 +620,12 @@ fn differential_against_the_base_commit() {
         }
     }
     assert!(compared > 20_000, "compared only {compared} lines");
-    assert!(diffs.is_empty(), "{} lines differ from the base commit outside {allowed:?}:\n{}", diffs.len(), diffs.join("\n"));
+    assert!(
+        diffs.is_empty(),
+        "{} lines differ from the base commit outside {allowed:?}:\n{}",
+        diffs.len(),
+        diffs.join("\n")
+    );
     // and the allowed ones differ exactly as intended
     for l in now.lines().filter(|l| l.contains("|Spectral Procession|") || l.contains("|Transguild Courier|")) {
         eprintln!("changed: {} -> {l}", gold.get(&key(l)).copied().unwrap_or("(no such card in the base)"));

@@ -62,12 +62,22 @@ pub fn mono_cost(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, 
     };
     let mut masks: Vec<u32> = (0..1u32 << ls.len()).collect();
     masks.sort_by_key(|m| m.count_ones()); // stable: the printed colours first
+    // the payable choice that costs the fewest mana in all (a generic reducer can make a {2} cheaper than its colour); the
+    // masks are in fewest-{2}-first order, so a tie keeps the printed colours
+    let mut best: Option<(u32, String, Vec<char>)> = None;
     for m in masks {
-        let (gn, cp, mut paid) = price(m);
-        if can_pay_spell(g, p, c, gn, &cp, false) {
-            record(g, c, &mut paid);
-            return (gn, cp);
+        let (gn, cp, paid) = price(m);
+        if can_pay_spell(g, p, c, gn, &cp, false)
+            && best
+                .as_ref()
+                .is_none_or(|(bg, bc, _)| gn as usize + cp.chars().count() < *bg as usize + bc.chars().count())
+        {
+            best = Some((gn, cp, paid));
         }
+    }
+    if let Some((gn, cp, mut paid)) = best {
+        record(g, c, &mut paid);
+        return (gn, cp);
     }
     let have = mana_units(g, p, false).iter().fold(crate::cards::Colors::NONE, |a, u| a.union(u.cols));
     let m = ls.iter().enumerate().filter(|(_, l)| !have.has(**l)).fold(0u32, |m, (i, _)| m | 1 << i);
