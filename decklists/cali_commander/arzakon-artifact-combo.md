@@ -61,7 +61,7 @@ in the 99 needs a commander on the battlefield.
 
 **Kyodai, Soul of Kamigawa** ({3}{W}, 3/3). *Flash, flying. When Kyodai enters, another target permanent gains
 indestructible for as long as you control Kyodai. {W}{U}{B}{R}{G}: Kyodai gets +5/+5 until end of turn.* He is a normal
-card in the 99 now, not the commander, so he is cast from the hand. Flash him in at the opponent's end step.
+card in the 99, so he is cast from the hand. Flash him in at the opponent's end step.
 
 **Protecting the combo.** His enter trigger makes another permanent indestructible while he stays on the battlefield.
 Cast him in response to a destroy effect aimed at Rings of Brighthearth, Basalt Monolith or Staff of Domination. It does

@@ -74,7 +74,7 @@ not legal under the deck's format by cardgen's deck checks (Commander legality o
 your commander" (a legendary creature, or text that says so), every card inside NEW's colour identity, singleton,
 100 cards). The explain breakdown, the preflight and `--no-explain`, `--no-preflight` and `--preflight-only` work as
 for `--swap`: the new commander has its model-status line, its AI-rule line (the deck's priority for the commander)
-and a dry-run line (a WARNING and exit code 3 when it is cast in under 5% of the 200 games), and the card tables list
+and a dry-run line (a WARNING only when it is cast in under 5% of the 200 games: a new commander never stops the run), and the card tables list
 the new commander (variant) and the old one (current) marked `(cmdr)`. A commander starts in the command zone, so its row
 reads drawn 100%, cast% of all games and stuck% = games it was never cast in. The deck's plan file and AI rules belong
 to the deck key, not the commander: a commander with its own engine code needs that code and its model status first.

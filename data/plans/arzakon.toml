@@ -24,7 +24,7 @@ caution = 0.5
 
 # Arzakon, a five-colour planeswalker ({W}{U}{B}{R}{G}, loyalty 4: +2 three damage, -3 a Black Lotus token, -7 wheel),
 # sorcery speed. It needs all five colours, so it comes down on turn 3 only off fast mana and a fixed mana base, and it is
-# the card that turns on Deflecting Swat, Jeska's Will and Akroma's Will while it is on the battlefield.
+# the deck's commander.
 # PROVISIONAL: prio 74, turn 3 (Opus design consult 2026-11-23, item 10), not tuned by any sim.
 [commander]
 prio = 74

@@ -953,7 +953,7 @@ t3-t4 (Seph's seat from 2026-10-30).
   games at the table, so it mostly dies (to Tergrid, Aurelia, Edgar, Krenko) before a loop. Details: the ghave
   FINDINGS (audit/ghave/).
 
-## Kyodai, Soul of Kamigawa — Artifact Combo (Cali Commander)
+## Arzakon — Artifact Combo (Cali Commander)
 
 Deck key `arzakon` (it was `kyodai` until 2026-11-23 and `thanos` until 2026-11-22), `decklists/cali_commander/arzakon-artifact-combo.md` (it was `kyodai-artifact-combo.md`, and `thanos-artifact-combo.md` before) since 2026-11-13 (tier t5 for now; the engine has no
 1v1 or 30-life mode yet). Thanos, the Mad Titan was its commander until 2026-11-22; the key, guide, plan, printings, spellbook, ownership and audit folder were renamed the same day. Before 2026-11-13 it was the artifacts-and-Dragons list below.
