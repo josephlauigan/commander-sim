@@ -6,7 +6,11 @@
    "seats": 4,
    "life": 40,
    "first_player_draws": true,
-   "bans": "scryfall"
+   "bans": "scryfall",
+   "ai": {
+    "learned_eval": true,
+    "go_rules": "t6"
+   }
   },
   "cali": {
    "name": "Cali Commander",
@@ -33,7 +37,11 @@
     "Time Walk",
     "Tolarian Academy",
     "Yawgmoth's Bargain"
-   ]
+   ],
+   "ai": {
+    "learned_eval": false,
+    "go_rules": "all"
+   }
   }
  },
  "mine": [

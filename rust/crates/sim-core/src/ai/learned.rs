@@ -44,6 +44,10 @@ fn parse_mode(v: Option<&str>) -> Mode {
 
 /// does the look-ahead score p's positions with the learned evaluation?
 pub fn on(g: &Game, p: PlayerId) -> bool {
+    // the evaluation was fitted on 4-seat, 40-life games: a format can switch it off (`Settings.table`)
+    if !g.settings.table.learned_eval {
+        return false;
+    }
     let m = mode();
     if let Mode::Keys(k) = m
         && k.is_empty()

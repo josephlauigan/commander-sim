@@ -536,32 +536,46 @@ pub fn ready_to_go(g: &Game, p: PlayerId, i: usize) -> bool {
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let t6 = crate::impls::t6_plans::is_t6(g, p);
+    // the protection step is Tier 6's, or a plan deck's opt-in (`knobs.protect_before_go`): `go_rules = all` does not
+    // widen it (Q-J3)
     // --- stage4: a plan deck may opt in to the protection step alone (`knobs.protect_before_go`)
-    if !t6 && !crate::ai::plan_data::protect_before_go(g, p) {
+    let protects = t6 || crate::ai::plan_data::protect_before_go(g, p);
+    // --- cali-c4: the win-attempt flag (`t6_going`) follows the table's go rules: Tier 6, or every seat in Cali
+    let go = crate::impls::t6_plans::go_rules(g, p);
+    if !protects && !go {
         return attempt_run(g, p, i);
     }
     // Tier 6: protection first (Silence / Orim's Chant), then every spell and ability of the line is a win step the
     // table answers with everything it has
-    let cmb = all()[i as usize];
-    let (ok, _, casts) = (cmb.ready)(g, p);
-    let turns = g.player(p).turns;
-    if ok && playable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
-        let need = mana_need(g, p, cmb, &casts);
-        if t6 {
-            crate::ai::t6_table::protect_before_go(g, p, need)?;
-        } else {
-            // --- stage4: the opt-in deck's step: Silence also against a single answer when it holds no Orim's Chant,
-            // and only if the line is still playable and priced right with the protection spell counted as cast
-            let reprice = |g: &Game, c: CardId| line_after_cast(g, p, cmb, c);
-            crate::ai::t6_table::protect_before_go_opt_in(g, p, need, &reprice)?;
+    if protects {
+        let cmb = all()[i as usize];
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        let turns = g.player(p).turns;
+        if ok && playable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
+            let need = mana_need(g, p, cmb, &casts);
+            if t6 {
+                crate::ai::t6_table::protect_before_go(g, p, need)?;
+            } else {
+                // --- stage4: the opt-in deck's step: Silence also against a single answer when it holds no Orim's Chant,
+                // and only if the line is still playable and priced right with the protection spell counted as cast
+                let reprice = |g: &Game, c: CardId| line_after_cast(g, p, cmb, c);
+                crate::ai::t6_table::protect_before_go_opt_in(g, p, need, &reprice)?;
+            }
         }
     }
-    if !t6 {
+    if !go {
         return attempt_run(g, p, i);
     }
     g.t6_going = Some(p);
+    let tried = g.player(p).stats.get("combo_attempt").copied().unwrap_or(0);
     let r = attempt_run(g, p, i);
     g.t6_going = None;
+    // --- cali-c4: the counter (stats only; kept when `go_rules = all`): a line gone for under the go rules
+    if g.settings.table.go_rules == crate::format::GoRules::All
+        && g.player(p).stats.get("combo_attempt").copied().unwrap_or(0) > tried
+    {
+        g.player_mut(p).stat("go_went", 1);
+    }
     r
 }
 
@@ -838,6 +852,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         return Ok(vec![]); // g.combo_decks: the outside decks
     }
     let mut out = vec![];
+    let mut held_back = false;
     // the names of p's cards in hand and on the battlefield, built once: the same test as `has_piece` for every combo
     let held: std::collections::HashSet<&str> = {
         let pl = g.player(p);
@@ -859,8 +874,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         if !ok || !playable(g, p, cmb, &casts) {
             continue;
         }
-        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
-            continue; // Tier 6: the table can still stop it (or the plan slot says wait)
+        if crate::impls::t6_plans::go_rules(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            held_back = true; // --- cali-c4: counted below (stats only), once the borrow of `g` ends
+            continue; // Tier 6 (every seat under `go_rules = all`): the table can still stop it (or the plan slot says wait)
         }
         let risk = if casts.is_empty() { 0.0 } else { ctr_risk };
         out.push(Opt {
@@ -868,6 +884,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
             label: format!("combo: {}", cmb.name),
             act: Some(Action::Plan { f: attempt, arg: i as i64 }),
         });
+    }
+    if held_back {
+        crate::ai::t6_table::note_go_held(g, p);
     }
     Ok(out)
 }
@@ -905,7 +924,7 @@ pub fn line_enabled_by(g: &Game, p: PlayerId, r: CardId, after: &[crate::engine:
         if can_pay(g, p, gn, &pips, false) || crate::engine::mana::plan_pay(g, after, gn, &pips).is_none() {
             continue;
         }
-        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+        if crate::impls::t6_plans::go_rules(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
             continue;
         }
         return Some(14.0);
