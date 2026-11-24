@@ -26,6 +26,88 @@ impl Default for Rules {
     }
 }
 
+// ------------------------------------------------------------------------------------------ the AI's table profile
+
+/// whose catalogued lines the hold-up-or-go gates (`t6_table::go_ok`) apply to
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum GoRules {
+    /// Tier 6 seats only (`t6_plans::is_t6`): today's play
+    #[default]
+    T6,
+    /// every seat
+    All,
+}
+
+/// What the shared AI reads of the table it plays at (`Settings.table`). Commander's values are today's play exactly;
+/// a format record can change them (`[cali.ai]` in data/formats.toml). `deny_unknown_fields`: a field this reader does
+/// not know is an error. `duel` is not a data field: the loader derives it from the format's seats (`formats_table`),
+/// never from the live player count, so a 4-player endgame at a Commander table plays as it always has.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Deserialize)]
+#[serde(deny_unknown_fields, default)]
+pub struct TableAi {
+    /// the look-ahead scores positions with the learned evaluation (fitted on 4-seat, 40-life games) for generic decks
+    pub learned_eval: bool,
+    /// whose catalogued lines wait for the table to be unable to stop them
+    pub go_rules: GoRules,
+    /// one opponent at the table (the format has 2 seats): Silence and Orim's Chant are equal cover
+    #[serde(skip)]
+    pub duel: bool,
+}
+
+impl TableAi {
+    /// Commander as the AI has always played it
+    pub const COMMANDER: TableAi = TableAi { learned_eval: true, go_rules: GoRules::T6, duel: false };
+
+    /// The field names `TABLE_AI` may name.
+    pub const FIELDS: [&'static str; 3] = ["learned_eval", "go_rules", "duel"];
+
+    /// This profile with the fields `spec` names turned off, that is back at Commander's value (a measurement arm:
+    /// env `TABLE_AI`). `spec` is `commander` (every field) or a comma list of field names; empty changes nothing.
+    pub fn turned_off(self, spec: &str) -> Result<TableAi, String> {
+        let spec = spec.trim();
+        if spec.is_empty() {
+            return Ok(self);
+        }
+        let mut out = self;
+        let all = spec == "commander";
+        let names: Vec<&str> = if all { Self::FIELDS.to_vec() } else { spec.split(',').map(str::trim).collect() };
+        for n in names {
+            match n {
+                "learned_eval" => out.learned_eval = Self::COMMANDER.learned_eval,
+                "go_rules" => out.go_rules = Self::COMMANDER.go_rules,
+                "duel" => out.duel = Self::COMMANDER.duel,
+                _ => {
+                    return Err(format!(
+                        "bad TABLE_AI {spec:?}: `commander` or a comma list of {}",
+                        Self::FIELDS.join(", ")
+                    ));
+                }
+            }
+        }
+        Ok(out)
+    }
+
+    /// the profile as a report names it: `Commander's (4-player)`, or each field's value
+    pub fn describe(&self) -> String {
+        if *self == Self::COMMANDER {
+            return "Commander's (4-player)".into();
+        }
+        format!(
+            "learned eval {}, go rules {}, duel cover {}",
+            if self.learned_eval { "on" } else { "off" },
+            if self.go_rules == GoRules::All { "every seat" } else { "Tier 6 only" },
+            if self.duel { "on" } else { "off" }
+        )
+    }
+}
+
+impl Default for TableAi {
+    fn default() -> TableAi {
+        TableAi::COMMANDER
+    }
+}
+
 // ------------------------------------------------------------------------------------------ the format record
 
 /// the key of the format a deck plays when its record names none
@@ -61,6 +143,10 @@ pub struct Format {
     /// the ban list when `bans` is `List`: front-face names
     #[serde(default)]
     pub banned: Vec<String>,
+    /// what the AI reads of the table (`[<key>.ai]`); an old decks.json without it reads as Commander's. Its `duel`
+    /// is filled in by `formats_table` from `seats`
+    #[serde(default)]
+    pub ai: TableAi,
 }
 
 /// a card name's front face, lower case: how ban lists compare names
@@ -80,6 +166,7 @@ impl Format {
             first_player_draws: Rules::COMMANDER.first_player_draws,
             bans: Bans::Scryfall,
             banned: vec![],
+            ai: TableAi::COMMANDER,
         }
     }
 
@@ -120,10 +207,10 @@ impl Format {
         }
         if k == DEFAULT_FORMAT {
             let c = Format::commander();
-            if (self.seats, self.rules(), self.bans) != (c.seats, c.rules(), c.bans) {
+            if (self.seats, self.rules(), self.bans, self.ai) != (c.seats, c.rules(), c.bans, c.ai) {
                 return Err(format!(
-                    "format {k:?} must stay {} seats, {} life, first player draws, Scryfall bans (the engine's \
-                     Commander)",
+                    "format {k:?} must stay {} seats, {} life, first player draws, Scryfall bans and \
+                     Commander's AI profile (learned_eval on, go_rules t6; the engine's Commander)",
                     c.seats,
                     Rules::COMMANDER.life
                 ));
@@ -179,6 +266,7 @@ pub fn formats_table<'a>(
     formats.entry(DEFAULT_FORMAT.to_string()).or_insert_with(Format::commander);
     for (k, f) in formats.iter_mut() {
         f.key = k.clone();
+        f.ai.duel = f.seats == 2;
         f.validate()?;
     }
     for d in decks {
@@ -280,9 +368,10 @@ mod format_data_tests {
 
     #[test]
     fn a_record_with_a_field_this_reader_does_not_know_is_an_error() {
-        let e = serde_json::from_str::<Format>(r#"{"name":"X","seats":2,"life":30,"first_player_draws":false,"ai":1}"#)
-            .unwrap_err();
-        assert!(e.to_string().contains("unknown field `ai`"), "{e}");
+        let e =
+            serde_json::from_str::<Format>(r#"{"name":"X","seats":2,"life":30,"first_player_draws":false,"speed":1}"#)
+                .unwrap_err();
+        assert!(e.to_string().contains("unknown field `speed`"), "{e}");
         // `bans` and `banned` may be left out (Scryfall's, no list)
         let f: Format = serde_json::from_str(r#"{"name":"X","seats":2,"life":30,"first_player_draws":false}"#).unwrap();
         assert_eq!((f.bans, f.banned.len()), (Bans::Scryfall, 0));

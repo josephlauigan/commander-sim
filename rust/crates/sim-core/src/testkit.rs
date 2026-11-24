@@ -281,6 +281,13 @@ pub fn table_in(keys: &[&str], seed: u64, rules: Rules) -> Game {
     g
 }
 
+/// set the AI's table profile of a test game (`format::TableAi`: a Cali table is `learned_eval` off, `go_rules` all, `duel`)
+pub fn set_table(g: &mut Game, table: crate::format::TableAi) {
+    let mut s = (*g.settings).clone();
+    s.table = table;
+    g.settings = Arc::new(s);
+}
+
 /// switch a test game's AI (the heuristic alone, or with the look-ahead)
 pub fn set_ai(g: &mut Game, ai: AiMode) {
     let mut s = (*g.settings).clone();
@@ -358,9 +365,15 @@ pub fn play_with(keys: &[&str], seed: u64, trace: bool, ai: AiMode) -> Game {
 
 /// `play_with` under these format rules
 pub fn play_in(keys: &[&str], seed: u64, trace: bool, ai: AiMode, rules: Rules) -> Game {
+    play_at(keys, seed, trace, ai, rules, crate::format::TableAi::COMMANDER)
+}
+
+/// `play_in` with the AI's table profile too (a Cali table: `Rules` 30 life, no first draw, and its `TableAi`)
+pub fn play_at(keys: &[&str], seed: u64, trace: bool, ai: AiMode, rules: Rules, table: crate::format::TableAi) -> Game {
     let seats: Vec<_> = keys.iter().map(|k| seat_spec(k)).collect();
     let mut settings = Settings::new(Profile::Loose, ai, 1.0);
     settings.rules = rules;
+    settings.table = table;
     let settings = Arc::new(settings);
     let mut g = crate::engine::turn::setup_game(db(), registry(), settings, seed, &seats, trace);
     crate::engine::turn::run_rounds(&mut g, 20);
