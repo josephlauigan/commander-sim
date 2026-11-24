@@ -16608,30 +16608,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 2,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [
-        "flying"
-       ],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "thopter"
-       ],
-       "color": "U"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -16641,13 +16618,8 @@
    "ward": 0,
    "identity": "BRUW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}, Sacrifice two artifacts: Choose one —",
-    "• ~ deals 3 damage to target player or planeswalker.",
-    "• Target creature gets -4/-4 until end of turn.",
-    "• You gain 5 life."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -55195,13 +55167,11 @@
     "thopter"
    ],
    "protfrom": "",
-   "ward": 2,
+   "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Each legendary permanent you control has ward {2}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -60781,8 +60751,7 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "rock": "1:C",
-    "eng": "1"
+    "rock": "1:A"
    },
    "pow": 0,
    "tgh": 0,
@@ -60795,7 +60764,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -65685,25 +65654,13 @@
    "generic": 0,
    "pips": "WUBRG",
    "tags": {
-    "leg": true
+    "leg": true,
+    "station": "12"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": "X",
-       "who": "you"
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "station"
@@ -65715,12 +65672,8 @@
    "ward": 0,
    "identity": "BGRUW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, create a tapped 2/2 colorless Robot artifact creature token for each multicolored permanent you control.",
-    "Station",
-    "12+ | Flying"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -115820,10 +115773,21 @@
        "do": "discard",
        "n": 1,
        "who": "you"
+      },
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "pilot"
+       ],
+       "color": ""
       }
-     ],
-     "sorcery": false,
-     "once": false
+     ]
     }
    ],
    "start_loyalty": null,
@@ -115837,10 +115801,8 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"   [partly: create a 1/1 colorless pilot creature token with \"this token crews vehicles as though its power were 2 greater.\"]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -133951,11 +133913,8 @@
    "ward": 0,
    "identity": "BGR",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, put a -1/-1 counter on each of up to two target creatures.",
-    "Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may put that card onto the battlefield under your control. Do this only once each turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -138236,9 +138195,7 @@
    "identity": "BGRUW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "~ is all colors."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -139640,9 +139597,7 @@
    "tags": {
     "pow": "2",
     "dork": "A",
-    "noatk": true,
-    "tok": "1",
-    "tokp": "2"
+    "noatk": true
    },
    "pow": 2,
    "tgh": 2,
@@ -139658,7 +139613,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
