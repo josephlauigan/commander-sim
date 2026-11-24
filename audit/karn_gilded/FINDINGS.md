@@ -30,10 +30,15 @@ decks, whose findings are in `audit/retired/yshtola/` and `audit/retired/yoshima
   Ring; Crew is not modelled); Teferi's Protection is Approximate (JD waived the Full requirement 2026-11-24); an opponent's Flickerwisp on
   Karn goes to the command zone without asking; Cursed Mirror never copies a commander; the AI does not cast Karn at instant speed under Gandalf;
   Breya's 3-damage mode takes a player only; the AI numbers for Station, Breya, Herd Heirloom, Twitching Doll and Karn's own priority are
-  provisional and untuned. The full lists are in the E3, E4 and E5 handoffs.
+  provisional and untuned. More engine limits: in a rare spot the Oracle exception checks that the Oracle is castable before the blink itself is
+  paid, so the AI can draw its library to zero and lose; a main-phase blink (Flickerwisp worst) costs Karn's attack and the AI does not weigh it;
+  Flickerwisp keeps only the primary commander in exile; the Restoration Angel protector double-blinks Karn whenever it saves any creature, which
+  flatters Karn's draw numbers in a baseline; The Reaper misses the case where a wipe kills it together with the creature, and a person is never
+  offered its "may" (the card is always taken); for a person, Station, Breya, Herd Heirloom and Twitching Doll go through the card's own option hook;
+  and the settings rows, `CTHRESH` and `HAND_DELETED` in `ai/mod.rs` and `settings.rs` are keyed on the retired decks, so Karn gets the generic values.
 - **Deck-key gates that do not run for this key:** Solitude's pitch spares line pieces (`rules2.rs`), equipment holder scoring for Buster Sword and
   the Sword (`bulk_white.rs`, `cloud.rs`, `tymna_cards.rs`) and commander importance 7.0 (`cast.rs`) are keyed on the retired decks; Karn gets the generic paths.
-  Doomsday's pile builder is keyed on the retired `thrasios` key, so the Doomsday line only steers the tutors.
+  Doomsday's pile builder and its play are card code that runs for every deck (only the `tutor_stat` trace stat is keyed on `thrasios`); whether it ever finds a winning pile with this list is unmeasured (read the `dd|asked|...` and `dd|chosen (cast begun)` stats).
 
 ## To check in the first runs
 Goldfish first (`trace-record.sh --mode goldfish`), then `--analyze` at t4 and t5: the turn Karn is cast and how many colours he counts on entry;

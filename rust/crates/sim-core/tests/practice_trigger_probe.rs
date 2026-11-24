@@ -934,7 +934,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ),
     (
         "karn_gilded: The Reaper, King No More (DieOpp (state only))",
-        "the \"may\" is the AI's: the card is put onto the battlefield whenever it can be (once each turn) and the person is not asked; the creature to take is the one that died, so there is no choice of card",
+        "a person is not offered the \"may\": the trigger runs through a window that never asks a person, so the card is always taken (once each turn); a small known limit of The Reaper (audit/karn_gilded/FINDINGS.md), not a false alarm",
     ),
     (
         "urdragon: Goldspan Dragon (Combat)",

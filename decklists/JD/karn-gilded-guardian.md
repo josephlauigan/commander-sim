@@ -92,8 +92,7 @@ match. **Giver of Runes** ({W}, 1/1) is protection for Karn: {T}, another target
 colorless or from a colour of our choice until end of turn.
 
 **Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
-(for Karn), Akroma's Will ("if you control a commander" gives both modes, so it is mostly a single mode here: Karn lands
-around turn 6-7), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
+(for Karn), Akroma's Will ("if you control a commander" gives both modes, so before Karn is out it is a single mode), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
 Apparition, Solitude, Farewell (a sweeper that also exiles our own artifacts: choose the modes).
 
 **Card flow and mana.** Rhystic Study, Smothering Tithe, Necropotence, Consecrated Sphinx, The One Ring, Gleaming
@@ -120,7 +119,9 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
 - **Instant-speed blinks resolve in one action** (Ephemerate, Cloudshift, Restoration Angel, Felidar Guardian), so Karn
   simply returns.
 - **Restoration Angel and Felidar Guardian blink each other without end** (both are "may"): with Haliya and a drain card
-  that wins, and aimed at Karn it draws without end: stop before the library is empty, or have Thassa's Oracle ready.
+  that wins. Each trigger is spent blinking the other creature, so aiming one at Karn ends the loop; it draws Karn's cards
+  without end only with Elesh Norn out (her extra trigger blinks Karn while the other keeps the loop going; Gandalf does not
+  help, because neither creature is legendary or an artifact). Stop before the library is empty, or have Thassa's Oracle ready.
 - **Akroma's Will** gives both modes only with a commander on the battlefield: before Karn is out it is a single mode.
 
 ### How the deck wins
@@ -188,7 +189,7 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
   kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
-- **Not modelled:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return).
+- **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return).
 
 ## Mana
 
@@ -249,7 +250,8 @@ Disclose before the game:
 - **The fifteen Game Changers** above.
 - **Infinite or game-ending lines:** Thassa's Oracle with Demonic Consultation or Doomsday; Exquisite Blood with Sanguine
   Bond or Vito (with Haliya or a lifelink source as the starter); Restoration Angel with Felidar Guardian (infinite
-  blink, and with Karn an infinite draw).
+  blink; with Elesh Norn out and Karn as a target, an infinite draw); Felidar Guardian with Cursed Mirror (the Mirror
+  copies the Guardian and the two blink each other without end).
 - **Tutors:** Demonic, Vampiric, Mystical, Enlightened, Imperial Seal, Ringsight, Expedition Map and Ranger-Captain of Eos
   (a creature with mana value 1 or less: Yoshimaru or Giver of Runes).
 - **Free spells:** Force of Will (exile a blue card) and Solitude (exile a white card).
