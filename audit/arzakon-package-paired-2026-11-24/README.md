@@ -32,3 +32,5 @@ every result as new against old.
 - One seed (500000) and one profile (loose): a single draw of 1,500 games per list per tier.
 - The Arzakon deck (`arzakon`) was NOT tested. The package also changed it; it needs a Cali paired run with
   `--swap-commander`, which has not been run.
+
+The raw outputs have trailing spaces stripped (the repository's whitespace check requires it); no number or word changed.
