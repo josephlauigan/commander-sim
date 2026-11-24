@@ -1142,6 +1142,11 @@ fn protector(name: &str) -> Option<usize> {
     PROTECTORS.iter().position(|x| x.0 == name)
 }
 
+/// --- b1a: a name pool_ai.PROTECTORS lists (a plan's `[[hold]]` row must name a protector or a counter)
+pub(super) fn is_protector(name: &str) -> bool {
+    protector(name).is_some()
+}
+
 /// pool_ai.worth_protecting
 fn worth_protecting(g: &Game, p: PlayerId, m: PermId) -> bool {
     let x = g.perm(m);
