@@ -170,15 +170,55 @@ fn a_hold_row_must_name_a_protector_or_a_counter() {
         let l = plan_data::load("x", &format!("deck = \"x\"\n[[hold]]\ncard = \"{card}\"\n")).unwrap();
         plan_data::hold_problems(&l, &db)
     };
-    for ok in [FLAWLESS, "Teferi's Protection", "Eerie Interlude", "Counterspell", "Mana Drain"] {
+    for ok in [FLAWLESS, "Teferi's Protection", "Eerie Interlude", "Mana Drain"] {
         // (tags and the protector list: Flawless Maneuver and Eerie Interlude carry no tag, they are in the list)
         let p = check(ok);
         assert!(p.is_empty(), "{ok}: {p:?}");
     }
     let p = check("Sol Ring");
-    assert!(p.len() == 1 && p[0].contains("not a protector or a counter"), "{p:?}");
+    assert!(p.iter().any(|m| m.contains("not a protector or a counter")), "{p:?}");
     let p = check("No Such Card");
     assert!(p.len() == 1 && p[0].contains("no such card"), "{p:?}");
+}
+
+#[test]
+fn hold_problems_refuses_rows_the_hold_cannot_keep() {
+    let db = db();
+    let check = |card: &str, extra: &str| {
+        let l = plan_data::load("x", &format!("deck = \"x\"\n[[hold]]\ncard = \"{card}\"\n{extra}")).unwrap();
+        plan_data::hold_problems(&l, &db)
+    };
+    // a creature, a commander and a battlefield protector held in hand are dead: not instants
+    for (card, why) in [
+        ("Selfless Spirit", "not an instant"),
+        ("Kyodai, Soul of Kamigawa", "not an instant"),
+        ("Dream Trawler", "not an instant"),
+        // removal_options and the end-of-turn window cast a card with a removal mode whatever the hold says
+        ("Valorous Stance", "removal mode"),
+        ("Cryptic Command", "removal mode"),
+    ] {
+        let p = check(card, "");
+        assert!(p.iter().any(|m| m.contains(why)), "{card}: {p:?}");
+    }
+    // Eerie Interlude predates b1a: a row without `when` only; with one it would claim to hold a card it cannot
+    let p = check("Eerie Interlude", "when = [\"creatures>=1\"]\n");
+    assert!(p.len() == 1 && p[0].contains("no DSL"), "{p:?}");
+    assert!(check("Eerie Interlude", "").is_empty());
+    // a no-DSL card outside the two old rows
+    assert!(check("Counterspell", "").iter().any(|m| m.contains("no DSL")));
+}
+
+#[test]
+fn hold_problems_passes_the_real_rows_and_the_adoption_row() {
+    let db = db();
+    for (key, l) in plan_data::all() {
+        assert_eq!(plan_data::hold_problems(l, &db), Vec::<String>::new(), "{key}");
+    }
+    // yoshimaru.toml as it is on disk, plus the row the plan will adopt after the paired sim (the file is unchanged)
+    let text = std::fs::read_to_string(data_dir().join("plans/yoshimaru.toml")).unwrap();
+    let l = plan_data::load("yoshimaru", &format!("{text}\n[[hold]]\ncard = \"{FLAWLESS}\"\n")).unwrap();
+    assert!(l.plan.hold.iter().any(|h| h.card == FLAWLESS));
+    assert_eq!(plan_data::hold_problems(&l, &db), Vec::<String>::new());
 }
 
 // ------------------------------------------------------------------ 5: no existing plan is affected
