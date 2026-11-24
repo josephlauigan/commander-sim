@@ -79,7 +79,8 @@ fn a_deck_naming_a_format_the_file_lacks_is_a_load_error() {
 
 #[test]
 fn a_pool_deck_with_a_format_is_read_and_refused_at_a_commander_table() {
-    let e = engine_with("pool_format", |v| deck_mut(v, "pool", "dack-fayden-white-stax")["format"] = json!("cali")).unwrap();
+    let e = engine_with("pool_format", |v| deck_mut(v, "pool", "dack-fayden-white-stax")["format"] = json!("cali"))
+        .unwrap();
     assert_eq!(e.format_of("dack-fayden-white-stax").key, "cali");
     assert!(e.admits("dack-fayden-white-stax", "commander").is_err());
 }
@@ -94,12 +95,18 @@ fn bad_format_records_are_refused_at_load() {
     assert!(bad("life0", &|f| f["cali"]["life"] = json!(0)).contains("life must be at least 1"));
     let _ = bad("life_float", &|f| f["cali"]["life"] = json!(30.5));
     assert!(bad("empty_list", &|f| f["cali"]["banned"] = json!([])).contains("non-empty banned list"));
-    assert!(bad("no_list", &|f| {
-        f["cali"].as_object_mut().unwrap().remove("banned");
-    })
-    .contains("non-empty banned list"));
-    assert!(bad("dup", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("balance"))).contains("listed twice"));
-    assert!(bad("slashes", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("A // B"))).contains("front-face"));
+    assert!(
+        bad("no_list", &|f| {
+            f["cali"].as_object_mut().unwrap().remove("banned");
+        })
+        .contains("non-empty banned list")
+    );
+    assert!(
+        bad("dup", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("balance"))).contains("listed twice")
+    );
+    assert!(
+        bad("slashes", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("A // B"))).contains("front-face")
+    );
     assert!(bad("blank", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("  "))).contains("front-face"));
     assert!(bad("scry_list", &|f| f["cali"]["bans"] = json!("scryfall")).contains("needs bans"));
     assert!(bad("bans_word", &|f| f["cali"]["bans"] = json!("everything")).contains("unknown variant"));
@@ -107,11 +114,13 @@ fn bad_format_records_are_refused_at_load() {
     assert!(bad("cmd_life", &|f| f["commander"]["life"] = json!(30)).contains("must stay"));
     assert!(bad("cmd_seats", &|f| f["commander"]["seats"] = json!(2)).contains("must stay"));
     assert!(bad("cmd_draw", &|f| f["commander"]["first_player_draws"] = json!(false)).contains("must stay"));
-    assert!(bad("cmd_list", &|f| {
-        f["commander"]["bans"] = json!("list");
-        f["commander"]["banned"] = json!(["Sol Ring"]);
-    })
-    .contains("must stay"));
+    assert!(
+        bad("cmd_list", &|f| {
+            f["commander"]["bans"] = json!("list");
+            f["commander"]["banned"] = json!(["Sol Ring"]);
+        })
+        .contains("must stay")
+    );
     // formats as an array, a string
     assert!(engine_with("arr", |v| v["formats"] = json!([])).is_err());
     assert!(engine_with("str", |v| v["formats"] = json!("x")).is_err());

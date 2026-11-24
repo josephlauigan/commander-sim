@@ -58,7 +58,11 @@ fn a_format_cardgen_accepts_is_one_sim_core_accepts() {
         let v: serde_json::Value = serde_json::from_str(&text).unwrap();
         let x = v.get("x").unwrap().clone();
         let r = serde_json::from_value::<Format>(x);
-        assert!(r.is_ok(), "formats.toml `{to}` loads in cardgen and exports, but sim-core cannot read it: {:?}", r.err());
+        assert!(
+            r.is_ok(),
+            "formats.toml `{to}` loads in cardgen and exports, but sim-core cannot read it: {:?}",
+            r.err()
+        );
     }
 }
 
@@ -110,8 +114,11 @@ fn my_decks_format_field_edge_cases() {
     let ok = try_with("[yoshimaru]", "[yoshimaru]\nformat = \"cali\"").unwrap();
     assert_eq!(ok.iter().find(|d| d.key == "yoshimaru").unwrap().format, "cali");
     // the format table can be edited: a deck can name a format the file adds
-    std::fs::write(p.data("formats.toml"), std::fs::read_to_string(p.data("formats.toml")).unwrap() + &CALI_OK.replace("[x]", "[other]"))
-        .unwrap();
+    std::fs::write(
+        p.data("formats.toml"),
+        std::fs::read_to_string(p.data("formats.toml")).unwrap() + &CALI_OK.replace("[x]", "[other]"),
+    )
+    .unwrap();
     assert!(try_with("format = \"cali\"", "format = \"other\"").is_ok());
     // a my_decks.toml key that is a plain value, not a table
     std::fs::write(p.data("my_decks.toml"), format!("zzz = 1\n{base}")).unwrap();
@@ -170,7 +177,8 @@ fn export_reproduces_the_committed_files_byte_for_byte() {
     cardgen::export::run(&p, &out2, true).unwrap();
     assert_eq!(std::fs::read(out.join("decks.json")).unwrap(), std::fs::read(out2.join("decks.json")).unwrap());
     let text = std::fs::read_to_string(out.join("decks.json")).unwrap();
-    let (f, m, pl) = (text.find("\"formats\"").unwrap(), text.find("\"mine\"").unwrap(), text.find("\"pool\"").unwrap());
+    let (f, m, pl) =
+        (text.find("\"formats\"").unwrap(), text.find("\"mine\"").unwrap(), text.find("\"pool\"").unwrap());
     assert!(f < m && m < pl);
     // the exported mine record of a Commander deck has no `format` key at all
     let doc = json::parse(&text).unwrap();
@@ -237,13 +245,23 @@ fn each_deck_is_judged_by_its_own_format_by_key_and_by_path() {
     let p = scratch("deck_formats");
     for d in load_my_decks(&p).unwrap() {
         let (path, mut cards) = list_of(&p, &d);
-        let i = cards.iter().position(|c| c != &d.commander && !decks::BASICS.contains(&c.as_str()) && c != "Mana Crypt" && c != "Sol Ring").unwrap_or(0);
+        let i = cards
+            .iter()
+            .position(|c| {
+                c != &d.commander && !decks::BASICS.contains(&c.as_str()) && c != "Mana Crypt" && c != "Sol Ring"
+            })
+            .unwrap_or(0);
         // the Tabernacle: legal in Commander, banned in Cali
         cards[i] = "The Tabernacle at Pendrell Vale".into();
         for which in [d.key.clone(), path.to_string_lossy().into_owned()] {
             let o = dry(&p, &which, &cards);
             if d.format == "cali" {
-                assert!(!o.ok && o.text.contains("banned in Cali Commander: The Tabernacle"), "{} {which}: {}", d.key, o.text);
+                assert!(
+                    !o.ok && o.text.contains("banned in Cali Commander: The Tabernacle"),
+                    "{} {which}: {}",
+                    d.key,
+                    o.text
+                );
             } else {
                 assert!(!o.text.contains("banned in"), "{} {which}: {}", d.key, o.text);
             }

@@ -32,7 +32,6 @@ fn colour_lands(g: &mut Game, p: PlayerId) {
     }
 }
 
-
 #[test]
 fn inspect_what_the_lotus_token_is_spent_on() {
     use sim_core::format::Rules;
@@ -48,7 +47,9 @@ fn inspect_what_the_lotus_token_is_spent_on() {
                 tokens_made += 1;
                 let round = l.split_whitespace().next().unwrap_or("").to_string();
                 let tail: Vec<&String> = log[i + 1..].iter().take(25).collect();
-                let spent = tail.iter().any(|t| t.contains("Black Lotus") && (t.contains("sacrific") || t.contains("taps") || t.contains("tap")));
+                let spent = tail.iter().any(|t| {
+                    t.contains("Black Lotus") && (t.contains("sacrific") || t.contains("taps") || t.contains("tap"))
+                });
                 if spent && tail.iter().any(|t| t.starts_with(&round)) {
                     tokens_spent_same_round += 1;
                 }
@@ -65,7 +66,9 @@ fn inspect_what_the_lotus_token_is_spent_on() {
             }
         }
     }
-    eprintln!("LOTUS made={tokens_made} spent_soon={tokens_spent_same_round} no_spend_line_in_next_25={tokens_never_spent}");
+    eprintln!(
+        "LOTUS made={tokens_made} spent_soon={tokens_spent_same_round} no_spend_line_in_next_25={tokens_never_spent}"
+    );
 }
 
 #[allow(dead_code)]
@@ -149,7 +152,11 @@ fn siege_gang_commander_does_not_start_aiming_its_pings_at_a_battle() {
         opts.iter().map(|o| &o.label).collect::<Vec<_>>()
     );
     let hit_battle = opts.iter().any(|o| o.label.contains("Invasion of Ikoria"));
-    assert!(!hit_battle, "Siege-Gang should not ping a battle: {:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(
+        !hit_battle,
+        "Siege-Gang should not ping a battle: {:?}",
+        opts.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
     let _ = before;
 }
 
@@ -187,7 +194,6 @@ fn cali_games_with_the_real_arzakon_deck_complete_and_use_the_walker() {
     );
 }
 
-
 // ---------------------------------------------------------------- urdragon package: Courser and Incubator
 fn ur_table(seed: u64) -> Game {
     let mut g = table_with(&["urdragon", "yshtola", "sheoldred"], seed, 40);
@@ -208,7 +214,11 @@ fn urzas_incubator_names_dragon_and_discounts_the_big_dragons_with_eminence() {
     eprintln!("Incubator names {named:?}; Courser cost before {gn0}+{} after:", pi0.len());
     assert!(named.as_deref().is_some_and(|n| n.contains("dragon")), "the AI must name Dragon: {named:?}");
     let (gn1, pi1) = mana::cost_of(&g, P0, courser);
-    assert_eq!(gn0 + pi0.len() as u32 - (gn1 + pi1.len() as u32), 2, "Incubator: creature spells of the type cost {{2}} less");
+    assert_eq!(
+        gn0 + pi0.len() as u32 - (gn1 + pi1.len() as u32),
+        2,
+        "Incubator: creature spells of the type cost {{2}} less"
+    );
 }
 
 #[test]
@@ -225,13 +235,21 @@ fn a_whole_ai_turn_with_hellkite_courser_puts_the_ur_dragon_in_attacks_and_retur
         turn::continue_turn(&mut g, P0, Step::Main1).unwrap();
         let log: Vec<String> = g.log.clone().unwrap_or_default();
         let cast = perms_named(&g, P0, "Hellkite Courser").len();
-        eprintln!("seed {seed}: courser_on_bf={cast} cmd_zone={} life={:?} tax={} {}", g.player(P0).cmd_zone_of(ur), [g.player(P1).life, g.player(P2).life], g.player(P0).tax, log.len());
+        eprintln!(
+            "seed {seed}: courser_on_bf={cast} cmd_zone={} life={:?} tax={} {}",
+            g.player(P0).cmd_zone_of(ur),
+            [g.player(P1).life, g.player(P2).life],
+            g.player(P0).tax,
+            log.len()
+        );
         assert!(g.player(P0).cmd_zone_of(ur), "seed {seed}: back in the command zone at the end step");
         assert_eq!(g.player(P0).tax, tax0, "seed {seed}: not cast, so no tax");
-        assert!(g.player(P1).life < 40 || g.player(P2).life < 40, "seed {seed}: The Ur-Dragon (haste) attacked and connected");
+        assert!(
+            g.player(P1).life < 40 || g.player(P2).life < 40,
+            "seed {seed}: The Ur-Dragon (haste) attacked and connected"
+        );
     }
 }
-
 
 #[test]
 fn many_cali_games_scan_for_self_targets_and_odd_log_lines() {
@@ -294,7 +312,6 @@ fn many_cali_games_scan_for_self_targets_and_odd_log_lines() {
     assert_eq!(selfhit, 0, "the AI aimed Arzakon's +2 at itself");
 }
 
-
 // ---------------------------------------------------------------- data guards
 fn engine_with(name: &str, edit: impl FnOnce(&mut serde_json::Value)) -> Result<sim_core::run::Engine, String> {
     let real = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data");
@@ -340,7 +357,6 @@ fn the_old_deck_key_does_not_exist_and_the_new_one_has_arzakon_as_commander() {
     assert_eq!(d.cards.iter().filter(|c| *c == "Arzakon").count(), 1);
 }
 
-
 // ---------------------------------------------------------------- Karn (new in the 99) against the table's artifacts
 #[test]
 fn an_opposing_karn_stops_a_sol_ring_and_the_lotus_token_in_the_mana_count_too() {
@@ -372,7 +388,6 @@ fn oath_of_teferi_lets_arzakon_use_two_abilities_and_the_second_is_still_legal()
     assert!(!o.is_empty(), "a second ability is on offer with Oath of Teferi");
 }
 
-
 #[test]
 fn lookahead_ai_cali_games_still_cast_arzakon() {
     use sim_core::format::Rules;
@@ -389,7 +404,6 @@ fn lookahead_ai_cali_games_still_cast_arzakon() {
     }
     eprintln!("LOOKAHEAD games={games} cast_games={cast_games}");
 }
-
 
 fn names_on_bf(g: &Game, p: PlayerId) -> Vec<String> {
     g.player(p).perms.iter().map(|&m| g.perm(m).name.to_string()).collect()
@@ -437,7 +451,10 @@ fn arzakon_returns_to_the_command_zone_from_every_zone_it_can_be_sent_to() {
         zones::to_zone_card(&mut g, w, z);
         let pl = g.player(P0);
         assert!(pl.cmd_in_zone, "{z:?}: back in the command zone");
-        assert!(!pl.hand.contains(&cmd) && !pl.gy.contains(&cmd) && !pl.exile.contains(&cmd) && !pl.library.contains(&cmd), "{z:?}: nowhere else");
+        assert!(
+            !pl.hand.contains(&cmd) && !pl.gy.contains(&cmd) && !pl.exile.contains(&cmd) && !pl.library.contains(&cmd),
+            "{z:?}: nowhere else"
+        );
         assert_eq!(pl.tax, 2, "{z:?}: tax paid once");
     }
 }

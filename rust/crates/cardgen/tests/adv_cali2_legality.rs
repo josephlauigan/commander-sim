@@ -80,8 +80,15 @@ fn the_cali_list_is_the_guide_text_and_nothing_else() {
     assert_eq!(got, want, "guide text: {before_legal}");
     assert_eq!(got.len(), 18);
     // the guide's legal cards are not on it
-    for n in ["Mana Crypt", "Tinker", "Primeval Titan", "Paradox Engine", "Jeweled Lotus", "Dockside Extortionist", "Upheaval"]
-    {
+    for n in [
+        "Mana Crypt",
+        "Tinker",
+        "Primeval Titan",
+        "Paradox Engine",
+        "Jeweled Lotus",
+        "Dockside Extortionist",
+        "Upheaval",
+    ] {
         assert!(!cali.banned.iter().any(|b| b.eq_ignore_ascii_case(n)), "{n} is legal in the guide");
     }
 }
@@ -96,7 +103,8 @@ fn commander_verdicts_over_the_whole_cache_are_the_old_ones() {
     let mut other = vec![];
     for name in c.names() {
         let r = c.get(&name).unwrap();
-        let old_banned = r.get("legalities").and_then(|l| l.get("commander")).and_then(|v| v.as_str()) == Some("banned");
+        let old_banned =
+            r.get("legalities").and_then(|l| l.get("commander")).and_then(|v| v.as_str()) == Some("banned");
         let v = legality_problems(&cmd, &name, Some(r));
         assert_eq!(v.contains(&Illegal::Banned), old_banned, "{name}");
         // any non-banned problem is the new `not legal` report: list it, it must only be junk keys
@@ -127,7 +135,8 @@ fn every_deck_validates_and_arzakon_under_commander_fails_on_exactly_three() {
     }
     let (cmd, _) = formats();
     let arzakon = report.iter().find(|(d, ..)| d.key == "arzakon").unwrap().0.clone();
-    let (probs, _) = card_problems(&cmd, &arzakon.cards, &[arzakon.commander.as_str()], None, None, &|n| c.get(n).cloned());
+    let (probs, _) =
+        card_problems(&cmd, &arzakon.cards, &[arzakon.commander.as_str()], None, None, &|n| c.get(n).cloned());
     assert_eq!(probs, ["banned in Commander: Mana Crypt, Primeval Titan, Tinker"]);
 }
 
@@ -156,10 +165,8 @@ fn cardgen_and_sim_core_agree_on_who_is_banned_in_cali() {
 fn a_back_face_named_like_a_banned_card_is_treated_the_same_by_both_readers() {
     let (_, cali) = formats();
     let (sc_cali, sc_cmd) = sim_core_formats();
-    let dfc = rec(
-        r#"{"name":"Zork the Brave // Balance","layout":"transform","legalities":{"commander":"legal"},
-        "card_faces":[{"name":"Zork the Brave"},{"name":"Balance"}]}"#,
-    );
+    let dfc = rec(r#"{"name":"Zork the Brave // Balance","layout":"transform","legalities":{"commander":"legal"},
+        "card_faces":[{"name":"Zork the Brave"},{"name":"Balance"}]}"#);
     let cg = legality_problems(&cali, "Zork the Brave // Balance", Some(&dfc)).contains(&Illegal::Banned);
     let sc = sc_cali.admits(&deck_of("Zork the Brave // Balance"), &sc_cmd).is_err();
     assert_eq!(cg, sc, "cardgen banned={cg}, sim-core refuses={sc}");
@@ -183,12 +190,12 @@ fn name_matching_edge_cases() {
     // padded and upper case request, record spelled canonically
     assert_eq!(legality_problems(&cali, "  MOX JET  ", Some(&r("Mox Jet"))), [Illegal::Banned]);
     // the requested name is a typographic apostrophe spelling, the record the canonical one: the record name still bans it
-    assert_eq!(legality_problems(&cali, "Yawgmoth\u{2019}s Bargain", Some(&r("Yawgmoth's Bargain"))), [Illegal::Banned]);
-    // the comma names
     assert_eq!(
-        legality_problems(&cali, "Nadu, Winged Wisdom", Some(&r("Nadu, Winged Wisdom"))),
+        legality_problems(&cali, "Yawgmoth\u{2019}s Bargain", Some(&r("Yawgmoth's Bargain"))),
         [Illegal::Banned]
     );
+    // the comma names
+    assert_eq!(legality_problems(&cali, "Nadu, Winged Wisdom", Some(&r("Nadu, Winged Wisdom"))), [Illegal::Banned]);
     // a name that merely contains a banned name is fine
     assert!(legality_problems(&cali, "Mox Jetty", Some(&r("Mox Jetty"))).is_empty());
     assert!(legality_problems(&cali, "Time Walker", Some(&r("Time Walker"))).is_empty());

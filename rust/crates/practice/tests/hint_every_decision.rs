@@ -27,9 +27,10 @@ fn check(h: &Value, what: &str) {
 fn every_decision_of_several_games_has_a_hint() {
     let seen = RefCell::new(BTreeMap::<String, usize>::new());
     let mut mulligan_texts = vec![];
-    for (i, (deck, seed)) in [("urdragon", 4242u64), ("sheoldred", 7), ("yoshimaru", 11), ("arzakon", 3), ("yshtola", 5)]
-        .into_iter()
-        .enumerate()
+    for (i, (deck, seed)) in
+        [("urdragon", 4242u64), ("sheoldred", 7), ("yoshimaru", 11), ("arzakon", 3), ("yshtola", 5)]
+            .into_iter()
+            .enumerate()
     {
         let mut o = opts("adaptive");
         o.deck = deck.into();

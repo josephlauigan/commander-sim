@@ -39,8 +39,11 @@ fn every_pool_mode_refuses_arzakon_at_a_commander_table() {
         let c = ["--format", "commander"];
         refused(&[&c[..], &["--deck", "arzakon", "--pool", pool, "--analyze", "--quiet", "--games", "1"]].concat());
         refused(
-            &[&c[..], &["--deck", "arzakon", "--pool", pool, "--swap", swap, "--no-explain", "--quiet", "--games", "1"]]
-                .concat(),
+            &[
+                &c[..],
+                &["--deck", "arzakon", "--pool", pool, "--swap", swap, "--no-explain", "--quiet", "--games", "1"],
+            ]
+            .concat(),
         );
         refused(
             &[
@@ -86,7 +89,9 @@ fn every_pool_mode_refuses_arzakon_at_a_commander_table() {
 /// `--goldfish`; the oracle is 4-seat by construction), with spaces too
 #[test]
 fn goldfish_and_oracle_lists_refuse_arzakon_anywhere() {
-    for spec in ["arzakon", "yoshimaru,arzakon", "arzakon,yoshimaru", "yoshimaru , arzakon", "t6,arzakon", "arzakon,arzakon"] {
+    for spec in
+        ["arzakon", "yoshimaru,arzakon", "arzakon,yoshimaru", "yoshimaru , arzakon", "t6,arzakon", "arzakon,arzakon"]
+    {
         refused(&["--goldfish", spec, "--format", "commander", "--quiet"]);
         let (code, out, err) = sim(&["--mulligan-oracle", spec, "--quiet"]);
         assert_eq!(code, 1, "{spec}\n{out}\n{err}");

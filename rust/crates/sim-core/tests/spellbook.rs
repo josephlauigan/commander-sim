@@ -28,18 +28,18 @@ use std::fs;
 /// included combos whose cards are all catalogue pieces but that no line plays, in decks that hold them
 /// (deck key, Spellbook variant id): the audit's list, not to model in this PR
 const KNOWN_GAPS: &[(&str, &str)] = &[
-    ("arzakon", "1368-1414-4856"),               // Underworld Breach + Lotus Petal + Brain Freeze
+    ("arzakon", "1368-1414-4856"), // Underworld Breach + Lotus Petal + Brain Freeze
     ("krenko-mono-red-goblins", "38-659-2645"), // Skirk Prospector + Krenko, Mob Boss + Staff of Domination
     ("krenko-mono-red-goblins", "38-659-2816"), // Skirk Prospector + Krenko, Mob Boss + Umbral Mantle
     ("krenko-mono-red-goblins", "618-2178-5147"), // Kiki-Jiki, Mirror Breaker + Thornbite Staff + Goblin Bombardment
     ("krenko-mono-red-goblins", "38-618-2178"), // Kiki-Jiki, Mirror Breaker + Thornbite Staff + Skirk Prospector
     ("krenko-mono-red-goblins", "618-2034-2178"), // Kiki-Jiki, Mirror Breaker + Thornbite Staff + Ashnod's Altar
-    ("kinnan-simic-mana-combo", "3430-4131"),   // Basalt Monolith + Nyxbloom Ancient
+    ("kinnan-simic-mana-combo", "3430-4131"), // Basalt Monolith + Nyxbloom Ancient
     ("urza-mono-blue-artifacts", "513-2364--47"), // Hullbreaker Horror + Mana Vault
     ("yawgmoth-mono-black-aristocrats", "3240-4050-4314"), // Nether Traitor + Phyrexian Altar + Pawn of Ulamog
     ("yawgmoth-mono-black-aristocrats", "2393-3240-4050"), // Nether Traitor + Phyrexian Altar + Sifter of Skulls
     ("kraum-tymna-blue-breach-midrange", "1368-1414-4856"), // Underworld Breach + Lotus Petal + Brain Freeze
-    ("yoshimaru", "1090-2781"), // Restoration Angel + Felidar Guardian (the guide's Line D, needs a payoff)
+    ("yoshimaru", "1090-2781"),    // Restoration Angel + Felidar Guardian (the guide's Line D, needs a payoff)
     ("rograkh-silas-turbo-breach", "1368-1414-4856"), // Underworld Breach + Lotus Petal + Brain Freeze
     ("sisay-legends-toolbox", "2364-2608-4499"), // Derevi, Empyrial Tactician + Emiel the Blessed + Mana Vault
     ("sisay-legends-toolbox", "527-2608-4499"), // Derevi, Empyrial Tactician + Emiel the Blessed + Selvala, Heart of the Wilds

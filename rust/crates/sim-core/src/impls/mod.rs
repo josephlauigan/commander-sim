@@ -35,10 +35,10 @@ pub mod green_cards;
 pub mod karn;
 pub mod karn_cards;
 pub mod karn_engines;
-pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
 pub mod kefka;
 pub mod krrik;
 pub mod kuja;
+pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
 pub mod lands;
 pub mod legends;
 pub mod marchesa;
