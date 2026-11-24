@@ -352,7 +352,12 @@ fn the_old_deck_key_does_not_exist_and_the_new_one_has_arzakon_as_commander() {
     assert!(!decks().iter().any(|d| &*d.key == "kyodai"), "the old key must be gone");
     let d = deck("arzakon");
     assert_eq!(d.commander, "Arzakon");
-    assert!(d.cards.iter().any(|c| c == "Kyodai, Soul of Kamigawa"), "Kyodai is a 99 card");
+    // Kyodai moved to the urdragon deck: it is not in the arzakon list, and it is in the urdragon list
+    assert!(!d.cards.iter().any(|c| c == "Kyodai, Soul of Kamigawa"), "Kyodai is no longer in the arzakon list");
+    assert!(
+        deck("urdragon").cards.iter().any(|c| c == "Kyodai, Soul of Kamigawa"),
+        "Kyodai is a card of the urdragon list"
+    );
     assert_eq!(d.cards.len(), 100);
     assert_eq!(d.cards.iter().filter(|c| *c == "Arzakon").count(), 1);
 }
