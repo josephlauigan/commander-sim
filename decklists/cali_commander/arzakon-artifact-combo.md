@@ -17,7 +17,7 @@ Cali format, so the plan and the keep rule are a pilot's guide, not measured.
 |---|---|
 | **Commander** | Arzakon ({W}{U}{B}{R}{G}, a legendary planeswalker with loyalty 4; "can be your commander"); a five-colour card |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
-| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Kyodai and Leyline of the Guildpact are modelled (Full); Arzakon is modelled by the engine work that goes with this list (status Full once that branch is merged), and its loyalty choices are provisional rules that nothing has tested. The AI never copies loyalty abilities with Rings of Brighthearth; a person at a real table can. This list has not been simulated at the Cali format |
+| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Kyodai and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI never copies loyalty abilities with Rings of Brighthearth; a person at a real table can. This list has not been simulated at the Cali format |
 | **Buys** | None. Arzakon, Karn, Voltaic Key and Pithing Needle are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination, Rhystic Study and Watery Grave |
 
 ## Strategy
@@ -31,8 +31,8 @@ commander.*
 
 **When to cast it.** It costs one mana of each colour and nothing else, so the colourless rocks (Sol Ring, Mana Crypt, Mana
 Vault, Basalt Monolith, Ancient Tomb) pay nothing toward it. The sources that can pay a colour are the dual lands and
-fetchlands, Command Tower, Arcane Signet, Coalition Relic, Birds of Paradise, Paradise Druid, Lotus Petal, Fellwar Stone,
-Chrome Mox (one colour), Mox Opal (with three artifacts) and Leyline of the Guildpact, which turns every land into every
+fetchlands, Command Tower, Arcane Signet, Coalition Relic, Birds of Paradise, Paradise Druid, Lotus Petal, Fellwar Stone (only a colour an
+opponent's land can make), Chrome Mox (one colour), Mox Opal (with three artifacts) and Leyline of the Guildpact, which turns every land into every
 basic land type so that each land taps for any colour. Expect it on turn 4 or 5, not turn 2 or 3. If it leaves the
 battlefield you may return it to the command zone and cast it again for {2} more.
 
