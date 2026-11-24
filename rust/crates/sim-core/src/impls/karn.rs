@@ -51,9 +51,11 @@ pub fn karn_of(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// the artifacts p controls: artifact permanents (cards and artifact tokens), Treasure / Food / Clue / Blood tokens,
-/// artifact lands (Treasure Vault, Darksteel Citadel); an animated Mishra's Factory is one of the permanents
+/// artifact lands (Treasure Vault, Darksteel Citadel); an animated Mishra's Factory is one of the permanents, and a
+/// land token that is also a creature (listed in `lands` and in `perms`) is counted once
 pub fn artifacts(g: &Game, p: PlayerId) -> u32 {
-    let lands = g.player(p).lands.iter().filter(|&&l| is_art_card(g, g.perm(l).card())).count() as u32;
+    let pl = g.player(p);
+    let lands = pl.lands.iter().filter(|&&l| !pl.perms.contains(&l) && is_art_card(g, g.perm(l).card())).count() as u32;
     crate::impls::sheoldred::artifact_count(g, p) as u32 + lands
 }
 
