@@ -357,30 +357,30 @@ game. Check with the organiser whether proxies are allowed.
 
 ## Decklist by type (100)
 
-**Commander (1).** Kyodai, Soul of Kamigawa
+**Commander (1).** Arzakon
 
-**Creatures (15).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
+**Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Kyodai, Soul of Kamigawa, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
 
-**Artifacts (20).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Mox Opal, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring
+**Artifacts (21).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
 
 **Enchantments (5).** Leyline of the Guildpact, Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
 
-**Planeswalkers (1).** Tezzeret, Cruel Captain
+**Planeswalkers (2).** Karn, the Great Creator, Tezzeret, Cruel Captain
 
-**Instants (24).** Akroma's Will, An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Deflecting Swat, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (22).** An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (7).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Jeska's Will, Tinker
+**Sorceries (6).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Tinker
 
 **Lands (27).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Bloodstained Mire, Command Tower, Flooded Strand, Hallowed Fountain, Marsh Flats, Misty Rainforest, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Steam Vents, Strip Mine, Taiga, Tropical Island, Tundra, Underground Sea, Urza's Saga, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills
 
 ## Import list (100)
 
 ```
-1 Akroma's Will
 1 An Offer You Can't Refuse
 1 Ancient Tomb
 1 Arcane Signet
 1 Arid Mesa
+1 Arzakon
 1 Avacyn's Pilgrim
 1 Badlands
 1 Basalt Monolith
@@ -397,7 +397,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Crucible of Worlds
 1 Cyclonic Rift
 1 Dark Ritual
-1 Deflecting Swat
 1 Demonic Consultation
 1 Demonic Tutor
 1 Diabolic Intent
@@ -418,7 +417,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Hallowed Fountain
 1 Hangarback Walker
 1 Heroic Intervention
-1 Jeska's Will
+1 Karn, the Great Creator
 1 Kyodai, Soul of Kamigawa
 1 Leyline of the Guildpact
 1 Lightning Greaves
@@ -428,13 +427,13 @@ game. Check with the organiser whether proxies are allowed.
 1 Mana Vault
 1 Marsh Flats
 1 Meteor Golem
-1 Mind Stone
 1 Misty Rainforest
 1 Mox Opal
 1 Mystic Confluence
 1 Mystic Remora
 1 Mystical Tutor
 1 Paradise Druid
+1 Pithing Needle
 1 Plateau
 1 Polluted Delta
 1 Primeval Titan
@@ -471,6 +470,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Vampiric Tutor
 1 Verdant Catacombs
 1 Volcanic Island
+1 Voltaic Key
 1 Walking Ballista
 1 Watery Grave
 1 Windswept Heath

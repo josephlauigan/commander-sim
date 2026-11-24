@@ -18,7 +18,7 @@ tiers = ["t3", "t4"]
 [arzakon]
 file = "cali_commander/arzakon-artifact-combo.md"
 name = "Arzakon"
-commander = "Kyodai, Soul of Kamigawa"
+commander = "Arzakon"
 ident = "WUBRG"
 format = "cali"
 tiers = ["t5", "t6"]

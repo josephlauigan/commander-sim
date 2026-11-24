@@ -7306,6 +7306,77 @@
    "spell_prio": false
   },
   {
+   "name": "Arzakon",
+   "types": "P",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 2,
+     "effects": [
+      {
+       "do": "damage",
+       "n": 3,
+       "to": {
+        "sel": "any_target"
+       }
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -7,
+     "effects": [
+      {
+       "do": "draw",
+       "n": 7,
+       "who": "you"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "arzakon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "create a black lotus token",
+    "each player shuffles their hand",
+    "each player graveyard into their library",
+    "each player",
+    "~ can be your commander."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ash Barrens",
    "types": "L",
    "generic": 0,
@@ -128113,7 +128184,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,
