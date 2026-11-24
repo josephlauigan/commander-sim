@@ -7,7 +7,8 @@
 //!    ctr / rem / wipe / prot).
 //! 2. a quick dry run (about a minute): the swapped list on the adaptive AI, 200 games per profile on the first tier;
 //!    each swapped-in card's drawn and cast numbers. A card drawn in 20+ games and cast in under 5% of them stops the
-//!    run with exit code 3.
+//!    run with exit code 3. A new commander (`--swap-commander`) is only warned about: it is never drawn, and a
+//!    five-colour commander is cast late by design.
 
 use crate::args::Args;
 use crate::play::{Sim, profile};
@@ -249,7 +250,8 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
             (row.commander, row.drawn) = (true, row.games); // in the command zone from the start: never "drawn"
         }
         println!("  {}", row.line());
-        stop |= row.warns();
+        // a new commander only warns: a five-colour commander is cast late by design, and it is never stuck in hand
+        stop |= row.warns() && !row.commander;
     }
     if stop {
         println!(
