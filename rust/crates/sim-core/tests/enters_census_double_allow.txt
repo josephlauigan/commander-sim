@@ -53,6 +53,7 @@ Invasion of Ikoria // Zilortha, Apex of Ikoria | [fixture] The census's any-face
 Isochron Scepter | [deferred] Multiple imprints overwrite DataKey::Imprint; retaining every linked instant requires the t4 activation and combos::scepter to consume a list. This linked-activation change is outside the source/event-copy paths; the fixture itself has only one imprintable instant.
 Jadar, Ghoulcaller of Nephalia | [deferred] Tok=1 entry proxy invents an ETB for an end-step ability. Correcting the underlying card model is outside the source/event-copy scope.
 Kaalia, Zenith Seeker | [exhausted] The successive revealed library slices contain different eligible Goblins/Angels; the extra queued reveal is not an identical hand/library delta.
+Karn, Gilded Guardian | [fixture] No exercised enters clause in the standard entrant set: his draw counts the colours among the other artifacts you control and the census board has no coloured artifact, so the extra instance draws 0 as well (tests/cards_karn_gilded.rs gandalf_and_norn_give_three_triggers covers the doubling).
 Kazuul, Tyrant of the Cliffs | [deferred] Tok=1 entry proxy invents an ETB for an opponent-attacking ability. Correcting the underlying card model is outside the source/event-copy scope.
 Kindred Discovery | [fixture] Raw observer installation bypasses the as-enters creature-type choice; the hook has no chosen type to match against the standard entrants.
 Lathliss, Dragon Queen | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
@@ -112,6 +113,7 @@ Terror of the Peaks | [exhausted] The first instance consumes its chosen target;
 Tezzeret, Cruel Captain | [fixture] Raw observer installation bypasses starting loyalty; its artifact-enter hook requires existing loyalty and therefore cannot exercise its counter increment.
 The Meathook Massacre | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
 The One Ring | [idempotent] The cast-entry hook sets the same protection-until-next-turn flag again.
+The Reaper, King No More | [exhausted] The first instance puts -1/-1 counters on the opposing creatures worth most (a small one dies); the extra instance finds nothing further to shrink in the fixture, so its metrics do not repeat.
 The Wasp, Winsome Avenger | [idempotent] wasp_etb grants hexproof to the same chosen Hero each time; the keyword does not stack.
 Thornbite Staff | [deferred] The existing Thornbite Staff model lacks its Shaman-enter attach trigger; adding the missing card ability is outside the source/event-copy paths.
 Thousand-Faced Shadow | [fixture] The fixture casts it without an attack in progress; the enters-from-hand-while-attacking condition is false.
@@ -126,3 +128,4 @@ Welcoming Vampire | [once-per-turn] The original and additional token-entry trig
 Wingcrafter | [idempotent] The first hook instance attaches or pairs the chosen objects; repeating that attachment or soulbond adds no state change.
 Wolverine Riders | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
 Yorion, Sky Nomad | [exhausted] yorion_etb exiles all worthwhile owned nonland permanents at once; none remains for the extra instance.
+Yoshimaru, Ever Faithful | [fixture] No standard observer entrant is legendary (a creature, tokens, a basic land, a Treasure); his legendary-permanent counter is not exercised (tests/cards_enter_event_copies.rs and tests/cards_gandalf.rs cover it under the doublers).

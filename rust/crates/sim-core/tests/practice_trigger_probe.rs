@@ -929,6 +929,14 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn_gilded: Necropotence (Discard (state only))",
+        "no choice: the discarded card is exiled; the line only matched \"discard a\"",
+    ),
+    (
+        "karn_gilded: The Reaper, King No More (DieOpp (state only))",
+        "the \"may\" is the AI's: the card is put onto the battlefield whenever it can be (once each turn) and the person is not asked; the creature to take is the one that died, so there is no choice of card",
+    ),
+    (
         "urdragon: Goldspan Dragon (Combat)",
         "attacking or becoming the target of a spell creates a Treasure with no choice; \"target\" is a trigger condition. Choosing mana when spending the Treasure is a separate ability",
     ),
@@ -944,7 +952,20 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 /// Walking Ballista) give each card what its trigger waits for. Rings of Brighthearth is driven with Grim Monolith's
 /// untap: the person's Rings offer exists only for the abilities that carry out their copies (`stack::ability_run`,
 /// `ability_window_ex`, `ability_window_rc`), see `tests/play_rings.rs`.
-const UNPROBED: &[(&str, &str)] = &[];
+const UNPROBED: &[(&str, &str)] = &[
+    (
+        "karn_gilded: Herd Heirloom",
+        "an activated ability that needs a creature of yours with power 4 or greater: the probe's driven moments never have one, so it does not fire",
+    ),
+    (
+        "karn_gilded: The Mind Stone",
+        "its end-step ability exists only once the stone is harnessed ({5}{W}): the driven moments never harness it, so the trigger does not fire",
+    ),
+    (
+        "karn_gilded: The Soul Stone",
+        "its upkeep ability exists only once the stone is harnessed ({6}{B}, exiling a creature): the driven moments never harness it, so the trigger does not fire",
+    ),
+];
 
 fn check(found: &BTreeMap<String, Vec<String>>) {
     let found: BTreeSet<String> = found

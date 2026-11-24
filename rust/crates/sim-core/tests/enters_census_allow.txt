@@ -51,6 +51,7 @@ Icetill Explorer | [fixture] No land enters after this permanent is installed; i
 Impact Tremors | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.
 Intruder Alarm | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever a creature enters, untap all creatures.
 Jadar, Ghoulcaller of Nephalia | [deferred] Pre-existing Tok=1 entry proxy invents an ETB for an end-step ability. Correcting the underlying card model is out of the round-three diff.
+Karn, Gilded Guardian | [fixture] His draw counts the colours among the other artifacts you control, and the fixture's board has no coloured artifact: he draws 0 with or without an opposing Elesh (opp_diff=false), so the suppression is not seen here (tests/cards_karn_gilded.rs opposing_norn_blanks_trigger covers it).
 Kazuul, Tyrant of the Cliffs | [deferred] Pre-existing Tok=1 entry proxy invents an ETB for an opponent-attacking ability. Correcting the underlying card model is out of the round-three diff.
 Khalni Heart Expedition | [fixture] No land enters after this permanent is installed; its landfall guard is not exercised.
 Kindred Discovery | [fixture] No qualifying subsequent entrant after this source; guard not exercised: Whenever a creature you control of the chosen type enters or attacks, draw a card.
