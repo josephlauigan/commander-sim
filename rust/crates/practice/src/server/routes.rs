@@ -58,6 +58,33 @@ impl Site {
         Ok(Value::Object(c))
     }
 
+    /// the game format of a new-game request: the given `format`, else the deck's own; `Err` is the 400's text.
+    /// Read from the catalog (formats, and which formats admit each deck: `Format::admits` computed there).
+    fn request_format(&self, deck: &str, given: Option<&Value>) -> Result<RequestFormat, String> {
+        let cat = match self.catalog() {
+            Ok(c) => c,
+            Err(e) if given.is_some() => return Err(format!("format: the format list is not available ({e})")),
+            Err(_) => return Ok(RequestFormat::default()),
+        };
+        let formats = cat["formats"].as_array().cloned().unwrap_or_default();
+        let keys: Vec<&str> = formats.iter().filter_map(|f| f["key"].as_str()).collect();
+        let d = cat["decks"].as_array().and_then(|a| a.iter().find(|d| d["key"] == deck));
+        let key = match given {
+            Some(v) => {
+                v.as_str().filter(|k| keys.contains(k)).ok_or_else(|| format!("format: one of {}", keys.join(", ")))?
+            }
+            None => d.and_then(|d| d["format"].as_str()).unwrap_or("commander"),
+        };
+        let f =
+            formats.iter().find(|f| f["key"] == key).ok_or_else(|| format!("format: one of {}", keys.join(", ")))?;
+        let name = f["name"].as_str().unwrap_or(key).to_string();
+        let admitted = d.and_then(|d| d["formats"].as_array()).is_none_or(|a| a.iter().any(|k| k == key));
+        if !admitted {
+            return Err(format!("{deck} cannot be played at a {name} table"));
+        }
+        Ok(RequestFormat { name, seats: f["seats"].as_u64().unwrap_or(4) as usize })
+    }
+
     pub fn catalog(&self) -> Result<Value, String> {
         let mut g = self.catalog.lock().unwrap_or_else(|e| e.into_inner());
         if g.is_none() {
@@ -65,6 +92,23 @@ impl Site {
         }
         Ok(g.clone().unwrap_or(Value::Null))
     }
+}
+
+/// the format of a new game, as the routes check it
+struct RequestFormat {
+    name: String,
+    seats: usize,
+}
+
+impl Default for RequestFormat {
+    fn default() -> Self {
+        RequestFormat { name: "Commander".into(), seats: 4 }
+    }
+}
+
+/// "one", "two", ... for the messages
+fn seat_word(n: usize) -> String {
+    ["zero", "one", "two", "three", "four"].get(n).map_or(n.to_string(), |w| w.to_string())
 }
 
 /// This request's browser cookie (a new one is set with the response if it has none, and only if it was used).
@@ -227,19 +271,35 @@ fn post(site: &Site, req: &Request, tok: &Token) -> Response {
             if !in_list(get("tier"), &TIERS) {
                 return err(400, format!("tier: one of {}", TIERS.join(", ")));
             }
+            if get("format").is_some_and(|v| !v.is_string()) {
+                return err(400, "format: a format key");
+            }
+            let fmt = match site.request_format(body["deck"].as_str().unwrap_or(""), get("format")) {
+                Ok(f) => f,
+                Err(e) => return err(400, e),
+            };
             if get("opponents").is_some_and(|v| !str_list(v)) {
                 return err(400, "opponents: a list of deck keys");
             }
             if get("seats").is_some_and(|v| !str_list(v)) {
-                return err(400, "seats: four deck keys in turn order");
+                return err(400, format!("seats: {} deck keys in turn order", seat_word(fmt.seats)));
             }
             if get("seat").is_some_and(|v| !(v.is_i64() || v.is_u64() || v.is_boolean())) {
-                return err(400, "seat: 1 to 4");
+                return err(400, format!("seat: 1 to {}", fmt.seats));
             }
             if get("autopass").is_some_and(|v| !v.as_str().is_some_and(|s| AUTOPASS.contains(&s))) {
                 return err(400, format!("autopass: one of {}", AUTOPASS.join(", ")));
             }
             if get("two").is_some_and(truthy) {
+                if fmt.seats != 4 {
+                    return err(
+                        400,
+                        format!(
+                            "{} has {} seats: a table of two people is not available for it yet (one person against one AI opponent is)",
+                            fmt.name, fmt.seats
+                        ),
+                    );
+                }
                 if !hub.lan {
                     return err(
                         409,

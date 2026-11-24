@@ -2,6 +2,7 @@
 //! `ais.setup_pool_game(human=...)`).
 
 use sim_core::engine::turn::mulligan;
+use sim_core::format::Format;
 use sim_core::ids::PlayerId;
 use sim_core::rng::Rng;
 use sim_core::run::Engine;
@@ -21,12 +22,24 @@ pub fn pool_keys(e: &Engine, tier: &str) -> Vec<String> {
     v
 }
 
+/// the pool decks of a tier that a table of `fmt` admits, sorted by key (every pool deck at a Commander table)
+pub fn pool_keys_in(e: &Engine, tier: &str, fmt: &Format) -> Vec<String> {
+    let mut v = pool_keys(e, tier);
+    v.retain(|k| e.admits(k, &fmt.key).is_ok());
+    v
+}
+
 /// k keys drawn without replacement (Python's `random.sample`)
 fn sample(r: &mut Rng, keys: &[String], k: usize) -> Vec<String> {
     let mut v = keys.to_vec();
     r.shuffle(&mut v);
     v.truncate(k);
     v
+}
+
+/// "one", "two", "three" for the messages
+fn count_word(n: usize) -> String {
+    ["none", "one", "two", "three"].get(n).map_or(n.to_string(), |w| w.to_string())
 }
 
 pub struct SeatArgs<'a> {
@@ -39,18 +52,17 @@ pub struct SeatArgs<'a> {
     pub seats: Option<&'a [String]>,
 }
 
-/// a seating given in full (playing the same seed again)
-fn exact_seats(e: &Engine, a: &SeatArgs, seats: &[String]) -> Result<Vec<String>, String> {
-    let keys = pool_keys(e, a.tier);
+/// a seating given in full (playing the same seed again) at a table of `n` seats
+fn exact_seats(a: &SeatArgs, keys: &[String], n: usize, seats: &[String]) -> Result<Vec<String>, String> {
     let humans: Vec<&str> = std::iter::once(a.deck).chain(a.partner).collect();
-    let n = 4 - humans.len();
-    let bad = seats.len() != 4
+    let others = n - humans.len();
+    let bad = seats.len() != n
         || humans.iter().any(|h| seats.iter().filter(|s| s == h).count() != 1)
-        || (0..4).any(|i| (0..i).any(|j| seats[i] == seats[j]))
+        || (0..seats.len()).any(|i| (0..i).any(|j| seats[i] == seats[j]))
         || seats.iter().any(|k| !humans.contains(&k.as_str()) && !keys.contains(k));
     if bad {
         return Err(format!(
-            "seats: {} and {n} of {}, in turn order",
+            "seats: {} and {others} of {}, in turn order",
             if a.partner.is_some() { "your decks" } else { "your deck" },
             keys.join(", ")
         ));
@@ -58,13 +70,22 @@ fn exact_seats(e: &Engine, a: &SeatArgs, seats: &[String]) -> Result<Vec<String>
     Ok(seats.to_vec())
 }
 
-/// the seat order for a new game
+/// the seat order for a new game at the table of the deck's own format (`Engine::format_of`)
 pub fn choose_seats(e: &Engine, a: &SeatArgs) -> Result<Vec<String>, String> {
+    choose_seats_in(e, e.format_of(a.deck), a)
+}
+
+/// the seat order for a new game at a table of `fmt`: its seat count, and opponents from the pool decks it admits
+pub fn choose_seats_in(e: &Engine, fmt: &Format, a: &SeatArgs) -> Result<Vec<String>, String> {
+    let n = fmt.seats;
+    let keys = pool_keys_in(e, a.tier, fmt);
     if let Some(s) = a.seats {
-        return exact_seats(e, a, s);
+        return exact_seats(a, &keys, n, s);
     }
-    let keys = pool_keys(e, a.tier);
     if let Some(partner) = a.partner {
+        if n != 4 {
+            return Err(format!("{} has {n} seats: two people need a 4-seat format", fmt.name));
+        }
         // two people: two opponents, everyone seated at random
         if let Some(o) = a.opponents
             && (o.len() != 2 || o.iter().any(|k| !keys.contains(k)))
@@ -83,29 +104,33 @@ pub fn choose_seats(e: &Engine, a: &SeatArgs) -> Result<Vec<String>, String> {
         Rng::named(&format!("seats:{}", a.seed)).shuffle(&mut seats);
         return Ok(seats);
     }
+    let opp = n - 1;
     let mut seats = if let Some(o) = a.opponents {
-        if o.len() != 3 || o.iter().any(|k| !keys.contains(k)) {
-            return Err(format!("pick three of: {}", keys.join(", ")));
+        if o.len() != opp || o.iter().any(|k| !keys.contains(k)) {
+            return Err(format!("pick {} of: {}", count_word(opp), keys.join(", ")));
         }
         let mut s = o.to_vec();
         s.push(a.deck.to_string());
         Rng::named(&format!("seats:{}", a.seed)).shuffle(&mut s);
         s
     } else {
-        // pools.draw_seats: three opponents and the deck, in a random order
+        // pools.draw_seats: the opponents and the deck, in a random order
         let mut r = Rng::named(&format!("pool:{}", a.seed));
-        let mut s = sample(&mut r, &keys, 3);
+        if keys.len() < opp {
+            return Err(format!("{} has too few decks at {} for a table of {n}", a.tier, fmt.name));
+        }
+        let mut s = sample(&mut r, &keys, opp);
         s.push(a.deck.to_string());
         r.shuffle(&mut s);
         s
     };
-    if let Some(n) = a.seat {
-        if !(1..=4).contains(&n) {
-            return Err("seat is 1 to 4".into());
+    if let Some(pick) = a.seat {
+        if !(1..=n).contains(&pick) {
+            return Err(format!("seat is 1 to {n}"));
         }
         let i = seats.iter().position(|s| s == a.deck).unwrap();
         let d = seats.remove(i);
-        seats.insert(n - 1, d);
+        seats.insert(pick - 1, d);
     }
     Ok(seats)
 }

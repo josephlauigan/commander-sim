@@ -219,7 +219,7 @@ export function renderTable(root, view, images) {
   const me = view.players.find((p) => p.you);
   const opps = view.players.filter((p) => !p.you);
   baseImages = images;
-  root.append(el('div', { class: 'opps' }, opps.map((p) => opponent(p, view, forSeat(images, p.key)))));
+  root.append(el('div', { class: 'opps', style: opps.length === 3 ? null : `--opps: ${opps.length}` }, opps.map((p) => opponent(p, view, forSeat(images, p.key)))));
   images = forSeat(images, me.key);
   root.append(el('section', { class: 'mine' + (me.key === view.active ? ' active' : ''), 'aria-label': 'Your battlefield', 'data-player': me.key },
     el('header', {}, el('h2', {}, `${me.name} (you)`), stats(me, true),

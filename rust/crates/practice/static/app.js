@@ -645,7 +645,7 @@ async function listSaves() {
   if (!r.data.saves.length) return;
   $('#saves').replaceChildren(el('table', { class: 'review' },
     el('thead', {}, el('tr', {}, ['Saved', 'Deck', 'Tier', 'Seed', 'Where', ''].map((h) => el('th', {}, h)))),
-    el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, x.partner ? `${x.deck} + ${x.partner} (two players)` : x.deck),
+    el('tbody', {}, r.data.saves.map((x) => el('tr', {}, el('td', {}, x.saved_at || ''), el('td', {}, (x.partner ? `${x.deck} + ${x.partner} (two players)` : x.deck) + inFormat(x.format)),
       el('td', {}, (x.tier || '').toUpperCase()), el('td', {}, x.seed),
       el('td', {}, x.finished ? `finished, round ${x.round}` : `round ${x.round}`),
       el('td', {}, el('button', { onclick: () => loadGame(x.name) }, x.finished ? 'Open (review)' : 'Continue')))))));
@@ -658,7 +658,7 @@ function showResume(x) {
   if (box.hidden) return;
   const deck = catalog.decks.find((d) => d.key === x.deck);
   box.replaceChildren(el('span', {}, el('strong', {}, 'Your last game: '),
-    `${deck ? deck.name : x.deck} at ${(x.tier || '').toUpperCase()}, round ${x.round}`, el('small', {}, ` (seed ${x.seed}, ${x.saved_at || ''})`)),
+    `${deck ? deck.name : x.deck}${inFormat(x.format)} at ${(x.tier || '').toUpperCase()}, round ${x.round}`, el('small', {}, ` (seed ${x.seed}, ${x.saved_at || ''})`)),
   el('button', { class: 'primary big', onclick: () => loadGame('autosave.json') }, 'Continue'));
 }
 
@@ -772,6 +772,7 @@ async function sameSeed() {
   const g = st.game;
   const body = { deck: g.deck, tier: g.tier, seed: g.seed, ai: g.ai, profile: g.profile, tools: g.tools,
     seats: g.seats, autopass: g.autopass };
+  if (g.format && g.format !== 'commander') body.format = g.format;
   $('#log').replaceChildren(); logQueue = []; pending = null; inbox = []; skipping = false; renderTable(null); renderPrompt(null); loading(0, 0);
   const r = await api('/api/new', body);
   if (!r.ok) { loading(null); toast(r.data.error); return; }
@@ -848,16 +849,33 @@ function deckImages(d) {
 
 function pct(x) { return x == null ? '–' : `${x.toFixed(1)}%`; }
 
-// The opponents are always drawn at random from the tier (three, or two with a friend): again whenever the tier or
-// the number of players changes, and each time you come back to this screen. You choose your deck after seeing them.
+// A format from the catalog's `formats` list (key, name, seats, ...): the page plays a deck at its own format. A catalog
+// without the list (or a deck without a format) is the four-seat Commander table.
+function formatOf(key) {
+  return ((catalog.formats || []).find((f) => f.key === key)) || { key: 'commander', name: 'Commander', seats: 4 };
+}
+function chosenFormat() {
+  const d = catalog.decks.find((x) => x.key === chosen.deck);
+  return formatOf(d && d.format);
+}
+// " (Cali)" after a deck in the saved-games list, for a format other than Commander
+function inFormat(key) { return key && key !== 'commander' ? ` (${formatOf(key).name})` : ''; }
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four'];
+
+// The opponents are always drawn at random from the tier: the table's seats less yours (three at Commander, two with a
+// friend, one at Cali), only from the tier decks the catalog says the format admits. Again whenever the tier, the
+// number of players or the deck's format changes, and each time you come back to this screen. You choose your deck
+// after seeing them.
 function drawOpponents() {
   const tier = catalog.tiers.find((t) => t.key === chosen.tier);
-  const keys = tier.decks.map((x) => x.key);
+  const fmt = chosenFormat();
+  const pair = $('#newgame').players.value === 'two' && fmt.seats > 2;
+  const keys = tier.decks.filter((x) => !x.formats || x.formats.includes(fmt.key)).map((x) => x.key);
   for (let i = keys.length - 1; i > 0; i--) {                    // shuffle (Fisher-Yates)
     const j = Math.floor(Math.random() * (i + 1));
     [keys[i], keys[j]] = [keys[j], keys[i]];
   }
-  chosen.opponents = keys.slice(0, $('#newgame').players.value === 'two' ? 2 : 3);
+  chosen.opponents = keys.slice(0, pair ? fmt.seats - 2 : fmt.seats - 1);
 }
 
 // "**bold**" in the deck files' text, as <b>
@@ -888,17 +906,38 @@ function renderSetup() {
   }, el('span', {}, el('b', {}, t.label)),
     el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: (x.commanders || [x.commander]).join(' + ') }, (x.commanders || [x.commander]).map((n) => cardImage(n)), x.name))))));
   $('#opponents').replaceChildren(...chosen.opponents.map((k) => opponentCard(tier.decks.find((x) => x.key === k))));
-  $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
-    type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
-    onclick: () => { chosen.deck = d.key; renderSetup(); },
-  }, deckImages(d), el('span', {}, el('b', {}, d.name),
-    el('small', {}, `Bracket ${d.bracket} · ${d.game_changers.length} Game Changers`),
-    el('small', {}, d.win_rates && d.win_rates[chosen.tier] != null
-      ? `Simulations at ${chosen.tier.toUpperCase()}: ${pct(d.win_rates[chosen.tier])} wins` : 'No simulation results at this tier')))));
+  $('#decks').replaceChildren(...catalog.decks.map((d) => {
+    const wins = d.win_rates && d.win_rates[chosen.tier] != null;
+    // the simulations are four-player Commander games: a deck of another format has none
+    const other = formatOf(d.format).key !== (d.win_rates_format || 'commander');
+    return el('button', {
+      type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
+      onclick: () => { const was = chosenFormat().key; chosen.deck = d.key; if (chosenFormat().key !== was) drawOpponents(); renderSetup(); },
+    }, deckImages(d), el('span', {}, el('b', {}, d.name),
+      el('small', {}, `Bracket ${d.bracket} · ${d.game_changers.length} Game Changers`),
+      el('small', {}, other ? 'No 4-player simulation results for this format' : wins
+        ? `Simulations at ${chosen.tier.toUpperCase()}: ${pct(d.win_rates[chosen.tier])} wins` : 'No simulation results at this tier')));
+  }));
   const f = $('#newgame');
   if (catalog.app) { f.players.value = 'one'; $('#players-pick').hidden = true; }   // the iPad app: one player only
+  const fmt = chosenFormat();
+  const twoSeats = fmt.seats <= 2;                  // a friend needs a four-seat table (LAN at Cali is a later change)
+  if (twoSeats && f.players.value === 'two') f.players.value = 'one';
+  for (const r of f.players) if (r.value === 'two') r.disabled = twoSeats;
+  $('#format-note').hidden = !twoSeats;
+  $('#format-note').textContent = twoSeats ? `${fmt.name} is a two-player game: playing it with a friend on another computer is not available yet.` : '';
   const pair = f.players.value === 'two';
-  for (const x of document.querySelectorAll('.opp-n')) x.textContent = pair ? 'Two' : 'Three';
+  const nOpp = pair ? fmt.seats - 2 : fmt.seats - 1;
+  for (const x of document.querySelectorAll('.opp-n')) x.textContent = WORDS[nOpp] || String(nOpp);
+  const solo = $('#solo-n');
+  solo.textContent = (WORDS[fmt.seats - 1] || String(fmt.seats - 1)).toLowerCase();
+  $('#solo-s').textContent = fmt.seats - 1 === 1 ? '' : 's';
+  const seatSel = f.seat;                           // your seat: random, or 1 to the table's seats
+  if (seatSel.options.length - 1 !== fmt.seats) {
+    const was = seatSel.value;
+    seatSel.replaceChildren(el('option', { value: '' }, 'random'), ...Array.from({ length: fmt.seats }, (_, i) => el('option', {}, String(i + 1))));
+    seatSel.value = +was >= 1 && +was <= fmt.seats ? was : '';
+  }
   document.querySelector('.seat-pick').hidden = pair;
   const lanNote = $('#lan-note');
   lanNote.hidden = !pair;
@@ -918,6 +957,8 @@ async function startGame(e) {
   if (f.seed.value) body.seed = +f.seed.value;
   if (f.seat.value && !pair) body.seat = +f.seat.value;
   body.opponents = chosen.opponents;                             // the ones drawn and shown above
+  const fmt = chosenFormat();
+  if (fmt.key !== 'commander') body.format = fmt.key;            // a Commander request is as it always was
   $('#setup-error').textContent = '';
   if (pair) {
     body.two = true;

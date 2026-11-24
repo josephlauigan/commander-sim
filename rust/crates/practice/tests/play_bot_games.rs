@@ -111,7 +111,11 @@ fn play(deck: &str, tier: &str, seed: u64) {
                 &SeatArgs { deck: &deck, tier: &tier, partner: None, seed, seat: None, opponents: None, seats: None },
             )
             .unwrap();
-            let st = settings("loose", "adaptive", 1.0).unwrap();
+            let mut st = settings("loose", "adaptive", 1.0).unwrap();
+            // the deck's own format (a 2-seat Cali table plays its own rules and AI profile, as a session does)
+            let f = e.format_of(&deck);
+            st.rules = f.rules();
+            st.table = f.ai;
             let (mut g, mull) = build_game(&e, st, seed, &seats, &[deck.clone()]).unwrap();
             let bot = Arc::new(Bot { deck: deck.clone(), st: Mutex::default(), told: Mutex::default() });
             let me = g.players.iter().find(|q| &*q.key == deck.as_str()).unwrap().id;
