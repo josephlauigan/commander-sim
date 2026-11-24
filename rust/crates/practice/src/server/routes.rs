@@ -82,7 +82,7 @@ impl Site {
         if !admitted {
             return Err(format!("{deck} cannot be played at a {name} table"));
         }
-        Ok(RequestFormat { name, seats: f["seats"].as_u64().unwrap_or(4) as usize })
+        Ok(RequestFormat { key: key.to_string(), seats: f["seats"].as_u64().unwrap_or(4) as usize })
     }
 
     pub fn catalog(&self) -> Result<Value, String> {
@@ -96,13 +96,13 @@ impl Site {
 
 /// the format of a new game, as the routes check it
 struct RequestFormat {
-    name: String,
+    key: String,
     seats: usize,
 }
 
 impl Default for RequestFormat {
     fn default() -> Self {
-        RequestFormat { name: "Commander".into(), seats: 4 }
+        RequestFormat { key: "commander".into(), seats: 4 }
     }
 }
 
@@ -291,15 +291,6 @@ fn post(site: &Site, req: &Request, tok: &Token) -> Response {
                 return err(400, format!("autopass: one of {}", AUTOPASS.join(", ")));
             }
             if get("two").is_some_and(truthy) {
-                if fmt.seats != 4 {
-                    return err(
-                        400,
-                        format!(
-                            "{} has {} seats: a table of two people is not available for it yet (one person against one AI opponent is)",
-                            fmt.name, fmt.seats
-                        ),
-                    );
-                }
                 if !hub.lan {
                     return err(
                         409,
@@ -310,10 +301,23 @@ fn post(site: &Site, req: &Request, tok: &Token) -> Response {
                 for k in ["two", "seat", "seats"] {
                     o.remove(k);
                 }
+                // two people at a two-seat table: nobody else plays, so there is no tier (the page still sends one)
+                if fmt.seats <= 2 {
+                    o.remove("tier");
+                }
+                // the lobby carries the table's format (a Commander request is as it always was)
+                if fmt.key != "commander" {
+                    o.insert("format".into(), json!(fmt.key));
+                }
                 return match hub.open_lobby(&Value::Object(o), tok.get(), None) {
                     Ok(code) => Response::json(200, &json!({"ok": true, "code": code, "addresses": lan_addresses()})),
                     Err(e) => err(400, e),
                 };
+            }
+            // a friend joins the table with its code: a partner key here would seat a second person nobody plays
+            // (still allowed at the four-seat table, as it always was)
+            if get("partner").is_some() && fmt.seats <= 2 {
+                return err(400, "partner: a friend joins with the table's code");
             }
             let deck = body["deck"].as_str().unwrap_or("").to_string();
             match hub.new_game(&body, None, [(tok.get().to_string(), deck)].into()) {

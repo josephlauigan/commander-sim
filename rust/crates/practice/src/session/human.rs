@@ -64,10 +64,18 @@ impl Human for SessionHuman {
         {
             let mut st = s.st.lock().unwrap();
             st.marks.push(mark);
-            if let Some(a) = st.replay.pop_front() {
-                st.answers.push(a.clone());
-                st.answer_seats.push(self.seat.clone());
-                return a;
+            if let Some((a, want)) = st.replay.pop_front() {
+                if want.as_ref().is_none_or(|w| *w == self.seat) {
+                    st.answers.push(a.clone());
+                    st.answer_seats.push(self.seat.clone());
+                    return a;
+                }
+                // the recorded answer is another seat's: the replay went a different way, so this decision is live
+                st.replay.clear();
+                st.replaying = false;
+                let n = st.answers.len();
+                st.events.push(super::replay_went_another_way(n));
+                s.cv.notify_all();
             }
             st.replaying = false; // caught up: this decision is live
             if st.run.aborted() {

@@ -18,7 +18,8 @@ use std::time::Duration;
 #[derive(Clone, Debug, Default)]
 pub struct Info {
     pub deck: String,
-    pub tier: String,
+    /// the opponents' tier; None at a table with no AI seat
+    pub tier: Option<String>,
     /// the game format's key (`commander`, `cali`, ...)
     pub format: String,
     pub seed: u64,

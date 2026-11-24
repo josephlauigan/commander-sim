@@ -345,7 +345,7 @@ pub fn run(session: &Arc<Session>, inp: &mut dyn BufRead, out: &mut dyn Write) -
         out,
         "Practice game: {} vs {}, seed {}. Seats: {}",
         session.deck,
-        session.tier,
+        session.tier.as_deref().unwrap_or("-"),
         session.seed,
         session.seats.join(", ")
     );
