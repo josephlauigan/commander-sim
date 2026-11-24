@@ -5,7 +5,7 @@
 use std::process::Command;
 
 const ARZAKON: &str = "Arzakon"; // the deck's commander
-const KYODAI: &str = "Kyodai, Soul of Kamigawa"; // a card of the 99
+const GOLEM: &str = "Meteor Golem"; // a card of the 99, colourless
 const URDRAGON: &str = "The Ur-Dragon"; // five colours, a legendary creature, Commander-legal, in no arzakon list
 
 fn sim(args: &[&str]) -> (i32, String, String) {
@@ -83,7 +83,7 @@ fn a_bad_commander_change_is_refused_before_any_game() {
 #[test]
 fn a_plain_swap_naming_the_commander_is_refused_before_any_game() {
     let base = ["--deck", "arzakon", "--pool", "t5", "--games", "2", "--quiet", "--swap"];
-    for pair in [format!("{ARZAKON}=>Sol Ring"), format!("{KYODAI}=>{ARZAKON}")] {
+    for pair in [format!("{ARZAKON}=>Sol Ring"), format!("{GOLEM}=>{ARZAKON}")] {
         let args: Vec<&str> = base.iter().copied().chain([pair.as_str()]).collect();
         refused(&args, &[&format!("'{ARZAKON}' is the deck's commander"), "--swap-commander"]);
     }
@@ -139,8 +139,8 @@ fn a_paired_commander_run_plays_both_lists_explains_the_commander_and_keeps_the_
 }
 
 /// `--no-explain` keeps the paired line and drops the breakdown, as for --swap; a --swap rides along on the 99 and the
-/// old commander can come in as a card (here the pair of the real Arzakon / Kyodai change: the new commander is the 99
-/// card the same run swaps out)
+/// old commander can come in as a card (here Arzakon comes back into the slot of Meteor Golem while The Ur-Dragon takes the
+/// command zone)
 #[test]
 fn no_explain_and_a_combined_swap_work() {
     let (code, out, err) = sim(&[
@@ -158,14 +158,14 @@ fn no_explain_and_a_combined_swap_work() {
         "--no-preflight",
         "--no-explain",
         "--swap-commander",
-        &format!("{ARZAKON}=>{KYODAI}"),
+        &format!("{ARZAKON}=>{URDRAGON}"),
         "--swap",
-        &format!("{KYODAI}=>{ARZAKON}"),
+        &format!("{GOLEM}=>{ARZAKON}"),
     ]);
     assert_eq!(code, 0, "{err}\n{out}");
     assert!(out.contains("baseline vs variant (paired"), "{out}");
     assert!(!out.contains("paired breakdown") && !out.contains("Model status of the swapped-in cards"), "{out}");
-    assert!(out.contains(&format!("Swaps: commander {ARZAKON} -> {KYODAI}; {KYODAI} -> {ARZAKON}")), "{out}");
+    assert!(out.contains(&format!("Swaps: commander {ARZAKON} -> {URDRAGON}; {GOLEM} -> {ARZAKON}")), "{out}");
 }
 
 /// the preflight reads the new commander like a swapped-in card: its AI rule and its dry-run cast share

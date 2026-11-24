@@ -315,7 +315,7 @@ mod tests {
         Sim::load(RunOpts { ai: AiMode::Adaptive, temp: 1.0, jobs: 2 }).unwrap()
     }
 
-    /// the repository's data: the arzakon deck (Cali Commander, WUBRG, commander Arzakon; Kyodai is a card of the 99)
+    /// the repository's data: the arzakon deck (Cali Commander, WUBRG, commander Arzakon)
     #[test]
     fn check_refuses_a_wrong_old_commander_and_an_unknown_or_illegal_new_one() {
         let s = sim();
@@ -351,13 +351,16 @@ mod tests {
         let var = check(&s, "arzakon", k, "The Ur-Dragon", &swaps).unwrap();
         let j = base.iter().position(|c| c == out).unwrap();
         assert_eq!((var[ci].as_str(), var[j].as_str()), ("The Ur-Dragon", k));
-        // the real change: Kyodai (a card of the 99) becomes the commander and the same run swaps it out for Arzakon
-        let kyodai = "Kyodai, Soul of Kamigawa";
-        let var = check(&s, "arzakon", k, kyodai, &pairs(&[(kyodai, k)])).unwrap();
-        let j = base.iter().position(|c| c == kyodai).unwrap();
-        assert_eq!((var[ci].as_str(), var[j].as_str()), (kyodai, k));
-        // without the swap Kyodai is a Kyodai already in the 99 clashes with it as commander: refused
-        assert!(check(&s, "arzakon", k, kyodai, &[]).unwrap_err().contains("already in the 99"));
+        // the old commander comes back as a card of the 99 in the same run: The Ur-Dragon commands, Arzakon takes the
+        // slot of a card of the list
+        let golem = "Meteor Golem";
+        assert!(base.iter().any(|c| c == golem) && !base.iter().any(|c| c == "The Ur-Dragon"));
+        let var = check(&s, "arzakon", k, "The Ur-Dragon", &pairs(&[(golem, k)])).unwrap();
+        let j = base.iter().position(|c| c == golem).unwrap();
+        assert_eq!((var[ci].as_str(), var[j].as_str()), ("The Ur-Dragon", k));
+        // a swap that brings the new commander into the 99 too is the singleton clash: refused
+        let err = check(&s, "arzakon", k, "The Ur-Dragon", &pairs(&[(golem, "The Ur-Dragon")])).unwrap_err();
+        assert!(err.contains("already in the 99"), "{err}");
     }
 
     /// the library of a seat is its list without the commander's slot: the variant's 99 sit where the base's do, so
@@ -385,11 +388,12 @@ mod tests {
         let var = s.seat_with_commander("arzakon", &var_list, Some("The Ur-Dragon")).unwrap();
         let diff = library(&base).iter().zip(library(&var)).filter(|(a, b)| *a != b).count();
         assert_eq!(diff, 1);
-        // the real change (Kyodai commander, Arzakon swapped into Kyodai's slot): one position differs, the length is 99
-        let kyodai = "Kyodai, Soul of Kamigawa";
-        let var_list = check(&s, "arzakon", k, kyodai, &pairs(&[(kyodai, k)])).unwrap();
-        let var = s.seat_with_commander("arzakon", &var_list, Some(kyodai)).unwrap();
-        assert_eq!(var.commander, s.engine.db.id(kyodai).unwrap());
+        // the old commander back as a card of the 99 in the same run (Arzakon takes Meteor Golem's slot): one position
+        // differs, the length is 99
+        let golem = "Meteor Golem";
+        let var_list = check(&s, "arzakon", k, "The Ur-Dragon", &pairs(&[(golem, k)])).unwrap();
+        let var = s.seat_with_commander("arzakon", &var_list, Some("The Ur-Dragon")).unwrap();
+        assert_eq!(var.commander, s.engine.db.id("The Ur-Dragon").unwrap());
         assert_eq!(library(&var).len(), 99);
         let diff = library(&base).iter().zip(library(&var)).filter(|(a, b)| *a != b).count();
         assert_eq!(diff, 1);
