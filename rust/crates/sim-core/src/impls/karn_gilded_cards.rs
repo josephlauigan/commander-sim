@@ -23,7 +23,7 @@ use crate::engine::life::{check_state, gain, lose_life_dealt};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, trigger_window};
-use crate::engine::values::{epow, etgh, ptypes, pval, untargetable};
+use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, die, draw, enter, make_tokens, max_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -268,12 +268,26 @@ fn breya_fodder(g: &Game, p: PlayerId, src: PermId) -> Option<[PermId; 2]> {
     Some([v[0], v[1]])
 }
 
-/// the opposing creature the -4/-4 mode kills that is worth most (4 toughness or less, worth 3 or more)
-fn breya_kill(g: &Game, p: PlayerId) -> Option<PermId> {
+/// can `src`'s ability or trigger target `m`: not hexproof or shroud against an opponent, and no protection from one of
+/// the source's colours (Breya is white, blue, black and red; The Reaper black, red and green)
+fn targetable_by(g: &Game, src: PermId, m: PermId) -> bool {
+    owner(g, m) == owner(g, src) || !(untargetable(g, m) || protected_from(g, m, colors_of(g, src)))
+}
+
+/// the opposing creature the -4/-4 mode kills that is worth most (4 toughness or less, worth 3 or more), one whose ward
+/// the AI can pay on top of Breya's own {2}
+fn breya_kill(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
     let cs: Vec<PermId> = g
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&m| live(g, m) && g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= 4 && pval(g, m) >= 3.0)
+        .filter(|&m| {
+            live(g, m)
+                && g.is_creature(m)
+                && targetable_by(g, src, m)
+                && etgh(g, m) <= 4
+                && pval(g, m) >= 3.0
+                && crate::engine::ward::ward_affordable(g, p, m, 2, "")
+        })
         .collect();
     max_by(&cs, |m| pval(g, m))
 }
@@ -299,7 +313,7 @@ fn breya_plan(g: &Game, p: PlayerId, src: PermId, only: Option<i64>) -> Option<P
     if let Some(q) = breya_burn(g, p) {
         put(0, 8.0, None, Some(q));
     }
-    if let Some(t) = breya_kill(g, p) {
+    if let Some(t) = breya_kill(g, p, src) {
         put(1, 1.0 + 0.5 * pval(g, t).min(8.0), Some(t), None);
     }
     if g.player(p).life <= 10 {
@@ -349,7 +363,8 @@ fn breya_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
             let Some(i) = ask(g, p, "Breya: 3 damage to which player?", &labels)? else { return Ok(false) };
             q = Some(opps[i]);
         } else if mode == 1 {
-            let cs = crate::human::cards::creatures(g, p, false);
+            let cs: Vec<PermId> =
+                crate::human::cards::creatures(g, p, false).into_iter().filter(|&m| targetable_by(g, src, m)).collect();
             if cs.is_empty() {
                 return Ok(false);
             }
@@ -390,7 +405,7 @@ fn breya_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
             1 => {
                 if let Some(t) = target.filter(|&t| live(g, t)) {
                     let foreign = owner(g, t) != p;
-                    if !(foreign && untargetable(g, t)) && (!foreign || crate::engine::ward::pay_ward(g, p, t)?) {
+                    if targetable_by(g, src, t) && (!foreign || crate::engine::ward::pay_ward(g, p, t)?) {
                         let x = g.perm_mut(t);
                         x.eot_pt = (x.eot_pt.0 - 4, x.eot_pt.1 - 4);
                         crate::glog!(g, "    {} gets -4/-4 until end of turn (Breya)", g.perm(t).name);
@@ -437,7 +452,7 @@ fn reaper_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     let mut cs: Vec<PermId> = g
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&m| m != src && live(g, m) && g.is_creature(m) && !untargetable(g, m) && repl::minus_ok(g, m))
+        .filter(|&m| m != src && live(g, m) && g.is_creature(m) && targetable_by(g, src, m) && repl::minus_ok(g, m))
         .collect();
     cs.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
     cs.truncate(2);
@@ -453,7 +468,8 @@ fn reaper_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = crate::engine::hooks::trigger_controller(g, src);
     let targets: Vec<PermId> = if human(g, o) {
-        let mut left = crate::human::cards::creatures(g, o, false);
+        let mut left: Vec<PermId> =
+            crate::human::cards::creatures(g, o, false).into_iter().filter(|&m| targetable_by(g, src, m)).collect();
         let mut picked = vec![];
         for i in 0..2 {
             if left.is_empty() {
@@ -476,7 +492,7 @@ fn reaper_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     for t in targets {
-        if !live(g, t) || (owner(g, t) != o && (untargetable(g, t) || !crate::engine::ward::pay_ward(g, o, t)?)) {
+        if !live(g, t) || !targetable_by(g, src, t) || (owner(g, t) != o && !crate::engine::ward::pay_ward(g, o, t)?) {
             continue;
         }
         if repl::minus_ok(g, t) {
