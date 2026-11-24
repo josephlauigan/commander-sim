@@ -21,7 +21,6 @@
 1 Diabolic Tutor (sld) 1592
 1 Disdainful Stroke (soa) 147
 1 Doomsday (sld) 1115
-1 Esper Sentinel (mh2) 328
 1 Expedition Map (2xm) 359
 1 Exquisite Blood (lcc) 195
 1 Exsanguinate (cmm) 638
@@ -30,6 +29,7 @@
 1 Flooded Strand (mh3) 353
 1 Force of Will (dmr) 418
 1 Generous Gift (cmr) 620
+1 Gleaming Splendor (hob) 15
 1 Go for the Throat (j25) 447
 1 Godless Shrine (rvr) 294
 1 Grand Abolisher (cmm) 625

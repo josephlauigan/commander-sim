@@ -120,12 +120,6 @@ value = 54
 cards = ["Ringsight", "Diabolic Tutor", "Mystical Tutor", "Vampiric Tutor"]
 value = 52
 
-[[prio]]
-cards = ["Esper Sentinel"]
-when = ["turn<=4"]
-value = 46
-else = 30
-
 # the X drains have their own cast options
 [[prio]]
 cards = ["Exsanguinate", "Debt to the Deathless"]

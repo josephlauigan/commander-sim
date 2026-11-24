@@ -501,7 +501,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (16).** Arcane Signet; Buster Sword; Chrome Mox; Conjurer's Closet; Mana Vault; Mithril Coat; Mox Amber; Orzhov Signet; Sol Ring; Sting, the Glinting Dagger; Swiftfoot Boots; Sword of Feast and Famine; Sword of Fire and Ice; Sword of Hearth and Home; The One Ring; Wayfarer's Bauble
 
-**Instants (11).** Deadly Rollick; Eerie Interlude; Enlightened Tutor; Ephemerate; Flawless Maneuver; Path to Exile; Silence; Stroke of Midnight; Swords to Plowshares; Teferi's Protection; Vampiric Tutor
+**Instants (11).** Akroma's Will; Deadly Rollick; Eerie Interlude; Enlightened Tutor; Ephemerate; Flawless Maneuver; Path to Exile; Silence; Stroke of Midnight; Swords to Plowshares; Vampiric Tutor
 
 **Sorceries (4).** Demonic Tutor; Imperial Seal; Steelshaper's Gift; Wrath of God
 
@@ -511,6 +511,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ```
 1 Adeline, Resplendent Cathar
+1 Akroma's Will
 1 Arcane Signet
 1 Archangel of Thune
 1 Ardenn, Intrepid Archaeologist
@@ -575,7 +576,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sword of Hearth and Home
 1 Swords to Plowshares
 1 Takenuma, Abandoned Mire
-1 Teferi's Protection
 1 Teleportation Circle
 1 The One Ring
 1 The Wandering Emperor

@@ -1,11 +1,13 @@
 # data/ownership.toml: JD's record of which cards of his decks he has, plays as a proxy or is missing.
 # Statuses for the five decks come from JD's own lists of 2026-11-22 (each card marked Have or proxy; none missing), and each
 # deck is confirmed. A `have` card in k decks carries `copies = k`: JD marked a copy for each deck.
+# 2026-11-23 (JD): the Arzakon, Yoshimaru, Ur-Dragon and Y'shtola swaps moved cards between decks; he owns every incoming card
+# except Hellkite Courser (a proxy), and the freed Mind Stone copy is a spare.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
 version = 1
-updated = "2026-11-22"
+updated = "2026-11-23"
 
 [deck.sheoldred]
 confirmed = "2026-11-22"
@@ -40,7 +42,7 @@ have = [
   "Memory Jar",
   "Mikaeus, the Unhallowed",
   "Mikokoro, Center of the Sea",
-  { card = "Mind Stone", copies = 2 },
+  "Mind Stone",
   "Nevinyrral's Disk",
   "Ob Nixilis, the Fallen",
   "Overkill",
@@ -88,10 +90,10 @@ missing = []
 [deck.arzakon]
 confirmed = "2026-11-22"
 have = [
-  "Akroma's Will",
   "An Offer You Can't Refuse",
   "Ancient Tomb",
   { card = "Arcane Signet", copies = 4 },
+  "Arzakon",
   "Avacyn's Pilgrim",
   "Basalt Monolith",
   "Birds of Paradise",
@@ -105,7 +107,6 @@ have = [
   "Crucible of Worlds",
   "Cyclonic Rift",
   "Dark Ritual",
-  "Deflecting Swat",
   "Demonic Consultation",
   "Demonic Tutor",
   "Diabolic Intent",
@@ -125,7 +126,7 @@ have = [
   "Hallowed Fountain",
   "Hangarback Walker",
   "Heroic Intervention",
-  "Jeska's Will",
+  "Karn, the Great Creator",
   "Kyodai, Soul of Kamigawa",
   "Lightning Greaves",
   "Llanowar Elves",
@@ -133,11 +134,11 @@ have = [
   "Mana Crypt",
   "Mana Vault",
   "Meteor Golem",
-  { card = "Mind Stone", copies = 2 },
   "Mystic Confluence",
   "Mystic Remora",
   "Mystical Tutor",
   "Paradise Druid",
+  "Pithing Needle",
   "Primeval Titan",
   "Ragavan, Nimble Pilferer",
   "Rings of Brighthearth",
@@ -161,6 +162,7 @@ have = [
   "Urza's Saga",
   "Urza, Lord High Artificer",
   "Vampiric Tutor",
+  "Voltaic Key",
   "Walking Ballista",
   "Worldly Tutor",
 ]
@@ -203,6 +205,7 @@ have = [
   "Crux of Fate",
   "Cursed Mirror",
   "Decimate",
+  "Deflecting Swat",
   "Delighted Halfling",
   "Dragonlord Ojutai",
   "Exotic Orchard",
@@ -212,6 +215,7 @@ have = [
   "Garth One-Eye",
   "Glorybringer",
   "Hellkite Tyrant",
+  "Jeska's Will",
   "Kura, the Boundless Sky",
   "Lightning Bolt",
   "Mox Jasper",
@@ -230,14 +234,15 @@ have = [
   "Spark Double",
   "Sulfurous Springs",
   "Summon: Bahamut",
+  "Sylvan Library",
   "The Ur-Dragon",
   "Thundermaw Hellkite",
   "Triple Triad",
+  "Urza's Incubator",
   "Utvara Hellkite",
   "Young Pyromancer",
 ]
 proxy = [
-  "Ancient Copper Dragon",
   "Ancient Tomb",
   "Arcane Signet",
   "Arid Mesa",
@@ -250,13 +255,12 @@ proxy = [
   "Doubling Season",
   "Dragon Tempest",
   "Dragonlord Dromoka",
-  "Dragonlord Silumgar",
   "Elvish Mystic",
   "Flooded Strand",
   "Ganax, Astral Hunter",
   "Goldspan Dragon",
+  "Hellkite Courser",
   "Klauth, Unrivaled Ancient",
-  "Korvold, Fae-Cursed King",
   "Lathliss, Dragon Queen",
   "Llanowar Elves",
   "Maelstrom of the Spirit Dragon",
@@ -279,11 +283,9 @@ proxy = [
   "Smaug the Magnificent",
   "Sol Ring",
   "Steam Vents",
-  "Steel Hellkite",
   "Stomping Ground",
   "Swords to Plowshares",
   "Taiga",
-  "Teferi's Protection",
   "Terror of the Peaks",
   "The One Ring",
   "Three Visits",
@@ -303,6 +305,7 @@ missing = []
 [deck.yoshimaru]
 confirmed = "2026-11-22"
 have = [
+  "Akroma's Will",
   { card = "Arcane Signet", copies = 4 },
   "Ardenn, Intrepid Archaeologist",
   "Buster Sword",
@@ -376,7 +379,6 @@ proxy = [
   "Solitude",
   "Stoneforge Mystic",
   "Takenuma, Abandoned Mire",
-  "Teferi's Protection",
   "The One Ring",
   "The Wandering Emperor",
   "Vampiric Tutor",
@@ -409,6 +411,7 @@ have = [
   "Farewell",
   "Fatal Push",
   "Generous Gift",
+  "Gleaming Splendor",
   "Go for the Throat",
   "Marauding Blight-Priest",
   "Mindbreak Trap",
@@ -447,7 +450,6 @@ proxy = [
   "Dark Ritual",
   "Demonic Consultation",
   "Demonic Tutor",
-  "Esper Sentinel",
   "Exquisite Blood",
   "Flooded Strand",
   "Force of Will",
@@ -487,6 +489,7 @@ cards = [
   "Exotic Orchard",
   "Haunted Ridge",
   "Massacre Wurm",
+  "Mind Stone",
   "Overgrown Tomb",
   "Path of Ancestry",
   "Plaza of Heroes",

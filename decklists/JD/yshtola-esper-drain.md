@@ -620,11 +620,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (12).** Consecrated Sphinx, Esper Sentinel, Grand Abolisher, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Valley Floodcaller, Voice of Victory, Zur the Enchanter
+**Creatures (11).** Consecrated Sphinx, Grand Abolisher, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Valley Floodcaller, Voice of Victory, Zur the Enchanter
 
 **Planeswalkers (2).** Teferi, Time Raveler, The Theorist, Jace Beleren
 
-**Enchantments (10).** Arrest, Exquisite Blood, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety
+**Enchantments (11).** Arrest, Exquisite Blood, Gleaming Splendor, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety
 
 **Artifacts (8).** Arcane Signet, Chrome Mox, Coalition Relic, Expedition Map, Mox Diamond, Palantír of Orthanc, Sapphire Medallion, Sol Ring
 
@@ -660,7 +660,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Diabolic Tutor
 1 Disdainful Stroke
 1 Doomsday
-1 Esper Sentinel
 1 Expedition Map
 1 Exquisite Blood
 1 Exsanguinate
@@ -669,6 +668,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Flooded Strand
 1 Force of Will
 1 Generous Gift
+1 Gleaming Splendor
 1 Go for the Throat
 1 Godless Shrine
 1 Grand Abolisher

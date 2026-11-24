@@ -1,5 +1,5 @@
 # JD's The Ur-Dragon five-colour Dragons deck (decklists/JD/urdragon-five-colour-dragons.md, key `urdragon`, tier t5;
-# rewritten 2026-11-14 for the list with Utvara Hellkite, Steel Hellkite, Summon: Bahamut and the spells package). The
+# rewritten 2026-11-14 for the list with Utvara Hellkite, Summon: Bahamut and the spells package; 2026-11-23: Sylvan Library, Deflecting Swat, Hellkite Courser, Urza's Incubator and Jeska's Will in). The
 # deck has no hand-written AI code, so the generic policy reads this file: `[style]`, `[commander]`, `[key_cards]`,
 # `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp first, an engine (Rhystic Study, The
 # One Ring, Terror of the Peaks) on turns 3-5, then The Ur-Dragon and the Dragons, then attack; the Garth One-Eye +
@@ -8,8 +8,7 @@
 # paired test (no sims yet). Deliberately NOT listed in `[[prio]]`: Twinflame, Crux of Fate, Austere Command, Decimate,
 # removal and the protection spells. A positive priority turns a held card into a plain main-phase cast, which skips the
 # wipe logic (your own losses count 1.2x) and spends Twinflame outside the combo.
-# Left out, because the schema can't express them: "an opponent has shown a wipe" (hold the Dragons, and tutor for
-# Teferi's Protection), hold up mana or go (Tier 6 only), Dromoka before the combo, Twinflame into open blue mana,
+# Left out, because the schema can't express them: "an opponent has shown a wipe" (hold the Dragons), hold up mana or go (Tier 6 only), Dromoka before the combo, Twinflame into open blue mana,
 # Cavern of Souls naming Dragon, the tutor target for "the table's best creature" (`opp-power` is the whole table's total
 # power), leaving a seven-drop in hand for The Ur-Dragon's free drop (the AI may hard-cast it), Morophon / Rivaz cost
 # sequencing, "seven mana and no Dragon" for the Terror of the Peaks / Goldspan row (it uses `lands+mana-perms>=5` and
@@ -48,7 +47,8 @@
 # the copy decides), Garth (or the tutor that fetches it) cannot be paid for by next
 # turn, or the table's danger (incoming damage over life) reaches 1.0. While it is held Twinflame is held too (the
 # line stays alive). Not done: releasing the hold for a better copy target.
-# The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
+# The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon), Urza's Incubator
+# (dead before a Dragon, added 2026-11-23, provisional), Jeska's Will, Deflecting Swat and Garth One-Eye;
 # Rhythm of the Wild (in the list since 2026-11-20, for Temur Ascendancy) is not in it: it does nothing on its own.
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
 # against `pieces`, and a catalogue combo has none).
@@ -106,6 +106,21 @@ cards = ["Klauth, Unrivaled Ancient", "Utvara Hellkite"]
 when = ["commander-out"]
 score = 76
 
+# PROVISIONAL (2026-11-23, no sim yet): Urza's Incubator (names Dragon: Dragon spells cost {2} less) early, before the big
+# Dragons it discounts; Demonic and Vampiric Tutor can fetch it, Worldly Tutor cannot (an artifact). Hellkite Courser
+# (six mana: puts The Ur-Dragon onto the battlefield with haste, back to the command zone at the end step) while the
+# commander is still in the command zone and six mana is there; all three tutors can fetch it (a creature). Both sit below
+# the Garth rows above, which always come first.
+[[wish]]
+cards = ["Urza's Incubator"]
+when = ["turn<=4 & not out:Urza's Incubator"]
+score = 74
+
+[[wish]]
+cards = ["Hellkite Courser"]
+when = ["commander-zone & lands+mana-perms>=6"]
+score = 72
+
 # The damage engines (each Dragon entering or attacking is a burst), the draw engines, and the Treasure and ping Dragons.
 # Ramp keeps its generic rating (Sol Ring and Mana Vault 88, the dorks and rocks 85 through turn 5, Three Visits farseek_prio):
 # a flat row here would only lower late ramp. Terror and Dromoka are key_cards (a key card skips every rule below). The One
@@ -129,16 +144,34 @@ value = 78
 cards = ["Ganax, Astral Hunter", "Niv-Mizzet, the Firemind"]
 value = 66
 
+# PROVISIONAL (2026-11-23, no sim yet; neither is in a paired test). Urza's Incubator ({3}, names Dragon) goes down early,
+# before the big Dragons it discounts (the plan cannot say "a Dragon is in hand", so it is cast on rating alone). Sylvan Library
+# ({1}{G}) is a cheap draw engine, like Rhystic Study. Hellkite Courser ({4}{R}{R}) is a bridge: while The Ur-Dragon is still
+# in the command zone it puts it onto the battlefield with haste to attack from turn 5-6 (Dragons attacking draw cards);
+# with the commander already out it is only a 6/5 flier, so it ranks with the plain Dragons.
+[[prio]]
+cards = ["Urza's Incubator"]
+when = ["turn<=6"]
+value = 72
+else = 40
+
+[[prio]]
+cards = ["Sylvan Library"]
+when = ["turn<=6"]
+value = 64
+else = 50
+
+[[prio]]
+cards = ["Hellkite Courser"]
+when = ["commander-zone & lands+mana-perms>=6"]
+value = 70
+else = 58
+
 # Triple Triad ({3}{R}{R}{R}) does nothing the turn it lands and is worth casting from six mana on, as a main-phase play.
 [[prio]]
 cards = ["Triple Triad"]
 when = ["lands+mana-perms>=6"]
 value = 62
-
-# Keep the wipe answer for the engine pieces.
-[[hold]]
-card = "Teferi's Protection"
-protects = ["commander", "Terror of the Peaks", "The One Ring"]
 
 # The guide's keep rule: 2-5 lands (one land only with Sol Ring, Mana Vault or two dorks), three mana by turn 3, an action
 # card, and not a hand of only seven-drops. `tries` is always 0 for this deck (the settle rule is Tier 6 only), so every
@@ -153,10 +186,10 @@ bigs = ["Klauth, Unrivaled Ancient", "Old Gnawbone", "Tiamat", "Morophon, the Bo
 plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Cursed Mirror", "Birds of Paradise", "Llanowar Elves", "Elvish Mystic",
     "Delighted Halfling", "Relic of Sauron", "Nature's Lore", "Rivaz of the Claw", "Scion of Draco", "Three Visits", "Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Rhystic Study",
     "The One Ring", "Terror of the Peaks", "Goldspan Dragon", "Glorybringer", "Thundermaw Hellkite",
-    "Korvold, Fae-Cursed King", "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
+    "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
     "Ganax, Astral Hunter", "Kura, the Boundless Sky", "Dragonlord Ojutai", "Scion of the Ur-Dragon", "Dragon Tempest",
-    "Lathliss, Dragon Queen", "Miirym, Sentinel Wyrm", "Dragonlord Dromoka", "Dragonlord Silumgar",
-    "Ancient Copper Dragon", "Hellkite Tyrant", "Niv-Mizzet, the Firemind", "Steel Hellkite"]
+    "Lathliss, Dragon Queen", "Miirym, Sentinel Wyrm", "Dragonlord Dromoka",
+    "Hellkite Tyrant", "Niv-Mizzet, the Firemind", "Hellkite Courser", "Sylvan Library"]
 
 [mulligan]
 [[mulligan.rule]]
