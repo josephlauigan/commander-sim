@@ -53,10 +53,14 @@ fn enchantment(g: &Game, m: PermId) -> bool {
 }
 
 /// X for a Dockside Extortionist controlled by `o`: the artifacts and enchantments the living opponents of `o` control
-/// (each permanent once, even an artifact enchantment; the Treasure, Food, Clue and Blood tokens each once)
+/// (each permanent once, even an artifact enchantment; the Treasure, Food, Clue and Blood tokens each once). An opponent
+/// under Teferi's Protection (`life_locked` and `ring_prot`, both set by it) controls nothing: it is all phased out.
 pub fn opposing_artifacts_and_enchantments(g: &Game, o: PlayerId) -> u32 {
     let mut n: u32 = 0;
     for q in g.players.iter().filter(|q| q.alive && q.id != o) {
+        if q.life_locked && q.ring_prot {
+            continue; // Teferi's Protection: all it controls is phased out, its token counters and lands too (702.26)
+        }
         let mut seen: Vec<PermId> = Vec::with_capacity(q.perms.len() + q.lands.len());
         for &m in q.perms.iter().chain(q.lands.iter()) {
             if seen.contains(&m) {

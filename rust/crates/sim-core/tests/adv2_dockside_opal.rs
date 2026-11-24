@@ -30,7 +30,6 @@ fn adv2_enchantment_land_counts() {
 }
 
 #[test]
-#[ignore = "DEFECT adv2-1: Dockside counts a Teferi-protected opponent's Treasure/Food/Clue/Blood counters and artifact/enchantment lands (Teferi's Protection phases out perms only)"]
 fn adv2_teferis_protection_phases_out_the_opponents_everything() {
     // CR 702.26: a phased-out permanent is treated as though it does not exist. Teferi's Protection phases out all of
     // the caster's permanents, including its Treasure tokens and artifact lands, until its next turn.
