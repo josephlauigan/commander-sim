@@ -2401,6 +2401,9 @@ fn mine_etb_value(g: &Game, _p: PlayerId, m: PermId) -> f64 {
 
 /// mine.blink_worth: what blinking p's creature m is worth
 fn blink_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    if let Some(v) = crate::impls::karn_gilded::reenter_now(g, p, m) {
+        return v; // Karn, Gilded Guardian: above the 2.0 enters floor, or the guard would leak past it
+    }
     if def(g, m).is_some_and(|d| d.tag(Tag::Bahamut)) {
         return mine_etb_value(g, p, m);
     }

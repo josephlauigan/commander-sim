@@ -28,6 +28,8 @@ pub struct Cd {
     pub source: String,
     pub unparsed: Vec<String>,
     pub pool_override: bool,
+    /// an override entry states this card's `cost` (so its pips are the override's, not Scryfall's)
+    pub cost_override: bool,
     pub types_filled: bool,
 }
 
@@ -80,6 +82,7 @@ impl Cd {
             source: "manual".into(),
             unparsed: vec![],
             pool_override: false,
+            cost_override: false,
             types_filled: false,
         }
     }

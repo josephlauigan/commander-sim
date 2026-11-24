@@ -1039,6 +1039,16 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
 /// minimum counts them, Opposition Agent, hybrid and Morophon see them, and so do the Phyrexian and K'rrik choices (those
 /// two look at the printed card's own Phyrexian symbols, `d.phyrexian`, and at its black pips in the string).
 pub fn cost_of_with(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
+    let hybrid = &g.db.get(c).hybrid;
+    if !hybrid.is_empty() && hybrid.contains('2') {
+        return crate::engine::hybrid::mono_cost(g, p, c, x, pips); // {2/W}: the {2} is chosen first (engine::hybrid)
+    }
+    cost_of_base(g, p, c, x, pips)
+}
+
+/// `cost_of_with` for the printed symbols as they stand: the pipeline itself (`engine::hybrid::mono_cost` runs it once per
+/// choice of {2} for a card with {2/X} symbols)
+pub(crate) fn cost_of_base(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;

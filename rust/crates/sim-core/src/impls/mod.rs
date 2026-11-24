@@ -36,6 +36,8 @@ pub mod green_cards;
 pub mod karn;
 pub mod karn_cards;
 pub mod karn_engines;
+pub mod karn_gilded; // --- karn_gilded (2026-11-24): Karn, Gilded Guardian's enter trigger
+pub mod karn_gilded_cards; // --- karn_gilded: the deck's other cards with no record
 pub mod kefka;
 pub mod krrik;
 pub mod kuja;
@@ -238,5 +240,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     kyodai::register(&mut r, db)?; // --- thanos: Kyodai's enter trigger
     arzakon::register(&mut r, db)?; // --- arzakon: Arzakon
     dockside::register(&mut r, db)?; // --- arzakon: Dockside Extortionist
+    karn_gilded::register(&mut r, db)?; // --- karn_gilded: Karn, Gilded Guardian
+    karn_gilded_cards::register(&mut r, db)?; // --- karn_gilded: the deck's other cards
     Ok(r)
 }

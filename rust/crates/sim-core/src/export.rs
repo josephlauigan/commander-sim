@@ -53,8 +53,8 @@ pub struct RawCard {
     pub derived: Derived,
     /// the colours of its Phyrexian mana symbols ("B" for {B/P})
     pub phyrexian: String,
-    /// its two-colour hybrid symbols in cost order ("GW" for {G/W}); `pips` hold the first colour of each (older exports
-    /// have no field)
+    /// its hybrid symbols in cost order ("GW" for {G/W}, "W2" for {2/W}); `pips` hold the first colour of each, the colour
+    /// of a {2/W} (older exports have no field)
     #[serde(default)]
     pub hybrid: Vec<String>,
     /// how many {X} symbols its printed cost has (0 for none; older exports have no field)
@@ -76,7 +76,10 @@ impl RawCard {
         let has = |c: char| self.types.contains(c);
         let (land, creature, instant, sorcery) = (has('L'), has('C'), has('I'), has('S'));
         Derived {
-            cmc: self.generic + self.pips.chars().count() as u32,
+            // a {2/W} is a pip of `pips` (1) and has mana value 2: one more for each
+            cmc: self.generic
+                + self.pips.chars().count() as u32
+                + self.hybrid.iter().filter(|h| h.ends_with('2')).count() as u32,
             land,
             creature,
             instant,

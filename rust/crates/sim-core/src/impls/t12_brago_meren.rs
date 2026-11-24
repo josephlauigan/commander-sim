@@ -60,7 +60,8 @@ use crate::engine::stack::{ability_window, ability_window_card, flush_triggers, 
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{colors_of, epow, protected_from, pval, untargetable};
 use crate::engine::zones::{
-    Enter, agent_for, agent_take, bounce, die, draw, enter, enter_token_copy, exile_perm, landfall, max_by, min_by,
+    Enter, agent_for, agent_take, bounce, die, draw, enter, enter_token_copy, exile_perm, exile_perm_keep_cmd,
+    landfall, max_by, min_by,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src, TrigAct, Trigger};
@@ -391,6 +392,10 @@ fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
         if is_named(g, m, ACID) {
             return x.attached.filter(|&h| live(g, h)).map_or(0.0, |h| pval(g, h) + 1.0);
         }
+        if let Some(v) = super::karn_gilded::reenter_bonus(g, p, m, g.active == Some(p) && g.step != Step::End) {
+            // Karn, Gilded Guardian: his draw when he returns at the end step (his own commander stays in exile meanwhile)
+            return v - if m == src { 99.0 } else { 0.0 };
+        }
         return blink_value(g, p, m) as f64 - if x.is_cmd { 2.0 } else { 0.0 } - if m == src { 99.0 } else { 0.0 };
     }
     if untargetable(g, m) {
@@ -469,7 +474,11 @@ fn exile_until_end(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
         super::yoshimaru_p7::exile_land(g, m)?;
     } else if x.owner == p {
-        exile_perm(g, m)?;
+        if x.orig == p && card.is_some_and(|c| g.player(p).is_commander(c)) {
+            exile_perm_keep_cmd(g, m)?; // the owner's commander waits in exile (it returns below), not in the command zone
+        } else {
+            exile_perm(g, m)?;
+        }
     } else {
         apply_removal(g, Some(p), m, "exile", None)?;
     }

@@ -223,6 +223,7 @@ Kaalia, Zenith Seeker | Etb | T
 Kaito, Bane of Nightmares | Etb | S
 Kaldra Compleat | Etb | T
 Kappa Cannoneer | Etb | T
+Karn, Gilded Guardian | Etb | T | | a triggered ability on the stack (a window to respond; the colours are counted as it resolves)
 Kaya's Ghostform | Etb | S
 Keeper of the Quiet Hour | Etb | T
 Kefka, Court Mage // Kefka, Ruler of Ruin | Etb | T

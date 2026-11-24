@@ -2050,7 +2050,7 @@ fn cratermaker(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<
         return Ok(vec![]);
     }
     let t1 = best_opp_creature(g, p, |g, m| etgh(g, m) <= 2);
-    let t2 = best_opp_nonland(g, p, |g, m| g.perm(m).cd.is_some_and(|c| g.db.get(c).pips.is_empty()));
+    let t2 = best_opp_nonland(g, p, |g, m| g.perm(m).cd.is_some() && crate::engine::chars::colors(g, m).is_empty());
     let ts: Vec<PermId> = [t1, t2].into_iter().flatten().collect();
     let Some(t) = max_by(&ts, |m| pval(g, m)).filter(|&t| pval(g, t) >= 3.0) else { return Ok(vec![]) };
     let dmg = Some(t) == t1;

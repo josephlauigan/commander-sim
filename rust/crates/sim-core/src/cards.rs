@@ -289,8 +289,9 @@ pub struct CardDef {
     pub source: Box<str>,
     /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
     pub phyrexian: Box<str>,
-    /// its two-colour hybrid symbols, two letters each in cost order ("GWGU" for {G/W}{G/U}); `pips` hold the first
-    /// colour of each (engine::hybrid pays the other one when the first can't be paid)
+    /// its hybrid symbols, two letters each in cost order ("GWGU" for {G/W}{G/U}; "W2" for {2/W}, whose colour `pips`
+    /// hold); `pips` hold the first colour of each (engine::hybrid pays the other one when the first can't be paid; a
+    /// {2/W} is paid with {2} when {W} can't be)
     pub hybrid: Box<str>,
     /// how many {X} symbols its printed cost has (practice mode asks the person for X when it is not 0)
     pub xcount: u32,
@@ -324,8 +325,8 @@ impl CardDef {
     }
 
     /// its mana symbols that count toward devotion to the colours `cols` (CR 700.5: a symbol counts once, for any
-    /// colour it has; a two-colour hybrid symbol counts for either half, `pips` holding only the first; {2/W} and
-    /// Phyrexian symbols are not handled)
+    /// colour it has; a two-colour hybrid symbol counts for either half, `pips` holding only the first; a {2/W} is a
+    /// pip of `pips` and counts as it is; Phyrexian symbols are not handled)
     pub fn devotion_to(&self, cols: &str) -> usize {
         let set = Colors::from_letters(cols);
         let hy: Vec<char> = self.hybrid.chars().collect();
@@ -373,7 +374,11 @@ impl CardDef {
             pow: r.pow,
             tgh: r.tgh,
             bomb: r.bomb,
-            colors: Colors::from_letters(&r.pips).union(Colors::from_letters(&r.hybrid.concat())),
+            colors: if crate::engine::chars::named_fx(&r.name) == Some(crate::engine::chars::NamedFx::SelfAllColors) {
+                Colors::from_letters("WUBRG") // Transguild Courier: "is all colors" (a CDA: every zone)
+            } else {
+                Colors::from_letters(&r.pips).union(Colors::from_letters(&r.hybrid.concat()))
+            },
             identity: r.identity.as_deref().map(Colors::from_letters),
             counters_mult: repl::counters_mult_of(&abilities),
             abilities,

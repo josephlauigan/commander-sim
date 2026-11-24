@@ -2626,6 +2626,11 @@ dsl = [] # a land isn't a permanent in `perms`, so its compiled proliferate neve
 status = "Full"
 note = "{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter on Summon: Bahamut)"
 
+["Karn, Gilded Guardian"]
+dsl = [] # the compiled "draw X" trigger counted artifacts, not colours; impls/karn_gilded.rs draws the colours. No cost line: the {2/X} symbols stay (cardinfo::hybrid)
+status = "Full"
+note = "{2/W}{2/U}{2/B}{2/R}{2/G} (each {2/X} is paid with that colour or with {2}, chosen before any reduction or tax; engine::hybrid) 5/5 vigilance trample Golem. The enter trigger (impls/karn_gilded.rs) is a stack trigger (the table may respond, an opposing Elesh Norn blanks it, Gandalf the White and your own Elesh Norn add triggers, each instance counting at its own resolution): draw a card for each colour among the other artifacts you control, counted as it resolves (CR 608.2h): the union of chars::colors over your artifacts (a Transguild Courier is five colours, a token has its token colour, a Cursed Mirror copy of Karn counts the original), not the number of artifacts; Karn himself, phased-out and face-down permanents are not counted; Treasure, Food, Clue and Blood are colourless counters; 0 draws nothing. AI (PROVISIONAL, never tuned by a sim): a hand-written cast priority, 40 plus 8 for each colour among your artifacts now (80 at five), no plan row. Blinking him (Ephemerate and its rebound, Cloudshift, Restoration Angel, Felidar Guardian, Teleportation Circle, the harnessed The Mind Stone, Flickerwisp; Ephemerate, Restoration Angel and Cloudshift also save him from removal): the AI values a blink at 1.5 per card drawn (0.25 per card it would discard at the cleanup step, no cap with no maximum hand size), counting the draws with Gandalf and your own Elesh Norn before the blink, and never blinks him when the draws would leave 3 or fewer cards in the library (except in your own main phase with Thassa's Oracle castable and the draws no larger than the library), when a Doomsday pile is being played, or when he is stolen; he stays your commander through every blink, and Flickerwisp leaves him in exile (not the command zone) until the end step; an opposing Flickerwisp still sends him to the command zone; a Cursed Mirror or Metamorph never copies a commander. tests/cards_karn_gilded.rs, tests/cards_karn_gilded_blink.rs"
+
 ["Karn, the Great Creator"]
 tags = "leg"
 dsl = []
@@ -3131,7 +3136,7 @@ note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or th
 
 ["The Mind Stone"]
 status = "Approximate"
-note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked)"
+note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature (picks Karn, Gilded Guardian by his draw count, with the decking and hand-size guards), else a tapped mana rock; never picks noncreature permanents other than tapped mana rocks (Infinite Guideline Station, The One Ring)"
 
 ["Mind Twist"]
 types = "S"

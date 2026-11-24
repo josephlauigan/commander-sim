@@ -1311,13 +1311,23 @@ fn run(
                     .filter(|&m| {
                         let x = g.perm(m);
                         g.is_creature(m)
-                            && x.cd.is_some_and(|c| c != cmd && Some(c) != cmd2 && etb_value(g, c) > 0)
+                            && x.cd.is_some_and(|c| {
+                                // Karn, Gilded Guardian (his own draw, with the guards): his own value; his dsl is empty
+                                match crate::impls::karn_gilded::reenter_now(g, p, m) {
+                                    Some(v) => v > 0.0,
+                                    None => c != cmd && Some(c) != cmd2 && etb_value(g, c) > 0,
+                                }
+                            })
                             && !x.phased
                             && matches(g, p, m, sel.filter.as_ref(), src)
                     })
                     .collect();
-                let mut ms: Vec<PermId> =
-                    max_by(&cands, |m| etb_value(g, g.perm(m).cd.unwrap()) as f64).into_iter().collect();
+                let mut ms: Vec<PermId> = max_by(&cands, |m| {
+                    crate::impls::karn_gilded::reenter_now(g, p, m)
+                        .unwrap_or_else(|| etb_value(g, g.perm(m).cd.unwrap()) as f64)
+                })
+                .into_iter()
+                .collect();
                 if crate::human::is_human(g, p) {
                     // practice mode: any of yours, or none
                     let mine: Vec<PermId> = g
@@ -1343,8 +1353,10 @@ fn run(
                     && x.owner == p
                     && !x.token
                 {
+                    let is_cmd = x.is_cmd; // a commander stays the commander through the blink
                     zones::leave(g, m)?;
                     let n = zones::enter(g, p, cd, Enter::default())?;
+                    g.perm_mut(n).is_cmd = is_cmd;
                     zones::exiled_from_bf(g, m, Some(n))?;
                     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
                 }

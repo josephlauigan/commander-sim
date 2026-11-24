@@ -156,6 +156,7 @@ fn apply_override(base: &Cd, spec: &Entry) -> Cd {
     }
     cd.source = "pool".into();
     cd.pool_override = true;
+    cd.cost_override = spec.cost.as_ref().is_some_and(|s| !s.is_empty());
     cd
 }
 

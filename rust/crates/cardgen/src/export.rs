@@ -79,6 +79,22 @@ impl Inputs {
         // Dockside Extortionist: modelled and tested before the arzakon deck listed it (2026-11-23; banned in Commander,
         // legal in Cali); kept so the record exists whichever deck lists it
         extra.insert("Dockside Extortionist".to_string());
+        // the Karn, Gilded Guardian deck (key karn_gilded): its nine cards with no record are modelled before the deck is
+        // registered (2026-11-24), as for Yoshimaru and Arzakon, so the card data exists whichever deck lists them
+        extra.extend(
+            [
+                "Karn, Gilded Guardian",
+                "Transguild Courier",
+                "Infinite Guideline Station",
+                "Breya, Etherium Shaper",
+                "Gold-Forged Thopteryx",
+                "Shorikai, Genesis Engine",
+                "The Reaper, King No More",
+                "Herd Heirloom",
+                "Twitching Doll",
+            ]
+            .map(String::from),
+        );
         // cards modeled before the Yoshimaru/Tymna deck is registered (it needs them in the card data first)
         extra.extend(
             [
@@ -154,6 +170,7 @@ fn identity(cd: &Cd, cache: &Cache) -> J {
 pub fn card_record(cd: &Cd, cache: &Cache, hooks: Option<&Hooks>) -> J {
     let land = cd.land();
     let (lt, basic) = if land { cardinfo::land_types(cache, &cd.name) } else { (vec![], false) };
+    let hybrid = cardinfo::hybrid(cache, cd);
     let mut events: Vec<&String> = hooks.map(|h| h.events.iter().collect()).unwrap_or_default();
     events.sort();
     J::Obj(obj! {
@@ -175,10 +192,10 @@ pub fn card_record(cd: &Cd, cache: &Cache, hooks: Option<&Hooks>) -> J {
         "game_changer" => game_changer(cd, cache),
         "source" => cd.source.as_str(),
         "unparsed" => J::Arr(cd.unparsed.iter().map(|s| J::from(s.as_str())).collect()),
-        "derived" => obj! {"cmc" => cd.cmc, "land" => land, "creature" => cd.creature(), "instant" => cd.instant(),
+        "derived" => obj! {"cmc" => cardinfo::mana_value(cd, &hybrid), "land" => land, "creature" => cd.creature(), "instant" => cd.instant(),
             "sorcery" => cd.sorcery(), "perm" => cd.perm()},
         "phyrexian" => cardinfo::phyrexian(cache, cd),
-        "hybrid" => J::Arr(cardinfo::hybrid(cache, cd).iter().map(|s| J::from(s.as_str())).collect()),
+        "hybrid" => J::Arr(hybrid.iter().map(|s| J::from(s.as_str())).collect()),
         "xcount" => cardinfo::xcount(cache, cd),
         "enters_rule" => if land { cardinfo::enters_rule(cache, cd).unwrap_or(J::Null) } else { J::Null },
         "land_types" => J::Arr(lt.iter().map(|s| J::from(s.as_str())).collect()),

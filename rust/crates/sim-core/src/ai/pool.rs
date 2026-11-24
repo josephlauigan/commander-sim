@@ -1089,7 +1089,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 31] = [
+const PROTECTORS: [Protector; 32] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -1130,6 +1130,9 @@ const PROTECTORS: [Protector; 31] = [
     ("Not of This World", Where::Hand, Some((7, "")), How::AllTargeted, Scope::One, false),
     ("Angelic Shield", Where::BfSac, None, How::Bounce, Scope::One, false),
     ("Eerie Interlude", Where::Hand, Some((2, "W")), How::Interlude, Scope::Creatures, false),
+    // --- Karn, Gilded Guardian (kg-e4): Cloudshift blinks him out of the removal (and he draws again). A protector only
+    // for him (`protect_cands`): every other deck holds Cloudshift for value or a combo, as before
+    ("Cloudshift", Where::Hand, Some((0, "W")), How::Blink, Scope::One, false),
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];
@@ -1370,6 +1373,14 @@ fn protect_cands(
         }
         if !saves(g, how, kind, Some(m), spell, true) {
             continue;
+        }
+        if how == How::Blink {
+            // Karn, Gilded Guardian: a blink that would deck the owner (or return a stolen Karn) is no protection: losing
+            // him to the command zone is better. Cloudshift protects only him.
+            let bonus = crate::impls::karn_gilded::reenter_bonus(g, owner, m, false);
+            if bonus.is_some_and(|v| v < 0.0) || (name == "Cloudshift" && bonus.is_none()) {
+                continue;
+            }
         }
         if heur && name == "Teferi's Protection" && !worth_whole_board(g, owner, m) {
             continue; // kept for wipes and lethal
