@@ -223,12 +223,10 @@ fn hold_problems_passes_the_real_rows_and_the_adoption_row() {
 
 // ------------------------------------------------------------------ 5: no existing plan is affected
 /// every plan file's hold rows today (plan, card): the ones this test pins
-const ROWS: [(&str, &str); 5] = [
+const ROWS: [(&str, &str); 3] = [
+    ("arzakon", "Teferi's Protection"),
     ("aurelia-boros-extra-combats", "Teferi's Protection"),
-    ("kyodai", "Teferi's Protection"),
-    ("urdragon", "Teferi's Protection"),
     ("yoshimaru", "Eerie Interlude"),
-    ("yoshimaru", "Teferi's Protection"),
 ];
 
 #[test]
@@ -274,7 +272,7 @@ fn every_card_of_every_plan_decks_lists_passes_the_new_check_untouched() {
 
 #[test]
 fn the_real_hold_rows_leave_card_utility_alone() {
-    // yoshimaru's own rows (Teferi's Protection, Eerie Interlude): the utility with the row equals the utility with the
+    // yoshimaru's own row (Eerie Interlude; the Teferi's Protection row left with the card): the utility with the row equals the utility with the
     // hook plan that has no row at all, for every card in its hand, in the same position
     let (g, _) = {
         let (mut g, c) = position();
