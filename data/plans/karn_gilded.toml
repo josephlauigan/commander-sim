@@ -8,8 +8,8 @@
 # PROVISIONAL: nothing here has been measured; no sim has run on this list. The keep rule and the tutor order are the
 # generic ones. Left out (the schema can't express it): the Oracle outlet when Karn's draw would empty the library
 # (card code), Cabal Coffers + Urborg + Exsanguinate (no catalogue line), the combat line with Karn and a Sword, and the
-# guide's mulligan table. Doomsday's pile builder and its play are card code (impls/doomsday.rs), keyed on a deck key
-# that is not this one: the Doomsday line below only steers the tutors.
+# guide's mulligan table. Doomsday's pile builder and its play are card code (impls/doomsday.rs) that runs for every
+# deck: the Doomsday line below is the combo row only, and whether the builder ever finds a pile with this list is unmeasured.
 deck = "karn_gilded"
 default = "plan"
 # card engines the tutors want once no line wants a card: the five-colour artifacts that make Karn's draw big, the doublers
