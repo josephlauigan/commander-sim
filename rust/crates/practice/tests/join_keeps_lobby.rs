@@ -14,6 +14,7 @@ use std::sync::{Arc, Barrier};
 use std::time::Duration;
 
 const REFUSED: &str = "the engine refuses this pairing";
+const CHECK_REFUSED: &str = "the format refuses this deck";
 
 struct Fake {
     deck: String,
@@ -79,11 +80,16 @@ impl SessionApi for Fake {
 /// refuses a game whose partner deck is `refuse` (what a `new_session` failure after the lobby is taken looks like)
 struct Factory {
     refuse: &'static str,
+    /// the partner deck `check_two` refuses (the pre-check a fresh lobby runs when a guest joins)
+    check_refuses: &'static str,
     made: AtomicUsize,
+    /// every call of `new_session`, refused or not
+    new_calls: AtomicUsize,
 }
 
 impl SessionFactory for Factory {
     fn new_session(&self, opts: &Value) -> Result<Arc<dyn SessionApi>, String> {
+        self.new_calls.fetch_add(1, Ordering::SeqCst);
         if opts["partner"].as_str() == Some(self.refuse) {
             return Err(REFUSED.into());
         }
@@ -93,8 +99,8 @@ impl SessionFactory for Factory {
             partner: opts["partner"].as_str().map(String::from),
         }))
     }
-    fn check_two(&self, _: &Value, _: &str) -> Result<(), String> {
-        Ok(())
+    fn check_two(&self, _: &Value, partner: &str) -> Result<(), String> {
+        if partner == self.check_refuses { Err(CHECK_REFUSED.into()) } else { Ok(()) }
     }
     fn load_session(&self, _: &Value, _: bool) -> Result<Arc<dyn SessionApi>, String> {
         Err("not used".into())
@@ -114,8 +120,12 @@ impl Drop for Scratch {
 }
 
 fn hub(refuse: &'static str) -> (Arc<Hub>, Arc<Factory>, Scratch) {
+    hub_checking(refuse, "nobody")
+}
+
+fn hub_checking(refuse: &'static str, check_refuses: &'static str) -> (Arc<Hub>, Arc<Factory>, Scratch) {
     static N: AtomicUsize = AtomicUsize::new(0);
-    let f = Arc::new(Factory { refuse, made: AtomicUsize::new(0) });
+    let f = Arc::new(Factory { refuse, check_refuses, made: AtomicUsize::new(0), new_calls: AtomicUsize::new(0) });
     let dir =
         std::env::temp_dir().join(format!("practice-join-{}-{}", std::process::id(), N.fetch_add(1, Ordering::SeqCst)));
     let _ = std::fs::remove_dir_all(&dir);
@@ -255,4 +265,44 @@ fn two_guests_at_once_never_half_take_the_lobby() {
         h.shutdown();
     }
     eprintln!("good guest got in first in {started} of 200 rounds");
+}
+
+/// A deck the table's format refuses is refused when the guest joins, before the lobby is taken: the factory is asked
+/// to check it (`check_two`), `new_session` is never called, and the host's lobby and code are untouched.
+#[test]
+fn a_deck_the_check_refuses_never_reaches_new_session() {
+    let (h, f, _dir) = hub_checking("nobody", "sheoldred");
+    let code = open(&h);
+    for guest in ["g1", "g2", "g1"] {
+        assert_eq!(join(&h, guest, &code, "sheoldred").as_deref(), Some(CHECK_REFUSED));
+        assert_eq!(lobby_code(&h).as_deref(), Some(code.as_str()), "the host's lobby is gone after a refused join");
+        assert!(!game_running(&h));
+    }
+    assert_eq!(f.new_calls.load(Ordering::SeqCst), 0, "new_session was called for a deck the check refuses");
+    // the same code works for a deck that fits: one session, made once
+    assert_eq!(join(&h, "g1", &code, "urdragon"), None);
+    assert!(game_running(&h));
+    assert_eq!((f.new_calls.load(Ordering::SeqCst), f.made.load(Ordering::SeqCst)), (1, 1));
+    h.shutdown();
+}
+
+/// the other refusals keep their order: the pre-check comes after the code, the deck's name, the mirror and the host's
+/// own browser, so those texts are the ones they always were
+#[test]
+fn the_pre_check_comes_after_the_other_join_checks() {
+    let (h, f, _dir) = hub_checking("nobody", "sheoldred");
+    let code = open(&h);
+    let wrong = if code != "000000" { "000000" } else { "111111" };
+    assert_eq!(
+        join(&h, "g", wrong, "sheoldred").as_deref(),
+        Some("That code is not right: the host's screen shows it.")
+    );
+    assert!(join(&h, "g", &code, "nonsense").unwrap().starts_with("deck: one of "));
+    assert_eq!(join(&h, "g", &code, "yoshimaru").as_deref(), Some("The host plays that deck: pick another."));
+    assert_eq!(
+        join(&h, "host", &code, "sheoldred").as_deref(),
+        Some("This browser is the host's: join from the other computer.")
+    );
+    assert_eq!(f.new_calls.load(Ordering::SeqCst), 0);
+    h.shutdown();
 }
