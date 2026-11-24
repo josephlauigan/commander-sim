@@ -30,6 +30,15 @@ every result as new against old.
 ## Limits
 
 - One seed (500000) and one profile (loose): a single draw of 1,500 games per list per tier.
+- The old arm is not exactly the list that was played before PR #394. That PR also removed the plan rows of the cards that left, so
+  those old cards play on the generic AI here: Ur-Dragon lost Klauth's wish row and `bigs` entry, the five old Dragons' `plays`
+  entries and the Teferi's Protection hold row (it protected Terror of the Peaks and The One Ring); Y'shtola lost the Esper
+  Sentinel priority row. For Ur-Dragon this handicaps the old list, and it still scored higher, so the -2.7 is conservative.
+  Yoshimaru's Teferi's Protection row was recorded as changing no play, so its old arm is fair.
+- Library order: the deck lists are sorted and `--swap` puts each card at the other card's position, so a rebuilt old list has a
+  different card order from the 11-23 list and the same seeds deal different libraries. Any comparison with the 11-23 baselines
+  (Ur-Dragon 27.6%, Y'shtola 35.1%) is therefore an unpaired re-draw and not evidence of an engine change. Only the new-against-old
+  comparison inside one run is paired.
 - The Arzakon deck (`arzakon`) was NOT tested. The package also changed it; it needs a Cali paired run with
   `--swap-commander`, which has not been run.
 
