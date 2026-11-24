@@ -113,6 +113,28 @@ systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>
 
 Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 
+## Keep the drive from filling
+
+(JD, 2026-11-23: the root volume reached 100% and halted builds, tests and agents mid-run.) Every worktree has its own
+`rust/target`, and a release build with debug info is 40-90 GB: about 25 worktrees held over 1.2 TB.
+
+1. **Check before you build.** Before creating a worktree, or starting a build, a test run, a sim queue or a batch of
+   agents, run `df -h /`. Below 150 GB free: do not start; free space first (rules 2-4). Below 50 GB: stop all work and
+   tell JD. Agent briefs that build say to check `df -h /` first and to report instead of building when it is low.
+2. **One build directory per active worktree, removed when done.** Delete a worktree's `rust/target` as soon as its PR is
+   merged or abandoned, and `git worktree remove` the worktree once its branch is merged and its tree is clean. Keep
+   about 8 worktrees with a built target at most; reuse an existing worktree for follow-up fixes instead of creating a
+   new one.
+3. **Scratch space belongs to its author.** A `CARGO_TARGET_DIR` or cache directory (for example
+   `~/.cache/<name>-target`) that an agent or session creates is deleted by it when its work ends; briefs that set one
+   say so. Trace sets, gate recordings and test logs under `/tmp/handoff` are removed once their results are logged
+   (decisions log, FINDINGS or the PR text).
+4. **Making room.** Delete only regenerable build output and your own scratch files, never source, branches, saves or
+   untracked work, and tell JD what was deleted and how much was freed. Anything else needs JD's yes.
+5. **A full disk is not a test result.** "No space left on device", an empty log or an exit code 101 with no counts is an
+   infrastructure failure: stop, free space, and re-run the failed step. Never report a result from a run that overlapped
+   a full disk.
+
 ## Opponent tiers
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
