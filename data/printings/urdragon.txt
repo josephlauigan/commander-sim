@@ -31,11 +31,10 @@
 1 Garth One-Eye (mh2) 420
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (soc) 245
-1 Hellkite Courser (tdc) 218
 1 Hellkite Tyrant (fic) 295
 1 Jeska's Will (soa) 109
-1 Klauth, Unrivaled Ancient (sld) 2499
 1 Kura, the Boundless Sky (neo) 200
+1 Kyodai, Soul of Kamigawa (neo) 407
 1 Lathliss, Dragon Queen (fdc) 7
 1 Lightning Bolt (sld) 86
 1 Llanowar Elves (fdn) 227
@@ -79,6 +78,7 @@
 1 Swords to Plowshares (cst) 54
 1 Sylvan Library (dmr) 179
 1 Taiga (3ed) 287
+1 Talisman of Hierarchy (h1r) 36
 1 Terror of the Peaks (pspl) 1
 1 The One Ring (hoc) 44
 1 The Ur-Dragon (sld) 11

@@ -3,11 +3,14 @@
 # deck is confirmed. A `have` card in k decks carries `copies = k`: JD marked a copy for each deck.
 # 2026-11-23 (JD): the Arzakon, Yoshimaru, Ur-Dragon and Y'shtola swaps moved cards between decks; he owns every incoming card
 # except Hellkite Courser (a proxy), and the freed Mind Stone copy is a spare.
+# 2026-11-24 (JD, from his deck export): Talisman of Hierarchy moved from the Arzakon deck to the Ur-Dragon deck (Hellkite Courser left
+# the Ur-Dragon deck); Kyodai, Soul of Kamigawa moved from the Arzakon deck to the Ur-Dragon deck in place of Klauth, Unrivaled Ancient
+# (a proxy, now out); Dockside Extortionist and Karn Liberated joined the Arzakon deck, and he has both.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
 version = 1
-updated = "2026-11-23"
+updated = "2026-11-24"
 
 [deck.sheoldred]
 confirmed = "2026-11-22"
@@ -110,6 +113,7 @@ have = [
   "Demonic Consultation",
   "Demonic Tutor",
   "Diabolic Intent",
+  "Dockside Extortionist",
   "Dovin's Veto",
   "Enlightened Tutor",
   "Ephemerate",
@@ -126,8 +130,8 @@ have = [
   "Hallowed Fountain",
   "Hangarback Walker",
   "Heroic Intervention",
+  "Karn Liberated",
   "Karn, the Great Creator",
-  "Kyodai, Soul of Kamigawa",
   "Lightning Greaves",
   "Llanowar Elves",
   "Lotus Petal",
@@ -150,7 +154,6 @@ have = [
   "Strip Mine",
   { card = "Swords to Plowshares", copies = 2 },
   "Tainted Pact",
-  "Talisman of Hierarchy",
   "Talisman of Progress",
   "Teferi's Protection",
   "Tezzeret, Cruel Captain",
@@ -217,6 +220,7 @@ have = [
   "Hellkite Tyrant",
   "Jeska's Will",
   "Kura, the Boundless Sky",
+  "Kyodai, Soul of Kamigawa",
   "Lightning Bolt",
   "Mox Jasper",
   "Nature's Lore",
@@ -235,6 +239,7 @@ have = [
   "Sulfurous Springs",
   "Summon: Bahamut",
   "Sylvan Library",
+  "Talisman of Hierarchy",
   "The Ur-Dragon",
   "Thundermaw Hellkite",
   "Triple Triad",
@@ -259,8 +264,6 @@ proxy = [
   "Flooded Strand",
   "Ganax, Astral Hunter",
   "Goldspan Dragon",
-  "Hellkite Courser",
-  "Klauth, Unrivaled Ancient",
   "Lathliss, Dragon Queen",
   "Llanowar Elves",
   "Maelstrom of the Spirit Dragon",
