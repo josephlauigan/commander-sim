@@ -1,10 +1,9 @@
 {
   "about": "Pins Commander practice (tests/commander_practice_fixture.rs); regenerate with UPDATE_PRACTICE_FIXTURE=1",
   "decks": [
+    "karn_gilded",
     "sheoldred",
-    "urdragon",
-    "yoshimaru",
-    "yshtola"
+    "urdragon"
   ],
   "legacy_save": {
     "ai": "adaptive",
@@ -130,19 +129,19 @@
   },
   "save": {
     "answers_at_save": 30,
-    "deck": "sheoldred",
+    "deck": "karn_gilded",
     "partner": null,
     "replay": {
-      "events": 56,
-      "game_hash": "2636b784683672e9",
-      "hash": "04b0d64a95437206",
-      "live_answers": 1,
+      "events": 69,
+      "game_hash": "aebff05949a3494c",
+      "hash": "3d25370973f96481",
+      "live_answers": 7,
       "live_by_seat": {
-        "sheoldred": 1
+        "karn_gilded": 7
       },
       "over": {
         "how": "timeout",
-        "winner": "aurelia-boros-extra-combats"
+        "winner": "chulane-bant-value-combo"
       }
     },
     "saved": {
@@ -150,45 +149,13 @@
       "answers": [
         0,
         {
-          "card": 1,
+          "card": 2,
           "do": "land"
         },
+        0,
         {
           "do": "tap",
           "source": 0
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "card": 1,
-          "do": "land"
-        },
-        {
-          "do": "tap",
-          "source": 0
-        },
-        {
-          "do": "tap",
-          "source": 0
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
         },
         {
           "do": "pass"
@@ -212,10 +179,7 @@
           "card": 2,
           "do": "land"
         },
-        {
-          "do": "tap",
-          "source": 0
-        },
+        0,
         {
           "do": "tap",
           "source": 0
@@ -232,6 +196,37 @@
         },
         {
           "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "card": 4,
+          "do": "land"
+        },
+        {
+          "do": "tap",
+          "source": 0
+        },
+        {
+          "do": "tap",
+          "source": 0
+        },
+        {
+          "do": "tap",
+          "source": 0
         },
         {
           "do": "pass"
@@ -247,80 +242,80 @@
         }
       ],
       "autopass": {
-        "sheoldred": "respond"
+        "karn_gilded": "respond"
       },
       "autopass_log": [],
-      "deck": "sheoldred",
+      "deck": "karn_gilded",
       "finished": false,
       "max_rounds": 3,
       "profile": "loose",
       "round": 3,
       "seats": [
-        "sheoldred",
-        "atraxa-infect",
-        "aurelia-boros-extra-combats",
-        "korvold-jund-sacrifice"
+        "karn_gilded",
+        "chulane-bant-value-combo",
+        "edgar-markov-mardu-vampires",
+        "krenko-mono-red-goblins"
       ],
       "seed": 7,
       "shadow": [],
       "tape": [],
-      "tier": "t3",
+      "tier": "t4",
       "version": 1
     },
     "seed": 7,
-    "tier": "t3"
+    "tier": "t4"
   },
   "save_partner": {
     "answers_at_save": 30,
-    "deck": "sheoldred",
-    "partner": "urdragon",
+    "deck": "karn_gilded",
+    "partner": "sheoldred",
     "replay": {
-      "events": 95,
-      "game_hash": "a2e5e527104da330",
-      "hash": "d9c4acdf19a58b6a",
-      "live_answers": 32,
+      "events": 104,
+      "game_hash": "45b4ae1605bbaabd",
+      "hash": "c60b6d3cf2da8298",
+      "live_answers": 39,
       "live_by_seat": {
-        "sheoldred": 17,
-        "urdragon": 15
+        "karn_gilded": 22,
+        "sheoldred": 17
       },
       "over": {
         "how": "timeout",
-        "winner": "aurelia-boros-extra-combats"
+        "winner": "edgar-markov-mardu-vampires"
       }
     },
     "saved": {
       "ai": "adaptive",
       "answer_seats": [
-        "urdragon",
         "sheoldred",
-        "urdragon",
+        "karn_gilded",
         "sheoldred",
-        "urdragon",
-        "urdragon",
-        "urdragon",
-        "urdragon",
+        "karn_gilded",
+        "sheoldred",
+        "karn_gilded",
         "sheoldred",
         "sheoldred",
         "sheoldred",
         "sheoldred",
-        "sheoldred",
-        "urdragon",
-        "urdragon",
-        "sheoldred",
-        "urdragon",
-        "sheoldred",
-        "urdragon",
-        "sheoldred",
-        "urdragon",
-        "urdragon",
-        "urdragon",
-        "urdragon",
-        "urdragon",
-        "urdragon",
+        "karn_gilded",
+        "karn_gilded",
+        "karn_gilded",
+        "karn_gilded",
+        "karn_gilded",
+        "karn_gilded",
         "sheoldred",
         "sheoldred",
+        "karn_gilded",
         "sheoldred",
-        "sheoldred"
+        "karn_gilded",
+        "sheoldred",
+        "karn_gilded",
+        "sheoldred",
+        "sheoldred",
+        "sheoldred",
+        "sheoldred",
+        "sheoldred",
+        "karn_gilded",
+        "karn_gilded"
       ],
       "answers": [
         0,
@@ -332,17 +327,6 @@
           "do": "pass"
         },
         {
-          "card": 0,
-          "do": "land"
-        },
-        {
-          "do": "tap",
-          "source": 0
-        },
-        {
-          "do": "pass"
-        },
-        {
           "do": "pass"
         },
         {
@@ -366,25 +350,7 @@
           "do": "pass"
         },
         {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "card": 0,
+          "card": 2,
           "do": "land"
         },
         0,
@@ -393,8 +359,22 @@
           "source": 0
         },
         {
-          "do": "tap",
-          "source": 0
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
         },
         {
           "do": "pass"
@@ -416,34 +396,47 @@
         {
           "do": "tap",
           "source": 0
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "card": 2,
+          "do": "land"
         }
       ],
       "autopass": {
-        "sheoldred": "respond",
-        "urdragon": "respond"
+        "karn_gilded": "respond",
+        "sheoldred": "respond"
       },
       "autopass_log": [],
-      "deck": "sheoldred",
+      "deck": "karn_gilded",
       "finished": false,
       "max_rounds": 3,
-      "partner": "urdragon",
+      "partner": "sheoldred",
       "partner_shadow": [],
       "profile": "loose",
       "round": 2,
       "seats": [
-        "aurelia-boros-extra-combats",
-        "urdragon",
+        "edgar-markov-mardu-vampires",
         "sheoldred",
-        "atraxa-infect"
+        "karn_gilded",
+        "chulane-bant-value-combo"
       ],
       "seed": 7,
       "shadow": [],
       "tape": [],
-      "tier": "t3",
+      "tier": "t4",
       "version": 1
     },
     "seed": 7,
-    "tier": "t3"
+    "tier": "t4"
   },
   "seats": {
     "errors": [
@@ -491,6 +484,36 @@
       }
     ],
     "exact": {
+      "karn_gilded": {
+        "one_person": {
+          "again": [
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts",
+            "karn_gilded",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "short": {
+            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          },
+          "wrong": {
+            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          }
+        },
+        "two_people": {
+          "again": [
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "short": {
+            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          },
+          "wrong": {
+            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          }
+        }
+      },
       "sheoldred": {
         "one_person": {
           "again": [
@@ -541,67 +564,7 @@
             "urza-mono-blue-artifacts",
             "yawgmoth-mono-black-aristocrats",
             "urdragon",
-            "yoshimaru"
-          ],
-          "short": {
-            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          },
-          "wrong": {
-            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          }
-        }
-      },
-      "yoshimaru": {
-        "one_person": {
-          "again": [
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts",
-            "yoshimaru",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "short": {
-            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          },
-          "wrong": {
-            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          }
-        },
-        "two_people": {
-          "again": [
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "short": {
-            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          },
-          "wrong": {
-            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          }
-        }
-      },
-      "yshtola": {
-        "one_person": {
-          "again": [
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts",
-            "yshtola",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "short": {
-            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          },
-          "wrong": {
-            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
-          }
-        },
-        "two_people": {
-          "again": [
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola",
-            "sheoldred"
+            "karn_gilded"
           ],
           "short": {
             "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
@@ -613,6 +576,380 @@
       }
     },
     "one_person": {
+      "karn_gilded": {
+        "t1": {
+          "1": [
+            "tatyova-simic-landfall",
+            "karn_gilded",
+            "light-paws-aura-voltron",
+            "isshin-mardu-attack-triggers"
+          ],
+          "10": [
+            "light-paws-aura-voltron",
+            "isshin-mardu-attack-triggers",
+            "teysa-orzhov-aristocrats",
+            "karn_gilded"
+          ],
+          "2": [
+            "lathril-golgari-elves",
+            "light-paws-aura-voltron",
+            "karn_gilded",
+            "tatyova-simic-landfall"
+          ],
+          "3": [
+            "tatyova-simic-landfall",
+            "isshin-mardu-attack-triggers",
+            "karn_gilded",
+            "teysa-orzhov-aristocrats"
+          ],
+          "4": [
+            "isshin-mardu-attack-triggers",
+            "karn_gilded",
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall"
+          ],
+          "5": [
+            "light-paws-aura-voltron",
+            "lathril-golgari-elves",
+            "tatyova-simic-landfall",
+            "karn_gilded"
+          ],
+          "6": [
+            "karn_gilded",
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall",
+            "lathril-golgari-elves"
+          ],
+          "7": [
+            "karn_gilded",
+            "isshin-mardu-attack-triggers",
+            "lathril-golgari-elves",
+            "light-paws-aura-voltron"
+          ],
+          "8": [
+            "tatyova-simic-landfall",
+            "teysa-orzhov-aristocrats",
+            "karn_gilded",
+            "light-paws-aura-voltron"
+          ],
+          "9": [
+            "lathril-golgari-elves",
+            "teysa-orzhov-aristocrats",
+            "tatyova-simic-landfall",
+            "karn_gilded"
+          ]
+        },
+        "t2": {
+          "1": [
+            "meren-golgari-recursion",
+            "karn_gilded",
+            "lord-windgrace-jund-lands",
+            "brago-azorius-blink-control"
+          ],
+          "10": [
+            "lord-windgrace-jund-lands",
+            "brago-azorius-blink-control",
+            "sythis-selesnya-enchantress",
+            "karn_gilded"
+          ],
+          "2": [
+            "kaalia-mardu-creature-cheat",
+            "lord-windgrace-jund-lands",
+            "karn_gilded",
+            "meren-golgari-recursion"
+          ],
+          "3": [
+            "meren-golgari-recursion",
+            "brago-azorius-blink-control",
+            "karn_gilded",
+            "sythis-selesnya-enchantress"
+          ],
+          "4": [
+            "brago-azorius-blink-control",
+            "karn_gilded",
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion"
+          ],
+          "5": [
+            "lord-windgrace-jund-lands",
+            "kaalia-mardu-creature-cheat",
+            "meren-golgari-recursion",
+            "karn_gilded"
+          ],
+          "6": [
+            "karn_gilded",
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion",
+            "kaalia-mardu-creature-cheat"
+          ],
+          "7": [
+            "karn_gilded",
+            "brago-azorius-blink-control",
+            "kaalia-mardu-creature-cheat",
+            "lord-windgrace-jund-lands"
+          ],
+          "8": [
+            "meren-golgari-recursion",
+            "sythis-selesnya-enchantress",
+            "karn_gilded",
+            "lord-windgrace-jund-lands"
+          ],
+          "9": [
+            "kaalia-mardu-creature-cheat",
+            "sythis-selesnya-enchantress",
+            "meren-golgari-recursion",
+            "karn_gilded"
+          ]
+        },
+        "t3": {
+          "1": [
+            "marwyn-mono-green-elves",
+            "karn_gilded",
+            "korvold-jund-sacrifice",
+            "atraxa-infect"
+          ],
+          "10": [
+            "korvold-jund-sacrifice",
+            "atraxa-infect",
+            "tergrid-mono-black-disruption",
+            "karn_gilded"
+          ],
+          "2": [
+            "aurelia-boros-extra-combats",
+            "korvold-jund-sacrifice",
+            "karn_gilded",
+            "marwyn-mono-green-elves"
+          ],
+          "3": [
+            "marwyn-mono-green-elves",
+            "atraxa-infect",
+            "karn_gilded",
+            "tergrid-mono-black-disruption"
+          ],
+          "4": [
+            "atraxa-infect",
+            "karn_gilded",
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves"
+          ],
+          "5": [
+            "korvold-jund-sacrifice",
+            "aurelia-boros-extra-combats",
+            "marwyn-mono-green-elves",
+            "karn_gilded"
+          ],
+          "6": [
+            "karn_gilded",
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves",
+            "aurelia-boros-extra-combats"
+          ],
+          "7": [
+            "karn_gilded",
+            "atraxa-infect",
+            "aurelia-boros-extra-combats",
+            "korvold-jund-sacrifice"
+          ],
+          "8": [
+            "marwyn-mono-green-elves",
+            "tergrid-mono-black-disruption",
+            "karn_gilded",
+            "korvold-jund-sacrifice"
+          ],
+          "9": [
+            "aurelia-boros-extra-combats",
+            "tergrid-mono-black-disruption",
+            "marwyn-mono-green-elves",
+            "karn_gilded"
+          ]
+        },
+        "t4": {
+          "1": [
+            "prosper-rakdos-exile-treasure",
+            "karn_gilded",
+            "krenko-mono-red-goblins",
+            "chulane-bant-value-combo"
+          ],
+          "10": [
+            "krenko-mono-red-goblins",
+            "chulane-bant-value-combo",
+            "yuriko-dimir-ninjas",
+            "karn_gilded"
+          ],
+          "2": [
+            "edgar-markov-mardu-vampires",
+            "krenko-mono-red-goblins",
+            "karn_gilded",
+            "prosper-rakdos-exile-treasure"
+          ],
+          "3": [
+            "prosper-rakdos-exile-treasure",
+            "chulane-bant-value-combo",
+            "karn_gilded",
+            "yuriko-dimir-ninjas"
+          ],
+          "4": [
+            "chulane-bant-value-combo",
+            "karn_gilded",
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure"
+          ],
+          "5": [
+            "krenko-mono-red-goblins",
+            "edgar-markov-mardu-vampires",
+            "prosper-rakdos-exile-treasure",
+            "karn_gilded"
+          ],
+          "6": [
+            "karn_gilded",
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure",
+            "edgar-markov-mardu-vampires"
+          ],
+          "7": [
+            "karn_gilded",
+            "chulane-bant-value-combo",
+            "edgar-markov-mardu-vampires",
+            "krenko-mono-red-goblins"
+          ],
+          "8": [
+            "prosper-rakdos-exile-treasure",
+            "yuriko-dimir-ninjas",
+            "karn_gilded",
+            "krenko-mono-red-goblins"
+          ],
+          "9": [
+            "edgar-markov-mardu-vampires",
+            "yuriko-dimir-ninjas",
+            "prosper-rakdos-exile-treasure",
+            "karn_gilded"
+          ]
+        },
+        "t5": {
+          "1": [
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded",
+            "urza-mono-blue-artifacts",
+            "kinnan-simic-mana-combo"
+          ],
+          "10": [
+            "urza-mono-blue-artifacts",
+            "kinnan-simic-mana-combo",
+            "zur-esper-enchantment-control",
+            "karn_gilded"
+          ],
+          "2": [
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts",
+            "karn_gilded",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "3": [
+            "yawgmoth-mono-black-aristocrats",
+            "kinnan-simic-mana-combo",
+            "karn_gilded",
+            "zur-esper-enchantment-control"
+          ],
+          "4": [
+            "kinnan-simic-mana-combo",
+            "karn_gilded",
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "5": [
+            "urza-mono-blue-artifacts",
+            "miirym-temur-dragons",
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded"
+          ],
+          "6": [
+            "karn_gilded",
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "miirym-temur-dragons"
+          ],
+          "7": [
+            "karn_gilded",
+            "kinnan-simic-mana-combo",
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts"
+          ],
+          "8": [
+            "yawgmoth-mono-black-aristocrats",
+            "zur-esper-enchantment-control",
+            "karn_gilded",
+            "urza-mono-blue-artifacts"
+          ],
+          "9": [
+            "miirym-temur-dragons",
+            "zur-esper-enchantment-control",
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded"
+          ]
+        },
+        "t6": {
+          "1": [
+            "rograkh-thrasios-creature-combo",
+            "karn_gilded",
+            "kinnan-bonder-mana-combo",
+            "sisay-legends-toolbox"
+          ],
+          "10": [
+            "sisay-legends-toolbox",
+            "karn_gilded",
+            "kinnan-bonder-mana-combo",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "2": [
+            "sisay-legends-toolbox",
+            "karn_gilded",
+            "rograkh-silas-turbo-breach",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "3": [
+            "rograkh-thrasios-creature-combo",
+            "karn_gilded",
+            "kinnan-bonder-mana-combo",
+            "dack-fayden-white-stax"
+          ],
+          "4": [
+            "karn_gilded",
+            "rograkh-silas-turbo-breach",
+            "sisay-legends-toolbox",
+            "kinnan-bonder-mana-combo"
+          ],
+          "5": [
+            "rograkh-silas-turbo-breach",
+            "karn_gilded",
+            "sisay-legends-toolbox",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "6": [
+            "rograkh-thrasios-creature-combo",
+            "rograkh-silas-turbo-breach",
+            "kraum-tymna-blue-breach-midrange",
+            "karn_gilded"
+          ],
+          "7": [
+            "dack-fayden-white-stax",
+            "rograkh-silas-turbo-breach",
+            "karn_gilded",
+            "kinnan-bonder-mana-combo"
+          ],
+          "8": [
+            "dack-fayden-white-stax",
+            "kinnan-bonder-mana-combo",
+            "karn_gilded",
+            "rograkh-silas-turbo-breach"
+          ],
+          "9": [
+            "kraum-tymna-blue-breach-midrange",
+            "kinnan-bonder-mana-combo",
+            "karn_gilded",
+            "rograkh-thrasios-creature-combo"
+          ]
+        }
+      },
       "sheoldred": {
         "t1": {
           "1": [
@@ -1357,760 +1694,58 @@
             "kraum-tymna-blue-breach-midrange",
             "kinnan-bonder-mana-combo",
             "urdragon",
-            "rograkh-thrasios-creature-combo"
-          ]
-        }
-      },
-      "yoshimaru": {
-        "t1": {
-          "1": [
-            "tatyova-simic-landfall",
-            "yoshimaru",
-            "light-paws-aura-voltron",
-            "isshin-mardu-attack-triggers"
-          ],
-          "10": [
-            "light-paws-aura-voltron",
-            "isshin-mardu-attack-triggers",
-            "teysa-orzhov-aristocrats",
-            "yoshimaru"
-          ],
-          "2": [
-            "lathril-golgari-elves",
-            "light-paws-aura-voltron",
-            "yoshimaru",
-            "tatyova-simic-landfall"
-          ],
-          "3": [
-            "tatyova-simic-landfall",
-            "isshin-mardu-attack-triggers",
-            "yoshimaru",
-            "teysa-orzhov-aristocrats"
-          ],
-          "4": [
-            "isshin-mardu-attack-triggers",
-            "yoshimaru",
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall"
-          ],
-          "5": [
-            "light-paws-aura-voltron",
-            "lathril-golgari-elves",
-            "tatyova-simic-landfall",
-            "yoshimaru"
-          ],
-          "6": [
-            "yoshimaru",
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall",
-            "lathril-golgari-elves"
-          ],
-          "7": [
-            "yoshimaru",
-            "isshin-mardu-attack-triggers",
-            "lathril-golgari-elves",
-            "light-paws-aura-voltron"
-          ],
-          "8": [
-            "tatyova-simic-landfall",
-            "teysa-orzhov-aristocrats",
-            "yoshimaru",
-            "light-paws-aura-voltron"
-          ],
-          "9": [
-            "lathril-golgari-elves",
-            "teysa-orzhov-aristocrats",
-            "tatyova-simic-landfall",
-            "yoshimaru"
-          ]
-        },
-        "t2": {
-          "1": [
-            "meren-golgari-recursion",
-            "yoshimaru",
-            "lord-windgrace-jund-lands",
-            "brago-azorius-blink-control"
-          ],
-          "10": [
-            "lord-windgrace-jund-lands",
-            "brago-azorius-blink-control",
-            "sythis-selesnya-enchantress",
-            "yoshimaru"
-          ],
-          "2": [
-            "kaalia-mardu-creature-cheat",
-            "lord-windgrace-jund-lands",
-            "yoshimaru",
-            "meren-golgari-recursion"
-          ],
-          "3": [
-            "meren-golgari-recursion",
-            "brago-azorius-blink-control",
-            "yoshimaru",
-            "sythis-selesnya-enchantress"
-          ],
-          "4": [
-            "brago-azorius-blink-control",
-            "yoshimaru",
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion"
-          ],
-          "5": [
-            "lord-windgrace-jund-lands",
-            "kaalia-mardu-creature-cheat",
-            "meren-golgari-recursion",
-            "yoshimaru"
-          ],
-          "6": [
-            "yoshimaru",
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion",
-            "kaalia-mardu-creature-cheat"
-          ],
-          "7": [
-            "yoshimaru",
-            "brago-azorius-blink-control",
-            "kaalia-mardu-creature-cheat",
-            "lord-windgrace-jund-lands"
-          ],
-          "8": [
-            "meren-golgari-recursion",
-            "sythis-selesnya-enchantress",
-            "yoshimaru",
-            "lord-windgrace-jund-lands"
-          ],
-          "9": [
-            "kaalia-mardu-creature-cheat",
-            "sythis-selesnya-enchantress",
-            "meren-golgari-recursion",
-            "yoshimaru"
-          ]
-        },
-        "t3": {
-          "1": [
-            "marwyn-mono-green-elves",
-            "yoshimaru",
-            "korvold-jund-sacrifice",
-            "atraxa-infect"
-          ],
-          "10": [
-            "korvold-jund-sacrifice",
-            "atraxa-infect",
-            "tergrid-mono-black-disruption",
-            "yoshimaru"
-          ],
-          "2": [
-            "aurelia-boros-extra-combats",
-            "korvold-jund-sacrifice",
-            "yoshimaru",
-            "marwyn-mono-green-elves"
-          ],
-          "3": [
-            "marwyn-mono-green-elves",
-            "atraxa-infect",
-            "yoshimaru",
-            "tergrid-mono-black-disruption"
-          ],
-          "4": [
-            "atraxa-infect",
-            "yoshimaru",
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves"
-          ],
-          "5": [
-            "korvold-jund-sacrifice",
-            "aurelia-boros-extra-combats",
-            "marwyn-mono-green-elves",
-            "yoshimaru"
-          ],
-          "6": [
-            "yoshimaru",
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves",
-            "aurelia-boros-extra-combats"
-          ],
-          "7": [
-            "yoshimaru",
-            "atraxa-infect",
-            "aurelia-boros-extra-combats",
-            "korvold-jund-sacrifice"
-          ],
-          "8": [
-            "marwyn-mono-green-elves",
-            "tergrid-mono-black-disruption",
-            "yoshimaru",
-            "korvold-jund-sacrifice"
-          ],
-          "9": [
-            "aurelia-boros-extra-combats",
-            "tergrid-mono-black-disruption",
-            "marwyn-mono-green-elves",
-            "yoshimaru"
-          ]
-        },
-        "t4": {
-          "1": [
-            "prosper-rakdos-exile-treasure",
-            "yoshimaru",
-            "krenko-mono-red-goblins",
-            "chulane-bant-value-combo"
-          ],
-          "10": [
-            "krenko-mono-red-goblins",
-            "chulane-bant-value-combo",
-            "yuriko-dimir-ninjas",
-            "yoshimaru"
-          ],
-          "2": [
-            "edgar-markov-mardu-vampires",
-            "krenko-mono-red-goblins",
-            "yoshimaru",
-            "prosper-rakdos-exile-treasure"
-          ],
-          "3": [
-            "prosper-rakdos-exile-treasure",
-            "chulane-bant-value-combo",
-            "yoshimaru",
-            "yuriko-dimir-ninjas"
-          ],
-          "4": [
-            "chulane-bant-value-combo",
-            "yoshimaru",
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure"
-          ],
-          "5": [
-            "krenko-mono-red-goblins",
-            "edgar-markov-mardu-vampires",
-            "prosper-rakdos-exile-treasure",
-            "yoshimaru"
-          ],
-          "6": [
-            "yoshimaru",
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure",
-            "edgar-markov-mardu-vampires"
-          ],
-          "7": [
-            "yoshimaru",
-            "chulane-bant-value-combo",
-            "edgar-markov-mardu-vampires",
-            "krenko-mono-red-goblins"
-          ],
-          "8": [
-            "prosper-rakdos-exile-treasure",
-            "yuriko-dimir-ninjas",
-            "yoshimaru",
-            "krenko-mono-red-goblins"
-          ],
-          "9": [
-            "edgar-markov-mardu-vampires",
-            "yuriko-dimir-ninjas",
-            "prosper-rakdos-exile-treasure",
-            "yoshimaru"
-          ]
-        },
-        "t5": {
-          "1": [
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru",
-            "urza-mono-blue-artifacts",
-            "kinnan-simic-mana-combo"
-          ],
-          "10": [
-            "urza-mono-blue-artifacts",
-            "kinnan-simic-mana-combo",
-            "zur-esper-enchantment-control",
-            "yoshimaru"
-          ],
-          "2": [
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts",
-            "yoshimaru",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "3": [
-            "yawgmoth-mono-black-aristocrats",
-            "kinnan-simic-mana-combo",
-            "yoshimaru",
-            "zur-esper-enchantment-control"
-          ],
-          "4": [
-            "kinnan-simic-mana-combo",
-            "yoshimaru",
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "5": [
-            "urza-mono-blue-artifacts",
-            "miirym-temur-dragons",
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru"
-          ],
-          "6": [
-            "yoshimaru",
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "miirym-temur-dragons"
-          ],
-          "7": [
-            "yoshimaru",
-            "kinnan-simic-mana-combo",
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts"
-          ],
-          "8": [
-            "yawgmoth-mono-black-aristocrats",
-            "zur-esper-enchantment-control",
-            "yoshimaru",
-            "urza-mono-blue-artifacts"
-          ],
-          "9": [
-            "miirym-temur-dragons",
-            "zur-esper-enchantment-control",
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru"
-          ]
-        },
-        "t6": {
-          "1": [
-            "rograkh-thrasios-creature-combo",
-            "yoshimaru",
-            "kinnan-bonder-mana-combo",
-            "sisay-legends-toolbox"
-          ],
-          "10": [
-            "sisay-legends-toolbox",
-            "yoshimaru",
-            "kinnan-bonder-mana-combo",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "2": [
-            "sisay-legends-toolbox",
-            "yoshimaru",
-            "rograkh-silas-turbo-breach",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "3": [
-            "rograkh-thrasios-creature-combo",
-            "yoshimaru",
-            "kinnan-bonder-mana-combo",
-            "dack-fayden-white-stax"
-          ],
-          "4": [
-            "yoshimaru",
-            "rograkh-silas-turbo-breach",
-            "sisay-legends-toolbox",
-            "kinnan-bonder-mana-combo"
-          ],
-          "5": [
-            "rograkh-silas-turbo-breach",
-            "yoshimaru",
-            "sisay-legends-toolbox",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "6": [
-            "rograkh-thrasios-creature-combo",
-            "rograkh-silas-turbo-breach",
-            "kraum-tymna-blue-breach-midrange",
-            "yoshimaru"
-          ],
-          "7": [
-            "dack-fayden-white-stax",
-            "rograkh-silas-turbo-breach",
-            "yoshimaru",
-            "kinnan-bonder-mana-combo"
-          ],
-          "8": [
-            "dack-fayden-white-stax",
-            "kinnan-bonder-mana-combo",
-            "yoshimaru",
-            "rograkh-silas-turbo-breach"
-          ],
-          "9": [
-            "kraum-tymna-blue-breach-midrange",
-            "kinnan-bonder-mana-combo",
-            "yoshimaru",
-            "rograkh-thrasios-creature-combo"
-          ]
-        }
-      },
-      "yshtola": {
-        "t1": {
-          "1": [
-            "tatyova-simic-landfall",
-            "yshtola",
-            "light-paws-aura-voltron",
-            "isshin-mardu-attack-triggers"
-          ],
-          "10": [
-            "light-paws-aura-voltron",
-            "isshin-mardu-attack-triggers",
-            "teysa-orzhov-aristocrats",
-            "yshtola"
-          ],
-          "2": [
-            "lathril-golgari-elves",
-            "light-paws-aura-voltron",
-            "yshtola",
-            "tatyova-simic-landfall"
-          ],
-          "3": [
-            "tatyova-simic-landfall",
-            "isshin-mardu-attack-triggers",
-            "yshtola",
-            "teysa-orzhov-aristocrats"
-          ],
-          "4": [
-            "isshin-mardu-attack-triggers",
-            "yshtola",
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall"
-          ],
-          "5": [
-            "light-paws-aura-voltron",
-            "lathril-golgari-elves",
-            "tatyova-simic-landfall",
-            "yshtola"
-          ],
-          "6": [
-            "yshtola",
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall",
-            "lathril-golgari-elves"
-          ],
-          "7": [
-            "yshtola",
-            "isshin-mardu-attack-triggers",
-            "lathril-golgari-elves",
-            "light-paws-aura-voltron"
-          ],
-          "8": [
-            "tatyova-simic-landfall",
-            "teysa-orzhov-aristocrats",
-            "yshtola",
-            "light-paws-aura-voltron"
-          ],
-          "9": [
-            "lathril-golgari-elves",
-            "teysa-orzhov-aristocrats",
-            "tatyova-simic-landfall",
-            "yshtola"
-          ]
-        },
-        "t2": {
-          "1": [
-            "meren-golgari-recursion",
-            "yshtola",
-            "lord-windgrace-jund-lands",
-            "brago-azorius-blink-control"
-          ],
-          "10": [
-            "lord-windgrace-jund-lands",
-            "brago-azorius-blink-control",
-            "sythis-selesnya-enchantress",
-            "yshtola"
-          ],
-          "2": [
-            "kaalia-mardu-creature-cheat",
-            "lord-windgrace-jund-lands",
-            "yshtola",
-            "meren-golgari-recursion"
-          ],
-          "3": [
-            "meren-golgari-recursion",
-            "brago-azorius-blink-control",
-            "yshtola",
-            "sythis-selesnya-enchantress"
-          ],
-          "4": [
-            "brago-azorius-blink-control",
-            "yshtola",
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion"
-          ],
-          "5": [
-            "lord-windgrace-jund-lands",
-            "kaalia-mardu-creature-cheat",
-            "meren-golgari-recursion",
-            "yshtola"
-          ],
-          "6": [
-            "yshtola",
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion",
-            "kaalia-mardu-creature-cheat"
-          ],
-          "7": [
-            "yshtola",
-            "brago-azorius-blink-control",
-            "kaalia-mardu-creature-cheat",
-            "lord-windgrace-jund-lands"
-          ],
-          "8": [
-            "meren-golgari-recursion",
-            "sythis-selesnya-enchantress",
-            "yshtola",
-            "lord-windgrace-jund-lands"
-          ],
-          "9": [
-            "kaalia-mardu-creature-cheat",
-            "sythis-selesnya-enchantress",
-            "meren-golgari-recursion",
-            "yshtola"
-          ]
-        },
-        "t3": {
-          "1": [
-            "marwyn-mono-green-elves",
-            "yshtola",
-            "korvold-jund-sacrifice",
-            "atraxa-infect"
-          ],
-          "10": [
-            "korvold-jund-sacrifice",
-            "atraxa-infect",
-            "tergrid-mono-black-disruption",
-            "yshtola"
-          ],
-          "2": [
-            "aurelia-boros-extra-combats",
-            "korvold-jund-sacrifice",
-            "yshtola",
-            "marwyn-mono-green-elves"
-          ],
-          "3": [
-            "marwyn-mono-green-elves",
-            "atraxa-infect",
-            "yshtola",
-            "tergrid-mono-black-disruption"
-          ],
-          "4": [
-            "atraxa-infect",
-            "yshtola",
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves"
-          ],
-          "5": [
-            "korvold-jund-sacrifice",
-            "aurelia-boros-extra-combats",
-            "marwyn-mono-green-elves",
-            "yshtola"
-          ],
-          "6": [
-            "yshtola",
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves",
-            "aurelia-boros-extra-combats"
-          ],
-          "7": [
-            "yshtola",
-            "atraxa-infect",
-            "aurelia-boros-extra-combats",
-            "korvold-jund-sacrifice"
-          ],
-          "8": [
-            "marwyn-mono-green-elves",
-            "tergrid-mono-black-disruption",
-            "yshtola",
-            "korvold-jund-sacrifice"
-          ],
-          "9": [
-            "aurelia-boros-extra-combats",
-            "tergrid-mono-black-disruption",
-            "marwyn-mono-green-elves",
-            "yshtola"
-          ]
-        },
-        "t4": {
-          "1": [
-            "prosper-rakdos-exile-treasure",
-            "yshtola",
-            "krenko-mono-red-goblins",
-            "chulane-bant-value-combo"
-          ],
-          "10": [
-            "krenko-mono-red-goblins",
-            "chulane-bant-value-combo",
-            "yuriko-dimir-ninjas",
-            "yshtola"
-          ],
-          "2": [
-            "edgar-markov-mardu-vampires",
-            "krenko-mono-red-goblins",
-            "yshtola",
-            "prosper-rakdos-exile-treasure"
-          ],
-          "3": [
-            "prosper-rakdos-exile-treasure",
-            "chulane-bant-value-combo",
-            "yshtola",
-            "yuriko-dimir-ninjas"
-          ],
-          "4": [
-            "chulane-bant-value-combo",
-            "yshtola",
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure"
-          ],
-          "5": [
-            "krenko-mono-red-goblins",
-            "edgar-markov-mardu-vampires",
-            "prosper-rakdos-exile-treasure",
-            "yshtola"
-          ],
-          "6": [
-            "yshtola",
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure",
-            "edgar-markov-mardu-vampires"
-          ],
-          "7": [
-            "yshtola",
-            "chulane-bant-value-combo",
-            "edgar-markov-mardu-vampires",
-            "krenko-mono-red-goblins"
-          ],
-          "8": [
-            "prosper-rakdos-exile-treasure",
-            "yuriko-dimir-ninjas",
-            "yshtola",
-            "krenko-mono-red-goblins"
-          ],
-          "9": [
-            "edgar-markov-mardu-vampires",
-            "yuriko-dimir-ninjas",
-            "prosper-rakdos-exile-treasure",
-            "yshtola"
-          ]
-        },
-        "t5": {
-          "1": [
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola",
-            "urza-mono-blue-artifacts",
-            "kinnan-simic-mana-combo"
-          ],
-          "10": [
-            "urza-mono-blue-artifacts",
-            "kinnan-simic-mana-combo",
-            "zur-esper-enchantment-control",
-            "yshtola"
-          ],
-          "2": [
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts",
-            "yshtola",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "3": [
-            "yawgmoth-mono-black-aristocrats",
-            "kinnan-simic-mana-combo",
-            "yshtola",
-            "zur-esper-enchantment-control"
-          ],
-          "4": [
-            "kinnan-simic-mana-combo",
-            "yshtola",
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats"
-          ],
-          "5": [
-            "urza-mono-blue-artifacts",
-            "miirym-temur-dragons",
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola"
-          ],
-          "6": [
-            "yshtola",
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "miirym-temur-dragons"
-          ],
-          "7": [
-            "yshtola",
-            "kinnan-simic-mana-combo",
-            "miirym-temur-dragons",
-            "urza-mono-blue-artifacts"
-          ],
-          "8": [
-            "yawgmoth-mono-black-aristocrats",
-            "zur-esper-enchantment-control",
-            "yshtola",
-            "urza-mono-blue-artifacts"
-          ],
-          "9": [
-            "miirym-temur-dragons",
-            "zur-esper-enchantment-control",
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola"
-          ]
-        },
-        "t6": {
-          "1": [
-            "rograkh-thrasios-creature-combo",
-            "yshtola",
-            "kinnan-bonder-mana-combo",
-            "sisay-legends-toolbox"
-          ],
-          "10": [
-            "sisay-legends-toolbox",
-            "yshtola",
-            "kinnan-bonder-mana-combo",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "2": [
-            "sisay-legends-toolbox",
-            "yshtola",
-            "rograkh-silas-turbo-breach",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "3": [
-            "rograkh-thrasios-creature-combo",
-            "yshtola",
-            "kinnan-bonder-mana-combo",
-            "dack-fayden-white-stax"
-          ],
-          "4": [
-            "yshtola",
-            "rograkh-silas-turbo-breach",
-            "sisay-legends-toolbox",
-            "kinnan-bonder-mana-combo"
-          ],
-          "5": [
-            "rograkh-silas-turbo-breach",
-            "yshtola",
-            "sisay-legends-toolbox",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "6": [
-            "rograkh-thrasios-creature-combo",
-            "rograkh-silas-turbo-breach",
-            "kraum-tymna-blue-breach-midrange",
-            "yshtola"
-          ],
-          "7": [
-            "dack-fayden-white-stax",
-            "rograkh-silas-turbo-breach",
-            "yshtola",
-            "kinnan-bonder-mana-combo"
-          ],
-          "8": [
-            "dack-fayden-white-stax",
-            "kinnan-bonder-mana-combo",
-            "yshtola",
-            "rograkh-silas-turbo-breach"
-          ],
-          "9": [
-            "kraum-tymna-blue-breach-midrange",
-            "kinnan-bonder-mana-combo",
-            "yshtola",
             "rograkh-thrasios-creature-combo"
           ]
         }
       }
     },
     "opponents": {
+      "karn_gilded": {
+        "t5": {
+          "1": {
+            "one_person": [
+              "kinnan-simic-mana-combo",
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "karn_gilded"
+            ],
+            "two_people": [
+              "kinnan-simic-mana-combo",
+              "miirym-temur-dragons",
+              "karn_gilded",
+              "sheoldred"
+            ]
+          },
+          "2": {
+            "one_person": [
+              "miirym-temur-dragons",
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "karn_gilded"
+            ],
+            "two_people": [
+              "miirym-temur-dragons",
+              "kinnan-simic-mana-combo",
+              "karn_gilded",
+              "sheoldred"
+            ]
+          },
+          "3": {
+            "one_person": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "karn_gilded",
+              "kinnan-simic-mana-combo"
+            ],
+            "two_people": [
+              "miirym-temur-dragons",
+              "karn_gilded",
+              "sheoldred",
+              "kinnan-simic-mana-combo"
+            ]
+          }
+        }
+      },
       "sheoldred": {
         "t5": {
           "1": {
@@ -2170,7 +1805,7 @@
               "kinnan-simic-mana-combo",
               "miirym-temur-dragons",
               "urdragon",
-              "yoshimaru"
+              "karn_gilded"
             ]
           },
           "2": {
@@ -2184,7 +1819,7 @@
               "miirym-temur-dragons",
               "kinnan-simic-mana-combo",
               "urdragon",
-              "yoshimaru"
+              "karn_gilded"
             ]
           },
           "3": {
@@ -2197,99 +1832,7 @@
             "two_people": [
               "miirym-temur-dragons",
               "urdragon",
-              "yoshimaru",
-              "kinnan-simic-mana-combo"
-            ]
-          }
-        }
-      },
-      "yoshimaru": {
-        "t5": {
-          "1": {
-            "one_person": [
-              "kinnan-simic-mana-combo",
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yoshimaru"
-            ],
-            "two_people": [
-              "kinnan-simic-mana-combo",
-              "miirym-temur-dragons",
-              "yoshimaru",
-              "yshtola"
-            ]
-          },
-          "2": {
-            "one_person": [
-              "miirym-temur-dragons",
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yoshimaru"
-            ],
-            "two_people": [
-              "miirym-temur-dragons",
-              "kinnan-simic-mana-combo",
-              "yoshimaru",
-              "yshtola"
-            ]
-          },
-          "3": {
-            "one_person": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yoshimaru",
-              "kinnan-simic-mana-combo"
-            ],
-            "two_people": [
-              "miirym-temur-dragons",
-              "yoshimaru",
-              "yshtola",
-              "kinnan-simic-mana-combo"
-            ]
-          }
-        }
-      },
-      "yshtola": {
-        "t5": {
-          "1": {
-            "one_person": [
-              "kinnan-simic-mana-combo",
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yshtola"
-            ],
-            "two_people": [
-              "kinnan-simic-mana-combo",
-              "miirym-temur-dragons",
-              "yshtola",
-              "sheoldred"
-            ]
-          },
-          "2": {
-            "one_person": [
-              "miirym-temur-dragons",
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yshtola"
-            ],
-            "two_people": [
-              "miirym-temur-dragons",
-              "kinnan-simic-mana-combo",
-              "yshtola",
-              "sheoldred"
-            ]
-          },
-          "3": {
-            "one_person": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yshtola",
-              "kinnan-simic-mana-combo"
-            ],
-            "two_people": [
-              "miirym-temur-dragons",
-              "yshtola",
-              "sheoldred",
+              "karn_gilded",
               "kinnan-simic-mana-combo"
             ]
           }
@@ -2297,6 +1840,140 @@
       }
     },
     "seat": {
+      "karn_gilded": {
+        "t5": {
+          "1": {
+            "1": [
+              "karn_gilded",
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo"
+            ],
+            "2": [
+              "yawgmoth-mono-black-aristocrats",
+              "karn_gilded",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo"
+            ],
+            "3": [
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "karn_gilded",
+              "kinnan-simic-mana-combo"
+            ],
+            "4": [
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo",
+              "karn_gilded"
+            ]
+          },
+          "2": {
+            "1": [
+              "karn_gilded",
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "miirym-temur-dragons",
+              "karn_gilded",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "karn_gilded",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats",
+              "karn_gilded"
+            ]
+          },
+          "3": {
+            "1": [
+              "karn_gilded",
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control"
+            ],
+            "2": [
+              "yawgmoth-mono-black-aristocrats",
+              "karn_gilded",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control"
+            ],
+            "3": [
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "karn_gilded",
+              "zur-esper-enchantment-control"
+            ],
+            "4": [
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control",
+              "karn_gilded"
+            ]
+          },
+          "4": {
+            "1": [
+              "karn_gilded",
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "kinnan-simic-mana-combo",
+              "karn_gilded",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "karn_gilded",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats",
+              "karn_gilded"
+            ]
+          },
+          "5": {
+            "1": [
+              "karn_gilded",
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "urza-mono-blue-artifacts",
+              "karn_gilded",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "karn_gilded",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats",
+              "karn_gilded"
+            ]
+          }
+        }
+      },
       "sheoldred": {
         "t5": {
           "1": {
@@ -2561,280 +2238,386 @@
               "miirym-temur-dragons",
               "yawgmoth-mono-black-aristocrats",
               "urdragon"
-            ]
-          }
-        }
-      },
-      "yoshimaru": {
-        "t5": {
-          "1": {
-            "1": [
-              "yoshimaru",
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo"
-            ],
-            "2": [
-              "yawgmoth-mono-black-aristocrats",
-              "yoshimaru",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo"
-            ],
-            "3": [
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "yoshimaru",
-              "kinnan-simic-mana-combo"
-            ],
-            "4": [
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo",
-              "yoshimaru"
-            ]
-          },
-          "2": {
-            "1": [
-              "yoshimaru",
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "miirym-temur-dragons",
-              "yoshimaru",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yoshimaru",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats",
-              "yoshimaru"
-            ]
-          },
-          "3": {
-            "1": [
-              "yoshimaru",
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control"
-            ],
-            "2": [
-              "yawgmoth-mono-black-aristocrats",
-              "yoshimaru",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control"
-            ],
-            "3": [
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "yoshimaru",
-              "zur-esper-enchantment-control"
-            ],
-            "4": [
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control",
-              "yoshimaru"
-            ]
-          },
-          "4": {
-            "1": [
-              "yoshimaru",
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "kinnan-simic-mana-combo",
-              "yoshimaru",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yoshimaru",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats",
-              "yoshimaru"
-            ]
-          },
-          "5": {
-            "1": [
-              "yoshimaru",
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "urza-mono-blue-artifacts",
-              "yoshimaru",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yoshimaru",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats",
-              "yoshimaru"
-            ]
-          }
-        }
-      },
-      "yshtola": {
-        "t5": {
-          "1": {
-            "1": [
-              "yshtola",
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo"
-            ],
-            "2": [
-              "yawgmoth-mono-black-aristocrats",
-              "yshtola",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo"
-            ],
-            "3": [
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "yshtola",
-              "kinnan-simic-mana-combo"
-            ],
-            "4": [
-              "yawgmoth-mono-black-aristocrats",
-              "urza-mono-blue-artifacts",
-              "kinnan-simic-mana-combo",
-              "yshtola"
-            ]
-          },
-          "2": {
-            "1": [
-              "yshtola",
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "miirym-temur-dragons",
-              "yshtola",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yshtola",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "miirym-temur-dragons",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats",
-              "yshtola"
-            ]
-          },
-          "3": {
-            "1": [
-              "yshtola",
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control"
-            ],
-            "2": [
-              "yawgmoth-mono-black-aristocrats",
-              "yshtola",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control"
-            ],
-            "3": [
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "yshtola",
-              "zur-esper-enchantment-control"
-            ],
-            "4": [
-              "yawgmoth-mono-black-aristocrats",
-              "kinnan-simic-mana-combo",
-              "zur-esper-enchantment-control",
-              "yshtola"
-            ]
-          },
-          "4": {
-            "1": [
-              "yshtola",
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "kinnan-simic-mana-combo",
-              "yshtola",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yshtola",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "kinnan-simic-mana-combo",
-              "urza-mono-blue-artifacts",
-              "yawgmoth-mono-black-aristocrats",
-              "yshtola"
-            ]
-          },
-          "5": {
-            "1": [
-              "yshtola",
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "2": [
-              "urza-mono-blue-artifacts",
-              "yshtola",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "3": [
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yshtola",
-              "yawgmoth-mono-black-aristocrats"
-            ],
-            "4": [
-              "urza-mono-blue-artifacts",
-              "miirym-temur-dragons",
-              "yawgmoth-mono-black-aristocrats",
-              "yshtola"
             ]
           }
         }
       }
     },
     "two_people": {
+      "karn_gilded": {
+        "t1": {
+          "1": [
+            "tatyova-simic-landfall",
+            "light-paws-aura-voltron",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "teysa-orzhov-aristocrats",
+            "sheoldred",
+            "karn_gilded",
+            "isshin-mardu-attack-triggers"
+          ],
+          "2": [
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "teysa-orzhov-aristocrats",
+            "karn_gilded",
+            "sheoldred",
+            "isshin-mardu-attack-triggers"
+          ],
+          "4": [
+            "light-paws-aura-voltron",
+            "karn_gilded",
+            "sheoldred",
+            "isshin-mardu-attack-triggers"
+          ],
+          "5": [
+            "sheoldred",
+            "tatyova-simic-landfall",
+            "karn_gilded",
+            "lathril-golgari-elves"
+          ],
+          "6": [
+            "tatyova-simic-landfall",
+            "sheoldred",
+            "light-paws-aura-voltron",
+            "karn_gilded"
+          ],
+          "7": [
+            "lathril-golgari-elves",
+            "sheoldred",
+            "karn_gilded",
+            "isshin-mardu-attack-triggers"
+          ],
+          "8": [
+            "tatyova-simic-landfall",
+            "teysa-orzhov-aristocrats",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "teysa-orzhov-aristocrats",
+            "lathril-golgari-elves",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        },
+        "t2": {
+          "1": [
+            "meren-golgari-recursion",
+            "lord-windgrace-jund-lands",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "sythis-selesnya-enchantress",
+            "sheoldred",
+            "karn_gilded",
+            "brago-azorius-blink-control"
+          ],
+          "2": [
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "sythis-selesnya-enchantress",
+            "karn_gilded",
+            "sheoldred",
+            "brago-azorius-blink-control"
+          ],
+          "4": [
+            "lord-windgrace-jund-lands",
+            "karn_gilded",
+            "sheoldred",
+            "brago-azorius-blink-control"
+          ],
+          "5": [
+            "sheoldred",
+            "meren-golgari-recursion",
+            "karn_gilded",
+            "kaalia-mardu-creature-cheat"
+          ],
+          "6": [
+            "meren-golgari-recursion",
+            "sheoldred",
+            "lord-windgrace-jund-lands",
+            "karn_gilded"
+          ],
+          "7": [
+            "kaalia-mardu-creature-cheat",
+            "sheoldred",
+            "karn_gilded",
+            "brago-azorius-blink-control"
+          ],
+          "8": [
+            "meren-golgari-recursion",
+            "sythis-selesnya-enchantress",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "sythis-selesnya-enchantress",
+            "kaalia-mardu-creature-cheat",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        },
+        "t3": {
+          "1": [
+            "marwyn-mono-green-elves",
+            "korvold-jund-sacrifice",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "tergrid-mono-black-disruption",
+            "sheoldred",
+            "karn_gilded",
+            "atraxa-infect"
+          ],
+          "2": [
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "tergrid-mono-black-disruption",
+            "karn_gilded",
+            "sheoldred",
+            "atraxa-infect"
+          ],
+          "4": [
+            "korvold-jund-sacrifice",
+            "karn_gilded",
+            "sheoldred",
+            "atraxa-infect"
+          ],
+          "5": [
+            "sheoldred",
+            "marwyn-mono-green-elves",
+            "karn_gilded",
+            "aurelia-boros-extra-combats"
+          ],
+          "6": [
+            "marwyn-mono-green-elves",
+            "sheoldred",
+            "korvold-jund-sacrifice",
+            "karn_gilded"
+          ],
+          "7": [
+            "aurelia-boros-extra-combats",
+            "sheoldred",
+            "karn_gilded",
+            "atraxa-infect"
+          ],
+          "8": [
+            "marwyn-mono-green-elves",
+            "tergrid-mono-black-disruption",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "tergrid-mono-black-disruption",
+            "aurelia-boros-extra-combats",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        },
+        "t4": {
+          "1": [
+            "prosper-rakdos-exile-treasure",
+            "krenko-mono-red-goblins",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "yuriko-dimir-ninjas",
+            "sheoldred",
+            "karn_gilded",
+            "chulane-bant-value-combo"
+          ],
+          "2": [
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "yuriko-dimir-ninjas",
+            "karn_gilded",
+            "sheoldred",
+            "chulane-bant-value-combo"
+          ],
+          "4": [
+            "krenko-mono-red-goblins",
+            "karn_gilded",
+            "sheoldred",
+            "chulane-bant-value-combo"
+          ],
+          "5": [
+            "sheoldred",
+            "prosper-rakdos-exile-treasure",
+            "karn_gilded",
+            "edgar-markov-mardu-vampires"
+          ],
+          "6": [
+            "prosper-rakdos-exile-treasure",
+            "sheoldred",
+            "krenko-mono-red-goblins",
+            "karn_gilded"
+          ],
+          "7": [
+            "edgar-markov-mardu-vampires",
+            "sheoldred",
+            "karn_gilded",
+            "chulane-bant-value-combo"
+          ],
+          "8": [
+            "prosper-rakdos-exile-treasure",
+            "yuriko-dimir-ninjas",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "yuriko-dimir-ninjas",
+            "edgar-markov-mardu-vampires",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        },
+        "t5": {
+          "1": [
+            "yawgmoth-mono-black-aristocrats",
+            "urza-mono-blue-artifacts",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "zur-esper-enchantment-control",
+            "sheoldred",
+            "karn_gilded",
+            "kinnan-simic-mana-combo"
+          ],
+          "2": [
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "zur-esper-enchantment-control",
+            "karn_gilded",
+            "sheoldred",
+            "kinnan-simic-mana-combo"
+          ],
+          "4": [
+            "urza-mono-blue-artifacts",
+            "karn_gilded",
+            "sheoldred",
+            "kinnan-simic-mana-combo"
+          ],
+          "5": [
+            "sheoldred",
+            "yawgmoth-mono-black-aristocrats",
+            "karn_gilded",
+            "miirym-temur-dragons"
+          ],
+          "6": [
+            "yawgmoth-mono-black-aristocrats",
+            "sheoldred",
+            "urza-mono-blue-artifacts",
+            "karn_gilded"
+          ],
+          "7": [
+            "miirym-temur-dragons",
+            "sheoldred",
+            "karn_gilded",
+            "kinnan-simic-mana-combo"
+          ],
+          "8": [
+            "yawgmoth-mono-black-aristocrats",
+            "zur-esper-enchantment-control",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "zur-esper-enchantment-control",
+            "miirym-temur-dragons",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        },
+        "t6": {
+          "1": [
+            "sisay-legends-toolbox",
+            "rograkh-thrasios-creature-combo",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "10": [
+            "sisay-legends-toolbox",
+            "sheoldred",
+            "karn_gilded",
+            "kinnan-bonder-mana-combo"
+          ],
+          "2": [
+            "sisay-legends-toolbox",
+            "kraum-tymna-blue-breach-midrange",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "3": [
+            "kinnan-bonder-mana-combo",
+            "karn_gilded",
+            "sheoldred",
+            "rograkh-thrasios-creature-combo"
+          ],
+          "4": [
+            "sisay-legends-toolbox",
+            "karn_gilded",
+            "sheoldred",
+            "kinnan-bonder-mana-combo"
+          ],
+          "5": [
+            "sheoldred",
+            "sisay-legends-toolbox",
+            "karn_gilded",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "6": [
+            "rograkh-silas-turbo-breach",
+            "sheoldred",
+            "rograkh-thrasios-creature-combo",
+            "karn_gilded"
+          ],
+          "7": [
+            "rograkh-silas-turbo-breach",
+            "sheoldred",
+            "karn_gilded",
+            "dack-fayden-white-stax"
+          ],
+          "8": [
+            "rograkh-silas-turbo-breach",
+            "dack-fayden-white-stax",
+            "karn_gilded",
+            "sheoldred"
+          ],
+          "9": [
+            "kraum-tymna-blue-breach-midrange",
+            "rograkh-thrasios-creature-combo",
+            "sheoldred",
+            "karn_gilded"
+          ]
+        }
+      },
       "sheoldred": {
         "t1": {
           "1": [
@@ -3215,11 +2998,11 @@
             "tatyova-simic-landfall",
             "light-paws-aura-voltron",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "teysa-orzhov-aristocrats",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "isshin-mardu-attack-triggers"
           ],
@@ -3227,35 +3010,35 @@
             "light-paws-aura-voltron",
             "tatyova-simic-landfall",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "teysa-orzhov-aristocrats",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "isshin-mardu-attack-triggers"
           ],
           "4": [
             "light-paws-aura-voltron",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "isshin-mardu-attack-triggers"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "tatyova-simic-landfall",
             "urdragon",
             "lathril-golgari-elves"
           ],
           "6": [
             "tatyova-simic-landfall",
-            "yoshimaru",
+            "karn_gilded",
             "light-paws-aura-voltron",
             "urdragon"
           ],
           "7": [
             "lathril-golgari-elves",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "isshin-mardu-attack-triggers"
           ],
@@ -3263,12 +3046,12 @@
             "tatyova-simic-landfall",
             "teysa-orzhov-aristocrats",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "teysa-orzhov-aristocrats",
             "lathril-golgari-elves",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
           ]
         },
@@ -3277,11 +3060,11 @@
             "meren-golgari-recursion",
             "lord-windgrace-jund-lands",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "sythis-selesnya-enchantress",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "brago-azorius-blink-control"
           ],
@@ -3289,35 +3072,35 @@
             "lord-windgrace-jund-lands",
             "meren-golgari-recursion",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "sythis-selesnya-enchantress",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "brago-azorius-blink-control"
           ],
           "4": [
             "lord-windgrace-jund-lands",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "brago-azorius-blink-control"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "meren-golgari-recursion",
             "urdragon",
             "kaalia-mardu-creature-cheat"
           ],
           "6": [
             "meren-golgari-recursion",
-            "yoshimaru",
+            "karn_gilded",
             "lord-windgrace-jund-lands",
             "urdragon"
           ],
           "7": [
             "kaalia-mardu-creature-cheat",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "brago-azorius-blink-control"
           ],
@@ -3325,12 +3108,12 @@
             "meren-golgari-recursion",
             "sythis-selesnya-enchantress",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "sythis-selesnya-enchantress",
             "kaalia-mardu-creature-cheat",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
           ]
         },
@@ -3339,11 +3122,11 @@
             "marwyn-mono-green-elves",
             "korvold-jund-sacrifice",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "tergrid-mono-black-disruption",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "atraxa-infect"
           ],
@@ -3351,35 +3134,35 @@
             "korvold-jund-sacrifice",
             "marwyn-mono-green-elves",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "tergrid-mono-black-disruption",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "atraxa-infect"
           ],
           "4": [
             "korvold-jund-sacrifice",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "atraxa-infect"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "marwyn-mono-green-elves",
             "urdragon",
             "aurelia-boros-extra-combats"
           ],
           "6": [
             "marwyn-mono-green-elves",
-            "yoshimaru",
+            "karn_gilded",
             "korvold-jund-sacrifice",
             "urdragon"
           ],
           "7": [
             "aurelia-boros-extra-combats",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "atraxa-infect"
           ],
@@ -3387,12 +3170,12 @@
             "marwyn-mono-green-elves",
             "tergrid-mono-black-disruption",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "tergrid-mono-black-disruption",
             "aurelia-boros-extra-combats",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
           ]
         },
@@ -3401,11 +3184,11 @@
             "prosper-rakdos-exile-treasure",
             "krenko-mono-red-goblins",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "yuriko-dimir-ninjas",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "chulane-bant-value-combo"
           ],
@@ -3413,35 +3196,35 @@
             "krenko-mono-red-goblins",
             "prosper-rakdos-exile-treasure",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "yuriko-dimir-ninjas",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "chulane-bant-value-combo"
           ],
           "4": [
             "krenko-mono-red-goblins",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "chulane-bant-value-combo"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "prosper-rakdos-exile-treasure",
             "urdragon",
             "edgar-markov-mardu-vampires"
           ],
           "6": [
             "prosper-rakdos-exile-treasure",
-            "yoshimaru",
+            "karn_gilded",
             "krenko-mono-red-goblins",
             "urdragon"
           ],
           "7": [
             "edgar-markov-mardu-vampires",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "chulane-bant-value-combo"
           ],
@@ -3449,12 +3232,12 @@
             "prosper-rakdos-exile-treasure",
             "yuriko-dimir-ninjas",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "yuriko-dimir-ninjas",
             "edgar-markov-mardu-vampires",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
           ]
         },
@@ -3463,11 +3246,11 @@
             "yawgmoth-mono-black-aristocrats",
             "urza-mono-blue-artifacts",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "zur-esper-enchantment-control",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "kinnan-simic-mana-combo"
           ],
@@ -3475,35 +3258,35 @@
             "urza-mono-blue-artifacts",
             "yawgmoth-mono-black-aristocrats",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "zur-esper-enchantment-control",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "kinnan-simic-mana-combo"
           ],
           "4": [
             "urza-mono-blue-artifacts",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "kinnan-simic-mana-combo"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "yawgmoth-mono-black-aristocrats",
             "urdragon",
             "miirym-temur-dragons"
           ],
           "6": [
             "yawgmoth-mono-black-aristocrats",
-            "yoshimaru",
+            "karn_gilded",
             "urza-mono-blue-artifacts",
             "urdragon"
           ],
           "7": [
             "miirym-temur-dragons",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "kinnan-simic-mana-combo"
           ],
@@ -3511,12 +3294,12 @@
             "yawgmoth-mono-black-aristocrats",
             "zur-esper-enchantment-control",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "zur-esper-enchantment-control",
             "miirym-temur-dragons",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
           ]
         },
@@ -3525,11 +3308,11 @@
             "sisay-legends-toolbox",
             "rograkh-thrasios-creature-combo",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "10": [
             "sisay-legends-toolbox",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "kinnan-bonder-mana-combo"
           ],
@@ -3537,35 +3320,35 @@
             "sisay-legends-toolbox",
             "kraum-tymna-blue-breach-midrange",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "3": [
             "kinnan-bonder-mana-combo",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "rograkh-thrasios-creature-combo"
           ],
           "4": [
             "sisay-legends-toolbox",
             "urdragon",
-            "yoshimaru",
+            "karn_gilded",
             "kinnan-bonder-mana-combo"
           ],
           "5": [
-            "yoshimaru",
+            "karn_gilded",
             "sisay-legends-toolbox",
             "urdragon",
             "kraum-tymna-blue-breach-midrange"
           ],
           "6": [
             "rograkh-silas-turbo-breach",
-            "yoshimaru",
+            "karn_gilded",
             "rograkh-thrasios-creature-combo",
             "urdragon"
           ],
           "7": [
             "rograkh-silas-turbo-breach",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon",
             "dack-fayden-white-stax"
           ],
@@ -3573,767 +3356,67 @@
             "rograkh-silas-turbo-breach",
             "dack-fayden-white-stax",
             "urdragon",
-            "yoshimaru"
+            "karn_gilded"
           ],
           "9": [
             "kraum-tymna-blue-breach-midrange",
             "rograkh-thrasios-creature-combo",
-            "yoshimaru",
+            "karn_gilded",
             "urdragon"
-          ]
-        }
-      },
-      "yoshimaru": {
-        "t1": {
-          "1": [
-            "tatyova-simic-landfall",
-            "light-paws-aura-voltron",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "teysa-orzhov-aristocrats",
-            "yshtola",
-            "yoshimaru",
-            "isshin-mardu-attack-triggers"
-          ],
-          "2": [
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "teysa-orzhov-aristocrats",
-            "yoshimaru",
-            "yshtola",
-            "isshin-mardu-attack-triggers"
-          ],
-          "4": [
-            "light-paws-aura-voltron",
-            "yoshimaru",
-            "yshtola",
-            "isshin-mardu-attack-triggers"
-          ],
-          "5": [
-            "yshtola",
-            "tatyova-simic-landfall",
-            "yoshimaru",
-            "lathril-golgari-elves"
-          ],
-          "6": [
-            "tatyova-simic-landfall",
-            "yshtola",
-            "light-paws-aura-voltron",
-            "yoshimaru"
-          ],
-          "7": [
-            "lathril-golgari-elves",
-            "yshtola",
-            "yoshimaru",
-            "isshin-mardu-attack-triggers"
-          ],
-          "8": [
-            "tatyova-simic-landfall",
-            "teysa-orzhov-aristocrats",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "teysa-orzhov-aristocrats",
-            "lathril-golgari-elves",
-            "yshtola",
-            "yoshimaru"
-          ]
-        },
-        "t2": {
-          "1": [
-            "meren-golgari-recursion",
-            "lord-windgrace-jund-lands",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "sythis-selesnya-enchantress",
-            "yshtola",
-            "yoshimaru",
-            "brago-azorius-blink-control"
-          ],
-          "2": [
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "sythis-selesnya-enchantress",
-            "yoshimaru",
-            "yshtola",
-            "brago-azorius-blink-control"
-          ],
-          "4": [
-            "lord-windgrace-jund-lands",
-            "yoshimaru",
-            "yshtola",
-            "brago-azorius-blink-control"
-          ],
-          "5": [
-            "yshtola",
-            "meren-golgari-recursion",
-            "yoshimaru",
-            "kaalia-mardu-creature-cheat"
-          ],
-          "6": [
-            "meren-golgari-recursion",
-            "yshtola",
-            "lord-windgrace-jund-lands",
-            "yoshimaru"
-          ],
-          "7": [
-            "kaalia-mardu-creature-cheat",
-            "yshtola",
-            "yoshimaru",
-            "brago-azorius-blink-control"
-          ],
-          "8": [
-            "meren-golgari-recursion",
-            "sythis-selesnya-enchantress",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "sythis-selesnya-enchantress",
-            "kaalia-mardu-creature-cheat",
-            "yshtola",
-            "yoshimaru"
-          ]
-        },
-        "t3": {
-          "1": [
-            "marwyn-mono-green-elves",
-            "korvold-jund-sacrifice",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "tergrid-mono-black-disruption",
-            "yshtola",
-            "yoshimaru",
-            "atraxa-infect"
-          ],
-          "2": [
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "tergrid-mono-black-disruption",
-            "yoshimaru",
-            "yshtola",
-            "atraxa-infect"
-          ],
-          "4": [
-            "korvold-jund-sacrifice",
-            "yoshimaru",
-            "yshtola",
-            "atraxa-infect"
-          ],
-          "5": [
-            "yshtola",
-            "marwyn-mono-green-elves",
-            "yoshimaru",
-            "aurelia-boros-extra-combats"
-          ],
-          "6": [
-            "marwyn-mono-green-elves",
-            "yshtola",
-            "korvold-jund-sacrifice",
-            "yoshimaru"
-          ],
-          "7": [
-            "aurelia-boros-extra-combats",
-            "yshtola",
-            "yoshimaru",
-            "atraxa-infect"
-          ],
-          "8": [
-            "marwyn-mono-green-elves",
-            "tergrid-mono-black-disruption",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "tergrid-mono-black-disruption",
-            "aurelia-boros-extra-combats",
-            "yshtola",
-            "yoshimaru"
-          ]
-        },
-        "t4": {
-          "1": [
-            "prosper-rakdos-exile-treasure",
-            "krenko-mono-red-goblins",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "yuriko-dimir-ninjas",
-            "yshtola",
-            "yoshimaru",
-            "chulane-bant-value-combo"
-          ],
-          "2": [
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "yuriko-dimir-ninjas",
-            "yoshimaru",
-            "yshtola",
-            "chulane-bant-value-combo"
-          ],
-          "4": [
-            "krenko-mono-red-goblins",
-            "yoshimaru",
-            "yshtola",
-            "chulane-bant-value-combo"
-          ],
-          "5": [
-            "yshtola",
-            "prosper-rakdos-exile-treasure",
-            "yoshimaru",
-            "edgar-markov-mardu-vampires"
-          ],
-          "6": [
-            "prosper-rakdos-exile-treasure",
-            "yshtola",
-            "krenko-mono-red-goblins",
-            "yoshimaru"
-          ],
-          "7": [
-            "edgar-markov-mardu-vampires",
-            "yshtola",
-            "yoshimaru",
-            "chulane-bant-value-combo"
-          ],
-          "8": [
-            "prosper-rakdos-exile-treasure",
-            "yuriko-dimir-ninjas",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "yuriko-dimir-ninjas",
-            "edgar-markov-mardu-vampires",
-            "yshtola",
-            "yoshimaru"
-          ]
-        },
-        "t5": {
-          "1": [
-            "yawgmoth-mono-black-aristocrats",
-            "urza-mono-blue-artifacts",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "zur-esper-enchantment-control",
-            "yshtola",
-            "yoshimaru",
-            "kinnan-simic-mana-combo"
-          ],
-          "2": [
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "zur-esper-enchantment-control",
-            "yoshimaru",
-            "yshtola",
-            "kinnan-simic-mana-combo"
-          ],
-          "4": [
-            "urza-mono-blue-artifacts",
-            "yoshimaru",
-            "yshtola",
-            "kinnan-simic-mana-combo"
-          ],
-          "5": [
-            "yshtola",
-            "yawgmoth-mono-black-aristocrats",
-            "yoshimaru",
-            "miirym-temur-dragons"
-          ],
-          "6": [
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola",
-            "urza-mono-blue-artifacts",
-            "yoshimaru"
-          ],
-          "7": [
-            "miirym-temur-dragons",
-            "yshtola",
-            "yoshimaru",
-            "kinnan-simic-mana-combo"
-          ],
-          "8": [
-            "yawgmoth-mono-black-aristocrats",
-            "zur-esper-enchantment-control",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "zur-esper-enchantment-control",
-            "miirym-temur-dragons",
-            "yshtola",
-            "yoshimaru"
-          ]
-        },
-        "t6": {
-          "1": [
-            "sisay-legends-toolbox",
-            "rograkh-thrasios-creature-combo",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "10": [
-            "sisay-legends-toolbox",
-            "yshtola",
-            "yoshimaru",
-            "kinnan-bonder-mana-combo"
-          ],
-          "2": [
-            "sisay-legends-toolbox",
-            "kraum-tymna-blue-breach-midrange",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "3": [
-            "kinnan-bonder-mana-combo",
-            "yoshimaru",
-            "yshtola",
-            "rograkh-thrasios-creature-combo"
-          ],
-          "4": [
-            "sisay-legends-toolbox",
-            "yoshimaru",
-            "yshtola",
-            "kinnan-bonder-mana-combo"
-          ],
-          "5": [
-            "yshtola",
-            "sisay-legends-toolbox",
-            "yoshimaru",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "6": [
-            "rograkh-silas-turbo-breach",
-            "yshtola",
-            "rograkh-thrasios-creature-combo",
-            "yoshimaru"
-          ],
-          "7": [
-            "rograkh-silas-turbo-breach",
-            "yshtola",
-            "yoshimaru",
-            "dack-fayden-white-stax"
-          ],
-          "8": [
-            "rograkh-silas-turbo-breach",
-            "dack-fayden-white-stax",
-            "yoshimaru",
-            "yshtola"
-          ],
-          "9": [
-            "kraum-tymna-blue-breach-midrange",
-            "rograkh-thrasios-creature-combo",
-            "yshtola",
-            "yoshimaru"
-          ]
-        }
-      },
-      "yshtola": {
-        "t1": {
-          "1": [
-            "tatyova-simic-landfall",
-            "light-paws-aura-voltron",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "teysa-orzhov-aristocrats",
-            "sheoldred",
-            "yshtola",
-            "isshin-mardu-attack-triggers"
-          ],
-          "2": [
-            "light-paws-aura-voltron",
-            "tatyova-simic-landfall",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "teysa-orzhov-aristocrats",
-            "yshtola",
-            "sheoldred",
-            "isshin-mardu-attack-triggers"
-          ],
-          "4": [
-            "light-paws-aura-voltron",
-            "yshtola",
-            "sheoldred",
-            "isshin-mardu-attack-triggers"
-          ],
-          "5": [
-            "sheoldred",
-            "tatyova-simic-landfall",
-            "yshtola",
-            "lathril-golgari-elves"
-          ],
-          "6": [
-            "tatyova-simic-landfall",
-            "sheoldred",
-            "light-paws-aura-voltron",
-            "yshtola"
-          ],
-          "7": [
-            "lathril-golgari-elves",
-            "sheoldred",
-            "yshtola",
-            "isshin-mardu-attack-triggers"
-          ],
-          "8": [
-            "tatyova-simic-landfall",
-            "teysa-orzhov-aristocrats",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "teysa-orzhov-aristocrats",
-            "lathril-golgari-elves",
-            "sheoldred",
-            "yshtola"
-          ]
-        },
-        "t2": {
-          "1": [
-            "meren-golgari-recursion",
-            "lord-windgrace-jund-lands",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "sythis-selesnya-enchantress",
-            "sheoldred",
-            "yshtola",
-            "brago-azorius-blink-control"
-          ],
-          "2": [
-            "lord-windgrace-jund-lands",
-            "meren-golgari-recursion",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "sythis-selesnya-enchantress",
-            "yshtola",
-            "sheoldred",
-            "brago-azorius-blink-control"
-          ],
-          "4": [
-            "lord-windgrace-jund-lands",
-            "yshtola",
-            "sheoldred",
-            "brago-azorius-blink-control"
-          ],
-          "5": [
-            "sheoldred",
-            "meren-golgari-recursion",
-            "yshtola",
-            "kaalia-mardu-creature-cheat"
-          ],
-          "6": [
-            "meren-golgari-recursion",
-            "sheoldred",
-            "lord-windgrace-jund-lands",
-            "yshtola"
-          ],
-          "7": [
-            "kaalia-mardu-creature-cheat",
-            "sheoldred",
-            "yshtola",
-            "brago-azorius-blink-control"
-          ],
-          "8": [
-            "meren-golgari-recursion",
-            "sythis-selesnya-enchantress",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "sythis-selesnya-enchantress",
-            "kaalia-mardu-creature-cheat",
-            "sheoldred",
-            "yshtola"
-          ]
-        },
-        "t3": {
-          "1": [
-            "marwyn-mono-green-elves",
-            "korvold-jund-sacrifice",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "tergrid-mono-black-disruption",
-            "sheoldred",
-            "yshtola",
-            "atraxa-infect"
-          ],
-          "2": [
-            "korvold-jund-sacrifice",
-            "marwyn-mono-green-elves",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "tergrid-mono-black-disruption",
-            "yshtola",
-            "sheoldred",
-            "atraxa-infect"
-          ],
-          "4": [
-            "korvold-jund-sacrifice",
-            "yshtola",
-            "sheoldred",
-            "atraxa-infect"
-          ],
-          "5": [
-            "sheoldred",
-            "marwyn-mono-green-elves",
-            "yshtola",
-            "aurelia-boros-extra-combats"
-          ],
-          "6": [
-            "marwyn-mono-green-elves",
-            "sheoldred",
-            "korvold-jund-sacrifice",
-            "yshtola"
-          ],
-          "7": [
-            "aurelia-boros-extra-combats",
-            "sheoldred",
-            "yshtola",
-            "atraxa-infect"
-          ],
-          "8": [
-            "marwyn-mono-green-elves",
-            "tergrid-mono-black-disruption",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "tergrid-mono-black-disruption",
-            "aurelia-boros-extra-combats",
-            "sheoldred",
-            "yshtola"
-          ]
-        },
-        "t4": {
-          "1": [
-            "prosper-rakdos-exile-treasure",
-            "krenko-mono-red-goblins",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "yuriko-dimir-ninjas",
-            "sheoldred",
-            "yshtola",
-            "chulane-bant-value-combo"
-          ],
-          "2": [
-            "krenko-mono-red-goblins",
-            "prosper-rakdos-exile-treasure",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "yuriko-dimir-ninjas",
-            "yshtola",
-            "sheoldred",
-            "chulane-bant-value-combo"
-          ],
-          "4": [
-            "krenko-mono-red-goblins",
-            "yshtola",
-            "sheoldred",
-            "chulane-bant-value-combo"
-          ],
-          "5": [
-            "sheoldred",
-            "prosper-rakdos-exile-treasure",
-            "yshtola",
-            "edgar-markov-mardu-vampires"
-          ],
-          "6": [
-            "prosper-rakdos-exile-treasure",
-            "sheoldred",
-            "krenko-mono-red-goblins",
-            "yshtola"
-          ],
-          "7": [
-            "edgar-markov-mardu-vampires",
-            "sheoldred",
-            "yshtola",
-            "chulane-bant-value-combo"
-          ],
-          "8": [
-            "prosper-rakdos-exile-treasure",
-            "yuriko-dimir-ninjas",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "yuriko-dimir-ninjas",
-            "edgar-markov-mardu-vampires",
-            "sheoldred",
-            "yshtola"
-          ]
-        },
-        "t5": {
-          "1": [
-            "yawgmoth-mono-black-aristocrats",
-            "urza-mono-blue-artifacts",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "zur-esper-enchantment-control",
-            "sheoldred",
-            "yshtola",
-            "kinnan-simic-mana-combo"
-          ],
-          "2": [
-            "urza-mono-blue-artifacts",
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "zur-esper-enchantment-control",
-            "yshtola",
-            "sheoldred",
-            "kinnan-simic-mana-combo"
-          ],
-          "4": [
-            "urza-mono-blue-artifacts",
-            "yshtola",
-            "sheoldred",
-            "kinnan-simic-mana-combo"
-          ],
-          "5": [
-            "sheoldred",
-            "yawgmoth-mono-black-aristocrats",
-            "yshtola",
-            "miirym-temur-dragons"
-          ],
-          "6": [
-            "yawgmoth-mono-black-aristocrats",
-            "sheoldred",
-            "urza-mono-blue-artifacts",
-            "yshtola"
-          ],
-          "7": [
-            "miirym-temur-dragons",
-            "sheoldred",
-            "yshtola",
-            "kinnan-simic-mana-combo"
-          ],
-          "8": [
-            "yawgmoth-mono-black-aristocrats",
-            "zur-esper-enchantment-control",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "zur-esper-enchantment-control",
-            "miirym-temur-dragons",
-            "sheoldred",
-            "yshtola"
-          ]
-        },
-        "t6": {
-          "1": [
-            "sisay-legends-toolbox",
-            "rograkh-thrasios-creature-combo",
-            "yshtola",
-            "sheoldred"
-          ],
-          "10": [
-            "sisay-legends-toolbox",
-            "sheoldred",
-            "yshtola",
-            "kinnan-bonder-mana-combo"
-          ],
-          "2": [
-            "sisay-legends-toolbox",
-            "kraum-tymna-blue-breach-midrange",
-            "yshtola",
-            "sheoldred"
-          ],
-          "3": [
-            "kinnan-bonder-mana-combo",
-            "yshtola",
-            "sheoldred",
-            "rograkh-thrasios-creature-combo"
-          ],
-          "4": [
-            "sisay-legends-toolbox",
-            "yshtola",
-            "sheoldred",
-            "kinnan-bonder-mana-combo"
-          ],
-          "5": [
-            "sheoldred",
-            "sisay-legends-toolbox",
-            "yshtola",
-            "kraum-tymna-blue-breach-midrange"
-          ],
-          "6": [
-            "rograkh-silas-turbo-breach",
-            "sheoldred",
-            "rograkh-thrasios-creature-combo",
-            "yshtola"
-          ],
-          "7": [
-            "rograkh-silas-turbo-breach",
-            "sheoldred",
-            "yshtola",
-            "dack-fayden-white-stax"
-          ],
-          "8": [
-            "rograkh-silas-turbo-breach",
-            "dack-fayden-white-stax",
-            "yshtola",
-            "sheoldred"
-          ],
-          "9": [
-            "kraum-tymna-blue-breach-midrange",
-            "rograkh-thrasios-creature-combo",
-            "sheoldred",
-            "yshtola"
           ]
         }
       }
     }
   },
   "sessions": [
+    {
+      "answers": 33,
+      "answers_by_seat": {
+        "karn_gilded": 33
+      },
+      "deck": "karn_gilded",
+      "events": 87,
+      "game_hash": "2b0e4ee743d03f71",
+      "hash": "59752335c342af6d",
+      "max_rounds": 3,
+      "over": {
+        "how": "timeout",
+        "winner": "krenko-mono-red-goblins"
+      },
+      "partner": null,
+      "seats": [
+        "prosper-rakdos-exile-treasure",
+        "karn_gilded",
+        "krenko-mono-red-goblins",
+        "chulane-bant-value-combo"
+      ],
+      "seed": 1,
+      "tier": "t4"
+    },
+    {
+      "answers": 38,
+      "answers_by_seat": {
+        "karn_gilded": 38
+      },
+      "deck": "karn_gilded",
+      "events": 101,
+      "game_hash": "9be65242d27fe7c7",
+      "hash": "08f6c89f47bca513",
+      "max_rounds": 3,
+      "over": {
+        "how": "timeout",
+        "winner": "miirym-temur-dragons"
+      },
+      "partner": null,
+      "seats": [
+        "miirym-temur-dragons",
+        "urza-mono-blue-artifacts",
+        "karn_gilded",
+        "yawgmoth-mono-black-aristocrats"
+      ],
+      "seed": 2,
+      "tier": "t5"
+    },
     {
       "answers": 30,
       "answers_by_seat": {
@@ -4431,135 +3514,39 @@
       "tier": "t5"
     },
     {
-      "answers": 33,
+      "answers": 63,
       "answers_by_seat": {
-        "yoshimaru": 33
+        "karn_gilded": 32,
+        "sheoldred": 31
       },
-      "deck": "yoshimaru",
-      "events": 87,
-      "game_hash": "077e5ddf91ff6c00",
-      "hash": "4794cc4c2553db16",
+      "deck": "karn_gilded",
+      "events": 131,
+      "game_hash": "8febd7d9a1805cab",
+      "hash": "2a2d3cd3fff2ac95",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
-        "winner": "krenko-mono-red-goblins"
+        "winner": "yuriko-dimir-ninjas"
       },
-      "partner": null,
+      "partner": "sheoldred",
       "seats": [
-        "prosper-rakdos-exile-treasure",
-        "yoshimaru",
-        "krenko-mono-red-goblins",
+        "yuriko-dimir-ninjas",
+        "karn_gilded",
+        "sheoldred",
         "chulane-bant-value-combo"
       ],
-      "seed": 1,
+      "seed": 3,
       "tier": "t4"
     },
     {
-      "answers": 37,
+      "answers": 55,
       "answers_by_seat": {
-        "yoshimaru": 37
+        "karn_gilded": 55
       },
-      "deck": "yoshimaru",
-      "events": 99,
-      "game_hash": "643005cd2978108a",
-      "hash": "118f44ff9df8a40e",
-      "max_rounds": 3,
-      "over": {
-        "how": "timeout",
-        "winner": "miirym-temur-dragons"
-      },
-      "partner": null,
-      "seats": [
-        "miirym-temur-dragons",
-        "urza-mono-blue-artifacts",
-        "yoshimaru",
-        "yawgmoth-mono-black-aristocrats"
-      ],
-      "seed": 2,
-      "tier": "t5"
-    },
-    {
-      "answers": 36,
-      "answers_by_seat": {
-        "yshtola": 36
-      },
-      "deck": "yshtola",
-      "events": 94,
-      "game_hash": "883628d9033eae2b",
-      "hash": "b4535a12c14dd8f7",
-      "max_rounds": 3,
-      "over": {
-        "how": "timeout",
-        "winner": "yawgmoth-mono-black-aristocrats"
-      },
-      "partner": null,
-      "seats": [
-        "yawgmoth-mono-black-aristocrats",
-        "yshtola",
-        "urza-mono-blue-artifacts",
-        "kinnan-simic-mana-combo"
-      ],
-      "seed": 1,
-      "tier": "t5"
-    },
-    {
-      "answers": 37,
-      "answers_by_seat": {
-        "yshtola": 37
-      },
-      "deck": "yshtola",
-      "events": 99,
-      "game_hash": "f758b87f90702594",
-      "hash": "e59807624d643d1e",
-      "max_rounds": 3,
-      "over": {
-        "how": "timeout",
-        "winner": "miirym-temur-dragons"
-      },
-      "partner": null,
-      "seats": [
-        "miirym-temur-dragons",
-        "urza-mono-blue-artifacts",
-        "yshtola",
-        "yawgmoth-mono-black-aristocrats"
-      ],
-      "seed": 2,
-      "tier": "t5"
-    },
-    {
-      "answers": 61,
-      "answers_by_seat": {
-        "sheoldred": 31,
-        "urdragon": 30
-      },
-      "deck": "sheoldred",
-      "events": 120,
-      "game_hash": "103a49054cdf89e9",
-      "hash": "36a5317bd1056e5c",
-      "max_rounds": 3,
-      "over": {
-        "how": "timeout",
-        "winner": "tergrid-mono-black-disruption"
-      },
-      "partner": "urdragon",
-      "seats": [
-        "tergrid-mono-black-disruption",
-        "sheoldred",
-        "urdragon",
-        "atraxa-infect"
-      ],
-      "seed": 3,
-      "tier": "t3"
-    },
-    {
-      "answers": 53,
-      "answers_by_seat": {
-        "sheoldred": 53
-      },
-      "deck": "sheoldred",
-      "events": 138,
-      "game_hash": "49705c2277f058f3",
-      "hash": "a550301c46802583",
+      "deck": "karn_gilded",
+      "events": 142,
+      "game_hash": "02c878fbc6b30f0b",
+      "hash": "a92451b1006f73e1",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -4568,7 +3555,7 @@
       "partner": null,
       "seats": [
         "rograkh-thrasios-creature-combo",
-        "sheoldred",
+        "karn_gilded",
         "kinnan-bonder-mana-combo",
         "dack-fayden-white-stax"
       ],
@@ -4576,28 +3563,28 @@
       "tier": "t6"
     },
     {
-      "answers": 152,
+      "answers": 102,
       "answers_by_seat": {
-        "sheoldred": 152
+        "karn_gilded": 102
       },
-      "deck": "sheoldred",
-      "events": 402,
-      "game_hash": "658362fbdb107f23",
-      "hash": "7cfa87f5a8520447",
+      "deck": "karn_gilded",
+      "events": 274,
+      "game_hash": "b24b0570c879c597",
+      "hash": "633c5fa1138d2ab4",
       "max_rounds": 30,
       "over": {
         "how": "damage",
-        "winner": "atraxa-infect"
+        "winner": "chulane-bant-value-combo"
       },
       "partner": null,
       "seats": [
-        "atraxa-infect",
-        "sheoldred",
-        "korvold-jund-sacrifice",
-        "marwyn-mono-green-elves"
+        "chulane-bant-value-combo",
+        "karn_gilded",
+        "krenko-mono-red-goblins",
+        "prosper-rakdos-exile-treasure"
       ],
       "seed": 4,
-      "tier": "t3"
+      "tier": "t4"
     }
   ]
 }
