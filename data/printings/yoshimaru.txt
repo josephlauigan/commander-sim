@@ -1,4 +1,5 @@
 1 Adeline, Resplendent Cathar (tdc) 108
+1 Akroma's Will (soa) 66
 1 Arcane Signet (fic) 333
 1 Archangel of Thune (sld) 2430
 1 Ardenn, Intrepid Archaeologist (cmr) 10
@@ -65,7 +66,6 @@
 1 Sword of Hearth and Home (mh2) 433
 1 Swords to Plowshares (ice) 54
 1 Takenuma, Abandoned Mire (neo) 278
-1 Teferi's Protection (2x2) 32
 1 Teleportation Circle (afr) 39
 1 The One Ring (ltr) 246
 1 The Wandering Emperor (neo) 316
