@@ -817,7 +817,6 @@ fn settle_after_answer(t: &mut Rig, what: &str) {
 }
 
 #[test]
-#[ignore = "ticket T-S5-16 (pre-existing, same family as L13): two rewinds racing can panic at st.answers[..to] and poison the session (session/mod.rs rewind: bound checked in one critical section, sliced in the next); fix: do the check and the slice under one lock; remove this ignore with the fix"]
 fn two_undos_racing_never_poison_the_session_or_leave_two_game_threads() {
     let _g = serial();
     let e = engine();
