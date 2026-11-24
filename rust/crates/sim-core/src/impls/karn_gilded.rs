@@ -136,9 +136,6 @@ pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Op
     if x.orig != p {
         return Some(STOLEN);
     }
-    if crate::impls::doomsday::active(g, p) {
-        return Some(0.0); // the pile is planned
-    }
     let n = colours_among_other_artifacts(g, p, m) as usize
         * crate::engine::hooks::enters_trigger_times(g, p, None, Some(m)) as usize;
     if n == 0 {
@@ -146,7 +143,10 @@ pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Op
     }
     let library = g.player(p).library.len();
     if library <= n + LIBRARY_FLOOR && !oracle_covers(g, p, n, library) {
-        return Some(DECKING);
+        return Some(DECKING); // also under a Doomsday pile: a blink that draws the pile down to the floor is no protection
+    }
+    if crate::impls::doomsday::active(g, p) {
+        return Some(0.0); // the pile is planned: the choosers never blink him for it
     }
     let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
     let kept = if capped { n.min(HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len())) } else { n };

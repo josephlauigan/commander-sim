@@ -345,6 +345,23 @@ fn opposing_norn_makes_him_worthless() {
 }
 
 #[test]
+fn doomsday_pile_no_blink_protection_when_it_would_deck() {
+    // a Doomsday pile of five with two colours: a blink draws two and leaves three, the floor
+    let mut g = tbl();
+    let k = karn(&mut g);
+    colours(&mut g, "WB");
+    lands(&mut g, P0, "Plains", 1, false);
+    let c = hand(&mut g, P0, &["Ephemerate", "Cloudshift"])[0];
+    library(&mut g, 5);
+    g.player_mut(P0).stat("doomsday", 1);
+    assert_eq!(reenter_bonus(&g, P0, k, false), Some(DECKING), "the guard comes before the pile's zero");
+    let swords = card(&g, "Swords to Plowshares");
+    assert!(!ai::protect_response(&mut g, P0, k, "exile", Some(P1), Some(swords)).unwrap());
+    assert!(g.player(P0).hand.contains(&c), "Ephemerate was not cast");
+    assert_stays(&g, k);
+}
+
+#[test]
 fn doomsday_pile_never_blinks() {
     let mut g = tbl();
     let k = karn(&mut g);

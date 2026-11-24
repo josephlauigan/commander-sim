@@ -474,7 +474,7 @@ fn exile_until_end(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
         super::yoshimaru_p7::exile_land(g, m)?;
     } else if x.owner == p {
-        if x.orig == p && card.is_some_and(|c| g.player(p).is_commander(c)) {
+        if x.orig == p && card.is_some_and(|c| c == g.player(p).cmd) {
             exile_perm_keep_cmd(g, m)?; // the owner's commander waits in exile (it returns below), not in the command zone
         } else {
             exile_perm(g, m)?;
