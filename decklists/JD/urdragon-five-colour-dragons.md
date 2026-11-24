@@ -314,17 +314,19 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Commander (1).** The Ur-Dragon
 
-**Creatures (33).** Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Kura, the Boundless Sky, Kyodai, Soul of Kamigawa, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Utvara Hellkite, Young Pyromancer
+**Creatures (35).** Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Dragonspeaker Shaman, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Giver of Runes, Glorybringer, Goldspan Dragon, Hellkite Courser, Hellkite Tyrant, Kura, the Boundless Sky, Kyodai, Soul of Kamigawa, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Tymna the Weaver, Utvara Hellkite
 
-**Artifacts (9).** Arcane Signet, Cursed Mirror, Mana Vault, Mox Jasper, Relic of Sauron, Sol Ring, Talisman of Hierarchy, The One Ring, Urza's Incubator
+**Artifacts (11).** Arcane Signet, Mana Vault, Mithril Coat, Mox Jasper, Relic of Sauron, Sapphire Medallion, Sol Ring, Talisman of Curiosity, Talisman of Hierarchy, The One Ring, Urza's Incubator
 
-**Enchantments (6).** Doubling Season, Dragon Tempest, Rhystic Study, Rhythm of the Wild, Sylvan Library, Triple Triad
+**Enchantments (4).** Doubling Season, Dragon Tempest, Rhystic Study, Sylvan Library
 
-**Instants (9).** Chaos Warp, Deflecting Swat, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
+**Instants (8).** Chaos Warp, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (9).** Austere Command, Crux of Fate, Decimate, Demonic Tutor, Jeska's Will, Nature's Lore, Nibelheim Aflame, Three Visits, Twinflame
+**Sorceries (7).** Crux of Fate, Demonic Tutor, Jeska's Will, Nature's Lore, Nibelheim Aflame, Three Visits, Twinflame
 
 **Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Field of the Dead, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest
+
+**Planeswalkers (1).** The Theorist, Jace Beleren
 
 ## Import list (100)
 
@@ -332,7 +334,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Ancient Tomb
 1 Arcane Signet
 1 Arid Mesa
-1 Austere Command
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -342,15 +343,13 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 City of Brass
 1 Command Tower
 1 Crux of Fate
-1 Cursed Mirror
-1 Decimate
-1 Deflecting Swat
 1 Delighted Halfling
 1 Demonic Tutor
 1 Doubling Season
 1 Dragon Tempest
 1 Dragonlord Dromoka
 1 Dragonlord Ojutai
+1 Dragonspeaker Shaman
 1 Elvish Mystic
 1 Exotic Orchard
 1 Fact or Fiction
@@ -359,8 +358,10 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Flooded Strand
 1 Ganax, Astral Hunter
 1 Garth One-Eye
+1 Giver of Runes
 1 Glorybringer
 1 Goldspan Dragon
+1 Hellkite Courser
 1 Hellkite Tyrant
 1 Jeska's Will
 1 Kura, the Boundless Sky
@@ -372,6 +373,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Mana Vault
 1 Marsh Flats
 1 Miirym, Sentinel Wyrm
+1 Mithril Coat
 1 Morophon, the Boundless
 1 Mox Jasper
 1 Nature's Lore
@@ -386,13 +388,12 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Polluted Delta
 1 Relic of Sauron
 1 Rhystic Study
-1 Rhythm of the Wild
 1 Rivaz of the Claw
 1 Sacred Foundry
+1 Sapphire Medallion
 1 Savannah
 1 Scalding Tarn
 1 Scion of Draco
-1 Scion of the Ur-Dragon
 1 Scourge of Valkas
 1 Scrubland
 1 Shivan Dragon
@@ -408,17 +409,19 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Swords to Plowshares
 1 Sylvan Library
 1 Taiga
+1 Talisman of Curiosity
 1 Talisman of Hierarchy
 1 Terror of the Peaks
 1 The One Ring
+1 The Theorist, Jace Beleren
 1 The Ur-Dragon
 1 Three Visits
 1 Thundermaw Hellkite
 1 Tiamat
-1 Triple Triad
 1 Tropical Island
 1 Tundra
 1 Twinflame
+1 Tymna the Weaver
 1 Underground Sea
 1 Urza's Incubator
 1 Utvara Hellkite
@@ -427,6 +430,5 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
-1 Young Pyromancer
 1 Forest
 ```

@@ -705,7 +705,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Sorceries (14).** Ambition's Cost, Cost of Brilliance, Damnable Pact, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
-**Instants (7).** Cabal Ritual, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
+**Instants (7).** Dark Ritual, Deadly Dispute, Deadly Rollick, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
 
 ## Import list (100)
 
@@ -720,12 +720,12 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Cabal Coffers
-1 Cabal Ritual
 1 Call of the Ring
 1 Cost of Brilliance
 1 Damnable Pact
 1 Dark Ritual
 1 Deadly Dispute
+1 Deadly Rollick
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Dreadhorde Invasion
