@@ -974,6 +974,11 @@ fn a_two_person_cali_save_has_no_tier_and_loads_to_the_same_point() {
     .err()
     .unwrap();
     assert_eq!(why, "a damaged saved game");
+    // a partner that is null (or not a name) is no partner: with no tier that reads as damaged too
+    for bad in [Value::Null, json!(5), json!(["x"])] {
+        let why = edit(&|v| v["partner"] = bad.clone()).err().unwrap();
+        assert_eq!(why, "a damaged saved game", "partner {bad}");
+    }
 }
 
 // ------------------------------------------------------------------------------------------------ the tape
@@ -1037,14 +1042,14 @@ fn the_seat_guard_stops_a_replay_whose_seats_do_not_match() {
     assert!(g.live());
     assert_eq!(g.guard_warns(), 1, "{:?}", g.evs.iter().filter(|e| e["kind"] == "warn").collect::<Vec<_>>());
     let w = g.evs.iter().find(|e| e["kind"] == "warn").unwrap();
-    assert_eq!(w["text"], "The replay of this game went a different way at decision 0: it goes on from here.");
+    assert_eq!(w["text"], "The replay of this game went a different way at decision 1: it goes on from here.");
     assert!(w.get("seat").is_none() && w.get("replay").is_none(), "{w}");
     assert_eq!(g.s.answers_len(), 0);
     assert_eq!(g.seat(), seats[0], "the first decision is live, asked of its own seat");
     // it is the decision the unedited game starts with
     let fresh = Table::open(Session::new(options(&e, &deck, &guest, seed)).unwrap());
     same(&g, &fresh);
-    eprintln!("RECORD guard: all seats swapped: 1 warning at decision 0, live ask of {}", g.seat());
+    eprintln!("RECORD guard: all seats swapped: 1 warning at decision 1, live ask of {}", g.seat());
     g.s.close(Duration::from_secs(10));
     fresh.s.close(Duration::from_secs(10));
 
@@ -1057,14 +1062,13 @@ fn the_seat_guard_stops_a_replay_whose_seats_do_not_match() {
     let g = Table::open(load(&|v| v["answer_seats"] = json!(mid)).unwrap());
     assert!(g.live());
     assert_eq!(g.guard_warns(), 1);
-    assert!(
-        g.evs.iter().any(|e| e["text"]
-            == format!("The replay of this game went a different way at decision {k}: it goes on from here."))
-    );
+    assert!(g.evs.iter().any(|e| e["text"]
+        == format!("The replay of this game went a different way at decision {}: it goes on from here.", k + 1)));
     assert_eq!(g.s.answers_len(), k);
     assert_eq!(point(&g).answer_seats, seats[..k].to_vec());
     eprintln!(
-        "RECORD guard: seats of answers {k} and {} swapped: 1 warning at decision {k}, {k} answers kept, live from there",
+        "RECORD guard: seats of answers {k} and {} swapped: 1 warning at decision {} (numbered from 1), {k} answers kept, live from there",
+        k + 1,
         k + 1
     );
     g.s.close(Duration::from_secs(10));
@@ -1081,16 +1085,18 @@ fn the_seat_guard_stops_a_replay_whose_seats_do_not_match() {
     v["answer_seats"].as_array_mut().unwrap().extend([json!(deck), json!(guest)]);
     let g = Table::open(Session::load(e.clone(), &v, true, false).unwrap());
     assert_eq!(g.at["kind"], "over", "{}", g.at);
-    assert_eq!(g.guard_warns(), 1);
-    assert!(
-        g.evs.iter().any(|e| e["text"]
-            == format!("The replay of this game went a different way at decision {n}: it goes on from here."))
+    // its own text (the game is over: it does not go on from here), and not the guard's
+    let warns: Vec<&str> = g.evs.iter().filter(|e| e["kind"] == "warn").map(|e| e["text"].as_str().unwrap()).collect();
+    assert_eq!(
+        warns,
+        vec![format!("The game ended after {n} decisions with 2 recorded answers left over: they were not used.")]
     );
+    assert_eq!(g.guard_warns(), 0);
     // the untouched finished save: no warning
     let g2 = Table::open(Session::load(e.clone(), &done, true, false).unwrap());
     assert_eq!((g2.at["kind"].clone(), g2.guard_warns()), (json!("over"), 0));
     eprintln!(
-        "RECORD guard: 2 left-over answers after a finished game of {n}: 1 warning at decision {n}; the untouched finished save: 0"
+        "RECORD guard: 2 left-over answers after a finished game of {n}: 1 warning with its own text (not the guard's); the untouched finished save: 0"
     );
 
     // a save whose answer_seats cannot be right is damaged: a non-player, the wrong length, not a list, not a string

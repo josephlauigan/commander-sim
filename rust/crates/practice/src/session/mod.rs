@@ -462,10 +462,11 @@ impl Session {
             // answers still left: the game ended before the replay did
             let mut s = self.st.lock().unwrap();
             if !s.replay.is_empty() {
+                let left = s.replay.len();
                 s.replay.clear();
                 s.replaying = false;
                 let n = s.answers.len();
-                s.events.push(replay_went_another_way(n));
+                s.events.push(replay_left_over(n, left));
                 drop(s);
                 self.cv.notify_all();
             }
@@ -714,7 +715,7 @@ impl Session {
             None => String::new(),
             Some(t) => t.as_str().map(str::to_string).ok_or_else(damaged)?,
         };
-        if tier.is_empty() && data.get("partner").is_none() {
+        if tier.is_empty() && data.get("partner").and_then(Value::as_str).is_none() {
             return Err(damaged()); // one person plays against AI seats, which need a tier
         }
         let mut o = Options::new(engine, &s("deck")?, &tier);
@@ -843,9 +844,20 @@ impl Session {
 }
 
 /// the message when a replay stops: its recorded answers no longer fit the game (a saved game that was edited, or
-/// changed rules), so the game goes on live from decision `n`
+/// changed rules), so the game goes on live. `n` answers were already given, so the decision that went another way is
+/// number n + 1 (the first decision is number 1)
 pub(crate) fn replay_went_another_way(n: usize) -> Value {
-    json!({"kind": "warn", "text": format!("The replay of this game went a different way at decision {n}: it goes on from here.")})
+    json!({"kind": "warn", "text": format!("The replay of this game went a different way at decision {}: it goes on from here.", n + 1)})
+}
+
+/// the message when the game ended before its recorded answers did: `n` were used, `left` were not (the game does not
+/// go on from here: it is over)
+pub(crate) fn replay_left_over(n: usize, left: usize) -> Value {
+    json!({"kind": "warn", "text": format!(
+        "The game ended after {n} decision{} with {left} recorded answer{} left over: they were not used.",
+        if n == 1 { "" } else { "s" },
+        if left == 1 { "" } else { "s" },
+    )})
 }
 
 fn autopass_of(st: &State, seat: &str, at: Option<usize>) -> String {
