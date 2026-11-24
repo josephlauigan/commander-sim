@@ -121,6 +121,8 @@ pub enum Restr {
     /// only to cast a creature spell of this creature type: a changeling, or any creature under Maskwood Nexus
     /// (Unclaimed Territory, Cavern of Souls, Secluded Courtyard: the type each chose as it entered)
     CreatureType(Sym),
+    /// only to cast a creature spell (Herd Heirloom: "spend this mana only to cast a creature spell")
+    CreatureSpell,
 }
 
 /// How long a mana object stays in the pool.

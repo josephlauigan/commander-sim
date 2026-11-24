@@ -314,8 +314,8 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
             if no_art_mana && d.types.has(crate::cards::Types::ARTIFACT) {
                 continue;
             }
-            if !restr_ok_for(g, p, pay_for, d.mana_restr) {
-                continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells
+            if !restr_ok_for(g, p, pay_for, d.mana_restr) && !(manual && d.mana_restr == Restr::CreatureSpell) {
+                continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells; Herd Heirloom: creature spells
             }
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1));
@@ -472,6 +472,7 @@ fn restr_ok_for(g: &Game, p: PlayerId, pay_for: Option<CardId>, r: Restr) -> boo
         Restr::CreatureType(t) => {
             pay_for.is_some_and(|c| g.db.get(c).creature && crate::impls::galadriel::card_is(g, p, c, t))
         }
+        Restr::CreatureSpell => spell().is_some_and(|d| d.creature),
     }
 }
 
@@ -497,6 +498,7 @@ pub fn restr_of(name: &str, tags: &crate::cards::Tags) -> Restr {
         "Giada, Font of Hope" => Restr::Subtype("angel"),
         "Hydro-Channeler" => Restr::InstantSorcery,
         "Rivaz of the Claw" => Restr::DragonCreature,
+        "Herd Heirloom" => Restr::CreatureSpell,
         _ => Restr::None,
     }
 }
