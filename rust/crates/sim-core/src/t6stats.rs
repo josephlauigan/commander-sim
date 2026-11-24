@@ -402,7 +402,7 @@ fn makes_mana_now(g: &Game, p: PlayerId, c: CardId) -> bool {
             x != c && !xd.land && !xd.types.has(Types::ARTIFACT) && xd.colors.intersects(pl.ident)
         }),
         "Mox Amber" => bf().any(|x| (x.creature && x.tag(crate::tag::Tag::Leg)) || x.types.has(Types::PLANESWALKER)),
-        "Mox Opal" => bf().filter(|x| x.types.has(Types::ARTIFACT)).count() >= 2,
+        "Mox Opal" => crate::impls::karn::artifacts(g, p) >= 2, // as the card counts: Treasures and artifact lands too
         // --- t6-ai-b: the diamond makes mana only for a use: a wheel it pays for, or a hand of lands and a play for the mana
         "Lion's Eye Diamond" => crate::impls::mine::led_use_open(g, p, c),
         "Elvish Spirit Guide" | "Simian Spirit Guide" => false,

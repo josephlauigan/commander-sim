@@ -169,6 +169,39 @@ fn a_phased_out_permanent_is_not_counted() {
 }
 
 #[test]
+fn an_opponent_not_under_teferis_protection_still_counts_with_its_tokens_and_lands() {
+    // the control for the Teferi's Protection tests: the same board with only the life lock (Flare of Fortitude) or only the Ring protection is not a phase out
+    let mut g = tbl();
+    perm(&mut g, P1, "Sol Ring");
+    lands(&mut g, P1, "Darksteel Citadel", 1, false);
+    zones::add_treasure(&mut g, P1, 2).unwrap();
+    g.player_mut(P1).life_locked = true;
+    assert_eq!(x_of(&g, P0), 4, "Sol Ring, Citadel, 2 Treasures");
+    g.player_mut(P1).life_locked = false;
+    g.player_mut(P1).ring_prot = true; // The One Ring's protection phases nothing out
+    assert_eq!(x_of(&g, P0), 4);
+    perm(&mut g, P0, DOCKSIDE);
+    assert_eq!(treasures(&g, P0), 4);
+}
+
+#[test]
+fn teferis_protection_ends_for_dockside_when_the_opponents_turn_begins() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sol Ring");
+    lands(&mut g, P1, "Darksteel Citadel", 1, false);
+    zones::add_treasure(&mut g, P1, 2).unwrap();
+    zones::teferis_protection(&mut g, P1);
+    assert_eq!(x_of(&g, P0), 0, "until its next turn it controls nothing");
+    // another opponent still counts while P1 is protected
+    perm(&mut g, P2, "Mana Vault");
+    assert_eq!(x_of(&g, P0), 1);
+    // P1's turn: its permanents phase in (untap step), then the upkeep ends the protection
+    sim_core::engine::turn::phase_in_for(&mut g, P1);
+    sim_core::engine::turn::upkeep(&mut g, P1).unwrap();
+    assert_eq!(x_of(&g, P0), 1 + 1 + 1 + 2, "Mana Vault, Sol Ring, Citadel, 2 Treasures");
+}
+
+#[test]
 fn the_count_follows_the_controller_not_the_seat() {
     // P1 controls Dockside: its opponents are P0, P2 and P3, so P0's Sol Ring counts and P1's own Mana Vault does not
     let mut g = tbl();

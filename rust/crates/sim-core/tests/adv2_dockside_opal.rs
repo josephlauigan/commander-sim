@@ -30,7 +30,6 @@ fn adv2_enchantment_land_counts() {
 }
 
 #[test]
-#[ignore = "DEFECT adv2-1: Dockside counts a Teferi-protected opponent's Treasure/Food/Clue/Blood counters and artifact/enchantment lands (Teferi's Protection phases out perms only)"]
 fn adv2_teferis_protection_phases_out_the_opponents_everything() {
     // CR 702.26: a phased-out permanent is treated as though it does not exist. Teferi's Protection phases out all of
     // the caster's permanents, including its Treasure tokens and artifact lands, until its next turn.
@@ -41,7 +40,11 @@ fn adv2_teferis_protection_phases_out_the_opponents_everything() {
     zones::teferis_protection(&mut g, P1);
     assert!(g.perm(perm_named(&g, P1, "Sol Ring")).phased, "the engine phases the permanents");
     perm(&mut g, P0, DOCKSIDE);
-    assert_eq!(treasures(&g, P0), 0, "everything the opponent has is phased out: X = 0 (Sol Ring, Citadel, 2 Treasures)");
+    assert_eq!(
+        treasures(&g, P0),
+        0,
+        "everything the opponent has is phased out: X = 0 (Sol Ring, Citadel, 2 Treasures)"
+    );
 }
 
 fn perm_named(g: &Game, p: PlayerId, n: &str) -> PermId {
@@ -168,7 +171,6 @@ fn adv2_opal_paying_with_the_treasure_in_the_same_payment() {
 }
 
 #[test]
-#[ignore = "DEFECT adv2-2: karn::artifacts counts a token land copy that is also a creature twice (lands and perms), so Mox Opal gets metalcraft with two artifacts"]
 fn adv2_opal_and_one_animated_artifact_land_are_two_artifacts() {
     // Astral Dragon: a token copy of an artifact land that is also a creature (listed in `lands` and in `perms`).
     // Opal + that one land are TWO artifacts (the land token is one permanent): no metalcraft.
@@ -183,7 +185,6 @@ fn adv2_opal_and_one_animated_artifact_land_are_two_artifacts() {
 }
 
 #[test]
-#[ignore = "DEFECT adv2-2: same double count seen directly in karn::artifacts"]
 fn adv2_karn_artifacts_counts_a_token_land_copy_once() {
     let mut g = tbl();
     let cit = card(&g, "Darksteel Citadel");
