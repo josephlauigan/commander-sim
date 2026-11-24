@@ -201,6 +201,18 @@ fn panic_text(p: &(dyn std::any::Any + Send)) -> String {
         .unwrap_or_else(|| "panic".into())
 }
 
+/// clears `Session.restarting` when it goes out of scope, whatever way `rewind` is left (a panic included; a poisoned lock
+/// is skipped, not a second panic)
+struct Restarting<'a>(&'a Session);
+
+impl Drop for Restarting<'_> {
+    fn drop(&mut self) {
+        if let Ok(mut st) = self.0.st.lock() {
+            st.restarting = false;
+        }
+    }
+}
+
 impl Session {
     pub fn new(o: Options) -> Result<Arc<Session>, String> {
         let e = &o.engine;
@@ -579,6 +591,10 @@ impl Session {
     pub fn rewind(self: &Arc<Self>, to: Option<usize>, then: Option<(Answer, String)>, info: Value) -> Option<String> {
         let (to, handle) = {
             let mut st = self.st.lock().unwrap();
+            // one rewind at a time: a second one would find the answers cleared and the game thread already taken
+            if st.restarting {
+                return Some("The game is busy; try again in a moment.".into());
+            }
             let to = match to {
                 Some(t) if t <= st.answers.len() => t,
                 _ => return Some("No such decision.".into()),
@@ -588,6 +604,9 @@ impl Session {
             st.run.close();
             (to, st.thread.take())
         };
+        // `restarting` is set from here on: the guard clears it on every way out of this function, a panic included (a
+        // stuck flag would refuse every later Undo and silence `closed()`)
+        let _restarting = Restarting(self);
         if let Some(h) = handle {
             let end = Instant::now() + Duration::from_secs(30);
             while !h.is_finished() && Instant::now() < end {
@@ -596,13 +615,16 @@ impl Session {
             if !h.is_finished() {
                 let mut st = self.st.lock().unwrap();
                 st.thread = Some(h);
-                st.restarting = false;
                 return Some("The game is busy; try again in a moment.".into());
             }
             let _ = h.join();
         }
         {
             let mut st = self.st.lock().unwrap();
+            // the guard above keeps this true; if it ever fails, refuse rather than slice out of range
+            if to > st.answers.len() || to > st.answer_seats.len() {
+                return Some("No such decision.".into());
+            }
             let keep: Vec<(Answer, Option<String>)> =
                 st.answers[..to].iter().cloned().zip(st.answer_seats[..to].iter().cloned().map(Some)).collect();
             let cut = st.marks.get(to).copied().unwrap_or_else(|| self.tape.lock().unwrap().entries.len());
@@ -626,9 +648,10 @@ impl Session {
             }
             st.events.push(ev);
             st.replaying = !st.replay.is_empty();
-            st.restarting = false;
         }
         self.cv.notify_all();
+        // `restarting` stays set until the new game thread is installed (the guard clears it on the way out), so no
+        // other rewind can run in between
         self.start();
         None
     }
