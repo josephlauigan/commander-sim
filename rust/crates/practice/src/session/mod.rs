@@ -221,7 +221,10 @@ impl Session {
         }
         let fmt = match &o.format {
             Some(k) => e.formats.get(k).ok_or_else(|| {
-                format!("unknown format {k:?}: one of {}", e.formats.keys().cloned().collect::<Vec<_>>().join(", "))
+                // Commander first, as the web routes list them
+                let mut keys: Vec<&str> = e.formats.keys().map(String::as_str).collect();
+                keys.sort_by_key(|k| *k != "commander");
+                format!("unknown format {k:?}: one of {}", keys.join(", "))
             })?,
             None => e.format_of(&o.deck),
         };
@@ -704,7 +707,8 @@ impl Session {
         );
         o.partner = data.get("partner").and_then(Value::as_str).map(str::to_string);
         let sess = Session::new(o).map_err(|e| {
-            if old {
+            // the "no format" explanation is only for a refusal that comes from the format; any other damage keeps its own text
+            if old && e.contains("cannot be played at a ") {
                 format!("this saved game has no format, so it is a four-player Commander game, and it can't be played now: {e}")
             } else {
                 e
