@@ -2,6 +2,7 @@
 //! `python_hooks.txt`.
 
 use crate::json::{J, Obj};
+use sim_core::format::{GoRules, TableAi};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
@@ -197,6 +198,9 @@ pub struct FormatDef {
     pub bans: Bans,
     /// the ban list when `bans` is `List`, one name per entry (a front-face name)
     pub banned: Vec<String>,
+    /// what the AI reads of the table (`[<key>.ai]`; Commander's values when the table has none). `duel` is derived from
+    /// `seats`, never data
+    pub ai: TableAi,
 }
 
 impl FormatDef {
@@ -210,6 +214,7 @@ impl FormatDef {
             first_player_draws: true,
             bans: Bans::Scryfall,
             banned: vec![],
+            ai: TableAi::COMMANDER,
         }
     }
 }
@@ -219,7 +224,36 @@ pub fn front_face(name: &str) -> String {
     name.split(" // ").next().unwrap_or("").trim().to_lowercase()
 }
 
-const FORMAT_KEYS: [&str; 6] = ["name", "seats", "life", "first_player_draws", "bans", "banned"];
+const FORMAT_KEYS: [&str; 7] = ["name", "seats", "life", "first_player_draws", "bans", "banned", "ai"];
+
+/// the keys of a format's `[<key>.ai]` table (`duel` is not one: the loader derives it from `seats`)
+const AI_KEYS: [&str; 2] = ["learned_eval", "go_rules"];
+
+/// a format's `[<key>.ai]` table: strict (an unknown key, `duel` included, or a bad value is an error); a missing key
+/// keeps Commander's value
+fn parse_ai(ctx: &str, v: &toml::Value, seats: i64) -> Result<TableAi, String> {
+    let ctx = format!("{ctx} ai");
+    let t = v.as_table().ok_or(format!("{ctx}: must be a table ([<format>.ai])"))?;
+    if let Some(k) = t.keys().find(|k| !AI_KEYS.contains(&k.as_str())) {
+        return Err(format!(
+            "{ctx}: unknown key {k:?} (one of {}; duel follows the format's seats)",
+            AI_KEYS.join(", ")
+        ));
+    }
+    let mut ai = TableAi::COMMANDER;
+    if let Some(x) = t.get("learned_eval") {
+        ai.learned_eval = x.as_bool().ok_or(format!("{ctx}: learned_eval must be true or false"))?;
+    }
+    if let Some(x) = t.get("go_rules") {
+        ai.go_rules = match x.as_str() {
+            Some("t6") => GoRules::T6,
+            Some("all") => GoRules::All,
+            _ => return Err(format!("{ctx}: go_rules must be \"t6\" or \"all\"")),
+        };
+    }
+    ai.duel = seats == 2;
+    Ok(ai)
+}
 
 /// the formats of formats.toml, in file order (`src` is the text, `path` only names it in errors)
 pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
@@ -276,6 +310,10 @@ pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
             }
             _ => {}
         }
+        let ai = match tbl.get("ai") {
+            Some(v) => parse_ai(&ctx, v, seats)?,
+            None => TableAi { duel: seats == 2, ..TableAi::COMMANDER },
+        };
         out.push(FormatDef {
             key: key.clone(),
             name: name.trim().to_string(),
@@ -284,6 +322,7 @@ pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
             first_player_draws,
             bans,
             banned,
+            ai,
         });
     }
     // [commander] stays what the engine plays: editing the data cannot change every 4-player game
@@ -294,11 +333,12 @@ pub fn parse_formats(src: &str, path: &Path) -> Result<Vec<FormatDef>, String> {
             let same = c.seats == 4
                 && c.life == rules.life as i64
                 && c.first_player_draws == rules.first_player_draws
-                && c.bans == Bans::Scryfall;
+                && c.bans == Bans::Scryfall
+                && c.ai == TableAi::COMMANDER;
             if !same {
                 return Err(format!(
                     "{} [{DEFAULT_FORMAT}]: must stay 4 seats, {} life, first player draws, bans = \"scryfall\" \
-                     (the engine's Commander)",
+                     and Commander's AI profile (learned_eval true, go_rules \"t6\"; the engine's Commander)",
                     path.display(),
                     rules.life
                 ));
