@@ -7,7 +7,8 @@
 //!    ctr / rem / wipe / prot).
 //! 2. a quick dry run (about a minute): the swapped list on the adaptive AI, 200 games per profile on the first tier;
 //!    each swapped-in card's drawn and cast numbers. A card drawn in 20+ games and cast in under 5% of them stops the
-//!    run with exit code 3.
+//!    run with exit code 3. A new commander (`--swap-commander`) is only warned about: it is never drawn, and a
+//!    five-colour commander is cast late by design.
 
 use crate::args::Args;
 use crate::play::{Sim, profile};
@@ -62,6 +63,9 @@ impl AiRule {
 
 /// The deck's priority for each swapped-in card on mid-game boards of the swapped list (rounds 4 and 7 of two games
 /// against the first tier's decks, adaptive AI): the best value seen, since a rule may wait for a graveyard or mana.
+/// `commander`: the variant's commander when a `--swap-commander` run changes it. The priority function ranks a
+/// commander too (the seat's own, cast from the command zone from its second turn), so the new commander is read
+/// like any swapped-in card.
 pub fn ai_rules(
     sim: &Sim,
     deck: &str,
@@ -69,8 +73,9 @@ pub fn ai_rules(
     ins: &[String],
     opp_keys: &[String],
     seed0: u64,
+    commander: Option<&str>,
 ) -> Result<Vec<AiRule>, String> {
-    let vseat = sim.seat(deck, var)?;
+    let vseat = sim.seat_with_commander(deck, var, commander)?;
     let fmt = sim.format_for(deck);
     let mut settings = Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp);
     settings.rules = fmt.rules();
@@ -120,6 +125,8 @@ pub struct DryRow {
     pub games: i64,
     pub drawn: i64,
     pub cast: i64,
+    /// the new commander of a `--swap-commander` run: it starts in the command zone, so it counts as drawn in every game
+    pub commander: bool,
 }
 
 impl DryRow {
@@ -136,6 +143,19 @@ impl DryRow {
     }
 
     pub fn line(&self) -> String {
+        if self.commander {
+            return if self.warns() {
+                format!(
+                    "WARNING: commander {} cast in {} of {} games ({:.1}%): the deck's AI rarely casts it",
+                    self.card,
+                    self.cast,
+                    self.games,
+                    self.cast_pct()
+                )
+            } else {
+                format!("dry run: commander {}: cast in {:.1}% of games ({})", self.card, self.cast_pct(), self.cast)
+            };
+        }
         if self.warns() {
             format!(
                 "WARNING: {} drawn {}, cast {} ({:.1}%): the deck's AI rarely casts it",
@@ -170,7 +190,7 @@ pub fn dry_rows(analyses: &[Analysis], cards: &[String]) -> Vec<DryRow> {
                 drawn += s.max(k);
                 cast += k;
             }
-            DryRow { card: c.clone(), games, drawn, cast }
+            DryRow { card: c.clone(), games, drawn, cast, commander: false }
         })
         .collect()
 }
@@ -183,6 +203,7 @@ pub enum Outcome {
 
 /// Both steps for a `--swap` run; prints their lines. `var` is the swapped list.
 pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> Result<Outcome, String> {
+    let cmd = crate::swapcmd::new_commander(a, swaps);
     let Some(deck) = a.deck.as_deref() else { return Ok(Outcome::Continue) };
     let plan = tier_plan(sim, a)?;
     let Some(tier) = plan.tiers.first().cloned() else { return Ok(Outcome::Continue) };
@@ -190,7 +211,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     let keys = sim.opponents(&tier, fmt);
     let ins: Vec<String> = swaps.iter().map(|s| s.1.clone()).collect();
     println!("Preflight (--no-preflight skips it): is each swapped-in card ever cast by {deck}'s AI?");
-    let rules = ai_rules(sim, deck, var, &ins, &keys, a.seed)?;
+    let rules = ai_rules(sim, deck, var, &ins, &keys, a.seed, cmd)?;
     let mut bad = false;
     for r in &rules {
         println!("  {}", r.line());
@@ -198,7 +219,7 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     }
     sim.prog.lock().unwrap().on = !a.quiet;
     let ctx = Ctx { sim, verbose: false };
-    let seat = sim.seat(deck, var)?;
+    let seat = sim.seat_with_commander(deck, var, cmd)?;
     let mut analyses = vec![];
     {
         let mut pr = sim.prog.lock().unwrap();
@@ -223,12 +244,16 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
         crate::decks::tier_label(&tier)
     );
     let mut stop = false;
-    for (row, r) in dry_rows(&analyses, &ins).iter().zip(&rules) {
+    for (mut row, r) in dry_rows(&analyses, &ins).into_iter().zip(&rules) {
         if r.land {
             continue;
         }
+        if cmd == Some(row.card.as_str()) {
+            (row.commander, row.drawn) = (true, row.games); // in the command zone from the start: never "drawn"
+        }
         println!("  {}", row.line());
-        stop |= row.warns();
+        // a new commander only warns: a five-colour commander is cast late by design, and it is never stuck in hand
+        stop |= row.warns() && !row.commander;
     }
     if stop {
         println!(
@@ -270,7 +295,7 @@ mod tests {
     fn rules_at(sim: &Sim, deck: &str, out: &str, inn: &str, tier: &str, seed: u64) -> AiRule {
         let swaps = vec![(out.to_string(), inn.to_string())];
         let var = crate::swap_in_place(&sim.mine[deck], &swaps);
-        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), seed).unwrap().remove(0)
+        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), seed, None).unwrap().remove(0)
     }
 
     fn args(extra: &[&str]) -> Args {
@@ -280,27 +305,24 @@ mod tests {
         crate::args::parse(&v).unwrap()
     }
 
-    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in the Kyodai deck (no
-    /// plan rule names it, and Breach is gated on escape candidates). Kefka played this test until it was retired
-    /// (2026-11-06); its note: the same shape as Bribery before the
-    /// audit gave it an arm in kefka_prio. The seed matters: on some seeds the board reaches a round where the deck can
-    /// escape cards with Breach and the rule rightly ranks it above 0 (Kefka's list on seed 500000, kefka_prio 56; Thanos'
-    /// list with Gifts Ungiven instead of Triple Triad on seeds 500002, 500003, 500010, 500011, 500023 and 500024). Seed
-    /// 500000 gives 0 for the 2026-11-15 Thanos list
+    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Cost of Brilliance in the Arzakon deck
+    /// (no plan rule or deck rule of that deck names it, so it gets the generic 0, and it is a sorcery). The card, and the
+    /// card it replaces, are picked by name: Underworld Breach was used here until the 2026-11-23 Arzakon list; with that
+    /// list the sampled seed 500000 boards rank it 72 (a card gated on the board, as below), so it is the wrong witness. The seed matters for such cards (Kefka's list on seed 500000,
+    /// kefka_prio 56; Thanos' list with Gifts Ungiven instead of Triple Triad on seeds 500002, 500003, 500010, 500011,
+    /// 500023 and 500024). Cost of Brilliance ranked 0 on seeds 500000, 500002 and 500010 at the 2026-11-23 list (found by
+    /// ranking every card of the other decks through `ai_rules`)
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
-        let out = s.mine["kyodai"]
-            .iter()
-            .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
-            .unwrap()
-            .clone();
-        let r = rules_at(&s, "kyodai", &out, "Underworld Breach", "t5", 500000);
+        let (out, inn) = ("Brain Freeze", "Cost of Brilliance");
+        assert!(s.mine["arzakon"].iter().any(|c| c == out) && !s.mine["arzakon"].iter().any(|c| c == inn));
+        let r = rules_at(&s, "arzakon", out, inn, "t5", 500000);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(
             r.line(),
-            "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it"
+            "WARNING AI: Cost of Brilliance: priority 0 and no response path: the AI may never cast it"
         );
     }
 

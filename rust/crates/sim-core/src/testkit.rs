@@ -295,6 +295,17 @@ pub fn set_ai(g: &mut Game, ai: AiMode) {
     g.settings = Arc::new(s);
 }
 
+/// seat the card `name` as p's commander, in the command zone with no tax: for a test that needs a commander other than
+/// its deck's (the `arzakon` deck's record names the commander the deck was last registered with)
+pub fn set_commander(g: &mut Game, p: PlayerId, name: &str) {
+    let c = card(g, name);
+    let pl = g.player_mut(p);
+    pl.library.retain(|&x| x != c);
+    pl.cmd = c;
+    pl.cmd_in_zone = true;
+    pl.tax = 0;
+}
+
 /// The card out of p's library (its definition if the deck doesn't run it): Python's `take`.
 pub fn take(g: &mut Game, p: PlayerId, name: &str) -> CardId {
     let c = g.db.id(name).unwrap_or_else(|| panic!("{name:?} isn't in data/cards.json"));

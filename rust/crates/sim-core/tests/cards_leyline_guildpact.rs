@@ -20,7 +20,7 @@ fn all() -> Colors {
 
 /// a three-seat table with Leyline on P0's battlefield
 fn game() -> Game {
-    table(&["kyodai", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
+    table(&["arzakon", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
 }
 
 fn with_leyline() -> (Game, PermId) {

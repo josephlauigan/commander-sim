@@ -679,11 +679,27 @@ fn courser_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || p != owner(g, src) {
         return Ok(());
     }
-    let Some(c) = g.player(p).cmds_in_zone().max_by_key(|&c| g.db.get(c).cmc) else { return Ok(()) };
+    let Some(mut c) = g.player(p).cmds_in_zone().max_by_key(|&c| g.db.get(c).cmc) else { return Ok(()) };
     if !trigger_window(g, p, Some(src), "your commander onto the battlefield", Some(6.0))?
         || !g.player(p).cmd_zone_of(c)
     {
         return Ok(());
+    }
+    if crate::human::is_human(g, p) {
+        // "you may": a person is asked, and which commander when two or more wait in the command zone
+        let cmds: Vec<CardId> = g.player(p).cmds_in_zone().collect();
+        let pick = if let [only] = cmds[..] {
+            let prompt = format!("Hellkite Courser: put {} onto the battlefield?", cname(g, only));
+            crate::human::choices::yes_no(g, p, &prompt)?.then_some(only)
+        } else {
+            let labels: Vec<String> = cmds.iter().map(|&x| crate::human::choices::card_label(g, x)).collect();
+            let prompt = "Hellkite Courser: put which commander onto the battlefield?";
+            crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("none"), None)?.map(|k| cmds[k])
+        };
+        match pick {
+            Some(x) => c = x,
+            None => return Ok(()),
+        }
     }
     g.player_mut(p).set_cmd_zone(c, false);
     let n = enter(g, p, c, Enter::default())?;

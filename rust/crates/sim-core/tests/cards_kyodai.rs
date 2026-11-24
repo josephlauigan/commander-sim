@@ -18,7 +18,7 @@ const ELESH: &str = "Elesh Norn, Mother of Machines";
 const ASK: &str = "Kyodai: which permanent gains indestructible?";
 
 fn tbl() -> Game {
-    table(&["kyodai", "seph"])
+    table(&["arzakon", "seph"])
 }
 
 fn live(g: &Game, m: PermId) -> bool {
@@ -314,6 +314,7 @@ fn panharmonicon_two_targets() {
 #[test]
 fn recast_from_command_zone_new_grant() {
     let mut g = tbl();
+    set_commander(&mut g, P0, KYODAI); // the deck's commander is Arzakon; Kyodai sits in the 99
     let elf = perm(&mut g, P0, "Llanowar Elves");
     lands(&mut g, P0, "Plains", 8, false);
     let cmd = g.player(P0).cmd;
@@ -483,5 +484,5 @@ fn leyline_scan_is_skipped_when_no_deck_holds_one() {
     assert!(g.hooks.contains(&l), "the scan would find it");
     assert!(!sim_core::engine::chars::leyline(&g, P0), "the scan did not run");
     let g = tbl();
-    assert!(g.leyline_deck, "the kyodai deck plays Leyline");
+    assert!(g.leyline_deck, "the arzakon deck plays Leyline");
 }

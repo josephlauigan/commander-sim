@@ -87,17 +87,17 @@ fn adv_cali3_every_four_seat_mode_is_refused_by_format_cali_alone() {
 /// the same modes for a Cali deck: `--calibrate` and the oracle name the deck; `--realism`/`--fit` with a deck keep their
 /// older "drop --deck" message (the builder's open question 3) and play nothing
 #[test]
-fn adv_cali3_four_seat_modes_with_kyodai_never_reach_a_game() {
+fn adv_cali3_four_seat_modes_with_arzakon_never_reach_a_game() {
     for a in [
-        &["--deck", "kyodai", "--calibrate", "within"][..],
-        &["--deck", "kyodai", "--calibrate", "ordering", "--pool", "t5"][..],
-        &["--deck", "kyodai", "--calibrate", "all", "--pool", "t6"][..],
-        &["--mulligan-oracle", "kyodai", "--hands", "1"][..],
-        &["--mulligan-oracle", "kyodai", "--vs-tier", "--hands", "1"][..],
-        &["--mulligan-oracle", "t6, kyodai", "--vs-tier"][..],
-        &["--mulligan-oracle", " kyodai ,yoshimaru"][..],
-        &["--deck", "kyodai", "--realism", "--pool", "t5"][..],
-        &["--deck", "kyodai", "--fit", "--pool", "t5"][..],
+        &["--deck", "arzakon", "--calibrate", "within"][..],
+        &["--deck", "arzakon", "--calibrate", "ordering", "--pool", "t5"][..],
+        &["--deck", "arzakon", "--calibrate", "all", "--pool", "t6"][..],
+        &["--mulligan-oracle", "arzakon", "--hands", "1"][..],
+        &["--mulligan-oracle", "arzakon", "--vs-tier", "--hands", "1"][..],
+        &["--mulligan-oracle", "t6, arzakon", "--vs-tier"][..],
+        &["--mulligan-oracle", " arzakon ,yoshimaru"][..],
+        &["--deck", "arzakon", "--realism", "--pool", "t5"][..],
+        &["--deck", "arzakon", "--fit", "--pool", "t5"][..],
     ] {
         let (code, out, err) = sim(a);
         assert_eq!(code, 1, "{a:?}\n{out}\n{err}");
@@ -144,45 +144,45 @@ fn adv_cali3_unknown_format_names() {
 /// `--deck` is limited to JD's decks: a pool deck key is a usage error even with `--format cali`
 #[test]
 fn adv_cali3_a_pool_deck_is_not_a_deck_argument() {
-    for k in ["dack-fayden-white-stax", "krenko-mono-red-goblins", "Kyodai", "thanos"] {
+    for k in ["dack-fayden-white-stax", "krenko-mono-red-goblins", "Arzakon", "kyodai", "thanos"] {
         rejected(&["--deck", k, "--pool", "t6", "--format", "cali", "--quiet", "--games", "1"]);
     }
 }
 
 /// goldfish lists at a Cali table: Dack inside `t6` or named, anywhere in the list, refused with the card named; a Cali
-/// deck inside a list at a Commander table is refused naming kyodai (and not yshtola)
+/// deck inside a list at a Commander table is refused naming arzakon (and not yshtola)
 #[test]
 fn adv_cali3_goldfish_lists_refuse_what_the_table_does_not_admit() {
-    for spec in ["t6", "dack-fayden-white-stax", "yshtola,t6", "t6,kyodai", "kyodai , dack-fayden-white-stax"] {
+    for spec in ["t6", "dack-fayden-white-stax", "yshtola,t6", "t6,arzakon", "arzakon , dack-fayden-white-stax"] {
         let err = refused(&["--goldfish", spec, "--format", "cali", "--quiet"], &["--goldfish:", "Tabernacle"]);
         assert!(err.contains("dack-fayden-white-stax"), "{spec}: {err}");
     }
-    for spec in ["yshtola,kyodai", "kyodai,yshtola", "t6,kyodai,yshtola"] {
+    for spec in ["yshtola,arzakon", "arzakon,yshtola", "t6,arzakon,yshtola"] {
         let err = refused(
             &["--goldfish", spec, "--format", "commander", "--quiet"],
-            &["--goldfish: kyodai", "Cali Commander"],
+            &["--goldfish: arzakon", "Cali Commander"],
         );
         assert!(!err.contains("yshtola cannot"), "{spec}: {err}");
     }
     // unknown keys are still refused with the key list
-    refused(&["--goldfish", "kyodai,nothing", "--quiet"], &["nothing"]);
+    refused(&["--goldfish", "arzakon,nothing", "--quiet"], &["nothing"]);
     refused(&["--goldfish", "", "--quiet"], &[]);
     refused(&["--goldfish", ",", "--quiet"], &[]);
 }
 
-/// searchtest and swaptest: the tier rule still refuses a tier outside kyodai's before any game; swaptest takes pool decks
-/// only (kyodai is not one)
+/// searchtest and swaptest: the tier rule still refuses a tier outside arzakon's before any game; swaptest takes pool decks
+/// only (arzakon is not one)
 #[test]
 fn adv_cali3_searchtest_and_swaptest_refusals_before_a_game() {
     for t in ["t1", "t2", "t3", "t4"] {
-        let (code, out, err) = sim(&["searchtest", "kyodai", t, "1"]);
-        assert_eq!(code, 1, "searchtest kyodai {t}\n{out}\n{err}");
+        let (code, out, err) = sim(&["searchtest", "arzakon", t, "1"]);
+        assert_eq!(code, 1, "searchtest arzakon {t}\n{out}\n{err}");
         assert!(!err.contains("panicked"), "{err}");
         no_game(&[], &out);
     }
-    let (code, out, err) = sim(&["searchtest", "kyodai", "t9", "1"]);
+    let (code, out, err) = sim(&["searchtest", "arzakon", "t9", "1"]);
     assert_eq!(code, 1, "{out}\n{err}");
-    let (code, out, err) = sim(&["swaptest", "kyodai", "t5", "1", "Sol Ring>Swiftfoot Boots"]);
+    let (code, out, err) = sim(&["swaptest", "arzakon", "t5", "1", "Sol Ring>Swiftfoot Boots"]);
     assert_eq!(code, 1, "{out}\n{err}");
     assert!(err.contains("no pool deck") && !err.contains("panicked"), "{err}");
 }
@@ -196,6 +196,6 @@ fn adv_cali3_cards_listing_is_not_affected_by_format() {
         assert_eq!(code, 0, "{f}\n{out}\n{err}");
     }
     // the coverage / model listing of a Cali deck at its own table is refused only when it would seat the deck wrongly
-    let (code, out, err) = sim(&["--deck", "kyodai", "--cards", "--format", "commander"]);
+    let (code, out, err) = sim(&["--deck", "arzakon", "--cards", "--format", "commander"]);
     assert!(code == 0 || code == 1, "{out}\n{err}");
 }

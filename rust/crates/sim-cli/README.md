@@ -16,6 +16,7 @@ cargo build --release -p sim-cli          # -> rust/target/release/commander-sim
 ```
 commander-sim --deck sauron --pool all                          # one of your decks against its own tiers
 commander-sim --deck sauron --pool t3 --swap "Spell Pierce=>Negate"   # paired A/B: the list and the swap, same seeds
+commander-sim --deck sauron --pool t3 --swap-commander "Old Cmdr=>New Cmdr"   # paired A/B with another commander
 commander-sim --all-decks --pool all                            # every deck of yours, each against its own tiers
 commander-sim --deck sauron --pool t3 --analyze                   # how it wins and loses, plan timing, card report
 commander-sim --deck sauron --pool t3 --trace 12                  # play-by-play of one game (seed offset 12)
@@ -33,6 +34,7 @@ and is used only when JD asks (CLAUDE.md). The loose interaction profile is the 
 | --- | --- |
 | `--deck KEY` | one of your decks (`src/decks.rs` `MINE`) |
 | `--swap "OUT=>IN"` | repeat for several: a paired run of the list and the variant. Runs a preflight first (`--no-preflight`, `--preflight-only`) and prints the swapped cards' breakdown after (`--no-explain`) |
+| `--swap-commander "OLD=>NEW"` | once: a paired run whose variant has another commander (NEW takes OLD's slot, so both lists get the same library from the same seed). Checks the pair before any game; combines with `--swap`; preflight and breakdown as for `--swap` (`src/swapcmd.rs`) |
 | `--pool t0..t6\|all` | the tier the three opponents come from; `all` = the deck's own tiers |
 | `--all-decks` | every deck of yours against its own tiers |
 | `--calibrate within\|ordering\|all` | within-tier balance, each tier against the one below |

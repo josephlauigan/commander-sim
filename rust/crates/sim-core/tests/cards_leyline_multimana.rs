@@ -8,7 +8,7 @@ use sim_core::cards::Colors;
 use sim_core::engine::mana::{self, Shape, Source};
 
 fn game() -> Game {
-    table(&["kyodai", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
+    table(&["arzakon", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
 }
 
 fn with_leyline() -> Game {

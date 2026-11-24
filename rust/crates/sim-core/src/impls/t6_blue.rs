@@ -80,6 +80,15 @@ fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
 /// itself goes to the graveyard afterwards (it is not shuffled in). A card held from an opponent (Opposition Agent
 /// style) goes into its owner's library.
 fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    twister_all(g, p)?;
+    Ok("gy")
+}
+
+/// "Each player shuffles their hand and graveyard into their library, then draws seven cards": Timetwister's resolution,
+/// and Arzakon's -7 (impls/arzakon.rs). `p` (the controller) goes first, then the others in turn order. A card held from an
+/// opponent (Opposition Agent style) goes into its owner's library; a commander card in a hand goes to the command zone
+/// instead (CR 903.9b: its owner may, and the AI always does).
+pub(crate) fn twister_all(g: &mut Game, p: PlayerId) -> Res {
     let mut order = vec![p];
     order.extend(g.after(p).filter(|&q| g.player(q).alive));
     for &q in &order {
@@ -89,7 +98,11 @@ fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res
             let owner = g.player_mut(q).stolen.swap_remove(&c).unwrap_or(q);
             g.player_mut(q).agent_ids.retain(|&x| x != c);
             g.player_mut(q).impulse.retain(|&x| x != c);
-            g.player_mut(owner).library.push(c);
+            if g.player(owner).is_commander(c) {
+                g.player_mut(owner).set_cmd_zone(c, true); // 903.9b
+            } else {
+                g.player_mut(owner).library.push(c);
+            }
         }
     }
     for &q in &order {
@@ -101,7 +114,7 @@ fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res
             break;
         }
     }
-    Ok("gy")
+    Ok(())
 }
 
 // ================================================================== Demonic Counsel

@@ -5,7 +5,7 @@ Put creatures with enter effects on the battlefield, then use them again, and ba
 | | |
 |---|---|
 | **Commanders** | Yoshimaru, Ever Faithful ({W}, 1/1; white) and Tymna the Weaver ({1}{W}{B}, 2/2 lifelink; white-black). Both have Partner; the colour identity is white-black |
-| **Bracket** | 4 (9 Game Changers: Mana Vault, Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal, Teferi's Protection, The One Ring, Orcish Bowmasters, Chrome Mox) |
+| **Bracket** | 4 (8 Game Changers: Mana Vault, Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal, The One Ring, Orcish Bowmasters, Chrome Mox) |
 | **Simulator** | Deck key `yoshimaru`, tiers t4-t5; findings in `audit/yoshimaru/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/yoshimaru.toml`. No sims yet |
 
 ## Strategy
@@ -214,7 +214,7 @@ Two cards, 8 mana ({2}{B} and {4}{B}), over one turn or two. Vito: *Whenever you
 3. **Start the loop.** The cast of the second piece does not start it. We need one life gain, or one point of life lost by an opponent, after both are on the battlefield: Elas's gain for a creature entering, Haliya's gain for a creature or artifact entering, The Wandering Emperor's -2 (it gains 2), a lifelink hit from Tymna, Solitude or Archangel of Thune, any combat damage to an opponent, Sword of Fire and Ice's 2 damage to an opponent, an Orcish Bowmasters or Walking Ballista ping at an opponent, or an opponent paying life for a fetch land or a shock land. A cheap start with Elas out is a one-drop creature such as Giver of Runes or Skrelv ({W}): Elas gains 1 life when it enters.
 4. **The loop.** An opponent loses N, Blood gains us N, Vito makes an opponent lose N, Blood gains us N again. Both triggers are mandatory, and each Vito trigger targets one opponent; when that opponent dies, the next trigger targets another. The loop ends only when every opponent is dead.
 
-**What stops it:** a counterspell on the second piece; removal on Vito or on Blood (a trigger already on the stack still resolves, so one more cycle can happen before the loop stops); an effect that stops life changes (including our own Teferi's Protection); an opponent who can't lose life or can't be targeted.
+**What stops it:** a counterspell on the second piece; removal on Vito or on Blood (a trigger already on the stack still resolves, so one more cycle can happen before the loop stops); an effect that stops life changes; an opponent who can't lose life or can't be targeted.
 
 **Finding it:** Enlightened Tutor finds Exquisite Blood; Demonic Tutor, Vampiric Tutor and Imperial Seal find either piece. Nothing else finds Vito: he is a creature that is neither an artifact nor an enchantment, and his toughness of 3 is out of Recruiter of the Guard's range.
 
@@ -229,7 +229,7 @@ Two cards, 9 mana: Heliod 3, Walking Ballista with X = 2 for 4, and {1}{W} for l
 
 **Why X = 2:** at X = 1, removing the counter makes Ballista a 0/0 that dies, so Heliod's counter has no Ballista to land on and the loop ends after one cycle.
 
-**What stops it:** removal on Ballista before it has lifelink (answer by pinging with every counter in response); removal on Ballista in response to Heliod's trigger (the counter has no target); Teferi's Protection or a life-gain prevention effect; a counterspell. Heliod himself is indestructible, so only exile or bounce stops him. Do not put Sword of Hearth and Home on Ballista: its protection from white stops Heliod's lifelink from targeting it.
+**What stops it:** removal on Ballista before it has lifelink (answer by pinging with every counter in response); removal on Ballista in response to Heliod's trigger (the counter has no target); a life-gain prevention effect; a counterspell. Heliod himself is indestructible, so only exile or bounce stops him. Do not put Sword of Hearth and Home on Ballista: its protection from white stops Heliod's lifelink from targeting it.
 
 **Finding it:** Enlightened Tutor finds either (both are artifact or enchantment cards); Ranger-Captain of Eos finds Ballista (mana value 0 in the library); Demonic Tutor, Vampiric Tutor and Imperial Seal find either.
 
@@ -256,7 +256,7 @@ Two cards that blink each other. Restoration Angel: *When this creature enters, 
 4. **Flash timing.** Restoration Angel has flash. With Felidar already on the battlefield, cast Restoration Angel at an opponent's end step and run the loop there, with the payoff already out.
 5. **Ending the loop.** Aim the last Felidar trigger at Recruiter of the Guard or Cloud (a search), Solitude or Skyclave Apparition (removal), or decline the "may".
 
-Cost: 8 mana for the two cards, then the payoff already on the battlefield. The worst case is 13 mana and four cards (Restoration Angel 4, Felidar 4, Elas 2, Vito 3); it is a late finisher or a finish when two of the pieces are already on the table. **What stops it:** removal on either creature in response to a trigger (the trigger has no target), an effect that stops enter triggers, or removal on the payoff. Teferi's Protection, again, stops the life changes.
+Cost: 8 mana for the two cards, then the payoff already on the battlefield. The worst case is 13 mana and four cards (Restoration Angel 4, Felidar 4, Elas 2, Vito 3); it is a late finisher or a finish when two of the pieces are already on the table. **What stops it:** removal on either creature in response to a trigger (the trigger has no target), an effect that stops enter triggers, or removal on the payoff.
 
 #### The grind
 
@@ -302,7 +302,7 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 - **Go now** when a line is complete (Line A with a start in hand, Line B with 9 mana, Line D at an opponent's end step), or when the table has tapped out.
 - **Hold** the second piece of Line A until a start is ready; every turn Vito or Blood sits alone is a turn for an answer to find it.
 - **Hold** a blink spell for a removal spell or a sweeper when a creature that matters is on the table: the spell is worth more as an answer than as a second enter.
-- **Hold** Eerie Interlude and Teferi's Protection when the table plays sweepers, and keep Mithril Coat's mana up (or Skrelv untapped and not summoning sick) when a legend is the target.
+- **Hold** Eerie Interlude and Akroma's Will when the table plays sweepers, and keep Mithril Coat's mana up (or Skrelv untapped and not summoning sick) when a legend is the target.
 - **Hold** Wrath of God until a legend can be protected (see Protecting the commanders).
 
 ### Protecting the commanders and the table
@@ -321,12 +321,14 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 | Swiftfoot Boots | {1} to equip | Removal that targets the carrier on our own turn: hexproof, equipped in response with Forge Anew (equip is a sorcery otherwise) | Sweepers; anything on an opponent's turn (Forge Anew lets us equip at instant speed only during our turn); removal already on the stack without Forge Anew |
 | A Sword, with Forge Anew | {2} to equip, or {0} for the first | Removal of the Sword's protected colours aimed at the carrier during our own turn: equip in response (Feast and Famine: black and green; Fire and Ice: red and blue; Hearth and Home: green and white) | Other colours, sweepers, and anything on an opponent's turn |
 | Flawless Maneuver | {2}{W}, free with a commander | Creatures gain indestructible until end of turn: a destroy sweeper | -X/-X (indestructible does not save a creature whose toughness reaches 0, a rules point), exile |
-| Teferi's Protection | {2}{W} | Everything on our side: our permanents phase out and we gain protection from everything until our next turn | Our life can't change in that time, so no life loop and Tymna can't pay |
+| Akroma's Will | {3}{W} | Creatures we control gain indestructible and protection from each colour (and lifelink) until end of turn: a destroy sweeper, a damage sweeper, targeted removal. With a commander on the battlefield (Yoshimaru or Tymna) we may choose both modes, so they also gain flying, vigilance and double strike | -X/-X, exile and bounce sweepers (Farewell, Toxic Deluge); it covers creatures only, not our other permanents |
 | Plaza of Heroes | {3}, {T}, exile | A legendary creature gains hexproof and indestructible until end of turn | Anything that is not a legendary creature |
+
+**Akroma's Will, protection and finisher.** Cast in response to a destroy or damage sweeper or to removal, it gives our creatures indestructible and protection from each colour. With Yoshimaru or Tymna on the battlefield (one is enough), choose both modes and it is also a finisher: double strike doubles the combat triggers of Sword of Fire and Ice, Sword of Feast and Famine and Sword of Hearth and Home, and double strike with lifelink feeds the life-gain kills (Vito with Exquisite Blood, Heliod, Archangel of Thune). It is an instant, so cast it before combat damage and after blockers.
 
 A commander in the command zone can be recast for its tax. Yoshimaru is cheap to recast but loses his counters.
 
-**Sweepers, and what each answer does not stop.** A destroy sweeper (a Wrath of God type) is stopped by Flawless Maneuver, Mithril Coat on a legend, Plaza on a legend, Eerie Interlude and Teferi's Protection. A -X/-X sweeper is stopped only by Eerie Interlude and Teferi's Protection (an instant blink does not help: the creature returns before the sweeper resolves, so it still gets -X/-X). Exile and bounce effects are stopped by the same two. After a wipe the deck rebuilds with its noncreature permanents: The Wandering Emperor, Teleportation Circle, The One Ring, Heliod (not a creature unless our devotion to white is five or more), Exquisite Blood, Conjurer's Closet (it needs a creature to blink), every Equipment (they stay on the battlefield), Court of Ardenvale (it returns a permanent card with mana value 3 or less each upkeep and survives a creature sweeper), and Takenuma's channel (returns a creature or planeswalker from the graveyard to hand). Most draw engines are creatures, so a wipe also costs card flow, apart from The One Ring and Court.
+**Sweepers, and what each answer does not stop.** A destroy sweeper (a Wrath of God type) is stopped by Flawless Maneuver, Mithril Coat on a legend, Plaza on a legend, Eerie Interlude and Akroma's Will. A -X/-X sweeper is stopped only by Eerie Interlude (an instant blink does not help: the creature returns before the sweeper resolves, so it still gets -X/-X). Exile and bounce effects are stopped by Eerie Interlude too. Nothing in the deck gives total protection any more, so Akroma's Will does nothing against exile or -X/-X. After a wipe the deck rebuilds with its noncreature permanents: The Wandering Emperor, Teleportation Circle, The One Ring, Heliod (not a creature unless our devotion to white is five or more), Exquisite Blood, Conjurer's Closet (it needs a creature to blink), every Equipment (they stay on the battlefield), Court of Ardenvale (it returns a permanent card with mana value 3 or less each upkeep and survives a creature sweeper), and Takenuma's channel (returns a creature or planeswalker from the graveyard to hand). Most draw engines are creatures, so a wipe also costs card flow, apart from The One Ring and Court.
 
 **Our own Wrath of God can be one-sided.** Cast it, hold priority, and cast Flawless Maneuver (free with a commander) in response; Mithril Coat and Plaza of Heroes keep a single legend alive; Equipment stays on the battlefield; Court of Ardenvale rebuilds. It does not touch opposing indestructible creatures.
 
@@ -336,7 +338,7 @@ A commander in the command zone can be recast for its tax. Yoshimaru is cheap to
 - **Ranger-Captain of Eos** ({1}{W}{W}, 3/3): *Sacrifice this creature: Your opponents can't cast noncreature spells this turn.* It works at instant speed on their turn, but it stops only noncreature spells (not creature spells, so a combo that runs on a creature spell is not stopped, and not abilities). Blink makes it reusable.
 - **Instant removal:** Swords to Plowshares, Path to Exile, Deadly Rollick, Stroke of Midnight ({2}{W}: destroy target nonland permanent; its controller creates a 1/1 white Human creature token, so it also answers a noncreature combo piece), and the flash creatures Solitude, Orcish Bowmasters (an X/1 piece) and The Wandering Emperor (-2 on a tapped creature).
 
-**This is a weakness.** The deck has no board shield for its own win turn: Silence cast that turn is the only protection against an opponent's instant-speed answer, and abilities (an opponent's equip, a planeswalker, a land) are not stopped. Teferi's Protection and Flawless Maneuver do not stop an opponent's combo.
+**This is a weakness.** The deck has no board shield for its own win turn: Silence cast that turn is the only protection against an opponent's instant-speed answer, and abilities (an opponent's equip, a planeswalker, a land) are not stopped. Flawless Maneuver and Akroma's Will do not stop an opponent's combo.
 
 ### Mulligans
 
@@ -395,7 +397,7 @@ Yoshimaru and Tymna start in the command zone, so no tutor finds them. The tutor
 | An opponent combo is about to win | Demonic Tutor on our turn; Vampiric Tutor at their end step | Silence; instant removal for the piece (Stroke of Midnight reaches a noncreature piece) | Mana spent on a tutor is mana not spent on the stop. Ranger-Captain's sacrifice works on their turn if it is already out |
 | A creature that decides the game | Recruiter of the Guard | Solitude or Skyclave Apparition (mana value 4 or less) | Solitude can be evoked for free |
 | An artifact or enchantment stax piece | Recruiter of the Guard; Demonic Tutor | Witch Enchanter (artifact or enchantment only); Stroke of Midnight (any nonland permanent) | Witch Enchanter is a creature cast at sorcery speed; Stroke of Midnight is an instant but leaves its controller a 1/1 Human. Enlightened Tutor cannot find either |
-| A sweeper is coming | Demonic Tutor, Vampiric Tutor; Enlightened Tutor or Steelshaper's Gift for Mithril Coat | Eerie Interlude, Teferi's Protection, Flawless Maneuver or Mithril Coat | Match the answer to the sweeper (see Protecting the commanders) |
+| A sweeper is coming | Demonic Tutor, Vampiric Tutor; Enlightened Tutor or Steelshaper's Gift for Mithril Coat | Eerie Interlude, Akroma's Will, Flawless Maneuver or Mithril Coat | Match the answer to the sweeper (see Protecting the commanders) |
 | Equipment in hand, nothing that connects | Recruiter of the Guard; Demonic Tutor | A flier (Flickerwisp, Restoration Angel) or Cloud | Swords on Tymna turn off Delney; Swiftfoot Boots and Mithril Coat are the exceptions |
 | Equipment on the battlefield, equip cost too high | Recruiter of the Guard; Enlightened Tutor | Puresteel Paladin or Kor Outfitter; Forge Anew | Puresteel needs three artifacts; Ardenn also attaches for free |
 | A legend needs a shield | Steelshaper's Gift; Enlightened Tutor | Mithril Coat | Flash, so it can wait for the removal spell |
@@ -441,7 +443,7 @@ The list is exactly 100 cards.
 **Land count and early mana** (hypergeometric, exact, from the 98-card library):
 
 - Three or more lands by turn 3 on the play (9 cards): 69.0% (76.7% on the draw). Four or more by turn 4 (10 cards): 50.9% (60.3% on the draw). A 2-to-4-land opening hand: 73.4%.
-- 35 lands, 6 rocks and Wayfarer's Bauble smooth this out. 16 of the 63 nonland cards cost 0 or 1 (four of them rocks), 14 cost 4 or more and the payoffs cost 5; most of the curve is 3 and 4 (28 cards), and the Equipment (cast {3}, equip {2} or {3}) and Court of Ardenvale use the extra mana.
+- 35 lands, 6 rocks and Wayfarer's Bauble smooth this out. 16 of the 63 nonland cards cost 0 or 1 (four of them rocks), 15 cost 4 or more and the payoffs cost 5; most of the curve is 3 and 4 (28 cards), and the Equipment (cast {3}, equip {2} or {3}) and Court of Ardenvale use the extra mana.
 - **Mana through turn 5 (an estimate).** The deck typically has 4 to 5 mana through turn 5 even with 35 lands. An outside goldfish model (an estimate, not the simulator) gave a mean of about 5.3 mana on turn 6 on the play for 35 lands plus Wayfarer's Bauble. Do not count on more than that: the mana is spent on equip costs, Court and the second spell each turn.
 - **Yoshimaru turn 1:** 87.0% on the play and 90.4% on the draw (an untapped white land among the 24, lands only; see The commanders for Chrome Mox).
 - **Tymna turn 3 (on the play, 9 cards):** the chance that two different lands among the 9 cards make white and black is 79.1%, and 83.8% on the draw (10 cards). This counts Plaza of Heroes for Tymna (she is a legendary spell). It is necessary but not sufficient: the third land is also needed (at least three lands in the 9 cards with a white and a black: 64.3%; 72.1% on the draw), and a Signet, Chrome Mox or Mox Amber can supply it.
@@ -449,13 +451,13 @@ The list is exactly 100 cards.
 
 **Life costs.** Caves of Koilos 1 per coloured tap; Marsh Flats and Arid Mesa 1; Godless Shrine 2 (or tapped); Witch Enchanter's land side 3 (or tapped); Mana Vault 1 damage in the draw step while tapped; Vampiric Tutor and Imperial Seal 2; Tymna X per trigger (and per doubled trigger); Lotho 1 per trigger, on any player's second spell each turn (2 per spell under Delney); The One Ring 1 per burden counter each upkeep. Offsets: Tymna's lifelink, Elas, Haliya (also for each Treasure and each Equipment), Solitude's lifelink and Heliod's lifelink on a creature of our choice. Keep an eye on life at a 40-life table. Lotho's Treasures are one-shot mana of any colour: they fix white and black and can pay for a second spell, but they come from a trigger the whole table can set off, so they are not counted among the colour sources above.
 
-**Curve** (63 nonland cards in the 98; Walking Ballista counts 0, Deadly Rollick 4 and Flawless Maneuver 3 at their printed costs, Solitude 5; Witch Enchanter is counted as a land). Average mana value 2.56 (161 over 63). 29 of 63 cost 0 to 2.
+**Curve** (63 nonland cards in the 98; Walking Ballista counts 0, Deadly Rollick 4 and Flawless Maneuver 3 at their printed costs, Solitude 5; Witch Enchanter is counted as a land). Average mana value 2.57 (162 over 63). 29 of 63 cost 0 to 2.
 
 - **0 (3):** Chrome Mox, Mox Amber, Walking Ballista
 - **1 (13):** Enlightened Tutor, Ephemerate, Giver of Runes, Imperial Seal, Mana Vault, Path to Exile, Silence, Skrelv, Defector Mite, Sol Ring, Steelshaper's Gift, Swords to Plowshares, Vampiric Tutor, Wayfarer's Bauble
 - **2 (13):** Arcane Signet, Cloud, Demonic Tutor, Elas il-Kor, Kor Outfitter, Lotho, Orcish Bowmasters, Orzhov Signet, Puresteel Paladin, Sting, Stoneforge Mystic, Sunpearl Kirin, Swiftfoot Boots
-- **3 (20):** Adeline, Ardenn, Buster Sword, Delney, Eerie Interlude, Flawless Maneuver, Flickerwisp, Forge Anew, Haliya, Heliod, Mithril Coat, Ranger-Captain of Eos, Recruiter of the Guard, Skyclave Apparition, Stroke of Midnight, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Teferi's Protection, Vito
-- **4 (8):** Court of Ardenvale, Deadly Rollick, Felidar Guardian, Restoration Angel, Teleportation Circle, The One Ring, The Wandering Emperor, Wrath of God
+- **3 (19):** Adeline, Ardenn, Buster Sword, Delney, Eerie Interlude, Flawless Maneuver, Flickerwisp, Forge Anew, Haliya, Heliod, Mithril Coat, Ranger-Captain of Eos, Recruiter of the Guard, Skyclave Apparition, Stroke of Midnight, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Vito
+- **4 (9):** Akroma's Will, Court of Ardenvale, Deadly Rollick, Felidar Guardian, Restoration Angel, Teleportation Circle, The One Ring, The Wandering Emperor, Wrath of God
 - **5 (6):** Archangel of Thune, Conjurer's Closet, Elesh Norn, Exquisite Blood, Gandalf the White, Solitude
 
 **Card types.** As listed under Decklist by type: 28 creatures (counting Witch Enchanter's creature face, Heliod as an enchantment creature, and Walking Ballista and Skrelv as artifact creatures), 1 planeswalker, 4 enchantments, 16 artifacts, 11 instants, 4 sorceries and 34 lands; counted as a land, Witch Enchanter // Witch-Blessed Meadow makes it 35 lands and 27 creatures. Counting Walking Ballista and Skrelv, the list has 18 artifacts and 7 Equipment.
@@ -470,17 +472,17 @@ The list is exactly 100 cards.
 - **Answers to noncreature permanents are thin:** Stroke of Midnight, Skyclave Apparition (mana value 4 or less), Witch Enchanter (artifact or enchantment).
 - **Other removal:** The Wandering Emperor (-2 exiles a tapped creature), Eiganjo's channel ({2}{W}, discard: 4 damage to an attacking or blocking creature, {1} less per legendary creature we control), Sword of Fire and Ice's 2 damage, Walking Ballista and Orcish Bowmasters pings.
 - **Sweepers (1):** Wrath of God, which can be one-sided (see Protecting the commanders).
-- **Protection (6):** Teferi's Protection, Flawless Maneuver, Giver of Runes, Mithril Coat, Skrelv, Swiftfoot Boots; plus the blink spells, the Swords' protection (with Forge Anew in response) and Plaza of Heroes.
+- **Protection (6):** Akroma's Will, Flawless Maneuver, Giver of Runes, Mithril Coat, Skrelv, Swiftfoot Boots; plus the blink spells, the Swords' protection (with Forge Anew in response) and Plaza of Heroes.
 - **Stops for the win turn:** Silence, Ranger-Captain of Eos; no board shield.
 - **No counterspells and no graveyard hate.**
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with nine Game Changers: **Mana Vault**, **Demonic Tutor**, **Vampiric Tutor**, **Enlightened Tutor**, **Imperial Seal**, **Teferi's Protection**, **The One Ring**, **Orcish Bowmasters** and **Chrome Mox**. It has no free counterspell, no mass land destruction and no extra turns.
+**Bracket 4,** with eight Game Changers: **Mana Vault**, **Demonic Tutor**, **Vampiric Tutor**, **Enlightened Tutor**, **Imperial Seal**, **The One Ring**, **Orcish Bowmasters** and **Chrome Mox**. It has no free counterspell, no mass land destruction and no extra turns.
 
 Disclose before the game:
 
-- **The nine Game Changers** above.
+- **The eight Game Changers** above.
 - **Four infinite or game-ending lines:** Vito with Exquisite Blood; Heliod with Walking Ballista (with {1}{W} for lifelink); Archangel of Thune with Walking Ballista and a lifelink source; and the Restoration Angel and Felidar Guardian loop (infinite life with Elas il-Kor or Haliya, and a kill with Vito).
 - **Tutors:** four any-card or type tutors (Demonic, Vampiric, Enlightened, Imperial Seal), two creature searchers (Ranger-Captain of Eos, Recruiter of the Guard) and three Equipment searchers (Cloud, Stoneforge Mystic, Steelshaper's Gift).
 - **Free spells:** Deadly Rollick and Flawless Maneuver are free with a commander on the battlefield, and Solitude can be evoked by exiling a white card. Fast mana: Sol Ring, Mana Vault, Mox Amber and Chrome Mox (exile a card from hand).
@@ -501,7 +503,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (16).** Arcane Signet; Buster Sword; Chrome Mox; Conjurer's Closet; Mana Vault; Mithril Coat; Mox Amber; Orzhov Signet; Sol Ring; Sting, the Glinting Dagger; Swiftfoot Boots; Sword of Feast and Famine; Sword of Fire and Ice; Sword of Hearth and Home; The One Ring; Wayfarer's Bauble
 
-**Instants (11).** Deadly Rollick; Eerie Interlude; Enlightened Tutor; Ephemerate; Flawless Maneuver; Path to Exile; Silence; Stroke of Midnight; Swords to Plowshares; Teferi's Protection; Vampiric Tutor
+**Instants (11).** Akroma's Will; Deadly Rollick; Eerie Interlude; Enlightened Tutor; Ephemerate; Flawless Maneuver; Path to Exile; Silence; Stroke of Midnight; Swords to Plowshares; Vampiric Tutor
 
 **Sorceries (4).** Demonic Tutor; Imperial Seal; Steelshaper's Gift; Wrath of God
 
@@ -511,6 +513,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ```
 1 Adeline, Resplendent Cathar
+1 Akroma's Will
 1 Arcane Signet
 1 Archangel of Thune
 1 Ardenn, Intrepid Archaeologist
@@ -575,7 +578,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sword of Hearth and Home
 1 Swords to Plowshares
 1 Takenuma, Abandoned Mire
-1 Teferi's Protection
 1 Teleportation Circle
 1 The One Ring
 1 The Wandering Emperor

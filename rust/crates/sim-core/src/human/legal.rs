@@ -232,6 +232,10 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
     if name == "Return the Favor" {
         return Some("Return the Favor targets a spell: cast it in response to one.".into());
     }
+    if name == "Deflecting Swat" && g.stack.is_empty() {
+        // its target is a spell or ability on the stack; in response to one it is `human::protect::deflecting_swat`
+        return Some("Deflecting Swat changes the target of a spell or ability: cast it in response to one.".into());
+    }
     if !instant_speed(g, p, c) && name != "Necromancy" {
         // Necromancy: "as though it had flash"
         if let Some(why) = sorcery_timing(g, p) {

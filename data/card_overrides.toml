@@ -261,6 +261,11 @@ dsl = []
 status = "Full"
 note = "Aura: the creature can't attack or block, and its activated abilities can't be activated (mana abilities too)"
 
+["Arzakon"]
+dsl = []
+status = "Full"
+note = "Legendary planeswalker commander (loyalty 4; the engine casts, taxes and returns any commander card, and a planeswalker deals no commander damage); card code in impls/arzakon.rs on the walker framework: +2: 3 damage to any other target (player, creature, planeswalker or battle: model_gaps_a4::ping, the target committed on activation and re-checked as it resolves; the AI takes an opponent at 3 life or less, else a creature 3 damage kills or a planeswalker at 3 loyalty or less when worth 3+, else the lowest-life opponent's face; a battle is a legal target for a person and loses defense counters, the AI never aims at one); -3: a Black Lotus token (the Garth One-Eye token: three mana of one colour, sacrificed as it taps; the AI scores what the mana enables this turn via brain::extra_mana_play, else banks it while loyalty allows); -7: Timetwister's resolution (t6_blue::twister_all; the AI wheels only against no draw punisher, with at most 2 nonland cards and a hand 3+ smaller than an opponent's); a person is asked the +2's target before the loyalty is paid (human/walkers.rs). Accepted limits: Rings of Brighthearth does not copy its abilities for the AI (a person's copy asks again); planeswalker attacks are assigned after blockers; generic burn never aims at planeswalkers; damage to planeswalkers skips prevention and ward; opponents over-value it (the symmetric -7 reads as a game-ending ultimate); the Lotus token is spent like a Lotus Petal (nothing saves it for the combo turn); the AI rules and the commander priority are provisional, never tuned by a sim"
+
 ["Ashnod's Altar"]
 status = "Full"
 note = "sacrifice a creature: {C}{C} (spent this turn)"
@@ -1145,7 +1150,7 @@ note = "when it blocks, at end of combat, it and the creature it blocked are des
 
 ["Deflecting Swat"]
 status = "Full"
-note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response)"
+note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response); a person casts it at the spell or ability they pick and picks its new target (human/protect.rs)"
 
 ["Delighted Halfling"]
 pool_add_tags = ["dork=C"]
@@ -1232,6 +1237,11 @@ note = "+0/+3 and hexproof: Veyran's AI casts it in response to targeted removal
 paths_ok = "compiled: the Wizard token on instant and sorcery casts (both faces); card code: the transform, and Final Iteration's +2/+1 and flying for Wizards (mine.rs)"
 status = "Full"
 note = "a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final Iteration: Wizards you control get +2/+1 and have flying"
+
+["Dockside Extortionist"]
+dsl = []
+status = "Full"
+note = "1/2 Goblin Pirate; the enter trigger (impls/dockside.rs) is a stack trigger (the table may respond, Elesh Norn blanks it, Panharmonicon and the other doublers repeat it, each instance counting again): X Treasure tokens, X counted as it resolves, not when it was cast or put on the stack = the artifacts and enchantments the controller's living opponents control (artifact and enchantment creatures, artifact lands, and the Treasure, Food, Clue and Blood tokens and other artifact tokens, each once; phased-out and face-down permanents not; the controller's own never); X = 0 makes no tokens; the Treasures are zones::add_treasure (real artifacts for metalcraft, Tinker, Urza, Karn; any one colour; Manufactor, Xorn and the token doublers apply). Banned in Commander, legal in Cali by data/formats.toml. AI (PROVISIONAL, never tuned by a sim): a hand-written cast priority held at 0 while no opponent has an artifact or an enchantment, else 52 plus 5 for each more (at most 77), under any plan row. tests/cards_dockside.rs"
 
 ["Doom Blade"]
 add_tags = ["nonblack"]
@@ -5531,7 +5541,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "{1},{T}: untap an artifact (the best mana rock: net mana), also used in the Monolith loops"
+note = "{1},{T}: untap an artifact (the best mana rock: net mana), also used in the Monolith loops; a person chooses the target (any artifact, an opponent's too, the Key itself, tapped ones only) and Rings of Brighthearth copies it (human/abilities.rs voltaic_key)"
 
 ["Vraska, Betrayal's Sting"]
 loyalty = "6"
@@ -8771,7 +8781,7 @@ note = "destroys all creatures (the wipe=destroy tag); cast for {5}{W}{W} or by 
 ["Gleaming Splendor"]
 tags = ""
 status = "Full"
-note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"
+note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: two target players each draw a card; the AI picks itself and one opponent and uses it in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure); a person chooses both players (nothing to choose with two players in the game), and the draw hook gives the Treasure for either draw (human/abilities.rs splendor)"
 ["City of Brass"]
 status = "Full"
 note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
@@ -10065,6 +10075,7 @@ paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Ph
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Maelstrom of the Spirit Dragon"]
+note = "{4},{T}, sacrifice: search for a Dragon card; a person chooses which Dragon (or nothing) from the library (human/model_gaps.rs maelstrom)"
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Skemfar Elderhall"]

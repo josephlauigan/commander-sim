@@ -7306,6 +7306,46 @@
    "spell_prio": false
   },
   {
+   "name": "Arzakon",
+   "types": "P",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "arzakon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ash Barrens",
    "types": "L",
    "generic": 0,
@@ -34405,6 +34445,50 @@
    "unparsed": [],
    "derived": {
     "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Dockside Extortionist",
+   "types": "C",
+   "generic": 1,
+   "pips": "R",
+   "tags": {
+    "pow": "1",
+    "tgh": "2"
+   },
+   "pow": 1,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "treasure"
+   ],
+   "subtypes": [
+    "goblin",
+    "pirate"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -128113,7 +128197,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,

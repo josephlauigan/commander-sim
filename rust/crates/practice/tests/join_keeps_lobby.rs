@@ -166,7 +166,7 @@ fn a_refused_join_can_be_retried_by_the_same_guest() {
         assert_eq!(join(&h, "guest1", &code, "sheoldred").as_deref(), Some(REFUSED));
         assert_eq!(lobby_code(&h).as_deref(), Some(code.as_str()));
     }
-    assert_eq!(join(&h, "guest1", &code, "kyodai"), None);
+    assert_eq!(join(&h, "guest1", &code, "arzakon"), None);
     assert!(game_running(&h));
     h.shutdown();
 }

@@ -545,7 +545,7 @@ mod tests {
     fn the_loss_buckets_sum_to_the_own_turns() {
         use sim_core::gf_audit::Bucket;
         let sim = sim();
-        for key in ["kyodai", "kinnan-bonder-mana-combo"] {
+        for key in ["arzakon", "kinnan-bonder-mana-combo"] {
             let games = run_deck(&sim, key, "loose", 16, 500000).unwrap();
             let audits: Vec<&sim_core::gf_audit::AuditOut> = games.iter().map(|g| g.audit.as_ref().unwrap()).collect();
             let (all, early) = crate::gf_audit::bucket_counts(&audits);
@@ -572,7 +572,7 @@ mod tests {
     #[test]
     fn the_loss_accounting_changes_no_play() {
         let sim = sim();
-        let key = "kyodai";
+        let key = "arzakon";
         let deck = sim.seat(key, &list_of(&sim, key).unwrap()).unwrap();
         let seats = seats(&sim, &deck).unwrap();
         let st = sim.settings_in(profile("loose").unwrap(), None);
@@ -599,16 +599,16 @@ mod tests {
         let mut sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
         assert_eq!(deck_keys(&sim, "yoshimaru,t6,yoshimaru").unwrap().len(), 7);
-        // kyodai plays Cali Commander: a goldfish of it is played at its own table, alone or among others
-        assert_eq!(deck_keys(&sim, "kyodai").unwrap(), ["kyodai"]);
-        assert_eq!(deck_keys(&sim, "yoshimaru,kyodai,t6").unwrap().len(), 8);
+        // arzakon plays Cali Commander: a goldfish of it is played at its own table, alone or among others
+        assert_eq!(deck_keys(&sim, "arzakon").unwrap(), ["arzakon"]);
+        assert_eq!(deck_keys(&sim, "yoshimaru,arzakon,t6").unwrap().len(), 8);
         assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
         assert!(deck_keys(&sim, "").is_err());
         // at a Commander table (`--format commander`) it is refused, alone or among decks that are fine
         sim.set_format("commander").unwrap();
-        for spec in ["kyodai", "yoshimaru,kyodai", "kyodai,t6"] {
+        for spec in ["arzakon", "yoshimaru,arzakon", "arzakon,t6"] {
             let e = deck_keys(&sim, spec).unwrap_err();
-            assert!(e.contains("Cali Commander") && e.starts_with("--goldfish: kyodai"), "{spec}: {e}");
+            assert!(e.contains("Cali Commander") && e.starts_with("--goldfish: arzakon"), "{spec}: {e}");
         }
         assert_eq!(deck_keys(&sim, "yoshimaru,t6").unwrap().len(), 7);
     }
@@ -618,15 +618,15 @@ mod tests {
     #[test]
     fn the_goldfish_table_follows_the_format() {
         let sim = sim();
-        let deck = sim.seat("kyodai", &list_of(&sim, "kyodai").unwrap()).unwrap();
+        let deck = sim.seat("arzakon", &list_of(&sim, "arzakon").unwrap()).unwrap();
         let (cmd, cali) = (&sim.engine.formats["commander"], &sim.engine.formats["cali"]);
         let keys = |s: &[Seat]| s.iter().map(|x| x.key.to_string()).collect::<Vec<_>>();
         for seed in 500000..500006u64 {
             assert_eq!(
                 keys(&seats_in(&sim, &deck, cmd, seed).unwrap()),
-                ["kyodai", "goldfish-2", "goldfish-3", "goldfish-4"]
+                ["arzakon", "goldfish-2", "goldfish-3", "goldfish-4"]
             );
-            let want = if seed % 2 == 0 { ["kyodai", "goldfish-2"] } else { ["goldfish-2", "kyodai"] };
+            let want = if seed % 2 == 0 { ["arzakon", "goldfish-2"] } else { ["goldfish-2", "arzakon"] };
             assert_eq!(keys(&seats_in(&sim, &deck, cali, seed).unwrap()), want, "seed {seed}");
         }
         assert_eq!(keys(&seats(&sim, &deck).unwrap()), keys(&seats_in(&sim, &deck, cmd, 0).unwrap()));
@@ -646,7 +646,7 @@ mod tests {
                 );
                 assert_eq!(g.players.len(), fmt.seats);
                 assert!(g.players.iter().all(|p| p.life == life && p.start_life == life), "{} life", fmt.name);
-                let me = g.players.iter().position(|p| p.key == "kyodai").unwrap();
+                let me = g.players.iter().position(|p| p.key == "arzakon").unwrap();
                 assert_eq!(GfGame::read(&g).play, me == 0);
                 assert_eq!(me == 0, !duel::is_duel(fmt) || duel::on_the_play(seed));
             }

@@ -1,8 +1,8 @@
-1 Akroma's Will (soa) 66
 1 An Offer You Can't Refuse (fdn) 311
 1 Ancient Tomb (tmp) 315
 1 Arcane Signet (cmr) 297
 1 Arid Mesa (spg) 109
+1 Arzakon (mbc) 33
 1 Avacyn's Pilgrim (isd) 170
 1 Badlands (ced) 278
 1 Basalt Monolith (3ed) 235
@@ -19,10 +19,10 @@
 1 Crucible of Worlds (2x2) 393
 1 Cyclonic Rift (sld) 1869
 1 Dark Ritual (3ed) 99
-1 Deflecting Swat (cmm) 698
 1 Demonic Consultation (ice) 121
 1 Demonic Tutor (cmm) 696
 1 Diabolic Intent (fca) 34
+1 Dockside Extortionist (2x2) 360
 1 Dovin's Veto (p30a) 27
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
@@ -40,8 +40,8 @@
 1 Hallowed Fountain (sld) 123
 1 Hangarback Walker (plg20) 2
 1 Heroic Intervention (sld) 1750
-1 Jeska's Will (soa) 109
-1 Kyodai, Soul of Kamigawa (neo) 407
+1 Karn Liberated (2xm) 333
+1 Karn, the Great Creator (war) 1★
 1 Leyline of the Guildpact (mkm) 217
 1 Lightning Greaves (sld) 1662
 1 Llanowar Elves (btd) 58
@@ -50,13 +50,13 @@
 1 Mana Vault (4ed) 334
 1 Marsh Flats (spg) 110
 1 Meteor Golem (sld) 285
-1 Mind Stone (ltc) 282
 1 Misty Rainforest (spg) 111
 1 Mox Opal (2xm) 362
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
 1 Paradise Druid (pwar) 171
+1 Pithing Needle (2x2) 397
 1 Plateau (cei) 280
 1 Polluted Delta (mh3) 356
 1 Primeval Titan (fca) 48
@@ -76,7 +76,6 @@
 1 Swords to Plowshares (ice) 54
 1 Taiga (cei) 283
 1 Tainted Pact (ody) 164
-1 Talisman of Hierarchy (h1r) 36
 1 Talisman of Progress (msc) 221
 1 Teferi's Protection (sta) 74
 1 Tezzeret, Cruel Captain (eoe) 287
@@ -93,6 +92,7 @@
 1 Vampiric Tutor (soa) 100
 1 Verdant Catacombs (spg) 113
 1 Volcanic Island (cei) 287
+1 Voltaic Key (dde) 17
 1 Walking Ballista (sld) 58
 1 Watery Grave (pgrn) 259p
 1 Windswept Heath (mh3) 360

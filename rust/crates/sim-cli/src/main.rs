@@ -5,6 +5,7 @@
 //!     commander-sim --deck sauron --pool t3 --games 1500
 //!     commander-sim --deck sauron --pool t3 --swap "Blood Artist=>Grim Tutor"
 //!     commander-sim --all-decks --pool all --profile loose
+//!     commander-sim --deck arzakon --pool t5 --swap-commander "Old Commander=>New Commander"
 //!
 //! Baseline = the deck list in decklists/<owner>/. Same seeds are used for baseline and variant, so the comparison
 //! is paired.
@@ -31,6 +32,7 @@ mod pyrand;
 mod realism;
 mod report;
 mod stats;
+mod swapcmd;
 mod t6report;
 mod tools;
 
@@ -147,6 +149,22 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
             "--format: not with --all-decks (each deck is run in its own format; use --deck KEY --format KEY)".into()
         );
     }
+    if a.swap_commander.is_some()
+        && (a.deck.is_none()
+            || a.all_decks
+            || a.calibrate.is_some()
+            || a.fit
+            || a.realism
+            || a.goldfish.is_some()
+            || a.mulligan_oracle.is_some())
+    {
+        // the modes that run no paired list change would drop the option without a word
+        return Err(
+            "--swap-commander needs --deck KEY and a paired pool run (not with --all-decks, --calibrate, --fit, \
+             --realism, --goldfish or --mulligan-oracle)"
+                .into(),
+        );
+    }
     if a.fit {
         return fit::run(sim, &a).map(|()| 0);
     }
@@ -168,11 +186,25 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
         && !a.all_decks
     {
         swaps = parse_swaps(&a.swap)?;
+        // the commander pair is the first swap: the model status, the preflight, the coverage and the breakdown read it
+        // like a swapped-in card (the list and the seat are built apart from it: `swapcmd`)
+        if let Some(raw) = &a.swap_commander {
+            swaps.insert(0, swapcmd::parse(raw)?);
+        }
         for s in swaps.iter_mut() {
             if sim.raw_card(&s.1).is_none()
                 && let Some(full) = sim.full_face_name(&s.1)
             {
                 s.1 = full; // the front face alone names a double-faced card
+            }
+        }
+        if a.swap_commander.is_none()
+            && let Some(rec) = sim.engine.decks.get(&deck)
+        {
+            let cmds: Vec<&str> =
+                [Some(rec.commander.as_str()), rec.commander2.as_deref()].into_iter().flatten().collect();
+            if let Some(why) = swapcmd::plain_swap_problem(&cmds, &swaps) {
+                return Err(why);
             }
         }
         let missing: Vec<&str> = swaps.iter().map(|(_, b)| b.as_str()).filter(|b| sim.raw_card(b).is_none()).collect();
@@ -193,6 +225,11 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
         if !bad.is_empty() {
             return Err(format!("Outside {deck}'s color identity ({ident}): {}", bad.join(", ")));
         }
+        base = sim.mine[&deck].clone();
+        if a.swap_commander.is_some() {
+            let (old, new) = swaps[0].clone();
+            var = swapcmd::check(sim, &deck, &old, &new, &swaps[1..])?;
+        }
         // compare.show_auto
         let auto: Vec<_> = swaps.iter().filter_map(|(_, b)| sim.raw_card(b)).filter(|c| c.source != "manual").collect();
         if !auto.is_empty() {
@@ -208,8 +245,9 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
                 Err(e) => println!("(model status unavailable: {e})"),
             }
         }
-        base = sim.mine[&deck].clone();
-        var = apply_swaps(&base, &deck, &swaps)?;
+        if a.swap_commander.is_none() {
+            var = apply_swaps(&base, &deck, &swaps)?;
+        }
     }
 
     if a.cards {
@@ -231,11 +269,12 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     if a.deck.is_none() && a.calibrate.is_none() && !a.all_decks {
         return Err("--deck is required (or use --all-decks)".into());
     }
-    if !swaps.is_empty() {
+    if !swaps.is_empty() && a.swap_commander.is_none() {
         var = swap_in_place(&base, &swaps);
     }
     if a.trace.is_some() {
-        return poolmode::trace(sim, &a, if swaps.is_empty() { &base } else { &var }).map(|()| 0);
+        let cmd = swapcmd::new_commander(&a, &swaps);
+        return poolmode::trace(sim, &a, if swaps.is_empty() { &base } else { &var }, cmd).map(|()| 0);
     }
     // the model coverage of every deck the run plays, before anything is played (Phase 2)
     coverage::print(&coverage::pool_run(sim, &a, &swaps, &base, &var)?);

@@ -57,9 +57,11 @@ struct CardRow {
     lost: f64,
 }
 
-fn card_row(a: &Analysis, name: &str) -> Option<CardRow> {
+/// `commander`: the card is the seat's commander. It starts in the command zone, so every game counts as one it was
+/// available in (drawn 100%, stuck = the games it was never cast in), instead of the games it was cast in
+fn card_row(a: &Analysis, name: &str, commander: bool) -> Option<CardRow> {
     let key = name.to_string();
-    let seen = a.seen.get(&key);
+    let seen = if commander { a.n } else { a.seen.get(&key) };
     let cast = a.cast.get(&key);
     if seen == 0 && cast == 0 {
         return None;
@@ -82,15 +84,17 @@ fn opt(x: Option<f64>, w: usize, d: usize) -> String {
     }
 }
 
-fn card_table(title: &str, names: &[String], a: &Analysis) {
+/// `commanders`: the list's commanders, whose rows are read as a command-zone card (`card_row`)
+fn card_table(title: &str, names: &[String], a: &Analysis, commanders: &[String]) {
     println!("  {title}");
     println!(
         "    {:34} {:>7} {:>9} {:>11} {:>8} {:>10} {:>9}",
         "card", "drawn%", "cast%*", "avg round", "stuck%", "win%cast", "lost/game"
     );
     for n in names {
-        let t: String = n.chars().take(34).collect();
-        match card_row(a, n) {
+        let is_cmd = commanders.contains(n);
+        let t: String = if is_cmd { format!("{n} (cmdr)") } else { n.clone() }.chars().take(34).collect();
+        match card_row(a, n, is_cmd) {
             Some(r) => println!(
                 "    {t:34} {:>7.1} {} {} {} {} {:>9.2}",
                 r.drawn,
@@ -132,9 +136,10 @@ fn shares(c: &crate::stats::Counter<String>, total: i64, take: usize) -> String 
 }
 
 /// the breakdown. `base` is the current list's analysis, `var` the swapped one's; both were played on the same seeds.
+/// `commanders`: the commanders of the current list and of the swapped one (the same unless `--swap-commander`).
 pub fn print_explain(
     deck: &str,
-    commanders: &[String],
+    commanders: (&[String], &[String]),
     swaps: &[(String, String)],
     base: &Analysis,
     var: &Analysis,
@@ -144,9 +149,14 @@ pub fn print_explain(
     println!("\n-- Why: paired breakdown [{profile} profile, {} games per list, same seeds] --", base.n);
     let outs: Vec<String> = swaps.iter().map(|s| s.0.clone()).collect();
     let ins: Vec<String> = swaps.iter().map(|s| s.1.clone()).collect();
-    card_table("Swapped IN (from the swapped list)", &ins, var);
-    card_table("Swapped OUT (from the current list, what they were doing)", &outs, base);
+    card_table("Swapped IN (from the swapped list)", &ins, var, commanders.1);
+    card_table("Swapped OUT (from the current list, what they were doing)", &outs, base, commanders.0);
     println!("    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;");
+    if commanders.0 != commanders.1 {
+        println!(
+            "     a commander (cmdr) starts in the command zone: drawn 100%, cast% of all games, stuck = never cast;"
+        );
+    }
     println!("     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)");
 
     println!("\n  Game shape{:36} {:>9} {:>9} {:>8}", "", "current", "swapped", "change");
@@ -181,8 +191,9 @@ pub fn print_explain(
             1,
         );
     }
-    let removed = |a: &Analysis| commanders.iter().map(|c| a.lost.get(c)).sum::<i64>() as f64 / a.n.max(1) as f64;
-    row("commander removals, per game", Some(removed(base)), Some(removed(var)), 2);
+    let removed =
+        |a: &Analysis, cs: &[String]| cs.iter().map(|c| a.lost.get(c)).sum::<i64>() as f64 / a.n.max(1) as f64;
+    row("commander removals, per game", Some(removed(base, commanders.0)), Some(removed(var, commanders.1)), 2);
     for (label, k) in [
         ("lands on the battlefield, turn 4", "lands_T4"),
         ("lands on the battlefield, turn 8", "lands_T8"),
@@ -258,13 +269,44 @@ mod tests {
             a.win_cast.add(card.to_string(), 3);
         }
         let swaps = vec![("Mind Stone".to_string(), "Welcoming Vampire".to_string())];
-        let ins = card_row(&var, "Welcoming Vampire").unwrap();
+        let ins = card_row(&var, "Welcoming Vampire", false).unwrap();
         assert!((ins.drawn - 80.0).abs() < 1e-9);
         assert!((ins.cast_of_drawn.unwrap() - 75.0).abs() < 1e-9);
         assert!((ins.round.unwrap() - 3.0).abs() < 1e-9);
         assert!((ins.stuck.unwrap() - 25.0).abs() < 1e-9);
-        assert!(card_row(&base, "Welcoming Vampire").is_none());
+        assert!(card_row(&base, "Welcoming Vampire", false).is_none());
         // the printer must not panic on a sparse analysis
-        print_explain("cloud", &["Cloud".to_string()], &swaps, &base, &var, "loose", &|k| k.to_string());
+        let cloud = ["Cloud".to_string()];
+        print_explain("cloud", (&cloud, &cloud), &swaps, &base, &var, "loose", &|k| k.to_string());
+    }
+
+    #[test]
+    fn a_commander_row_counts_every_game_as_one_it_was_available_in() {
+        let mut a = Analysis::default();
+        a.n = 20;
+        a.seen.add("Boss".to_string(), 15); // a card cast in 15 games is "seen" in them (Analysis::add)
+        a.cast.add("Boss".to_string(), 15);
+        a.cast_round.add("Boss".to_string(), 45);
+        let r = card_row(&a, "Boss", true).unwrap();
+        assert!((r.drawn - 100.0).abs() < 1e-9);
+        assert!((r.cast_of_drawn.unwrap() - 75.0).abs() < 1e-9);
+        assert!((r.stuck.unwrap() - 25.0).abs() < 1e-9);
+        assert!((r.round.unwrap() - 3.0).abs() < 1e-9);
+        // a list with a never-cast commander still has a row (0% cast, 100% stuck)
+        let r = card_row(&Analysis { n: 10, ..Default::default() }, "Boss", true).unwrap();
+        assert_eq!((r.cast_of_drawn, r.stuck), (Some(0.0), Some(100.0)));
+        // as a plain card it would read as drawn in the games it was cast in
+        let r = card_row(&a, "Boss", false).unwrap();
+        assert!((r.drawn - 75.0).abs() < 1e-9 && r.stuck == Some(0.0));
+        // the commander's removals are counted per list
+        let (mut base, mut var) = (Analysis::default(), Analysis::default());
+        base.n = 10;
+        var.n = 10;
+        base.lost.add("Old".to_string(), 5);
+        var.lost.add("New".to_string(), 2);
+        let swaps = vec![("Old".to_string(), "New".to_string())];
+        print_explain("d", (&["Old".to_string()], &["New".to_string()]), &swaps, &base, &var, "loose", &|k| {
+            k.to_string()
+        });
     }
 }

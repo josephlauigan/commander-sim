@@ -118,7 +118,7 @@ fn texts_for_a_commander_request_are_as_before() {
         (
             json!({"deck": "nope", "tier": tier}),
             "",
-            "deck: one of yshtola, sheoldred, kyodai, urdragon, yoshimaru".into(),
+            "deck: one of yshtola, sheoldred, arzakon, urdragon, yoshimaru".into(),
         ),
         (json!({"deck": deck, "tier": "t9"}), "", "tier: one of t0, t1, t2, t3, t4, t5, t6".into()),
         (json!({"deck": deck, "tier": tier, "opponents": "x"}), "", "opponents: a list of deck keys".into()),
@@ -529,7 +529,7 @@ fn terminal_arguments() {
         vec!["--text", "--seat", ""],
         vec!["--text", "--seat"],
         vec!["--text", "--format"],
-        vec!["--text", "--deck", "kyodai", "--format"],
+        vec!["--text", "--deck", "arzakon", "--format"],
     ] {
         let (code, _, err) = run(&args);
         assert_eq!(code, 2, "{args:?}: {err}");
@@ -537,18 +537,18 @@ fn terminal_arguments() {
     }
     // a value that parses but the session refuses: exit 1 and the session's text, nothing played
     for (args, want) in [
-        (vec!["--text", "--deck", "kyodai", "--format", "nope"], "unknown format \"nope\": one of "),
-        (vec!["--text", "--deck", "kyodai", "--format", "commander"], "kyodai cannot be played at a Commander table"),
-        (vec!["--text", "--deck", "kyodai", "--format", "Cali"], "unknown format \"Cali\""),
-        (vec!["--text", "--deck", "kyodai", "--format="], "unknown format \"\""),
-        (vec!["--text", "--deck", "kyodai", "--tier", "t5", "--seat", "3"], "seat is 1 to 2"),
-        (vec!["--text", "--deck", "kyodai", "--tier", "t5", "--seat", "0"], "seat is 1 to 2"),
-        (vec!["--text", "--deck", "kyodai", "--tier", "t5", "--seat", "9", "--format", "cali"], "seat is 1 to 2"),
+        (vec!["--text", "--deck", "arzakon", "--format", "nope"], "unknown format \"nope\": one of "),
+        (vec!["--text", "--deck", "arzakon", "--format", "commander"], "arzakon cannot be played at a Commander table"),
+        (vec!["--text", "--deck", "arzakon", "--format", "Cali"], "unknown format \"Cali\""),
+        (vec!["--text", "--deck", "arzakon", "--format="], "unknown format \"\""),
+        (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "3"], "seat is 1 to 2"),
+        (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "0"], "seat is 1 to 2"),
+        (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "9", "--format", "cali"], "seat is 1 to 2"),
         (vec!["--text", "--deck", "yoshimaru", "--seat", "9"], "seat is 1 to 4"),
         (vec!["--text", "--deck", "yoshimaru", "--seat", "0"], "seat is 1 to 4"),
         (vec!["--text", "--deck", "yoshimaru", "--seat", "18446744073709551615"], "seat is 1 to 4"),
         (vec!["--text", "--deck", "yoshimaru", "--opponents", "a,b"], "pick three of: "),
-        (vec!["--text", "--deck", "kyodai", "--tier", "t5", "--opponents", "a,b,c"], "pick one of: "),
+        (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--opponents", "a,b,c"], "pick one of: "),
     ] {
         let (code, _, err) = run(&args);
         assert_eq!(code, 1, "{args:?}: {err}");

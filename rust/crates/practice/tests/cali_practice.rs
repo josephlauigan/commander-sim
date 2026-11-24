@@ -361,7 +361,12 @@ fn waiting(evs: &[Value]) -> &Value {
 fn a_cali_save_carries_its_format_and_reloads_to_the_same_decision() {
     let e = engine();
     let (deck, tier) = cali_deck(&e);
-    let s = Session::new(options(&e, &deck, &tier, 7)).unwrap();
+    // the bot answers 20 requests and stops at the 21st; how many requests a round holds depends on the list (mana
+    // sources to tap), so the game gets room for 20 answers whatever the list: at 3 rounds the arzakon list's game on
+    // this seed ended after 19 requests, with no request left to wait at
+    let mut o = options(&e, &deck, &tier, 7);
+    o.max_rounds = 10;
+    let s = Session::new(o).unwrap();
     let evs = play(&s, Some(20));
     let saved = s.saved();
     s.close(Duration::from_secs(10));

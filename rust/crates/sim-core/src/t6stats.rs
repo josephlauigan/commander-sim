@@ -376,8 +376,9 @@ pub fn mana_held(g: &mut Game, p: PlayerId) {
             continue;
         }
         let d = g.db.get(c);
-        // one-shot sources: rituals, Lotus Petal, Lion's Eye Diamond (held for the turn they pay for)
-        let one_shot = d.instant || d.sorcery || matches!(d.name.as_ref(), "Lotus Petal" | "Lion's Eye Diamond");
+        // one-shot sources: rituals, Lotus Petal, Black Lotus, Lion's Eye Diamond (held for the turn they pay for)
+        let one_shot =
+            d.instant || d.sorcery || matches!(d.name.as_ref(), "Lotus Petal" | "Lion's Eye Diamond" | "Black Lotus");
         bump(g, p, format!("mn|held{}|T{t}|{}", if one_shot { "r" } else { "" }, card(g, c)));
         if !one_shot {
             let why = if crate::ai::brain::card_utility(g, p, &s, c).is_some() { "lost" } else { "rule" };

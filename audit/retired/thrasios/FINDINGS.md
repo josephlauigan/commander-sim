@@ -8,7 +8,7 @@ The deck's living list of strengths and weaknesses and what was tested.
 Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (the retired key's `data/my_decks.toml` entry, removed 2026-11-21). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
 its first sim is the baseline below. The findings of the previous list (t5, Basalt
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
-(t6) in `audit/kyodai/FINDINGS-old-list.md` (the folder was `audit/thanos/` until 2026-11-22).
+(t6) in `audit/arzakon/FINDINGS-old-list.md` (the folder was `audit/thanos/` until 2026-11-22).
 
 ## 2026-11-08: why it sits one tutor away (branch thrasios-tutor-measure; main d6a86cb7; look-ahead, loose, seed 500000, t6)
 Why: the 11-08 baseline read "one tutor away 61%, ready 42%" with tutors held at passes (Walking Ballista 1,565, Vampiric

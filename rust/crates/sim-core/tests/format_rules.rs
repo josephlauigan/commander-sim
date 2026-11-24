@@ -48,7 +48,7 @@ fn every_seat_starts_at_the_rules_life_total() {
 #[test]
 fn a_whole_setup_game_starts_every_seat_at_the_rules_life_total() {
     for (rules, life) in [(CALI, 30), (Rules::COMMANDER, 40)] {
-        let g = play_in(&["kyodai", "seph"], 3, false, AiMode::Adaptive, rules);
+        let g = play_in(&["arzakon", "seph"], 3, false, AiMode::Adaptive, rules);
         assert!(g.players.iter().all(|p| p.start_life == life), "start_life {life}");
     }
 }
@@ -272,7 +272,7 @@ fn two_seat_games_finish_under_cali_rules() {
     assert!(!t5.is_empty());
     for (i, seed) in [1u64, 2, 3].into_iter().enumerate() {
         let opp = t5[i % t5.len()];
-        let g = play_in(&["kyodai", opp], seed, false, AiMode::Adaptive, CALI);
+        let g = play_in(&["arzakon", opp], seed, false, AiMode::Adaptive, CALI);
         assert_eq!(g.players.len(), 2);
         assert!(g.over || g.wintype == Some("timeout"), "seed {seed} vs {opp}: the game ended or timed out");
         assert!(g.winner.is_some() || g.players.iter().all(|p| !p.alive), "seed {seed} vs {opp}");
