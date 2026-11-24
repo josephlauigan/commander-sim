@@ -135,7 +135,9 @@ pub(crate) struct State {
     pub answers: Vec<Answer>,
     pub marks: Vec<usize>,
     pub answer_seats: Vec<String>,
-    pub replay: VecDeque<Answer>,
+    /// the answers a replay gives back, each with the seat that gave it (None: not known, a save from before saves
+    /// carried them): a decision asked of another seat means the replay went a different way
+    pub replay: VecDeque<(Answer, Option<String>)>,
     pub replaying: bool,
     pub current: Option<Current>,
     pub finished: bool,
@@ -152,7 +154,8 @@ pub(crate) struct State {
 pub struct Session {
     pub engine: Arc<Engine>,
     pub deck: String,
-    pub tier: String,
+    /// the opponents' tier; None exactly when no seat is an AI (a table of people only)
+    pub tier: Option<String>,
     /// the key of the game's format (a key of `engine.formats`)
     pub format: String,
     pub profile: String,
@@ -204,7 +207,8 @@ impl Session {
         if !MY_DECKS.contains(&o.deck.as_str()) {
             return Err(format!("unknown deck {:?}: one of {}", o.deck, MY_DECKS.join(", ")));
         }
-        if !TIERS.contains(&o.tier.as_str()) {
+        // an empty tier is for a table with no AI seat (checked once the format is known)
+        if !o.tier.is_empty() && !TIERS.contains(&o.tier.as_str()) {
             return Err(format!("unknown tier {:?}: one of {}", o.tier, TIERS.join(", ")));
         }
         if let Some(p) = &o.partner {
@@ -232,10 +236,16 @@ impl Session {
             e.admits(d, &fmt.key)
                 .map_err(|why| format!("{d} cannot be played at a {} table: {}", fmt.name, why.join("; ")))?;
         }
-        if o.partner.is_some() && fmt.seats != 4 {
-            return Err(format!("{} has {} seats: a second person needs a 4-seat format", fmt.name, fmt.seats));
-        }
         let humans: Vec<String> = std::iter::once(o.deck.clone()).chain(o.partner.clone()).collect();
+        // the tier is for the AI seats: a table of people only has none, so it takes no tier
+        let tier = if fmt.seats > humans.len() {
+            if o.tier.is_empty() {
+                return Err("unknown tier None".into());
+            }
+            Some(o.tier.clone())
+        } else {
+            None
+        };
         let seed = o.seed.unwrap_or_else(|| {
             let t =
                 std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
@@ -246,7 +256,7 @@ impl Session {
             fmt,
             &setup::SeatArgs {
                 deck: &o.deck,
-                tier: &o.tier,
+                tier: tier.as_deref().unwrap_or(""),
                 partner: o.partner.as_deref(),
                 seed,
                 seat: o.seat,
@@ -260,7 +270,7 @@ impl Session {
         Ok(Arc::new(Session {
             engine: o.engine.clone(),
             deck: o.deck,
-            tier: o.tier,
+            tier,
             format,
             profile: o.profile,
             ai: o.ai,
@@ -387,6 +397,9 @@ impl Session {
             tx.insert(k.clone(), t);
             rxs.push((k.clone(), r));
         }
+        // install this generation before the thread can run: the replay reaches its first live decision fast, and a
+        // thread that still saw the closed generation of the game before the rewind would answer Cancel and end the game
+        self.st.lock().unwrap().run = Gen { abort: abort.clone(), tx };
         let me = self.clone();
         let flag = abort.clone();
         let h = std::thread::Builder::new()
@@ -399,9 +412,7 @@ impl Session {
                 }
             })
             .expect("spawn game thread");
-        let mut st = self.st.lock().unwrap();
-        st.run = Gen { abort, tx };
-        st.thread = Some(h);
+        self.st.lock().unwrap().thread = Some(h);
     }
 
     fn closed(&self) {
@@ -447,6 +458,19 @@ impl Session {
         sim_core::engine::turn::run_rounds(&mut g, self.max_rounds);
         if abort.load(Ordering::Relaxed) {
             return self.closed();
+        }
+        {
+            // answers still left: the game ended before the replay did
+            let mut s = self.st.lock().unwrap();
+            if !s.replay.is_empty() {
+                let left = s.replay.len();
+                s.replay.clear();
+                s.replaying = false;
+                let n = s.answers.len();
+                s.events.push(replay_left_over(n, left));
+                drop(s);
+                self.cv.notify_all();
+            }
         }
         if self.compare {
             // the comparisons not yet worked out, before the review
@@ -535,7 +559,7 @@ impl Session {
         let Some(e) = self.try_entry(n, seat) else { return Some("That decision has no AI choice to try.".into()) };
         let then = e.ai_answer();
         let info = json!({"tryit": {"n": e.n, "ai": e.ai_text(), "applied": then.is_some(), "by": seat}});
-        self.rewind(Some(e.n), then, info)
+        self.rewind(Some(e.n), then.map(|a| (a, seat.to_string())), info)
     }
 
     /// a rewind to answer `to`: the replay keeps the settings it had; the setting now applies from there on
@@ -552,7 +576,7 @@ impl Session {
 
     /// restart the game and replay your first `to` answers (then `then`, if given, as your answer to decision `to`);
     /// the decisions after are live again. None, or why not
-    pub fn rewind(self: &Arc<Self>, to: Option<usize>, then: Option<Answer>, info: Value) -> Option<String> {
+    pub fn rewind(self: &Arc<Self>, to: Option<usize>, then: Option<(Answer, String)>, info: Value) -> Option<String> {
         let (to, handle) = {
             let mut st = self.st.lock().unwrap();
             let to = match to {
@@ -579,7 +603,8 @@ impl Session {
         }
         {
             let mut st = self.st.lock().unwrap();
-            let keep: Vec<Answer> = st.answers[..to].to_vec();
+            let keep: Vec<(Answer, Option<String>)> =
+                st.answers[..to].iter().cloned().zip(st.answer_seats[..to].iter().cloned().map(Some)).collect();
             let cut = st.marks.get(to).copied().unwrap_or_else(|| self.tape.lock().unwrap().entries.len());
             self.tape.lock().unwrap().cut(cut);
             for sh in self.shadows.values() {
@@ -588,7 +613,7 @@ impl Session {
             st.answers.clear();
             st.marks.clear();
             st.answer_seats.clear();
-            st.replay = keep.into_iter().chain(then).collect();
+            st.replay = keep.into_iter().chain(then.map(|(a, seat)| (a, Some(seat)))).collect();
             st.finished = false;
             st.outcome = None;
             st.current = None;
@@ -665,6 +690,9 @@ impl Session {
             "autopass": st.autopass_start.iter().cloned().collect::<HashMap<_, _>>(),
             "autopass_log": st.autopass_log.iter().map(|(n, k, m)| json!([n, k, m])).collect::<Vec<_>>(),
         });
+        if self.tier.is_none() {
+            d.as_object_mut().unwrap().remove("tier"); // a table of people only has no tier
+        }
         if self.format != DEFAULT_FORMAT {
             d["format"] = self.format.clone().into(); // a Commander save has none: it is what an old save reads as
         }
@@ -683,7 +711,15 @@ impl Session {
         }
         let damaged = || "a damaged saved game".to_string();
         let s = |k: &str| data.get(k).and_then(Value::as_str).map(str::to_string).ok_or_else(damaged);
-        let mut o = Options::new(engine, &s("deck")?, &s("tier")?);
+        // the tier is optional (a table of people only has none); present, it is a string
+        let tier = match data.get("tier") {
+            None => String::new(),
+            Some(t) => t.as_str().map(str::to_string).ok_or_else(damaged)?,
+        };
+        if tier.is_empty() && data.get("partner").and_then(Value::as_str).is_none() {
+            return Err(damaged()); // one person plays against AI seats, which need a tier
+        }
+        let mut o = Options::new(engine, &s("deck")?, &tier);
         // a save without `format` is a Commander game (every save made before formats was): read it as one, so a deck
         // that Commander refuses (a Cali deck) is refused rather than converted
         let old = data.get("format").is_none();
@@ -753,14 +789,25 @@ impl Session {
                     .collect()
             })
             .unwrap_or_default();
-        st.replay =
+        let answers: Vec<Answer> =
             data.get("answers").and_then(Value::as_array).ok_or_else(damaged)?.iter().map(answer_from_json).collect();
-        if let Some(a) = data.get("answer_seats").and_then(Value::as_array) {
-            // (a two-player save knows whose answer each one is; replay re-derives it, so this only checks the shape)
-            if a.len() != st.replay.len() {
-                return Err(damaged());
+        // whose answer each one is: a one-person save has only the deck's; a two-player save writes them; one without
+        // them (an older one) is replayed unchecked
+        let seats: Vec<Option<String>> = match data.get("answer_seats") {
+            Some(a) => {
+                let a = a.as_array().ok_or_else(damaged)?;
+                if a.len() != answers.len() {
+                    return Err(damaged());
+                }
+                a.iter()
+                    .map(|x| x.as_str().filter(|k| sess.humans.iter().any(|h| h == k)).map(|k| Some(k.to_string())))
+                    .collect::<Option<_>>()
+                    .ok_or_else(damaged)?
             }
-        }
+            None if sess.partner.is_none() => vec![Some(sess.deck.clone()); answers.len()],
+            None => vec![None; answers.len()],
+        };
+        st.replay = answers.into_iter().zip(seats).collect();
         st.replaying = !st.replay.is_empty();
         drop(st);
         Ok(sess)
@@ -795,6 +842,23 @@ impl Session {
         let st = self.st.lock().unwrap();
         st.thread.as_ref().is_some_and(|h| !h.is_finished()) || self.shadows.values().any(|s| s.workers_running() > 0)
     }
+}
+
+/// the message when a replay stops: its recorded answers no longer fit the game (a saved game that was edited, or
+/// changed rules), so the game goes on live. `n` answers were already given, so the decision that went another way is
+/// number n + 1 (the first decision is number 1)
+pub(crate) fn replay_went_another_way(n: usize) -> Value {
+    json!({"kind": "warn", "text": format!("The replay of this game went a different way at decision {}: it goes on from here.", n + 1)})
+}
+
+/// the message when the game ended before its recorded answers did: `n` were used, `left` were not (the game does not
+/// go on from here: it is over)
+pub(crate) fn replay_left_over(n: usize, left: usize) -> Value {
+    json!({"kind": "warn", "text": format!(
+        "The game ended after {n} decision{} with {left} recorded answer{} left over: they were not used.",
+        if n == 1 { "" } else { "s" },
+        if left == 1 { "" } else { "s" },
+    )})
 }
 
 fn autopass_of(st: &State, seat: &str, at: Option<usize>) -> String {
