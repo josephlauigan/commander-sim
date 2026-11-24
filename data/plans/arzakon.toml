@@ -4,13 +4,14 @@
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Arzakon first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
 # into Walking Ballista. Arzakon is the commander (a five-colour planeswalker, {W}{U}{B}{R}{G}, so it needs all five colours and has no flash body),
-# Kyodai, Soul of Kamigawa is a 99 card. Kyodai (impls/kyodai.rs) and Leyline of the Guildpact (engine/chars.rs, impls/card_models.rs) are card code;
-# the plan only values them: Kyodai by a `[[prio]]` row below, Leyline by the Faeburrow Elder. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
+# Kyodai, Soul of Kamigawa left the list on 2026-11-24 (his card code, impls/kyodai.rs, stays in the engine). Leyline of the Guildpact
+# (engine/chars.rs, impls/card_models.rs) is card code; the plan only values it, by the Faeburrow Elder. The old commander's card code
+# (impls/t6_thanos.rs) stays in the engine.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
 # Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
-# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander and Kyodai values
-# below are provisional (Opus design consult 2026-11-23), not tuned.
+# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander value
+# below is provisional (Opus design consult 2026-11-23), not tuned.
 deck = "arzakon"
 default = "plan"
 engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
@@ -66,11 +67,23 @@ score = 76
 # Acceleration and fixing are the first plays; Arzakon and the engines next; the big top end last.
 [[prio]]
 cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Birds of Paradise",
-    "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Hierarchy", "Talisman of Progress",
+    "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Progress",
     "Mox Opal", "Chrome Mox", "Fellwar Stone"]
 when = ["turn<=4"]
 value = 86
 else = 46
+
+# Dockside Extortionist ({1}{R}, 1/2) makes one Treasure for each artifact and enchantment the one opponent controls (Cali is
+# 1v1), so it makes 0 to 2 Treasures on turn 2 and more later: it does nothing for mana until the opponent has artifacts or
+# enchantments, and the plan language has no atom for the opponent's permanent count. It is rated just below the true rocks
+# (80 through turn 4 against 86) so that a rock is cast first, and kept at 56 after turn 4 (it is a burst of mana
+# when the opponent's board has grown, unlike a rock, which is dead late). It needs a red source.
+# PROVISIONAL (2026-11-24): the values are a guess, not simulated.
+[[prio]]
+cards = ["Dockside Extortionist"]
+when = ["turn<=4"]
+value = 80
+else = 56
 
 [[prio]]
 cards = ["Rhystic Study", "The One Ring", "Mystic Remora"]
@@ -116,11 +129,8 @@ else = 40
 cards = ["Hangarback Walker", "Primeval Titan"]
 value = 68
 
-# Kyodai, Soul of Kamigawa is a 99 card now: a {3}{W} flash flier that gives another permanent indestructible, played as a
-# body and a combo shield once the engines are down. PROVISIONAL: 60 (Opus design consult 2026-11-23, item 10).
-[[prio]]
-cards = ["Kyodai, Soul of Kamigawa"]
-value = 60
+# No row for Karn Liberated ({7}, in since 2026-11-24 for Kyodai): the plan has no row for Tezzeret or Karn, the Great Creator
+# either, so it is left to the generic rating (not checked how that rates a seven-mana planeswalker).
 
 # The top end: after the board is built
 [[prio]]
