@@ -1,5 +1,5 @@
 # JD's The Ur-Dragon five-colour Dragons deck (decklists/JD/urdragon-five-colour-dragons.md, key `urdragon`, tier t5;
-# rewritten 2026-11-14 for the list with Utvara Hellkite, Summon: Bahamut and the spells package; 2026-11-23: Sylvan Library, Deflecting Swat, Urza's Incubator and Jeska's Will in; 2026-11-24: Talisman of Hierarchy and Kyodai, Soul of Kamigawa in, Hellkite Courser and Klauth, Unrivaled Ancient out). The
+# rewritten 2026-11-14 for the list with Utvara Hellkite, Summon: Bahamut and the spells package; 2026-11-23: Sylvan Library, Deflecting Swat, Urza's Incubator and Jeska's Will in; 2026-11-23: Talisman of Hierarchy and Kyodai, Soul of Kamigawa in, Hellkite Courser and Klauth, Unrivaled Ancient out). The
 # deck has no hand-written AI code, so the generic policy reads this file: `[style]`, `[commander]`, `[key_cards]`,
 # `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp first, an engine (Rhystic Study, The
 # One Ring, Terror of the Peaks) on turns 3-5, then The Ur-Dragon and the Dragons, then attack; the Garth One-Eye +
@@ -141,7 +141,7 @@ value = 66
 # so every Dragon payoff in the deck sees him enter (Terror of the Peaks, Scourge of Valkas, Dragon Tempest, Miirym), and the guide
 # holds him for an opponent's end step or in response to a destroy effect on a key permanent. The plan language has no end-step
 # or response atom, so this row only rates him as a plain 60 (the Arzakon plan rated him 60 in the 99), below Ganax and Niv-Mizzet.
-# PROVISIONAL (2026-11-24, no sim yet): not a paired test; whether the AI casts him at an end step is unchecked.
+# PROVISIONAL (2026-11-23, no sim yet): not a paired test; whether the AI casts him at an end step is unchecked.
 [[prio]]
 cards = ["Kyodai, Soul of Kamigawa"]
 value = 60

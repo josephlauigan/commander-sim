@@ -123,7 +123,8 @@ fn commander_verdicts_over_the_whole_cache_are_the_old_ones() {
 }
 
 /// every deck in the repository, under Commander (its own format for arzakon): the problem list is empty, and arzakon under
-/// Commander fails on exactly the three
+/// Commander fails on exactly four cards: Dockside Extortionist, Mana Crypt, Primeval Titan and Tinker (the name keeps "three": a
+/// renamed test would read as a deleted one to the names gate)
 #[test]
 fn every_deck_validates_and_arzakon_under_commander_fails_on_exactly_three() {
     let p = Project::new(root());
@@ -137,7 +138,7 @@ fn every_deck_validates_and_arzakon_under_commander_fails_on_exactly_three() {
     let arzakon = report.iter().find(|(d, ..)| d.key == "arzakon").unwrap().0.clone();
     let (probs, _) =
         card_problems(&cmd, &arzakon.cards, &[arzakon.commander.as_str()], None, None, &|n| c.get(n).cloned());
-    assert_eq!(probs, ["banned in Commander: Mana Crypt, Primeval Titan, Tinker"]);
+    assert_eq!(probs, ["banned in Commander: Dockside Extortionist, Mana Crypt, Primeval Titan, Tinker"]);
 }
 
 /// cardgen and sim-core must agree on which cards the Cali list bans: cardgen is what blesses a deck list, sim-core is

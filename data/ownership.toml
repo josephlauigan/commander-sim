@@ -3,14 +3,14 @@
 # deck is confirmed. A `have` card in k decks carries `copies = k`: JD marked a copy for each deck.
 # 2026-11-23 (JD): the Arzakon, Yoshimaru, Ur-Dragon and Y'shtola swaps moved cards between decks; he owns every incoming card
 # except Hellkite Courser (a proxy), and the freed Mind Stone copy is a spare.
-# 2026-11-24 (JD, from his deck export): Talisman of Hierarchy moved from the Arzakon deck to the Ur-Dragon deck (Hellkite Courser left
+# 2026-11-23 (JD, from his deck export): Talisman of Hierarchy moved from the Arzakon deck to the Ur-Dragon deck (Hellkite Courser left
 # the Ur-Dragon deck); Kyodai, Soul of Kamigawa moved from the Arzakon deck to the Ur-Dragon deck in place of Klauth, Unrivaled Ancient
 # (a proxy, now out); Dockside Extortionist and Karn Liberated joined the Arzakon deck, and he has both.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
 version = 1
-updated = "2026-11-24"
+updated = "2026-11-23"
 
 [deck.sheoldred]
 confirmed = "2026-11-22"

@@ -4,7 +4,7 @@
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Arzakon first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
 # into Walking Ballista. Arzakon is the commander (a five-colour planeswalker, {W}{U}{B}{R}{G}, so it needs all five colours and has no flash body),
-# Kyodai, Soul of Kamigawa left the list on 2026-11-24 (his card code, impls/kyodai.rs, stays in the engine). Leyline of the Guildpact
+# Kyodai, Soul of Kamigawa left the list on 2026-11-23 (his card code, impls/kyodai.rs, stays in the engine). Leyline of the Guildpact
 # (engine/chars.rs, impls/card_models.rs) is card code; the plan only values it, by the Faeburrow Elder. The old commander's card code
 # (impls/t6_thanos.rs) stays in the engine.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
@@ -78,7 +78,7 @@ else = 46
 # enchantments, and the plan language has no atom for the opponent's permanent count. It is rated just below the true rocks
 # (80 through turn 4 against 86) so that a rock is cast first, and kept at 56 after turn 4 (it is a burst of mana
 # when the opponent's board has grown, unlike a rock, which is dead late). It needs a red source.
-# PROVISIONAL (2026-11-24): the values are a guess, not simulated.
+# PROVISIONAL (2026-11-23): the values are a guess, not simulated.
 [[prio]]
 cards = ["Dockside Extortionist"]
 when = ["turn<=4"]
@@ -129,7 +129,7 @@ else = 40
 cards = ["Hangarback Walker", "Primeval Titan"]
 value = 68
 
-# No row for Karn Liberated ({7}, in since 2026-11-24 for Kyodai): the plan has no row for Tezzeret or Karn, the Great Creator
+# No row for Karn Liberated ({7}, in since 2026-11-23 for Kyodai): the plan has no row for Tezzeret or Karn, the Great Creator
 # either, so it is left to the generic rating (not checked how that rates a seven-mana planeswalker).
 
 # The top end: after the board is built

@@ -260,7 +260,11 @@ fn cardgen_deck_checks_a_deck_under_its_own_format() {
     std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"\n", "")).unwrap();
     let o = dry(&p, "arzakon", &cards);
     assert!(!o.ok);
-    assert!(o.text.contains("banned in Commander: Mana Crypt, Primeval Titan, Tinker"), "{}", o.text);
+    assert!(
+        o.text.contains("banned in Commander: Dockside Extortionist, Mana Crypt, Primeval Titan, Tinker"),
+        "{}",
+        o.text
+    );
 }
 
 #[test]
