@@ -198,6 +198,15 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
                 s.1 = full; // the front face alone names a double-faced card
             }
         }
+        if a.swap_commander.is_none()
+            && let Some(rec) = sim.engine.decks.get(&deck)
+        {
+            let cmds: Vec<&str> =
+                [Some(rec.commander.as_str()), rec.commander2.as_deref()].into_iter().flatten().collect();
+            if let Some(why) = swapcmd::plain_swap_problem(&cmds, &swaps) {
+                return Err(why);
+            }
+        }
         let missing: Vec<&str> = swaps.iter().map(|(_, b)| b.as_str()).filter(|b| sim.raw_card(b).is_none()).collect();
         if !missing.is_empty() {
             return Err(format!(

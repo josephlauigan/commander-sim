@@ -35,6 +35,15 @@ pub fn new_commander<'a>(a: &Args, swaps: &'a [(String, String)]) -> Option<&'a 
     a.swap_commander.as_ref().and_then(|_| swaps.first()).map(|s| s.1.as_str())
 }
 
+/// A plain `--swap` edits the 99 only, but `swap_in_place` and `apply_swaps` also match the commander's own slot in the
+/// list, so a pair naming the deck's commander (out or in) would run a seat with a doubled or missing commander. Refused
+/// before any game, with the option that does change a commander.
+pub fn plain_swap_problem(commanders: &[&str], swaps: &[(String, String)]) -> Option<String> {
+    swaps.iter().flat_map(|(o, i)| [o, i]).find(|c| commanders.contains(&c.as_str())).map(|c| {
+        format!("--swap: '{c}' is the deck's commander: use --swap-commander OLD=>NEW to change the commander")
+    })
+}
+
 /// the commanders of the variant seat, for reports (`base` when the run changes none)
 pub fn commanders_of(base: &[String], new: Option<&str>) -> Vec<String> {
     match new {
@@ -172,6 +181,18 @@ mod tests {
         for bad in ["A", "A=>", "=>B", "A=>B=>C", "A->B", "A=>A"] {
             assert!(parse(bad).is_err(), "{bad}");
         }
+    }
+
+    #[test]
+    fn a_plain_swap_naming_the_decks_commander_is_refused_either_way() {
+        let cmd = ["Old"];
+        assert!(plain_swap_problem(&cmd, &pairs(&[("A", "B")])).is_none());
+        for p in [("Old", "B"), ("A", "Old")] {
+            let e = plain_swap_problem(&cmd, &pairs(&[("X", "Y"), p])).unwrap();
+            assert!(e.contains("'Old' is the deck's commander") && e.contains("--swap-commander"), "{e}");
+        }
+        // a second commander counts too
+        assert!(plain_swap_problem(&["Old", "Two"], &pairs(&[("Two", "B")])).is_some());
     }
 
     #[test]

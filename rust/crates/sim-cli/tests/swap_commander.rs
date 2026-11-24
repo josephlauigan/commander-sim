@@ -79,6 +79,16 @@ fn a_bad_commander_change_is_refused_before_any_game() {
     assert_eq!(code, 2, "{err}");
 }
 
+/// a plain `--swap` may not name the deck's commander, out or in; the message points at `--swap-commander`
+#[test]
+fn a_plain_swap_naming_the_commander_is_refused_before_any_game() {
+    let base = ["--deck", "arzakon", "--pool", "t5", "--games", "2", "--quiet", "--swap"];
+    for pair in [format!("{ARZAKON}=>Sol Ring"), format!("{KYODAI}=>{ARZAKON}")] {
+        let args: Vec<&str> = base.iter().copied().chain([pair.as_str()]).collect();
+        refused(&args, &[&format!("'{ARZAKON}' is the deck's commander"), "--swap-commander"]);
+    }
+}
+
 /// the value after `label` up to the next space
 fn field<'a>(text: &'a str, label: &str) -> &'a str {
     let i = text.find(label).unwrap_or_else(|| panic!("{label:?} missing from\n{text}")) + label.len();
