@@ -7,7 +7,7 @@ damage, and Miirym and Lathliss double the Dragons. Beside those sits one four-c
 Double + Twinflame + Doubling Season**, which makes mana and hasty tokens without limit. Around them sit the top-end
 Dragons (Utvara Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lightning Bolt, Decimate,
 Fact or Fiction, Austere Command, Young Pyromancer) and Triple Triad. A speed package (Sylvan Library, Urza's Incubator,
-Hellkite Courser, Deflecting Swat and Jeska's Will) gets the commander and its engine out earlier. The deck is weak to board wipes and mass bounce after it
+Talisman of Hierarchy, Deflecting Swat and Jeska's Will) gets the commander and its engine out earlier. The deck is weak to board wipes and mass bounce after it
 has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (one basic land). Nothing in this document has been simulated yet.
 
 | | |
@@ -33,7 +33,7 @@ the command zone it already discounts every Dragon you cast, so the deck can win
 
 What it does once it attacks:
 - **Draws and cheats.** Each attacking Dragon is a card, and you may drop a permanent from the new hand onto the
-  battlefield: a seven-drop or bigger (Klauth, Old Gnawbone, Morophon, Utvara Hellkite, Summon: Bahamut), an engine, or Doubling Season.
+  battlefield: a seven-drop or bigger (Old Gnawbone, Morophon, Utvara Hellkite, Summon: Bahamut), an engine, or Doubling Season.
   Tiamat only fetches Dragons if you cast it, so don't drop it.
 - **Commander damage.** It is a 10/10 flier: two hits kill an opponent. With **Utvara Hellkite** out, every attacking
   Dragon makes a 6/6 flying Dragon, so the next attack is far bigger.
@@ -41,6 +41,13 @@ What it does once it attacks:
   strike or trample, and The Ur-Dragon is all five. **Dragonlord Ojutai** has hexproof while it is untapped.
   **Fierce Guardianship** and **Deflecting Swat** are free while you control a commander. **Delighted Halfling** and
   **Cavern of Souls** (name Dragon) make the Dragons uncounterable.
+- **Kyodai, Soul of Kamigawa** ({3}{W}, a 3/3 flash flier, a Dragon Spirit): when he enters, another target permanent gains
+  indestructible for as long as you control him. Flash him in at an opponent's end step, or in response to a destroy effect
+  or a destroy wipe aimed at one key permanent (Terror of the Peaks, Doubling Season, a Garth, the Ur-Dragon on the
+  battlefield): that one survives, and the rest of the wipe still resolves. It does nothing against exile, bounce, -X/-X,
+  counterspells or a wipe that sacrifices, and it ends if Kyodai leaves. {W}{U}{B}{R}{G}: he gets +5/+5 until end of turn
+  (it needs all five colours at once). He is a Dragon, so Eminence takes {1} off him and
+  Urza's Incubator naming Dragon {2}; he also triggers Terror of the Peaks, Scourge of Valkas and Dragon Tempest when he enters.
 - **A second cast costs {2} more per previous cast.** It is a nine-mana commander, so a recast is ten or more. Protect
   it, and do not rely on recasting.
 
@@ -51,13 +58,8 @@ The deck's weakness is reaching its commander, so five cards work on speed. Cost
 - **Urza's Incubator** ({3} artifact, naming Dragon): Dragon creature spells cost {2} less. The Ur-Dragon
   ({4}{W}{U}{B}{R}{G}) goes from nine to seven, and every other Dragon costs two less on top of Eminence's one. With
   Morophon as well, The Ur-Dragon costs {2}. Cast it on turn 3 or 4, before the Dragons, and name Dragon.
-- **Hellkite Courser** ({4}{R}{R}, a 6/5 flying Dragon): when it enters you may put your commander from the command zone
-  onto the battlefield; it gains haste and returns to the command zone at the beginning of the next end step. That is a
-  five-mana bridge to nine (Eminence takes one off Courser while The Ur-Dragon is in the command zone; three mana with Urza's Incubator
-  naming Dragon): one attack with The Ur-Dragon draws a card per attacking Dragon and drops a permanent from your hand,
-  and with the commander on the battlefield for the turn, Fierce Guardianship and Deflecting Swat are free and Jeska's Will
-  has both modes. Putting it onto the battlefield is not a cast, so it adds no commander tax. If The Ur-Dragon is already on the
-  battlefield, Courser is a plain 6/5 flier.
+- **Talisman of Hierarchy** ({2} artifact): taps for {C}, or for {W} or {B} and deals 1 damage to you. A turn-2 rock that
+  pays for a turn-3 four-drop and makes white or black, the thinnest colours in the list.
 - **Sylvan Library** ({1}{G}): at your draw step you may draw two extra cards, then for each of two cards drawn this turn
   pay 4 life or put it on top of the library. A Library on turn 2 draws up to two extra cards a turn, to find the ramp and the Dragons. At 40 life
   pay only for a card you will cast; the life adds to the fetches, the shocks and The One Ring.
@@ -71,7 +73,7 @@ The deck's weakness is reaching its commander, so five cards work on speed. Cost
 
 #### Route 1: The Ur-Dragon in combat (main route)
 
-Cast a hasty Dragon (Glorybringer, Thundermaw Hellkite, Goldspan Dragon, Smaug, Klauth) the turn it
+Cast a hasty Dragon (Glorybringer, Thundermaw Hellkite, Goldspan Dragon, Smaug) the turn it
 lands, or attack with what you have. Each attack with The Ur-Dragon or with Dragons draws a card per Dragon and puts a
 permanent onto the battlefield, which triggers the damage engines below. Plan the attack for the turn you have
 protection up.
@@ -117,8 +119,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 #### Fair wins and backups
 
 - **Old Gnawbone** (a Treasure for each point of combat damage dealt by your
-  creatures) and **Klauth** (mana equal to the attackers' total power) turn a connecting attack into the mana for the
-  next play.
+  creatures) turns a connecting attack into the mana for the next play.
 - **Hellkite Tyrant** takes every artifact a player controls when it connects. Against an artifact deck that is the
   game. (Twenty or more artifacts wins on your upkeep.)
 - **Summon: Bahamut** ({9}, a flying Saga Dragon) destroys up to one nonland permanent in each of its first two
@@ -136,10 +137,10 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 
 | Cost | Dragons | Role |
 |---|---|---|
-| 4 | Smaug the Magnificent, Nicol Bolas the Ravager | Early hasty flier with a Treasure every upkeep; discard and a flip into a planeswalker |
+| 4 | Smaug the Magnificent, Nicol Bolas the Ravager, Kyodai, Soul of Kamigawa | Early hasty flier with a Treasure every upkeep; discard and a flip into a planeswalker; a flash flier that protects one permanent (see Protection) |
 | 5 | Terror of the Peaks, Goldspan Dragon, Glorybringer, Thundermaw Hellkite, Scourge of Valkas, Ganax, Kura, Dragonlord Ojutai, Scion of the Ur-Dragon | The core: damage, haste, removal, Treasures, card selection |
-| 6 | Lathliss, Miirym, Dragonlord Dromoka, Hellkite Courser, Hellkite Tyrant, Shivan Dragon, Niv-Mizzet | Engines and finishers; Hellkite Courser puts the commander onto the battlefield for a turn (see Getting The Ur-Dragon out earlier) |
-| 7 | Tiamat, Old Gnawbone, Klauth, Smaug the Impenetrable, Morophon | The seven-drops The Ur-Dragon drops in free; Morophon is a Dragon (changeling) and makes the commander cost {4}; Smaug the Impenetrable is hasty and indestructible, so it survives a destroy wipe, and turns noncombat damage dealt to it into Treasures |
+| 6 | Lathliss, Miirym, Dragonlord Dromoka, Hellkite Tyrant, Shivan Dragon, Niv-Mizzet | Engines and finishers |
+| 7 | Tiamat, Old Gnawbone, Smaug the Impenetrable, Morophon | The seven-drops The Ur-Dragon drops in free; Morophon is a Dragon (changeling) and makes the commander cost {4}; Smaug the Impenetrable is hasty and indestructible, so it survives a destroy wipe, and turns noncombat damage dealt to it into Treasures |
 | 8-9 | Utvara Hellkite (8), Summon: Bahamut (9) | The finishers: a Dragon-attack engine and a slow four-chapter removal, card draw and burn |
 | Varies | Scion of Draco | Costs {12} minus {2} per basic land type among your lands: about {2} with five types, {1} less than that with Eminence |
 
@@ -148,7 +149,8 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Mana Vault, Sol Ring, Arcane Signet** (and Ancient Tomb): the fast start. Cast on turn 1 and left
   untapped, Mana Vault gives {C}{C}{C} on turn 2: two lands and the Vault pay for a five-drop. **Mox Jasper** makes any
   colour once you control a Dragon, so it is a dead card before one lands. **Cursed Mirror** ({2}{R}) taps for {R}, or
-  enters as a hasty copy of the best creature on the table for a turn.
+  enters as a hasty copy of the best creature on the table for a turn. **Talisman of Hierarchy** ({2}) taps for {C}, or for {W} or {B}
+  at 1 damage.
 - **Relic of Sauron** ({4}): taps for two mana in any mix of blue, black and red, which pays for a seven-drop and fixes
   the blue and black the elves don't make. Later, {3} and a tap draws two cards and discards one. Its own mana can't pay
   for the loot.
@@ -169,7 +171,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Triple Triad** ({3}{R}{R}{R}, enchantment): at the beginning of your upkeep each player exiles the top card of their
   library, and this turn you may play your own exiled card and every other exiled card with a lower mana value without
   paying their mana costs. About a third of the 99 are lands (a land flip gives no free spell, but you may play it as your
-  land drop) and 26 are Dragons (counting Morophon), mostly costing 5 to 7, so a flip is a free Dragon about one time in four, and the
+  land drop) and 25 are Dragons (counting Morophon), mostly costing 5 to 7, so a flip is a free Dragon about one time in four, and the
   higher the card you flip, the more of the opponents' exiled cards qualify. It needs three red sources.
 - **Rhythm of the Wild** ({1}{R}{G}, enchantment): your creature spells can't be countered, and your nontoken creatures
   have riot, so each enters with a +1/+1 counter or haste, your choice (the Dragons The Ur-Dragon puts in included). Tokens
@@ -185,8 +187,7 @@ strongest start. Sylvan Library is a good turn-2 play when the hand has no ramp.
 Incubator naming Dragon before the big Dragons and The Ur-Dragon. Keep
 mana for Fierce Guardianship or a free spell on the opponent's turn when you hold protection.
 
-**Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. With five
-mana (three with Urza's Incubator) and the commander in the command zone, Hellkite Courser puts it onto the battlefield for one attack. Win
+**Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. Win
 through the combat route or the Garth loop once the pieces are there.
 
 **Hold up or go?** Go when the table has no sweeper in sight and you hold protection, or when an opponent is about to win.
@@ -212,7 +213,7 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 | # | Hand | Call | Why |
 |---|---|---|---|
 | 1 | Taiga, Windswept Heath, Birds of Paradise, Sol Ring, Terror of the Peaks, Lightning Bolt, Swords to Plowshares | Keep | Turn 2: Sol Ring and Birds; turn 3 Terror with removal behind it |
-| 2 | Ancient Tomb, Mana Vault, Mox Jasper, Old Gnawbone, Klauth, Utvara Hellkite, Rivaz of the Claw | Ship | One land that only makes colourless, and nothing to cast before turn 5 |
+| 2 | Ancient Tomb, Mana Vault, Mox Jasper, Old Gnawbone, Tiamat, Utvara Hellkite, Rivaz of the Claw | Ship | One land that only makes colourless, and nothing to cast before turn 5 |
 | 3 | Tundra, Bayou, Elvish Mystic, Nature's Lore, Three Visits, Lathliss, Doubling Season | Keep (close) | Two duals plus Nature's Lore and Three Visits fetch two more duals, and the Mystic adds mana: Lathliss and Doubling Season by turn 5 |
 | 4 | Demonic Tutor, Vampiric Tutor, Command Tower, Sol Ring, Garth One-Eye, Spark Double, Twinflame | Keep (close) | Tutors and Sol Ring find the rest, but it needs a second land and Doubling Season to be a combo |
 
@@ -224,7 +225,7 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 | Doubling Season on the battlefield, no Garth | Garth One-Eye | Worldly Tutor, then the loop with Spark Double and Twinflame |
 | Seven mana and no Dragon | Terror of the Peaks or Goldspan Dragon | Demonic Tutor or Vampiric Tutor (to the top) |
 | Opponent about to wipe | Fierce Guardianship | Vampiric Tutor, hold the mana (it is free only with a commander out) and the card |
-| The Ur-Dragon is about to attack | A seven-drop to put in free | Tutor for Klauth or Utvara Hellkite and leave it in hand |
+| The Ur-Dragon is about to attack | A seven-drop to put in free | Tutor for Old Gnawbone or Utvara Hellkite and leave it in hand |
 | A creature with the table's best card | Swords, Path or Decimate | Any tutor |
 
 ### Protecting the key turn
@@ -261,7 +262,7 @@ The matchup notes are expectations, not measured.
 | Opponent type | What to do |
 |---|---|
 | Fast combo (Kinnan, Yawgmoth, Zur) | Hold Fierce Guardianship; kill the commander with Swords or Path; go over the top with a hasty Dragon on turn 5 |
-| Board wipes | Keep Dragons in hand and hold Fierce Guardianship; Smaug the Impenetrable survives a destroy wipe; Rivaz and Tiamat rebuild. Swat does not stop a wipe |
+| Board wipes | Keep Dragons in hand and hold Fierce Guardianship; Smaug the Impenetrable survives a destroy wipe, and Kyodai, flashed in, saves one other permanent from it; Rivaz and Tiamat rebuild. Swat does not stop a wipe |
 | Creature-heavy midrange | Glorybringer, Thundermaw and the Dragon-enters damage clear blockers; Crux of Fate (non-Dragon mode) clears their board but not yours |
 | Artifact decks (Thanos, Urza, Kinnan) | Hellkite Tyrant takes their artifacts; Decimate, Austere Command and Chaos Warp answer the key one |
 | Stax / Blood Moon | Fetch the basic (Forest) first; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
@@ -298,7 +299,7 @@ enters while you control seven or more lands with different names; almost every 
 blue 15, black 17, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
 Maelstrom adding one more of each for Dragon spells and Orchard adding what the table's lands make. Red is the heaviest
 colour (RR on most Dragons, RRR on Scourge of Valkas and Triple Triad), then green and black; white and blue are the thinnest, for
-Niv-Mizzet ({U}{U}), Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks: Arcane Signet, Birds, Mox Jasper (with a
+Niv-Mizzet ({U}{U}), Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks (Talisman of Hierarchy makes {W} or {B}): Arcane Signet, Birds, Mox Jasper (with a
 Dragon out) and Delighted Halfling make any colour, and Treasures from Goldspan, Ganax, Smaug and
 Old Gnawbone fix the rest. The one basic is thin protection against Blood
 Moon (fetch it first; it makes only green).
@@ -313,9 +314,9 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Commander (1).** The Ur-Dragon
 
-**Creatures (34).** Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Courser, Hellkite Tyrant, Klauth, Unrivaled Ancient, Kura, the Boundless Sky, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Utvara Hellkite, Young Pyromancer
+**Creatures (33).** Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Kura, the Boundless Sky, Kyodai, Soul of Kamigawa, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Utvara Hellkite, Young Pyromancer
 
-**Artifacts (8).** Arcane Signet, Cursed Mirror, Mana Vault, Mox Jasper, Relic of Sauron, Sol Ring, The One Ring, Urza's Incubator
+**Artifacts (9).** Arcane Signet, Cursed Mirror, Mana Vault, Mox Jasper, Relic of Sauron, Sol Ring, Talisman of Hierarchy, The One Ring, Urza's Incubator
 
 **Enchantments (6).** Doubling Season, Dragon Tempest, Rhystic Study, Rhythm of the Wild, Sylvan Library, Triple Triad
 
@@ -360,11 +361,10 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Garth One-Eye
 1 Glorybringer
 1 Goldspan Dragon
-1 Hellkite Courser
 1 Hellkite Tyrant
 1 Jeska's Will
-1 Klauth, Unrivaled Ancient
 1 Kura, the Boundless Sky
+1 Kyodai, Soul of Kamigawa
 1 Lathliss, Dragon Queen
 1 Lightning Bolt
 1 Llanowar Elves
@@ -408,6 +408,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Swords to Plowshares
 1 Sylvan Library
 1 Taiga
+1 Talisman of Hierarchy
 1 Terror of the Peaks
 1 The One Ring
 1 The Ur-Dragon

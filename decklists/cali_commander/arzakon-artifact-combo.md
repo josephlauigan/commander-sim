@@ -2,11 +2,11 @@
 
 A fast-mana artifact deck for Cali Commander: one opponent, 30 life, and Mana Crypt, Tinker and Primeval Titan legal.
 Arzakon is a five-colour planeswalker that can be your commander: it pings for 3, makes a Black Lotus token and can wheel
-both hands, but the deck is built to win in a few turns without it. Kyodai, Soul of Kamigawa is a flash 3/3 flier in the
-99 that can save a combo piece from a destroy effect. The deck has five ways to end the game: **infinite colourless mana**
+both hands, but the deck is built to win in a few turns without it. Karn Liberated is a seven-mana planeswalker in the
+99 that exiles any permanent. The deck has five ways to end the game: **infinite colourless mana**
 (Basalt Monolith + Rings of Brighthearth) into Walking Ballista, **infinite coloured mana** (Staff of Domination +
 Faeburrow Elder, with Leyline of the Guildpact making every nonland permanent all five colours) into the whole library and
-Thassa's Oracle or an unlimited Kyodai pump, **Tinker into Blightsteel Colossus** (one hit is lethal),
+Thassa's Oracle or a Walking Ballista with a huge X, **Tinker into Blightsteel Colossus** (one hit is lethal),
 **Thassa's Oracle with Demonic Consultation or Tainted Pact** (the singleton library exiles itself), and **Underworld
 Breach with Brain Freeze** as a storm line into the Oracle. Sneak Attack is a second way to put Blightsteel onto the
 battlefield. It is weak to Null Rod and Collector Ouphe effects, to stax that stops free spells and rocks, and to a
@@ -17,8 +17,8 @@ Cali format, so the plan and the keep rule are a pilot's guide, not measured.
 |---|---|
 | **Commander** | Arzakon ({W}{U}{B}{R}{G}, a legendary planeswalker with loyalty 4; "can be your commander"); a five-colour card |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
-| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Kyodai and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI never copies loyalty abilities with Rings of Brighthearth; a person at a real table can. This list has not been simulated at the Cali format |
-| **Buys** | None. Arzakon, Karn, Voltaic Key and Pithing Needle are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination, Rhystic Study and Watery Grave |
+| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI never copies loyalty abilities with Rings of Brighthearth; a person at a real table can. This list has not been simulated at the Cali format |
+| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist and Karn Liberated are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination, Rhystic Study and Watery Grave |
 
 ## Strategy
 
@@ -59,18 +59,8 @@ in the deck, so it is legal, the same way Garth One-Eye's copy in the Ur-Dragon 
 4-loyalty planeswalker, so a creature or two can attack it down in a 1v1 game, and it does not turn on any card: no spell
 in the 99 needs a commander on the battlefield.
 
-**Kyodai, Soul of Kamigawa** ({3}{W}, 3/3). *Flash, flying. When Kyodai enters, another target permanent gains
-indestructible for as long as you control Kyodai. {W}{U}{B}{R}{G}: Kyodai gets +5/+5 until end of turn.* He is a normal
-card in the 99, so he is cast from the hand. Flash him in at the opponent's end step.
-
-**Protecting the combo.** His enter trigger makes another permanent indestructible while he stays on the battlefield.
-Cast him in response to a destroy effect aimed at Rings of Brighthearth, Basalt Monolith or Staff of Domination. It does
-nothing against exile, bounce, -X/-X, counterspells, Null Rod or Collector Ouphe, and it ends if Kyodai leaves.
-Ephemerate on Kyodai lets him protect a new permanent when he returns, but the first one loses its protection. Answering a
-removal spell aimed at Arzakon is not his job.
-
-**As a clock.** Each {W}{U}{B}{R}{G} gives him +5/+5. With infinite coloured mana (Route A2) the pump has no limit, so an
-unblocked Kyodai is lethal. He has no trample, so a flying or reach blocker stops it. The deck has no sweeper of its
+**Protecting the combo.** Arzakon does not protect it: the protection is the free counters, Silence, Grand Abolisher, Teferi's
+Protection and Heroic Intervention (see Protecting the win turn). The deck has no sweeper of its
 own besides Cyclonic Rift (overloaded), so when the combo is stopped it falls back on the fair wins
 below.
 
@@ -104,8 +94,8 @@ below.
   your permanents, and **Leyline of the Guildpact** ({G/W}{G/U}{B/G}{R/G}) to supply them: it makes every nonland
   permanent you control all colours, so with Leyline out the Elder alone taps for all five. Without Leyline, artifacts
   and lands are colourless, so the rocks and lands don't count (with it, every nonland permanent counts, rocks
-  included). Without Leyline the permanents reach at most four colours (Kyodai is
-  white, the Elder is green and white, Urza, Rhystic Study, Mystic Remora or Thassa's Oracle is blue, Ragavan, Sneak
+  included). Without Leyline the permanents reach at most four colours (the Elder is
+  green and white, Esper Sentinel and Grand Abolisher are white, Urza, Rhystic Study, Mystic Remora or Thassa's Oracle is blue, Ragavan, Sneak
   Attack or Underworld Breach is red) and nothing is black, so the loop makes no extra mana, unless Arzakon is on the
   battlefield: it is all five colours itself.
 - **Casting Leyline:** each hybrid symbol needs coloured mana ({G}{G}{G}{G}, or {W}{U}{B}{R}, or a mix); the colourless
@@ -115,8 +105,7 @@ below.
   the Staff. Four mana spent, five made: one extra coloured mana per loop. It takes five colours to be worth it, so
   check the colour count first. With infinite mana of every colour, draw the library with the Staff (stop at zero
   cards: drawing from an empty library loses) and cast Thassa's Oracle: an empty library wins. Or cast Walking
-  Ballista for a huge X, or Blightsteel Colossus ({12}), whichever you hold or draw, or pump Kyodai if he is on the
-  battlefield and unblocked.
+  Ballista for a huge X, or Blightsteel Colossus ({12}), whichever you hold or draw.
 - **What else Leyline does:** your lands become every basic land type as well, so Ancient Tomb, Strip Mine and Urza's
   Saga each tap for any one colour (that tap does not hurt you). It also makes your nonland permanents blue and
   red, so Pyroblast, Red Elemental Blast and Hydroblast can destroy any of them (your lands stay colourless); Heroic
@@ -167,7 +156,6 @@ If the combo is stopped, the deck still has threats and a way to grind:
 
 - **Arzakon** ({W}{U}{B}{R}{G}): the +2 is 3 damage every turn, a ten-turn clock at 30 life, and it clears Collector Ouphe,
   dorks and small blockers.
-- **Kyodai** ({3}{W}): a flash 3/3 flier that blocks, attacks in the air and grows by +5/+5 for each {W}{U}{B}{R}{G}.
 - **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Strip Mine, or any two lands, and attacks.
 - **Meteor Golem** ({7}): destroy any nonland permanent. **Hangarback Walker** ({X}{X}) is a mana sink that leaves
   fliers. **Walking Ballista** is a mana sink and a pinger. **Exsanguinate** ({X}{B}{B}) is a late finisher.
@@ -207,12 +195,26 @@ If the combo is stopped, the deck still has threats and a way to grind:
   artifact each combat) is rarely reached.
 - **Mox Opal** ({0}, legendary artifact): taps for one mana of any colour while you control three or more artifacts, and
   it counts itself. It needs two other artifacts to work, which is possible on turn 1 with free rocks (Mana Crypt and Lotus Petal) and
-  usual from turn 2 (the deck has 26 artifacts with the artifact creatures). **Chrome Mox** ({0}, a Game Changer): when it enters, exile a nonartifact, nonland card
+  usual from turn 2 (the deck has 25 artifacts with the artifact creatures). **Chrome Mox** ({0}, a Game Changer): when it enters, exile a nonartifact, nonland card
   from your hand; it taps for one mana of any colour of that card. Imprint the card whose colour you are missing (a
   multicolour card makes it tap for any of its colours), not a combo piece; it costs a card, so it is best on a hand
   with a spare.
+- **Dockside Extortionist** ({1}{R}, a 1/2 Goblin Pirate): when it enters, it creates X Treasure tokens, where X is the number of
+  artifacts and enchantments the opponent controls. Cali has one opponent, so it makes 0 to 2 Treasures on turn 2 and more as
+  that player's board grows; into an empty board it is a 1/2 body and nothing else, so hold it until the opponent has artifacts or
+  enchantments to count. A Treasure is an artifact that taps (and sacrifices itself) for one mana of any colour, so the Treasures
+  pay Arzakon's five colours, count toward Mox Opal's three artifacts, are fodder for Tinker, give Urza blue mana, and each one that
+  enters adds a loyalty counter to Tezzeret. It needs a red source for its {R}, the deck's lightest colour. It is banned in
+  Commander and legal in Cali.
 - **Esper Sentinel** ({W}) draws you a card when the opponent casts their first noncreature spell each turn and doesn't
   pay {X}, where X is its power (1, or more with a +1/+1 counter from Tezzeret's 0). **Mystic Confluence** ({3}{U}{U}) is a flexible counter, bounce or draw.
+- **Karn Liberated** ({7}, colourless legendary planeswalker, loyalty 6): **+4:** target player exiles a card from their
+  hand. **-3:** exile target permanent. **-14:** restart the game. It is the deck's seven-mana answer to any permanent that
+  is not a land, and it exiles rather than destroys, so it also beats an indestructible permanent or one that returns from the
+  graveyard. At {7} it comes down after the mana is built (a Monolith or Mana Vault turn). From 6 loyalty the -3 exiles one
+  permanent and leaves it at 3; the -14 needs two turns of +4 first (6 to 14) and leaves Karn at 0, so it is not a plan. It is a
+  planeswalker, so Sneak Attack cannot put it onto the battlefield. Karn Liberated and Karn, the Great Creator have different
+  names, so both can be on the battlefield.
 - **Karn, the Great Creator** ({4}, loyalty 5): *activated abilities of artifacts your opponents control can't be
   activated*, mana abilities included, so an opponent's Sol Ring, Mana Vault or Basalt Monolith stops tapping and
   untapping while he is out. It is the deck's answer to an artifact combo, and it does nothing to a creature or enchantment
@@ -231,8 +233,8 @@ If the combo is stopped, the deck still has threats and a way to grind:
 ### Game plan
 
 **Turns 1-2.** Land and fast mana: Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual, Chrome Mox, Mox Opal (with three
-artifacts), Arcane Signet, Fellwar Stone, a Talisman, a dork. A turn-1 Mana Crypt or Sol Ring plus a white source puts
-Kyodai out on turn 2, or flashes him in at the end of the opponent's turn; Arzakon is not a turn-2 play (it needs all five colours). On the play you skip your first
+artifacts), Arcane Signet, Fellwar Stone, Talisman of Progress, a dork; Dockside Extortionist when the opponent already has an artifact or an enchantment.
+Arzakon is not a turn-2 play (it needs all five colours). On the play you skip your first
 draw, so an opening seven with a tutor and two mana sources is better than a clunky seven with five lands.
 
 **Turns 3-4.** Assemble a route. Count which routes your hand supports (A: Basalt + Rings; A2: Staff + Elder + Leyline
@@ -254,7 +256,7 @@ one). The player on the play skips their first draw.
 
 | Hand | Keep when |
 |---|---|
-| 7 cards | 2-4 lands, or 1 land and 2+ mana rocks or Moxen-style pieces (Crypt, Petal, Ritual); at least one coloured source; and an action card: a tutor, a route piece, an engine, or a way to cast Arzakon by turn 4 or 5 (all five colours reachable from lands and any-colour rocks; colourless rocks do not pay for it), or Kyodai castable by turn 4 (a white source and three more mana) |
+| 7 cards | 2-4 lands, or 1 land and 2+ mana rocks or Moxen-style pieces (Crypt, Petal, Ritual); at least one coloured source; and an action card: a tutor, a route piece, an engine, or a way to cast Arzakon by turn 4 or 5 (all five colours reachable from lands and any-colour rocks; colourless rocks do not pay for it) |
 | 6 or 5 cards | 1-4 lands plus mana, and any tutor or route piece |
 | 4 cards | Keep |
 
@@ -305,7 +307,7 @@ speed, not a new route; cast it at the end of the opponent's turn:
   (can't be countered, for noncreature spells), An Offer You Can't Refuse (counter a noncreature spell for {U}; it gives
   the opponent two Treasures, so use it on the combo turn), Mystic Confluence, Silence (stops the opponent casting
   during your turn), Grand Abolisher (no spells on your turn), Teferi's Protection (phases out everything, ends in a
-  stalled game), Heroic Intervention, and Kyodai, flashed in in response to a destroy effect on a combo piece.
+  stalled game), and Heroic Intervention.
 - **Order:** bait with the less important spell first. Cast Brain Freeze or a rock before the key spell, keep the free
   counter for the one that matters.
 - **The Oracle line is the hardest to stop:** it is two cheap spells and no permanents to destroy. Silence or
@@ -315,7 +317,7 @@ speed, not a new route; cast it at the end of the opponent's turn:
 
 - **Spot removal:** Swords to Plowshares (a creature, including an artifact creature) and Chaos Warp (any permanent),
   Cyclonic Rift (overloaded at {6}{U}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game),
-  and Meteor Golem (any nonland permanent).
+  Meteor Golem (destroy any nonland permanent) and Karn Liberated (-3 exiles any permanent).
 - **Hate pieces to expect:** Null Rod and Collector Ouphe hit the artifacts, Stony Silence, Pithing Needle and Cursed
   Totem hit abilities (a +2 from Arzakon kills Collector Ouphe), Rule of Law and Eidolon of the Great Revel hit spells. Route E (a creature, but without Greaves it has no haste) and Route O (two spells and a
   creature) mostly dodge artifact hate.
@@ -331,7 +333,7 @@ The matchup notes are expectations, not measured.
 |---|---|
 | Fast combo | Race it with Route E or Route O. Hold Force of Will and Silence. You are the beatdown on turn 3-4 |
 | Stax (Null Rod, Collector Ouphe, Stony Silence, Cursed Totem) | Route O (spells and a creature) and Route E (Blightsteel is a creature, but Greaves' equip is stopped, so it attacks a turn later). Remove the stax piece first if you must |
-| Creature-heavy midrange | Remove the blocker (Swords, Chaos Warp, Meteor Golem) or reset the board with Cyclonic Rift, then a Blightsteel attack or Ballista. Kyodai flashes in to block |
+| Creature-heavy midrange | Remove the blocker (Swords, Chaos Warp, Meteor Golem, Karn Liberated) or reset the board with Cyclonic Rift, then a Blightsteel attack or Ballista |
 | Artifact combo (Urza, Kinnan) | Karn, the Great Creator stops every activated ability of their artifacts, mana abilities included; Pithing Needle names one card for the abilities that are not mana abilities |
 | Control (counters and removal) | Bait with Brain Freeze and Mystic Confluence, then go with a free counter behind it. The One Ring protects you for a turn |
 
@@ -345,7 +347,7 @@ it first. Keep a Force of Will for the retry, and rebuild mana with the rocks yo
 
 You start at 30. Mana Crypt costs 3 life on a lost coin flip each upkeep (about 1.5 life per turn on average), The One
 Ring costs 1 per burden counter, Ancient Tomb costs 2 per tap, each fetchland costs 1 (a fetched shockland costs 2
-more life to enter untapped, so fetch an original), Talismans cost 1 per coloured tap, Diabolic Intent is a creature sacrifice, and
+more life to enter untapped, so fetch an original), Talisman of Progress costs 1 per coloured tap, Diabolic Intent is a creature sacrifice, and
 Exsanguinate gains life for the X it costs. If you are on the draw against a fast deck, hold off on Mana Crypt and
 Ring until you know the matchup. Exsanguinate pays some of it back. The original duals and Command Tower cost
 nothing to tap.
@@ -357,8 +359,6 @@ nothing to tap.
 - Tinkering Blightsteel into a board with a blocker you can't remove: the blocker absorbs the hit unless trample
   carries ten damage over, so clear it first.
 - Playing the two Route A pieces into open mana and a hand of counters instead of waiting for both to resolve at once.
-- Casting Kyodai in your own main phase when you could flash him in at the opponent's end step or in response to a
-  destroy effect on a combo piece.
 - Using Arzakon's -3 with nothing for the three mana to do, or its -7 into Narset, Sheoldred, Orcish Bowmasters or Notion
   Thief, or when your hand is the larger one.
 - Cracking a fetchland after Vampiric, Mystical, Enlightened or Worldly Tutor: the shuffle loses the card you put on top.
@@ -373,12 +373,13 @@ Plateau, Taiga), ten fetchlands (Flooded Strand, Polluted Delta, Windswept Heath
 Wooded Foothills, Bloodstained Mire, Marsh Flats, Arid Mesa, Misty Rainforest) and three shocklands (Hallowed Fountain,
 Steam Vents, Watery Grave). Coloured sources among the lands, counting each fetchland as any colour: blue 18, white 16,
 black 16, red 16, green 15. The deck also has 5 mana dorks (Birds of Paradise, Llanowar Elves, Paradise Druid,
-Avacyn's Pilgrim, Faeburrow Elder), 14 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
-Chrome Mox, Mox Opal, Arcane Signet, Coalition Relic, Fellwar Stone, Talisman of Hierarchy, Talisman of
-Progress, The Mightstone and Weakstone, Basalt Monolith) and Voltaic Key to untap them. Blue is the heaviest colour ({U}{U} for Counterspell, Thassa's
-Oracle, Urza and Mystic Confluence), white needs {W}{W} for Grand Abolisher and one {W} for Kyodai, Silence and several other spells, and green
+Avacyn's Pilgrim, Faeburrow Elder), 13 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
+Chrome Mox, Mox Opal, Arcane Signet, Coalition Relic, Fellwar Stone, Talisman of Progress,
+The Mightstone and Weakstone, Basalt Monolith) and Voltaic Key to untap them, and Dockside Extortionist, which makes Treasures from the
+opponent's artifacts and enchantments. Blue is the heaviest colour ({U}{U} for Counterspell, Thassa's
+Oracle, Urza and Mystic Confluence), white needs {W}{W} for Grand Abolisher and one {W} for Silence and several other spells, and green
 matters most for the three one-mana dorks (Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim). Red is the lightest: only Chaos Warp, Gamble,
-Underworld Breach, Sneak Attack and Ragavan need it, besides Arzakon and Kyodai's pump. Arzakon needs all five at once, which the colourless sources
+Underworld Breach, Sneak Attack, Ragavan and Dockside Extortionist need it, besides Arzakon. Arzakon needs all five at once, which the colourless sources
 (Ancient Tomb, Strip Mine, Urza's Saga and the colourless rocks) cannot help with.
 
 **Fetchlands in this list.** The list has no basic lands, so a fetchland finds an original dual or a shockland by its
@@ -393,7 +394,7 @@ real duals and shocklands.
 
 Cali Commander: 1v1 and 30 life. Arzakon can be your commander (its own text). Banned: Ancestral Recall, Balance, Black Lotus, Channel, Erayo, Fastbond, Karakas, the
 five Moxen (Emerald, Jet, Pearl, Ruby, Sapphire), Nadu, Time Vault, Time Walk, Tolarian Academy, Tabernacle, Yawgmoth's
-Bargain. Mana Crypt, Tinker, Primeval Titan, Paradox Engine, Jeweled Lotus, Dockside Extortionist and Upheaval are
+Bargain. Mana Crypt, Tinker, Primeval Titan, Paradox Engine, Jeweled Lotus, Dockside Extortionist (banned in Commander) and Upheaval are
 legal. The Black Lotus token Arzakon's -3 makes is not a card in the deck, so the ban does not apply to it. The deck's two combos and its Oracle line are all infinite or library-win kills, so tell the opponent before the
 game. Check with the organiser whether proxies are allowed.
 
@@ -401,13 +402,13 @@ game. Check with the organiser whether proxies are allowed.
 
 **Commander (1).** Arzakon
 
-**Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Kyodai, Soul of Kamigawa, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
+**Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Dockside Extortionist, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
 
-**Artifacts (21).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
+**Artifacts (20).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
 
 **Enchantments (5).** Leyline of the Guildpact, Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
 
-**Planeswalkers (2).** Karn, the Great Creator, Tezzeret, Cruel Captain
+**Planeswalkers (3).** Karn Liberated, Karn, the Great Creator, Tezzeret, Cruel Captain
 
 **Instants (22).** An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
@@ -442,6 +443,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Demonic Consultation
 1 Demonic Tutor
 1 Diabolic Intent
+1 Dockside Extortionist
 1 Dovin's Veto
 1 Enlightened Tutor
 1 Ephemerate
@@ -459,8 +461,8 @@ game. Check with the organiser whether proxies are allowed.
 1 Hallowed Fountain
 1 Hangarback Walker
 1 Heroic Intervention
+1 Karn Liberated
 1 Karn, the Great Creator
-1 Kyodai, Soul of Kamigawa
 1 Leyline of the Guildpact
 1 Lightning Greaves
 1 Llanowar Elves
@@ -495,7 +497,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Swords to Plowshares
 1 Taiga
 1 Tainted Pact
-1 Talisman of Hierarchy
 1 Talisman of Progress
 1 Teferi's Protection
 1 Tezzeret, Cruel Captain
