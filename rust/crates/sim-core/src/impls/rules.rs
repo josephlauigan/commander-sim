@@ -750,15 +750,11 @@ fn moxamber(g: &Game, p: PlayerId, _m: PermId) -> u32 {
     }) as u32
 }
 
-/// Mox Opal: metalcraft: mana only with three or more artifacts
+/// Mox Opal: metalcraft: mana only with three or more artifacts. `karn::artifacts` counts them all: artifact cards and
+/// tokens, artifact lands, and the Treasure, Food, Clue and Blood tokens (counters on the player: Dockside Extortionist's
+/// Treasures make metalcraft)
 fn moxopal(g: &Game, p: PlayerId, _m: PermId) -> u32 {
-    let n = g
-        .player(p)
-        .perms
-        .iter()
-        .filter(|&&x| card_is(g, x, Types::ARTIFACT) || (g.perm(x).token && g.perm(x).ttypes.contains(&"artifact")))
-        .count();
-    (n >= 3) as u32
+    (crate::impls::karn::artifacts(g, p) >= 3) as u32
 }
 
 /// Sanctum Weaver: {T}: X mana of one colour, X = enchantments you control

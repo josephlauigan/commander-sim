@@ -1238,6 +1238,11 @@ paths_ok = "compiled: the Wizard token on instant and sorcery casts (both faces)
 status = "Full"
 note = "a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final Iteration: Wizards you control get +2/+1 and have flying"
 
+["Dockside Extortionist"]
+dsl = []
+status = "Full"
+note = "1/2 Goblin Pirate; the enter trigger (impls/dockside.rs) is a stack trigger (the table may respond, Elesh Norn blanks it, Panharmonicon and the other doublers repeat it, each instance counting again): X Treasure tokens, X counted as it resolves, not when it was cast or put on the stack = the artifacts and enchantments the controller's living opponents control (artifact and enchantment creatures, artifact lands, and the Treasure, Food, Clue and Blood tokens and other artifact tokens, each once; phased-out and face-down permanents not; the controller's own never); X = 0 makes no tokens; the Treasures are zones::add_treasure (real artifacts for metalcraft, Tinker, Urza, Karn; any one colour; Manufactor, Xorn and the token doublers apply). Banned in Commander, legal in Cali by data/formats.toml. AI (PROVISIONAL, never tuned by a sim): a hand-written cast priority held at 0 while no opponent has an artifact or an enchantment, else 52 plus 5 for each more (at most 77), under any plan row. tests/cards_dockside.rs"
+
 ["Doom Blade"]
 add_tags = ["nonblack"]
 

@@ -73,17 +73,11 @@ when = ["turn<=4"]
 value = 86
 else = 46
 
-# Dockside Extortionist ({1}{R}, 1/2) makes one Treasure for each artifact and enchantment the one opponent controls (Cali is
-# 1v1), so it makes 0 to 2 Treasures on turn 2 and more later: it does nothing for mana until the opponent has artifacts or
-# enchantments, and the plan language has no atom for the opponent's permanent count. It is rated just below the true rocks
-# (80 through turn 4 against 86) so that a rock is cast first, and kept at 56 after turn 4 (it is a burst of mana
-# when the opponent's board has grown, unlike a rock, which is dead late). It needs a red source.
-# PROVISIONAL (2026-11-23): the values are a guess, not simulated.
-[[prio]]
-cards = ["Dockside Extortionist"]
-when = ["turn<=4"]
-value = 80
-else = 56
+# No [[prio]] row for Dockside Extortionist ({1}{R}, 1/2): it makes one Treasure for each artifact and enchantment the one
+# opponent controls (Cali is 1v1), so 0 to 2 on turn 2 and more later. A plan row would override the card's own priority
+# (impls/dockside.rs: 0 while the opponent has no artifact or enchantment, so the AI holds it; 52 to 77 from one up), and a
+# plan row cannot say "the opponent has an artifact". It needs a red source.
+# PROVISIONAL (2026-11-23): the card's values are a guess, not simulated.
 
 [[prio]]
 cards = ["Rhystic Study", "The One Ring", "Mystic Remora"]
