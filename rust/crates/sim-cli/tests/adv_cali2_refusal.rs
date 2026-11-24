@@ -89,9 +89,14 @@ fn every_pool_mode_refuses_arzakon_at_a_commander_table() {
 /// `--goldfish`; the oracle is 4-seat by construction), with spaces too
 #[test]
 fn goldfish_and_oracle_lists_refuse_arzakon_anywhere() {
-    for spec in
-        ["arzakon", "yoshimaru,arzakon", "arzakon,yoshimaru", "yoshimaru , arzakon", "t6,arzakon", "arzakon,arzakon"]
-    {
+    for spec in [
+        "arzakon",
+        "karn_gilded,arzakon",
+        "arzakon,karn_gilded",
+        "karn_gilded , arzakon",
+        "t6,arzakon",
+        "arzakon,arzakon",
+    ] {
         refused(&["--goldfish", spec, "--format", "commander", "--quiet"]);
         let (code, out, err) = sim(&["--mulligan-oracle", spec, "--quiet"]);
         assert_eq!(code, 1, "{spec}\n{out}\n{err}");
@@ -101,7 +106,7 @@ fn goldfish_and_oracle_lists_refuse_arzakon_anywhere() {
         );
         no_game(&out);
     }
-    let (code, _, err) = sim(&["--mulligan-oracle", "yoshimaru,arzakon", "--vs-tier", "--quiet"]);
+    let (code, _, err) = sim(&["--mulligan-oracle", "karn_gilded,arzakon", "--vs-tier", "--quiet"]);
     assert_eq!(code, 1);
     assert!(err.contains("Cali Commander"), "{err}");
 }
@@ -123,9 +128,9 @@ fn cards_listing_still_works_for_arzakon() {
         assert!(out.contains("Mana Crypt"), "{args:?}: {out}");
     }
     // another deck is unaffected
-    let (code, out, _) = sim(&["--deck", "yoshimaru", "--cards"]);
+    let (code, out, _) = sim(&["--deck", "karn_gilded", "--cards"]);
     assert_eq!(code, 0);
-    assert!(out.contains("yoshimaru:"));
+    assert!(out.contains("karn_gilded:"));
 }
 
 /// `--all-decks` for a tier only arzakon plays: no deck left, the deck is named as left out, nothing is played, exit 0
@@ -134,7 +139,7 @@ fn all_decks_t6_leaves_arzakon_out_and_plays_nothing() {
     let (code, out, err) = sim(&["--all-decks", "--pool", "t6", "--quiet", "--games", "1"]);
     eprintln!("exit {code}\nstdout:\n{out}\nstderr:\n{err}");
     assert!(out.contains("leaves out arzakon"), "{out}");
-    assert!(!out.contains("leaves out yshtola") && !out.contains("leaves out sheoldred"));
+    assert!(!out.contains("leaves out karn_gilded") && !out.contains("leaves out sheoldred"));
     no_game(&out);
 }
 

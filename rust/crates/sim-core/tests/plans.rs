@@ -13,10 +13,12 @@ use std::fs;
 /// the deck's cards (commanders included): decks.json, or for a retired deck its import list
 fn deck_cards(key: &str, retired: bool) -> BTreeSet<String> {
     if retired {
-        // the retired guides of the `thrasios` and `cloud` keys have their own file names
+        // the retired guides of the `thrasios`, `cloud`, `yshtola` and `yoshimaru` keys have their own file names
         let file = match key {
             "thrasios" => "tymna-thrasios-doomsday",
             "cloud" => "cloud-midgar-equipment",
+            "yshtola" => "yshtola-esper-drain",
+            "yoshimaru" => "yoshimaru-tymna-blink",
             _ => key,
         };
         let p = data_dir().join(format!("../decklists/pool/retired/{file}.md"));

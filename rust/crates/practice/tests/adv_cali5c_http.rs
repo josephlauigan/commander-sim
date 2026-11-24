@@ -790,7 +790,9 @@ fn a_commander_lobby_whose_opponents_spoil_the_first_placeholder_is_refused_as_b
     let mut host = s.client();
     host.get("/");
     let h = c.cmdr.clone();
-    let first_other = MY_DECKS.iter().find(|k| **k != h.as_str()).unwrap().to_string();
+    // the first other deck of mine that a Commander table admits (the first one in the list is `arzakon`, a Cali deck, since
+    // the yshtola key left)
+    let first_other = MY_DECKS.iter().find(|k| **k != h.as_str() && c.admits(k, "commander")).unwrap().to_string();
     let o = host.get("/api/options").json();
     let tier_keys: Vec<String> = o["tiers"][0]["decks"]
         .as_array()

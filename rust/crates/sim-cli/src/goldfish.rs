@@ -598,19 +598,19 @@ mod tests {
     fn the_deck_keys_are_yours_and_the_tier_6_pool() {
         let mut sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
-        assert_eq!(deck_keys(&sim, "yoshimaru,t6,yoshimaru").unwrap().len(), 7);
+        assert_eq!(deck_keys(&sim, "karn_gilded,t6,karn_gilded").unwrap().len(), 7);
         // arzakon plays Cali Commander: a goldfish of it is played at its own table, alone or among others
         assert_eq!(deck_keys(&sim, "arzakon").unwrap(), ["arzakon"]);
-        assert_eq!(deck_keys(&sim, "yoshimaru,arzakon,t6").unwrap().len(), 8);
+        assert_eq!(deck_keys(&sim, "karn_gilded,arzakon,t6").unwrap().len(), 8);
         assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
         assert!(deck_keys(&sim, "").is_err());
         // at a Commander table (`--format commander`) it is refused, alone or among decks that are fine
         sim.set_format("commander").unwrap();
-        for spec in ["arzakon", "yoshimaru,arzakon", "arzakon,t6"] {
+        for spec in ["arzakon", "karn_gilded,arzakon", "arzakon,t6"] {
             let e = deck_keys(&sim, spec).unwrap_err();
             assert!(e.contains("Cali Commander") && e.starts_with("--goldfish: arzakon"), "{spec}: {e}");
         }
-        assert_eq!(deck_keys(&sim, "yoshimaru,t6").unwrap().len(), 7);
+        assert_eq!(deck_keys(&sim, "karn_gilded,t6").unwrap().len(), 7);
     }
 
     /// a Commander goldfish is the deck then three inert seats at 40 life, whatever the seed; a Cali goldfish is the deck

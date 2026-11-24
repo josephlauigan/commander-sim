@@ -15,7 +15,7 @@ use sim_core::state::{Game, Step};
 /// seat 0 is `deck` at its main phase on round 3, with these lands on the battlefield and exactly this hand
 fn game_with(deck: &str, lands: &[&str], hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "urdragon", "arzakon", "yshtola"];
+    let others = ["sheoldred", "urdragon", "arzakon", "karn_gilded"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -96,8 +96,9 @@ fn the_hint_plays_the_ais_land_first_and_says_why() {
 
 #[test]
 fn a_new_colour_beats_a_basic_of_a_colour_you_have() {
-    // Y'shtola with a Swamp out: a Plains (white is new) beats a second Swamp
-    let (mut g, p) = game_with("yshtola", &["Swamp"], &["Plains", "Swamp", "Rhystic Study", "Counterspell"]);
+    // a white-blue-black deck with a Swamp out: a Plains (white is new) beats a second Swamp (the Karn deck has no basic lands, so a pool deck that does)
+    let (mut g, p) =
+        game_with("zur-esper-enchantment-control", &["Swamp"], &["Plains", "Swamp", "Rhystic Study", "Counterspell"]);
     let h = hint(&mut g, p);
     assert!(h["text"].as_str().unwrap().starts_with("Play Plains, then "), "{h}");
     let d = detail(&h);

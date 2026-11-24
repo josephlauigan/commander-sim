@@ -52,9 +52,9 @@ fn adv_cali3_every_four_seat_mode_is_refused_by_format_cali_alone() {
         (&["--realism"], "--realism"),
         (&["--fit"], "--fit"),
         (&["--mulligan-oracle", "t6"], "--mulligan-oracle"),
-        (&["--mulligan-oracle", "yshtola"], "--mulligan-oracle"),
+        (&["--mulligan-oracle", "karn_gilded"], "--mulligan-oracle"),
         (&["--mulligan-oracle", "t6", "--vs-tier"], "--vs-tier"),
-        (&["--mulligan-oracle", "yshtola,t6", "--vs-tier"], "--vs-tier"),
+        (&["--mulligan-oracle", "karn_gilded,t6", "--vs-tier"], "--vs-tier"),
     ];
     for (mode, name) in modes {
         // format first, last, `=` spelling, and with a pool and a quiet flag around it
@@ -95,7 +95,7 @@ fn adv_cali3_four_seat_modes_with_arzakon_never_reach_a_game() {
         &["--mulligan-oracle", "arzakon", "--hands", "1"][..],
         &["--mulligan-oracle", "arzakon", "--vs-tier", "--hands", "1"][..],
         &["--mulligan-oracle", "t6, arzakon", "--vs-tier"][..],
-        &["--mulligan-oracle", " arzakon ,yoshimaru"][..],
+        &["--mulligan-oracle", " arzakon ,karn_gilded"][..],
         &["--deck", "arzakon", "--realism", "--pool", "t5"][..],
         &["--deck", "arzakon", "--fit", "--pool", "t5"][..],
     ] {
@@ -126,14 +126,14 @@ fn adv_cali3_format_with_all_decks_is_refused_for_any_format() {
 #[test]
 fn adv_cali3_unknown_format_names() {
     for bad in ["Cali", "CALI", "", " ", "cali ", "commander2", "cali,commander", "1v1", "--quiet", "nowhere"] {
-        let err = rejected(&["--deck", "yshtola", "--pool", "t5", "--format", bad, "--games", "1"]);
+        let err = rejected(&["--deck", "karn_gilded", "--pool", "t5", "--format", bad, "--games", "1"]);
         if bad != "--quiet" {
             assert!(err.contains("--format"), "{bad:?}: {err}");
         }
     }
     // missing value, and `=` with nothing after it
-    rejected(&["--deck", "yshtola", "--pool", "t5", "--format"]);
-    rejected(&["--deck", "yshtola", "--pool", "t5", "--format="]);
+    rejected(&["--deck", "karn_gilded", "--pool", "t5", "--format"]);
+    rejected(&["--deck", "karn_gilded", "--pool", "t5", "--format="]);
     // repeated flag: last one wins or is refused, never a game on a Commander-only mode
     let (code, out, err) = sim(&["--format", "commander", "--format", "cali", "--fit", "--pool", "t5"]);
     assert_eq!(code, 1, "{out}\n{err}");
@@ -150,19 +150,19 @@ fn adv_cali3_a_pool_deck_is_not_a_deck_argument() {
 }
 
 /// goldfish lists at a Cali table: Dack inside `t6` or named, anywhere in the list, refused with the card named; a Cali
-/// deck inside a list at a Commander table is refused naming arzakon (and not yshtola)
+/// deck inside a list at a Commander table is refused naming arzakon (and not karn_gilded)
 #[test]
 fn adv_cali3_goldfish_lists_refuse_what_the_table_does_not_admit() {
-    for spec in ["t6", "dack-fayden-white-stax", "yshtola,t6", "t6,arzakon", "arzakon , dack-fayden-white-stax"] {
+    for spec in ["t6", "dack-fayden-white-stax", "karn_gilded,t6", "t6,arzakon", "arzakon , dack-fayden-white-stax"] {
         let err = refused(&["--goldfish", spec, "--format", "cali", "--quiet"], &["--goldfish:", "Tabernacle"]);
         assert!(err.contains("dack-fayden-white-stax"), "{spec}: {err}");
     }
-    for spec in ["yshtola,arzakon", "arzakon,yshtola", "t6,arzakon,yshtola"] {
+    for spec in ["karn_gilded,arzakon", "arzakon,karn_gilded", "t6,arzakon,karn_gilded"] {
         let err = refused(
             &["--goldfish", spec, "--format", "commander", "--quiet"],
             &["--goldfish: arzakon", "Cali Commander"],
         );
-        assert!(!err.contains("yshtola cannot"), "{spec}: {err}");
+        assert!(!err.contains("karn_gilded cannot"), "{spec}: {err}");
     }
     // unknown keys are still refused with the key list
     refused(&["--goldfish", "arzakon,nothing", "--quiet"], &["nothing"]);
@@ -192,7 +192,7 @@ fn adv_cali3_searchtest_and_swaptest_refusals_before_a_game() {
 #[test]
 fn adv_cali3_cards_listing_is_not_affected_by_format() {
     for f in ["cali", "commander"] {
-        let (code, out, err) = sim(&["--deck", "yshtola", "--cards", "--format", f]);
+        let (code, out, err) = sim(&["--deck", "karn_gilded", "--cards", "--format", f]);
         assert_eq!(code, 0, "{f}\n{out}\n{err}");
     }
     // the coverage / model listing of a Cali deck at its own table is refused only when it would seat the deck wrongly

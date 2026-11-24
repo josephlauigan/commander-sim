@@ -929,10 +929,6 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "yshtola: Necropotence (Discard (state only))",
-        "no choice: the discarded card is exiled; the line only matched \"discard a\"",
-    ),
-    (
         "urdragon: Goldspan Dragon (Combat)",
         "attacking or becoming the target of a spell creates a Treasure with no choice; \"target\" is a trigger condition. Choosing mana when spending the Treasure is a separate ability",
     ),

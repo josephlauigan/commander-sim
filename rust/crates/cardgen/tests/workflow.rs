@@ -102,7 +102,7 @@ fn a_card_without_scryfall_data_is_an_error_offline() {
 fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let p = scratch("update");
     let inp = Inputs::load(&p).unwrap();
-    let deck = inp.my.iter().find(|d| d.key == "yoshimaru").unwrap().clone();
+    let deck = inp.my.iter().find(|d| d.key == "urdragon").unwrap().clone();
     let path = cardgen::decks::deck_path(&p, &deck);
     let mut list = cardgen::decks::load(&path).unwrap();
     let out = list.iter().position(|c| c == "Arcane Signet").unwrap();
@@ -110,13 +110,13 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let text = list.join("\n");
     // dry run: reports, writes nothing
     let before = std::fs::read_to_string(&path).unwrap();
-    let o = run(&p, "yoshimaru", &text, &Options { dry: true, log: None, offline: true }).unwrap();
+    let o = run(&p, "urdragon", &text, &Options { dry: true, log: None, offline: true }).unwrap();
     assert!(o.ok);
     assert!(o.text.contains("1 out, 1 in"), "{}", o.text);
     assert!(o.text.contains("out: Arcane Signet") && o.text.contains("in:  Prismatic Lens"), "{}", o.text);
     assert_eq!(std::fs::read_to_string(&path).unwrap(), before);
     // for real, with a log line
-    let o = run(&p, "yoshimaru", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
+    let o = run(&p, "urdragon", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
     assert!(o.ok, "{}", o.text);
     let after = std::fs::read_to_string(&path).unwrap();
     assert!(after.contains("1 Prismatic Lens\n") && !after.contains("1 Arcane Signet\n"));
@@ -138,7 +138,7 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     assert!(fixture.contains("\"Prismatic Lens\""));
     // a bad list stops before any file is touched
     let o =
-        run(&p, "yoshimaru", &format!("{text}\n1 Prismatic Lens"), &Options { dry: false, log: None, offline: true })
+        run(&p, "urdragon", &format!("{text}\n1 Prismatic Lens"), &Options { dry: false, log: None, offline: true })
             .unwrap();
     assert!(!o.ok);
     assert!(
@@ -216,7 +216,7 @@ fn audit_never_overwrites_a_decklist() {
     assert!(std::fs::read_to_string(&table).unwrap().starts_with("| Tier | Deck |"));
     assert!(run(&["--md", table.to_str().unwrap()]).status.success(), "an old table can be rewritten");
     // --deck and --mine print to stdout and touch no file
-    let key = "yshtola";
+    let key = "urdragon";
     assert!(run(&["--deck", key]).status.success());
     assert!(run(&["--mine"]).status.success());
     assert_eq!(std::fs::read_to_string(&doc).unwrap(), before);
@@ -270,12 +270,12 @@ fn cardgen_deck_checks_a_deck_under_its_own_format() {
 #[test]
 fn a_commander_deck_with_mana_crypt_swapped_in_is_refused() {
     let p = scratch("deck_commander_ban");
-    let (_, mut cards) = list_of(&p, "yshtola");
-    let o = dry(&p, "yshtola", &cards);
+    let (_, mut cards) = list_of(&p, "urdragon");
+    let o = dry(&p, "urdragon", &cards);
     assert!(o.ok, "{}", o.text);
     let i = cards.iter().position(|c| c == "Sol Ring").expect("Sol Ring in the list");
     cards[i] = "Mana Crypt".into();
-    let o = dry(&p, "yshtola", &cards);
+    let o = dry(&p, "urdragon", &cards);
     assert!(!o.ok);
     assert!(o.text.contains("banned in Commander: Mana Crypt"), "{}", o.text);
 }
@@ -293,13 +293,7 @@ fn validate_covers_each_of_your_decks_under_its_own_format() {
     mine.sort();
     assert_eq!(
         mine,
-        [
-            ("arzakon", "cali"),
-            ("sheoldred", "commander"),
-            ("urdragon", "commander"),
-            ("yoshimaru", "commander"),
-            ("yshtola", "commander")
-        ]
+        [("arzakon", "cali"), ("karn_gilded", "commander"), ("sheoldred", "commander"), ("urdragon", "commander")]
     );
 }
 
@@ -316,7 +310,7 @@ fn a_typo_or_an_unknown_format_in_my_decks_is_an_error() {
     std::fs::write(p.data("my_decks.toml"), &toml).unwrap();
     let decks = cardgen::data::load_my_decks(&p).unwrap();
     let fmt: Vec<(&str, &str)> = decks.iter().map(|d| (d.key.as_str(), d.format.as_str())).collect();
-    assert!(fmt.contains(&("arzakon", "cali")) && fmt.contains(&("yshtola", "commander")), "{fmt:?}");
+    assert!(fmt.contains(&("arzakon", "cali")) && fmt.contains(&("urdragon", "commander")), "{fmt:?}");
 }
 
 #[test]

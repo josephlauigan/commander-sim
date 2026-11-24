@@ -133,9 +133,9 @@ fn hub_checking(refuse: &'static str, check_refuses: &'static str) -> (Arc<Hub>,
     (Hub::new(true, false, dir.clone(), Images::new(dir.clone()), f.clone()), f, Scratch(dir))
 }
 
-/// the host (browser token "host", yoshimaru) opens a lobby; returns its code
+/// the host (browser token "host", karn_gilded) opens a lobby; returns its code
 fn open(h: &Hub) -> String {
-    h.open_lobby(&json!({"deck": "yoshimaru", "tier": "t2", "images": false}), "host", None).unwrap()
+    h.open_lobby(&json!({"deck": "karn_gilded", "tier": "t2", "images": false}), "host", None).unwrap()
 }
 
 fn lobby_code(h: &Hub) -> Option<String> {
@@ -164,7 +164,7 @@ fn a_refused_join_keeps_the_lobby_and_the_code() {
     assert!(game_running(&h));
     assert_eq!(f.made.load(Ordering::SeqCst), 1);
     assert_eq!(h.seat_of("guest2", false).as_deref(), Some("urdragon"));
-    assert_eq!(h.seat_of("host", true).as_deref(), Some("yoshimaru"));
+    assert_eq!(h.seat_of("host", true).as_deref(), Some("karn_gilded"));
     h.shutdown();
 }
 
@@ -185,7 +185,7 @@ fn a_refused_join_can_be_retried_by_the_same_guest() {
 fn a_mirror_is_refused_and_keeps_the_lobby() {
     let (h, _, _dir) = hub("nobody");
     let code = open(&h);
-    assert_eq!(join(&h, "guest1", &code, "yoshimaru").as_deref(), Some("The host plays that deck: pick another."));
+    assert_eq!(join(&h, "guest1", &code, "karn_gilded").as_deref(), Some("The host plays that deck: pick another."));
     assert_eq!(lobby_code(&h).as_deref(), Some(code.as_str()));
     assert_eq!(join(&h, "guest2", &code, "sheoldred"), None);
     assert!(game_running(&h));
@@ -298,7 +298,7 @@ fn the_pre_check_comes_after_the_other_join_checks() {
         Some("That code is not right: the host's screen shows it.")
     );
     assert!(join(&h, "g", &code, "nonsense").unwrap().starts_with("deck: one of "));
-    assert_eq!(join(&h, "g", &code, "yoshimaru").as_deref(), Some("The host plays that deck: pick another."));
+    assert_eq!(join(&h, "g", &code, "karn_gilded").as_deref(), Some("The host plays that deck: pick another."));
     assert_eq!(
         join(&h, "host", &code, "sheoldred").as_deref(),
         Some("This browser is the host's: join from the other computer.")

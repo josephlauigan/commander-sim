@@ -216,7 +216,7 @@ fn options_and_saves_shapes() {
     let (st, _, o) = call(r.h.port, "GET", "/api/options", None, None);
     assert_eq!(st, 200);
     assert_eq!((o["lan"].clone(), o["host"].clone(), o["app"].clone()), (json!(false), json!(true), json!(false)));
-    assert_eq!(o["decks"].as_array().unwrap().len(), 5);
+    assert_eq!(o["decks"].as_array().unwrap().len(), 4);
     assert_eq!(o["tiers"].as_array().unwrap().len(), 7);
     assert!(o["images"].is_object());
     let (_, _, s) = call(r.h.port, "GET", "/api/saves", None, None);
@@ -228,7 +228,7 @@ fn a_game_through_the_routes() {
     let r = rig("game", false);
     let p = r.h.port;
     let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "nope", "tier": "t1"})));
-    assert_eq!((st, b["error"].as_str()), (400, Some("deck: one of yshtola, sheoldred, arzakon, urdragon, yoshimaru")));
+    assert_eq!((st, b["error"].as_str()), (400, Some("deck: one of sheoldred, arzakon, urdragon, karn_gilded")));
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "sheoldred", "tier": "t9"}))).2["error"],
         "tier: one of t0, t1, t2, t3, t4, t5, t6"
@@ -415,12 +415,15 @@ fn lobby_and_join_with_lan() {
     let join = |cookie: &str, code: &str, deck: &str| {
         call(p, "POST", "/api/join", Some(cookie), Some(&json!({"code": code, "deck": deck}))).2
     };
-    assert_eq!(join("guest", "000000x", "yoshimaru")["error"], "That code is not right: the host's screen shows it.");
+    assert_eq!(join("guest", "000000x", "karn_gilded")["error"], "That code is not right: the host's screen shows it.");
     assert_eq!(join("guest", &code, "sheoldred")["error"], "The host plays that deck: pick another.");
-    assert_eq!(join("host", &code, "yoshimaru")["error"], "This browser is the host's: join from the other computer.");
-    assert_eq!(join("guest", &code, "bogus")["error"], "deck: one of yshtola, sheoldred, arzakon, urdragon, yoshimaru");
-    assert_eq!(join("guest", &code, "yoshimaru")["ok"], true);
-    assert_eq!(join("guest", &code, "yoshimaru")["error"], "There is no game waiting for a second player.");
+    assert_eq!(
+        join("host", &code, "karn_gilded")["error"],
+        "This browser is the host's: join from the other computer."
+    );
+    assert_eq!(join("guest", &code, "bogus")["error"], "deck: one of sheoldred, arzakon, urdragon, karn_gilded");
+    assert_eq!(join("guest", &code, "karn_gilded")["ok"], true);
+    assert_eq!(join("guest", &code, "karn_gilded")["error"], "There is no game waiting for a second player.");
     let (_, _, s) = call(p, "GET", "/api/state", Some("guest"), None);
-    assert_eq!(s["game"]["you"], "yoshimaru");
+    assert_eq!(s["game"]["you"], "karn_gilded");
 }

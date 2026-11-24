@@ -178,6 +178,31 @@ fn retired_decks() -> Vec<RawDeck> {
             "W",
             include_str!("../../../../decklists/pool/retired/cloud-midgar-equipment.md"),
         ),
+        // JD's Y'shtola, Night's Blessed Esper drain deck, retired 2026-11-24 (its cards went to the Karn, Gilded Guardian
+        // deck) and out of the simulator the same day: the tests of its card code (impls/yshtola.rs, doomsday.rs and the
+        // drain cards) still seat it with its real list, and the deck AI keys on "yshtola" (its plan file,
+        // data/plans/yshtola.toml, stays with `retired = true`)
+        listed(
+            "yshtola",
+            "Y'shtola",
+            "Y'shtola, Night's Blessed",
+            "WUB",
+            include_str!("../../../../decklists/pool/retired/yshtola-esper-drain.md"),
+        ),
+        // JD's Yoshimaru/Tymna blink deck, retired 2026-11-24 (its blink package went to the Karn, Gilded Guardian deck) and
+        // out of the simulator the same day: the tests of its card code (impls/tymna_*.rs, bulk_white.rs, cloud.rs) still seat
+        // it with its real list, two commanders included, and the deck AI keys on "yoshimaru" (its plan file,
+        // data/plans/yoshimaru.toml, stays with `retired = true`)
+        RawDeck {
+            commander2: Some("Tymna the Weaver".into()),
+            ..listed(
+                "yoshimaru",
+                "Yoshimaru/Tymna",
+                "Yoshimaru, Ever Faithful",
+                "WB",
+                include_str!("../../../../decklists/pool/retired/yoshimaru-tymna-blink.md"),
+            )
+        },
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
         listed(

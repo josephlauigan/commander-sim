@@ -15,7 +15,7 @@ use sim_core::state::Game;
 /// a game whose seat 0 is `deck`, with exactly this hand (taken from the library; the rest stays shuffled)
 fn game_with(deck: &str, hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["sheoldred", "urdragon", "arzakon", "yshtola"];
+    let others = ["sheoldred", "urdragon", "arzakon", "karn_gilded"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -290,10 +290,18 @@ fn cloud_two_lands_need_a_cheap_play_and_say_what_would_have_kept_it() {
 }
 
 #[test]
-fn yshtola_and_sheoldred_have_no_table_and_say_so() {
+fn karn_gilded_and_sheoldred_have_no_table_and_say_so() {
     let (mut g, p) = game_with(
-        "yshtola",
-        &["Swamp", "Rhystic Study", "Counterspell", "Farewell", "Exsanguinate", "Sanguine Bond", "Toxic Deluge"],
+        "karn_gilded",
+        &[
+            "Underground Sea",
+            "Rhystic Study",
+            "Counterspell",
+            "Farewell",
+            "Exsanguinate",
+            "Sanguine Bond",
+            "Necropotence",
+        ],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
@@ -314,8 +322,8 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["arzakon", "yshtola", "sheoldred", "yoshimaru", "kraum-tymna-blue-breach-midrange"] {
-        let others = ["sheoldred", "urdragon", "arzakon", "yshtola"];
+    for deck in ["arzakon", "karn_gilded", "sheoldred", "urdragon", "kraum-tymna-blue-breach-midrange"] {
+        let others = ["sheoldred", "urdragon", "arzakon", "karn_gilded"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
         for seed in 0..12u64 {
@@ -352,16 +360,8 @@ fn the_verdict_is_keeps_hand_over_many_hands() {
 #[test]
 fn the_bottom_choice_says_why() {
     let (mut g, p) = game_with(
-        "yoshimaru",
-        &[
-            "Plains",
-            "Plains",
-            "Plains",
-            "Sword of Fire and Ice",
-            "Swords to Plowshares",
-            "Wrath of God",
-            "The Wandering Emperor",
-        ],
+        "karn_gilded",
+        &["Tundra", "Plateau", "Bayou", "Sol Ring", "Swords to Plowshares", "Farewell", "Consecrated Sphinx"],
     );
     let r = req("Your opening hand (6 to keep). If you keep, you put 1 card(s) on the bottom.");
     let h = advisor::hint(&mut g, p, &r);
@@ -396,29 +396,10 @@ fn print_example_hints() {
                 "Demonic Consultation",
             ],
         ),
+        ("karn_gilded", &["Tundra", "Plateau", "Bayou", "Sol Ring", "Path to Exile", "Solitude", "Baleful Strix"]),
         (
-            "yoshimaru",
-            &[
-                "Plains",
-                "Wrath of God",
-                "Path to Exile",
-                "Solitude",
-                "Sword of Fire and Ice",
-                "Mithril Coat",
-                "Stoneforge Mystic",
-            ],
-        ),
-        (
-            "yoshimaru",
-            &[
-                "Plains",
-                "Plains",
-                "Plains",
-                "Sword of Fire and Ice",
-                "Swords to Plowshares",
-                "Stoneforge Mystic",
-                "Sol Ring",
-            ],
+            "karn_gilded",
+            &["Tundra", "Plateau", "Bayou", "Sol Ring", "Swords to Plowshares", "Baleful Strix", "Thought Vessel"],
         ),
     ];
     for (deck, hand) in cases {

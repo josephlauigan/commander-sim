@@ -64,7 +64,8 @@ fn its_controller_draws_in_each_opponents_draw_step_but_not_their_own() {
     let mut g = tbl();
     perm(&mut g, P0, THEORIST);
     turn::step_start(&mut g, P0).unwrap();
-    assert_eq!(hand_len(&g, P0), 1, "your own draw step: no extra card");
+    // the turn's land drop follows the draw step: a land drawn from the top of the library is already on the battlefield
+    assert_eq!(hand_len(&g, P0) + g.player(P0).lands.len(), 1, "your own draw step: no extra card");
 }
 
 #[test]

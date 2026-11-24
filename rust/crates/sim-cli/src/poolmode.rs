@@ -951,11 +951,11 @@ mod tier_tests {
     #[test]
     fn a_tier_outside_is_refused_unless_any_tier() {
         let own = v(&["t4", "t5"]);
-        let e = select_tiers("yshtola", &own, "t1", false).unwrap_err();
-        assert!(e.contains("yshtola") && e.contains("t4, t5") && e.contains("--any-tier"), "{e}");
-        assert_eq!(select_tiers("yshtola", &own, "t1", true).unwrap(), v(&["t1"]));
+        let e = select_tiers("karn_gilded", &own, "t1", false).unwrap_err();
+        assert!(e.contains("karn_gilded") && e.contains("t4, t5") && e.contains("--any-tier"), "{e}");
+        assert_eq!(select_tiers("karn_gilded", &own, "t1", true).unwrap(), v(&["t1"]));
         // --any-tier with all: every tier
-        assert_eq!(select_tiers("yshtola", &own, "all", true).unwrap().len(), 7);
+        assert_eq!(select_tiers("karn_gilded", &own, "all", true).unwrap().len(), 7);
     }
 
     #[test]
@@ -970,12 +970,11 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str], Option<&str>); 5] = [
-            ("yshtola", &["t5"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
-            ("sheoldred", &["t3", "t4"], None),
+        let want: [(&str, &[&str], Option<&str>); 4] = [
+            ("sheoldred", &["t3", "t4"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("arzakon", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
             ("urdragon", &["t5"], None),
-            ("yoshimaru", &["t4", "t5"], None),
+            ("karn_gilded", &["t4", "t5"], None), // JD 11/24: replaces yshtola (t5) and yoshimaru (t4-t5)
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t, fmt) in want {
@@ -1024,19 +1023,18 @@ mod tier_tests {
         }
         let e = deck_tiers(&sim, "arzakon").unwrap_err();
         assert!(e.contains("arzakon cannot be played at a Commander table") && e.contains("Cali Commander"), "{e}");
-        assert_eq!(deck_tiers(&sim, "yoshimaru").unwrap(), v(&["t4", "t5"]));
+        assert_eq!(deck_tiers(&sim, "karn_gilded").unwrap(), v(&["t4", "t5"]));
         assert!(select_tiers("arzakon", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
     }
 
-    /// `--all-decks` leaves the deck out with a note and plays the other four with their tiers unchanged
+    /// `--all-decks` leaves the deck out with a note and plays the other three with their tiers unchanged
     #[test]
     fn all_decks_skips_the_deck_and_keeps_the_others_tiers() {
         let sim = sim();
         let want = vec![
-            ("yshtola".to_string(), v(&["t5"])),
             ("sheoldred".to_string(), v(&["t3", "t4"])),
             ("urdragon".to_string(), v(&["t5"])),
-            ("yoshimaru".to_string(), v(&["t4", "t5"])),
+            ("karn_gilded".to_string(), v(&["t4", "t5"])),
         ];
         let plan = tier_plan(&sim, &args("--all-decks --pool all")).unwrap();
         assert_eq!(plan.per_deck, want);
@@ -1046,16 +1044,13 @@ mod tier_tests {
         assert_eq!(plan.tiers, v(&["t3", "t4", "t5"]));
         // one tier: the decks that play it, arzakon still out (t6 has no deck of yours left)
         let plan = tier_plan(&sim, &args("--all-decks --pool t5")).unwrap();
-        assert_eq!(
-            plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
-            ["yshtola", "urdragon", "yoshimaru"]
-        );
+        assert_eq!(plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(), ["urdragon", "karn_gilded"]);
         assert!(tier_plan(&sim, &args("--all-decks --pool t6")).unwrap().per_deck.is_empty());
         // --any-tier lifts the tier limit, not the format one
         let plan = tier_plan(&sim, &args("--all-decks --pool all --any-tier")).unwrap();
         assert_eq!(
             plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
-            ["yshtola", "sheoldred", "urdragon", "yoshimaru"]
+            ["sheoldred", "urdragon", "karn_gilded"]
         );
         assert!(plan.per_deck.iter().all(|(_, t)| t.len() == 7));
         assert_eq!(plan.skipped.len(), 1);
@@ -1089,6 +1084,6 @@ mod tier_tests {
             sim.pool.iter().filter(|d| sim.engine.admits(&d.key, "cali").is_err()).map(|d| d.key.as_str()).collect();
         assert_eq!(kept_out, ["dack-fayden-white-stax"]);
         assert!(sim.engine.admits("arzakon", "commander").is_err());
-        assert!(sim.engine.admits("yoshimaru", "nowhere").is_err());
+        assert!(sim.engine.admits("karn_gilded", "nowhere").is_err());
     }
 }

@@ -268,10 +268,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
-    (
-        "yoshimaru: Mithril Coat",
-        "the probe's table has no legendary creature you control: no legal target (with two, the person picks: practice_gaps_c mithril_coat_attaches_to_the_legendary_creature_you_pick)",
-    ),
 ];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
