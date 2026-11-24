@@ -303,27 +303,24 @@ mod tests {
         crate::args::parse(&v).unwrap()
     }
 
-    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in the Arzakon deck (no
-    /// plan rule names it, and Breach is gated on escape candidates). Kefka played this test until it was retired
-    /// (2026-11-06); its note: the same shape as Bribery before the
-    /// audit gave it an arm in kefka_prio. The seed matters: on some seeds the board reaches a round where the deck can
-    /// escape cards with Breach and the rule rightly ranks it above 0 (Kefka's list on seed 500000, kefka_prio 56; Thanos'
-    /// list with Gifts Ungiven instead of Triple Triad on seeds 500002, 500003, 500010, 500011, 500023 and 500024). Seed
-    /// 500000 gives 0 for the 2026-11-15 Thanos list
+    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Cost of Brilliance in the Arzakon deck
+    /// (no plan rule or deck rule of that deck names it, so it gets the generic 0, and it is a sorcery). The card, and the
+    /// card it replaces, are picked by name: Underworld Breach was used here until the 2026-11-23 Arzakon list; with that
+    /// list the sampled seed 500000 boards rank it 72 (a card gated on the board, as below), so it is the wrong witness. The seed matters for such cards (Kefka's list on seed 500000,
+    /// kefka_prio 56; Thanos' list with Gifts Ungiven instead of Triple Triad on seeds 500002, 500003, 500010, 500011,
+    /// 500023 and 500024). Cost of Brilliance ranked 0 on seeds 500000, 500002 and 500010 at the 2026-11-23 list (found by
+    /// ranking every card of the other decks through `ai_rules`)
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
-        let out = s.mine["arzakon"]
-            .iter()
-            .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
-            .unwrap()
-            .clone();
-        let r = rules_at(&s, "arzakon", &out, "Underworld Breach", "t5", 500000);
+        let (out, inn) = ("Brain Freeze", "Cost of Brilliance");
+        assert!(s.mine["arzakon"].iter().any(|c| c == out) && !s.mine["arzakon"].iter().any(|c| c == inn));
+        let r = rules_at(&s, "arzakon", out, inn, "t5", 500000);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(
             r.line(),
-            "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it"
+            "WARNING AI: Cost of Brilliance: priority 0 and no response path: the AI may never cast it"
         );
     }
 
