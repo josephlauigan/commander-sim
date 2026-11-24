@@ -1,30 +1,33 @@
-# JD's Kyodai, Soul of Kamigawa Cali Commander artifact-combo deck (decklists/cali_commander/arzakon-artifact-combo.md, key
+# JD's Arzakon Cali Commander artifact-combo deck (decklists/cali_commander/arzakon-artifact-combo.md, key
 # `arzakon`, `kyodai` until 2026-11-23, `thanos` until 2026-11-22; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `arzakon` is not a Tier
 # 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
-# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Kyodai first,
+# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Arzakon first,
 # the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
-# into Walking Ballista. Kyodai (impls/kyodai.rs) and Leyline of the Guildpact (engine/chars.rs, impls/card_models.rs) are card code;
-# the plan only values them: Kyodai as the commander below, Leyline by the Faeburrow Elder. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
+# into Walking Ballista. Arzakon is the commander (a five-colour planeswalker, {W}{U}{B}{R}{G}, so it needs all five colours and has no flash body),
+# Kyodai, Soul of Kamigawa is a 99 card. Kyodai (impls/kyodai.rs) and Leyline of the Guildpact (engine/chars.rs, impls/card_models.rs) are card code;
+# the plan only values them: Kyodai by a `[[prio]]` row below, Leyline by the Faeburrow Elder. The old commander's card code (impls/t6_thanos.rs) stays in the engine.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
 # Staff of Domination + Faeburrow Elder, Thassa's Oracle with Demonic Consultation or Tainted Pact, and Tezzeret, Cruel
-# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander values below are
-# placeholders for a {3}{W} flash flier, not tuned.
+# Captain (the plan has no lines for them), and the 1v1, 30-life Cali rules themselves. The commander and Kyodai values
+# below are provisional (Opus design consult 2026-11-23), not tuned.
 deck = "arzakon"
 default = "plan"
 engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 
-# The deck plans to have its commander down on turn 2-4 and then play value, not a goldfish combo: pool defaults for temperature, a little
+# The deck plans to have its commander down on turn 3 and then play value, not a goldfish combo: pool defaults for temperature, a little
 # above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
 [style]
 temp = 1.0
 aggression = 0.6
 caution = 0.5
 
-# The enabler of Deflecting Swat, Jeska's Will and Akroma's Will: a {3}{W} flash flier, castable on turn 2 off a fast rock
-# (the colourless rocks pay the generic part) and on turn 4 off lands, before the engines.
+# Arzakon, a five-colour planeswalker ({W}{U}{B}{R}{G}, loyalty 4: +2 three damage, -3 a Black Lotus token, -7 wheel),
+# sorcery speed. It needs all five colours, so it comes down on turn 3 only off fast mana and a fixed mana base, and it is
+# the card that turns on Deflecting Swat, Jeska's Will and Akroma's Will while it is on the battlefield.
+# PROVISIONAL: prio 74, turn 3 (Opus design consult 2026-11-23, item 10), not tuned by any sim.
 [commander]
-prio = 80
+prio = 74
 turn = 3
 
 [key_cards]
@@ -60,9 +63,9 @@ cards = ["Meteor Golem"]
 when = ["opp-power>=15"]
 score = 76
 
-# Acceleration and fixing are the first plays; Kyodai and the engines next; the big top end last.
+# Acceleration and fixing are the first plays; Arzakon and the engines next; the big top end last.
 [[prio]]
-cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Mind Stone", "Birds of Paradise",
+cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Birds of Paradise",
     "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Hierarchy", "Talisman of Progress",
     "Mox Opal", "Chrome Mox", "Fellwar Stone"]
 when = ["turn<=4"]
@@ -112,6 +115,12 @@ else = 40
 [[prio]]
 cards = ["Hangarback Walker", "Primeval Titan"]
 value = 68
+
+# Kyodai, Soul of Kamigawa is a 99 card now: a {3}{W} flash flier that gives another permanent indestructible, played as a
+# body and a combo shield once the engines are down. PROVISIONAL: 60 (Opus design consult 2026-11-23, item 10).
+[[prio]]
+cards = ["Kyodai, Soul of Kamigawa"]
+value = 60
 
 # The top end: after the board is built
 [[prio]]
