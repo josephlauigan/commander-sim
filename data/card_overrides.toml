@@ -1150,7 +1150,7 @@ note = "when it blocks, at end of combat, it and the creature it blocked are des
 
 ["Deflecting Swat"]
 status = "Full"
-note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response)"
+note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response); a person casts it at the spell or ability they pick and picks its new target (human/protect.rs)"
 
 ["Delighted Halfling"]
 pool_add_tags = ["dork=C"]
@@ -5536,7 +5536,7 @@ types = "A"
 tags = ""
 dsl = []
 status = "Full"
-note = "{1},{T}: untap an artifact (the best mana rock: net mana), also used in the Monolith loops"
+note = "{1},{T}: untap an artifact (the best mana rock: net mana), also used in the Monolith loops; a person chooses the target (any artifact, an opponent's too, the Key itself, tapped ones only) and Rings of Brighthearth copies it (human/abilities.rs voltaic_key)"
 
 ["Vraska, Betrayal's Sting"]
 loyalty = "6"
@@ -8776,7 +8776,7 @@ note = "destroys all creatures (the wipe=destroy tag); cast for {5}{W}{W} or by 
 ["Gleaming Splendor"]
 tags = ""
 status = "Full"
-note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"
+note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: two target players each draw a card; the AI picks itself and one opponent and uses it in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure); a person chooses both players (nothing to choose with two players in the game), and the draw hook gives the Treasure for either draw (human/abilities.rs splendor)"
 ["City of Brass"]
 status = "Full"
 note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
@@ -10070,6 +10070,7 @@ paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Ph
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Maelstrom of the Spirit Dragon"]
+note = "{4},{T}, sacrifice: search for a Dragon card; a person chooses which Dragon (or nothing) from the library (human/model_gaps.rs maelstrom)"
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Skemfar Elderhall"]
