@@ -397,6 +397,9 @@ impl Session {
             tx.insert(k.clone(), t);
             rxs.push((k.clone(), r));
         }
+        // install this generation before the thread can run: the replay reaches its first live decision fast, and a
+        // thread that still saw the closed generation of the game before the rewind would answer Cancel and end the game
+        self.st.lock().unwrap().run = Gen { abort: abort.clone(), tx };
         let me = self.clone();
         let flag = abort.clone();
         let h = std::thread::Builder::new()
@@ -409,9 +412,7 @@ impl Session {
                 }
             })
             .expect("spawn game thread");
-        let mut st = self.st.lock().unwrap();
-        st.run = Gen { abort, tx };
-        st.thread = Some(h);
+        self.st.lock().unwrap().thread = Some(h);
     }
 
     fn closed(&self) {
