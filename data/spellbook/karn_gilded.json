@@ -1,0 +1,5814 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-11-24",
+  "deck": "karn_gilded",
+  "commanders": [
+    "Karn, Gilded Guardian"
+  ],
+  "request_sha256": "9f7c1786535c7c4da0995eb021bcd2408cca47b124042bed1dfdcaa6d665e03f",
+  "identity": "WUBRG",
+  "included": [
+    {
+      "id": "690-3966",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 152603
+    },
+    {
+      "id": "742-1295",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 151946
+    },
+    {
+      "id": "314-3966",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 128160
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 56486
+    },
+    {
+      "id": "1295-3189",
+      "cards": [
+        {
+          "name": "Doomsday",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least three devotion to blue.",
+      "mana": "{U}{U}{B}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14714
+    },
+    {
+      "id": "2781-5291",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3480
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 371321,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1295-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 133264,
+      "missing": [
+        "Tainted Pact"
+      ]
+    },
+    {
+      "id": "314-6191",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 97602,
+      "missing": [
+        "Bloodthirsty Conqueror"
+      ]
+    },
+    {
+      "id": "690-6191",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 81778,
+      "missing": [
+        "Bloodthirsty Conqueror"
+      ]
+    },
+    {
+      "id": "3966-5755",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Tenacity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 77192,
+      "missing": [
+        "Enduring Tenacity"
+      ]
+    },
+    {
+      "id": "110-3966",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 62254,
+      "missing": [
+        "Marauding Blight-Priest"
+      ]
+    },
+    {
+      "id": "3966-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57649,
+      "missing": [
+        "Aetherflux Reservoir"
+      ]
+    },
+    {
+      "id": "1561-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size which is larger than or equal to their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 47094,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "1170-4761-5034",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 46600,
+      "missing": [
+        "Displacer Kitten"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38265,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "900-3750",
+      "cards": [
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to a creature that can attack this turn.\nAn opponent is unable to block and kill the creature with Sword of Feast and Famine attached.\nLands you control can tap to produce at least {3}{R}{R}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37897,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "3966-5867",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Starscape Cleric",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 28786,
+      "missing": [
+        "Starscape Cleric"
+      ]
+    },
+    {
+      "id": "1170-3363-4761",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27706,
+      "missing": [
+        "Displacer Kitten"
+      ]
+    },
+    {
+      "id": "553-2856",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 26113,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2781-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Ephemerate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21320,
+      "missing": [
+        "Preston, the Vanisher"
+      ]
+    },
+    {
+      "id": "314-4996",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Beacon of Immortality",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 18211,
+      "missing": [
+        "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "690-4996",
+      "cards": [
+        {
+          "name": "Beacon of Immortality",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have an equal or higher life total than an opponent.",
+      "mana": "{5}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17918,
+      "missing": [
+        "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "372-1090-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17590,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "314-4141",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Tribute",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 17187,
+      "missing": [
+        "Blood Tribute"
+      ]
+    },
+    {
+      "id": "372-2781-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16951,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1090-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16678,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "2781-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Cloudshift.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16672,
+      "missing": [
+        "Preston, the Vanisher"
+      ]
+    },
+    {
+      "id": "372-2781-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15376,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "3966-4789",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cliffhaven Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14965,
+      "missing": [
+        "Cliffhaven Vampire"
+      ]
+    },
+    {
+      "id": "742-2836",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14830,
+      "missing": [
+        "Laboratory Maniac"
+      ]
+    },
+    {
+      "id": "314-4624",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for up to two target opponents"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 13826,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "690-4624",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for up to two target opponents"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13524,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "2973-3966",
+      "cards": [
+        {
+          "name": "Dina, Soul Steeper",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13311,
+      "missing": [
+        "Dina, Soul Steeper"
+      ]
+    },
+    {
+      "id": "953-1295",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12901,
+      "missing": [
+        "Enter the Infinite"
+      ]
+    },
+    {
+      "id": "618-2781",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12564,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12540,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "92-3966",
+      "cards": [
+        {
+          "name": "Vizkopa Guildmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "{1}{W}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12390,
+      "missing": [
+        "Vizkopa Guildmage"
+      ]
+    },
+    {
+      "id": "2939-3966",
+      "cards": [
+        {
+          "name": "Defiant Bloodlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11669,
+      "missing": [
+        "Defiant Bloodlord"
+      ]
+    },
+    {
+      "id": "703-5291",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Cursed Mirror cannot be copying a creature.",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 11329,
+      "missing": [
+        "Astral Dragon"
+      ]
+    },
+    {
+      "id": "1295-4400",
+      "cards": [
+        {
+          "name": "Hermit Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Hermit Druid does not have summoning sickness.\nYou have no basic lands in library.",
+      "mana": "{G}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10486,
+      "missing": [
+        "Hermit Druid"
+      ]
+    },
+    {
+      "id": "2781-3734",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Metamorph",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Phyrexian Metamorph.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10427,
+      "missing": [
+        "Phyrexian Metamorph"
+      ]
+    },
+    {
+      "id": "1068-1295",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 10137,
+      "missing": [
+        "Leveler"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10077,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "1999-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Master Transmuter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Master Transmuter"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9939,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "742-3096",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jace, Wielder of Mysteries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9560,
+      "missing": [
+        "Jace, Wielder of Mysteries"
+      ]
+    },
+    {
+      "id": "2781-4200",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9421,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "2781-3908",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Spark Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9392,
+      "missing": [
+        "Spark Double"
+      ]
+    },
+    {
+      "id": "1025-4682",
+      "cards": [
+        {
+          "name": "Stasis",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8513,
+      "missing": [
+        "Stasis"
+      ]
+    },
+    {
+      "id": "3966-4912",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Epicure of Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8352,
+      "missing": [
+        "Epicure of Blood"
+      ]
+    },
+    {
+      "id": "335-5141",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8187,
+      "missing": [
+        "Ad Nauseam"
+      ]
+    },
+    {
+      "id": "2022-3283",
+      "cards": [
+        {
+          "name": "Wedding Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Consecrated Sphinx",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite card draw for opponents that control a Wedding Ring"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a Wedding Ring.\nYou have a way to draw a card.\nIt is your turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8081,
+      "missing": [
+        "Wedding Ring"
+      ]
+    },
+    {
+      "id": "314-1612",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7835,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "1308-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7799,
+      "missing": [
+        "Anointed Procession"
+      ]
+    },
+    {
+      "id": "553-1827",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vampiric Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7709,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "690-1612",
+      "cards": [
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7460,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "147-5144",
+      "cards": [
+        {
+          "name": "Dualcaster Mage",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{1}{R}{R}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7422,
+      "missing": [
+        "Dualcaster Mage"
+      ]
+    },
+    {
+      "id": "3363-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Infinite looting",
+        "Near-infinite untap of permanents you control",
+        "Near-infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7280,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "467-1636",
+      "cards": [
+        {
+          "name": "Shorikai, Genesis Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite card draw",
+        "Near-infinite untap of all creatures",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause Shorikai to become a creature this turn. You control a creature that can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7117,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "4365-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mondrak, Glory Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7066,
+      "missing": [
+        "Mondrak, Glory Dominus"
+      ]
+    },
+    {
+      "id": "193-2781",
+      "cards": [
+        {
+          "name": "Aminatou, the Fateshifter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Aminatou has at least two loyalty counters.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6596,
+      "missing": [
+        "Aminatou, the Fateshifter"
+      ]
+    },
+    {
+      "id": "4682-6441-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elspeth, Storm Slayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6475,
+      "missing": [
+        "Elspeth, Storm Slayer"
+      ]
+    },
+    {
+      "id": "618-1090",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5972,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "2781-4089",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glasspool Mimic // Glasspool Shore",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Glasspool Mimic // Glasspool Shore.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5807,
+      "missing": [
+        "Glasspool Mimic // Glasspool Shore"
+      ]
+    },
+    {
+      "id": "147-3603",
+      "cards": [
+        {
+          "name": "Dualcaster Mage",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Cloudshift.",
+      "mana": "{1}{R}{R}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5581,
+      "missing": [
+        "Dualcaster Mage"
+      ]
+    },
+    {
+      "id": "3966-7286",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "South Wind Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5450,
+      "missing": [
+        "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "2781-4753",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clever Impersonator",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Clever Impersonator.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5349,
+      "missing": [
+        "Clever Impersonator"
+      ]
+    },
+    {
+      "id": "2781-3668",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flesh Duplicate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Flesh Duplicate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5309,
+      "missing": [
+        "Flesh Duplicate"
+      ]
+    },
+    {
+      "id": "4682-6753-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exalted Sunborn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4900,
+      "missing": [
+        "Exalted Sunborn"
+      ]
+    },
+    {
+      "id": "1938-2781-3603",
+      "cards": [
+        {
+          "name": "Glorious Protector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4791,
+      "missing": [
+        "Glorious Protector"
+      ]
+    },
+    {
+      "id": "4682-7824-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bard, King of Dale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4779,
+      "missing": [
+        "Bard, King of Dale"
+      ]
+    },
+    {
+      "id": "1621-2781",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4606,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "1295-2853",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4448,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "3809-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4295,
+      "missing": [
+        "Goldspan Dragon"
+      ]
+    },
+    {
+      "id": "3903-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4193,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "2719-2781",
+      "cards": [
+        {
+          "name": "Sakashima of a Thousand Faces",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U} plus commander tax if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4124,
+      "missing": [
+        "Sakashima of a Thousand Faces"
+      ]
+    },
+    {
+      "id": "900-3398",
+      "cards": [
+        {
+          "name": "Hellkite Charger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite damage",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to Hellkite Charger.\nYou control lands that can produce at least {5}{R}{R}.\nOpponents cannot block Hellkite Charger.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4005,
+      "missing": [
+        "Hellkite Charger"
+      ]
+    },
+    {
+      "id": "4682-5184-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Xorn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4004,
+      "missing": [
+        "Xorn"
+      ]
+    },
+    {
+      "id": "2781-6913",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chameleon, Master of Disguise",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3912,
+      "missing": [
+        "Chameleon, Master of Disguise"
+      ]
+    },
+    {
+      "id": "1295-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3833,
+      "missing": [
+        "Paradigm Shift"
+      ]
+    },
+    {
+      "id": "3966-7416",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Professor Dellian Fel",
+          "zones": [
+            "B",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.\nYou have Professor Dellian Fel's emblem.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3678,
+      "missing": [
+        "Professor Dellian Fel"
+      ]
+    },
+    {
+      "id": "804-2781",
+      "cards": [
+        {
+          "name": "Sakashima the Impostor",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Sakashima the Impostor.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3533,
+      "missing": [
+        "Sakashima the Impostor"
+      ]
+    },
+    {
+      "id": "3363-4331",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3334,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "140-3245-3591",
+      "cards": [
+        {
+          "name": "Rowan, Scion of War",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3254,
+      "missing": [
+        "Rowan, Scion of War"
+      ]
+    },
+    {
+      "id": "2781-3680",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stunt Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Stunt Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2844,
+      "missing": [
+        "Stunt Double"
+      ]
+    },
+    {
+      "id": "900-2011",
+      "cards": [
+        {
+          "name": "Najeela, the Blade-Blossom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to Najeela.\nNajeela does not have summoning sickness.\nAn opponent is unable to block and kill Najeela.\nLands you control can tap to produce at least {W}{U}{B}{R}{G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2797,
+      "missing": [
+        "Najeela, the Blade-Blossom"
+      ]
+    },
+    {
+      "id": "553-3591",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2698,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "690-1738-3779",
+      "cards": [
+        {
+          "name": "Serra Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2447,
+      "missing": [
+        "Serra Avatar"
+      ]
+    },
+    {
+      "id": "142-2781",
+      "cards": [
+        {
+          "name": "Saheeli Rai",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Saheeli Rai has at least three loyalty counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2413,
+      "missing": [
+        "Saheeli Rai"
+      ]
+    },
+    {
+      "id": "1430-2781",
+      "cards": [
+        {
+          "name": "Mirror Image",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Mirror Image.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2407,
+      "missing": [
+        "Mirror Image"
+      ]
+    },
+    {
+      "id": "2548-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2386,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "2781-3455",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vizier of Many Faces",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Vizier of Many Faces.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2371,
+      "missing": [
+        "Vizier of Many Faces"
+      ]
+    },
+    {
+      "id": "2781-4264",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altered Ego",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Altered Ego.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2368,
+      "missing": [
+        "Altered Ego"
+      ]
+    },
+    {
+      "id": "2781-4284",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clone",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Clone.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2343,
+      "missing": [
+        "Clone"
+      ]
+    },
+    {
+      "id": "3362-5291",
+      "cards": [
+        {
+          "name": "Bladewing the Risen",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2254,
+      "missing": [
+        "Bladewing the Risen"
+      ]
+    },
+    {
+      "id": "4222-6037",
+      "cards": [
+        {
+          "name": "Twitching Doll",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Twitching Doll. Twitching Doll does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2197,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "249-5141",
+      "cards": [
+        {
+          "name": "Zethi, Arcane Blademaster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2130,
+      "missing": [
+        "Zethi, Arcane Blademaster"
+      ]
+    },
+    {
+      "id": "3765-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Worldfire",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent's life total becomes 1",
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2127,
+      "missing": [
+        "Worldfire"
+      ]
+    },
+    {
+      "id": "2781-6558",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Naga Fleshcrafter",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Naga Fleshcrafter.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2109,
+      "missing": [
+        "Naga Fleshcrafter"
+      ]
+    },
+    {
+      "id": "553-742",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your deck size is at least seven.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2099,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "141-5144",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2083,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "314-1738-3779",
+      "cards": [
+        {
+          "name": "Serra Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2042,
+      "missing": [
+        "Serra Avatar"
+      ]
+    },
+    {
+      "id": "1295-4267",
+      "cards": [
+        {
+          "name": "Divining Witch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2038,
+      "missing": [
+        "Divining Witch"
+      ]
+    },
+    {
+      "id": "745-2781",
+      "cards": [
+        {
+          "name": "Mirrorhall Mimic // Ghastly Mimicry",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Mirrorhall Mimic.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1992,
+      "missing": [
+        "Mirrorhall Mimic // Ghastly Mimicry"
+      ]
+    },
+    {
+      "id": "1725-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1955,
+      "missing": [
+        "Omen Machine"
+      ]
+    },
+    {
+      "id": "3862-6804",
+      "cards": [
+        {
+          "name": "Requiem Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Near-infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls an indestructible creature, or you have a way to give an opponent's creature indestructible.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1900,
+      "missing": [
+        "Requiem Monolith"
+      ]
+    },
+    {
+      "id": "2517-2781",
+      "cards": [
+        {
+          "name": "Parallax Wave",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "At least one fade counter on Parallax Wave.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1868,
+      "missing": [
+        "Parallax Wave"
+      ]
+    },
+    {
+      "id": "141-3603",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Cloudshift.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1796,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "4682-4772-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1792,
+      "missing": [
+        "Doubling Season"
+      ]
+    },
+    {
+      "id": "2781-3122",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Undercover Operative",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Undercover Operative.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1701,
+      "missing": [
+        "Undercover Operative"
+      ]
+    },
+    {
+      "id": "1090-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1699,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1090-3603-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1607,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "2781-2897",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gigantoplasm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Gigantoplasm.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1569,
+      "missing": [
+        "Gigantoplasm"
+      ]
+    },
+    {
+      "id": "2781-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1551,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1448,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "2781-3603-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1409,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "2713-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zirda, the Dawnwaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent cannot pay for Smothering Tithe's trigger.",
+      "mana": "{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1360,
+      "missing": [
+        "Zirda, the Dawnwaker"
+      ]
+    },
+    {
+      "id": "3525-6037",
+      "cards": [
+        {
+          "name": "Twitching Doll",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Twitching Doll. Twitching Doll does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1353,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "1090-6473",
+      "cards": [
+        {
+          "name": "Mardu Siegebreaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1312,
+      "missing": [
+        "Mardu Siegebreaker"
+      ]
+    },
+    {
+      "id": "2557-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Parallel Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1311,
+      "missing": [
+        "Parallel Lives"
+      ]
+    },
+    {
+      "id": "1164-1295",
+      "cards": [
+        {
+          "name": "Mirror of Fate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1269,
+      "missing": [
+        "Mirror of Fate"
+      ]
+    },
+    {
+      "id": "1770-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1247,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "690-1162",
+      "cards": [
+        {
+          "name": "Enduring Angel // Angelic Enforcer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "\nAngelic Enforcer does not have summoning sickness.\nYour life total is higher than or equal to an opponent's.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1237,
+      "missing": [
+        "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "314-1162",
+      "cards": [
+        {
+          "name": "Enduring Angel // Angelic Enforcer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "\nAngelic Enforcer does not have summoning sickness.\nYour life total is higher than or equal to an opponent's.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1208,
+      "missing": [
+        "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "2781-5241",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakashima's Student",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Sakashima's Student.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1188,
+      "missing": [
+        "Sakashima's Student"
+      ]
+    },
+    {
+      "id": "1350-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Meticulous Excavation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1088,
+      "missing": [
+        "Meticulous Excavation"
+      ]
+    },
+    {
+      "id": "205-2963",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1024,
+      "missing": [
+        "Azor, the Lawbringer"
+      ]
+    },
+    {
+      "id": "1295-5909",
+      "cards": [
+        {
+          "name": "Doomsday Excruciator",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to blue is at least 4.",
+      "mana": "{U}{U} and six {B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1006,
+      "missing": [
+        "Doomsday Excruciator"
+      ]
+    },
+    {
+      "id": "1624-3591",
+      "cards": [
+        {
+          "name": "Near-Death Experience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 993,
+      "missing": [
+        "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "2781-3086-5144",
+      "cards": [
+        {
+          "name": "Lagrella, the Magpie",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 978,
+      "missing": [
+        "Lagrella, the Magpie"
+      ]
+    },
+    {
+      "id": "2781-3086-3603",
+      "cards": [
+        {
+          "name": "Lagrella, the Magpie",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 864,
+      "missing": [
+        "Lagrella, the Magpie"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 855,
+      "missing": [
+        "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
+      "id": "3591-7792",
+      "cards": [
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cool but Rude",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 826,
+      "missing": [
+        "Cool but Rude"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 783,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "2677-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flumph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on certain creatures",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Flumph indestructible.\nYou have a way to deal damage to Flumph.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 777,
+      "missing": [
+        "Flumph"
+      ]
+    },
+    {
+      "id": "3245-7439",
+      "cards": [
+        {
+          "name": "Yavimaya Bloomsage // Channel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 751,
+      "missing": [
+        "Yavimaya Bloomsage // Channel"
+      ]
+    },
+    {
+      "id": "2057-3591",
+      "cards": [
+        {
+          "name": "Ashiok, Wicked Manipulator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 725,
+      "missing": [
+        "Ashiok, Wicked Manipulator"
+      ]
+    },
+    {
+      "id": "1562-2781",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Machine God's Effigy",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 705,
+      "missing": [
+        "Machine God's Effigy"
+      ]
+    },
+    {
+      "id": "742-1061",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Timestream Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have six or more cards in your library. You have the city's blessing",
+      "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 673,
+      "missing": [
+        "Timestream Navigator"
+      ]
+    },
+    {
+      "id": "2506-2781",
+      "cards": [
+        {
+          "name": "Molten Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "\"Cat\" or \"Beast\" chosen with Molten Echoes.",
+      "mana": "{3}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 645,
+      "missing": [
+        "Molten Echoes"
+      ]
+    },
+    {
+      "id": "2781-6473",
+      "cards": [
+        {
+          "name": "Mardu Siegebreaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 638,
+      "missing": [
+        "Mardu Siegebreaker"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 628,
+      "missing": [
+        "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 625,
+      "missing": [
+        "Apocalypse"
+      ]
+    },
+    {
+      "id": "2781-5361",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Auton Soldier",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Auton Soldier.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 574,
+      "missing": [
+        "Auton Soldier"
+      ]
+    },
+    {
+      "id": "690-3779-4658",
+      "cards": [
+        {
+          "name": "Soul of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game",
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 521,
+      "missing": [
+        "Soul of Eternity"
+      ]
+    },
+    {
+      "id": "2781-4313",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Flameshadow Conjuring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control a permanent that enters the battlefield untapped and can tap to produce at least {R}.",
+      "mana": "{3}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 517,
+      "missing": [
+        "Flameshadow Conjuring"
+      ]
+    },
+    {
+      "id": "314-3779-4658",
+      "cards": [
+        {
+          "name": "Soul of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 484,
+      "missing": [
+        "Soul of Eternity"
+      ]
+    },
+    {
+      "id": "507-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Possibility Storm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 456,
+      "missing": [
+        "Possibility Storm"
+      ]
+    },
+    {
+      "id": "1295-4059",
+      "cards": [
+        {
+          "name": "Dance with Calamity",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 442,
+      "missing": [
+        "Dance with Calamity"
+      ]
+    },
+    {
+      "id": "2781-7193",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Omni-Changeling",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Omni-Changeling.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 421,
+      "missing": [
+        "Omni-Changeling"
+      ]
+    },
+    {
+      "id": "1558-2963-6741",
+      "cards": [
+        {
+          "name": "Infinite Guideline Station",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Time Sieve",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five multicolored permanents plus either another multicolored permanent or another creature with power 2 or greater.",
+      "mana": "{W}{U}{B}{R}{G} plus commander tax if applicable",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 418,
+      "missing": [
+        "Time Sieve"
+      ]
+    },
+    {
+      "id": "2781-4393",
+      "cards": [
+        {
+          "name": "Dance of Many",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 374,
+      "missing": [
+        "Dance of Many"
+      ]
+    },
+    {
+      "id": "2529-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vedalken Mastermind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Vedalken Mastermind does not have summoning sickness.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 372,
+      "missing": [
+        "Vedalken Mastermind"
+      ]
+    },
+    {
+      "id": "2763-2781",
+      "cards": [
+        {
+          "name": "Kaya, Intangible Slayer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Kaya has at least four loyalty counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 369,
+      "missing": [
+        "Kaya, Intangible Slayer"
+      ]
+    },
+    {
+      "id": "3363-8187",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Essence Reliquary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 333,
+      "missing": [
+        "Essence Reliquary"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 318,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-5302",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keeper of the Nine Gales",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Keeper of the Nine Gales does not have summoning sickness.\nYou control at least two other untapped Birds.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 306,
+      "missing": [
+        "Keeper of the Nine Gales"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 302,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "3129-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Primal Vigor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 255,
+      "missing": [
+        "Primal Vigor"
+      ]
+    },
+    {
+      "id": "851-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Adrix and Nev, Twincasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 201,
+      "missing": [
+        "Adrix and Nev, Twincasters"
+      ]
+    },
+    {
+      "id": "4094-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kaya, Geist Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 189,
+      "missing": [
+        "Kaya, Geist Hunter"
+      ]
+    },
+    {
+      "id": "1295-2679",
+      "cards": [
+        {
+          "name": "Sacred Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 188,
+      "missing": [
+        "Sacred Guide"
+      ]
+    },
+    {
+      "id": "1621-5291",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 185,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "2665-2781",
+      "cards": [
+        {
+          "name": "Progenitor Mimic",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Progenitor Mimic.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 179,
+      "missing": [
+        "Progenitor Mimic"
+      ]
+    },
+    {
+      "id": "1603-2781",
+      "cards": [
+        {
+          "name": "Evil Twin",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Evil Twin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 175,
+      "missing": [
+        "Evil Twin"
+      ]
+    },
+    {
+      "id": "1260-2781",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Portcullis",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any two additional creatures on the battlefield under the control of any player or players.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 152,
+      "missing": [
+        "Portcullis"
+      ]
+    },
+    {
+      "id": "1090-4875",
+      "cards": [
+        {
+          "name": "Conspiracy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any creature type besides \"Angel\" chosen with Conspiracy.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 139,
+      "missing": [
+        "Conspiracy"
+      ]
+    },
+    {
+      "id": "314-5109",
+      "cards": [
+        {
+          "name": "Volcano Hellion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{R}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 120,
+      "missing": [
+        "Volcano Hellion"
+      ]
+    },
+    {
+      "id": "3363-4782",
+      "cards": [
+        {
+          "name": "Heidar, Rimewind Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Heidar does not have summoning sickness.\nYou control at least four snow permanents.",
+      "mana": "{6} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 115,
+      "missing": [
+        "Heidar, Rimewind Master"
+      ]
+    },
+    {
+      "id": "390-2781",
+      "cards": [
+        {
+          "name": "Hulking Metamorph",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Hulking Metamorph.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 115,
+      "missing": [
+        "Hulking Metamorph"
+      ]
+    },
+    {
+      "id": "2097-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jolene, the Plunder Queen",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 112,
+      "missing": [
+        "Jolene, the Plunder Queen"
+      ]
+    },
+    {
+      "id": "3363-8186",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Esperzoa",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Esperzoa"
+      ]
+    },
+    {
+      "id": "1363-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tradewind Rider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tradewind Rider does not have summoning sickness.\nYou control at least two other untapped creatures.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 96,
+      "missing": [
+        "Tradewind Rider"
+      ]
+    },
+    {
+      "id": "2781-4890",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dack's Duplicate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Dack's Duplicate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 87,
+      "missing": [
+        "Dack's Duplicate"
+      ]
+    },
+    {
+      "id": "2781-5399",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pirated Copy",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Pirated Copy.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 84,
+      "missing": [
+        "Pirated Copy"
+      ]
+    },
+    {
+      "id": "1111-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Adept",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Temporal Adept does not have summoning sickness.",
+      "mana": "{4}{U}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 83,
+      "missing": [
+        "Temporal Adept"
+      ]
+    },
+    {
+      "id": "2781-4865",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vesuvan Shapeshifter",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Vesuvan Shapeshifter.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 77,
+      "missing": [
+        "Vesuvan Shapeshifter"
+      ]
+    },
+    {
+      "id": "2781-3388",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moritte of the Frost",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Moritte of the Frost.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 72,
+      "missing": [
+        "Moritte of the Frost"
+      ]
+    },
+    {
+      "id": "2084-5291",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "2781-5400",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Synth Infiltrator",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Synth Infiltrator.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Synth Infiltrator"
+      ]
+    },
+    {
+      "id": "1558-6741-7638",
+      "cards": [
+        {
+          "name": "Infinite Guideline Station",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Time Sieve",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Mind Stone",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five multicolored permanents.",
+      "mana": "{W}{U}{B}{R}{G} plus commander tax if applicable",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Time Sieve"
+      ]
+    },
+    {
+      "id": "1082-2781",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Dual Nature",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana permanents you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control and own at least one mana-producing permanent that enters the battlefield untapped.",
+      "mana": "{3}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57,
+      "missing": [
+        "Dual Nature"
+      ]
+    },
+    {
+      "id": "2781-3504",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mercurial Pretender",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Mercurial Pretender.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38,
+      "missing": [
+        "Mercurial Pretender"
+      ]
+    },
+    {
+      "id": "3363-4780",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Sentinel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tolarian Sentinel does not have summoning sickness.\nYou have at least one card in hand.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37,
+      "missing": [
+        "Tolarian Sentinel"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "3363-6248",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phenomenon Investigators",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Phenomenon Investigators has \"Doubt\" chosen.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Phenomenon Investigators"
+      ]
+    },
+    {
+      "id": "3363-3823",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Elemental",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Time Elemental does not have summoning sickness.\nThe One Ring does not have an Aura attached.",
+      "mana": "{6}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Time Elemental"
+      ]
+    },
+    {
+      "id": "2781-7936",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dominion Saboteur",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Dominion Saboteur.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 26,
+      "missing": [
+        "Dominion Saboteur"
+      ]
+    },
+    {
+      "id": "2781-4661",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vesuvan Doppelganger",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Vesuvan Doppelganger.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 26,
+      "missing": [
+        "Vesuvan Doppelganger"
+      ]
+    },
+    {
+      "id": "3363-8189",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shi'ar Soldier",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Shi'ar Soldier doesn't have summoning sickness.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Shi'ar Soldier"
+      ]
+    },
+    {
+      "id": "306-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cache Raiders",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13,
+      "missing": [
+        "Cache Raiders"
+      ]
+    },
+    {
+      "id": "1974-2781",
+      "cards": [
+        {
+          "name": "Quicksilver Gargantuan",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Quicksilver Gargantuan.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 13,
+      "missing": [
+        "Quicksilver Gargantuan"
+      ]
+    },
+    {
+      "id": "3363-8188",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Salvage Scuttler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Salvage Scuttler doesn't have summoning sickness and cannot be blocked and killed by an opponent.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Salvage Scuttler"
+      ]
+    },
+    {
+      "id": "1172-3245",
+      "cards": [
+        {
+          "name": "Channel",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{G}{G}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Channel"
+      ]
+    }
+  ]
+}

@@ -134065,11 +134065,14 @@
    "dsl": null,
    "start_loyalty": null,
    "kws": [],
-   "subtypes": [],
+   "subtypes": [
+    "infinity",
+    "stone"
+   ],
    "protfrom": "",
    "ward": 0,
-   "identity": null,
-   "game_changer": null,
+   "identity": "B",
+   "game_changer": false,
    "source": "manual",
    "unparsed": [],
    "derived": {
