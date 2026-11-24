@@ -456,6 +456,66 @@ fn minus_three_is_not_used_at_three_loyalty_for_a_cheap_play_and_is_banked_only_
     assert!(find(&mut g, w, "-3").is_some(), "dying anyway: take the Lotus");
 }
 
+/// the -3 and the +2 as the AI scores them: (the -3's utility if offered, the +2's)
+fn minus_and_plus(g: &mut Game, w: PermId) -> (Option<f64>, f64) {
+    let plus = find(g, w, "+2").expect("the +2 is always on offer").utility;
+    (find(g, w, "-3").map(|o| o.utility), plus)
+}
+
+// PROVISIONAL rule (JD, 2026-11-24, option a): the -3 that leaves loyalty 1 or less is taken only for a line, a tutor, the
+// commander or one of the plan's engines
+#[test]
+fn at_four_loyalty_the_ai_takes_the_plus_two_over_a_minus_three_that_only_pays_for_an_arcane_signet() {
+    let mut g = tbl();
+    let w = walker(&mut g, 4);
+    hand(&mut g, P0, &["Arcane Signet"]); // {2}: payable only with the Lotus (no lands)
+    let (minus, plus) = minus_and_plus(&mut g, w);
+    assert!(minus.is_none_or(|m| m < plus), "-3 {minus:?} against +2 {plus}");
+}
+
+#[test]
+fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_a_catalogued_line_the_lotus_pays_for() {
+    let mut g = tbl();
+    let w = walker(&mut g, 4);
+    // Heliod, Sun-Crowned out, a Walking Ballista in hand and two Plains: the line needs {W} and {2}{2} for the Ballista (X = 2),
+    // five mana, which two lands cannot pay and two lands with the Lotus's three can (a catalogued line, combos::line_enabled_by;
+    // the Ballista itself costs nothing at X = 0, so it enables nothing on its own)
+    perm(&mut g, P0, "Heliod, Sun-Crowned");
+    lands(&mut g, P0, "Plains", 2, false);
+    hand(&mut g, P0, &["Walking Ballista"]);
+    let (minus, plus) = minus_and_plus(&mut g, w);
+    assert!(minus.is_some_and(|m| m > 13.0), "the line is worth 14: -3 {minus:?} against +2 {plus}");
+}
+
+#[test]
+fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_a_tutor_the_lotus_pays_for() {
+    let mut g = tbl();
+    let w = walker(&mut g, 4);
+    hand(&mut g, P0, &["Demonic Tutor"]);
+    let (minus, plus) = minus_and_plus(&mut g, w);
+    assert!(minus.is_some_and(|m| m > plus), "-3 {minus:?} against +2 {plus}");
+}
+
+#[test]
+fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_one_of_the_plans_engines() {
+    let mut g = tbl();
+    let w = walker(&mut g, 4);
+    hand(&mut g, P0, &["Rhystic Study"]); // {2}{U}, in data/plans/arzakon.toml's engines
+    let (minus, plus) = minus_and_plus(&mut g, w);
+    assert!(minus.is_some_and(|m| m > plus), "-3 {minus:?} against +2 {plus}");
+}
+
+#[test]
+fn at_five_and_six_loyalty_the_minus_three_for_an_arcane_signet_is_as_before() {
+    for l in [5, 6] {
+        let mut g = tbl();
+        let w = walker(&mut g, l);
+        hand(&mut g, P0, &["Arcane Signet"]);
+        let (minus, plus) = minus_and_plus(&mut g, w);
+        assert!(minus.is_some_and(|m| m > plus), "loyalty {l}: -3 {minus:?} against +2 {plus}");
+    }
+}
+
 fn wheel_position() -> (Game, PermId) {
     let mut g = tbl();
     let w = walker(&mut g, 8);

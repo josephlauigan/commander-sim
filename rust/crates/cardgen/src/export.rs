@@ -76,8 +76,8 @@ impl Inputs {
         extra.extend(["Black Lotus", "Braingeyser", "Regrowth", "Shivan Dragon"].map(String::from));
         // Arzakon: card code and tests before any deck lists it (2026-11-23)
         extra.insert("Arzakon".to_string());
-        // Dockside Extortionist: card code and tests before the arzakon deck lists it (2026-11-23; banned in Commander,
-        // legal in Cali)
+        // Dockside Extortionist: modelled and tested before the arzakon deck listed it (2026-11-23; banned in Commander,
+        // legal in Cali); kept so the record exists whichever deck lists it
         extra.insert("Dockside Extortionist".to_string());
         // cards modeled before the Yoshimaru/Tymna deck is registered (it needs them in the card data first)
         extra.extend(

@@ -25,6 +25,10 @@
 //!   play that is no line); with nothing to spend it on, banked: 3.6 after 2 or more loyalty (+1 for Mox Opal at metalcraft
 //!   with exactly two other artifacts, +1 for Tinker in hand with no other artifact to sacrifice), 1.5 after 1, and after 0
 //!   only when Arzakon would die anyway (the opposing creatures' power is at least its loyalty + 2): 2.5.
+//!   PROVISIONAL (JD, 2026-11-24, option a): a -3 that leaves loyalty 1 or less (`after <= 1`) keeps that score only when the
+//!   play is worth the loyalty: a catalogued line, a tutor, the commander or one of the plan's `engines`
+//!   (`worth_the_loyalty`); a good spell alone (a rock, say) is not, and the -3 is then banked (1.5 after 1; after 0 as
+//!   above), so the +2 wins (the -3 for a rock would leave Arzakon at 1 loyalty on the turn it lands).
 //! - -7: only when no opponent punishes the draws (Narset, Spirit of the Labyrinth, Notion Thief, Sheoldred, the
 //!   Apocalypse, Orcish Bowmasters, Smothering Tithe), p holds at most 2 nonland cards, the largest opposing hand is at least
 //!   3 cards bigger than p's, Underworld Breach is neither in hand nor out, and 2 or more mana is left to use the new
@@ -35,9 +39,10 @@
 
 use super::common::{WalkerAb, walker, walker_options, walker_pay_run};
 use super::model_gaps_a4::{Tgt, ping, ping_legal};
-use crate::ai::brain::{RITUAL_DISCOUNT, Situation, extra_mana_play};
+use crate::ai::brain::{RITUAL_DISCOUNT, Situation, card_utility, extra_mana_play};
 use crate::cards::{CardDb, Types};
-use crate::engine::mana::{Shape, Source, Unit, mana_units, total_mana};
+use crate::engine::cast::castable;
+use crate::engine::mana::{Shape, Source, Unit, cost_of, mana_units, plan_pay, ritual_net, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::values::{epow, etgh, hand_count, has, indestructible, is_artifact_perm, pval};
 use crate::engine::zones::enter_token_copy;
@@ -157,7 +162,31 @@ fn lotus_unit(g: &Game, p: PlayerId) -> Unit {
     Unit { src: Source::float(Kind::Any), cols: g.player(p).ident, amt: 3, shape: Shape::One }
 }
 
-/// -3's value: what the three mana of one colour let p do this turn; else banking the token while the loyalty allows
+/// Is what the Lotus mana (`with`: p's units and the token's) enables worth a loyalty down to 1 or less? A catalogued line,
+/// or a card p cannot pay for without the token that is a tutor, p's commander or one of the plan's engines (the classes
+/// of `extra_mana_play`'s candidates, less "any spell worth 5 or more").
+fn worth_the_loyalty(g: &Game, p: PlayerId, s: &Situation, me: crate::ids::CardId, u: &[Unit], with: &[Unit]) -> bool {
+    if crate::impls::combos::line_enabled_by(g, p, me, with).is_some() {
+        return true;
+    }
+    let pl = g.player(p);
+    let engines = crate::ai::plan_data::active(g, p).map(|l| &l.plan.engines);
+    let hand = pl.hand.iter().copied().filter(|&x| x != me && !g.db.get(x).land && ritual_net(g, p, x) <= 0);
+    let cands = hand.map(|x| (x, "hand")).chain(pl.cmds_in_zone().map(|x| (x, "cmd")));
+    cands.into_iter().any(|(x, zone)| {
+        let (xg, xp) = cost_of(g, p, x);
+        if plan_pay(g, u, xg, &xp).is_some() || plan_pay(g, with, xg, &xp).is_none() || !castable(g, p, x, zone) {
+            return false; // payable without the token, or not even with it
+        }
+        let d = g.db.get(x);
+        let tutor = [Tag::Tut, Tag::Xtutor, Tag::Seal, Tag::Top].iter().any(|&t| d.tag(t));
+        let engine = engines.is_some_and(|e| e.iter().any(|n| **n == *d.name));
+        (tutor || engine || pl.is_commander(x)) && card_utility(g, p, s, x).is_some()
+    })
+}
+
+/// -3's value: what the three mana of one colour let p do this turn (with 1 loyalty or less left, only a play worth the
+/// loyalty, `worth_the_loyalty`); else banking the token while the loyalty allows
 fn lotus_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
     let loyalty = g.perm(src).loyalty.unwrap_or(0);
     let after = loyalty - 3;
@@ -166,7 +195,9 @@ fn lotus_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
     with.push(lotus_unit(g, p));
     let s = Situation::new(g, p);
     let me = g.perm(src).cd?;
-    if let Some((v, line)) = extra_mana_play(g, p, &s, me, &u, &with) {
+    if let Some((v, line)) = extra_mana_play(g, p, &s, me, &u, &with)
+        && (after >= 2 || line || worth_the_loyalty(g, p, &s, me, &u, &with))
+    {
         return Some(v - RITUAL_DISCOUNT - if after <= 0 && !line { 2.0 } else { 0.0 });
     }
     match after {

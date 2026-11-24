@@ -1,0 +1,10 @@
+/dev/nvme0n1p2  1.8T  497G  1.3T  29% /
+tree 654db206 23:28:25
+built 23:29:33
+start yshtola 23:29:33
+done yshtola exit 0 23:41:04
+start urdragon 23:41:04
+done urdragon exit 0 23:50:56
+start yoshimaru 23:50:56
+done yoshimaru exit 0 00:23:16
+PAIRED ALL DONE 00:23:16
