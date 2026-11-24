@@ -16,10 +16,11 @@
 //!
 //! A mismatch names the pin that failed.
 //!
-//! WHEN THIS TEST TURNS RED, AND WHAT TO DO. The `seats` pins depend only on practice's own seating code, so they fail
-//! only when practice changes. The `sessions` and `save` pins play whole games, so they ALSO fail on any change to the
-//! deck lists (data/decks.json), the pools, the card data or card code, or the AI (sim-core), which routine swap and
-//! engine PRs make all the time (about 312 commits since 11-09). So:
+//! WHEN THIS TEST TURNS RED, AND WHAT TO DO. The `seats` pins fail when practice's seating code changes, and also when
+//! the opponent pools or the `mine` list of data/decks.json change (the seating draws from the tier pools, the error
+//! texts list the t5 pool, and the deck grid is read from `mine`). The `sessions` and `save` pins play whole games, so
+//! they ALSO fail on any change to the deck lists, the card data or card code, or the AI (sim-core), which routine swap
+//! and engine PRs make all the time (about 312 commits since 11-09). So:
 //!   - Regenerate the fixture on the base commit (origin/main), in its own commit, and never in the same commit as a
 //!     practice change. A practice change (Cali formats, 1v1 tables, ...) must then pass WITHOUT regenerating: that is
 //!     the proof that Commander practice did not change.
@@ -27,7 +28,12 @@
 //!     removed. If `game_hash` fails, the game itself changed; if only `hash` fails, a view or event shape changed
 //!     (a PR that adds a view field regenerates and the unchanged `game_hash` shows the game is the same).
 //!   - When a later regeneration is needed, `legacy_save` (the first save, kept as it was written) is carried over, never
-//!     rewritten: it is only loaded, so backward compatibility with the old save format stays proven.
+//!     rewritten: it is only loaded, so backward compatibility with the old save format stays proven. Regeneration
+//!     PANICS if the existing fixture is missing, unreadable (a merge conflict, say) or has no `legacy_save`, instead of
+//!     starting a new one from today's save. Only `UPDATE_PRACTICE_FIXTURE=new-legacy` starts a new legacy save
+//!     (use it only to create the very first one, and say why in the commit).
+//!   - The test bot picks its answers from `data.view`, so a change to the view fields it reads shows up as "THE GAME
+//!     ITSELF CHANGED" even though the game is the same.
 //!   - Run with no AI_*, PLANNER* or SEARCH_* environment variables set (sim-core's settings.rs reads them, and they
 //!     change the AI and so the games).
 //!
@@ -545,10 +551,28 @@ fn hash_part(sessions: &Value) -> Value {
 fn commander_practice_is_as_recorded() {
     let e = engine();
     let path = fixture_path();
-    let update = std::env::var("UPDATE_PRACTICE_FIXTURE").is_ok_and(|v| v == "1");
+    let mode = std::env::var("UPDATE_PRACTICE_FIXTURE").unwrap_or_default();
+    let new_legacy = mode == "new-legacy";
+    let update = mode == "1" || new_legacy;
     let read = || -> Option<Value> { serde_json::from_str(&std::fs::read_to_string(&path).ok()?).ok() };
     if update {
-        let legacy = read().and_then(|old| old.get("legacy_save").cloned());
+        // the legacy save is carried over from the existing fixture; it is only started anew when asked for explicitly
+        let legacy = if new_legacy {
+            None
+        } else {
+            let old = read().unwrap_or_else(|| {
+                panic!(
+                    "the fixture at {} is missing or unreadable: not regenerating, it would drop `legacy_save` \
+                     (restore the file, or use UPDATE_PRACTICE_FIXTURE=new-legacy to start a new legacy save)",
+                    path.display()
+                )
+            });
+            Some(old.get("legacy_save").cloned().unwrap_or_else(|| {
+                panic!(
+                    "the fixture has no `legacy_save`: not regenerating (UPDATE_PRACTICE_FIXTURE=new-legacy starts one)"
+                )
+            }))
+        };
         let now = compute(&e, None, legacy);
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(&path, serde_json::to_string_pretty(&now).unwrap() + "\n").unwrap();
@@ -558,7 +582,9 @@ fn commander_practice_is_as_recorded() {
     let want = read().unwrap_or_else(|| {
         panic!("no readable fixture at {}; generate it with UPDATE_PRACTICE_FIXTURE=1", path.display())
     });
-    let now = compute(&e, Some(&want), want.get("legacy_save").cloned());
+    let legacy =
+        want.get("legacy_save").cloned().expect("the fixture has no `legacy_save`: restore it from git history");
+    let now = compute(&e, Some(&want), Some(legacy));
     let mut failures = vec![];
     check(&mut failures, "the Commander decks of decks.json `mine`", &want["decks"], &now["decks"]);
     check(
@@ -596,8 +622,9 @@ fn commander_practice_is_as_recorded() {
     assert!(
         failures.is_empty(),
         "Commander practice no longer behaves as recorded:\n{}\n\
-         - a failing seats pin: practice's seating changed. A failing sessions / save pin may instead come from a change to \
-         the decks, pools, card code or AI since the fixture was made: then regenerate the fixture on the base commit \
+         - a failing seats pin: practice's seating changed, or the opponent pools or the `mine` list changed. A failing \
+         sessions / save pin may instead come from a change to the decks, pools, card code or AI since the fixture was \
+         made (a `game_hash` failure that is only the bot reading changed `data.view` fields is also possible): then regenerate the fixture on the base commit \
          (origin/main), in its own commit, and a practice change must pass WITHOUT regenerating. Never regenerate in the \
          same commit as a practice change; keep `legacy_save` (it is carried over). \
          Regenerate with UPDATE_PRACTICE_FIXTURE=1 and review the diff. Run with no AI_*, PLANNER* or SEARCH_* variables set.",
