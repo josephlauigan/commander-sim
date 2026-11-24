@@ -15,9 +15,9 @@ commander = "Sheoldred, the Apocalypse"
 ident = "B"
 tiers = ["t3", "t4"]
 
-[kyodai]
-file = "cali_commander/kyodai-artifact-combo.md"
-name = "Kyodai"
+[arzakon]
+file = "cali_commander/arzakon-artifact-combo.md"
+name = "Arzakon"
 commander = "Kyodai, Soul of Kamigawa"
 ident = "WUBRG"
 format = "cali"

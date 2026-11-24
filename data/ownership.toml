@@ -85,7 +85,7 @@ proxy = [
 ]
 missing = []
 
-[deck.kyodai]
+[deck.arzakon]
 confirmed = "2026-11-22"
 have = [
   "Akroma's Will",
