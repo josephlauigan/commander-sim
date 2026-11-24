@@ -1,6 +1,6 @@
 //! commander-practice: practice mode on a computer (the browser page and server; `--text` plays in the terminal).
 //!     cargo run --release -p practice -- [--port 8765] [--no-browser] [--lan] [--data DIR] [--static DIR]
-//! `--text` plays in the terminal instead (--deck --tier --seed --seat --opponents --profile --ai --step).
+//! `--text` plays in the terminal instead (--deck --tier --format --seed --seat --opponents --profile --ai --step).
 
 use practice::server::{self, Config, lan::lan_addresses};
 use practice::session::api_impl::RealSessions;
@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 const USAGE: &str = "usage: commander-practice [--port N] [--no-browser] [--lan] [--data DIR] [--static DIR]\n\
-    \x20      [--text --deck KEY --tier T --seed N --seat 1-4 --opponents A,B,C --profile conservative|loose --ai lookahead|adaptive --step]";
+    \x20      [--text --deck KEY --tier T --format KEY --seed N --seat N --opponents A,B,C --profile conservative|loose --ai lookahead|adaptive --step]";
 
 fn die(msg: &str) -> ! {
     eprintln!("commander-practice: {msg}\n{USAGE}");
@@ -42,11 +42,11 @@ fn main() {
             "--step" => step = true,
             "--data" => data = Some(PathBuf::from(value(&mut args))),
             "--static" => static_dir = Some(PathBuf::from(value(&mut args))),
-            "--deck" | "--tier" | "--seed" | "--seat" | "--opponents" | "--profile" | "--ai" => {
+            "--deck" | "--tier" | "--format" | "--seed" | "--seat" | "--opponents" | "--profile" | "--ai" => {
                 let v = value(&mut args);
                 let ok = match flag.as_str() {
                     "--seed" => v.parse::<u64>().is_ok(),
-                    "--seat" => matches!(v.as_str(), "1" | "2" | "3" | "4"),
+                    "--seat" => v.parse::<usize>().is_ok(), // the session checks it against the table's seats
                     "--profile" => matches!(v.as_str(), "conservative" | "loose"),
                     "--ai" => matches!(v.as_str(), "lookahead" | "adaptive"),
                     _ => true,
@@ -125,7 +125,7 @@ fn main() {
     }
 }
 
-/// `--text`: play a practice game in the terminal (--deck --tier --seed --seat --opponents a,b,c --profile --ai --step)
+/// `--text`: play a practice game in the terminal (--deck --tier --format --seed --seat --opponents a,b,c --profile --ai --step)
 fn text_game(data: &std::path::Path, arg: &dyn Fn(&str) -> Option<String>, step: bool) -> i32 {
     use practice::session::{Options, Session};
     let engine = match sim_core::run::Engine::load(data) {
@@ -138,6 +138,7 @@ fn text_game(data: &std::path::Path, arg: &dyn Fn(&str) -> Option<String>, step:
     let mut o =
         Options::new(engine, &arg("--deck").unwrap_or("yoshimaru".into()), &arg("--tier").unwrap_or("t1".into()));
     o.seed = arg("--seed").and_then(|s| s.parse().ok());
+    o.format = arg("--format");
     o.seat = arg("--seat").and_then(|s| s.parse().ok());
     o.opponents = arg("--opponents").map(|s| s.split(',').map(str::to_string).collect());
     if let Some(p) = arg("--profile") {

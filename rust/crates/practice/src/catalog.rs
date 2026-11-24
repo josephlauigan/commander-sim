@@ -6,6 +6,8 @@
 //! from the Game Changer count, the name is the commander and there are no win rates.
 
 use serde_json::{Value, json};
+use sim_core::export::load_decks;
+use sim_core::format::{DEFAULT_FORMAT, Format, formats_table};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
@@ -174,13 +176,32 @@ fn game_changer_set(data: &Path) -> BTreeSet<String> {
         .unwrap_or_default()
 }
 
-/// the whole catalog: `{decks: [...], tiers: [...]}`, the same JSON as Python's `catalog.catalog()`
+/// the formats of decks.json and, for each deck, the formats that admit it (`Format::admits`, the engine's own rule: not
+/// computed here from the lists): `(formats, {deck key: (its own format, the formats that admit it)})`. Commander first.
+type DeckFormats = BTreeMap<String, (String, Vec<String>)>;
+
+fn format_table(data: &Path) -> Result<(Vec<Format>, DeckFormats), String> {
+    let f = load_decks(&data.join("decks.json")).map_err(|e| format!("data/decks.json: {e}"))?;
+    let table = formats_table(f.formats.clone(), f.mine.iter().chain(&f.pool))?;
+    let mut formats: Vec<Format> = table.values().cloned().collect();
+    formats.sort_by_key(|x| (x.key != DEFAULT_FORMAT, x.key.clone()));
+    let mut per_deck = DeckFormats::new();
+    for d in f.mine.iter().chain(&f.pool) {
+        let own = &table[Format::key_of(d)];
+        let admits = formats.iter().filter(|t| t.admits(d, own).is_ok()).map(|t| t.key.clone()).collect();
+        per_deck.insert(d.key.clone(), (own.key.clone(), admits));
+    }
+    Ok((formats, per_deck))
+}
+
+/// the whole catalog: `{formats: [...], decks: [...], tiers: [...]}`, Python's `catalog.catalog()` and the formats
 pub fn catalog(data: &Path) -> Result<Value, String> {
     let root: PathBuf = data.join("..");
     let decks_file: Value = serde_json::from_str(&read(&data.join("decks.json")).ok_or("data/decks.json is missing")?)
         .map_err(|e| format!("data/decks.json: {e}"))?;
     let by_key =
         |list: &str| -> Vec<&Value> { decks_file[list].as_array().map(|a| a.iter().collect()).unwrap_or_default() };
+    let (formats, per_deck) = format_table(data)?;
     let mine = by_key("mine");
     let gc = game_changer_set(data);
     let rates = read(&root.join("decklists/pool/pool-results.md")).map(|t| win_rates(&t)).unwrap_or_default();
@@ -192,9 +213,13 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
         let text = read(&root.join("decklists").join(&file)).unwrap_or_default();
         let commander = d["commander"].as_str().unwrap_or("");
         let bracket = stated_bracket(&text).unwrap_or(if gcs.len() > 3 { 4 } else { 3 });
-        let r = rates.get(&key);
+        // the simulations' win rates are four-player (Commander) numbers: a deck of another format has none, and the page
+        // shows the rest for a Commander table only
+        let (own, admits) =
+            per_deck.get(&key).cloned().unwrap_or_else(|| (DEFAULT_FORMAT.into(), vec![DEFAULT_FORMAT.into()]));
+        let r = rates.get(&key).filter(|_| own == DEFAULT_FORMAT);
         decks.push(json!({
-            "key": key, "commander": commander, "commander2": d.get("commander2").cloned().unwrap_or(Value::Null),
+            "key": key, "format": own, "formats": admits, "win_rates_format": DEFAULT_FORMAT, "commander": commander, "commander2": d.get("commander2").cloned().unwrap_or(Value::Null),
             "commanders": std::iter::once(commander).chain(d["commander2"].as_str()).collect::<Vec<_>>(),
             "ident": d.get("ident").cloned().unwrap_or(Value::Null), "name": display_name(&text).unwrap_or(commander.to_string()),
             "bracket": bracket, "game_changers": gcs,
@@ -220,6 +245,7 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
                     let c2 = d["commander2"].as_str();
                     json!({
                         "key": d["key"], "commander": d["commander"], "commander2": d.get("commander2").cloned().unwrap_or(Value::Null),
+                        "formats": d["key"].as_str().and_then(|k| per_deck.get(k)).map_or_else(|| json!([DEFAULT_FORMAT]), |x| json!(x.1)),
                         "commanders": std::iter::once(c1).chain(c2).collect::<Vec<_>>(),
                         "name": pool_deck_name(c1, c2),
                         "summary": file.and_then(|f| read(&f)).map(|t| pool_summary(&t)),
@@ -228,7 +254,11 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
             })
         })
         .collect();
-    Ok(json!({"decks": decks, "tiers": tiers}))
+    let formats: Vec<Value> = formats
+        .iter()
+        .map(|f| json!({"key": f.key, "name": f.name, "seats": f.seats, "life": f.life, "first_player_draws": f.first_player_draws}))
+        .collect();
+    Ok(json!({"formats": formats, "decks": decks, "tiers": tiers, "win_rates_format": DEFAULT_FORMAT}))
 }
 
 /// the text of a `## <heading>` section, up to the next `## `

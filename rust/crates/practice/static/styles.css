@@ -20,7 +20,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 #steps .step { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #202020; color: var(--dim); }
 #steps .step.now { background: var(--gold); color: #1a1a14; }
 #steps .whose { font-weight: 600; margin-right: 8px; } #steps .round { color: var(--dim); margin-left: 8px; font-size: 12px; }
-.opps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.opps { display: grid; grid-template-columns: repeat(var(--opps, 3), minmax(0, 1fr)); gap: 10px; }   /* --opps: set by table.js when the table does not have three opponents (Cali: one column) */
 @media (max-width: 700px) { .opps { grid-template-columns: minmax(0, 1fr); } }   /* an iPad keeps all three side by side */
 .opp, .mine, .bottom { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
 .opp.active, .mine.active { border-color: var(--gold); }
