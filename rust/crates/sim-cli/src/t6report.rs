@@ -638,7 +638,14 @@ mod tests {
     }
 
     fn game(winner: Option<usize>, wintype: Option<&'static str>, round: u32) -> GameOut {
-        GameOut { winner, wintype, round, stopped: false, players: vec![player("a"), player("b"), player("c"), player("d")], log: None }
+        GameOut {
+            winner,
+            wintype,
+            round,
+            stopped: false,
+            players: vec![player("a"), player("b"), player("c"), player("d")],
+            log: None,
+        }
     }
 
     #[test]
