@@ -244,45 +244,62 @@ fn seat_seats_opponents_and_partner_at_a_cali_table() {
 
 // -------------------------------------------------------------------------------------- the existing web client
 
-/// What `static/app.js startGame` sends for a one-person game: the deck, the tier, the options, and `opponents` =
-/// THREE decks drawn from the whole tier (`drawOpponents`: `keys.slice(0, 3)` of the shuffled tier list, whatever
-/// Cali admits), plus `seat` from the 1-4 select. The page is not changed in this PR: for a Commander deck this is
-/// exactly today's request; for the Cali deck it must still start a game (or the page offers a deck it can't start).
+/// What `static/app.js startGame` sends for a one-person game: the deck, the tier, the options, `opponents` = the
+/// seats-1 first keys of the tier's decks whose catalog `formats` list includes the deck's format (three for a
+/// Commander deck, one for the Cali deck: `drawOpponents`), `format` ONLY when the deck's format is not Commander (so a
+/// Commander request is byte-identical to what the page always sent), and `seat` from the select (1 to the format's
+/// seats). The test builds the same request from the catalog the page reads.
 #[test]
-#[ignore = "ticket T-S5-15: the existing web page cannot start the Cali deck until the web client PR (C5b-web) sends a format-aware request; remove this ignore there"]
 fn the_existing_web_client_request_still_starts_the_cali_deck() {
     let s = srv!();
     let e = sess::engine();
     let (deck, tier) = cali_deck(&e);
     let mut c = s.client();
     let cat = c.get("/api/options").json();
-    let tier_keys: Vec<String> =
-        cat["tiers"].as_array().unwrap().iter().find(|t| t["key"] == tier.as_str()).unwrap()["decks"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|d| d["key"].as_str().unwrap().to_string())
-            .collect();
+    let tier_decks = cat["tiers"].as_array().unwrap().iter().find(|t| t["key"] == tier.as_str()).unwrap()["decks"]
+        .as_array()
+        .unwrap()
+        .clone();
     let web = |deck: &str, seat: Option<u64>| {
+        let d = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == deck).unwrap();
+        let fmt = cat["formats"].as_array().unwrap().iter().find(|f| f["key"] == d["format"]).unwrap();
+        let seats = fmt["seats"].as_u64().unwrap() as usize;
+        let keys: Vec<String> = tier_decks
+            .iter()
+            .filter(|x| x["formats"].as_array().unwrap().contains(&fmt["key"]))
+            .map(|x| x["key"].as_str().unwrap().to_string())
+            .take(seats - 1)
+            .collect();
         let mut b = json!({
             "deck": deck, "tier": tier, "ai": "adaptive", "profile": "loose",
             "tools": {"hint": true, "undo": true, "compare": false}, "autopass": "respond",
-            "opponents": tier_keys[..3].to_vec(), "images": false,
+            "opponents": keys, "images": false,
         });
+        if fmt["key"] != DEFAULT_FORMAT {
+            b["format"] = fmt["key"].clone();
+        }
         if let Some(n) = seat {
             b["seat"] = json!(n);
         }
         b
     };
-    // the control: a Commander deck gets its game, as before
+    // the control: a Commander deck gets its game, as before: three opponents, no `format`, seat 3 offered
     let (cdeck, _) = commander_deck(&e);
-    let (st, msg) = new(&mut c, web(&cdeck, None));
+    let req = web(&cdeck, None);
+    assert_eq!(req["opponents"].as_array().unwrap().len(), 3);
+    assert!(req.get("format").is_none());
+    let (st, msg) = new(&mut c, req);
     assert_eq!((st, msg.as_str()), (200, ""), "the web client's request for a Commander deck");
     let (st, msg) = new(&mut c, web(&cdeck, Some(3)));
     assert_eq!((st, msg.as_str()), (200, ""), "the web client's request for a Commander deck, seat 3");
-    // the Cali deck
-    let (st, msg) = new(&mut c, web(&deck, None));
-    assert_eq!((st, msg.as_str()), (200, ""), "the web client's request for the Cali deck, as the page sends it");
+    // the Cali deck: one opponent, the format, seats 1 and 2 (the page offers no other)
+    let req = web(&deck, None);
+    assert_eq!(req["opponents"].as_array().unwrap().len(), 1);
+    assert_eq!(req["format"], "cali");
+    for seat in [None, Some(1), Some(2)] {
+        let (st, msg) = new(&mut c, web(&deck, seat));
+        assert_eq!((st, msg.as_str()), (200, ""), "the web client's request for the Cali deck, seat {seat:?}");
+    }
 }
 
 /// and the catalog it reads: `win_rates` / `average` are null for the Cali deck, the page's reads are guarded
