@@ -92,7 +92,8 @@ fn opt_list(v: &Value, k: &str) -> Option<Vec<String>> {
 impl RealSessions {
     fn options(&self, opts: &Value) -> Result<Options, String> {
         let deck = opt_str(opts, "deck").ok_or("unknown deck None")?;
-        let tier = opt_str(opts, "tier").ok_or("unknown tier None")?;
+        // no tier is for a table with no AI seat: Session::new refuses it anywhere else
+        let tier = opt_str(opts, "tier").unwrap_or_default();
         let mut o = Options::new(self.engine.clone(), &deck, &tier);
         o.format = opt_str(opts, "format");
         o.seed = opts.get("seed").and_then(Value::as_u64);

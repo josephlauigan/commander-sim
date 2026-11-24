@@ -25,7 +25,7 @@ impl SessionApi for Fake {
         Info {
             deck: self.deck.clone(),
             format: "commander".into(),
-            tier: "t2".into(),
+            tier: Some("t2".into()),
             seed: 1,
             seats: vec![self.deck.clone(), "a".into(), "b".into(), "c".into()],
             profile: "loose".into(),

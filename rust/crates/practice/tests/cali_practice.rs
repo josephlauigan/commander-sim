@@ -339,15 +339,20 @@ fn the_format_is_checked() {
         assert_eq!((s.format.as_str(), s.seats.len()), ("cali", 2));
         assert_eq!(s.game_settings().rules.life, 30);
     }
-    // a partner is refused at a 2-seat table
+    // a partner at a 2-seat table is a table of two people with no AI seat (C5c); a deck the format refuses is refused
     let mut o = options(&e, &deck, &tier, 1);
     o.partner = Some(cdeck.clone());
-    let why = Session::new(o).err().unwrap();
-    assert!(why.contains("4-seat format"), "{why}");
+    match Session::new(o) {
+        Ok(s) => assert_eq!((s.seats.len(), s.tier.clone()), (2, None)),
+        Err(why) => assert!(why.contains("cannot be played at a "), "{why}"),
+    }
     let mut o = options(&e, &cdeck, &ctier, 1);
     o.format = Some("cali".into());
     o.partner = Some(deck.clone());
-    assert!(Session::new(o).err().unwrap().contains("4-seat format"));
+    match Session::new(o) {
+        Ok(s) => assert_eq!((s.seats.len(), s.tier.clone()), (2, None)),
+        Err(why) => assert!(why.contains("cannot be played at a "), "{why}"),
+    }
 }
 
 // ------------------------------------------------------------------------------------------------ saves

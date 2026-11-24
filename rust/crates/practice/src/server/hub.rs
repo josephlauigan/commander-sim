@@ -267,7 +267,7 @@ impl Hub {
                 .map(|i| i.deck.clone())
                 .unwrap_or_else(|| opts["deck"].as_str().unwrap_or("").to_string()),
             partner: info.as_ref().and_then(|i| i.partner.clone()),
-            tier: opts["tier"].as_str().map(String::from).or(info.map(|i| i.tier)),
+            tier: opts["tier"].as_str().map(String::from).or(info.and_then(|i| i.tier)),
             session: sess,
         });
         self.cond.notify_all();
@@ -600,8 +600,9 @@ impl Hub {
         } else {
             format!("-{}", info.format)
         };
-        let name =
-            format!("{}-{}{}{}-{}-{}.json", now("%Y%m%d-%H%M%S"), info.deck, partner, format, info.tier, info.seed);
+        // the tier is in the name when there is one (a table of people only has none)
+        let tier = info.tier.as_ref().map(|t| format!("-{t}")).unwrap_or_default();
+        let name = format!("{}-{}{}{}{}-{}.json", now("%Y%m%d-%H%M%S"), info.deck, partner, format, tier, info.seed);
         std::fs::create_dir_all(&self.saves).map_err(|e| e.to_string())?;
         std::fs::write(self.saves.join(&name), data.to_string()).map_err(|e| e.to_string())?;
         Ok(name)

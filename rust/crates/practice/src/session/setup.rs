@@ -61,6 +61,9 @@ fn exact_seats(a: &SeatArgs, keys: &[String], n: usize, seats: &[String]) -> Res
         || (0..seats.len()).any(|i| (0..i).any(|j| seats[i] == seats[j]))
         || seats.iter().any(|k| !humans.contains(&k.as_str()) && !keys.contains(k));
     if bad {
+        if others == 0 {
+            return Err("seats: your two decks, in turn order".into());
+        }
         return Err(format!(
             "seats: {} and {others} of {}, in turn order",
             if a.partner.is_some() { "your decks" } else { "your deck" },
@@ -83,21 +86,24 @@ pub fn choose_seats_in(e: &Engine, fmt: &Format, a: &SeatArgs) -> Result<Vec<Str
         return exact_seats(a, &keys, n, s);
     }
     if let Some(partner) = a.partner {
-        if n != 4 {
-            return Err(format!("{} has {n} seats: two people need a 4-seat format", fmt.name));
-        }
-        // two people: two opponents, everyone seated at random
+        // two people: the other seats are AI opponents (none at a two-seat table), everyone seated at random
+        let ai = n.saturating_sub(2);
         if let Some(o) = a.opponents
-            && (o.len() != 2 || o.iter().any(|k| !keys.contains(k)))
+            && (o.len() != ai || o.iter().any(|k| !keys.contains(k)))
         {
-            return Err(format!("pick two of: {}", keys.join(", ")));
+            return Err(if ai == 0 {
+                format!("{} for two people has no AI opponents", fmt.name)
+            } else {
+                format!("pick {} of: {}", count_word(ai), keys.join(", "))
+            });
         }
         if a.seat.is_some() {
             return Err("with two players the seats are drawn at random".into());
         }
         let mut seats = match a.opponents {
             Some(o) => o.to_vec(),
-            None => sample(&mut Rng::named(&format!("pool:{}", a.seed)), &keys, 2),
+            None if ai == 0 => vec![],
+            None => sample(&mut Rng::named(&format!("pool:{}", a.seed)), &keys, ai),
         };
         seats.push(a.deck.to_string());
         seats.push(partner.to_string());

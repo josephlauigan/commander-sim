@@ -152,7 +152,8 @@ pub(crate) struct State {
 pub struct Session {
     pub engine: Arc<Engine>,
     pub deck: String,
-    pub tier: String,
+    /// the opponents' tier; None exactly when no seat is an AI (a table of people only)
+    pub tier: Option<String>,
     /// the key of the game's format (a key of `engine.formats`)
     pub format: String,
     pub profile: String,
@@ -204,7 +205,8 @@ impl Session {
         if !MY_DECKS.contains(&o.deck.as_str()) {
             return Err(format!("unknown deck {:?}: one of {}", o.deck, MY_DECKS.join(", ")));
         }
-        if !TIERS.contains(&o.tier.as_str()) {
+        // an empty tier is for a table with no AI seat (checked once the format is known)
+        if !o.tier.is_empty() && !TIERS.contains(&o.tier.as_str()) {
             return Err(format!("unknown tier {:?}: one of {}", o.tier, TIERS.join(", ")));
         }
         if let Some(p) = &o.partner {
@@ -232,10 +234,16 @@ impl Session {
             e.admits(d, &fmt.key)
                 .map_err(|why| format!("{d} cannot be played at a {} table: {}", fmt.name, why.join("; ")))?;
         }
-        if o.partner.is_some() && fmt.seats != 4 {
-            return Err(format!("{} has {} seats: a second person needs a 4-seat format", fmt.name, fmt.seats));
-        }
         let humans: Vec<String> = std::iter::once(o.deck.clone()).chain(o.partner.clone()).collect();
+        // the tier is for the AI seats: a table of people only has none, so it takes no tier
+        let tier = if fmt.seats > humans.len() {
+            if o.tier.is_empty() {
+                return Err("unknown tier None".into());
+            }
+            Some(o.tier.clone())
+        } else {
+            None
+        };
         let seed = o.seed.unwrap_or_else(|| {
             let t =
                 std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
@@ -246,7 +254,7 @@ impl Session {
             fmt,
             &setup::SeatArgs {
                 deck: &o.deck,
-                tier: &o.tier,
+                tier: tier.as_deref().unwrap_or(""),
                 partner: o.partner.as_deref(),
                 seed,
                 seat: o.seat,
@@ -260,7 +268,7 @@ impl Session {
         Ok(Arc::new(Session {
             engine: o.engine.clone(),
             deck: o.deck,
-            tier: o.tier,
+            tier,
             format,
             profile: o.profile,
             ai: o.ai,
@@ -665,6 +673,9 @@ impl Session {
             "autopass": st.autopass_start.iter().cloned().collect::<HashMap<_, _>>(),
             "autopass_log": st.autopass_log.iter().map(|(n, k, m)| json!([n, k, m])).collect::<Vec<_>>(),
         });
+        if self.tier.is_none() {
+            d.as_object_mut().unwrap().remove("tier"); // a table of people only has no tier
+        }
         if self.format != DEFAULT_FORMAT {
             d["format"] = self.format.clone().into(); // a Commander save has none: it is what an old save reads as
         }
@@ -683,7 +694,15 @@ impl Session {
         }
         let damaged = || "a damaged saved game".to_string();
         let s = |k: &str| data.get(k).and_then(Value::as_str).map(str::to_string).ok_or_else(damaged);
-        let mut o = Options::new(engine, &s("deck")?, &s("tier")?);
+        // the tier is optional (a table of people only has none); present, it is a string
+        let tier = match data.get("tier") {
+            None => String::new(),
+            Some(t) => t.as_str().map(str::to_string).ok_or_else(damaged)?,
+        };
+        if tier.is_empty() && data.get("partner").is_none() {
+            return Err(damaged()); // one person plays against AI seats, which need a tier
+        }
+        let mut o = Options::new(engine, &s("deck")?, &tier);
         // a save without `format` is a Commander game (every save made before formats was): read it as one, so a deck
         // that Commander refuses (a Cali deck) is refused rather than converted
         let old = data.get("format").is_none();

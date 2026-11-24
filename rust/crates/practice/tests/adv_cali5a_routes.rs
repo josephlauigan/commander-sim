@@ -223,12 +223,12 @@ fn seat_seats_opponents_and_partner_at_a_cali_table() {
         assert_eq!(st, 400, "opponents {bad}");
         assert!(msg.starts_with("pick one of: "), "opponents {bad}: {msg}");
     }
-    // a partner at a 2-seat table
+    // a partner at a 2-seat table is a table of two people now (C5c): the session accepts it, whatever the route says
+    // of `two`; a deck the format refuses is still refused
     let (st, msg) = new(&mut c, body(&deck, &tier, json!({"partner": cdeck})));
-    assert_eq!(st, 400, "{msg}");
-    assert!(msg.contains("4-seat format"), "{msg}");
+    assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { 200 } else { 400 }, "{msg}");
     let (st, msg) = new(&mut c, body(&cdeck, &tier, json!({"format": "cali", "partner": deck})));
-    assert_eq!(st, 400, "{msg}");
+    assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { 200 } else { 400 }, "{msg}");
     // `two` at a 2-seat table, with and without the format given, with and without --lan: always the 400
     for extra in [json!({"two": true}), json!({"two": "yes"}), json!({"two": 1})] {
         let (st, msg) = new(&mut c, body(&deck, &tier, extra.clone()));
