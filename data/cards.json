@@ -128153,7 +128153,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,
