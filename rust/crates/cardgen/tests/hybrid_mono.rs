@@ -56,7 +56,10 @@ fn a_card_whose_cost_an_override_states_lists_no_two_hybrid() {
     let cache = Cache::load(&root().join("data/scryfall_cache.json")).unwrap();
     let mut c = Cd::new("Wildgrowth Archaic", "C", "GG", "");
     assert_eq!(hybrid(&cache, &c), ["G2", "G2"], "a card built from Scryfall lists them");
+    // an override that does not state a cost (a `dsl = []` block, tags, types) keeps the symbols: Karn, Gilded Guardian's override block is one
     c.pool_override = true;
+    assert_eq!(hybrid(&cache, &c), ["G2", "G2"], "an override that states no cost does not hide the {{2/G}} symbols");
+    c.cost_override = true;
     assert!(hybrid(&cache, &c).is_empty());
     assert_eq!(mana_value(&c, &[]), 2);
 }

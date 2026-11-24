@@ -36,7 +36,7 @@ pub fn hybrid(cache: &Cache, cd: &Cd) -> Vec<String> {
     let mc = face.s("mana_cost").filter(|s| !s.is_empty()).or_else(|| rec.s("mana_cost")).unwrap_or("");
     let mc = crate::py::first(mc, " // ");
     let mut v = hybrid_of_cost(mc);
-    if cd.pool_override {
+    if cd.cost_override {
         v.retain(|h| !h.ends_with('2'));
     }
     v
