@@ -37,12 +37,12 @@ fn deck_mut<'a>(v: &'a mut Value, group: &str, key: &str) -> &'a mut Value {
 fn the_real_data_loads_with_both_formats() {
     let e = engine_with("real", |_| {}).unwrap();
     assert_eq!(e.formats.keys().collect::<Vec<_>>(), ["cali", "commander"]);
-    assert_eq!(e.format_of("kyodai").key, "cali");
-    assert_eq!(e.format_of("kyodai").rules(), Rules { life: 30, first_player_draws: false });
+    assert_eq!(e.format_of("arzakon").key, "cali");
+    assert_eq!(e.format_of("arzakon").rules(), Rules { life: 30, first_player_draws: false });
     assert_eq!(e.format_of("yshtola").rules(), Rules::COMMANDER);
     assert_eq!(e.format_of("no-such-deck").key, "commander");
-    assert!(e.admits("kyodai", "commander").is_err());
-    assert!(e.admits("kyodai", "cali").is_ok());
+    assert!(e.admits("arzakon", "commander").is_err());
+    assert!(e.admits("arzakon", "cali").is_ok());
     assert!(e.admits("yshtola", "commander").is_ok());
     // a key that is no deck is admitted; a table that is no format is not
     assert!(e.admits("nobody", "cali").is_ok());
@@ -54,12 +54,12 @@ fn the_real_data_loads_with_both_formats() {
 fn an_old_decks_json_without_formats_or_format_reads_as_commander() {
     let e = engine_with("old", |v| {
         v.as_object_mut().unwrap().remove("formats");
-        deck_mut(v, "mine", "kyodai").as_object_mut().unwrap().remove("format");
+        deck_mut(v, "mine", "arzakon").as_object_mut().unwrap().remove("format");
     })
     .unwrap();
     assert_eq!(e.formats.keys().collect::<Vec<_>>(), ["commander"]);
-    assert_eq!(e.format_of("kyodai").key, "commander");
-    assert!(e.admits("kyodai", "commander").is_ok());
+    assert_eq!(e.format_of("arzakon").key, "commander");
+    assert!(e.admits("arzakon", "commander").is_ok());
 }
 
 #[test]
@@ -69,17 +69,18 @@ fn a_deck_naming_a_format_the_file_lacks_is_a_load_error() {
     });
     assert!(e.err().unwrap().contains("unknown format \"cali\""));
     let e = engine_with("typo", |v| {
-        deck_mut(v, "mine", "kyodai")["format"] = json!("calli");
+        deck_mut(v, "mine", "arzakon")["format"] = json!("calli");
     });
     assert!(e.err().unwrap().contains("unknown format \"calli\""));
     // `"format": null` is the same as absent
-    let e = engine_with("null", |v| deck_mut(v, "mine", "kyodai")["format"] = Value::Null).unwrap();
-    assert_eq!(e.format_of("kyodai").key, "commander");
+    let e = engine_with("null", |v| deck_mut(v, "mine", "arzakon")["format"] = Value::Null).unwrap();
+    assert_eq!(e.format_of("arzakon").key, "commander");
 }
 
 #[test]
 fn a_pool_deck_with_a_format_is_read_and_refused_at_a_commander_table() {
-    let e = engine_with("pool_format", |v| deck_mut(v, "pool", "dack-fayden-white-stax")["format"] = json!("cali")).unwrap();
+    let e = engine_with("pool_format", |v| deck_mut(v, "pool", "dack-fayden-white-stax")["format"] = json!("cali"))
+        .unwrap();
     assert_eq!(e.format_of("dack-fayden-white-stax").key, "cali");
     assert!(e.admits("dack-fayden-white-stax", "commander").is_err());
 }
@@ -94,12 +95,18 @@ fn bad_format_records_are_refused_at_load() {
     assert!(bad("life0", &|f| f["cali"]["life"] = json!(0)).contains("life must be at least 1"));
     let _ = bad("life_float", &|f| f["cali"]["life"] = json!(30.5));
     assert!(bad("empty_list", &|f| f["cali"]["banned"] = json!([])).contains("non-empty banned list"));
-    assert!(bad("no_list", &|f| {
-        f["cali"].as_object_mut().unwrap().remove("banned");
-    })
-    .contains("non-empty banned list"));
-    assert!(bad("dup", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("balance"))).contains("listed twice"));
-    assert!(bad("slashes", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("A // B"))).contains("front-face"));
+    assert!(
+        bad("no_list", &|f| {
+            f["cali"].as_object_mut().unwrap().remove("banned");
+        })
+        .contains("non-empty banned list")
+    );
+    assert!(
+        bad("dup", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("balance"))).contains("listed twice")
+    );
+    assert!(
+        bad("slashes", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("A // B"))).contains("front-face")
+    );
     assert!(bad("blank", &|f| f["cali"]["banned"].as_array_mut().unwrap().push(json!("  "))).contains("front-face"));
     assert!(bad("scry_list", &|f| f["cali"]["bans"] = json!("scryfall")).contains("needs bans"));
     assert!(bad("bans_word", &|f| f["cali"]["bans"] = json!("everything")).contains("unknown variant"));
@@ -107,11 +114,13 @@ fn bad_format_records_are_refused_at_load() {
     assert!(bad("cmd_life", &|f| f["commander"]["life"] = json!(30)).contains("must stay"));
     assert!(bad("cmd_seats", &|f| f["commander"]["seats"] = json!(2)).contains("must stay"));
     assert!(bad("cmd_draw", &|f| f["commander"]["first_player_draws"] = json!(false)).contains("must stay"));
-    assert!(bad("cmd_list", &|f| {
-        f["commander"]["bans"] = json!("list");
-        f["commander"]["banned"] = json!(["Sol Ring"]);
-    })
-    .contains("must stay"));
+    assert!(
+        bad("cmd_list", &|f| {
+            f["commander"]["bans"] = json!("list");
+            f["commander"]["banned"] = json!(["Sol Ring"]);
+        })
+        .contains("must stay")
+    );
     // formats as an array, a string
     assert!(engine_with("arr", |v| v["formats"] = json!([])).is_err());
     assert!(engine_with("str", |v| v["formats"] = json!("x")).is_err());

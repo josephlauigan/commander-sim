@@ -262,7 +262,6 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    ("kyodai: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     (
         "urdragon: Maelstrom of the Spirit Dragon",
         "an activated ability, not used as it enters (its person path, human/model_gaps.rs, asks which Dragon to find: practice_trigger_probe's Activate pass)",

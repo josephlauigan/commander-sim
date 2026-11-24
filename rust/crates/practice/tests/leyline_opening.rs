@@ -1,6 +1,6 @@
 //! A person who keeps an opening hand with Leyline of the Guildpact in it is asked, right after the mulligan, whether to
 //! begin the game with it on the battlefield ("If this card is in your opening hand, you may begin the game with it on the
-//! battlefield"). The Kyodai deck plays it.
+//! battlefield"). The Arzakon deck plays it.
 
 #[path = "session_common/mod.rs"]
 mod common;
@@ -31,7 +31,7 @@ fn next_request(s: &Arc<Session>, cursor: &mut u64) -> Option<Value> {
 fn a_kept_hand_with_leyline_is_asked_whether_to_begin_with_it() {
     for seed in 1..400u64 {
         let mut o = opts("adaptive");
-        o.deck = "kyodai".into();
+        o.deck = "arzakon".into();
         o.tier = "t5".into();
         o.seed = Some(seed);
         o.compare = false;
@@ -60,5 +60,5 @@ fn a_kept_hand_with_leyline_is_asked_whether_to_begin_with_it() {
         s.close(Duration::from_secs(10));
         return;
     }
-    panic!("no seed in 1..400 gave the Kyodai seat a Leyline in its opening hand");
+    panic!("no seed in 1..400 gave the Arzakon seat a Leyline in its opening hand");
 }

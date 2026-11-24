@@ -215,7 +215,7 @@ fn nicol_bolas_transforms_at_sorcery_speed() {
 // ------------------------------------------------------------------ Thanos, the Mad Titan
 #[test]
 fn thanos_power_up_asks_odd_or_even() {
-    let mut g = main_table("kyodai");
+    let mut g = main_table("arzakon");
     let thanos = perm(&mut g, P0, "Thanos, the Mad Titan");
     let elves = perm(&mut g, P1, "Llanowar Elves"); // mana value 1: odd
     let ours = perm(&mut g, P0, "Sakura-Tribe Elder"); // mana value 2: even
@@ -241,7 +241,7 @@ fn thanos_power_up_asks_odd_or_even() {
 
 #[test]
 fn thanos_power_up_can_pick_even() {
-    let mut g = main_table("kyodai");
+    let mut g = main_table("arzakon");
     let thanos = perm(&mut g, P0, "Thanos, the Mad Titan");
     let elves = perm(&mut g, P1, "Llanowar Elves");
     let ours = perm(&mut g, P0, "Sakura-Tribe Elder");
@@ -259,7 +259,7 @@ fn thanos_power_up_can_pick_even() {
 // ------------------------------------------------------------------ Ranger-Captain of Eos
 #[test]
 fn ranger_captain_sacrifices_to_silence_the_table() {
-    let mut g = main_table("kyodai");
+    let mut g = main_table("arzakon");
     let ranger = perm(&mut g, P0, "Ranger-Captain of Eos");
     let c = g.perm(ranger).card();
     seat(&mut g, P0, vec![]);
@@ -572,7 +572,7 @@ fn foreboding_ruins_asks_whether_to_reveal() {
 // ------------------------------------------------------------------ Cavern of Souls
 #[test]
 fn cavern_of_souls_asks_for_a_creature_type() {
-    for key in ["urdragon", "kyodai"] {
+    for key in ["urdragon", "arzakon"] {
         let mut g = main_table(key);
         hand(&mut g, P0, &["Cavern of Souls"]);
         let first = Some(json!({"do": "land", "card": 0}));

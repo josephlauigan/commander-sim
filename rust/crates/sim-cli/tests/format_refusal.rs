@@ -1,4 +1,4 @@
-//! What the real binary refuses before any game is played. kyodai plays Cali Commander (1v1, 30 life): it is refused at
+//! What the real binary refuses before any game is played. arzakon plays Cali Commander (1v1, 30 life): it is refused at
 //! a Commander table (`--format commander`), and the five modes that read four seats (`--calibrate`, `--realism`,
 //! `--fit`, `--mulligan-oracle`, `--vs-tier`) are refused for it by name. Each exits 1 with the reason on stderr and no
 //! game on stdout. The tier, key and table logic is unit-tested in src/poolmode.rs, src/duel.rs and src/goldfish.rs;
@@ -34,47 +34,47 @@ fn refused(args: &[&str], must: &[&str]) -> String {
 
 /// a Cali deck is refused at a Commander table, by every mode that seats it
 #[test]
-fn a_commander_table_refuses_kyodai() {
-    let why = ["Cali Commander", "kyodai", "Commander table"];
-    refused(&["--deck", "kyodai", "--pool", "t5", "--trace", "0", "--quiet", "--format", "commander"], &why);
-    refused(&["--deck", "kyodai", "--pool", "t6", "--trace", "0", "--quiet", "--format", "commander"], &why);
+fn a_commander_table_refuses_arzakon() {
+    let why = ["Cali Commander", "arzakon", "Commander table"];
+    refused(&["--deck", "arzakon", "--pool", "t5", "--trace", "0", "--quiet", "--format", "commander"], &why);
+    refused(&["--deck", "arzakon", "--pool", "t6", "--trace", "0", "--quiet", "--format", "commander"], &why);
     refused(
-        &["--deck", "kyodai", "--pool", "t1", "--any-tier", "--trace", "0", "--quiet", "--format", "commander"],
+        &["--deck", "arzakon", "--pool", "t1", "--any-tier", "--trace", "0", "--quiet", "--format", "commander"],
         &why,
     );
-    refused(&["--deck", "kyodai", "--pool", "t5", "--games", "2", "--quiet", "--format", "commander"], &why);
+    refused(&["--deck", "arzakon", "--pool", "t5", "--games", "2", "--quiet", "--format", "commander"], &why);
     refused(
-        &["--deck", "kyodai", "--pool", "all", "--games", "2", "--quiet", "--any-tier", "--format", "commander"],
+        &["--deck", "arzakon", "--pool", "all", "--games", "2", "--quiet", "--any-tier", "--format", "commander"],
         &why,
     );
-    refused(&["--goldfish", "kyodai", "--quiet", "--format", "commander"], &["--goldfish: kyodai", "Cali Commander"]);
+    refused(&["--goldfish", "arzakon", "--quiet", "--format", "commander"], &["--goldfish: arzakon", "Cali Commander"]);
     refused(
-        &["--goldfish", "kyodai", "--trace", "0", "--quiet", "--format", "commander"],
-        &["--goldfish: kyodai", "Cali Commander"],
+        &["--goldfish", "arzakon", "--trace", "0", "--quiet", "--format", "commander"],
+        &["--goldfish: arzakon", "Cali Commander"],
     );
     refused(
-        &["--mulligan-oracle", "kyodai", "--quiet", "--format", "commander"],
-        &["--mulligan-oracle: kyodai", "Cali Commander"],
+        &["--mulligan-oracle", "arzakon", "--quiet", "--format", "commander"],
+        &["--mulligan-oracle: arzakon", "Cali Commander"],
     );
 }
 
-/// each of the five modes that read four seats is refused for kyodai, by name, with no game. `--realism` and `--fit` take
+/// each of the five modes that read four seats is refused for arzakon, by name, with no game. `--realism` and `--fit` take
 /// no deck (they refuse `--deck` themselves, as before), so for them it is `--format cali` that selects the table.
 #[test]
 fn the_four_seat_modes_are_refused_for_a_cali_deck() {
     let cases: [(&[&str], &str); 5] = [
-        (&["--deck", "kyodai", "--calibrate", "within", "--quiet"], "--calibrate"),
-        (&["--mulligan-oracle", "kyodai", "--quiet"], "--mulligan-oracle"),
-        (&["--mulligan-oracle", "yoshimaru,kyodai", "--quiet"], "--mulligan-oracle"),
-        (&["--mulligan-oracle", "kyodai", "--vs-tier", "--quiet"], "--vs-tier"),
-        (&["--mulligan-oracle", "t6,kyodai", "--vs-tier", "--quiet"], "--vs-tier"),
+        (&["--deck", "arzakon", "--calibrate", "within", "--quiet"], "--calibrate"),
+        (&["--mulligan-oracle", "arzakon", "--quiet"], "--mulligan-oracle"),
+        (&["--mulligan-oracle", "yoshimaru,arzakon", "--quiet"], "--mulligan-oracle"),
+        (&["--mulligan-oracle", "arzakon", "--vs-tier", "--quiet"], "--vs-tier"),
+        (&["--mulligan-oracle", "t6,arzakon", "--vs-tier", "--quiet"], "--vs-tier"),
     ];
     for (args, mode) in cases {
-        let err = refused(args, &[mode, "kyodai", "Cali Commander", "is not available for Cali Commander yet"]);
+        let err = refused(args, &[mode, "arzakon", "Cali Commander", "is not available for Cali Commander yet"]);
         assert!(err.contains("1v1"), "{args:?}: {err}");
     }
     for mode in ["--realism", "--fit"] {
-        let err = refused(&["--deck", "kyodai", mode, "--pool", "t5", "--quiet"], &["drop --deck"]);
+        let err = refused(&["--deck", "arzakon", mode, "--pool", "t5", "--quiet"], &["drop --deck"]);
         assert!(!err.contains("not available for"), "{err}");
     }
 }
@@ -95,13 +95,13 @@ fn the_four_seat_modes_are_refused_at_a_cali_table() {
     }
 }
 
-/// `searchtest` measures the AI, and the 2-seat AI is the 4-player one until C4: refused for kyodai, no game
+/// `searchtest` measures the AI, and the 2-seat AI is the 4-player one until C4: refused for arzakon, no game
 #[test]
 fn searchtest_is_refused_for_a_cali_deck() {
     for tier in ["t5", "t6"] {
         refused(
-            &["searchtest", "kyodai", tier, "1"],
-            &["searchtest", "kyodai", "Cali Commander", "is not available for Cali Commander yet"],
+            &["searchtest", "arzakon", tier, "1"],
+            &["searchtest", "arzakon", "Cali Commander", "is not available for Cali Commander yet"],
         );
     }
 }
@@ -140,10 +140,10 @@ fn a_pool_deck_with_a_cali_banned_card_is_refused_at_a_cali_table() {
 /// the card list and the pool decks of swaptest are unaffected
 #[test]
 fn cards_and_swaptest_are_unchanged() {
-    let (code, out, err) = commander_sim(&["--deck", "kyodai", "--cards"]);
+    let (code, out, err) = commander_sim(&["--deck", "arzakon", "--cards"]);
     assert_eq!(code, 0, "{out}\n{err}");
-    assert!(out.contains("kyodai:") && out.contains("Mana Crypt"), "{out}");
-    let (code, _, err) = commander_sim(&["swaptest", "kyodai", "t5", "1", "Sol Ring>Swiftfoot Boots"]);
+    assert!(out.contains("arzakon:") && out.contains("Mana Crypt"), "{out}");
+    let (code, _, err) = commander_sim(&["swaptest", "arzakon", "t5", "1", "Sol Ring>Swiftfoot Boots"]);
     assert_eq!(code, 1);
     assert!(err.contains("no pool deck"), "{err}");
 }

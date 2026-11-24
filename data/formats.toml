@@ -30,7 +30,7 @@ life = 40
 first_player_draws = true
 bans = "scryfall"
 
-# Cali Commander: 1v1, 30 life. The ban list is copied from decklists/cali_commander/kyodai-artifact-combo.md
+# Cali Commander: 1v1, 30 life. The ban list is copied from decklists/cali_commander/arzakon-artifact-combo.md
 # ("Format and Rule 0"); JD confirmed these 18 names on 2026-11-23. The simulator's tooling made no web check
 # against an official page. The guide also lists Mana Crypt, Tinker, Primeval Titan, Paradox Engine, Jeweled Lotus,
 # Dockside Extortionist and Upheaval as legal in Cali. This list REPLACES Scryfall's banned list for a Cali deck.

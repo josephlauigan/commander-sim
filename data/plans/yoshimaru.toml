@@ -136,11 +136,7 @@ else = 50
 
 # the protection cards are kept for the commanders and the engine, not cast proactively. NOTE: `protects = ["commander"]`
 # matches no card name (the list is of card names), and commanders are protected through `is_cmd` (ai/pool.rs
-# `worth_protecting`) anyway, so these two rows change no play; the generic PROTECTORS table decides.
-[[hold]]
-card = "Teferi's Protection"
-protects = ["commander"]
-
+# `worth_protecting`) anyway, so this row changes no play; the generic PROTECTORS table decides.
 [[hold]]
 card = "Eerie Interlude"
 protects = ["commander"]

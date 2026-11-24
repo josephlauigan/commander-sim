@@ -1,0 +1,209 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Teferi's Protection [scryfall] I 2W :: prot=phase
+Model status of the swapped-in cards (cardgen audit):
+  Teferi's Protection: Full (until your next turn your life can't change and you have protection from everything (damage, drains and damage/drain combo wins are stopped; Thassa's Oracle, mill and Revel in Riches aren't); everything you control phases out, lands too; exiled. Cast against wipes, removal of key permanents, lethal combat damage and lethal combos)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yoshimaru                   100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  yoshimaru (swapped)         100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by yoshimaru's AI?
+  AI: Teferi's Protection: priority 0 (generic), cast as a response / removal only
+200 games (preflight dry run: swapped list, 200 per profile on t4), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 4 (Low B4)
+  dry run: Teferi's Protection: drawn in 19.5% of games (39), cast in 10.3% of those (4)
+
+6,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 13 minutes
+Swaps: Akroma's Will -> Teferi's Protection
+
+=== Yoshimaru/Tymna vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  27.3% ->  26.6%  (delta -0.7 pts, noise ±1.5, paired)   n=1500
+               eliminated by (variant): Yuriko 12.5%  Edgar Markov 18.8%  Prosper 12.3%  Chulane 9.9%  Krenko 19.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yoshimaru) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yoshimaru: first Tymna draw, or a combo going off
+                                                                     [loose]
+
+  Outcome
+    Win rate                                          27.3% ->  26.6%  -0.7pt   ±3.2
+    Rounds survived (or game length)                   8.35 ->   8.29   -0.06  ±0.17
+
+  Mana & consistency
+    Extra mulligans per game                           0.13 ->   0.13   +0.00  ±0.04
+    Missed land drops, turns 1-5                       0.62 ->   0.61   -0.00  ±0.06
+    Mana available on your turn 4                      4.26 ->   4.26   -0.00  ±0.08
+    Mana available on your turn 6                      5.89 ->   5.89   -0.00  ±0.13
+
+  Speed
+    Games where the game plan came online             82.9% ->  83.1%  +0.3pt   ±2.7
+    Turn the game plan came online                     3.91 ->   3.90   -0.01  ±0.12
+    Turn the commander first resolved                  1.53 ->   1.53   -0.00  ±0.07
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.25 ->  12.10   -0.15  ±0.43
+    Tutors resolved per game                           1.47 ->   1.46   -0.01  ±0.10
+    Spells cast per game                              12.95 ->  12.80   -0.15  ±0.45
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00
+    Spot removal cast                                  0.63 ->   0.62   -0.01  ±0.05
+    Board wipes cast                                   0.09 ->   0.09   -0.00  ±0.02
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00
+    Your key permanents removed by opponents           0.44 ->   0.43   -0.00  ±0.05
+    Your spells countered                              0.32 ->   0.33   +0.00  ±0.04
+
+  Threat & pressure
+    Damage dealt to opponents per game                27.55 ->  26.83   -0.72  ±2.26
+      ...of which combat damage                       23.70 ->  22.95   -0.75  ±1.96
+      ...of which drain triggers                       2.35 ->   2.41   +0.06  ±0.54
+      ...of which other triggers                       1.49 ->   1.47   -0.03  ±0.34
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Teferi's Protection                   17.6      14.4         8.9     85.6       28.9      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Akroma's Will                         17.9      33.6         6.6     66.4       52.2      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        27.3      26.6     -0.7
+    rounds survived                                   8.35      8.29    -0.06
+    eliminated, % of games                            72.7      73.4     +0.7
+    opponents it eliminated, per game                 0.76      0.76    -0.01
+    damage dealt, per game                            27.5      26.8     -0.7
+    plan: first Tymna draw, or a combo going off
+      plan online by turn 4, %                        63.4      63.4     +0.0
+      plan online by turn 6, %                        78.1      78.6     +0.5
+      plan online by turn 8, %                        81.2      81.6     +0.4
+      plan online by turn 12, %                       82.7      83.0     +0.3
+      plan online at all, %                           82.9      83.1     +0.3
+    commander resolved by turn 4, %                   97.4      97.4     +0.0
+    commander resolved by turn 6, %                   99.1      99.0     -0.1
+    commander removals, per game                      0.60      0.60    -0.00
+    lands on the battlefield, turn 4                  3.74      3.74    +0.00
+    lands on the battlefield, turn 8                  6.53      6.49    -0.04
+    mana available, turn 4                            4.26      4.26    -0.00
+    mana available, turn 8                            7.35      7.31    -0.04
+    cards in hand after the land drop, turn 4         5.75      5.75    +0.00
+    cards in hand after the land drop, turn 8         4.83      4.82    -0.01
+    wins by (current):  combo 57%, damage 43%
+    wins by (swapped):  combo 60%, damage 40%
+    eliminated by (current): Krenko via combat 12.8%, Edgar Markov via combat 9.5%, Chulane via combo 9.1%, Yuriko via triggers 8.1%
+    eliminated by (swapped): Krenko via combat 12.9%, Edgar Markov via combat 10.3%, Yuriko via triggers 8.9%, Chulane via combo 8.7%
+  progress 100.0%  29m22s elapsed, ~0m00s left
+Swaps: Akroma's Will -> Teferi's Protection
+
+=== Yoshimaru/Tymna vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.7% ->  24.1%  (delta +0.3 pts, noise ±1.5, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 13.4%  Miirym 18.9%  Yawgmoth 11.3%  Kinnan 17.1%  Urza 15.2%
+               game ends (baseline): timeout 9 (0.6%), engine step cap 0, no winner 1
+               game ends (variant):  timeout 4 (0.3%), engine step cap 0, no winner 1
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yoshimaru) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yoshimaru: first Tymna draw, or a combo going off
+                                                                     [loose]
+
+  Outcome
+    Win rate                                          23.7% ->  24.1%  +0.3pt   ±3.1
+    Rounds survived (or game length)                   8.50 ->   8.52   +0.02  ±0.21
+
+  Mana & consistency
+    Extra mulligans per game                           0.13 ->   0.13   +0.00  ±0.04
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.01  ±0.06
+    Mana available on your turn 4                      4.27 ->   4.26   -0.01  ±0.08
+    Mana available on your turn 6                      5.98 ->   5.98   +0.00  ±0.12
+
+  Speed
+    Games where the game plan came online             86.3% ->  86.4%  +0.1pt   ±2.5
+    Turn the game plan came online                     3.94 ->   3.93   -0.01  ±0.12
+    Turn the commander first resolved                  1.59 ->   1.60   +0.00  ±0.08
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.22 ->  13.34   +0.11  ±0.50
+    Tutors resolved per game                           1.39 ->   1.39   +0.00  ±0.10
+    Spells cast per game                              13.17 ->  13.24   +0.07  ±0.49
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00
+    Spot removal cast                                  0.66 ->   0.66   -0.00  ±0.05
+    Board wipes cast                                   0.09 ->   0.09   -0.00  ±0.02
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00
+    Your key permanents removed by opponents           0.37 ->   0.37   -0.00  ±0.05
+    Your spells countered                              0.78 ->   0.78   +0.01  ±0.07
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.04 ->  32.30   +0.27  ±2.56
+      ...of which combat damage                       28.37 ->  28.66   +0.29  ±2.27
+      ...of which drain triggers                       2.45 ->   2.45   -0.01  ±0.59
+      ...of which other triggers                       1.21 ->   1.20   -0.02  ±0.23
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Teferi's Protection                   19.3      20.0         9.7     80.0       25.9      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Akroma's Will                         19.1      30.3         7.4     69.7       49.4      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.7      24.1     +0.3
+    rounds survived                                   8.50      8.52    +0.02
+    eliminated, % of games                            76.1      75.9     -0.3
+    opponents it eliminated, per game                 0.71      0.72    +0.01
+    damage dealt, per game                            32.0      32.3     +0.3
+    plan: first Tymna draw, or a combo going off
+      plan online by turn 4, %                        66.9      66.8     -0.1
+      plan online by turn 6, %                        80.1      80.3     +0.2
+      plan online by turn 8, %                        84.5      85.0     +0.5
+      plan online by turn 12, %                       86.1      86.3     +0.1
+      plan online at all, %                           86.3      86.4     +0.1
+    commander resolved by turn 4, %                   96.7      96.7     +0.0
+    commander resolved by turn 6, %                   98.4      98.4     +0.0
+    commander removals, per game                      0.68      0.65    -0.03
+    lands on the battlefield, turn 4                  3.75      3.74    -0.01
+    lands on the battlefield, turn 8                  6.76      6.75    -0.01
+    mana available, turn 4                            4.27      4.26    -0.01
+    mana available, turn 8                            7.53      7.57    +0.03
+    cards in hand after the land drop, turn 4         5.75      5.76    +0.01
+    cards in hand after the land drop, turn 8         5.33      5.34    +0.01
+    wins by (current):  combo 55%, damage 43%, timeout 2%
+    wins by (swapped):  combo 54%, damage 45%, timeout 1%
+    eliminated by (current): Urza via combo 14.7%, Kinnan via combo 13.9%, Miirym via combat 10.2%, Zur the Enchanter via combo 9.9%
+    eliminated by (swapped): Urza via combo 14.3%, Kinnan via combo 14.0%, Miirym via combat 10.5%, Zur the Enchanter via combo 9.3%
+
+(1762s total)

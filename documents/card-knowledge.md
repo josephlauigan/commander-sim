@@ -429,8 +429,8 @@ a named set of `Out=>In` pairs run together (`commander-sim --deck K --pool all 
 
 ### Where an agent starts
 
-Before naming a card, read the deck's plan: the deck's guide (`decklists/JD/<deck>-*.md`; Kyodai:
-`decklists/cali_commander/kyodai-artifact-combo.md`), `data/plans/<deck>.toml` (engine plan
+Before naming a card, read the deck's plan: the deck's guide (`decklists/JD/<deck>-*.md`; the Arzakon deck:
+`decklists/cali_commander/arzakon-artifact-combo.md`), `data/plans/<deck>.toml` (engine plan
 config), `audit/<deck>/FINDINGS.md` (what was tested and why it helped or not), `decklists/CHANGELOG.md` and
 `audit/jd-packages/`. Write down the strategy in a paragraph and the deck's packages (name, job, members, support).
 FINDINGS can name cards that have since left a list: check `data/decks.json`.

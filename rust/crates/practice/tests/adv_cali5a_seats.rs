@@ -119,7 +119,7 @@ fn s(x: &[&str]) -> Vec<String> {
     x.iter().map(|k| k.to_string()).collect()
 }
 
-/// Every deck of MY_DECKS (kyodai too, at the Commander format: the table of 4 it used to get) x t0..t6 x seeds
+/// Every deck of MY_DECKS (arzakon too, at the Commander format: the table of 4 it used to get) x t0..t6 x seeds
 /// 1..=40 x every call shape, errors included.
 #[test]
 fn old_and_new_seating_agree_for_every_call_shape() {
@@ -303,7 +303,7 @@ fn a_tier_with_too_few_decks_is_an_error_not_a_short_table() {
 }
 
 /// Every caller of `choose_seats` (grep over rust/crates): `Session::new` (now `choose_seats_in` with the chosen
-/// format), `tests/play_bot_games.rs` (kyodai at t5) and `tests/commander_practice_fixture.rs` (Commander decks only).
+/// format), `tests/play_bot_games.rs` (arzakon at t5) and `tests/commander_practice_fixture.rs` (Commander decks only).
 /// `choose_seats` is "the table of the deck's own format": identical to the old function for each Commander deck of
 /// MY_DECKS, and a 2-seat table for the deck whose format has 2 seats.
 #[test]
@@ -348,7 +348,7 @@ fn old_seatings_are_accepted_back_as_exact_seats() {
                 let old = old_choose_seats(&e, &base).unwrap();
                 let back = SeatArgs { seats: Some(&old), ..base };
                 assert_eq!(choose_seats(&e, &back).unwrap(), old);
-                let p = SeatArgs { partner: Some("kyodai"), ..base };
+                let p = SeatArgs { partner: Some("arzakon"), ..base };
                 let old = old_choose_seats(&e, &p).unwrap();
                 assert_eq!(choose_seats(&e, &SeatArgs { seats: Some(&old), ..p }).unwrap(), old);
             }

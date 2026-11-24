@@ -1,13 +1,13 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-22",
+  "fetched": "2026-11-24",
   "deck": "yoshimaru",
   "commanders": [
     "Yoshimaru, Ever Faithful",
     "Tymna the Weaver"
   ],
-  "request_sha256": "085f4ef2d46190d361ab8c6ed7d6800a7e6dfc18de89cc1a74f944e4d68160d9",
+  "request_sha256": "bfbd912c31e9f961112afe9c1a300361129d85d458d488274e9e99739ef31441",
   "identity": "WB",
   "included": [
     {
@@ -36,7 +36,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 128055
+      "popularity": 128172
     },
     {
       "id": "1090-2781",
@@ -60,7 +60,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 56446
+      "popularity": 56474
     },
     {
       "id": "1274-3693",
@@ -88,7 +88,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 53781
+      "popularity": 53848
     },
     {
       "id": "2919-3693",
@@ -117,7 +117,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 13039
+      "popularity": 13073
     }
   ],
   "included_by_changing_commanders": [],
@@ -148,7 +148,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152553,
+      "popularity": 152625,
       "missing": [
         "Sanguine Bond"
       ]
@@ -179,7 +179,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 97486,
+      "popularity": 97604,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -210,7 +210,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 77160,
+      "popularity": 77207,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -241,7 +241,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62206,
+      "popularity": 62250,
       "missing": [
         "Marauding Blight-Priest"
       ]
@@ -271,7 +271,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57622,
+      "popularity": 57657,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -303,7 +303,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 47069,
+      "popularity": 47080,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -334,7 +334,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28789,
+      "popularity": 28803,
       "missing": [
         "Starscape Cleric"
       ]
@@ -401,7 +401,7 @@
       "mana": "{5}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 18190,
+      "popularity": 18200,
       "missing": [
         "Beacon of Immortality"
       ]
@@ -437,7 +437,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 17571,
+      "popularity": 17581,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -466,7 +466,7 @@
       "mana": "{4}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 17193,
+      "popularity": 17197,
       "missing": [
         "Blood Tribute"
       ]
@@ -502,7 +502,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 16939,
+      "popularity": 16948,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -533,7 +533,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14962,
+      "popularity": 14968,
       "missing": [
         "Cliffhaven Vampire"
       ]
@@ -563,7 +563,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 13835,
+      "popularity": 13827,
       "missing": [
         "Revival // Revenge"
       ]
@@ -594,7 +594,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12393,
+      "popularity": 12385,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -621,7 +621,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12243,
+      "popularity": 12248,
       "missing": [
         "Mikaeus, the Unhallowed"
       ]
@@ -652,7 +652,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11693,
+      "popularity": 11681,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -679,7 +679,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 10042,
+      "popularity": 10063,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -708,7 +708,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9910,
+      "popularity": 9929,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -739,7 +739,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9784,
+      "popularity": 9803,
       "missing": [
         "Cleric Class"
       ]
@@ -766,7 +766,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9388,
+      "popularity": 9408,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -797,38 +797,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8353,
+      "popularity": 8352,
       "missing": [
         "Epicure of Blood"
-      ]
-    },
-    {
-      "id": "335-5141",
-      "cards": [
-        {
-          "name": "Ad Nauseam",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 8172,
-      "missing": [
-        "Ad Nauseam"
       ]
     },
     {
@@ -855,7 +826,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7851,
+      "popularity": 7848,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -884,7 +855,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7683,
+      "popularity": 7699,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -915,7 +886,7 @@
       "mana": "{1}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6351,
+      "popularity": 6354,
       "missing": [
         "Triskelion"
       ]
@@ -946,7 +917,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5399,
+      "popularity": 5434,
       "missing": [
         "South Wind Avatar"
       ]
@@ -973,7 +944,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 4578,
+      "popularity": 4595,
       "missing": [
         "Wispweaver Angel"
       ]
@@ -1004,7 +975,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2462,
+      "popularity": 2469,
       "missing": [
         "Light of Promise"
       ]
@@ -1036,7 +1007,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2094,
+      "popularity": 2093,
       "missing": [
         "Triskelion"
       ]
@@ -1073,7 +1044,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2045,
+      "popularity": 2039,
       "missing": [
         "Serra Avatar"
       ]
@@ -1103,7 +1074,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1899,
+      "popularity": 1902,
       "missing": [
         "Requiem Monolith"
       ]
@@ -1130,7 +1101,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1862,
+      "popularity": 1865,
       "missing": [
         "Parallax Wave"
       ]
@@ -1163,7 +1134,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1699,
+      "popularity": 1702,
       "missing": [
         "Lumbering Battlement"
       ]
@@ -1196,38 +1167,9 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1551,
+      "popularity": 1553,
       "missing": [
         "Lumbering Battlement"
-      ]
-    },
-    {
-      "id": "1328-5141",
-      "cards": [
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Spellbinder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Your life total can't change during your opponents' turns"
-      ],
-      "requires": [],
-      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1442,
-      "missing": [
-        "Spellbinder"
       ]
     },
     {
@@ -1256,7 +1198,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1389,
+      "popularity": 1398,
       "missing": [
         "The Destined White Mage"
       ]
@@ -1285,7 +1227,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 1362,
+      "popularity": 1366,
       "missing": [
         "Crackdown Construct"
       ]
@@ -1346,7 +1288,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1112,
+      "popularity": 1114,
       "missing": [
         "Sunbond"
       ]
@@ -1373,7 +1315,7 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1090,
+      "popularity": 1089,
       "missing": [
         "Meticulous Excavation"
       ]
@@ -1404,36 +1346,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 789,
+      "popularity": 792,
       "missing": [
         "Spider-Man, Peter Parker"
-      ]
-    },
-    {
-      "id": "70-5141",
-      "cards": [
-        {
-          "name": "Balancing Act",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 776,
-      "missing": [
-        "Balancing Act"
       ]
     },
     {
@@ -1462,7 +1377,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 776,
+      "popularity": 778,
       "missing": [
         "Flumph"
       ]
@@ -1489,7 +1404,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 647,
+      "popularity": 646,
       "missing": [
         "Enduring Renewal"
       ]
@@ -1526,7 +1441,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 481,
+      "popularity": 484,
       "missing": [
         "Soul of Eternity"
       ]
@@ -1553,7 +1468,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 368,
+      "popularity": 369,
       "missing": [
         "Kaya, Intangible Slayer"
       ]
@@ -1580,7 +1495,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 329,
+      "popularity": 331,
       "missing": [
         "Essence Reliquary"
       ]
@@ -1607,7 +1522,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 313,
+      "popularity": 317,
       "missing": [
         "Umbilicus"
       ]
@@ -1634,7 +1549,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 298,
+      "popularity": 300,
       "missing": [
         "Blood Clock"
       ]
@@ -1663,7 +1578,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 186,
+      "popularity": 188,
       "missing": [
         "Bellowing Aegisaur"
       ]
@@ -1771,7 +1686,7 @@
       "mana": "{10} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 35,
+      "popularity": 36,
       "missing": [
         "Obelisk of Undoing"
       ]

@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-23",
-  "deck": "kyodai",
+  "fetched": "2026-11-24",
+  "deck": "arzakon",
   "commanders": [
-    "Kyodai, Soul of Kamigawa"
+    "Arzakon"
   ],
-  "request_sha256": "1b08f59faf1a789e46d870e113b929f58b31ef473224f3fad1c153c95c55cd4b",
+  "request_sha256": "369f489e1492b514aecaba79c724f41f8c1218aa3054734f673e2ab084acd954",
   "identity": "WUBRG",
   "included": [
     {
@@ -33,7 +33,7 @@
       "mana": "{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 151823
+      "popularity": 151886
     },
     {
       "id": "1295-3093",
@@ -59,7 +59,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 133155
+      "popularity": 133211
     },
     {
       "id": "1368-1414-4856",
@@ -93,7 +93,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 120323
+      "popularity": 120405
     },
     {
       "id": "4131-4235",
@@ -119,7 +119,7 @@
       "mana": "{2}",
       "bracket": "R",
       "legal": true,
-      "popularity": 54631
+      "popularity": 54660
     },
     {
       "id": "570-2645",
@@ -149,7 +149,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4079
+      "popularity": 4083
     }
   ],
   "included_by_changing_commanders": [],
@@ -180,7 +180,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 370824,
+      "popularity": 371144,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -217,44 +217,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 97544,
+      "popularity": 97598,
       "missing": [
         "Lion's Eye Diamond"
-      ]
-    },
-    {
-      "id": "1368-1878-2706",
-      "cards": [
-        {
-          "name": "Underworld Breach",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Wheel of Fortune",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Jeska's Will",
-          "zones": [
-            "G"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting for all players"
-      ],
-      "requires": [],
-      "prerequisites": "You have at least six additional cards in your graveyard, plus an additional six cards between your hand and/or graveyard.\nAn opponent has at least six cards in hand.",
-      "mana": "{2}{R}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 91911,
-      "missing": [
-        "Wheel of Fortune"
       ]
     },
     {
@@ -283,7 +248,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 79221,
+      "popularity": 79267,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -312,7 +277,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 67889,
+      "popularity": 67964,
       "missing": [
         "Forsaken Monument"
       ]
@@ -343,7 +308,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 53804,
+      "popularity": 53848,
       "missing": [
         "Heliod, Sun-Crowned"
       ]
@@ -372,7 +337,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 46969,
+      "popularity": 46968,
       "missing": [
         "Kinnan, Bonder Prodigy"
       ]
@@ -404,39 +369,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 41821,
+      "popularity": 41875,
       "missing": [
         "Grinding Station"
-      ]
-    },
-    {
-      "id": "1878-3368",
-      "cards": [
-        {
-          "name": "Reiterate",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Jeska's Will",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite red mana",
-        "Exile your library with the ability to play the exiled cards until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent has six or more cards in their hand.",
-      "mana": "{6}{R}{R}{R}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 39074,
-      "missing": [
-        "Reiterate"
       ]
     },
     {
@@ -463,7 +398,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38235,
+      "popularity": 38255,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -496,7 +431,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 38017,
+      "popularity": 38034,
       "missing": [
         "Priest of Titania"
       ]
@@ -529,7 +464,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 34449,
+      "popularity": 34467,
       "missing": [
         "Elvish Archdruid"
       ]
@@ -562,7 +497,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 33047,
+      "popularity": 33060,
       "missing": [
         "Marwyn, the Nurturer"
       ]
@@ -595,7 +530,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 29184,
+      "popularity": 29202,
       "missing": [
         "Circle of Dreams Druid"
       ]
@@ -624,7 +559,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 26774,
+      "popularity": 26790,
       "missing": [
         "Forensic Gadgeteer"
       ]
@@ -653,7 +588,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 26088,
+      "popularity": 26117,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -686,9 +621,36 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 24496,
+      "popularity": 24518,
       "missing": [
         "Selvala, Heart of the Wilds"
+      ]
+    },
+    {
+      "id": "3263-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 23098,
+      "missing": [
+        "Mycosynth Lattice"
       ]
     },
     {
@@ -715,7 +677,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 19226,
+      "popularity": 19244,
       "missing": [
         "Cybermen Squadron"
       ]
@@ -744,7 +706,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 15275,
+      "popularity": 15288,
       "missing": [
         "Nyxbloom Ancient"
       ]
@@ -777,7 +739,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 15119,
+      "popularity": 15122,
       "missing": [
         "Wirewood Channeler"
       ]
@@ -810,7 +772,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 15030,
+      "popularity": 15058,
       "missing": [
         "Bloom Tender"
       ]
@@ -839,7 +801,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14820,
+      "popularity": 14827,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -868,7 +830,7 @@
       "mana": "{U}{U}{B}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14713,
+      "popularity": 14707,
       "missing": [
         "Doomsday"
       ]
@@ -897,7 +859,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 13999,
+      "popularity": 13995,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -929,7 +891,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 13052,
+      "popularity": 13073,
       "missing": [
         "Archangel of Thune"
       ]
@@ -960,7 +922,7 @@
       "mana": "{8}{U}{U}{U}{U}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12892,
+      "popularity": 12903,
       "missing": [
         "Enter the Infinite"
       ]
@@ -989,7 +951,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12492,
+      "popularity": 12517,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -1016,7 +978,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12243,
+      "popularity": 12248,
       "missing": [
         "Mikaeus, the Unhallowed"
       ]
@@ -1049,9 +1011,45 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12156,
+      "popularity": 12176,
       "missing": [
         "Metalworker"
+      ]
+    },
+    {
+      "id": "617-4235-4563",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Everflowing Chalice has 4 or more charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12171,
+      "missing": [
+        "Everflowing Chalice"
       ]
     },
     {
@@ -1076,7 +1074,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12084,
+      "popularity": 12082,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -1105,7 +1103,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11155,
+      "popularity": 11166,
       "missing": [
         "Power Artifact"
       ]
@@ -1134,7 +1132,7 @@
       "mana": "{G}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 10472,
+      "popularity": 10473,
       "missing": [
         "Hermit Druid"
       ]
@@ -1163,7 +1161,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10319,
+      "popularity": 10322,
       "missing": [
         "Zirda, the Dawnwaker"
       ]
@@ -1193,7 +1191,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10302,
+      "popularity": 10314,
       "missing": [
         "Freed from the Real"
       ]
@@ -1222,7 +1220,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10157,
+      "popularity": 10156,
       "missing": [
         "Mesmeric Orb"
       ]
@@ -1251,9 +1249,39 @@
       "mana": "{5}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 10093,
+      "popularity": 10119,
       "missing": [
         "Leveler"
+      ]
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10066,
+      "missing": [
+        "Aetherflux Reservoir"
       ]
     },
     {
@@ -1278,7 +1306,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 10046,
+      "popularity": 10051,
       "missing": [
         "Master Transmuter"
       ]
@@ -1307,7 +1335,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9913,
+      "popularity": 9929,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1338,7 +1366,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9788,
+      "popularity": 9803,
       "missing": [
         "Cleric Class"
       ]
@@ -1367,7 +1395,7 @@
       "mana": "{1}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 9694,
+      "popularity": 9696,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -1396,7 +1424,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 9560,
+      "popularity": 9565,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1428,9 +1456,45 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9100,
+      "popularity": 9104,
       "missing": [
         "Najeela, the Blade-Blossom"
+      ]
+    },
+    {
+      "id": "578-617-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "2 or more artifacts in hand.\nMetalworker does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8834,
+      "missing": [
+        "Metalworker"
       ]
     },
     {
@@ -1457,7 +1521,7 @@
       "mana": "{3}{W}{U}{B}{R}{G}",
       "bracket": "P",
       "legal": true,
-      "popularity": 8425,
+      "popularity": 8434,
       "missing": [
         "Coalition Victory"
       ]
@@ -1486,7 +1550,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8178,
+      "popularity": 8179,
       "missing": [
         "Ad Nauseam"
       ]
@@ -1519,7 +1583,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7886,
+      "popularity": 7889,
       "missing": [
         "Karametra's Acolyte"
       ]
@@ -1548,7 +1612,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7688,
+      "popularity": 7699,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1581,9 +1645,51 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7529,
+      "popularity": 7535,
       "missing": [
         "Kami of Whispered Hopes"
+      ]
+    },
+    {
+      "id": "617-2364-4235-4547",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7467,
+      "missing": [
+        "Forsaken Monument"
       ]
     },
     {
@@ -1608,7 +1714,7 @@
       "mana": "{1}{R}{R}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 7409,
+      "popularity": 7408,
       "missing": [
         "Dualcaster Mage"
       ]
@@ -1640,7 +1746,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7267,
+      "popularity": 7276,
       "missing": [
         "Mind Over Matter"
       ]
@@ -1673,7 +1779,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7094,
+      "popularity": 7095,
       "missing": [
         "Gyre Sage"
       ]
@@ -1702,7 +1808,7 @@
       "mana": "{1}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 7086,
+      "popularity": 7088,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1735,7 +1841,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6881,
+      "popularity": 6889,
       "missing": [
         "Howlsquad Heavy"
       ]
@@ -1764,9 +1870,39 @@
       "mana": "{3}{R}{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6650,
+      "popularity": 6659,
       "missing": [
         "Chandra's Ignition"
+      ]
+    },
+    {
+      "id": "693-1368",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Path of the Pyromancer",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5672,
+      "missing": [
+        "Path of the Pyromancer"
       ]
     },
     {
@@ -1810,39 +1946,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5656,
+      "popularity": 5657,
       "missing": [
         "Clock of Omens"
-      ]
-    },
-    {
-      "id": "693-1368",
-      "cards": [
-        {
-          "name": "Underworld Breach",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Path of the Pyromancer",
-          "zones": [
-            "G"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite rummaging",
-        "Near-infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
-      "mana": "{4}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5656,
-      "missing": [
-        "Path of the Pyromancer"
       ]
     },
     {
@@ -1867,7 +1973,7 @@
       "mana": "{3}",
       "bracket": "E",
       "legal": true,
-      "popularity": 5338,
+      "popularity": 5346,
       "missing": [
         "Sharuum the Hegemon"
       ]
@@ -1897,7 +2003,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5247,
+      "popularity": 5253,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -1936,9 +2042,46 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5156,
+      "popularity": 5157,
       "missing": [
         "Myr Welder"
+      ]
+    },
+    {
+      "id": "617-1283-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5136,
+      "missing": [
+        "Chromatic Orrery"
       ]
     },
     {
@@ -1965,7 +2108,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4732,
+      "popularity": 4743,
       "missing": [
         "Blade of Selves"
       ]
@@ -1994,7 +2137,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4419,
+      "popularity": 4437,
       "missing": [
         "Thought Lash"
       ]
@@ -2040,7 +2183,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 4237,
+      "popularity": 4238,
       "missing": [
         "Clock of Omens"
       ]
@@ -2069,9 +2212,45 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 4049,
+      "popularity": 4056,
       "missing": [
         "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "617-4235-6893",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Eternity Elevator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "The Eternity Elevator has twenty or more charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4021,
+      "missing": [
+        "The Eternity Elevator"
       ]
     },
     {
@@ -2098,7 +2277,7 @@
       "mana": "{1}{U}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3822,
+      "popularity": 3831,
       "missing": [
         "Paradigm Shift"
       ]
@@ -2131,7 +2310,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3819,
+      "popularity": 3822,
       "missing": [
         "Viridian Joiner"
       ]
@@ -2160,7 +2339,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 3519,
+      "popularity": 3525,
       "missing": [
         "Mana Reflection"
       ]
@@ -2199,7 +2378,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3342,
+      "popularity": 3344,
       "missing": [
         "Myr Welder"
       ]
@@ -2238,7 +2417,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3339,
+      "popularity": 3337,
       "missing": [
         "Trazyn the Infinite"
       ]
@@ -2265,7 +2444,7 @@
       "mana": "{5}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 3333,
+      "popularity": 3334,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
@@ -2304,6 +2483,41 @@
       ]
     },
     {
+      "id": "1978-4131-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3009,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
       "id": "74-4131",
       "cards": [
         {
@@ -2327,7 +2541,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2643,
+      "popularity": 2652,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
       ]
@@ -2360,7 +2574,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2537,
+      "popularity": 2540,
       "missing": [
         "Redshift, Rocketeer Chief"
       ]
@@ -2394,7 +2608,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2536,
+      "popularity": 2539,
       "missing": [
         "Brigid, Clachan's Heart // Brigid, Doun's Mind"
       ]
@@ -2425,7 +2639,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2467,
+      "popularity": 2469,
       "missing": [
         "Light of Promise"
       ]
@@ -2458,7 +2672,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2403,
+      "popularity": 2409,
       "missing": [
         "Arbor Adherent"
       ]
@@ -2485,7 +2699,7 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2387,
+      "popularity": 2386,
       "missing": [
         "Obliterate"
       ]
@@ -2520,7 +2734,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2364,
+      "popularity": 2363,
       "missing": [
         "Emiel the Blessed"
       ]
@@ -2549,7 +2763,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2280,
+      "popularity": 2281,
       "missing": [
         "Cephalid Illusionist"
       ]
@@ -2578,7 +2792,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2132,
+      "popularity": 2130,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -2608,7 +2822,7 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2124,
+      "popularity": 2125,
       "missing": [
         "Worldfire"
       ]
@@ -2637,7 +2851,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2096,
+      "popularity": 2094,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -2664,38 +2878,9 @@
       "mana": "{2}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2094,
+      "popularity": 2088,
       "missing": [
         "Naru Meha, Master Wizard"
-      ]
-    },
-    {
-      "id": "1295-4267",
-      "cards": [
-        {
-          "name": "Divining Witch",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Thassa's Oracle",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "another card in hand.",
-      "mana": "{1}{U}{U}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2042,
-      "missing": [
-        "Divining Witch"
       ]
     },
     {
@@ -2732,39 +2917,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2039,
+      "popularity": 2040,
       "missing": [
         "Trazyn the Infinite"
       ]
     },
     {
-      "id": "1878-4560",
+      "id": "1295-4267",
       "cards": [
         {
-          "name": "Soulfire Grand Master",
+          "name": "Divining Witch",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Jeska's Will",
+          "name": "Thassa's Oracle",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite red mana",
-        "Exile your library with the ability to play the exiled cards until end of turn"
+        "Win the game"
       ],
       "requires": [],
-      "prerequisites": "An opponent has at least seven cards in hand.",
-      "mana": "{4}{U/R}{U/R}{R}",
-      "bracket": "P",
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 1971,
+      "popularity": 2039,
       "missing": [
-        "Soulfire Grand Master"
+        "Divining Witch"
       ]
     },
     {
@@ -2795,9 +2979,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1896,
+      "popularity": 1897,
       "missing": [
         "Bighorner Rancher"
+      ]
+    },
+    {
+      "id": "1978-2364-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1870,
+      "missing": [
+        "Voltaic Construct"
       ]
     },
     {
@@ -2828,7 +3047,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1788,
+      "popularity": 1794,
       "missing": [
         "Deathbloom Ritualist"
       ]
@@ -2861,7 +3080,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1775,
+      "popularity": 1776,
       "missing": [
         "Overgrown Battlement"
       ]
@@ -2900,7 +3119,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1748,
+      "popularity": 1747,
       "missing": [
         "Myr Welder"
       ]
@@ -2933,9 +3152,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1735,
+      "popularity": 1736,
       "missing": [
         "Axebane Guardian"
+      ]
+    },
+    {
+      "id": "617-2776-4235",
+      "cards": [
+        {
+          "name": "Doubling Cube",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1717,
+      "missing": [
+        "Doubling Cube"
       ]
     },
     {
@@ -2999,7 +3253,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1612,
+      "popularity": 1618,
       "missing": [
         "Topiary Lecturer"
       ]
@@ -3028,7 +3282,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1569,
+      "popularity": 1570,
       "missing": [
         "Crackdown Construct"
       ]
@@ -3067,6 +3321,42 @@
       ]
     },
     {
+      "id": "74-617-5034",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1516,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
       "id": "1328-5141",
       "cards": [
         {
@@ -3090,7 +3380,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1443,
+      "popularity": 1446,
       "missing": [
         "Spellbinder"
       ]
@@ -3121,9 +3411,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1395,
+      "popularity": 1398,
       "missing": [
         "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "4131-4893-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1358,
+      "missing": [
+        "Training Grounds"
       ]
     },
     {
@@ -3150,7 +3475,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1320,
+      "popularity": 1321,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -3242,7 +3567,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1266,
+      "popularity": 1268,
       "missing": [
         "Mirror of Fate"
       ]
@@ -3308,7 +3633,7 @@
       "mana": "{2}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1142,
+      "popularity": 1143,
       "missing": [
         "Magus of the Coffers"
       ]
@@ -3339,7 +3664,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1115,
+      "popularity": 1114,
       "missing": [
         "Sunbond"
       ]
@@ -3371,7 +3696,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1110,
+      "popularity": 1109,
       "missing": [
         "High Alert"
       ]
@@ -3427,7 +3752,7 @@
       "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1006,
+      "popularity": 1008,
       "missing": [
         "Doomsday Excruciator"
       ]
@@ -3466,7 +3791,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 986,
+      "popularity": 987,
       "missing": [
         "Trazyn the Infinite"
       ]
@@ -3501,9 +3826,44 @@
       "mana": "{4}{W}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 954,
+      "popularity": 955,
       "missing": [
         "Lethal Vapors"
+      ]
+    },
+    {
+      "id": "186-4131-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartstone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 913,
+      "missing": [
+        "Heartstone"
       ]
     },
     {
@@ -3533,7 +3893,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 890,
+      "popularity": 889,
       "missing": [
         "Vhal, Candlekeep Researcher"
       ]
@@ -3562,7 +3922,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 872,
+      "popularity": 873,
       "missing": [
         "Vigean Graftmage"
       ]
@@ -3595,7 +3955,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 859,
+      "popularity": 862,
       "missing": [
         "Mona Lisa, Science Geek"
       ]
@@ -3629,7 +3989,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 850,
+      "popularity": 849,
       "missing": [
         "Bigger on the Inside"
       ]
@@ -3658,9 +4018,45 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 827,
+      "popularity": 836,
       "missing": [
         "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
+      "id": "617-2593-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Cornucopia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 816,
+      "missing": [
+        "Astral Cornucopia"
       ]
     },
     {
@@ -3689,7 +4085,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 790,
+      "popularity": 792,
       "missing": [
         "Spider-Man, Peter Parker"
       ]
@@ -3716,7 +4112,7 @@
       "mana": "{4}{W}{W}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 777,
+      "popularity": 778,
       "missing": [
         "Balancing Act"
       ]
@@ -3749,7 +4145,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 758,
+      "popularity": 761,
       "missing": [
         "The Notary Hobbits"
       ]
@@ -3779,7 +4175,7 @@
       "mana": "{B}{B}{G}{G}",
       "bracket": "R",
       "legal": true,
-      "popularity": 752,
+      "popularity": 751,
       "missing": [
         "Yavimaya Bloomsage // Channel"
       ]
@@ -3818,6 +4214,42 @@
       ]
     },
     {
+      "id": "198-617-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Empowered Autogenerator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Empowered Autogenerator has at least three charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 707,
+      "missing": [
+        "Empowered Autogenerator"
+      ]
+    },
+    {
       "id": "2645-4188",
       "cards": [
         {
@@ -3845,7 +4277,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 686,
+      "popularity": 685,
       "missing": [
         "Accomplished Alchemist"
       ]
@@ -3874,7 +4306,7 @@
       "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 674,
+      "popularity": 672,
       "missing": [
         "Timestream Navigator"
       ]
@@ -3901,38 +4333,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 647,
+      "popularity": 646,
       "missing": [
         "Enduring Renewal"
-      ]
-    },
-    {
-      "id": "4274-5141",
-      "cards": [
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Apocalypse",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Exile all permanents opponents control"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{R}{R}{R}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 627,
-      "missing": [
-        "Apocalypse"
       ]
     },
     {
@@ -3959,9 +4362,38 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 625,
+      "popularity": 626,
       "missing": [
         "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 626,
+      "missing": [
+        "Apocalypse"
       ]
     },
     {
@@ -4082,7 +4514,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 550,
+      "popularity": 549,
       "missing": [
         "Sword of the Paruns"
       ]
@@ -4112,9 +4544,45 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 543,
+      "popularity": 544,
       "missing": [
         "Urban Daggertooth"
+      ]
+    },
+    {
+      "id": "74-617-2364",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 538,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
       ]
     },
     {
@@ -4143,7 +4611,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 486,
+      "popularity": 488,
       "missing": [
         "Heroic Feast"
       ]
@@ -4234,7 +4702,7 @@
       "mana": "{7}{U}{U}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 443,
+      "popularity": 442,
       "missing": [
         "Dance with Calamity"
       ]
@@ -4276,7 +4744,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 419,
+      "popularity": 420,
       "missing": [
         "Mizzix of the Izmagnus"
       ]
@@ -4366,7 +4834,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 369,
+      "popularity": 371,
       "missing": [
         "Vedalken Mastermind"
       ]
@@ -4422,7 +4890,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 330,
+      "popularity": 331,
       "missing": [
         "Essence Reliquary"
       ]
@@ -4449,7 +4917,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 313,
+      "popularity": 317,
       "missing": [
         "Umbilicus"
       ]
@@ -4479,6 +4947,33 @@
       "popularity": 307,
       "missing": [
         "Keeper of the Nine Gales"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 300,
+      "missing": [
+        "Blood Clock"
       ]
     },
     {
@@ -4515,33 +5010,6 @@
       ]
     },
     {
-      "id": "3363-4933",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Blood Clock",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 298,
-      "missing": [
-        "Blood Clock"
-      ]
-    },
-    {
       "id": "2645-7704",
       "cards": [
         {
@@ -4569,9 +5037,49 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 280,
+      "popularity": 282,
       "missing": [
         "Doc Samson, Super Psychiatrist"
+      ]
+    },
+    {
+      "id": "2470-2645-5089",
+      "cards": [
+        {
+          "name": "Grand Architect",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana that can only be spent to activate abilities of artifacts",
+        "Infinite colorless mana that can only be spent to cast artifact spells",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 276,
+      "missing": [
+        "Grand Architect"
       ]
     },
     {
@@ -4601,6 +5109,33 @@
       "popularity": 255,
       "missing": [
         "Wake Thrasher"
+      ]
+    },
+    {
+      "id": "492-2580",
+      "cards": [
+        {
+          "name": "Lethal Vapors",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pithing Needle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "\"Lethal Vapors\" chosen with Pithing Needle.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 230,
+      "missing": [
+        "Lethal Vapors"
       ]
     },
     {
@@ -4657,6 +5192,42 @@
       "popularity": 207,
       "missing": [
         "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "617-4235-4306",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyx Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana among colors with which you have devotion"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to any color is at least four.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 196,
+      "missing": [
+        "Nyx Lotus"
       ]
     },
     {
@@ -4745,9 +5316,80 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 182,
+      "popularity": 186,
       "missing": [
         "Loot, the Nexus"
+      ]
+    },
+    {
+      "id": "1912-4131-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 126,
+      "missing": [
+        "Biomancer's Familiar"
+      ]
+    },
+    {
+      "id": "617-4235-4851",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Timeless Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 123,
+      "missing": [
+        "Timeless Lotus"
       ]
     },
     {
@@ -4888,7 +5530,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 98,
+      "popularity": 97,
       "missing": [
         "Esperzoa"
       ]
@@ -4983,39 +5625,94 @@
       ]
     },
     {
-      "id": "1878-2634-3593",
+      "id": "492-524",
       "cards": [
         {
-          "name": "Rootha, Mercurial Artist",
+          "name": "Aether Storm",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Sneak Attack",
+          "name": "Pithing Needle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "\"Aether Storm\" chosen with Pithing Needle.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 73,
+      "missing": [
+        "Aether Storm"
+      ]
+    },
+    {
+      "id": "3099-4131-5089",
+      "cards": [
+        {
+          "name": "Leyline of Abundance",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Jeska's Will",
+          "name": "Karn, the Great Creator",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite red mana",
-        "Exile your library with the ability to play the exiled cards until end of turn"
+        "Infinite colorless mana",
+        "Infinite green mana",
+        "Infinite +1/+1 counters on creatures you control"
       ],
       "requires": [],
-      "prerequisites": "An opponent has at least three cards in hand.",
-      "mana": "{4}{R}",
-      "bracket": "P",
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
       "legal": true,
-      "popularity": 43,
+      "popularity": 38,
       "missing": [
-        "Rootha, Mercurial Artist"
+        "Leyline of Abundance"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Obelisk of Undoing"
       ]
     },
     {
@@ -5046,33 +5743,6 @@
       ]
     },
     {
-      "id": "3363-5278",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Obelisk of Undoing",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{10} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 35,
-      "missing": [
-        "Obelisk of Undoing"
-      ]
-    },
-    {
       "id": "3363-6248",
       "cards": [
         {
@@ -5100,6 +5770,41 @@
       ]
     },
     {
+      "id": "2092-4131-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Agatha of the Vile Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.\nAgatha of the Vile Cauldron has power 1 or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Agatha of the Vile Cauldron"
+      ]
+    },
+    {
       "id": "3363-3823",
       "cards": [
         {
@@ -5124,6 +5829,42 @@
       "popularity": 30,
       "missing": [
         "Time Elemental"
+      ]
+    },
+    {
+      "id": "617-4235-5527",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Five Hundred Year Diary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four Clues.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Five Hundred Year Diary"
       ]
     },
     {
@@ -5237,6 +5978,35 @@
       ]
     },
     {
+      "id": "617-1261",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
       "id": "132-1306-2645",
       "cards": [
         {
@@ -5338,6 +6108,106 @@
       ]
     },
     {
+      "id": "914-4790",
+      "cards": [
+        {
+          "name": "Dino DNA",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite copies of cards exiled with Dino DNA",
+        "Infinite creature tokens",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least six artifacts and/or enchantments.",
+      "mana": "{6}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dino DNA"
+      ]
+    },
+    {
+      "id": "914-2232",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken nonartifact creature.\nOpponents control a number of artifacts and/or enchantments equal to or greater than three plus the mana value of the additional nonartifact creature card.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "74-617-1306",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
       "id": "1306-2645-3918",
       "cards": [
         {
@@ -5431,6 +6301,92 @@
       ]
     },
     {
+      "id": "914-2136-2645",
+      "cards": [
+        {
+          "name": "Orthion, Hero of Lavabrink",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite creature tokens with haste",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens",
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite copies of creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Orthion does not have summoning sickness.\nOpponents control at least six artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Orthion, Hero of Lavabrink"
+      ]
+    },
+    {
+      "id": "618-914-2645",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite copies of most creatures you control with haste",
+        "Infinite creature tokens with haste",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least five artifacts and/or enchantments.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
       "id": "1306-1368-3698",
       "cards": [
         {
@@ -5497,6 +6453,343 @@
       ]
     },
     {
+      "id": "914-5626",
+      "cards": [
+        {
+          "name": "Chthonian Nightmare",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two energy counters.\nOpponents control at least four artifacts and/or enchantments.\nYou control another nontoken creature with mana value 4 or less.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Chthonian Nightmare"
+      ]
+    },
+    {
+      "id": "914-1522",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Disappear",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least eight artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Disappear"
+      ]
+    },
+    {
+      "id": "914-1350",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Meticulous Excavation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least six artifacts and/or enchantmanets.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Meticulous Excavation"
+      ]
+    },
+    {
+      "id": "914-3504",
+      "cards": [
+        {
+          "name": "Mercurial Pretender",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least ten artifacts and/or enchantments.",
+      "mana": "{4}{U}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mercurial Pretender"
+      ]
+    },
+    {
+      "id": "914-2429",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least ten artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Revel in Riches"
+      ]
+    },
+    {
+      "id": "914-2047",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mechanized Production",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least seven artifacts and/or enchantments; additional permanents beyond this minimum can reduce the mana needed.",
+      "mana": "{3}{U}{U}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mechanized Production"
+      ]
+    },
+    {
+      "id": "568-914",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Capsize",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least nine artifacts and/or enchantments.",
+      "mana": "{5}{U}{U}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Capsize"
+      ]
+    },
+    {
+      "id": "215-914",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Temur Sabertooth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least four artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Temur Sabertooth"
+      ]
+    },
+    {
+      "id": "914-1409",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator paired with Dockside Extortionist. Your opponents control at least two artifacts and/or enchantments.",
+      "mana": "{1}{U}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "914-3089",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Barrin, Master Wizard",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least six artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Barrin, Master Wizard"
+      ]
+    },
+    {
+      "id": "914-3423",
+      "cards": [
+        {
+          "name": "Aegis Automaton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least 8 artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Aegis Automaton"
+      ]
+    },
+    {
       "id": "1368-4808-4856",
       "cards": [
         {
@@ -5531,6 +6824,333 @@
       "popularity": 0,
       "missing": [
         "Black Lotus"
+      ]
+    },
+    {
+      "id": "914-3036-3593",
+      "cards": [
+        {
+          "name": "Sneak Attack",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wizard Mentor",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least two artifacts and/or enchantments.",
+      "mana": "{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Wizard Mentor"
+      ]
+    },
+    {
+      "id": "876-914-3036",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Wizard Mentor",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least five artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Wizard Mentor"
+      ]
+    },
+    {
+      "id": "876-914-1914",
+      "cards": [
+        {
+          "name": "Cowardice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Opponents control at least two artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Cowardice"
+      ]
+    },
+    {
+      "id": "914-1368-1745",
+      "cards": [
+        {
+          "name": "Lord of the Forsaken",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least four artifacts and/or enchantments.\nYou have at least three other cards in your graveyard.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Lord of the Forsaken"
+      ]
+    },
+    {
+      "id": "914-3368-5144",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least seven artifacts and/or enchantments.",
+      "mana": "{4}{R}{R}{W}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "914-4013-4131",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Displacer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least four artifacts and/or enchantments.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Eldrazi Displacer"
+      ]
+    },
+    {
+      "id": "914-5900",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least three artifacts and/or enchantments.",
+      "mana": "{1}{G}{U}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "914-4499",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents control at least three artifacts and/or enchantments.",
+      "mana": "{3}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "914-1368-2555-4856",
+      "cards": [
+        {
+          "name": "Death Match",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "If Dockside Extortionist and/or Brain Freeze are in your graveyard, you have an additional three cards in your graveyard for each one.\nOpponents control at least five artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Death Match"
       ]
     }
   ]

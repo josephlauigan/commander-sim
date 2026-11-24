@@ -39,7 +39,7 @@ commander-sim --deck yoshimaru --pool t4 --swap "A=>B" --ai adaptive            
 commander-sim --deck yoshimaru --pool t5 --analyze                              # how it wins and loses there
 commander-sim --deck yoshimaru --pool t4 --trace 7                              # play-by-play of game 7
 commander-sim --all-decks --pool all                                            # every deck against its own tiers
-commander-sim --goldfish kyodai,t5 --games 2000                                 # each deck alone against three inert seats
+commander-sim --goldfish arzakon,t5 --games 2000                                 # each deck alone against three inert seats
 commander-sim --deck yoshimaru --cards                                          # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                                  # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml           # the same with the AI's values from a file
@@ -61,7 +61,7 @@ cardgen validate                                                                
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `yshtola`, `sheoldred`, `kyodai`, `urdragon` or `yoshimaru`.
+- `--deck`: `yshtola`, `sheoldred`, `arzakon`, `urdragon` or `yoshimaru`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -98,7 +98,7 @@ the same opponents and draws.
 
 | JD's decks | Tiers |
 | --- | --- |
-| yshtola, kyodai | t5 |
+| yshtola, arzakon | t5 |
 | sheoldred | t3-t4 |
 | yoshimaru | t4-t5 |
 

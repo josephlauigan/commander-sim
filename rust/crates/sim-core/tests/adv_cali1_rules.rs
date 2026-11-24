@@ -316,8 +316,8 @@ fn whole_games_skip_exactly_once_in_cali_and_never_in_commander() {
 
 #[test]
 fn commander_play_in_equals_play_with() {
-    let a = play_with(&["kyodai", "seph"], 5, true, AiMode::Adaptive);
-    let b = play_in(&["kyodai", "seph"], 5, true, AiMode::Adaptive, Rules::COMMANDER);
+    let a = play_with(&["arzakon", "seph"], 5, true, AiMode::Adaptive);
+    let b = play_in(&["arzakon", "seph"], 5, true, AiMode::Adaptive, Rules::COMMANDER);
     assert_eq!(a.log, b.log);
     assert_eq!(a.winner, b.winner);
 }

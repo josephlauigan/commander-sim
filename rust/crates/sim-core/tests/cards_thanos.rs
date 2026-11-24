@@ -17,7 +17,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    table(&["kyodai", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
+    table(&["arzakon", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
 }
 
 /// Thanos on the battlefield as P0's commander; `fresh`: he entered this turn
@@ -155,6 +155,7 @@ fn sneak_stolen_phased_blinked_and_commander_creatures() {
         turn, zones,
     };
     let mut g = tbl();
+    set_commander(&mut g, P0, "Kyodai, Soul of Kamigawa"); // a creature commander: the deck's is Arzakon, a planeswalker
     let stolen = sneak_hand(&mut g, "Llanowar Elves");
     gain_control(&mut g, P1, stolen, Duration::Permanent);
     let phased = sneak_hand(&mut g, "Birds of Paradise");

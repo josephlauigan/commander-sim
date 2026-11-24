@@ -422,7 +422,7 @@ fn twinflame_row_20_ready_overrides_lethal() {
 
 #[test]
 fn twinflame_row_21_other_seats_are_unchanged() {
-    for key in ["aragorn", "yshtola", "kyodai"] {
+    for key in ["aragorn", "yshtola", "arzakon"] {
         let mut g = row01(key);
         fair(&mut g, false);
     }

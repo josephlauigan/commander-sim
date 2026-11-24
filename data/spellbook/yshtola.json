@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-23",
+  "fetched": "2026-11-24",
   "deck": "yshtola",
   "commanders": [
     "Y'shtola, Night's Blessed"
   ],
-  "request_sha256": "b6ced8ddb877fb1afa48cf404086b08bc02ce728027200aaac78ac3b40a95278",
+  "request_sha256": "59b2d9c45297cf993be84de6b78a20652608db8578af504396d9755f1afa0515",
   "identity": "WUB",
   "included": [
     {
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152549
+      "popularity": 152625
     },
     {
       "id": "742-1295",
@@ -61,7 +61,7 @@
       "mana": "{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 151823
+      "popularity": 151886
     },
     {
       "id": "110-3966",
@@ -89,7 +89,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62219
+      "popularity": 62250
     },
     {
       "id": "1295-3189",
@@ -115,7 +115,7 @@
       "mana": "{U}{U}{B}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14713
+      "popularity": 14707
     }
   ],
   "included_by_changing_commanders": [],
@@ -146,7 +146,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 370824,
+      "popularity": 371144,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -175,7 +175,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 133155,
+      "popularity": 133211,
       "missing": [
         "Tainted Pact"
       ]
@@ -206,7 +206,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 128083,
+      "popularity": 128172,
       "missing": [
         "Vito, Thorn of the Dusk Rose"
       ]
@@ -237,7 +237,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 81728,
+      "popularity": 81792,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -268,7 +268,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 77157,
+      "popularity": 77207,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -298,7 +298,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57632,
+      "popularity": 57657,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -329,7 +329,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 52439,
+      "popularity": 52490,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -360,7 +360,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 50723,
+      "popularity": 50742,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -392,7 +392,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 47062,
+      "popularity": 47080,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -428,7 +428,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46587,
+      "popularity": 46589,
       "missing": [
         "Displacer Kitten"
       ]
@@ -457,7 +457,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38235,
+      "popularity": 38255,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -488,7 +488,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 30111,
+      "popularity": 30102,
       "missing": [
         "Retraction Helix"
       ]
@@ -524,7 +524,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29678,
+      "popularity": 29669,
       "missing": [
         "Retraction Helix"
       ]
@@ -555,7 +555,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28778,
+      "popularity": 28803,
       "missing": [
         "Starscape Cleric"
       ]
@@ -584,7 +584,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 26088,
+      "popularity": 26117,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -613,7 +613,7 @@
       "mana": "{5}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 17899,
+      "popularity": 17909,
       "missing": [
         "Beacon of Immortality"
       ]
@@ -644,7 +644,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16831,
+      "popularity": 16830,
       "missing": [
         "Banishing Knack"
       ]
@@ -680,7 +680,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16565,
+      "popularity": 16564,
       "missing": [
         "Banishing Knack"
       ]
@@ -711,7 +711,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14961,
+      "popularity": 14968,
       "missing": [
         "Cliffhaven Vampire"
       ]
@@ -740,7 +740,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14820,
+      "popularity": 14827,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -770,7 +770,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13527,
+      "popularity": 13526,
       "missing": [
         "Revival // Revenge"
       ]
@@ -808,7 +808,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 13313,
+      "popularity": 13326,
       "missing": [
         "Vilis, Broker of Blood"
       ]
@@ -839,7 +839,7 @@
       "mana": "{8}{U}{U}{U}{U}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12892,
+      "popularity": 12903,
       "missing": [
         "Enter the Infinite"
       ]
@@ -870,7 +870,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12392,
+      "popularity": 12385,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -901,7 +901,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11691,
+      "popularity": 11681,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -930,7 +930,7 @@
       "mana": "{5}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 10093,
+      "popularity": 10119,
       "missing": [
         "Leveler"
       ]
@@ -959,7 +959,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9913,
+      "popularity": 9929,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -988,7 +988,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 9560,
+      "popularity": 9565,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1015,7 +1015,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8493,
+      "popularity": 8504,
       "missing": [
         "Stasis"
       ]
@@ -1046,7 +1046,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8351,
+      "popularity": 8352,
       "missing": [
         "Epicure of Blood"
       ]
@@ -1076,9 +1076,46 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8060,
+      "popularity": 8072,
       "missing": [
         "Wedding Ring"
+      ]
+    },
+    {
+      "id": "1308-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7767,
+      "missing": [
+        "Anointed Procession"
       ]
     },
     {
@@ -1105,7 +1142,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7688,
+      "popularity": 7699,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1140,6 +1177,80 @@
       ]
     },
     {
+      "id": "4365-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mondrak, Glory Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7037,
+      "missing": [
+        "Mondrak, Glory Dominus"
+      ]
+    },
+    {
+      "id": "4682-6441-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elspeth, Storm Slayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6444,
+      "missing": [
+        "Elspeth, Storm Slayer"
+      ]
+    },
+    {
       "id": "2286-3221",
       "cards": [
         {
@@ -1161,40 +1272,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6101,
+      "popularity": 6104,
       "missing": [
         "Teferi's Puzzle Box"
-      ]
-    },
-    {
-      "id": "444-2498",
-      "cards": [
-        {
-          "name": "Drogskol Reaver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sheoldred, the Apocalypse",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5957,
-      "missing": [
-        "Drogskol Reaver"
       ]
     },
     {
@@ -1223,9 +1303,40 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 5908,
+      "popularity": 5963,
       "missing": [
         "Niv-Mizzet, Ghost Counsel"
+      ]
+    },
+    {
+      "id": "444-2498",
+      "cards": [
+        {
+          "name": "Drogskol Reaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5958,
+      "missing": [
+        "Drogskol Reaver"
       ]
     },
     {
@@ -1254,7 +1365,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5673,
+      "popularity": 5671,
       "missing": [
         "Lich's Mastery"
       ]
@@ -1285,9 +1396,83 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5414,
+      "popularity": 5434,
       "missing": [
         "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "4682-6753-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exalted Sunborn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4882,
+      "missing": [
+        "Exalted Sunborn"
+      ]
+    },
+    {
+      "id": "4682-7824-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bard, King of Dale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4754,
+      "missing": [
+        "Bard, King of Dale"
       ]
     },
     {
@@ -1314,7 +1499,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4419,
+      "popularity": 4437,
       "missing": [
         "Thought Lash"
       ]
@@ -1341,7 +1526,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4186,
+      "popularity": 4189,
       "missing": [
         "Knowledge Pool"
       ]
@@ -1370,7 +1555,7 @@
       "mana": "{14}{W}{W}{B}{B}",
       "bracket": "C",
       "legal": true,
-      "popularity": 4072,
+      "popularity": 4076,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1399,7 +1584,7 @@
       "mana": "{1}{U}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3822,
+      "popularity": 3831,
       "missing": [
         "Paradigm Shift"
       ]
@@ -1457,7 +1642,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2096,
+      "popularity": 2094,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1486,7 +1671,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2042,
+      "popularity": 2039,
       "missing": [
         "Divining Witch"
       ]
@@ -1513,7 +1698,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1949,
+      "popularity": 1952,
       "missing": [
         "Omen Machine"
       ]
@@ -1574,7 +1759,7 @@
       "mana": "{5}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1861,
+      "popularity": 1860,
       "missing": [
         "Marina Vendrell's Grimoire"
       ]
@@ -1603,7 +1788,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1266,
+      "popularity": 1268,
       "missing": [
         "Mirror of Fate"
       ]
@@ -1669,7 +1854,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1052,
+      "popularity": 1053,
       "missing": [
         "Ketramose, the New Dawn"
       ]
@@ -1698,7 +1883,7 @@
       "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1006,
+      "popularity": 1008,
       "missing": [
         "Doomsday Excruciator"
       ]
@@ -1756,7 +1941,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 827,
+      "popularity": 836,
       "missing": [
         "Fblthp, Impossibly Lost"
       ]
@@ -1787,7 +1972,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 777,
+      "popularity": 778,
       "missing": [
         "Flumph"
       ]
@@ -1814,7 +1999,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 725,
+      "popularity": 726,
       "missing": [
         "Ashiok, Wicked Manipulator"
       ]
@@ -1843,7 +2028,7 @@
       "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 674,
+      "popularity": 672,
       "missing": [
         "Timestream Navigator"
       ]
@@ -1872,7 +2057,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 625,
+      "popularity": 626,
       "missing": [
         "Phyrexian Devourer"
       ]
@@ -1901,7 +2086,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 566,
+      "popularity": 567,
       "missing": [
         "Wedding Ring"
       ]
@@ -1962,6 +2147,43 @@
       "popularity": 352,
       "missing": [
         "Nefarious Lich"
+      ]
+    },
+    {
+      "id": "4094-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kaya, Geist Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 190,
+      "missing": [
+        "Kaya, Geist Hunter"
       ]
     },
     {
@@ -2027,6 +2249,45 @@
       "popularity": 79,
       "missing": [
         "Wrong Turn"
+      ]
+    },
+    {
+      "id": "145-4067-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Serra's Sanctum",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite card draw",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite mana permanents you control can produce",
+        "Near-infinite untap of permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three enchantments.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 58,
+      "missing": [
+        "Mind Over Matter"
       ]
     },
     {

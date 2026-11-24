@@ -328,6 +328,179 @@ fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     Ok(None)
 }
 
+/// the artifacts a Voltaic Key activation can untap: the Key itself (it is tapped by the cost) and every tapped artifact
+/// on the battlefield that p can target
+fn key_targets(g: &Game, p: PlayerId, key: PermId) -> Vec<PermId> {
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&x| {
+            let m = g.perm(x);
+            m.on_bf
+                && !m.phased
+                && (x == key || m.tapped)
+                && engine::values::is_artifact_perm(g, x)
+                && !(m.owner != p && engine::values::untargetable(g, x))
+        })
+        .collect()
+}
+
+/// Voltaic Key: {1}, {T}: untap target artifact (any artifact, the Key itself and an opponent's included). The person
+/// picks the target; the Key is tapped before the {1} is paid so it can't pay its own cost with its untap-chain mana
+fn voltaic_key(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tap_ok(g, m, false) {
+        return Ok(Some(why));
+    }
+    g.perm_mut(m).tapped = true;
+    let problem = mana::cost_problem(g, p, 1, "");
+    g.perm_mut(m).tapped = false;
+    if let Some(why) = problem {
+        return Ok(Some(format!("Can't activate Voltaic Key. {why}")));
+    }
+    let cands = key_targets(g, p, m);
+    let Some(t) =
+        super::cards::pick_perm(g, p, "target", "Voltaic Key: untap which artifact?", &cands, Some("cancel"))?
+    else {
+        return Ok(None);
+    };
+    g.perm_mut(m).tapped = true;
+    if let Some(why) = pay(g, p, 1, "", "Voltaic Key") {
+        g.perm_mut(m).tapped = false;
+        return Ok(Some(why));
+    }
+    crate::glog!(g, "  {} activates Voltaic Key: untap {}", g.player(p).name, g.perm(t).name);
+    let nm = format!("untap {}", g.perm(t).name);
+    stack::ability_run_w(g, p, Some(m), None, &nm, None, Some(t), 0.0, |g, is_copy| {
+        let mut x = t;
+        if is_copy {
+            // "you may choose new targets for the copy"
+            let cands = key_targets(g, p, m);
+            if let Some(y) = super::cards::pick_perm(
+                g,
+                p,
+                "target",
+                "Voltaic Key (copy): untap which artifact?",
+                &cands,
+                Some("keep the target"),
+            )? {
+                x = y;
+            }
+        }
+        if g.perm(x).on_bf && g.perm(x).tapped {
+            g.perm_mut(x).tapped = false;
+            crate::glog!(g, "    {} untaps", g.perm(x).name);
+        }
+        Ok(())
+    })?;
+    Ok(None)
+}
+
+/// the players p can target with Gleaming Splendor: p themselves and every other living player without hexproof
+fn splendor_targets(g: &Game, p: PlayerId) -> Vec<PlayerId> {
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .map(|q| q.id)
+        .filter(|&q| q == p || (legal::player_targetable(g, q) && !engine::values::player_hexproof(g, q)))
+        .collect()
+}
+
+/// Gleaming Splendor: {2}{W}: two target players each draw a card. The person picks the two players (themselves
+/// included); the draw hook then gives the Treasure for an opponent's second card of the turn, as it does for the AI
+fn splendor(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let cands = splendor_targets(g, p);
+    if cands.len() < 2 {
+        return Ok(Some("There aren't two players you can target.".into()));
+    }
+    if let Some(why) = mana::cost_problem(g, p, 2, "W") {
+        return Ok(Some(format!("Can't activate Gleaming Splendor. {why}")));
+    }
+    let (first, second) = if cands.len() == 2 {
+        (cands[0], cands[1]) // two players in the game: both are the targets, nothing to choose
+    } else {
+        let labels: Vec<String> = cands.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        let Some(a) = choices::choose(
+            g,
+            p,
+            "target",
+            "Gleaming Splendor: the first target player draws a card",
+            &labels,
+            Some("cancel"),
+            None,
+        )?
+        else {
+            return Ok(None);
+        };
+        let rest: Vec<PlayerId> = cands.iter().copied().filter(|&q| q != cands[a]).collect();
+        let labels: Vec<String> = rest.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        let Some(b) = choices::choose(
+            g,
+            p,
+            "target",
+            "Gleaming Splendor: the second target player draws a card",
+            &labels,
+            Some("cancel"),
+            None,
+        )?
+        else {
+            return Ok(None);
+        };
+        (cands[a], rest[b])
+    };
+    if let Some(why) = pay(g, p, 2, "W", "Gleaming Splendor") {
+        return Ok(Some(why));
+    }
+    let who = |g: &Game, q: PlayerId| g.player(q).name.to_string();
+    crate::glog!(
+        g,
+        "  {} activates Gleaming Splendor: {} and {} each draw a card",
+        g.player(p).name,
+        who(g, first),
+        who(g, second)
+    );
+    stack::ability_run_w(
+        g,
+        p,
+        Some(m),
+        None,
+        "two target players each draw a card",
+        Some(3.0),
+        None,
+        0.0,
+        |g, is_copy| {
+            let mut two = [first, second];
+            if is_copy {
+                // "you may choose new targets for the copy"
+                let cands = splendor_targets(g, p);
+                if cands.len() > 2 {
+                    let pick = |g: &Game, left: &[PlayerId], which: &str| -> Res<Option<PlayerId>> {
+                        let labels: Vec<String> =
+                            left.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+                        let prompt = format!("Gleaming Splendor (copy): the {which} target player draws a card");
+                        Ok(choices::choose(g, p, "target", &prompt, &labels, Some("keep the targets"), None)?
+                            .map(|k| left[k]))
+                    };
+                    if let Some(a) = pick(g, &cands, "first")? {
+                        let rest: Vec<PlayerId> = cands.iter().copied().filter(|&q| q != a).collect();
+                        let b = if rest.len() == 1 { Some(rest[0]) } else { pick(g, &rest, "second")? };
+                        if let Some(b) = b {
+                            two = [a, b];
+                        }
+                    }
+                }
+            }
+            for q in two {
+                if g.player(q).alive {
+                    zones::draw(g, q, 1, false)?;
+                }
+            }
+            engine::life::check_state(g)
+        },
+    )?;
+    Ok(None)
+}
+
 /// abilities.permanent_abilities: the abilities of permanent m
 pub fn permanent_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     let Some(cd) = g.perm(m).cd else { return vec![] };
@@ -352,6 +525,12 @@ pub fn permanent_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility>
     }
     if &*d.name == "Staff of Domination" {
         out.push(ability("draw N cards: untap for {1}, draw for {5} and tapping it, again and again", staff_draw));
+    }
+    if &*d.name == "Voltaic Key" {
+        out.push(ability("{1}, {T}: untap target artifact", voltaic_key));
+    }
+    if &*d.name == "Gleaming Splendor" {
+        out.push(ability("{2}{W}: two target players each draw a card", splendor));
     }
     if &*d.name == "Urza, Lord High Artificer" {
         out.push(ability("{5}: shuffle your library, then play the top card free this turn", urza_five));

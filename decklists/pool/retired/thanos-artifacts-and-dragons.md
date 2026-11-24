@@ -1,6 +1,6 @@
 # Thanos, the Mad Titan — Five-Colour Artifacts and Dragons (High Bracket 4)
 
-**Retired 2026-11-13 (JD).** Replaced by the Cali Commander artifact-combo list (`decklists/cali_commander/kyodai-artifact-combo.md`). Kept here as history only. Findings for this list: `audit/thanos/FINDINGS-artifacts-and-dragons-list.md`.
+**Retired 2026-11-13 (JD).** Replaced by the Cali Commander artifact-combo list (`decklists/cali_commander/arzakon-artifact-combo.md`). Kept here as history only. Findings for this list: `audit/thanos/FINDINGS-artifacts-and-dragons-list.md`.
 
 Fast artifact mana puts Thanos down on turn 2 or 3. Thanos is a cheap 4/4 with deathtouch and lifelink, he makes
 Deflecting Swat free and gives Jeska's Will both modes, and his power-up is a wipe you aim at the opponents' side.
@@ -15,7 +15,7 @@ wipes and Null Rod effects, to fast combo before turn 4, and to tables that puni
 | **Commander** | Thanos, the Mad Titan ({R}{W}{B}, 4/4 deathtouch, lifelink); five colours (his power-up costs all five) |
 | **Bracket** | 4: 17 Game Changers and two infinite combos. Played against Tier 5 (High Bracket 4) |
 | **Game Changers (17)** | Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Gamble, Grim Monolith, Imperial Seal, Jeska's Will, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml` (now `kyodai.toml`); findings in `audit/thanos/FINDINGS.md` (now `audit/kyodai/FINDINGS-artifacts-and-dragons-list.md`), history in `decklists/CHANGELOG.md`. Thanos's power-up is card code (`t6_thanos.rs`) |
+| **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml` (now `arzakon.toml`); findings in `audit/thanos/FINDINGS.md` (now `audit/arzakon/FINDINGS-artifacts-and-dragons-list.md`), history in `decklists/CHANGELOG.md`. Thanos's power-up is card code (`t6_thanos.rs`) |
 | **Buys** | None |
 
 ## Strategy

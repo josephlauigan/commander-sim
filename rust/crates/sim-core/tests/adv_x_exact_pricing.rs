@@ -1467,7 +1467,7 @@ fn twinflame_equals_the_old_price_without_price_changers() {
 #[test]
 fn whole_games_with_hangarback_and_chalice_in_three_seats_do_not_panic() {
     for seed in 1..=3u64 {
-        let g = play(&["kyodai", "dack-fayden-white-stax", "sheoldred"], seed, false);
+        let g = play(&["arzakon", "dack-fayden-white-stax", "sheoldred"], seed, false);
         assert!(g.round >= 1);
     }
 }

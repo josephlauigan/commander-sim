@@ -216,7 +216,15 @@ impl Sim {
 
     /// a seat for a deck key with these cards (its list, or a variant)
     pub fn seat(&self, key: &str, cards: &[String]) -> Result<Seat, String> {
-        let cmd = self.commander(key).ok_or_else(|| format!("no deck {key:?} (not in data/decks.json?)"))?;
+        self.seat_with_commander(key, cards, None)
+    }
+
+    /// `seat` with another commander than the deck record's (the variant of a `--swap-commander` run); None: the record's
+    pub fn seat_with_commander(&self, key: &str, cards: &[String], commander: Option<&str>) -> Result<Seat, String> {
+        let cmd = match commander {
+            Some(c) => c.to_string(),
+            None => self.commander(key).ok_or_else(|| format!("no deck {key:?} (not in data/decks.json?)"))?,
+        };
         self.engine.seat(key, cards, &cmd)
     }
 

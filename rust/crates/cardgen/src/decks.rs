@@ -450,7 +450,7 @@ mod legality_tests {
         legality_problems(fmt, name, Some(&rec(name, scry)))
     }
 
-    /// the 18 names: the Cali Commander ban list (decklists/cali_commander/kyodai-artifact-combo.md)
+    /// the 18 names: the Cali Commander ban list (decklists/cali_commander/arzakon-artifact-combo.md)
     const CALI_BANNED: [&str; 18] = [
         "Ancestral Recall",
         "Balance",

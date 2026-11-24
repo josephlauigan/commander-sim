@@ -88,7 +88,7 @@ fn with_the_knob_but_nothing_to_fear_silence_stays_in_hand() {
 #[test]
 fn without_the_knob_the_same_position_casts_no_silence() {
     // decks that play from a plan or not, none of them sets the knob: today's play
-    for key in ["kyodai", "sheoldred", "urdragon", "cloud"] {
+    for key in ["arzakon", "sheoldred", "urdragon", "cloud"] {
         let mut g = position(key, true);
         assert!(!plan_data::protect_before_go(&g, P0), "{key}");
         go(&mut g);
@@ -157,7 +157,11 @@ fn tier_6_under_damping_sphere_is_unchanged_and_a_knob_deck_keeps_silence() {
     perm(&mut g, P1, "Damping Sphere");
     go_heliod(&mut g);
     assert!(in_gy(&g, P0, "Silence"), "Tier 6 still casts Silence first");
-    assert_ne!(g.winner, Some(P0), "and the line is not played: the known Tier 6 flaw, ticket T-S4-1; flip this assertion when Tier 6 is fixed");
+    assert_ne!(
+        g.winner,
+        Some(P0),
+        "and the line is not played: the known Tier 6 flaw, ticket T-S4-1; flip this assertion when Tier 6 is fixed"
+    );
     let mut g = heliod("yoshimaru", 2, 3, 2);
     perm(&mut g, P1, "Damping Sphere");
     go_heliod(&mut g);

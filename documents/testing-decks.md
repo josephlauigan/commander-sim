@@ -24,7 +24,7 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 
 | Decks | Tiers |
 | --- | --- |
-| yshtola, kyodai | t5 |
+| yshtola, arzakon | t5 |
 | sheoldred | t3-t4 |
 
 `--pool all`, `--all-decks`, `--analyze`, swap runs and `searchtest` use only these tiers; `--deck X --pool tN` outside
@@ -37,6 +37,7 @@ limit; use it only when JD asks.
 commander-sim --deck seph --pool all --swap "Blood Artist=>Grim Tutor"        # every one of the deck's tiers
 commander-sim --deck seph --pool t3 --swap "A=>B" --swap "C=>D"               # a package: several swaps at once
 commander-sim --deck seph --pool t3 --swap "A=>B" --ai adaptive               # a quick read (seconds)
+commander-sim --deck seph --pool t3 --swap-commander "Old Cmdr=>New Cmdr"     # a commander change, paired
 ```
 
 The run plays the current list and the swapped list on the same seeds. The seat draw depends only on the seed and the
@@ -62,6 +63,21 @@ model status of each swapped-in card (Full ... Unmodeled; a WARNING on Partial a
 cards' drawn / cast / average round / stuck-in-hand numbers for both lists, and the game shape (win, survival, how it
 wins and dies, plan timing, commander removals, mana and hand at turns 4 and 8). It costs no extra games, and the
 `delta` line is unchanged (`rust/crates/sim-cli/src/explain.rs`).
+
+**A commander change** is a paired run too: `--swap-commander "Old Commander=>New Commander"` (once; it combines with any
+number of `--swap` pairs). The variant list is the current list with the new commander in the old one's slot, then the
+`--swap` pairs applied to its 99 (so the old commander may come in as a card: `--swap "Some Card=>Old Commander"`).
+Because the commander sits outside the library, the 99 keep their positions and both lists get the same library from the
+same seed, as for `--swap`. Before any game it refuses: an OLD that is not the deck's commander, a deck with two
+commanders, a NEW with no entry in `data/cards.json`, a NEW outside the deck's colours, and a variant list that is
+not legal under the deck's format by cardgen's deck checks (Commander legality or the format's ban list, "can be
+your commander" (a legendary creature, or text that says so), every card inside NEW's colour identity, singleton,
+100 cards). The explain breakdown, the preflight and `--no-explain`, `--no-preflight` and `--preflight-only` work as
+for `--swap`: the new commander has its model-status line, its AI-rule line (the deck's priority for the commander)
+and a dry-run line (a WARNING only when it is cast in under 5% of the 200 games: a new commander never stops the run), and the card tables list
+the new commander (variant) and the old one (current) marked `(cmdr)`. A commander starts in the command zone, so its row
+reads drawn 100%, cast% of all games and stuck% = games it was never cast in. The deck's plan file and AI rules belong
+to the deck key, not the commander: a commander with its own engine code needs that code and its model status first.
 
 ## 4. Deeper looks
 

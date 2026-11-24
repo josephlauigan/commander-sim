@@ -469,32 +469,51 @@ pub const RITUAL_DISCOUNT: f64 = 0.25;
 /// worth that play's utility less `RITUAL_DISCOUNT`, and nothing (None) otherwise: mana with nothing to spend it on is
 /// lost at the end of the step, the reason Cabal Ritual, Rite of Flame and Desperate Ritual had priority 0.
 pub fn ritual_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f64> {
-    use crate::engine::mana::{mana_units, plan_pay, ritual_net, units_after_ritual};
+    use crate::engine::mana::{mana_units, units_after_ritual};
     let u = mana_units(g, p, false);
     let after = units_after_ritual(g, p, c, &u)?;
-    let mut best = crate::impls::combos::line_enabled_by(g, p, c, &after);
+    extra_mana_play(g, p, s, c, &u, &after).map(|(v, _)| v - RITUAL_DISCOUNT)
+}
+
+/// What the extra mana `after` has over `u` (p's units now) lets p do this turn that it can't do now, other than casting
+/// `skip` (the source of the mana): the utility of the best play, and whether that play is a catalogued line
+/// (`combos::line_enabled_by`). The body of `ritual_utility`, shared with Arzakon's -3 (a Black Lotus token).
+pub fn extra_mana_play(
+    g: &Game,
+    p: PlayerId,
+    s: &Situation,
+    skip: CardId,
+    u: &[crate::engine::mana::Unit],
+    after: &[crate::engine::mana::Unit],
+) -> Option<(f64, bool)> {
+    use crate::engine::mana::{plan_pay, ritual_net};
+    let mut best = crate::impls::combos::line_enabled_by(g, p, skip, after);
+    let mut line = best.is_some();
     let pl = g.player(p);
     let mut cands: Vec<(CardId, &str)> = pl
         .hand
         .iter()
         .copied()
-        .filter(|&x| x != c && !g.db.get(x).land && ritual_net(g, p, x) <= 0)
+        .filter(|&x| x != skip && !g.db.get(x).land && ritual_net(g, p, x) <= 0)
         .map(|x| (x, "hand"))
         .collect();
     cands.extend(pl.cmds_in_zone().map(|x| (x, "cmd")));
     for (x, zone) in cands {
         let (xg, xp) = cost_of(g, p, x);
-        if plan_pay(g, &u, xg, &xp).is_some() || plan_pay(g, &after, xg, &xp).is_none() || !castable(g, p, x, zone) {
-            continue; // payable without the ritual, or not even with it
+        if plan_pay(g, u, xg, &xp).is_some() || plan_pay(g, after, xg, &xp).is_none() || !castable(g, p, x, zone) {
+            continue; // payable without the extra mana, or not even with it
         }
         let d = g.db.get(x);
         let tutor = [Tag::Tut, Tag::Xtutor, Tag::Seal, Tag::Top].iter().any(|&t| d.tag(t));
         let Some(v) = card_utility(g, p, s, x) else { continue };
         if tutor || pl.is_commander(x) || v >= RITUAL_GOOD_SPELL {
+            if best.is_none_or(|b| v > b) {
+                line = false;
+            }
             best = Some(best.map_or(v, |b: f64| b.max(v)));
         }
     }
-    best.map(|v| v - RITUAL_DISCOUNT)
+    best.map(|v| (v, line))
 }
 
 // ------------------------------------------------------------------ generic executors

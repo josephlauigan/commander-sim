@@ -10,6 +10,7 @@ use crate::hooks::Registry;
 
 pub mod alela;
 pub mod aragorn; // --- aragorn (2026-11-06): Aragorn, the Uniter's four cast triggers
+pub mod arzakon; // --- arzakon (2026-11-23): Arzakon, the `arzakon` deck's commander
 pub mod bites;
 pub mod blue_cards;
 pub mod breach_line; // --- aragorn-ai (2026-11-06): the Underworld Breach line, restored for every deck
@@ -23,6 +24,7 @@ pub mod cc_teysa; // --- casual combos (teysa)
 pub mod cloud;
 pub mod combos;
 pub mod common;
+pub mod dockside; // --- arzakon (2026-11-23): Dockside Extortionist's enter trigger (legal in Cali)
 pub mod doomsday;
 pub mod fixes;
 pub mod galadriel;
@@ -34,10 +36,10 @@ pub mod green_cards;
 pub mod karn;
 pub mod karn_cards;
 pub mod karn_engines;
-pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
 pub mod kefka;
 pub mod krrik;
 pub mod kuja;
+pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
 pub mod lands;
 pub mod legends;
 pub mod marchesa;
@@ -234,5 +236,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     vondam_elspeth::register(&mut r, db)?; // --- yoshimaru: Syr Vondam, Sunstar Exemplar
     yoshimaru_p7::register(&mut r, db)?; // --- yoshimaru (P7a): Takenuma's channel
     kyodai::register(&mut r, db)?; // --- thanos: Kyodai's enter trigger
+    arzakon::register(&mut r, db)?; // --- arzakon: Arzakon
+    dockside::register(&mut r, db)?; // --- arzakon: Dockside Extortionist
     Ok(r)
 }

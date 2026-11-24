@@ -13,7 +13,7 @@ brought in line with JD's physical deck (22 cards each way, see `decklists/CHANG
 - **Color identity:** White, Blue, Black, Red, Green (his power-up cost has all five colours)
 - **Game Changers (23):** Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gamble, Grim Monolith, Imperial Seal, Intuition, Jeska's Will, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Thassa's Oracle, Underworld Breach, Vampiric Tutor, Worldly Tutor
 - **Simulator:** none (the deck key `thanos` played this list at Tier 6, Scion's seat from 10/30, until 2026-11-05). The power-up is card code
-  (`rust/crates/sim-core/src/impls/t6_thanos.rs`); results in `audit/kyodai/FINDINGS-old-list.md` (the folder was `audit/thanos/` until 2026-11-22).
+  (`rust/crates/sim-core/src/impls/t6_thanos.rs`); results in `audit/arzakon/FINDINGS-old-list.md` (the folder was `audit/thanos/` until 2026-11-22).
 
 ## Strategy
 
