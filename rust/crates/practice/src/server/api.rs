@@ -19,6 +19,8 @@ use std::time::Duration;
 pub struct Info {
     pub deck: String,
     pub tier: String,
+    /// the game format's key (`commander`, `cali`, ...)
+    pub format: String,
     pub seed: u64,
     pub seats: Vec<String>,
     pub profile: String,
