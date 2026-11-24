@@ -294,11 +294,11 @@ mod tests {
         Sim::load(RunOpts { ai: AiMode::Adaptive, temp: 1.0, jobs: 2 }).unwrap()
     }
 
-    /// the repository's data: the arzakon deck (Cali Commander, WUBRG, commander Kyodai)
+    /// the repository's data: the arzakon deck (Cali Commander, WUBRG, commander Arzakon; Kyodai is a card of the 99)
     #[test]
     fn check_refuses_a_wrong_old_commander_and_an_unknown_or_illegal_new_one() {
         let s = sim();
-        let k = "Kyodai, Soul of Kamigawa";
+        let k = "Arzakon";
         let e = check(&s, "arzakon", "Sheoldred, the Apocalypse", "The Ur-Dragon", &[]).unwrap_err();
         assert!(e.contains(k) && e.contains("is not arzakon's commander"), "{e}");
         let e = check(&s, "arzakon", k, "No Such Card", &[]).unwrap_err();
@@ -318,7 +318,7 @@ mod tests {
     #[test]
     fn check_accepts_a_legal_five_colour_commander_and_combines_with_swaps() {
         let s = sim();
-        let k = "Kyodai, Soul of Kamigawa";
+        let k = "Arzakon";
         let base = &s.mine["arzakon"];
         let var = check(&s, "arzakon", k, "The Ur-Dragon", &[]).unwrap();
         let ci = base.iter().position(|c| c == k).unwrap();
@@ -330,6 +330,13 @@ mod tests {
         let var = check(&s, "arzakon", k, "The Ur-Dragon", &swaps).unwrap();
         let j = base.iter().position(|c| c == out).unwrap();
         assert_eq!((var[ci].as_str(), var[j].as_str()), ("The Ur-Dragon", k));
+        // the real change: Kyodai (a card of the 99) becomes the commander and the same run swaps it out for Arzakon
+        let kyodai = "Kyodai, Soul of Kamigawa";
+        let var = check(&s, "arzakon", k, kyodai, &pairs(&[(kyodai, k)])).unwrap();
+        let j = base.iter().position(|c| c == kyodai).unwrap();
+        assert_eq!((var[ci].as_str(), var[j].as_str()), (kyodai, k));
+        // without the swap Kyodai is a Kyodai already in the 99 clashes with it as commander: refused
+        assert!(check(&s, "arzakon", k, kyodai, &[]).unwrap_err().contains("already in the 99"));
     }
 
     /// the library of a seat is its list without the commander's slot: the variant's 99 sit where the base's do, so
@@ -337,7 +344,7 @@ mod tests {
     #[test]
     fn the_variant_seat_has_the_same_library_as_the_base_seat() {
         let s = sim();
-        let k = "Kyodai, Soul of Kamigawa";
+        let k = "Arzakon";
         let base = s.seat("arzakon", &s.mine["arzakon"]).unwrap();
         let var_list = check(&s, "arzakon", k, "The Ur-Dragon", &[]).unwrap();
         let var = s.seat_with_commander("arzakon", &var_list, Some("The Ur-Dragon")).unwrap();
@@ -355,6 +362,14 @@ mod tests {
         let out = s.mine["arzakon"].iter().find(|c| c.as_str() != k && s.engine.db.id(c).is_some()).unwrap().clone();
         let var_list = check(&s, "arzakon", k, "The Ur-Dragon", &pairs(&[(&out, "Swiftfoot Boots")])).unwrap();
         let var = s.seat_with_commander("arzakon", &var_list, Some("The Ur-Dragon")).unwrap();
+        let diff = library(&base).iter().zip(library(&var)).filter(|(a, b)| *a != b).count();
+        assert_eq!(diff, 1);
+        // the real change (Kyodai commander, Arzakon swapped into Kyodai's slot): one position differs, the length is 99
+        let kyodai = "Kyodai, Soul of Kamigawa";
+        let var_list = check(&s, "arzakon", k, kyodai, &pairs(&[(kyodai, k)])).unwrap();
+        let var = s.seat_with_commander("arzakon", &var_list, Some(kyodai)).unwrap();
+        assert_eq!(var.commander, s.engine.db.id(kyodai).unwrap());
+        assert_eq!(library(&var).len(), 99);
         let diff = library(&base).iter().zip(library(&var)).filter(|(a, b)| *a != b).count();
         assert_eq!(diff, 1);
     }

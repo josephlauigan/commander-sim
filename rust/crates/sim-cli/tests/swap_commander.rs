@@ -1,10 +1,11 @@
 //! `--swap-commander "OLD=>NEW"` through the real binary: the refusals before any game, and one very small paired run
-//! (arzakon, Kyodai -> The Ur-Dragon, 8 games on t5) whose baseline must equal a plain run on the same seeds. The
+//! (arzakon, Arzakon -> The Ur-Dragon, 8 games on t5) whose baseline must equal a plain run on the same seeds. The
 //! only game-playing here; the checks of the pairs themselves are unit tests in src/swapcmd.rs.
 
 use std::process::Command;
 
-const KYODAI: &str = "Kyodai, Soul of Kamigawa";
+const ARZAKON: &str = "Arzakon"; // the deck's commander
+const KYODAI: &str = "Kyodai, Soul of Kamigawa"; // a card of the 99
 const URDRAGON: &str = "The Ur-Dragon"; // five colours, a legendary creature, Commander-legal, in no arzakon list
 
 fn sim(args: &[&str]) -> (i32, String, String) {
@@ -46,31 +47,31 @@ fn refused_pair(pair: &str, extra: &[&str], must: &[&str]) {
 #[test]
 fn a_bad_commander_change_is_refused_before_any_game() {
     // the old commander is not the deck's
-    refused_pair(&format!("Sheoldred, the Apocalypse=>{URDRAGON}"), &[], &["is not arzakon's commander", KYODAI]);
+    refused_pair(&format!("Sheoldred, the Apocalypse=>{URDRAGON}"), &[], &["is not arzakon's commander", ARZAKON]);
     // a malformed pair, and the same commander
     refused_pair("just a name", &[], &["--swap-commander must look like"]);
-    refused_pair(&format!("{KYODAI}=>{KYODAI}"), &[], &["is already the commander"]);
+    refused_pair(&format!("{ARZAKON}=>{ARZAKON}"), &[], &["is already the commander"]);
     // a card the card data does not have
-    refused_pair(&format!("{KYODAI}=>No Such Card"), &[], &["Not in data/cards.json", "No Such Card"]);
+    refused_pair(&format!("{ARZAKON}=>No Such Card"), &[], &["Not in data/cards.json", "No Such Card"]);
     // not a legendary creature; outside the deck's colours (Sheoldred is mono-black, the list is five colours)
-    refused_pair(&format!("{KYODAI}=>Swiftfoot Boots"), &[], &["is not a legendary creature"]);
-    refused_pair(&format!("{KYODAI}=>Atraxa, Praetors' Voice"), &[], &["outside colour identity"]);
+    refused_pair(&format!("{ARZAKON}=>Swiftfoot Boots"), &[], &["is not a legendary creature"]);
+    refused_pair(&format!("{ARZAKON}=>Atraxa, Praetors' Voice"), &[], &["outside colour identity"]);
     // a card of the 99 as the new commander
-    refused_pair(&format!("{KYODAI}=>Counterspell"), &[], &["Counterspell"]);
+    refused_pair(&format!("{ARZAKON}=>Counterspell"), &[], &["Counterspell"]);
     // a --swap whose card out is not in the list, and one that names the commander as a card out
-    refused_pair(&format!("{KYODAI}=>{URDRAGON}"), &["--swap", "No Such Card=>Sol Ring"], &["No Such Card"]);
+    refused_pair(&format!("{ARZAKON}=>{URDRAGON}"), &["--swap", "No Such Card=>Sol Ring"], &["No Such Card"]);
     refused_pair(
-        &format!("{KYODAI}=>{URDRAGON}"),
-        &["--swap", &format!("{KYODAI}=>Sol Ring")],
+        &format!("{ARZAKON}=>{URDRAGON}"),
+        &["--swap", &format!("{ARZAKON}=>Sol Ring")],
         &["commander being replaced"],
     );
     // the option needs a deck and a paired pool run
     refused(
-        &["--pool", "t5", "--swap-commander", &format!("{KYODAI}=>{URDRAGON}")],
+        &["--pool", "t5", "--swap-commander", &format!("{ARZAKON}=>{URDRAGON}")],
         &["--swap-commander needs --deck"],
     );
     refused(
-        &["--all-decks", "--pool", "t5", "--swap-commander", &format!("{KYODAI}=>{URDRAGON}")],
+        &["--all-decks", "--pool", "t5", "--swap-commander", &format!("{ARZAKON}=>{URDRAGON}")],
         &["--swap-commander needs --deck"],
     );
     // a second --swap-commander is a usage error
@@ -90,13 +91,13 @@ fn a_paired_commander_run_plays_both_lists_explains_the_commander_and_keeps_the_
     let (code, plain, err) = sim(&common);
     assert_eq!(code, 0, "{err}\n{plain}");
     let (code, out, err) =
-        sim(&[&common[..], &["--no-preflight", "--swap-commander", &format!("{KYODAI}=>{URDRAGON}")]].concat());
+        sim(&[&common[..], &["--no-preflight", "--swap-commander", &format!("{ARZAKON}=>{URDRAGON}")]].concat());
     assert_eq!(code, 0, "{err}\n{out}");
     assert!(!err.contains("panicked"), "{err}");
 
     // the model status of the new commander before the run, and the commander named in the swaps line
     assert!(out.contains("Model status of the swapped-in cards") && out.contains(URDRAGON), "{out}");
-    assert!(out.contains(&format!("Swaps: commander {KYODAI} -> {URDRAGON}")), "{out}");
+    assert!(out.contains(&format!("Swaps: commander {ARZAKON} -> {URDRAGON}")), "{out}");
     // the variant's coverage line counts the new commander, not the old one
     assert!(out.contains("arzakon (swapped)"), "{out}");
 
@@ -122,13 +123,14 @@ fn a_paired_commander_run_plays_both_lists_explains_the_commander_and_keeps_the_
     let why = &out[out.find("-- Why: paired breakdown").expect(&out)..];
     let (ins, outs) = why.split_once("Swapped OUT").expect(why);
     assert!(ins.contains(&format!("{URDRAGON} (cmdr)")), "{why}");
-    assert!(outs.contains(&format!("{KYODAI} (cmdr)")), "{why}");
+    assert!(outs.contains(&format!("{ARZAKON} (cmdr)")), "{why}");
     assert!(why.contains("starts in the command zone") && why.contains("commander removals, per game"), "{why}");
     assert!(why.contains("current") && why.contains("swapped") && why.contains("win rate %"), "{why}");
 }
 
 /// `--no-explain` keeps the paired line and drops the breakdown, as for --swap; a --swap rides along on the 99 and the
-/// old commander can come in as a card
+/// old commander can come in as a card (here the pair of the real Arzakon / Kyodai change: the new commander is the 99
+/// card the same run swaps out)
 #[test]
 fn no_explain_and_a_combined_swap_work() {
     let (code, out, err) = sim(&[
@@ -146,14 +148,14 @@ fn no_explain_and_a_combined_swap_work() {
         "--no-preflight",
         "--no-explain",
         "--swap-commander",
-        &format!("{KYODAI}=>{URDRAGON}"),
+        &format!("{ARZAKON}=>{KYODAI}"),
         "--swap",
-        &format!("Deflecting Swat=>{KYODAI}"),
+        &format!("{KYODAI}=>{ARZAKON}"),
     ]);
     assert_eq!(code, 0, "{err}\n{out}");
     assert!(out.contains("baseline vs variant (paired"), "{out}");
     assert!(!out.contains("paired breakdown") && !out.contains("Model status of the swapped-in cards"), "{out}");
-    assert!(out.contains(&format!("Swaps: commander {KYODAI} -> {URDRAGON}; Deflecting Swat -> {KYODAI}")), "{out}");
+    assert!(out.contains(&format!("Swaps: commander {ARZAKON} -> {KYODAI}; {KYODAI} -> {ARZAKON}")), "{out}");
 }
 
 /// the preflight reads the new commander like a swapped-in card: its AI rule and its dry-run cast share
@@ -170,7 +172,7 @@ fn the_preflight_reads_the_new_commander() {
         "--preflight-only",
         "--no-explain",
         "--swap-commander",
-        &format!("{KYODAI}=>{URDRAGON}"),
+        &format!("{ARZAKON}=>{URDRAGON}"),
     ]);
     assert!(code == 0 || code == 3, "{err}\n{out}");
     assert!(out.contains(&format!("AI: {URDRAGON}: priority")), "{out}");
