@@ -69,14 +69,14 @@ pub enum Tgt {
 }
 
 impl Tgt {
-    fn pack(self) -> i64 {
+    pub(crate) fn pack(self) -> i64 {
         match self {
             Tgt::Player(q) => q.0 as i64,
             Tgt::Perm(m) => (1 << 32) | m.0 as i64,
         }
     }
 
-    fn unpack(x: i64) -> Tgt {
+    pub(crate) fn unpack(x: i64) -> Tgt {
         if x >> 32 == 1 { Tgt::Perm(PermId((x & 0xffff_ffff) as u32)) } else { Tgt::Player(PlayerId(x as u8)) }
     }
 
@@ -119,18 +119,28 @@ pub fn ping_legal(g: &Game, p: PlayerId, src: PermId, t: Tgt) -> bool {
         }
         Tgt::Perm(m) => {
             live(g, m)
-                && (g.is_creature(m) || g.perm(m).loyalty.is_some())
+                && (g.is_creature(m) || g.perm(m).loyalty.is_some() || is_battle(g, m))
                 && !(g.perm(m).owner != p && untargetable(g, m))
                 && !protected_from(g, m, colors_of(g, src))
         }
     }
 }
 
+/// a battle on the battlefield with defense counters left (card_models3: Invasion of Ikoria; not a creature)
+pub fn is_battle(g: &Game, m: PermId) -> bool {
+    live(g, m) && !g.is_creature(m) && crate::impls::card_models3::defense(g, m) > 0
+}
+
 /// the effect: n damage to the target (a creature dies if that reaches its toughness, a planeswalker loses loyalty, a
-/// player loses life)
+/// battle loses that many defense counters, a player loses life)
 pub fn ping(g: &mut Game, p: PlayerId, src: PermId, t: Tgt, n: i32) -> Res {
     if !ping_legal(g, p, src, t) {
         return Ok(());
+    }
+    if let Tgt::Perm(m) = t
+        && is_battle(g, m)
+    {
+        return crate::impls::card_models3::battle_damage(g, p, src, m, n);
     }
     let name = g.perm(src).name.to_string();
     let by = crate::human::choices::by(g, Some(src));

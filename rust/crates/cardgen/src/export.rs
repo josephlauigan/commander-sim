@@ -71,8 +71,11 @@ impl Inputs {
         extra.insert("Priest of Gix".to_string());
         // Witch of the Moors (2026-11-07: JD pulled it; tested in Sheoldred with --swap)
         extra.insert("Witch of the Moors".to_string());
-        // the six cards Garth One-Eye names (2026-11-04); Disenchant and Terror are in pool lists, the other four in none
+        // the six cards Garth One-Eye names (2026-11-04); Disenchant and Terror are in pool lists, the other four in none.
+        // Black Lotus is also the token Arzakon's -3 makes (2026-11-23), so it stays if Garth is retired
         extra.extend(["Black Lotus", "Braingeyser", "Regrowth", "Shivan Dragon"].map(String::from));
+        // Arzakon: card code and tests before any deck lists it (2026-11-23)
+        extra.insert("Arzakon".to_string());
         // cards modeled before the Yoshimaru/Tymna deck is registered (it needs them in the card data first)
         extra.extend(
             [

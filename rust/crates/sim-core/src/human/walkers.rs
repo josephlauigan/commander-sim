@@ -13,6 +13,8 @@
 //!   -2 the artifact card in exile to take.
 //! - **Teferi, Time Raveler**: +1 (no effect here), -3 the artifact, creature or enchantment to bounce (or none), then draw.
 //! - **Wrenn and Six**: +1 the land card to take back (or none), -1 the target of the damage, -7 the emblem.
+//! - **Arzakon**: +2 the target of the 3 damage (any player, creature, planeswalker or battle but Arzakon itself), -3 and -7
+//!   ask nothing.
 //! - **Venser, the Sojourner**: +2 the permanent you own to exile until the next end step, -1 (the AI's creatures-can't-be-
 //!   blocked flag, which a person never got), -8 the emblem.
 //! - **Elspeth, Knight-Errant**: +1 the Soldier, +1 the creature that gets +3/+3 and flying (asked once, before the
@@ -103,6 +105,15 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
             ),
             (-1, "create a 2/2 white Samurai creature token with vigilance.", emperor_samurai),
             (-2, "exile target tapped creature. You gain 2 life.", emperor_minus2),
+        ]),
+        "Arzakon" => walker(&[
+            (2, "3 damage to any other target", arzakon_plus),
+            (-3, "create a Black Lotus token", arzakon_minus3),
+            (
+                -7,
+                "each player shuffles their hand and graveyard into their library, then draws seven cards",
+                arzakon_minus7,
+            ),
         ]),
         "Sorin, Vengeful Bloodlord" => {
             let mut v = walker(&[(2, "1 damage to target player or planeswalker", sorin_plus)]);
@@ -466,6 +477,31 @@ fn w6_minus1(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 
 fn w6_minus7(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
     go(move |g| crate::impls::legends::w6_ult(g, p, m))
+}
+
+// ------------------------------------------------------------------ Arzakon
+/// +2: the target (a player, creature, planeswalker or battle other than Arzakon), asked before the loyalty is paid; the
+/// damage goes through the AI's `ping`, which checks again that the target is still legal as the ability resolves
+fn arzakon_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    use crate::impls::model_gaps_a4::Tgt;
+    let tg = crate::impls::arzakon::plus_targets(g, p, m);
+    if tg.is_empty() {
+        return Ok(Ready::Why("There is no target for the damage.".into()));
+    }
+    let labels: Vec<String> = tg.iter().map(|&t| legal::describe_target(g, p, t.target())).collect();
+    let Some(k) = pick(g, p, "target", "Arzakon +2: 3 damage to which other target?", &labels)? else {
+        return Ok(Ready::Cancel);
+    };
+    let t: Tgt = tg[k];
+    go(move |g| crate::impls::model_gaps_a4::ping(g, p, m, t, 3))
+}
+
+fn arzakon_minus3(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    go(move |g| crate::impls::arzakon::lotus_token(g, p, m))
+}
+
+fn arzakon_minus7(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
+    go(move |g| crate::impls::t6_blue::twister_all(g, p))
 }
 
 // ------------------------------------------------------------------ Venser, the Sojourner

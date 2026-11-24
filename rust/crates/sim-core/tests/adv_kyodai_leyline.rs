@@ -161,6 +161,7 @@ fn kyodai_indestructible_removal_matrix() {
 #[test]
 fn kyodai_four_commander_casts_tax_and_grants() {
     let mut g = game();
+    set_commander(&mut g, P0, KYODAI); // the deck's commander is Arzakon; Kyodai sits in the 99
     let elf = perm(&mut g, P0, "Llanowar Elves");
     lands(&mut g, P0, "Plains", 12, false);
     let c = g.player(P0).cmd;

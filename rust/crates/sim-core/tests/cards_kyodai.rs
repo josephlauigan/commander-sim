@@ -314,6 +314,7 @@ fn panharmonicon_two_targets() {
 #[test]
 fn recast_from_command_zone_new_grant() {
     let mut g = tbl();
+    set_commander(&mut g, P0, KYODAI); // the deck's commander is Arzakon; Kyodai sits in the 99
     let elf = perm(&mut g, P0, "Llanowar Elves");
     lands(&mut g, P0, "Plains", 8, false);
     let cmd = g.player(P0).cmd;

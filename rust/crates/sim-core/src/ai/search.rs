@@ -372,7 +372,7 @@ pub fn output_cards(g: &Game, m: crate::ids::PermId) -> f64 {
     } else {
         0.0
     };
-    let one_shot = t.has(Tag::Nountap) || matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond");
+    let one_shot = t.has(Tag::Nountap) || matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond" | "Black Lotus");
     let mana = if one_shot {
         0
     } else if let Some(r) = t.str(Tag::Rock) {
