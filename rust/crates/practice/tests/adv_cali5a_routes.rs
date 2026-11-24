@@ -223,20 +223,24 @@ fn seat_seats_opponents_and_partner_at_a_cali_table() {
         assert_eq!(st, 400, "opponents {bad}");
         assert!(msg.starts_with("pick one of: "), "opponents {bad}: {msg}");
     }
-    // a partner at a 2-seat table is a table of two people now (C5c): the session accepts it, whatever the route says
-    // of `two`; a deck the format refuses is still refused
+    // a `partner` key on a one-person request at a 2-seat table is refused (a friend joins with the table's code)
     let (st, msg) = new(&mut c, body(&deck, &tier, json!({"partner": cdeck})));
-    assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { 200 } else { 400 }, "{msg}");
+    assert_eq!(st, 400, "{msg}");
+    assert_eq!(msg, "partner: a friend joins with the table's code");
     let (st, msg) = new(&mut c, body(&cdeck, &tier, json!({"format": "cali", "partner": deck})));
-    assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { 200 } else { 400 }, "{msg}");
-    // `two` at a 2-seat table, with and without the format given, with and without --lan: always the 400
+    assert_eq!(st, 400, "{msg}");
+    // `two` at a 2-seat table (C5c: two people, no AI seat): a table opens with --lan and the same 409 as at Commander
+    // without it; a deck the format refuses is the 400 it always was
+    let want = if s.lan { 200 } else { 409 };
     for extra in [json!({"two": true}), json!({"two": "yes"}), json!({"two": 1})] {
         let (st, msg) = new(&mut c, body(&deck, &tier, extra.clone()));
-        assert_eq!(st, 400, "{extra}: {msg}");
+        assert_eq!(st, want, "{extra}: {msg}");
+        c.quit();
         let mut f = extra.clone();
         f["format"] = json!("cali");
         let (st, msg) = new(&mut c, body(&cdeck, &tier, f));
-        assert_eq!(st, 400, "{extra} cali: {msg}");
+        assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { want } else { 400 }, "{extra} cali: {msg}");
+        c.quit();
     }
     // `two: false` is not two
     assert_eq!(new(&mut c, body(&deck, &tier, json!({"two": false}))).0, 200);

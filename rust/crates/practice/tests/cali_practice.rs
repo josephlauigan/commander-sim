@@ -500,12 +500,15 @@ fn the_routes_check_the_format() {
         let r = c.post("/api/new", body);
         (r.status, r.error())
     };
-    // two people at a 2-seat table: not here
+    // two people at a 2-seat table (C5c): a lobby opens with --lan, the same 409 as at Commander without it; a deck the
+    // format refuses is the 400 it always was
+    let want = if s.lan { 200 } else { 409 };
     let (st, msg) = new(&mut c, json!({"deck": deck, "tier": tier, "two": true}));
-    assert_eq!(st, 400, "{msg}");
-    assert!(msg.contains("2 seats"), "{msg}");
+    assert_eq!(st, want, "{msg}");
+    c.quit();
     let (st, msg) = new(&mut c, json!({"deck": cdeck, "tier": ctier, "format": "cali", "two": true}));
-    assert_eq!(st, 400, "{msg}");
+    assert_eq!(st, if e.admits(&cdeck, "cali").is_ok() { want } else { 400 }, "{msg}");
+    c.quit();
     // unknown, not a string, and one that does not admit the deck
     let (st, msg) = new(&mut c, json!({"deck": deck, "tier": tier, "format": "nope"}));
     assert_eq!((st, msg.as_str()), (400, "format: one of commander, cali"));

@@ -33,16 +33,17 @@
     <h2>Players</h2>
     <div class="row">
       <label><input type="radio" name="players" value="one" checked> Just me, against <span id="solo-n">three</span> AI opponent<span id="solo-s">s</span></label>
-      <label><input type="radio" name="players" value="two"> Me and a friend on another computer, against two AI opponents</label>
+      <label><input type="radio" name="players" value="two"> Me and a friend on another computer<span id="two-opp">, against two AI opponents</span></label>
     </div>
     </div>
-    <p id="format-note" class="help" hidden></p>
     <p id="lan-note" class="help" hidden></p>
+    <div id="ai-table">
     <h2>The table</h2>
     <div id="tiers" class="tiers" role="radiogroup" aria-label="Tier"></div>
     <h2>Your opponents</h2>
     <p class="help"><span class="opp-n">Three</span> drawn at random from the tier. Hover over one (or tap it) to see how it plays.</p>
     <div id="opponents" class="opponents"></div>
+    </div>
     <h2>Your deck</h2>
     <div id="decks" class="decks" role="radiogroup" aria-label="Your deck"></div>
     <h2>Options</h2>

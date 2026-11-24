@@ -26,6 +26,8 @@ pub struct Lobby {
     pub deck: String,
     pub partner: Option<String>,
     pub tier: Option<String>,
+    /// the table's format key (None: Commander)
+    pub format: Option<String>,
 }
 
 struct Proposal {
@@ -249,10 +251,29 @@ impl Hub {
     /// a two-player game waiting for the second person; returns the join code
     pub fn open_lobby(&self, opts: &Value, host: &str, sess: Option<Arc<dyn SessionApi>>) -> Result<String, String> {
         if sess.is_none() {
-            // the settings are checked now, not when the second person arrives
+            // the settings are checked now, not when the second person arrives. A second deck stands in for the friend's:
+            // the first of the other decks that passes (a format may refuse some), else the first one's refusal
             let deck = opts["deck"].as_str().unwrap_or("");
-            let partner = MY_DECKS.iter().find(|k| **k != deck).copied().unwrap_or("");
-            self.factory.check_two(opts, partner)?;
+            let mut others: Vec<&str> = MY_DECKS.iter().filter(|k| **k != deck).copied().collect();
+            if others.is_empty() {
+                others.push(""); // no other deck at all: the factory says what is missing
+            }
+            let mut first_err = None;
+            let mut passed = false;
+            for partner in others {
+                match self.factory.check_two(opts, partner) {
+                    Ok(()) => {
+                        passed = true;
+                        break;
+                    }
+                    Err(e) => {
+                        first_err.get_or_insert(e);
+                    }
+                }
+            }
+            if !passed {
+                return Err(first_err.unwrap_or_default());
+            }
         }
         self.quit();
         let code = format!("{:06}", u32::from_le_bytes(random_bytes(4).try_into().unwrap_or([0; 4])) % 1_000_000);
@@ -267,6 +288,7 @@ impl Hub {
                 .map(|i| i.deck.clone())
                 .unwrap_or_else(|| opts["deck"].as_str().unwrap_or("").to_string()),
             partner: info.as_ref().and_then(|i| i.partner.clone()),
+            format: opts["format"].as_str().map(String::from).or(info.as_ref().map(|i| i.format.clone())),
             tier: opts["tier"].as_str().map(String::from).or(info.and_then(|i| i.tier)),
             session: sess,
         });
@@ -303,6 +325,13 @@ impl Hub {
             if token == lb.host {
                 return Some("This browser is the host's: join from the other computer.".into());
             }
+            // a fresh lobby checks this deck against the table's settings now, so a deck the format refuses is refused
+            // before the lobby is taken (a loaded one is pinned to its partner above). The factory never takes this lock.
+            if lb.session.is_none() {
+                if let Err(why) = self.factory.check_two(&lb.opts, deck_s) {
+                    return Some(why);
+                }
+            }
             st.lobby.take()?
         };
         let deck = deck.as_str().unwrap_or("").to_string();
@@ -335,7 +364,8 @@ impl Hub {
     /// the waiting game as a page sees it: the host also gets the code and the address to give
     fn lobby_info(&self, lb: Option<&Lobby>, local: bool) -> Value {
         let Some(lb) = lb else { return Value::Null };
-        let mut d = json!({"deck": lb.deck, "partner": lb.partner, "tier": lb.tier, "loaded": lb.session.is_some()});
+        let mut d = json!({"deck": lb.deck, "partner": lb.partner, "tier": lb.tier, "loaded": lb.session.is_some(),
+            "format": lb.format.as_deref().unwrap_or("commander")});
         if local {
             d["code"] = json!(lb.code);
             d["addresses"] = json!(if self.lan { lan_addresses() } else { vec![] });
