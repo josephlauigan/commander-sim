@@ -6,11 +6,15 @@
 # 2026-11-23 (JD, from his deck export): Talisman of Hierarchy moved from the Arzakon deck to the Ur-Dragon deck (Hellkite Courser left
 # the Ur-Dragon deck); Kyodai, Soul of Kamigawa moved from the Arzakon deck to the Ur-Dragon deck in place of Klauth, Unrivaled Ancient
 # (a proxy, now out); Dockside Extortionist and Karn Liberated joined the Arzakon deck, and he has both.
+# 2026-11-24 (JD): the Ur-Dragon speed and protection/draw packages (eight pairs) and Cabal Ritual => Deadly Rollick in the Sheoldred deck. Incoming cards JD owns
+# in a deck that stays live until the Karn deck lands (Mithril Coat, Giver of Runes, Tymna, Deadly Rollick from the Yoshimaru deck; The Theorist and Sapphire Medallion
+# from the Y'shtola deck) are entered as proxy in the receiving deck for now (one physical copy cannot sit in two decks; the Karn change settles it); Hellkite Courser,
+# Dragonspeaker Shaman and Talisman of Curiosity are proxies. Outgoing owned cards are spares (Austere Command: one of his two copies stays in the Y'shtola deck).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
 version = 1
-updated = "2026-11-23"
+updated = "2026-11-24"
 
 [deck.sheoldred]
 confirmed = "2026-11-22"
@@ -76,9 +80,9 @@ have = [
 ]
 proxy = [
   "Cabal Coffers",
-  "Cabal Ritual",
   "Damnable Pact",
   "Dark Ritual",
+  "Deadly Rollick",
   "Demonic Tutor",
   "Diabolic Tutor",
   "Enduring Tenacity",
@@ -201,14 +205,10 @@ missing = []
 [deck.urdragon]
 confirmed = "2026-11-22"
 have = [
-  { card = "Austere Command", copies = 2 },
   { card = "Chaos Warp", copies = 2 },
   "City of Brass",
   { card = "Command Tower", copies = 4 },
   "Crux of Fate",
-  "Cursed Mirror",
-  "Decimate",
-  "Deflecting Swat",
   "Delighted Halfling",
   "Dragonlord Ojutai",
   "Exotic Orchard",
@@ -230,7 +230,6 @@ have = [
   "Path of Ancestry",
   { card = "Path to Exile", copies = 3 },
   "Relic of Sauron",
-  "Rhythm of the Wild",
   "Scion of Draco",
   "Shivan Dragon",
   "Smaug the Impenetrable",
@@ -242,10 +241,8 @@ have = [
   "Talisman of Hierarchy",
   "The Ur-Dragon",
   "Thundermaw Hellkite",
-  "Triple Triad",
   "Urza's Incubator",
   "Utvara Hellkite",
-  "Young Pyromancer",
 ]
 proxy = [
   "Ancient Tomb",
@@ -260,16 +257,20 @@ proxy = [
   "Doubling Season",
   "Dragon Tempest",
   "Dragonlord Dromoka",
+  "Dragonspeaker Shaman",
   "Elvish Mystic",
   "Flooded Strand",
   "Ganax, Astral Hunter",
+  "Giver of Runes",
   "Goldspan Dragon",
+  "Hellkite Courser",
   "Lathliss, Dragon Queen",
   "Llanowar Elves",
   "Maelstrom of the Spirit Dragon",
   "Mana Vault",
   "Marsh Flats",
   "Miirym, Sentinel Wyrm",
+  "Mithril Coat",
   "Morophon, the Boundless",
   "Old Gnawbone",
   "Overgrown Tomb",
@@ -278,9 +279,9 @@ proxy = [
   "Rhystic Study",
   "Rivaz of the Claw",
   "Sacred Foundry",
+  "Sapphire Medallion",
   "Savannah",
   "Scalding Tarn",
-  "Scion of the Ur-Dragon",
   "Scourge of Valkas",
   "Scrubland",
   "Smaug the Magnificent",
@@ -289,13 +290,16 @@ proxy = [
   "Stomping Ground",
   "Swords to Plowshares",
   "Taiga",
+  "Talisman of Curiosity",
   "Terror of the Peaks",
   "The One Ring",
+  "The Theorist, Jace Beleren",
   "Three Visits",
   "Tiamat",
   "Tropical Island",
   "Tundra",
   "Twinflame",
+  "Tymna the Weaver",
   "Underground Sea",
   "Vampiric Tutor",
   "Volcanic Island",
@@ -398,7 +402,7 @@ have = [
   "Anguished Unmaking",
   { card = "Arcane Signet", copies = 4 },
   "Arrest",
-  { card = "Austere Command", copies = 2 },
+  "Austere Command",
   "Cabal Coffers",
   "Cast Away Doubt",
   { card = "Coalition Relic", copies = 2 },
@@ -485,10 +489,14 @@ missing = []
 cards = [
   "Ad Nauseam",
   "Adarkar Wastes",
+  "Austere Command",
   "Battlefield Forge",
   "Blood Crypt",
   "Brushland",
   "Caves of Koilos",
+  "Cursed Mirror",
+  "Decimate",
+  "Deflecting Swat",
   "Exotic Orchard",
   "Haunted Ridge",
   "Massacre Wurm",
@@ -496,6 +504,7 @@ cards = [
   "Overgrown Tomb",
   "Path of Ancestry",
   "Plaza of Heroes",
+  "Rhythm of the Wild",
   "Shivan Reef",
   "Spirebluff Canal",
   "Stormcarved Coast",
@@ -503,11 +512,13 @@ cards = [
   "Sunpetal Grove",
   "Temple Garden",
   "Thanos, the Mad Titan",
+  "Triple Triad",
   "Underground River",
   "Urborg, Tomb of Yawgmoth",
   "Vito, Thorn of the Dusk Rose",
   "Windborn Muse",
   "Woodland Cemetery",
   "Yavimaya Coast",
+  "Young Pyromancer",
   "Zack Fair",
 ]
