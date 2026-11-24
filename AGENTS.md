@@ -109,10 +109,10 @@ Read these references for task-specific work:
 ## Build, format, and test
 
 **Disk space** (JD, 2026-11-23: the root volume filled and halted builds): every worktree has its own `rust/target`
-(40-90 GB with debug info). Run `df -h /` before creating a worktree or building; under 150 GB free, do not build:
-report it. Delete a `CARGO_TARGET_DIR` or cache directory you created when your work ends, and never delete anything but
-regenerable build output and your own scratch files. "No space left on device", an empty log or exit 101 with no counts
-is not a test result: free space and re-run. The full rule is in CLAUDE.md ("Keep the drive from filling").
+(40-90 GB). Run `df -BG --output=avail /` before creating a worktree or building; under 150 GB free, do not build:
+report it. Delete a `CARGO_TARGET_DIR`, cache or scratch directory you created when your work ends; never delete another
+worktree's or session's files. "No space left on device", an empty or truncated log, or exit 101 with no counts is not a
+test result: report it and re-run once space is freed. The full rule is in CLAUDE.md ("Keep the drive from filling").
 
 The workspace uses Rust edition 2024 and the toolchain pinned by `rust/rust-toolchain.toml`. `rust/Cargo.lock` is
 committed and must remain authoritative.
