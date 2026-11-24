@@ -112,6 +112,7 @@ Derevi, Empyrial Tactician | Etb | T
 Detention Sphere | Etb | T
 Diplomatic Immunity | Etb | S
 Docent of Perfection // Final Iteration | Etb | S
+Dockside Extortionist | Etb | T | | a triggered ability on the stack (a window to respond; X is counted as it resolves)
 Doomwake Giant | Etb | T
 Dragon Tempest | Etb | T
 Dragon's Hoard | Etb | T

@@ -24,6 +24,7 @@ pub mod cc_teysa; // --- casual combos (teysa)
 pub mod cloud;
 pub mod combos;
 pub mod common;
+pub mod dockside; // --- arzakon (2026-11-23): Dockside Extortionist's enter trigger (legal in Cali)
 pub mod doomsday;
 pub mod fixes;
 pub mod galadriel;
@@ -236,5 +237,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     yoshimaru_p7::register(&mut r, db)?; // --- yoshimaru (P7a): Takenuma's channel
     kyodai::register(&mut r, db)?; // --- thanos: Kyodai's enter trigger
     arzakon::register(&mut r, db)?; // --- arzakon: Arzakon
+    dockside::register(&mut r, db)?; // --- arzakon: Dockside Extortionist
     Ok(r)
 }
