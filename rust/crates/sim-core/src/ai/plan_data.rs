@@ -184,6 +184,10 @@ pub struct Hold {
     /// keep its mana up once a protected permanent is out (not read yet)
     #[serde(default)]
     pub mana: bool,
+    /// --- b1a: the card is held (never offered as a proactive cast, `held_back`) while these conditions hold; none
+    /// (the default): always. It is still cast in response (the protect and counter paths read no hold row for that)
+    #[serde(default)]
+    pub when: Vec<String>,
 }
 
 /// --- phase4-cedh: one row of a mulligan rule table: the first row whose `when` holds decides
@@ -884,6 +888,8 @@ pub struct Loaded {
     pub hold_up_when: Vec<Cond>,
     pub go_now_when: Vec<Cond>,
     pub mull_when: Vec<Cond>,
+    /// --- b1a: the `when` of each `[[hold]]` row (same order as `plan.hold`)
+    pub hold_when: Vec<Cond>,
     /// --- plan-files-3: the conditions of the stay-home and priority-add rules
     pub stay_home_when: Vec<Cond>,
     pub prio_add_when: Vec<Cond>,
@@ -1024,6 +1030,10 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         }
         mull_when.push(cond(&r.when, format!("mulligan rule {}", i + 1))?);
     }
+    let mut hold_when = vec![];
+    for (i, h) in plan.hold.iter().enumerate() {
+        hold_when.push(cond(&h.when, format!("hold rule {} ({:?})", i + 1, h.card))?);
+    }
     if let Some(s) = plan.style
         && ![s.temp, s.aggression, s.caution].iter().all(|v| (0.0..=5.0).contains(v))
     {
@@ -1063,6 +1073,7 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         hold_up_when,
         go_now_when,
         mull_when,
+        hold_when,
         stay_home_when,
         prio_add_when,
         sets,
@@ -1347,6 +1358,51 @@ pub fn rule_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
 /// a hold of p's plan protects this permanent's card (`pool::worth_protecting`)
 pub fn protects(g: &Game, p: PlayerId, card: &str) -> bool {
     active(g, p).is_some_and(|l| l.plan.hold.iter().any(|h| h.protects.iter().any(|x| x == card)))
+}
+
+thread_local! {
+    /// a test's plan, read by `held_back` in place of the seat's own (see `set_hold_plan_for_test`)
+    static TEST_HOLD_PLAN: std::cell::Cell<Option<&'static Loaded>> = const { std::cell::Cell::new(None) };
+}
+
+/// Tests only: `held_back` on this thread reads this plan's `[[hold]]` rows for every seat (the plan files are
+/// compiled in, so a test cannot put a row in one); `None` restores the seat's own plan. Nothing else reads it.
+#[doc(hidden)]
+pub fn set_hold_plan_for_test(l: Option<&'static Loaded>) {
+    TEST_HOLD_PLAN.with(|t| t.set(l));
+}
+
+/// --- b1a: p's plan holds card c: a `[[hold]]` row names it and its `when` holds now. A held card is never offered as
+/// a proactive cast (`brain::card_utility`); the response paths (protect, counter) do not read this
+pub fn held_back(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let Some(l) = TEST_HOLD_PLAN.with(|t| t.get()).or_else(|| active(g, p)) else { return false };
+    let n = &*g.db.get(c).name;
+    l.plan
+        .hold
+        .iter()
+        .zip(&l.hold_when)
+        .any(|(h, w)| h.card == n && w.holds_cx(g, p, Cx { plan: Some(l), card: Some(c), ..Cx::default() }))
+}
+
+/// --- b1a: what is wrong with the plan's `[[hold]]` rows against the card database (`load` has none): the card must
+/// exist and be a protector or a counter (a `prot` or `ctr` tag, or one of the protection spells and creatures
+/// `pool::PROTECTORS` lists, some of which carry no tag). Empty: all rows fit.
+pub fn hold_problems(l: &Loaded, db: &crate::cards::CardDb) -> Vec<String> {
+    let mut out = vec![];
+    for h in &l.plan.hold {
+        match db.by_name(&h.card) {
+            None => out.push(format!("hold {:?}: no such card", h.card)),
+            Some(d) => {
+                if !(d.tag(Tag::Ctr) || d.tags.has(Tag::Prot) || super::pool::is_protector(&h.card)) {
+                    out.push(format!(
+                        "hold {:?}: not a protector or a counter (no ctr or prot tag, not a protector)",
+                        h.card
+                    ));
+                }
+            }
+        }
+    }
+    out
 }
 
 /// the plan's keep rule for p's current hand (None: no mulligan section)
@@ -1691,6 +1747,9 @@ pub fn named_cards(l: &Loaded) -> Vec<String> {
         v.extend(w.names().map(String::from));
     }
     for w in &l.stay_home_when {
+        v.extend(w.names().map(String::from));
+    }
+    for w in &l.hold_when {
         v.extend(w.names().map(String::from));
     }
     for h in &p.hold {
