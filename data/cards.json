@@ -70050,8 +70050,8 @@
   {
    "name": "Karn, Gilded Guardian",
    "types": "AC",
-   "generic": 10,
-   "pips": "",
+   "generic": 0,
+   "pips": "WUBRG",
    "tags": {
     "leg": true,
     "pow": "5",
@@ -70099,7 +70099,13 @@
     "perm": true
    },
    "phyrexian": "",
-   "hybrid": [],
+   "hybrid": [
+    "W2",
+    "U2",
+    "B2",
+    "R2",
+    "G2"
+   ],
    "xcount": 0,
    "enters_rule": null,
    "land_types": [],
@@ -121429,8 +121435,8 @@
   {
    "name": "Spectral Procession",
    "types": "S",
-   "generic": 6,
-   "pips": "",
+   "generic": 0,
+   "pips": "WWW",
    "tags": {},
    "pow": 0,
    "tgh": 0,
@@ -121475,7 +121481,11 @@
     "perm": false
    },
    "phyrexian": "",
-   "hybrid": [],
+   "hybrid": [
+    "W2",
+    "W2",
+    "W2"
+   ],
    "xcount": 0,
    "enters_rule": null,
    "land_types": [],
@@ -133935,8 +133945,8 @@
   {
    "name": "The Reaper, King No More",
    "types": "AC",
-   "generic": 6,
-   "pips": "",
+   "generic": 0,
+   "pips": "BRG",
    "tags": {
     "leg": true,
     "pow": "3"
@@ -133968,7 +133978,11 @@
     "perm": true
    },
    "phyrexian": "",
-   "hybrid": [],
+   "hybrid": [
+    "B2",
+    "R2",
+    "G2"
+   ],
    "xcount": 0,
    "enters_rule": null,
    "land_types": [],
