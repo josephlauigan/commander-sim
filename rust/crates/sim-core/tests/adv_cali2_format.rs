@@ -37,12 +37,12 @@ fn deck_mut<'a>(v: &'a mut Value, group: &str, key: &str) -> &'a mut Value {
 fn the_real_data_loads_with_both_formats() {
     let e = engine_with("real", |_| {}).unwrap();
     assert_eq!(e.formats.keys().collect::<Vec<_>>(), ["cali", "commander"]);
-    assert_eq!(e.format_of("kyodai").key, "cali");
-    assert_eq!(e.format_of("kyodai").rules(), Rules { life: 30, first_player_draws: false });
+    assert_eq!(e.format_of("arzakon").key, "cali");
+    assert_eq!(e.format_of("arzakon").rules(), Rules { life: 30, first_player_draws: false });
     assert_eq!(e.format_of("yshtola").rules(), Rules::COMMANDER);
     assert_eq!(e.format_of("no-such-deck").key, "commander");
-    assert!(e.admits("kyodai", "commander").is_err());
-    assert!(e.admits("kyodai", "cali").is_ok());
+    assert!(e.admits("arzakon", "commander").is_err());
+    assert!(e.admits("arzakon", "cali").is_ok());
     assert!(e.admits("yshtola", "commander").is_ok());
     // a key that is no deck is admitted; a table that is no format is not
     assert!(e.admits("nobody", "cali").is_ok());
@@ -54,12 +54,12 @@ fn the_real_data_loads_with_both_formats() {
 fn an_old_decks_json_without_formats_or_format_reads_as_commander() {
     let e = engine_with("old", |v| {
         v.as_object_mut().unwrap().remove("formats");
-        deck_mut(v, "mine", "kyodai").as_object_mut().unwrap().remove("format");
+        deck_mut(v, "mine", "arzakon").as_object_mut().unwrap().remove("format");
     })
     .unwrap();
     assert_eq!(e.formats.keys().collect::<Vec<_>>(), ["commander"]);
-    assert_eq!(e.format_of("kyodai").key, "commander");
-    assert!(e.admits("kyodai", "commander").is_ok());
+    assert_eq!(e.format_of("arzakon").key, "commander");
+    assert!(e.admits("arzakon", "commander").is_ok());
 }
 
 #[test]
@@ -69,12 +69,12 @@ fn a_deck_naming_a_format_the_file_lacks_is_a_load_error() {
     });
     assert!(e.err().unwrap().contains("unknown format \"cali\""));
     let e = engine_with("typo", |v| {
-        deck_mut(v, "mine", "kyodai")["format"] = json!("calli");
+        deck_mut(v, "mine", "arzakon")["format"] = json!("calli");
     });
     assert!(e.err().unwrap().contains("unknown format \"calli\""));
     // `"format": null` is the same as absent
-    let e = engine_with("null", |v| deck_mut(v, "mine", "kyodai")["format"] = Value::Null).unwrap();
-    assert_eq!(e.format_of("kyodai").key, "commander");
+    let e = engine_with("null", |v| deck_mut(v, "mine", "arzakon")["format"] = Value::Null).unwrap();
+    assert_eq!(e.format_of("arzakon").key, "commander");
 }
 
 #[test]

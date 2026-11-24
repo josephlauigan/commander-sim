@@ -238,12 +238,12 @@ fn dry(p: &Project, which: &str, cards: &[String]) -> cardgen::update_deck::Outc
 #[test]
 fn cardgen_deck_checks_a_deck_under_its_own_format() {
     let p = scratch("deck_format");
-    // kyodai plays Cali Commander: Mana Crypt, Primeval Titan and Tinker are legal there
-    let (path, cards) = list_of(&p, "kyodai");
+    // arzakon plays Cali Commander: Mana Crypt, Primeval Titan and Tinker are legal there
+    let (path, cards) = list_of(&p, "arzakon");
     for c in ["Mana Crypt", "Primeval Titan", "Tinker"] {
         assert!(cards.iter().any(|x| x == c), "{c}");
     }
-    let o = dry(&p, "kyodai", &cards);
+    let o = dry(&p, "arzakon", &cards);
     assert!(o.ok, "{}", o.text);
     // the same deck named by its file path takes the same format
     let o = dry(&p, path.to_str().unwrap(), &cards);
@@ -252,13 +252,13 @@ fn cardgen_deck_checks_a_deck_under_its_own_format() {
     let mut bad = cards.clone();
     let i = bad.iter().position(|c| c == "Tinker").unwrap();
     bad[i] = "The Tabernacle at Pendrell Vale".into();
-    let o = dry(&p, "kyodai", &bad);
+    let o = dry(&p, "arzakon", &bad);
     assert!(!o.ok);
     assert!(o.text.contains("banned in Cali Commander: The Tabernacle at Pendrell Vale"), "{}", o.text);
     // under Commander the same list fails on exactly the three
     let toml = std::fs::read_to_string(p.data("my_decks.toml")).unwrap();
     std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"\n", "")).unwrap();
-    let o = dry(&p, "kyodai", &cards);
+    let o = dry(&p, "arzakon", &cards);
     assert!(!o.ok);
     assert!(o.text.contains("banned in Commander: Mana Crypt, Primeval Titan, Tinker"), "{}", o.text);
 }
@@ -290,7 +290,7 @@ fn validate_covers_each_of_your_decks_under_its_own_format() {
     assert_eq!(
         mine,
         [
-            ("kyodai", "cali"),
+            ("arzakon", "cali"),
             ("sheoldred", "commander"),
             ("urdragon", "commander"),
             ("yoshimaru", "commander"),
@@ -305,18 +305,18 @@ fn a_typo_or_an_unknown_format_in_my_decks_is_an_error() {
     let toml = std::fs::read_to_string(p.data("my_decks.toml")).unwrap();
     std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"", "fromat = \"cali\"")).unwrap();
     let e = cardgen::data::load_my_decks(&p).unwrap_err();
-    assert!(e.contains("[kyodai]") && e.contains("unknown key \"fromat\""), "{e}");
+    assert!(e.contains("[arzakon]") && e.contains("unknown key \"fromat\""), "{e}");
     std::fs::write(p.data("my_decks.toml"), toml.replace("format = \"cali\"", "format = \"calli\"")).unwrap();
     let e = cardgen::data::load_my_decks(&p).unwrap_err();
-    assert!(e.contains("[kyodai]") && e.contains("unknown format \"calli\""), "{e}");
+    assert!(e.contains("[arzakon]") && e.contains("unknown format \"calli\""), "{e}");
     std::fs::write(p.data("my_decks.toml"), &toml).unwrap();
     let decks = cardgen::data::load_my_decks(&p).unwrap();
     let fmt: Vec<(&str, &str)> = decks.iter().map(|d| (d.key.as_str(), d.format.as_str())).collect();
-    assert!(fmt.contains(&("kyodai", "cali")) && fmt.contains(&("yshtola", "commander")), "{fmt:?}");
+    assert!(fmt.contains(&("arzakon", "cali")) && fmt.contains(&("yshtola", "commander")), "{fmt:?}");
 }
 
 #[test]
-fn export_writes_the_formats_and_only_kyodai_carries_one() {
+fn export_writes_the_formats_and_only_arzakon_carries_one() {
     let p = scratch("export_formats");
     let e = export(&Inputs::load(&p).unwrap()).unwrap();
     let doc = json::parse(&e.decks_json).unwrap();
@@ -329,7 +329,7 @@ fn export_writes_the_formats_and_only_kyodai_carries_one() {
     assert!(fmts.get("commander").unwrap().get("banned").is_none());
     for m in doc.get("mine").unwrap().as_arr().unwrap() {
         let key = m.s_or("key");
-        assert_eq!(m.s("format"), (key == "kyodai").then_some("cali"), "{key}");
+        assert_eq!(m.s("format"), (key == "arzakon").then_some("cali"), "{key}");
     }
     assert!(doc.get("pool").unwrap().as_arr().unwrap().iter().all(|d| d.get("format").is_none()));
 }

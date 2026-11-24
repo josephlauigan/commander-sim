@@ -116,7 +116,7 @@ fn plan_turn_for_the_other_decks_is_unchanged() {
     }
     // a deck that is not listed falls to `combo`, so the yoshimaru arm cannot leak: Tymna's draw does not count there
     let p = player("sheoldred", &[("tymna", 2)]);
-    assert_eq!(plan_turn(&p, "kyodai"), None);
+    assert_eq!(plan_turn(&p, "arzakon"), None);
     assert_eq!(plan_turn(&p, "yshtola"), None);
     assert_eq!(plan_turn(&player("urdragon", &[("combo", 5), ("tymna", 2)]), "urdragon"), Some(5));
 }

@@ -177,7 +177,7 @@ fn export_reproduces_the_committed_files_byte_for_byte() {
     let mine = doc.get("mine").unwrap().as_arr().unwrap();
     for d in mine {
         let key = d.s_or("key");
-        assert_eq!(d.get("format").is_some(), key == "kyodai", "{key}");
+        assert_eq!(d.get("format").is_some(), key == "arzakon", "{key}");
     }
 }
 
@@ -230,7 +230,7 @@ fn deck_by_key_and_by_path_agree_for_every_deck_of_yours() {
     }
 }
 
-/// each deck under the wrong format's ban list: a Cali-banned card in a Commander deck and in kyodai; the three in a
+/// each deck under the wrong format's ban list: a Cali-banned card in a Commander deck and in arzakon; the three in a
 /// Commander deck; by key and by path
 #[test]
 fn each_deck_is_judged_by_its_own_format_by_key_and_by_path() {

@@ -15,7 +15,7 @@ const KYODAI: &str = "Kyodai, Soul of Kamigawa";
 const LEYLINE: &str = "Leyline of the Guildpact";
 const ASK: &str = "Kyodai: which permanent gains indestructible?";
 fn game() -> Game {
-    table(&["kyodai", "seph"])
+    table(&["arzakon", "seph"])
 }
 fn leyline(g: &mut Game, p: PlayerId) -> PermId {
     perm(g, p, LEYLINE)

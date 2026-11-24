@@ -78,7 +78,7 @@ fn commander_out(g: &mut Game, p: PlayerId, name: &str) {
 
 #[test]
 fn force_of_will_with_no_mana_pitches_a_blue_card_and_one_life() {
-    let mut g = counter_table("kyodai", &["Force of Will", "Brainstorm"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Brainstorm"]);
     let life = g.player(P0).life;
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
@@ -89,7 +89,7 @@ fn force_of_will_with_no_mana_pitches_a_blue_card_and_one_life() {
 
 #[test]
 fn force_of_will_with_mana_open_you_may_still_pitch() {
-    let mut g = counter_table("kyodai", &["Force of Will", "Brainstorm"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Brainstorm"]);
     pool(&mut g, P0, &[('U', 5)]);
     let life = g.player(P0).life;
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![by_text("exile a blue card")]);
@@ -102,7 +102,7 @@ fn force_of_will_with_mana_open_you_may_still_pitch() {
 
 #[test]
 fn force_of_will_with_mana_open_you_may_pay_the_mana() {
-    let mut g = counter_table("kyodai", &["Force of Will", "Brainstorm"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Brainstorm"]);
     pool(&mut g, P0, &[('U', 5)]);
     let life = g.player(P0).life;
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![by_text("pay {3}{U}{U}")]);
@@ -115,7 +115,7 @@ fn force_of_will_with_mana_open_you_may_pay_the_mana() {
 #[test]
 fn force_of_will_may_pitch_a_phyrexian_blue_card() {
     // Gitaxian Probe ({U/P}) is a blue card
-    let mut g = counter_table("kyodai", &["Force of Will", "Gitaxian Probe"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Gitaxian Probe"]);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
     assert!(in_exile(&g, P0, "Gitaxian Probe"));
@@ -123,7 +123,7 @@ fn force_of_will_may_pitch_a_phyrexian_blue_card() {
 
 #[test]
 fn force_of_will_asks_which_blue_card_to_pitch() {
-    let mut g = counter_table("kyodai", &["Force of Will", "Brainstorm", "Mystical Tutor"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Brainstorm", "Mystical Tutor"]);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![by_text("Mystical Tutor")]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
     assert!(in_exile(&g, P0, "Mystical Tutor"), "the card you chose");
@@ -132,7 +132,7 @@ fn force_of_will_asks_which_blue_card_to_pitch() {
 
 #[test]
 fn force_of_will_with_no_blue_card_and_no_mana_is_refused() {
-    let mut g = counter_table("kyodai", &["Force of Will", "Sol Ring"]);
+    let mut g = counter_table("arzakon", &["Force of Will", "Sol Ring"]);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(!opponent_casts(&mut g, "Demonic Tutor"));
     assert!(in_hand(&g, P0, "Force of Will"));
@@ -143,7 +143,7 @@ fn force_of_will_with_no_blue_card_and_no_mana_is_refused() {
 
 #[test]
 fn force_of_negation_pitches_on_an_opponents_turn() {
-    let mut g = counter_table("kyodai", &["Force of Negation", "Brainstorm"]);
+    let mut g = counter_table("arzakon", &["Force of Negation", "Brainstorm"]);
     let life = g.player(P0).life;
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
@@ -154,7 +154,7 @@ fn force_of_negation_pitches_on_an_opponents_turn() {
 
 #[test]
 fn force_of_negation_cant_pitch_on_your_own_turn() {
-    let mut g = counter_table("kyodai", &["Force of Negation", "Brainstorm"]);
+    let mut g = counter_table("arzakon", &["Force of Negation", "Brainstorm"]);
     g.active = Some(P0);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(!opponent_casts(&mut g, "Brainstorm"), "not countered");
@@ -166,7 +166,7 @@ fn force_of_negation_cant_pitch_on_your_own_turn() {
 
 #[test]
 fn fierce_guardianship_is_free_with_your_commander_out() {
-    let mut g = counter_table("kyodai", &["Fierce Guardianship"]);
+    let mut g = counter_table("arzakon", &["Fierce Guardianship"]);
     commander_out(&mut g, P0, "Thanos, the Mad Titan");
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
@@ -174,7 +174,7 @@ fn fierce_guardianship_is_free_with_your_commander_out() {
 
 #[test]
 fn fierce_guardianship_without_your_commander_needs_its_mana() {
-    let mut g = counter_table("kyodai", &["Fierce Guardianship"]);
+    let mut g = counter_table("arzakon", &["Fierce Guardianship"]);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(!opponent_casts(&mut g, "Demonic Tutor"));
     assert!(in_hand(&g, P0, "Fierce Guardianship"), "told {:?}", told(&h));
@@ -182,7 +182,7 @@ fn fierce_guardianship_without_your_commander_needs_its_mana() {
 
 #[test]
 fn pact_of_negation_is_free_now_and_owed_at_upkeep() {
-    let mut g = counter_table("kyodai", &["Pact of Negation"]);
+    let mut g = counter_table("arzakon", &["Pact of Negation"]);
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Demonic Tutor"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
     assert_eq!(g.player(P0).pacts, 1, "a pact owed");
@@ -191,7 +191,7 @@ fn pact_of_negation_is_free_now_and_owed_at_upkeep() {
 #[test]
 fn mental_misstep_for_two_life_at_low_life() {
     // Oracle: "({U/P} can be paid with either {U} or 2 life.)": no life floor for the person
-    let mut g = counter_table("kyodai", &["Mental Misstep"]);
+    let mut g = counter_table("arzakon", &["Mental Misstep"]);
     g.player_mut(P0).life = 8;
     let h = responder(&mut g, P0, json!({"do": "cast", "card": 0}), vec![]);
     assert!(opponent_casts(&mut g, "Brainstorm"), "countered; asked {:?} told {:?}", asked(&h), told(&h));
@@ -200,7 +200,7 @@ fn mental_misstep_for_two_life_at_low_life() {
 
 #[test]
 fn mindbreak_trap_is_free_after_three_opponent_spells() {
-    let mut g = table(&["kyodai", "seph"]);
+    let mut g = table(&["arzakon", "seph"]);
     g.active = Some(P1);
     for s in ["Brainstorm", "Opt"] {
         opponent_casts(&mut g, s);
@@ -215,7 +215,7 @@ fn mindbreak_trap_is_free_after_three_opponent_spells() {
 
 #[test]
 fn snapback_pitches_a_blue_card() {
-    let mut g = table(&["kyodai", "seph"]);
+    let mut g = table(&["arzakon", "seph"]);
     hand(&mut g, P0, &["Snapback", "Brainstorm"]);
     perm(&mut g, P1, "Grave Titan");
     let h = main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), by_text("Grave Titan")]);
@@ -275,7 +275,7 @@ fn baleful_mastery_full_cost_no_one_draws() {
 
 #[test]
 fn deadly_rollick_is_free_with_your_commander_out() {
-    let mut g = table(&["kyodai", "seph"]);
+    let mut g = table(&["arzakon", "seph"]);
     hand(&mut g, P0, &["Deadly Rollick"]);
     commander_out(&mut g, P0, "Thanos, the Mad Titan");
     perm(&mut g, P1, "Grave Titan");
@@ -285,7 +285,7 @@ fn deadly_rollick_is_free_with_your_commander_out() {
 
 #[test]
 fn deadly_rollick_without_your_commander_needs_its_mana() {
-    let mut g = table(&["kyodai", "seph"]);
+    let mut g = table(&["arzakon", "seph"]);
     hand(&mut g, P0, &["Deadly Rollick"]);
     perm(&mut g, P1, "Grave Titan");
     let h = main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0}))]);

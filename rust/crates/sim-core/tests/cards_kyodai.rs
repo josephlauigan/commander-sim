@@ -18,7 +18,7 @@ const ELESH: &str = "Elesh Norn, Mother of Machines";
 const ASK: &str = "Kyodai: which permanent gains indestructible?";
 
 fn tbl() -> Game {
-    table(&["kyodai", "seph"])
+    table(&["arzakon", "seph"])
 }
 
 fn live(g: &Game, m: PermId) -> bool {
@@ -483,5 +483,5 @@ fn leyline_scan_is_skipped_when_no_deck_holds_one() {
     assert!(g.hooks.contains(&l), "the scan would find it");
     assert!(!sim_core::engine::chars::leyline(&g, P0), "the scan did not run");
     let g = tbl();
-    assert!(g.leyline_deck, "the kyodai deck plays Leyline");
+    assert!(g.leyline_deck, "the arzakon deck plays Leyline");
 }

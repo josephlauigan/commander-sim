@@ -246,7 +246,7 @@ mod tests {
     fn table_for_commander_is_seats_for_three_for_200_seeds() {
         let sim = sim();
         let cmd = &sim.engine.formats["commander"];
-        for me in ["yshtola", "sheoldred", "urdragon", "yoshimaru", "kyodai"] {
+        for me in ["yshtola", "sheoldred", "urdragon", "yoshimaru", "arzakon"] {
             for tier in ["t3", "t5", "t6"] {
                 let keys = sim.opponents(tier, cmd);
                 assert_eq!(keys, sim.pool_keys(tier), "a Commander table admits every pool deck");
@@ -284,12 +284,12 @@ mod tests {
         let (cali, cmd) = (&sim.engine.formats["cali"], &sim.engine.formats["commander"]);
         let keys = sim.opponents("t5", cali);
         for seed in 500000..500020u64 {
-            let seats = sim.table_for(seed, Some("kyodai"), None, &keys, cali);
+            let seats = sim.table_for(seed, Some("arzakon"), None, &keys, cali);
             assert_eq!(seats.len(), 2);
-            assert_eq!(seats.iter().filter(|x| &*x.key == "kyodai").count(), 1);
+            assert_eq!(seats.iter().filter(|x| &*x.key == "arzakon").count(), 1);
             assert_eq!(
                 &*seats[usize::from(seed % 2 == 1)].key,
-                "kyodai",
+                "arzakon",
                 "seed {seed}: the deck is on the play on an even seed"
             );
         }
@@ -302,7 +302,7 @@ mod tests {
         // the default settings are untouched
         assert_eq!(sim.settings_vs(Profile::Loose, &keys).rules, Rules::COMMANDER);
         // a deck plays its own format unless `--format` says another
-        assert_eq!(sim.format_for("kyodai").key, "cali");
+        assert_eq!(sim.format_for("arzakon").key, "cali");
         assert_eq!(sim.format_for("yoshimaru").key, "commander");
         assert_eq!(sim.format_for("dack-fayden-white-stax").key, "commander");
         assert!(describe(cali).unwrap().contains("30 life") && describe(cmd).is_none());
@@ -331,10 +331,10 @@ mod tests {
         }
     }
 
-    /// over 2 x n seeds from the default seed, kyodai meets each admitted deck of a tier once on the play and once on the
+    /// over 2 x n seeds from the default seed, arzakon meets each admitted deck of a tier once on the play and once on the
     /// draw, and the tiers are never mixed in one table
     #[test]
-    fn kyodai_meets_every_opponent_once_on_each_side() {
+    fn arzakon_meets_every_opponent_once_on_each_side() {
         let sim = sim();
         let cali = &sim.engine.formats["cali"];
         for tier in ["t5", "t6"] {
@@ -342,9 +342,9 @@ mod tests {
             let mut play: Vec<String> = vec![];
             let mut draw: Vec<String> = vec![];
             for seed in 500000..500000 + 2 * keys.len() as u64 {
-                let seats = sim.table_for(seed, Some("kyodai"), None, &keys, cali);
+                let seats = sim.table_for(seed, Some("arzakon"), None, &keys, cali);
                 let (side, other) =
-                    if &*seats[0].key == "kyodai" { (&mut play, &seats[1]) } else { (&mut draw, &seats[0]) };
+                    if &*seats[0].key == "arzakon" { (&mut play, &seats[1]) } else { (&mut draw, &seats[0]) };
                 assert!(keys.iter().any(|k| other.key == k.as_str()), "{tier}: {} is from the tier", other.key);
                 side.push(other.key.to_string());
             }
@@ -360,11 +360,11 @@ mod tests {
     #[test]
     fn the_format_of_a_run_is_checked() {
         let mut sim = sim();
-        assert_eq!(sim.check_format("kyodai").unwrap().key, "cali");
+        assert_eq!(sim.check_format("arzakon").unwrap().key, "cali");
         assert!(sim.set_format("nowhere").unwrap_err().contains("--format nowhere"));
         sim.set_format("commander").unwrap();
-        let e = sim.check_format("kyodai").unwrap_err();
-        assert!(e.contains("kyodai") && e.contains("Cali Commander") && e.contains("Commander table"), "{e}");
+        let e = sim.check_format("arzakon").unwrap_err();
+        assert!(e.contains("arzakon") && e.contains("Cali Commander") && e.contains("Commander table"), "{e}");
         assert_eq!(sim.check_format("yoshimaru").unwrap().key, "commander");
         // a Commander deck at a Cali table: fine unless a card of it is banned there
         sim.set_format("cali").unwrap();

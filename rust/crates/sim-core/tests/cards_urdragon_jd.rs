@@ -386,15 +386,15 @@ fn kaldra_compleat_comes_with_a_germ_it_makes_a_five_five() {
 
 #[test]
 fn the_thanos_seat_plays_from_its_plan_file() {
-    assert!(sim_core::ai::plan_data::get("kyodai").is_some());
-    assert!(sim_core::ai::plans::plays_plan("kyodai"));
-    assert!(!sim_core::ai::is_main("kyodai"), "a plan-file deck, not a hand-written main deck");
+    assert!(sim_core::ai::plan_data::get("arzakon").is_some());
+    assert!(sim_core::ai::plans::plays_plan("arzakon"));
+    assert!(!sim_core::ai::is_main("arzakon"), "a plan-file deck, not a hand-written main deck");
     assert!(
-        !sim_core::t6stats::is_t6_key("kyodai"),
+        !sim_core::t6stats::is_t6_key("arzakon"),
         "the artifacts-and-Dragons list plays Tier 5 on the ordinary rules"
     );
     assert!(sim_core::t6stats::is_t6_key("thrasios"), "the Doomsday list took the Tier 6 key");
-    let s = sim_core::ai::base_style("kyodai");
+    let s = sim_core::ai::base_style("arzakon");
     assert_eq!((s.aggression, s.caution), (0.6, 0.5), "the 11/05 plan style");
 }
 

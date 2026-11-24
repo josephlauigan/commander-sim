@@ -55,7 +55,7 @@ fn deck_of(card: &str) -> RawDeck {
 /// the ban list in the guide text matches data/formats.toml, token by token (read from the prose, not from the toml)
 #[test]
 fn the_cali_list_is_the_guide_text_and_nothing_else() {
-    let guide = std::fs::read_to_string(root().join("decklists/cali_commander/kyodai-artifact-combo.md")).unwrap();
+    let guide = std::fs::read_to_string(root().join("decklists/cali_commander/arzakon-artifact-combo.md")).unwrap();
     let flat = guide.replace('\n', " ");
     let start = flat.find("Banned: ").expect("the guide has a Banned: sentence") + "Banned: ".len();
     let end = start + flat[start..].find(" are legal").expect("... are legal");
@@ -114,10 +114,10 @@ fn commander_verdicts_over_the_whole_cache_are_the_old_ones() {
     assert!(other.iter().all(|o| o.ends_with(": Scryfall not_legal") && o.starts_with("_____")), "{other:?}");
 }
 
-/// every deck in the repository, under Commander (its own format for kyodai): the problem list is empty, and kyodai under
+/// every deck in the repository, under Commander (its own format for arzakon): the problem list is empty, and arzakon under
 /// Commander fails on exactly the three
 #[test]
-fn every_deck_validates_and_kyodai_under_commander_fails_on_exactly_three() {
+fn every_deck_validates_and_arzakon_under_commander_fails_on_exactly_three() {
     let p = Project::new(root());
     let c = cache();
     let report = validate_all(&p, &c).unwrap();
@@ -126,8 +126,8 @@ fn every_deck_validates_and_kyodai_under_commander_fails_on_exactly_three() {
         assert!(probs.is_empty(), "{} {}: {probs:?}", d.tier, d.key);
     }
     let (cmd, _) = formats();
-    let kyodai = report.iter().find(|(d, ..)| d.key == "kyodai").unwrap().0.clone();
-    let (probs, _) = card_problems(&cmd, &kyodai.cards, &[kyodai.commander.as_str()], None, None, &|n| c.get(n).cloned());
+    let arzakon = report.iter().find(|(d, ..)| d.key == "arzakon").unwrap().0.clone();
+    let (probs, _) = card_problems(&cmd, &arzakon.cards, &[arzakon.commander.as_str()], None, None, &|n| c.get(n).cloned());
     assert_eq!(probs, ["banned in Commander: Mana Crypt, Primeval Titan, Tinker"]);
 }
 

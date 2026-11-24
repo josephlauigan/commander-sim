@@ -278,7 +278,7 @@ mod tests {
         crate::args::parse(&v).unwrap()
     }
 
-    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in the Kyodai deck (no
+    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in the Arzakon deck (no
     /// plan rule names it, and Breach is gated on escape candidates). Kefka played this test until it was retired
     /// (2026-11-06); its note: the same shape as Bribery before the
     /// audit gave it an arm in kefka_prio. The seed matters: on some seeds the board reaches a round where the deck can
@@ -288,12 +288,12 @@ mod tests {
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
-        let out = s.mine["kyodai"]
+        let out = s.mine["arzakon"]
             .iter()
             .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
             .unwrap()
             .clone();
-        let r = rules_at(&s, "kyodai", &out, "Underworld Breach", "t5", 500000);
+        let r = rules_at(&s, "arzakon", &out, "Underworld Breach", "t5", 500000);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(

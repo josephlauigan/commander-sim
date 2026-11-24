@@ -15,7 +15,7 @@ const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
 
 fn tbl() -> Game {
-    table(&["kefka", "kyodai", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
+    table(&["kefka", "arzakon", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
 }
 
 fn cast_free(g: &mut Game, p: PlayerId, name: &str) {

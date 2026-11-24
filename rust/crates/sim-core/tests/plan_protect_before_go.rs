@@ -88,7 +88,7 @@ fn with_the_knob_but_nothing_to_fear_silence_stays_in_hand() {
 #[test]
 fn without_the_knob_the_same_position_casts_no_silence() {
     // decks that play from a plan or not, none of them sets the knob: today's play
-    for key in ["kyodai", "sheoldred", "urdragon", "cloud"] {
+    for key in ["arzakon", "sheoldred", "urdragon", "cloud"] {
         let mut g = position(key, true);
         assert!(!plan_data::protect_before_go(&g, P0), "{key}");
         go(&mut g);

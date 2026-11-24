@@ -14,7 +14,7 @@ use std::collections::VecDeque;
 
 // ------------------------------------------------------------------ Gifts Ungiven
 fn gifts_game() -> Game {
-    table(&["seph", "cloud", "kefka", "kyodai"])
+    table(&["seph", "cloud", "kefka", "arzakon"])
 }
 
 /// the person's answers for Gifts: the pile the AI found (four cards that left the library) and the opponent the AI
@@ -72,7 +72,7 @@ fn gifts_a_person_naming_the_ais_pile_and_opponent_gets_the_ais_result() {
 /// the stack, bottom to top: P0's Opt, P2's Brainstorm, P1's Lightning Bolt; P1 has cast three spells this turn, so the
 /// Trap costs {0} for either kind of player
 fn trap_game() -> Game {
-    let mut g = table(&["kyodai", "seph", "kefka"]);
+    let mut g = table(&["arzakon", "seph", "kefka"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Mindbreak Trap"]);
     for (p, n) in [(P0, "Opt"), (P2, "Brainstorm"), (P1, "Lightning Bolt")] {

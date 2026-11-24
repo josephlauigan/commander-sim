@@ -951,7 +951,7 @@ mod tier_tests {
         let want: [(&str, &[&str], Option<&str>); 5] = [
             ("yshtola", &["t5"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("sheoldred", &["t3", "t4"], None),
-            ("kyodai", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
+            ("arzakon", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
             ("urdragon", &["t5"], None),
             ("yoshimaru", &["t4", "t5"], None),
         ];
@@ -981,29 +981,29 @@ mod tier_tests {
     fn a_cali_deck_is_played_at_its_own_format_and_refused_at_a_commander_table() {
         let mut sim = sim();
         assert_eq!(
-            tier_plan(&sim, &args("--deck kyodai --pool all")).unwrap().per_deck,
-            [("kyodai".to_string(), v(&["t5", "t6"]))]
+            tier_plan(&sim, &args("--deck arzakon --pool all")).unwrap().per_deck,
+            [("arzakon".to_string(), v(&["t5", "t6"]))]
         );
         for pool in ["t5", "t6"] {
-            let plan = tier_plan(&sim, &args(&format!("--deck kyodai --pool {pool}"))).unwrap();
-            assert_eq!(plan.per_deck, [("kyodai".to_string(), v(&[pool]))]);
+            let plan = tier_plan(&sim, &args(&format!("--deck arzakon --pool {pool}"))).unwrap();
+            assert_eq!(plan.per_deck, [("arzakon".to_string(), v(&[pool]))]);
         }
-        assert!(tier_plan(&sim, &args("--deck kyodai --pool t1")).is_err(), "a tier outside its own needs --any-tier");
-        assert!(tier_plan(&sim, &args("--deck kyodai --pool t1 --any-tier")).is_ok());
+        assert!(tier_plan(&sim, &args("--deck arzakon --pool t1")).is_err(), "a tier outside its own needs --any-tier");
+        assert!(tier_plan(&sim, &args("--deck arzakon --pool t1 --any-tier")).is_ok());
         sim.set_format("commander").unwrap();
         for pool in ["t5", "t6", "all", "t1"] {
             for any in ["", " --any-tier"] {
-                let e = tier_plan(&sim, &args(&format!("--deck kyodai --pool {pool}{any}"))).err().unwrap();
+                let e = tier_plan(&sim, &args(&format!("--deck arzakon --pool {pool}{any}"))).err().unwrap();
                 assert!(
-                    e.contains("Cali Commander") && e.contains("kyodai") && e.contains("(--format)"),
+                    e.contains("Cali Commander") && e.contains("arzakon") && e.contains("(--format)"),
                     "{pool}{any}: {e}"
                 );
             }
         }
-        let e = deck_tiers(&sim, "kyodai").unwrap_err();
-        assert!(e.contains("kyodai cannot be played at a Commander table") && e.contains("Cali Commander"), "{e}");
+        let e = deck_tiers(&sim, "arzakon").unwrap_err();
+        assert!(e.contains("arzakon cannot be played at a Commander table") && e.contains("Cali Commander"), "{e}");
         assert_eq!(deck_tiers(&sim, "yoshimaru").unwrap(), v(&["t4", "t5"]));
-        assert!(select_tiers("kyodai", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
+        assert!(select_tiers("arzakon", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
     }
 
     /// `--all-decks` leaves the deck out with a note and plays the other four with their tiers unchanged
@@ -1019,10 +1019,10 @@ mod tier_tests {
         let plan = tier_plan(&sim, &args("--all-decks --pool all")).unwrap();
         assert_eq!(plan.per_deck, want);
         assert_eq!(plan.skipped.len(), 1);
-        assert_eq!(plan.skipped[0].0, "kyodai");
+        assert_eq!(plan.skipped[0].0, "arzakon");
         assert!(plan.skipped[0].1.contains("Cali Commander"), "{:?}", plan.skipped);
         assert_eq!(plan.tiers, v(&["t3", "t4", "t5"]));
-        // one tier: the decks that play it, kyodai still out (t6 has no deck of yours left)
+        // one tier: the decks that play it, arzakon still out (t6 has no deck of yours left)
         let plan = tier_plan(&sim, &args("--all-decks --pool t5")).unwrap();
         assert_eq!(
             plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
@@ -1050,7 +1050,7 @@ mod tier_tests {
             assert_eq!(not_in_matrix(&sim, key).is_some(), own == "cali", "{key} ({own})");
         }
         sim.set_format("commander").unwrap();
-        assert_eq!(MINE.iter().filter(|k| deck_tiers(&sim, k).is_err()).collect::<Vec<_>>(), [&"kyodai"]);
+        assert_eq!(MINE.iter().filter(|k| deck_tiers(&sim, k).is_err()).collect::<Vec<_>>(), [&"arzakon"]);
         // a pool deck is a Commander deck
         assert!(sim.pool.iter().all(|d| deck_tiers(&sim, &d.key).is_ok()));
     }
@@ -1066,7 +1066,7 @@ mod tier_tests {
         let kept_out: Vec<&str> =
             sim.pool.iter().filter(|d| sim.engine.admits(&d.key, "cali").is_err()).map(|d| d.key.as_str()).collect();
         assert_eq!(kept_out, ["dack-fayden-white-stax"]);
-        assert!(sim.engine.admits("kyodai", "commander").is_err());
+        assert!(sim.engine.admits("arzakon", "commander").is_err());
         assert!(sim.engine.admits("yoshimaru", "nowhere").is_err());
     }
 }

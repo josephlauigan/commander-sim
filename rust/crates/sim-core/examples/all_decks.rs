@@ -18,7 +18,7 @@ fn main() {
             if !deck(me).tiers.iter().any(|x| x == t) {
                 continue;
             }
-            // these are 4-seat Commander tables: a deck of another format (kyodai, Cali Commander) is not seated at one
+            // these are 4-seat Commander tables: a deck of another format (arzakon, Cali Commander) is not seated at one
             if deck(me).format.as_deref().is_some_and(|f| f != "commander") {
                 if t == deck(me).tiers[0].as_str() {
                     println!("skipping {me}: it plays {}, not Commander", deck(me).format.as_deref().unwrap());
