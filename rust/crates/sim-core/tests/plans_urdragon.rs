@@ -158,18 +158,17 @@ fn the_plan_is_active_for_the_deck_and_names_the_garth_line() {
 }
 
 #[test]
-fn triple_triad_has_one_priority_row_from_six_mana_and_no_else() {
+fn dragonspeaker_shaman_has_one_priority_row_through_turn_six_and_a_low_else() {
     let g = tbl();
     let l = plan_data::active(&g, P0).expect("the plan file is read for urdragon");
-    let rows: Vec<_> = l.plan.prio.iter().filter(|r| r.cards.iter().any(|c| c == "Triple Triad")).collect();
-    assert_eq!(rows.len(), 1, "one [[prio]] row names Triple Triad");
+    let rows: Vec<_> = l.plan.prio.iter().filter(|r| r.cards.iter().any(|c| c == "Dragonspeaker Shaman")).collect();
+    assert_eq!(rows.len(), 1, "one [[prio]] row names Dragonspeaker Shaman");
     let r = rows[0];
-    assert_eq!(r.cards, ["Triple Triad"]);
-    assert_eq!(r.when, ["lands+mana-perms>=6"]);
-    assert_eq!(r.value, 62.0);
-    assert!(r.otherwise.is_none(), "no else: below six mana the generic rating stands");
+    assert_eq!(r.cards, ["Dragonspeaker Shaman"]);
+    assert_eq!(r.when, ["turn<=6"]);
+    assert_eq!(r.value, 72.0);
+    assert_eq!(r.otherwise, Some(40.0), "after turn six the discount matters less");
 }
-
 #[test]
 fn a_lone_land_that_cannot_cast_the_dorks_goes_back() {
     // Tundra makes {W}{U}; Birds and Llanowar Elves need {G}
@@ -236,7 +235,7 @@ fn the_guides_other_close_keeps_and_the_ramp_the_rule_counts() {
         "Swords to Plowshares"
     ]));
     // a cheap Dragon or a three-mana rock is something to do (both are in the `plays` set)
-    for play in ["Rivaz of the Claw", "Scion of Draco", "Cursed Mirror"] {
+    for play in ["Rivaz of the Claw", "Scion of Draco", "Talisman of Curiosity"] {
         assert!(
             keeps(&["Tundra", "Bayou", "Taiga", play, "Lightning Bolt", "Swords to Plowshares", "Path to Exile"]),
             "{play} counts as something to do"

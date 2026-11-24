@@ -338,6 +338,7 @@ fn the_self_draw_takes_at_most_half_the_library_and_six_cards() {
     assert!(o[0].label.contains("draw 6"), "capped at six: {}", o[0].label);
     let mut g = game();
     lands(&mut g, P0, "Swamp", 7, false);
+    hand(&mut g, P0, &[PACT]); // out of the library first: the shuffled library may hold it among the four kept cards
     trim_library(&mut g, P0, 4);
     let o = pact_opts(&mut g, P0);
     assert!(o[0].label.contains("draw 2"), "half of a four card library: {}", o[0].label);
