@@ -53,7 +53,8 @@ The deck's weakness is reaching its commander, so five cards work on speed. Cost
   Morophon as well, The Ur-Dragon costs {2}. Cast it on turn 3 or 4, before the Dragons, and name Dragon.
 - **Hellkite Courser** ({4}{R}{R}, a 6/5 flying Dragon): when it enters you may put your commander from the command zone
   onto the battlefield; it gains haste and returns to the command zone at the beginning of the next end step. That is a
-  six-mana bridge to nine: one attack with The Ur-Dragon draws a card per attacking Dragon and drops a permanent from your hand,
+  five-mana bridge to nine (Eminence takes one off Courser while The Ur-Dragon is in the command zone; three mana with Urza's Incubator
+  naming Dragon): one attack with The Ur-Dragon draws a card per attacking Dragon and drops a permanent from your hand,
   and with the commander on the battlefield for the turn, Fierce Guardianship and Deflecting Swat are free and Jeska's Will
   has both modes. Putting it onto the battlefield is not a cast, so it adds no commander tax. If The Ur-Dragon is already on the
   battlefield, Courser is a plain 6/5 flier.
@@ -184,8 +185,8 @@ strongest start. Sylvan Library is a good turn-2 play when the hand has no ramp.
 Incubator naming Dragon before the big Dragons and The Ur-Dragon. Keep
 mana for Fierce Guardianship or a free spell on the opponent's turn when you hold protection.
 
-**Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. With six
-mana and the commander in the command zone, Hellkite Courser puts it onto the battlefield for one attack. Win
+**Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. With five
+mana (three with Urza's Incubator) and the commander in the command zone, Hellkite Courser puts it onto the battlefield for one attack. Win
 through the combat route or the Garth loop once the pieces are there.
 
 **Hold up or go?** Go when the table has no sweeper in sight and you hold protection, or when an opponent is about to win.
