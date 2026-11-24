@@ -16596,6 +16596,76 @@
    "spell_prio": false
   },
   {
+   "name": "Breya, Etherium Shaper",
+   "types": "AC",
+   "generic": 0,
+   "pips": "WUBR",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "4"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 2,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "thopter"
+       ],
+       "color": "U"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{2}, Sacrifice two artifacts: Choose one —",
+    "• ~ deals 3 damage to target player or planeswalker.",
+    "• Target creature gets -4/-4 until end of turn.",
+    "• You gain 5 life."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Bribery",
    "types": "S",
    "generic": 3,
@@ -55101,6 +55171,55 @@
    "spell_prio": false
   },
   {
+   "name": "Gold-Forged Thopteryx",
+   "types": "AC",
+   "generic": 0,
+   "pips": "WU",
+   "tags": {
+    "pow": "1",
+    "tgh": "3",
+    "fly": true,
+    "lifelink": true
+   },
+   "pow": 1,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "lifelink"
+   ],
+   "subtypes": [
+    "dinosaur",
+    "thopter"
+   ],
+   "protfrom": "",
+   "ward": 2,
+   "identity": "UW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Each legendary permanent you control has ward {2}."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Goldlust Triad",
    "types": "C",
    "generic": 4,
@@ -60657,6 +60776,45 @@
    "spell_prio": false
   },
   {
+   "name": "Herd Heirloom",
+   "types": "A",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "rock": "1:C",
+    "eng": "1"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Heritage Druid",
    "types": "C",
    "generic": 0,
@@ -65522,6 +65680,65 @@
    "spell_prio": false
   },
   {
+   "name": "Infinite Guideline Station",
+   "types": "A",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": "X",
+       "who": "you"
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "station"
+   ],
+   "subtypes": [
+    "spacecraft"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, create a tapped 2/2 colorless Robot artifact creature token for each multicolored permanent you control.",
+    "Station",
+    "12+ | Flying"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ingenious Infiltrator",
    "types": "C",
    "generic": 2,
@@ -69828,6 +70045,66 @@
    "python_hooks": [
     "land_options"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Karn, Gilded Guardian",
+   "types": "AC",
+   "generic": 10,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "pow": "5",
+    "bomb": "5",
+    "vig": true,
+    "trample": true
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": "X",
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "trample",
+    "vigilance"
+   ],
+   "subtypes": [
+    "golem"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 10,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -115523,6 +115800,72 @@
    "spell_prio": false
   },
   {
+   "name": "Shorikai, Genesis Engine",
+   "types": "A",
+   "generic": 2,
+   "pips": "WU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "1",
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "draw",
+       "n": 2,
+       "who": "you"
+      },
+      {
+       "do": "discard",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "crew"
+   ],
+   "subtypes": [
+    "vehicle"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "UW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"   [partly: create a 1/1 colorless pilot creature token with \"this token crews vehicles as though its power were 2 greater.\"]"
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Short Bow",
    "types": "A",
    "generic": 2,
@@ -133590,6 +133933,50 @@
    "spell_prio": false
   },
   {
+   "name": "The Reaper, King No More",
+   "types": "AC",
+   "generic": 6,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "scarecrow"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, put a -1/-1 counter on each of up to two target creatures.",
+    "Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may put that card onto the battlefield under your control. Do this only once each turn."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "The Reaver Cleaver",
    "types": "A",
    "generic": 2,
@@ -137827,6 +138214,48 @@
    "spell_prio": false
   },
   {
+   "name": "Transguild Courier",
+   "types": "AC",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "golem"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "~ is all colors."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Transmute Artifact",
    "types": "S",
    "generic": 0,
@@ -139192,6 +139621,51 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Twitching Doll",
+   "types": "AC",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "pow": "2",
+    "dork": "A",
+    "noatk": true,
+    "tok": "1",
+    "tokp": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "spider",
+    "toy"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "hybrid": [],
