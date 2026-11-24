@@ -1,11 +1,14 @@
 //! A refused `join` leaves the host's lobby open: the second person can try again with the same code. The hub is driven
 //! directly with a factory that refuses a chosen partner deck, since the real factory's `check_two` has already vetted
-//! everything `new_session` checks by the time a second person arrives.
+//! everything `new_session` checks by the time a second person arrives. The three tests that refuse after the lobby was
+//! taken (the refused join keeps the lobby, the same guest retries, two guests at once) prove the property and fail on
+//! main; the mirror, wrong code, host browser and bad deck tests are regression guards that also pass on main.
 
 use practice::images::Images;
 use practice::server::api::{Info, SessionApi, SessionFactory};
 use practice::server::hub::Hub;
 use serde_json::{Value, json};
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Barrier};
 use std::time::Duration;
@@ -100,10 +103,23 @@ impl SessionFactory for Factory {
     }
 }
 
-fn hub(refuse: &'static str) -> (Arc<Hub>, Arc<Factory>) {
+/// a per-hub scratch directory (saves and images), removed when the test drops it
+struct Scratch(PathBuf);
+
+impl Drop for Scratch {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
+fn hub(refuse: &'static str) -> (Arc<Hub>, Arc<Factory>, Scratch) {
+    static N: AtomicUsize = AtomicUsize::new(0);
     let f = Arc::new(Factory { refuse, made: AtomicUsize::new(0) });
-    let dir = std::env::temp_dir();
-    (Hub::new(true, false, dir.clone(), Images::new(dir), f.clone()), f)
+    let dir =
+        std::env::temp_dir().join(format!("practice-join-{}-{}", std::process::id(), N.fetch_add(1, Ordering::SeqCst)));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    (Hub::new(true, false, dir.clone(), Images::new(dir.clone()), f.clone()), f, Scratch(dir))
 }
 
 /// the host (browser token "host", yoshimaru) opens a lobby; returns its code
@@ -125,7 +141,7 @@ fn join(h: &Arc<Hub>, token: &str, code: &str, deck: &str) -> Option<String> {
 
 #[test]
 fn a_refused_join_keeps_the_lobby_and_the_code() {
-    let (h, f) = hub("sheoldred");
+    let (h, f, _dir) = hub("sheoldred");
     let code = open(&h);
     // refused after the lobby was taken (the factory refuses this pairing): the lobby is still there, same code
     assert_eq!(join(&h, "guest1", &code, "sheoldred").as_deref(), Some(REFUSED));
@@ -143,7 +159,7 @@ fn a_refused_join_keeps_the_lobby_and_the_code() {
 
 #[test]
 fn a_refused_join_can_be_retried_by_the_same_guest() {
-    let (h, _) = hub("sheoldred");
+    let (h, _, _dir) = hub("sheoldred");
     let code = open(&h);
     for _ in 0..3 {
         assert_eq!(join(&h, "guest1", &code, "sheoldred").as_deref(), Some(REFUSED));
@@ -156,7 +172,7 @@ fn a_refused_join_can_be_retried_by_the_same_guest() {
 
 #[test]
 fn a_mirror_is_refused_and_keeps_the_lobby() {
-    let (h, _) = hub("nobody");
+    let (h, _, _dir) = hub("nobody");
     let code = open(&h);
     assert_eq!(join(&h, "guest1", &code, "yoshimaru").as_deref(), Some("The host plays that deck: pick another."));
     assert_eq!(lobby_code(&h).as_deref(), Some(code.as_str()));
@@ -167,7 +183,7 @@ fn a_mirror_is_refused_and_keeps_the_lobby() {
 
 #[test]
 fn the_other_refusals_leave_the_lobby_alone() {
-    let (h, _) = hub("nobody");
+    let (h, _, _dir) = hub("nobody");
     let code = open(&h);
     let wrong = if code != "000000" { "000000" } else { "111111" };
     assert_eq!(
@@ -187,7 +203,7 @@ fn the_other_refusals_leave_the_lobby_alone() {
 
 #[test]
 fn a_successful_join_starts_the_game_and_closes_the_lobby() {
-    let (h, f) = hub("nobody");
+    let (h, f, _dir) = hub("nobody");
     let code = open(&h);
     assert_eq!(join(&h, "guest", &code, "sheoldred"), None);
     assert_eq!(lobby_code(&h), None);
@@ -205,7 +221,7 @@ fn a_successful_join_starts_the_game_and_closes_the_lobby() {
 fn two_guests_at_once_never_half_take_the_lobby() {
     let mut started = 0;
     for _ in 0..200 {
-        let (h, _) = hub("sheoldred");
+        let (h, _, _dir) = hub("sheoldred");
         let code = open(&h);
         let go = Arc::new(Barrier::new(2));
         let spawn = |token: &'static str, deck: &'static str| {
