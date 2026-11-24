@@ -21,8 +21,10 @@ use human::{SessionHuman, answer_from_json, answer_to_json};
 use serde_json::{Value, json};
 use sim_core::ai::tape::{Tape, TapeEntry, Taped};
 use sim_core::control::{Answer, LogSink, Request};
+use sim_core::format::DEFAULT_FORMAT;
 use sim_core::ids::PlayerId;
 use sim_core::run::{Engine, settings};
+use sim_core::settings::Settings;
 use sim_core::state::Game;
 use sim_core::sym::intern;
 use std::collections::{HashMap, VecDeque};
@@ -56,6 +58,8 @@ pub struct Options {
     pub engine: Arc<Engine>,
     pub deck: String,
     pub tier: String,
+    /// the game format's key; None: the deck's own (`Engine::format_of`)
+    pub format: Option<String>,
     pub seed: Option<u64>,
     pub seat: Option<usize>,
     pub opponents: Option<Vec<String>>,
@@ -76,6 +80,7 @@ impl Options {
             engine,
             deck: deck.into(),
             tier: tier.into(),
+            format: None,
             seed: None,
             seat: None,
             opponents: None,
@@ -148,6 +153,8 @@ pub struct Session {
     pub engine: Arc<Engine>,
     pub deck: String,
     pub tier: String,
+    /// the key of the game's format (a key of `engine.formats`)
+    pub format: String,
     pub profile: String,
     pub ai: String,
     pub step: bool,
@@ -212,14 +219,28 @@ impl Session {
         if !e.decks.contains_key(&o.deck) {
             return Err(format!("{:?} isn't in decks.json", o.deck));
         }
+        let fmt = match &o.format {
+            Some(k) => e.formats.get(k).ok_or_else(|| {
+                format!("unknown format {k:?}: one of {}", e.formats.keys().cloned().collect::<Vec<_>>().join(", "))
+            })?,
+            None => e.format_of(&o.deck),
+        };
+        for d in std::iter::once(&o.deck).chain(&o.partner) {
+            e.admits(d, &fmt.key)
+                .map_err(|why| format!("{d} cannot be played at a {} table: {}", fmt.name, why.join("; ")))?;
+        }
+        if o.partner.is_some() && fmt.seats != 4 {
+            return Err(format!("{} has {} seats: a second person needs a 4-seat format", fmt.name, fmt.seats));
+        }
         let humans: Vec<String> = std::iter::once(o.deck.clone()).chain(o.partner.clone()).collect();
         let seed = o.seed.unwrap_or_else(|| {
             let t =
                 std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
             1 + sim_core::rng::Rng::from_u64(t).below(999_999)
         });
-        let seats = setup::choose_seats(
+        let seats = setup::choose_seats_in(
             e,
+            fmt,
             &setup::SeatArgs {
                 deck: &o.deck,
                 tier: &o.tier,
@@ -230,12 +251,14 @@ impl Session {
                 seats: o.seats.as_deref(),
             },
         )?;
+        let format = fmt.key.clone();
         let names = seats.iter().map(|k| (k.clone(), e.decks.get(k).map_or(k.clone(), |d| d.name.clone()))).collect();
         let shadows = humans.iter().map(|k| (k.clone(), Arc::new(Shadow::new()))).collect();
         Ok(Arc::new(Session {
             engine: o.engine.clone(),
             deck: o.deck,
             tier: o.tier,
+            format,
             profile: o.profile,
             ai: o.ai,
             step: o.step,
@@ -384,8 +407,19 @@ impl Session {
         }
     }
 
+    /// the settings the game is built with: the profile and AI, and the format's rules (starting life, the starting
+    /// player's first draw) and what the AI reads of its table. The hint and the comparisons play copies of the game,
+    /// so they inherit all of it.
+    pub fn game_settings(&self) -> Settings {
+        let mut st = settings(&self.profile, &self.ai, 1.0).expect("checked in new");
+        let fmt = &self.engine.formats[&self.format];
+        st.rules = fmt.rules();
+        st.table = fmt.ai;
+        st
+    }
+
     fn play(self: Arc<Self>, abort: Arc<AtomicBool>, rxs: Vec<(String, std::sync::mpsc::Receiver<Answer>)>) {
-        let st = settings(&self.profile, &self.ai, 1.0).expect("checked in new");
+        let st = self.game_settings();
         let (mut g, mull) = match setup::build_game(&self.engine, st, self.seed, &self.seats, &self.humans) {
             Ok(x) => x,
             Err(e) => return self.emit(json!({"kind": "error", "text": e})),
@@ -628,6 +662,9 @@ impl Session {
             "autopass": st.autopass_start.iter().cloned().collect::<HashMap<_, _>>(),
             "autopass_log": st.autopass_log.iter().map(|(n, k, m)| json!([n, k, m])).collect::<Vec<_>>(),
         });
+        if self.format != DEFAULT_FORMAT {
+            d["format"] = self.format.clone().into(); // a Commander save has none: it is what an old save reads as
+        }
         if let Some(p) = &self.partner {
             d["partner"] = p.clone().into();
             d["answer_seats"] = json!(st.answer_seats);
@@ -644,6 +681,13 @@ impl Session {
         let damaged = || "a damaged saved game".to_string();
         let s = |k: &str| data.get(k).and_then(Value::as_str).map(str::to_string).ok_or_else(damaged);
         let mut o = Options::new(engine, &s("deck")?, &s("tier")?);
+        // a save without `format` is a Commander game (every save made before formats was): read it as one, so a deck
+        // that Commander refuses (a Cali deck) is refused rather than converted
+        let old = data.get("format").is_none();
+        o.format = Some(match data.get("format") {
+            None => DEFAULT_FORMAT.to_string(),
+            Some(f) => f.as_str().map(str::to_string).ok_or_else(damaged)?,
+        });
         o.seed = Some(data.get("seed").and_then(Value::as_u64).ok_or_else(damaged)?);
         o.profile = s("profile")?;
         o.ai = s("ai")?;
@@ -659,7 +703,13 @@ impl Session {
                 .collect(),
         );
         o.partner = data.get("partner").and_then(Value::as_str).map(str::to_string);
-        let sess = Session::new(o)?;
+        let sess = Session::new(o).map_err(|e| {
+            if old {
+                format!("this saved game has no format, so it is a four-player Commander game, and it can't be played now: {e}")
+            } else {
+                e
+            }
+        })?;
         {
             let mut t = sess.tape.lock().unwrap();
             for e in data.get("tape").and_then(Value::as_array).ok_or_else(damaged)? {

@@ -585,7 +585,14 @@ impl Hub {
         data["tools"] = Value::Object(tools);
         data["saved_at"] = json!(now("%Y-%m-%d %H:%M"));
         let partner = info.partner.as_ref().map(|p| format!("+{p}")).unwrap_or_default();
-        let name = format!("{}-{}{}-{}-{}.json", now("%Y%m%d-%H%M%S"), info.deck, partner, info.tier, info.seed);
+        // the format is in the name unless it is Commander (whose names are as they always were)
+        let format = if info.format.is_empty() || info.format == "commander" {
+            String::new()
+        } else {
+            format!("-{}", info.format)
+        };
+        let name =
+            format!("{}-{}{}{}-{}-{}.json", now("%Y%m%d-%H%M%S"), info.deck, partner, format, info.tier, info.seed);
         std::fs::create_dir_all(&self.saves).map_err(|e| e.to_string())?;
         std::fs::write(self.saves.join(&name), data.to_string()).map_err(|e| e.to_string())?;
         Ok(name)
@@ -639,8 +646,8 @@ impl Hub {
                 continue;
             };
             out.push(
-                json!({"name": name, "deck": d["deck"], "partner": d["partner"], "tier": d["tier"], "seed": d["seed"],
-                "round": d["round"], "finished": d["finished"], "saved_at": d["saved_at"]}),
+                json!({"name": name, "deck": d["deck"], "partner": d["partner"], "format": d["format"].as_str().unwrap_or("commander"),
+                "tier": d["tier"], "seed": d["seed"], "round": d["round"], "finished": d["finished"], "saved_at": d["saved_at"]}),
             );
         }
         out
@@ -710,7 +717,7 @@ impl Hub {
         let game = match (sess, seat) {
             (Some(s), Some(seat)) => {
                 let i: Info = s.info();
-                json!({"deck": i.deck, "tier": i.tier, "seed": i.seed, "seats": i.seats, "profile": i.profile, "ai": i.ai,
+                json!({"deck": i.deck, "tier": i.tier, "format": i.format, "seed": i.seed, "seats": i.seats, "profile": i.profile, "ai": i.ai,
                     "tools": st.tools, "you": seat, "humans": i.humans,
                     "names": i.names.iter().cloned().collect::<HashMap<_, _>>(), "autopass": s.autopass_of(seat)})
             }

@@ -16,6 +16,7 @@ impl SessionApi for SessionHandle {
         Info {
             deck: s.deck.clone(),
             tier: s.tier.clone(),
+            format: s.format.clone(),
             seed: s.seed,
             seats: s.seats.clone(),
             profile: s.profile.clone(),
@@ -93,6 +94,7 @@ impl RealSessions {
         let deck = opt_str(opts, "deck").ok_or("unknown deck None")?;
         let tier = opt_str(opts, "tier").ok_or("unknown tier None")?;
         let mut o = Options::new(self.engine.clone(), &deck, &tier);
+        o.format = opt_str(opts, "format");
         o.seed = opts.get("seed").and_then(Value::as_u64);
         o.seat = opts.get("seat").and_then(Value::as_u64).map(|n| n as usize);
         o.opponents = opt_list(opts, "opponents");
