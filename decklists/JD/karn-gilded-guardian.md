@@ -18,7 +18,7 @@ mandatory. **This list has not been simulated; every number below is a count fro
 | **Bracket** | 4: 15 Game Changers and four short winning lines. Played against Tier 4 and Tier 5 |
 | **Game Changers (15)** | Consecrated Sphinx, Demonic Tutor, Enlightened Tutor, Farewell, Force of Will, Imperial Seal, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Teferi's Protection, Thassa's Oracle, The One Ring, Vampiric Tutor |
 | **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. First runs and their limits are in the findings file; the current list is not simulated |
-| **Buys** | None: every card not owned is proxied |
+| **Buys** | JD is getting 18 cards: Baleful Strix; Birthing Pod; Blood Crypt; Gold-Forged Thopteryx; Herd Heirloom; Infinite Guideline Station; Plateau; Reliquary Tower; Sacred Foundry; Savannah; Steam Vents; Taiga; The Reaper, King No More; The Wind Crystal; Transguild Courier; Twitching Doll; Volcanic Island; Wooded Foothills. Every other card he does not own is proxied |
 
 ## Strategy
 
