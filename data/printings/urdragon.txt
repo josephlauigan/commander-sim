@@ -23,7 +23,6 @@
 1 Field of the Dead (spg) 28
 1 Fierce Guardianship (cmm) 694
 1 Flooded Strand (mh3) 353
-1 Forest (mdd) 301
 1 Ganax, Astral Hunter (clb) 176
 1 Garth One-Eye (mh2) 420
 1 Giver of Runes (plst) MH1-13
@@ -40,6 +39,7 @@
 1 Mana Vault (3ed) 263
 1 Marsh Flats (mh2) 437
 1 Miirym, Sentinel Wyrm (sld) 2500
+1 Minas Tirith (hoc) 49
 1 Mithril Coat (hoc) 43
 1 Morophon, the Boundless (m3c) 157
 1 Mox Jasper (tdm) 325

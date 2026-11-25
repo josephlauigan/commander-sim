@@ -9,7 +9,7 @@ Dragons (Utvara Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lig
 (Urza's Incubator, Dragonspeaker Shaman, Sapphire Medallion, the two Talismans, Sylvan Library and Jeska's Will) gets the commander and its
 engine out earlier, and a protection and draw package (Mithril Coat, Giver of Runes, The Theorist and Tymna the Weaver) keeps the key permanent alive and refills the
 hand; Rhythm of the Wild makes every creature spell uncounterable. The deck is weak to board wipes and mass bounce after it
-has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (one basic land). Nothing in this document has been simulated yet.
+has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (no basic land). Nothing in this document has been simulated yet.
 
 | | |
 |---|---|
@@ -173,7 +173,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
   for the loot.
 - **Birds of Paradise, Llanowar Elves, Elvish Mystic, Delighted Halfling:** one-mana dorks. The Halfling makes any colour
   for a legendary spell (The Ur-Dragon, Garth, Tiamat, Miirym, Smaug...) and that spell can't be countered.
-- **Nature's Lore, Three Visits:** each fetches a Forest dual (a shock land costs 2 life to enter untapped; a basic Forest is also a legal find), which fixes colours and adds
+- **Nature's Lore, Three Visits:** each fetches a Forest dual (a shock land costs 2 life to enter untapped; the deck has no basic Forest), which fixes colours and adds
   basic types for Scion of Draco.
 - **Rivaz of the Claw** ({1}{B}{R}): taps for two mana for Dragon spells, and lets you cast one Dragon from the
   graveyard each turn.
@@ -272,7 +272,7 @@ The matchup notes are expectations, not measured.
 | Board wipes | Keep Dragons in hand and hold Fierce Guardianship; Smaug the Impenetrable survives a destroy wipe, and Kyodai, flashed in, saves one other permanent from it; Rivaz and Tiamat rebuild; Mithril Coat, flashed in on a legendary creature, saves that one from a destroy wipe |
 | Creature-heavy midrange | Glorybringer, Thundermaw and the Dragon-enters damage clear blockers; Crux of Fate (non-Dragon mode) clears their board but not yours |
 | Artifact decks (Thanos, Urza, Kinnan) | Hellkite Tyrant takes their artifacts; Chaos Warp answers the key one |
-| Stax / Blood Moon | Fetch the basic (Forest) first; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
+| Stax / Blood Moon | Under Blood Moon every land here makes only {R} (there is no basic), so lean on the rocks and dorks for the other colours; cast Dromoka to dodge counterspells; Cavern of Souls names Dragon |
 
 ### Life management
 
@@ -288,28 +288,30 @@ already have.
 - Casting Twinflame into open blue mana without Fierce Guardianship or Dromoka.
 - Paying for The Ur-Dragon (nine) when Morophon and Rivaz would let you cast it and the Dragons you hold in the
   same turn for less.
-- Fetching a basic when a dual would fix more colours: a fetch finds any land with one of its two basic types, so pick
+- Fetching a land that adds a colour you already have: a fetch finds any land with one of its two basic types, so pick
   the dual (or shock) that adds the colour you lack.
 - Going to combat into a Settle the Wreckage or Aetherize pattern with no Fierce Guardianship up.
 
 ## Mana
 
-33 lands: 32 nonbasic and 1 basic (Forest). Ten original duals (Tundra, Underground Sea, Badlands,
+33 lands, all nonbasic (the deck has no basic land). Ten original duals (Tundra, Underground Sea, Badlands,
 Taiga, Savannah, Scrubland, Volcanic Island, Bayou, Plateau, Tropical Island), seven fetches, five shocks (Blood Crypt,
 Steam Vents, Stomping Ground, Overgrown Tomb, Sacred Foundry), Command Tower, City of Brass, Path of Ancestry (enters
 tapped, any colour, scries when it pays for a Dragon creature spell), Maelstrom of the Spirit Dragon (any colour for
 Dragon spells; {4}, {T}, sacrifice it to fetch a Dragon), Sokenzan, Crucible of Defiance ({R}; channel it for two hasty
 1/1s), Sulfurous Springs ({B} or {R} for 1 damage), Exotic Orchard (any colour an opponent's land could produce),
+Minas Tirith (a legendary land that taps for {W}; it enters tapped unless you control a legendary creature, and {1}{W}, {T}: draw a card, only if you attacked with two or more creatures this turn),
 Cavern of Souls, Ancient Tomb and Field of the Dead (enters tapped, makes {C}, and creates a 2/2 Zombie whenever a land
-enters while you control seven or more lands with different names; almost every land here has its own name). A fetch finds any dual or basic that shares a type, so every colour is reachable
-(Springs, Orchard and the other nonbasics without a land type cannot be fetched): land sources by colour are white 15,
-blue 15, black 17, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
+enters while you control seven or more lands with different names; almost every land here has its own name). A fetch finds any dual or shock that shares a type, so every colour is reachable
+(Springs, Orchard, Minas Tirith and the other lands without a land type cannot be fetched): land sources by colour are white 16,
+blue 15, black 17, red 20 and green 16, counting the fetches and the three any-colour lands, with
 Maelstrom adding one more of each for Dragon spells and Orchard adding what the table's lands make. Red is the heaviest
 colour (RR on most Dragons, RRR on Scourge of Valkas), then green and black; white and blue are the thinnest, for
 Niv-Mizzet and The Theorist ({U}{U}), Fact or Fiction, Tymna and Giver of Runes. Add the mana creatures and rocks (Talisman of Hierarchy makes {W} or {B}, Talisman of Curiosity {G} or {U}): Arcane Signet, Birds, Mox Jasper (with a
 Dragon out) and Delighted Halfling make any colour, and Treasures from Goldspan, Ganax, Smaug and
-Old Gnawbone fix the rest. The one basic is thin protection against Blood
-Moon (fetch it first; it makes only green).
+Old Gnawbone fix the rest. The deck has 17 legendary creatures besides the commander, so Minas Tirith
+enters untapped once one is out. With no basic land, a Blood Moon turns every land in the deck into a Mountain that makes only {R}: red is the
+only colour the lands make, and the other four come from the rocks, the mana creatures and Treasures.
 
 ## Bracket and Rule 0
 
@@ -331,7 +333,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Sorceries (7).** Crux of Fate, Demonic Tutor, Jeska's Will, Nature's Lore, Nibelheim Aflame, Three Visits, Twinflame
 
-**Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Field of the Dead, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest
+**Lands (33).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Blood Crypt, Cavern of Souls, City of Brass, Command Tower, Exotic Orchard, Field of the Dead, Flooded Strand, Maelstrom of the Spirit Dragon, Marsh Flats, Minas Tirith, Overgrown Tomb, Path of Ancestry, Plateau, Polluted Delta, Sacred Foundry, Savannah, Scalding Tarn, Scrubland, Sokenzan, Crucible of Defiance, Steam Vents, Stomping Ground, Sulfurous Springs, Taiga, Tropical Island, Tundra, Underground Sea, Volcanic Island, Windswept Heath, Wooded Foothills
 
 **Planeswalkers (1).** The Theorist, Jace Beleren
 
@@ -379,6 +381,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Mana Vault
 1 Marsh Flats
 1 Miirym, Sentinel Wyrm
+1 Minas Tirith
 1 Mithril Coat
 1 Morophon, the Boundless
 1 Mox Jasper
@@ -437,5 +440,4 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
-1 Forest
 ```
