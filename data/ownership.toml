@@ -14,7 +14,7 @@
 # Mithril Coat, Giver of Runes, Tymna, Deadly Rollick, The Theorist and Sapphire Medallion (entered as proxy in the Ur-Dragon and Sheoldred decks while
 # their donor decks lived) are now `have` there. The Karn deck is unconfirmed: JD has not marked its cards one by one.
 # 2026-11-24 (JD): Karn deck list change: Deflecting Swat and Generous Gift out (owned, now spares), Yoshimaru, Ever Faithful in as `have` and Giver of Runes in as `proxy` (JD owns one Giver of Runes: it stays `have` in the Ur-Dragon).
-# 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (listed as `have`, ownership not yet confirmed by JD).
+# 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (JD confirmed on 2026-11-24 that he owns them: `have`; his printings are not known).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
