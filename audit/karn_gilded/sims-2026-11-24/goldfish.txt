@@ -1,0 +1,79 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  karn_gilded  100 cards: Full 93, Full-auto 4, Approximate 3, Partial 0, Unmodeled 0
+
+
+=== Karn, Gilded Guardian (karn_gilded) goldfish [lookahead AI, 500 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.1 (over the 498 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.8%  T4 2.6%  T5 7.6%  T6 15.6%  T7 29.6%  T8 44.6%
+  no kill by round 20: 0.4% (of which the deck itself lost: 0.2% of games)
+How it won (share of kills): combo (unnamed) 88.6%, damage 11.2%, commander damage 0.2%
+Mulligans: kept 7 cards 94.2% (no mulligan 76.2%, the free mulligan 18.0%), 6 cards 5.0%, 5 or fewer 0.8%
+Ready turn (the plan came online): median 9.0, mean 8.6, reached in 78.6% of games
+Protection on the kill turn: 69.7% of kills held a protection card or had a cast lock in force
+  counted (6): Counterspell, Ephemerate, Force of Will, Restoration Angel, Silence, Teferi's Protection
+Commander cast: 79.8% of games, median own turn 5.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 4568 (9.14 a game; 1996 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     10.9%        0.7%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          1.6%        0.2%      0.14
+  no_land_drop             0.8%        0.1%      0.07
+  mana_short              16.6%       32.6%      1.51
+  progressed              68.7%       66.0%      6.28
+  idle                     1.4%        0.5%      0.13
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 46%, fast mana / rock 19%, tutor 11%, combo piece 10%, land only 5%, draw 5%, protection 2%, abilities only 1%
+    on turns 1-4: other 46%, fast mana / rock 27%, tutor 12%, combo piece 6%, land only 5%, draw 4%, protection 1%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 12 (11%), tutor 1 (1%), fast mana / rock 34 (32%), draw 4 (4%), other 56 (52%)
+    most passed: Gleaming Splendor 10, The Soul Stone 7, Giver of Runes 6, Demonic Consultation 6, Cursed Mirror 6, Herd Heirloom 5, The Mind Stone 4, Gold-Forged Thopteryx 4, Teleportation Circle 4, Baleful Strix 4, Coalition Relic 4, Sanguine Bond 3
+  payable but never offered as a play (card-turns; in 65.0% of turns): combo piece 1502 (22%), tutor 532 (8%), draw 33 (0%), protection 2202 (33%), other 2489 (37%)
+    most held: Thassa's Oracle 797, Path to Exile 522, Silence 475, Swords to Plowshares 470, Teferi's Protection 468, Demonic Consultation 455, Anguished Unmaking 426, Sword of Feast and Famine 381, Counterspell 338, Restoration Angel 309, Ephemerate 308, Force of Will 304
+  ready_not_taken, the line ready: Thassa's Oracle + Demonic Consultation / Tainted Pact 1
+    chosen at decisions with a line ready (before going for one): combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 194, combo: Sanguine Bond + Exquisite Blood 131, combo: Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 54, combo: Doomsday + Thassa's Oracle 14, Doomsday (unlocked line, 1 spells) 2, Doomsday (locked line, 2 spells) 1, Demonic Consultation 1
+Cleanup discards to 7: 1350 (2.70 a game, in 49.2% of games); combo pieces 0 (in 0.0% of games); 37 that ai::discard_keep would have kept
+  by role: tutor 13 (1%), fast mana / rock 109 (8%), draw 42 (3%), protection 58 (4%), land 510 (38%), other 618 (46%)
+  most discarded: Swords to Plowshares 55, Anguished Unmaking 50, Farewell 49, Path to Exile 48, Exsanguinate 48, Silence 46, Akroma's Will 44, Sword of Feast and Famine 35, Necropotence 27, Wooded Foothills 25, Thought Vessel 25, Teleportation Circle 23
+  median kill turn: games with a combo piece discarded - (0 games), without 9.0 (500 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 87 (0.17 a game; 4 on turns 1-4; 0 with a line ready) | < 0: 6, 0-3: 22, 3-6: 34, 6-10: 24, >= 10: 1
+      best other option: Cloudshift 5, Flickerwisp 5, Felidar Guardian 4, Ephemerate (blink Haliya, Guided by Light) 4, Ringsight 3, The One Ring 3, The Wind Crystal 3, Shorikai, Genesis Engine ability 3
+      look-ahead score, best other minus stop: mean -3.19; within 1 point of the stop 34 of 87
+  main 1 look-ahead "stop (hold mana)": 140 (0.28 a game; 3 on turns 1-4; 0 with a line ready) | < 0: 4, 0-3: 124, 3-6: 6, 6-10: 6
+      best other option: Shorikai, Genesis Engine ability 28, Teferi, Time Raveler +1 25, Herd Heirloom 12, The One Ring 7, Baleful Strix 6, Giver of Runes 6, Teferi, Time Raveler 5, Gold-Forged Thopteryx 5
+      look-ahead score, best other minus stop: mean -0.49; within 1 point of the stop 101 of 139
+  main 1 heuristic  "stop": 3859 (7.72 a game; 1965 on turns 1-4; 0 with a line ready) | nothing else offered: 3859
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 64 (0.13 a game; 11 on turns 1-4; 0 with a line ready) | nothing else offered: 64
+      best other option: -
+  main 2 look-ahead "stop": 14 (0.03 a game; 1 on turns 1-4; 0 with a line ready) | 0-3: 5, 3-6: 4, 6-10: 5
+      best other option: Demonic Consultation 4, Shorikai, Genesis Engine ability 3, Breya 2, harness The Mind Stone 2, Coalition Relic 1, Felidar Guardian 1, Necropotence 1
+      look-ahead score, best other minus stop: mean -10.74; within 1 point of the stop 5 of 14
+  main 2 look-ahead "stop (hold mana)": 114 (0.23 a game; 3 on turns 1-4; 0 with a line ready) | < 0: 7, 0-3: 104, 3-6: 3
+      best other option: Shorikai, Genesis Engine ability 26, Teferi, Time Raveler +1 21, Giver of Runes 6, The One Ring 6, Orcish Bowmasters 5, Teferi, Time Raveler 5, Baleful Strix 5, Herd Heirloom 4
+      look-ahead score, best other minus stop: mean -1.33; within 1 point of the stop 80 of 113
+  main 2 heuristic  "stop": 3878 (7.76 a game; 1968 on turns 1-4; 0 with a line ready) | nothing else offered: 3878
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 66 (0.13 a game; 11 on turns 1-4; 0 with a line ready) | nothing else offered: 66
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 19.2% of games, median own turn 8.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 1.0%  T4 1.6%  T5 3.0%  T6 4.6%
+  lines: Doomsday + Thassa's Oracle 31, Thassa's Oracle + Demonic Consultation / Tainted Pact 29, Sanguine Bond + Exquisite Blood 23, Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 13
+  kill turn - best case (96 games with both): median 1.0, mean 1.51; < 0: 0.0%, 0: 35.4%, 1: 41.7%, 2: 5.2%, 3: 5.2%, 4-5: 7.3%, 6+: 5.2%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 82.0% of games, median own turn 7.0
+  best case by turn (share of all games): T1 0.0%  T2 1.2%  T3 4.2%  T4 10.2%  T5 20.2%  T6 34.4%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 305, Sanguine Bond + Exquisite Blood 42, Doomsday + Thassa's Oracle 37, Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 26
+  kill turn - best case (408 games with both): median 2.0, mean 2.29; < 0: 0.0%, 0: 13.7%, 1: 35.8%, 2: 20.8%, 3: 9.6%, 4-5: 11.3%, 6+: 8.8%
+  games with a best case and no kill by the round cap: 2
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 70.4% of games, median own turn 8.0
+  best case by turn (share of all games): T1 0.0%  T2 0.8%  T3 3.2%  T4 6.6%  T5 12.4%  T6 20.4%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 214, Sanguine Bond + Exquisite Blood 63, Doomsday + Thassa's Oracle 39, Vito / Enduring Tenacity / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 36
+  kill turn - best case (350 games with both): median 1.0, mean 1.50; < 0: 0.0%, 0: 33.1%, 1: 37.1%, 2: 11.1%, 3: 7.7%, 4-5: 6.0%, 6+: 4.9%
+  games with a best case and no kill by the round cap: 2
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  karn_gilded                            9.0    9.1    0.0%    0.0%    0.8%     0.4%       69.7%
+
+(10s total)

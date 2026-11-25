@@ -1,0 +1,245 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Fatal Push [pool] I B :: rem=destroy tgt=c mv4
+   Propaganda [pool] E 2U :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Toxic Deluge: Full (X = the biggest opposing toughness worth killing (max 10))
+  Austere Command: Full (tags: `wipe=austere2`)
+  Fatal Push: Full (destroys MV 2 or less, or MV 4 or less with revolt (a permanent of yours left the battlefield this turn))
+  Propaganda: Full ()
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  karn_gilded                 100 cards: Full 93, Full-auto 4, Approximate 3, Partial 0, Unmodeled 0
+  karn_gilded (swapped)       100 cards: Full 94, Full-auto 4, Approximate 2, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 435, Full-auto 37, Approximate 28, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by karn_gilded's AI?
+  AI: Toxic Deluge: priority 0 (generic), cast as a response / removal only
+  AI: Austere Command: priority 0 (generic), cast as a response / removal only
+  AI: Fatal Push: priority 0 (generic), cast as a response / removal only
+  AI: Propaganda: priority 55 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t4), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 4 (Low B4)
+  dry run: Toxic Deluge: drawn in 25.0% of games (50), cast in 68.0% of those (34)
+  dry run: Austere Command: drawn in 24.5% of games (49), cast in 28.6% of those (14)
+  dry run: Fatal Push: drawn in 21.0% of games (42), cast in 73.8% of those (31)
+  dry run: Propaganda: drawn in 17.5% of games (35), cast in 62.9% of those (22)
+
+6,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 13 minutes
+Swaps: Shorikai, Genesis Engine -> Toxic Deluge; The One Ring -> Austere Command; Coalition Relic -> Fatal Push; Counterspell -> Propaganda
+
+=== Karn, Gilded Guardian vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.6% ->  25.9%  (delta +2.3 pts, noise ±2.4, paired)   n=1500
+               eliminated by (variant): Yuriko 12.2%  Edgar Markov 17.5%  Prosper 13.9%  Chulane 10.7%  Krenko 19.9%
+               game ends (baseline): timeout 0 (0.0%), engine step cap 0, no winner 0
+               game ends (variant):  timeout 2 (0.1%), engine step cap 0, no winner 0
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (karn_gilded) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for karn_gilded: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.6% ->  25.9%  +2.3pt   ±3.1 
+    Rounds survived (or game length)                   7.82 ->   8.14   +0.32  ±0.16*
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.72 ->   0.74   +0.02  ±0.07 
+    Mana available on your turn 4                      4.14 ->   4.08   -0.06  ±0.08 
+    Mana available on your turn 6                      5.82 ->   5.67   -0.15  ±0.16 
+
+  Speed
+    Games where the game plan came online             24.3% ->  25.1%  +0.9pt   ±3.1 
+    Turn the game plan came online                     7.37 ->   7.60   +0.23  ±0.35 
+    Turn the commander first resolved                  5.98 ->   6.18   +0.20  ±0.16*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.96 ->  12.18   -0.78  ±0.69*
+    Tutors resolved per game                           0.98 ->   0.98   +0.00  ±0.07 
+    Spells cast per game                               8.27 ->   8.56   +0.29  ±0.35 
+
+  Interaction
+    Counterspells cast                                 0.21 ->   0.13   -0.08  ±0.03*
+    Spot removal cast                                  0.49 ->   0.61   +0.12  ±0.05*
+    Board wipes cast                                   0.09 ->   0.29   +0.20  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.50 ->   0.54   +0.03  ±0.06 
+    Your spells countered                              0.26 ->   0.27   +0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                 6.75 ->   7.48   +0.73  ±0.86 
+      ...of which combat damage                        5.84 ->   6.41   +0.57  ±0.71 
+      ...of which drain triggers                       0.41 ->   0.50   +0.08  ±0.23 
+      ...of which other triggers                       0.49 ->   0.57   +0.08  ±0.16 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the commander first resolved (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+    better - Spot removal cast (both profiles)
+    better - Board wipes cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Toxic Deluge                          19.0      69.8         5.6     30.2       22.1      0.00
+    Austere Command                       17.8      42.3         7.1     57.7       29.2      0.00
+    Fatal Push                            19.3      66.4         5.2     33.6       22.9      0.00
+    Propaganda                            19.7      70.9         5.7     29.1       34.3      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Shorikai, Genesis Engine              19.5      59.4         5.4     40.6       19.0      0.01
+    The One Ring                          19.6      74.8         5.7     25.2       20.5      0.01
+    Coalition Relic                       19.5      63.4         4.2     36.6       20.5      0.02
+    Counterspell                          20.5      41.4         6.8     58.6       20.5      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.6      25.9     +2.3
+    rounds survived                                   7.82      8.14    +0.32
+    eliminated, % of games                            76.4      74.1     -2.3
+    opponents it eliminated, per game                 0.67      0.73    +0.07
+    damage dealt, per game                             6.7       7.5     +0.7
+    commander resolved by turn 4, %                    7.8       7.7     -0.1
+    commander resolved by turn 6, %                   38.1      36.3     -1.9
+    commander removals, per game                      0.31      0.34    +0.03
+    lands on the battlefield, turn 4                  3.62      3.62    -0.01
+    lands on the battlefield, turn 8                  6.09      5.98    -0.11
+    mana available, turn 4                            4.14      4.08    -0.06
+    mana available, turn 8                            7.38      7.28    -0.10
+    cards in hand after the land drop, turn 4         5.40      5.35    -0.04
+    cards in hand after the land drop, turn 8         5.82      5.43    -0.39
+    wins by (current):  combo 94%, damage 6%
+    wins by (swapped):  combo 92%, damage 7%, timeout 0%
+    eliminated by (current): Krenko via combat 13.0%, Edgar Markov via combat 9.9%, Yuriko via triggers 9.0%, Chulane via combo 8.2%
+    eliminated by (swapped): Krenko via combat 12.9%, Edgar Markov via combat 9.5%, Chulane via combo 9.3%, Yuriko via triggers 8.5%
+  progress 100.0%  26m28s elapsed, ~0m00s left
+Swaps: Shorikai, Genesis Engine -> Toxic Deluge; The One Ring -> Austere Command; Coalition Relic -> Fatal Push; Counterspell -> Propaganda
+
+=== Karn, Gilded Guardian vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  20.1% ->  20.4%  (delta +0.3 pts, noise ±2.4, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 13.9%  Miirym 18.5%  Yawgmoth 11.9%  Kinnan 19.1%  Urza 16.1%
+               game ends (baseline): timeout 4 (0.3%), engine step cap 0, no winner 1
+               game ends (variant):  timeout 13 (0.9%), engine step cap 0, no winner 2
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (karn_gilded) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for karn_gilded: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          20.1% ->  20.4%  +0.3pt   ±2.9 
+    Rounds survived (or game length)                   8.30 ->   8.58   +0.29  ±0.22*
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.68 ->   0.68   -0.00  ±0.06 
+    Mana available on your turn 4                      4.16 ->   4.13   -0.04  ±0.09 
+    Mana available on your turn 6                      5.93 ->   5.86   -0.07  ±0.34 
+
+  Speed
+    Games where the game plan came online             22.2% ->  20.5%  -1.7pt   ±3.0 
+    Turn the game plan came online                     8.16 ->   8.27   +0.11  ±0.48 
+    Turn the commander first resolved                  6.26 ->   6.22   -0.04  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.39 ->  13.35   -1.04  ±0.84*
+    Tutors resolved per game                           0.90 ->   0.88   -0.02  ±0.06 
+    Spells cast per game                               9.02 ->   9.32   +0.30  ±0.42 
+
+  Interaction
+    Counterspells cast                                 0.27 ->   0.14   -0.13  ±0.03*
+    Spot removal cast                                  0.54 ->   0.67   +0.14  ±0.05*
+    Board wipes cast                                   0.09 ->   0.32   +0.23  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.01  ±0.01*
+    Your key permanents removed by opponents           0.39 ->   0.43   +0.04  ±0.06 
+    Your spells countered                              0.66 ->   0.66   -0.00  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                10.61 ->  10.35   -0.27  ±1.17 
+      ...of which combat damage                        9.18 ->   9.18   -0.00  ±0.99 
+      ...of which drain triggers                       0.68 ->   0.56   -0.12  ±0.27 
+      ...of which other triggers                       0.75 ->   0.61   -0.14  ±0.21 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    better - Rounds survived (or game length) (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (both profiles)
+    better - Spot removal cast (both profiles)
+    better - Board wipes cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Toxic Deluge                          21.3      59.9         6.0     40.1       21.5      0.00
+    Austere Command                       20.0      44.0         7.9     56.0       26.5      0.00
+    Fatal Push                            20.1      76.4         6.0     23.6       25.2      0.00
+    Propaganda                            21.3      62.8         5.7     37.2       21.9      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Shorikai, Genesis Engine              22.4      57.4         5.9     42.6       26.9      0.00
+    The One Ring                          20.1      63.8         6.4     36.2       26.0      0.01
+    Coalition Relic                       22.2      59.8         5.1     40.2       21.6      0.01
+    Counterspell                          23.3      53.3         7.1     46.7       26.9      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        20.1      20.4     +0.3
+    rounds survived                                   8.30      8.58    +0.29
+    eliminated, % of games                            79.8      79.4     -0.4
+    opponents it eliminated, per game                 0.58      0.58    +0.01
+    damage dealt, per game                            10.6      10.3     -0.3
+    commander resolved by turn 4, %                    8.1       9.3     +1.2
+    commander resolved by turn 6, %                   34.9      35.3     +0.5
+    commander removals, per game                      0.18      0.21    +0.03
+    lands on the battlefield, turn 4                  3.64      3.64    +0.01
+    lands on the battlefield, turn 8                  6.18      6.04    -0.13
+    mana available, turn 4                            4.16      4.13    -0.04
+    mana available, turn 8                            7.47      7.21    -0.26
+    cards in hand after the land drop, turn 4         5.30      5.29    -0.02
+    cards in hand after the land drop, turn 8         5.89      5.44    -0.45
+    wins by (current):  combo 92%, damage 8%
+    wins by (swapped):  combo 88%, damage 11%, timeout 2%
+    eliminated by (current): Kinnan via combo 14.7%, Urza via combo 14.4%, Miirym via combat 10.7%, Zur the Enchanter via combo 9.6%
+    eliminated by (swapped): Urza via combo 14.6%, Kinnan via combo 14.5%, Miirym via combat 10.7%, Zur the Enchanter via combo 9.9%
+
+(1588s total)

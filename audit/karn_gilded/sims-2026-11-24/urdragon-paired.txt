@@ -1,0 +1,166 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Triple Triad [pool] E 3RRR :: (no tags)
+   Cursed Mirror [scryfall] A 2R :: rock=1:R
+   Decimate [pool] S 2RG :: (no tags)
+   Rhythm of the Wild [scryfall] E 1RG :: (no tags)
+      not modeled: Creature spells you control can't be countered.
+      not modeled: Nontoken creatures you control have riot.
+   Deflecting Swat [scryfall] I 2R :: (no tags)
+   Scion of the Ur-Dragon [pool] C WUBRG :: leg pow=4 fly
+Model status of the swapped-in cards (cardgen audit):
+  Triple Triad: Full (your upkeep: each player exiles their top card; you play your own card and every other exiled card of lesser mana value free, at once in the upkeep, highest first (lands only while a land drop is left; no Auras or counterspells); opponents' cards stay theirs)
+  Austere Command: Full (tags: `wipe=austere2`)
+  Young Pyromancer: Full (tags: `pow=2 tgh=1 noatk shaman spelltok=1`)
+  Cursed Mirror: Full ({T}: add {R}; as it enters it may become a copy of a creature on the battlefield until end of turn, with haste, as a replacement effect (impls/t0_stella.rs mirror_copy, engine/zones.rs enter): the permanent is the copied card, so it has that creature's abilities and its enters triggers fire (and no mana ability while it is a copy); the Mirror card stays under it, goes to the graveyard as the Mirror, and the permanent is the Mirror again as the next turn starts (mirror_revert). The AI copies the creature worth most to copy when it has 3 power or is worth 5 or more; a person picks or declines. Sculpting Steel copying the Mirror, or a token copy of it, does the same)
+  Decimate: Full (needs an artifact, a creature, an enchantment and a land to target; destroys the best of each)
+  Rhythm of the Wild: Full (hand-written (impls/t3_korvold.rs): your creature spells can't be countered; riot on your nontoken creatures (haste when it can still attack this turn, else a +1/+1 counter))
+  Deflecting Swat: Full (free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response); a person casts it at the spell or ability they pick and picks its new target (human/protect.rs))
+  Scion of the Ur-Dragon: Full (flying; {2}: search for a Dragon permanent card (a changeling too) into the graveyard, and Scion becomes a copy of it until end of turn, then shuffle (impls/t6_scion.rs: the copied card's code and statics apply, Scion's own ability is gone, stacked activations all resolve, the copy ends as the next turn starts, no enters trigger since nothing enters). A person searches for any Dragon permanent card; the pool Ur-Dragon deck's Rivaz use now becomes the copy too. The AI: JD's decks turn Scion into Ancient Copper Dragon before an attack, then Korvold with a Treasure to feed it, and Prismari as a step of the storm line (t6_combos_scion.rs): a choice of Dragon, not a rules limit)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  urdragon                    100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  urdragon (swapped)          100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by urdragon's AI?
+  AI: Triple Triad: priority 40 (generic)
+  AI: Austere Command: priority 0 (generic), cast as a response / removal only
+  AI: Young Pyromancer: priority 41 (generic)
+  AI: Cursed Mirror: priority 83 (generic)
+  AI: Decimate: priority 60 (generic)
+  AI: Rhythm of the Wild: priority 55 (generic)
+  AI: Deflecting Swat: priority 0 (generic), cast as a response / removal only
+  AI: Scion of the Ur-Dragon: priority 69 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Triple Triad: drawn in 22.5% of games (45), cast in 22.2% of those (10)
+  dry run: Austere Command: drawn in 20.5% of games (41), cast in 39.0% of those (16)
+  dry run: Young Pyromancer: drawn in 22.0% of games (44), cast in 72.7% of those (32)
+  dry run: Cursed Mirror: drawn in 24.0% of games (48), cast in 58.3% of those (28)
+  dry run: Decimate: drawn in 27.0% of games (54), cast in 27.8% of those (15)
+  dry run: Rhythm of the Wild: drawn in 24.5% of games (49), cast in 53.1% of those (26)
+  dry run: Deflecting Swat: drawn in 20.0% of games (40), cast in 17.5% of those (7)
+  dry run: Scion of the Ur-Dragon: drawn in 23.0% of games (46), cast in 45.7% of those (21)
+
+3,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 7 minutes
+  progress 100.0%  10m05s elapsed, ~0m00s left
+Swaps: Mithril Coat -> Triple Triad; The Theorist, Jace Beleren -> Austere Command; Giver of Runes -> Young Pyromancer; Talisman of Curiosity -> Cursed Mirror; Dragonspeaker Shaman -> Decimate; Hellkite Courser -> Rhythm of the Wild; Tymna the Weaver -> Deflecting Swat; Sapphire Medallion -> Scion of the Ur-Dragon
+
+=== Ur-Dragon vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.0% ->  26.5%  (delta -2.5 pts, noise ±2.7, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 13.1%  Miirym 18.4%  Yawgmoth 10.3%  Kinnan 17.8%  Urza 13.9%
+               game ends (baseline): timeout 1 (0.1%), engine step cap 0, no winner 1
+               game ends (variant):  timeout 2 (0.1%), engine step cap 0, no winner 1
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (urdragon) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for urdragon: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.0% ->  26.5%  -2.5pt   ±3.3 
+    Rounds survived (or game length)                   8.31 ->   8.47   +0.16  ±0.19 
+
+  Mana & consistency
+    Extra mulligans per game                           0.32 ->   0.35   +0.03  ±0.06 
+    Missed land drops, turns 1-5                       0.75 ->   0.77   +0.02  ±0.07 
+    Mana available on your turn 4                      4.80 ->   4.76   -0.04  ±0.10 
+    Mana available on your turn 6                      7.02 ->   6.61   -0.41  ±0.32*
+
+  Speed
+    Games where the game plan came online              0.1% ->   0.0%  -0.1pt   ±0.1 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  7.25 ->   7.35   +0.10  ±0.22 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.85 ->  15.03   -0.82  ±0.85 
+    Tutors resolved per game                           0.38 ->   0.39   +0.01  ±0.04 
+    Spells cast per game                              10.49 ->  10.10   -0.40  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.10 ->   0.09   -0.01  ±0.02 
+    Spot removal cast                                  0.62 ->   0.60   -0.01  ±0.05 
+    Board wipes cast                                   0.10 ->   0.19   +0.09  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.61 ->   0.61   -0.00  ±0.07 
+    Your spells countered                              0.49 ->   0.49   +0.00  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                48.04 ->  42.58   -5.46  ±4.55*
+      ...of which combat damage                       32.60 ->  30.18   -2.42  ±3.02 
+      ...of which magecraft / burn                     0.34 ->   0.32   -0.02  ±0.30 
+      ...of which drain triggers                       0.01 ->   0.02   +0.01  ±0.03 
+      ...of which other triggers                      15.10 ->  12.06   -3.04  ±2.60*
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Board wipes cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Triple Triad                          18.9      17.0         8.1     83.0       68.8      0.00
+    Austere Command                       18.8      46.5         7.4     53.5       45.8      0.00
+    Young Pyromancer                      21.3      62.2         5.3     37.8       36.2      0.01
+    Cursed Mirror                         21.8      66.1         5.3     33.9       31.5      0.00
+    Decimate                              20.0      39.7         6.7     60.3       33.6      0.00
+    Rhythm of the Wild                    18.5      50.7         6.2     49.3       41.8      0.01
+    Deflecting Swat                       22.2      13.8         7.5     86.2       45.7      0.00
+    Scion of the Ur-Dragon                21.6      36.1         7.7     63.9       56.4      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mithril Coat                          20.4      67.0         6.1     33.0       45.4      0.01
+    The Theorist, Jace Beleren            20.5      39.4         6.4     60.6       57.9      0.03
+    Giver of Runes                        21.7      61.2         5.1     38.8       34.2      0.00
+    Talisman of Curiosity                 24.4      69.4         4.1     30.6       38.6      0.00
+    Dragonspeaker Shaman                  21.1      45.9         5.7     54.1       40.7      0.00
+    Hellkite Courser                      21.9      60.7         6.5     39.3       57.8      0.02
+    Tymna the Weaver                      21.6      45.7         5.9     54.3       39.2      0.01
+    Sapphire Medallion                    22.5      66.2         5.0     33.8       32.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.0      26.5     -2.5
+    rounds survived                                   8.31      8.47    +0.16
+    eliminated, % of games                            71.0      73.5     +2.5
+    opponents it eliminated, per game                 0.88      0.82    -0.06
+    damage dealt, per game                            48.0      42.6     -5.5
+    commander resolved by turn 4, %                    2.3       2.4     +0.1
+    commander resolved by turn 6, %                   20.1      17.3     -2.7
+    commander removals, per game                      0.14      0.13    -0.02
+    lands on the battlefield, turn 4                  3.73      3.72    -0.01
+    lands on the battlefield, turn 8                  6.32      6.20    -0.12
+    mana available, turn 4                            4.80      4.76    -0.04
+    mana available, turn 8                            9.56      9.06    -0.50
+    cards in hand after the land drop, turn 4         5.27      5.39    +0.12
+    cards in hand after the land drop, turn 8         5.12      4.92    -0.21
+    wins by (current):  damage 97%, alt 3%, combo 0%
+    wins by (swapped):  damage 97%, alt 2%, timeout 0%
+    eliminated by (current): Kinnan via combo 13.5%, Urza via combo 12.1%, Zur the Enchanter via combo 8.9%, Miirym via combat 8.7%
+    eliminated by (swapped): Kinnan via combo 13.7%, Urza via combo 12.3%, Zur the Enchanter via combo 9.4%, Miirym via combat 8.9%
+
+(606s total)

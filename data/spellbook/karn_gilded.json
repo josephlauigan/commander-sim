@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-24",
+  "fetched": "2026-11-25",
   "deck": "karn_gilded",
   "commanders": [
     "Karn, Gilded Guardian"
   ],
-  "request_sha256": "9f7c1786535c7c4da0995eb021bcd2408cca47b124042bed1dfdcaa6d665e03f",
+  "request_sha256": "d7f951c2c233c5228f4e95c2800b82932f9b57a9192c80426ea189c6be040dd0",
   "identity": "WUBRG",
   "included": [
     {
@@ -92,30 +92,6 @@
       "popularity": 128160
     },
     {
-      "id": "1090-2781",
-      "cards": [
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 56486
-    },
-    {
       "id": "1295-3189",
       "cards": [
         {
@@ -140,30 +116,6 @@
       "bracket": "S",
       "legal": true,
       "popularity": 14714
-    },
-    {
-      "id": "2781-5291",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3480
     }
   ],
   "included_by_changing_commanders": [],
@@ -380,6 +332,33 @@
       "popularity": 57649,
       "missing": [
         "Aetherflux Reservoir"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 56486,
+      "missing": [
+        "Felidar Guardian"
       ]
     },
     {
@@ -602,43 +581,6 @@
       ]
     },
     {
-      "id": "2781-4605-5144",
-      "cards": [
-        {
-          "name": "Preston, the Vanisher",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ephemerate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite mana lands you control that enter the battlefield untapped can produce",
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Ephemerate.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 21320,
-      "missing": [
-        "Preston, the Vanisher"
-      ]
-    },
-    {
       "id": "314-4996",
       "cards": [
         {
@@ -763,42 +705,6 @@
       ]
     },
     {
-      "id": "372-2781-5144",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ephemerate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16951,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
-      ]
-    },
-    {
       "id": "372-1090-3603",
       "cards": [
         {
@@ -830,79 +736,6 @@
       "bracket": "S",
       "legal": true,
       "popularity": 16678,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
-      ]
-    },
-    {
-      "id": "2781-3603-4605",
-      "cards": [
-        {
-          "name": "Preston, the Vanisher",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite mana lands you control that enter the battlefield untapped can produce",
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Cloudshift.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 16672,
-      "missing": [
-        "Preston, the Vanisher"
-      ]
-    },
-    {
-      "id": "372-2781-3603",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 15376,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1090,35 +923,6 @@
       ]
     },
     {
-      "id": "618-2781",
-      "cards": [
-        {
-          "name": "Kiki-Jiki, Mirror Breaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 12564,
-      "missing": [
-        "Kiki-Jiki, Mirror Breaker"
-      ]
-    },
-    {
       "id": "3779-6323",
       "cards": [
         {
@@ -1269,33 +1073,6 @@
       ]
     },
     {
-      "id": "2781-3734",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Metamorph",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Phyrexian Metamorph.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 10427,
-      "missing": [
-        "Phyrexian Metamorph"
-      ]
-    },
-    {
       "id": "1068-1295",
       "cards": [
         {
@@ -1434,60 +1211,6 @@
       "popularity": 9560,
       "missing": [
         "Jace, Wielder of Mysteries"
-      ]
-    },
-    {
-      "id": "2781-4200",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Icewind Stalwart",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 9421,
-      "missing": [
-        "Icewind Stalwart"
-      ]
-    },
-    {
-      "id": "2781-3908",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spark Double",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Spark Double.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 9392,
-      "missing": [
-        "Spark Double"
       ]
     },
     {
@@ -1860,33 +1583,6 @@
       ]
     },
     {
-      "id": "193-2781",
-      "cards": [
-        {
-          "name": "Aminatou, the Fateshifter",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Aminatou has at least two loyalty counters.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6596,
-      "missing": [
-        "Aminatou, the Fateshifter"
-      ]
-    },
-    {
       "id": "4682-6441-7890",
       "cards": [
         {
@@ -1953,33 +1649,6 @@
       ]
     },
     {
-      "id": "2781-4089",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Glasspool Mimic // Glasspool Shore",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Glasspool Mimic // Glasspool Shore.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5807,
-      "missing": [
-        "Glasspool Mimic // Glasspool Shore"
-      ]
-    },
-    {
       "id": "147-3603",
       "cards": [
         {
@@ -2038,60 +1707,6 @@
       ]
     },
     {
-      "id": "2781-4753",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Clever Impersonator",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Clever Impersonator.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5349,
-      "missing": [
-        "Clever Impersonator"
-      ]
-    },
-    {
-      "id": "2781-3668",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flesh Duplicate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Flesh Duplicate.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5309,
-      "missing": [
-        "Flesh Duplicate"
-      ]
-    },
-    {
       "id": "4682-6753-7890",
       "cards": [
         {
@@ -2129,39 +1744,6 @@
       ]
     },
     {
-      "id": "1938-2781-3603",
-      "cards": [
-        {
-          "name": "Glorious Protector",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4791,
-      "missing": [
-        "Glorious Protector"
-      ]
-    },
-    {
       "id": "4682-7824-7890",
       "cards": [
         {
@@ -2196,33 +1778,6 @@
       "popularity": 4779,
       "missing": [
         "Bard, King of Dale"
-      ]
-    },
-    {
-      "id": "1621-2781",
-      "cards": [
-        {
-          "name": "Wispweaver Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4606,
-      "missing": [
-        "Wispweaver Angel"
       ]
     },
     {
@@ -2319,34 +1874,6 @@
       ]
     },
     {
-      "id": "2719-2781",
-      "cards": [
-        {
-          "name": "Sakashima of a Thousand Faces",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{U} plus commander tax if applicable",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4124,
-      "missing": [
-        "Sakashima of a Thousand Faces"
-      ]
-    },
-    {
       "id": "900-3398",
       "cards": [
         {
@@ -2417,33 +1944,6 @@
       ]
     },
     {
-      "id": "2781-6913",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chameleon, Master of Disguise",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3912,
-      "missing": [
-        "Chameleon, Master of Disguise"
-      ]
-    },
-    {
       "id": "1295-3367",
       "cards": [
         {
@@ -2505,30 +2005,30 @@
       ]
     },
     {
-      "id": "804-2781",
+      "id": "2781-5291",
       "cards": [
-        {
-          "name": "Sakashima the Impostor",
-          "zones": [
-            "H"
-          ]
-        },
         {
           "name": "Felidar Guardian",
           "zones": [
             "B"
           ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
         }
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "You have enough mana to cast Sakashima the Impostor.",
-      "mana": "",
+      "prerequisites": "",
+      "mana": "{2}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 3533,
+      "popularity": 3480,
       "missing": [
-        "Sakashima the Impostor"
+        "Felidar Guardian"
       ]
     },
     {
@@ -2592,33 +2092,6 @@
       "popularity": 3254,
       "missing": [
         "Rowan, Scion of War"
-      ]
-    },
-    {
-      "id": "2781-3680",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stunt Double",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Stunt Double.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2844,
-      "missing": [
-        "Stunt Double"
       ]
     },
     {
@@ -2721,62 +2194,6 @@
       ]
     },
     {
-      "id": "142-2781",
-      "cards": [
-        {
-          "name": "Saheeli Rai",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "Saheeli Rai has at least three loyalty counters on it.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2413,
-      "missing": [
-        "Saheeli Rai"
-      ]
-    },
-    {
-      "id": "1430-2781",
-      "cards": [
-        {
-          "name": "Mirror Image",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Mirror Image.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2407,
-      "missing": [
-        "Mirror Image"
-      ]
-    },
-    {
       "id": "2548-5141",
       "cards": [
         {
@@ -2801,87 +2218,6 @@
       "popularity": 2386,
       "missing": [
         "Obliterate"
-      ]
-    },
-    {
-      "id": "2781-3455",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vizier of Many Faces",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Vizier of Many Faces.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2371,
-      "missing": [
-        "Vizier of Many Faces"
-      ]
-    },
-    {
-      "id": "2781-4264",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Altered Ego",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Altered Ego.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2368,
-      "missing": [
-        "Altered Ego"
-      ]
-    },
-    {
-      "id": "2781-4284",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Clone",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Clone.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2343,
-      "missing": [
-        "Clone"
       ]
     },
     {
@@ -2997,33 +2333,6 @@
       "popularity": 2127,
       "missing": [
         "Worldfire"
-      ]
-    },
-    {
-      "id": "2781-6558",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Naga Fleshcrafter",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Naga Fleshcrafter.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2109,
-      "missing": [
-        "Naga Fleshcrafter"
       ]
     },
     {
@@ -3149,33 +2458,6 @@
       ]
     },
     {
-      "id": "745-2781",
-      "cards": [
-        {
-          "name": "Mirrorhall Mimic // Ghastly Mimicry",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Mirrorhall Mimic.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1992,
-      "missing": [
-        "Mirrorhall Mimic // Ghastly Mimicry"
-      ]
-    },
-    {
       "id": "1725-4761",
       "cards": [
         {
@@ -3230,33 +2512,6 @@
       "popularity": 1900,
       "missing": [
         "Requiem Monolith"
-      ]
-    },
-    {
-      "id": "2517-2781",
-      "cards": [
-        {
-          "name": "Parallax Wave",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "At least one fade counter on Parallax Wave.",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1868,
-      "missing": [
-        "Parallax Wave"
       ]
     },
     {
@@ -3321,33 +2576,6 @@
       "popularity": 1792,
       "missing": [
         "Doubling Season"
-      ]
-    },
-    {
-      "id": "2781-3122",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Undercover Operative",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Undercover Operative.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1701,
-      "missing": [
-        "Undercover Operative"
       ]
     },
     {
@@ -3417,66 +2645,6 @@
       ]
     },
     {
-      "id": "2781-2897",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gigantoplasm",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Gigantoplasm.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1569,
-      "missing": [
-        "Gigantoplasm"
-      ]
-    },
-    {
-      "id": "2781-4344-5144",
-      "cards": [
-        {
-          "name": "Lumbering Battlement",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Ephemerate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1551,
-      "missing": [
-        "Lumbering Battlement"
-      ]
-    },
-    {
       "id": "1328-5141",
       "cards": [
         {
@@ -3503,39 +2671,6 @@
       "popularity": 1448,
       "missing": [
         "Spellbinder"
-      ]
-    },
-    {
-      "id": "2781-3603-4344",
-      "cards": [
-        {
-          "name": "Lumbering Battlement",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1409,
-      "missing": [
-        "Lumbering Battlement"
       ]
     },
     {
@@ -3788,33 +2923,6 @@
       ]
     },
     {
-      "id": "2781-5241",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sakashima's Student",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Sakashima's Student.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1188,
-      "missing": [
-        "Sakashima's Student"
-      ]
-    },
-    {
       "id": "1350-3363",
       "cards": [
         {
@@ -3924,72 +3032,6 @@
       "popularity": 993,
       "missing": [
         "Near-Death Experience"
-      ]
-    },
-    {
-      "id": "2781-3086-5144",
-      "cards": [
-        {
-          "name": "Lagrella, the Magpie",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Ephemerate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 978,
-      "missing": [
-        "Lagrella, the Magpie"
-      ]
-    },
-    {
-      "id": "2781-3086-3603",
-      "cards": [
-        {
-          "name": "Lagrella, the Magpie",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 864,
-      "missing": [
-        "Lagrella, the Magpie"
       ]
     },
     {
@@ -4166,35 +3208,6 @@
       ]
     },
     {
-      "id": "1562-2781",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Machine God's Effigy",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 705,
-      "missing": [
-        "Machine God's Effigy"
-      ]
-    },
-    {
       "id": "742-1061",
       "cards": [
         {
@@ -4221,63 +3234,6 @@
       "popularity": 673,
       "missing": [
         "Timestream Navigator"
-      ]
-    },
-    {
-      "id": "2506-2781",
-      "cards": [
-        {
-          "name": "Molten Echoes",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "\"Cat\" or \"Beast\" chosen with Molten Echoes.",
-      "mana": "{3}{W}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 645,
-      "missing": [
-        "Molten Echoes"
-      ]
-    },
-    {
-      "id": "2781-6473",
-      "cards": [
-        {
-          "name": "Mardu Siegebreaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "E"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 638,
-      "missing": [
-        "Mardu Siegebreaker"
       ]
     },
     {
@@ -4339,33 +3295,6 @@
       ]
     },
     {
-      "id": "2781-5361",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Auton Soldier",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Auton Soldier.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 574,
-      "missing": [
-        "Auton Soldier"
-      ]
-    },
-    {
       "id": "690-3779-4658",
       "cards": [
         {
@@ -4400,35 +3329,6 @@
       "popularity": 521,
       "missing": [
         "Soul of Eternity"
-      ]
-    },
-    {
-      "id": "2781-4313",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Flameshadow Conjuring",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "You control a permanent that enters the battlefield untapped and can tap to produce at least {R}.",
-      "mana": "{3}{W}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 517,
-      "missing": [
-        "Flameshadow Conjuring"
       ]
     },
     {
@@ -4525,33 +3425,6 @@
       ]
     },
     {
-      "id": "2781-7193",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Omni-Changeling",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Omni-Changeling.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 421,
-      "missing": [
-        "Omni-Changeling"
-      ]
-    },
-    {
       "id": "1558-2963-6741",
       "cards": [
         {
@@ -4588,33 +3461,6 @@
       ]
     },
     {
-      "id": "2781-4393",
-      "cards": [
-        {
-          "name": "Dance of Many",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 374,
-      "missing": [
-        "Dance of Many"
-      ]
-    },
-    {
       "id": "2529-3363",
       "cards": [
         {
@@ -4639,33 +3485,6 @@
       "popularity": 372,
       "missing": [
         "Vedalken Mastermind"
-      ]
-    },
-    {
-      "id": "2763-2781",
-      "cards": [
-        {
-          "name": "Kaya, Intangible Slayer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Kaya has at least four loyalty counters on it.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 369,
-      "missing": [
-        "Kaya, Intangible Slayer"
       ]
     },
     {
@@ -4944,87 +3763,6 @@
       ]
     },
     {
-      "id": "2665-2781",
-      "cards": [
-        {
-          "name": "Progenitor Mimic",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Progenitor Mimic.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 179,
-      "missing": [
-        "Progenitor Mimic"
-      ]
-    },
-    {
-      "id": "1603-2781",
-      "cards": [
-        {
-          "name": "Evil Twin",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Evil Twin.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 175,
-      "missing": [
-        "Evil Twin"
-      ]
-    },
-    {
-      "id": "1260-2781",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Portcullis",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Any two additional creatures on the battlefield under the control of any player or players.",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 152,
-      "missing": [
-        "Portcullis"
-      ]
-    },
-    {
       "id": "1090-4875",
       "cards": [
         {
@@ -5105,33 +3843,6 @@
       "popularity": 115,
       "missing": [
         "Heidar, Rimewind Master"
-      ]
-    },
-    {
-      "id": "390-2781",
-      "cards": [
-        {
-          "name": "Hulking Metamorph",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Hulking Metamorph.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 115,
-      "missing": [
-        "Hulking Metamorph"
       ]
     },
     {
@@ -5227,60 +3938,6 @@
       ]
     },
     {
-      "id": "2781-4890",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dack's Duplicate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Dack's Duplicate.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 87,
-      "missing": [
-        "Dack's Duplicate"
-      ]
-    },
-    {
-      "id": "2781-5399",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pirated Copy",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Pirated Copy.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 84,
-      "missing": [
-        "Pirated Copy"
-      ]
-    },
-    {
       "id": "1111-3363",
       "cards": [
         {
@@ -5305,60 +3962,6 @@
       "popularity": 83,
       "missing": [
         "Temporal Adept"
-      ]
-    },
-    {
-      "id": "2781-4865",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vesuvan Shapeshifter",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Vesuvan Shapeshifter.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 77,
-      "missing": [
-        "Vesuvan Shapeshifter"
-      ]
-    },
-    {
-      "id": "2781-3388",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Moritte of the Frost",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Moritte of the Frost.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 72,
-      "missing": [
-        "Moritte of the Frost"
       ]
     },
     {
@@ -5388,33 +3991,6 @@
       "popularity": 66,
       "missing": [
         "Mirror-Mad Phantasm"
-      ]
-    },
-    {
-      "id": "2781-5400",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Synth Infiltrator",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Synth Infiltrator.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 59,
-      "missing": [
-        "Synth Infiltrator"
       ]
     },
     {
@@ -5451,63 +4027,6 @@
       "popularity": 59,
       "missing": [
         "Time Sieve"
-      ]
-    },
-    {
-      "id": "1082-2781",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Dual Nature",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana permanents you control that enter the battlefield untapped can produce",
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control and own at least one mana-producing permanent that enters the battlefield untapped.",
-      "mana": "{3}{W}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 57,
-      "missing": [
-        "Dual Nature"
-      ]
-    },
-    {
-      "id": "2781-3504",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mercurial Pretender",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Mercurial Pretender.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Mercurial Pretender"
       ]
     },
     {
@@ -5619,60 +4138,6 @@
       ]
     },
     {
-      "id": "2781-7936",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dominion Saboteur",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Dominion Saboteur.",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 26,
-      "missing": [
-        "Dominion Saboteur"
-      ]
-    },
-    {
-      "id": "2781-4661",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vesuvan Doppelganger",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Vesuvan Doppelganger.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 26,
-      "missing": [
-        "Vesuvan Doppelganger"
-      ]
-    },
-    {
       "id": "3363-8189",
       "cards": [
         {
@@ -5724,33 +4189,6 @@
       "popularity": 13,
       "missing": [
         "Cache Raiders"
-      ]
-    },
-    {
-      "id": "1974-2781",
-      "cards": [
-        {
-          "name": "Quicksilver Gargantuan",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Quicksilver Gargantuan.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 13,
-      "missing": [
-        "Quicksilver Gargantuan"
       ]
     },
     {
