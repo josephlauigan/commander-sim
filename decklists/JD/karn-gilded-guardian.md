@@ -18,7 +18,7 @@ mandatory. **This list has not been simulated; every number below is a count fro
 | **Bracket** | 4: 15 Game Changers and four short winning lines. Played against Tier 4 and Tier 5 |
 | **Game Changers (15)** | Consecrated Sphinx, Demonic Tutor, Enlightened Tutor, Farewell, Force of Will, Imperial Seal, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Teferi's Protection, Thassa's Oracle, The One Ring, Vampiric Tutor |
 | **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. First runs and their limits are in the findings file; the current list is not simulated |
-| **Buys** | JD is getting 18 cards: Baleful Strix; Birthing Pod; Blood Crypt; Gold-Forged Thopteryx; Herd Heirloom; Infinite Guideline Station; Plateau; Reliquary Tower; Sacred Foundry; Savannah; Steam Vents; Taiga; The Reaper, King No More; The Wind Crystal; Transguild Courier; Twitching Doll; Volcanic Island; Wooded Foothills. Every other card he does not own is proxied |
+| **Buys** | JD is getting 17 cards: Baleful Strix; Birthing Pod; Blood Crypt; Gold-Forged Thopteryx; Herd Heirloom; Infinite Guideline Station; Plateau; Reliquary Tower; Sacred Foundry; Savannah; Steam Vents; Taiga; The Reaper, King No More; Transguild Courier; Twitching Doll; Volcanic Island; Wooded Foothills. Every other card he does not own is proxied |
 
 ## Strategy
 
@@ -29,7 +29,7 @@ color among other artifacts you control.*
 
 Each hybrid symbol is paid with its colour or with {2}. With all five colours available Karn costs **five**; each colour
 you cannot pay adds one more mana, so the worst case is ten. The commander tax adds {2} for every recast from the command
-zone. The Wind Crystal makes white spells cost {1} less, but it only reduces the generic part (a {2} paid for a hybrid
+zone. The Fire Crystal makes red spells cost {1} less (Karn is red, like every colour), but it only reduces the generic part (a {2} paid for a hybrid
 symbol, or the tax), so it does nothing for a clean five-colour cast. Herd Heirloom's mana pays for Karn (he is a
 creature spell).
 
@@ -40,10 +40,10 @@ Feast and Famine, Conjurer's Closet, the Robot and Pilot tokens, Treasures) coun
 | Artifact | Colours |
 |---|---|
 | The Mind Stone | W |
-| The Wind Crystal | W |
 | Esper Sentinel | W |
 | The Soul Stone | B |
 | Cursed Mirror | R |
+| The Fire Crystal | R |
 | Twitching Doll | G |
 | Herd Heirloom | G |
 | Birthing Pod | G |
@@ -73,13 +73,17 @@ creature), Flickerwisp (the enter trigger is mandatory and exiles another perman
 and The Mind Stone once harnessed ({5}{W}, {T}; then it blinks one other nonland permanent at our end step). Skyclave
 Apparition, Solitude, Orcish Bowmasters, Baleful Strix and Breya are the other things worth blinking.
 
+**The Fire Crystal.** {2}{R}{R}, legendary: red spells cost {1} less, our creatures have haste (Karn attacks the turn he
+enters or returns, so a blink in the precombat main phase no longer costs his attack), and {4}{R}{R}, {T} makes a token copy of a creature we control that is
+sacrificed at the beginning of the next end step: a copy of Karn enters, draws, and (the legend rule) one Karn stays, while a copy of a creature with an enter
+trigger (Flickerwisp, Skyclave Apparition, Solitude, Orcish Bowmasters, Ranger-Captain of Eos) repeats it.
+
 **Doublers.** Gandalf the White doubles an enter trigger caused by a legendary permanent or an artifact entering (Karn is
 both), and also gives artifacts and legendary spells flash, so Karn can be cast at an opponent's end step. Elesh Norn,
 Mother of Machines doubles any permanent's enter trigger and turns off the opponents' enter triggers. Both out means three
 Karn triggers per entry. With the Courier out as well, one entry is fifteen cards: watch the library.
 
-**Drain (the life layer).** Haliya, Guided by Light (gain 1 for every creature or artifact entering), The Wind Crystal
-(doubles life gained), Vito, Thorn of the Dusk Rose and Sanguine Bond (an opponent loses what we gain), Exquisite Blood
+**Drain (the life layer).** Haliya, Guided by Light (gain 1 for every creature or artifact entering), Vito, Thorn of the Dusk Rose and Sanguine Bond (an opponent loses what we gain), Exquisite Blood
 (we gain what an opponent loses) and Exsanguinate.
 
 **Tutors.** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Enlightened Tutor (an artifact or enchantment), Imperial Seal,
@@ -88,7 +92,7 @@ without a legendary creature it finds nothing) and Expedition Map (a land: Cabal
 Ranger-Captain of Eos fetches one of the deck's three creatures with mana value 1 or less, Yoshimaru, Ever Faithful,
 Giver of Runes or Esper Sentinel, and is also a blinkable body (each blink fetches again) and a sacrifice that stops the table's
 noncreature spells for a turn. **Yoshimaru** ({W}, 1/1) gets a +1/+1 counter whenever another legendary permanent we
-control enters (Karn, The Mind Stone, The Wind Crystal, The Soul Stone, Breya, The Reaper, Infinite Guideline
+control enters (Karn, The Mind Stone, The Fire Crystal, The Soul Stone, Breya, The Reaper, Infinite Guideline
 Station, Haliya, Vito, Gandalf, Elesh Norn), so he grows with the deck; he is a legendary creature that Ringsight can
 match. **Giver of Runes** ({W}, 1/1) is protection for Karn: {T}, another target creature we control gains protection from
 colorless or from a colour of our choice until end of turn.
@@ -139,8 +143,8 @@ Teferi's Protection (with Thopteryx's ward and Ranger-Captain's sacrifice) are t
 
 **B. Exquisite Blood with Sanguine Bond or Vito.** Either pair loops: an opponent loses life, Exquisite Blood gains us
 that much, Sanguine Bond or Vito makes an opponent lose it again. Any life gain starts it: Haliya's trigger for each
-creature or artifact entering (Karn, a Thopter, a Treasure, a Robot), or a lifelink source (Thopteryx). The Wind Crystal
-doubles each gain, and Gandalf and Elesh Norn add extra Haliya triggers.
+creature or artifact entering (Karn, a Thopter, a Treasure, a Robot), or a lifelink source (Thopteryx). Nothing in the list doubles
+life gained, so each Haliya trigger is 1 life and the loop does the draining; Gandalf and Elesh Norn add extra Haliya triggers.
 
 **C. Exsanguinate with Cabal Coffers and Urborg.** Urborg makes every land a Swamp, Cabal Coffers ({2}, {T}) adds {B} for
 each Swamp, and Exsanguinate for a large X drains every opponent for X and gains us as much. (Urborg is symmetric: the
@@ -198,7 +202,7 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
   the Station's Robots are not used as fodder, though the card allows it); and a person using it in practice is offered the one
   sacrifice-and-fetch pair the AI computes, not a free choice of what to sacrifice or fetch.
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
-- **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return).
+- **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return) unless The Fire Crystal is out.
 
 ## Mana
 
@@ -223,10 +227,10 @@ Coffers, Mistrise Village and Reliquary Tower.
 - **Blood Moon** turns every nonbasic land into a Mountain and leaves the deck with red mana only: there is no basic to
   fetch or play.
 
-**Pips.** The 64 spells have **white 36, blue 16, black 23, red 3 and green 4** coloured pips (Birthing Pod's Phyrexian
-{G/P} counted as a green pip), plus The Reaper's {2/B}{2/R}{2/G}. Red comes from Cursed Mirror, Breya and Station; green
+**Pips.** The 64 spells have **white 34, blue 16, black 23, red 5 and green 4** coloured pips (Birthing Pod's Phyrexian
+{G/P} counted as a green pip), plus The Reaper's {2/B}{2/R}{2/G}. Red comes from Cursed Mirror, The Fire Crystal, Breya and Station; green
 from Twitching Doll, Herd Heirloom, Birthing Pod and Station. White is the heavy colour, with 20 sources; red and green
-are thin, and almost all of that load is Station and The Reaper (Birthing Pod's pip can be paid with 2 life).
+are thin, and almost all of that load is Station, The Reaper and The Fire Crystal's {R}{R} (Birthing Pod's pip can be paid with 2 life).
 
 **Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.88 (184 over 64).
 
@@ -239,7 +243,7 @@ are thin, and almost all of that load is Station and The Reaper (Birthing Pod's 
   Necropotence, Ranger-Captain of Eos, Rhystic Study, Ringsight, Skyclave Apparition, Sword of Feast and Famine,
   Teferi's Protection, Teferi, Time Raveler, Vito
 - **4 (9):** Akroma's Will, Birthing Pod, Breya, Restoration Angel, Smothering Tithe, Teleportation
-  Circle, The One Ring, The Wind Crystal, Transguild Courier
+  Circle, The Fire Crystal, The One Ring, Transguild Courier
 - **5 (8):** Conjurer's Closet, Elesh Norn, Exquisite Blood, Force of Will, Gandalf the White, Infinite Guideline Station, Sanguine Bond,
   Solitude
 - **6 (3):** Consecrated Sphinx, Farewell, The Reaper, King No More
@@ -275,7 +279,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (7).** Exquisite Blood, Gleaming Splendor, Necropotence, Rhystic Study, Sanguine Bond, Smothering Tithe, Teleportation Circle
 
-**Artifacts (16).** Arcane Signet, Birthing Pod, Buster Sword, Coalition Relic, Conjurer's Closet, Cursed Mirror, Expedition Map, Herd Heirloom, Infinite Guideline Station, Sol Ring, Sword of Feast and Famine, The Mind Stone, The One Ring, The Soul Stone, The Wind Crystal, Thought Vessel
+**Artifacts (16).** Arcane Signet, Birthing Pod, Buster Sword, Coalition Relic, Conjurer's Closet, Cursed Mirror, Expedition Map, Herd Heirloom, Infinite Guideline Station, Sol Ring, Sword of Feast and Famine, The Fire Crystal, The Mind Stone, The One Ring, The Soul Stone, Thought Vessel
 
 **Instants (13).** Akroma's Will, Anguished Unmaking, Counterspell, Demonic Consultation, Enlightened Tutor, Ephemerate, Force of Will, Mystical Tutor, Path to Exile, Silence, Swords to Plowshares, Teferi's Protection, Vampiric Tutor
 
@@ -370,11 +374,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Teleportation Circle
 1 Temple Garden
 1 Thassa's Oracle
+1 The Fire Crystal
 1 The Mind Stone
 1 The One Ring
 1 The Reaper, King No More
 1 The Soul Stone
-1 The Wind Crystal
 1 Thought Vessel
 1 Transguild Courier
 1 Tropical Island

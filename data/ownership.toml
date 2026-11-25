@@ -27,6 +27,7 @@
 # Breya, Etherium Shaper, Karn, Gilded Guardian, The Mind Stone, The Soul Stone and Thought Vessel are `have`; JD sold his copies of Adarkar Wastes, Overgrown Tomb,
 # Temple Garden and Vito, Thorn of the Dusk Rose (now `proxy`; a sold copy is gone, not a spare) and of Blood Crypt; the 18 cards he marked Getting are `missing`.
 # 2026-11-25 (JD): the Karn deck is confirmed: his list of that day marks every card (Have, proxy or Getting; Getting is recorded as `missing`).
+# 2026-11-25 (JD): Karn deck: The Fire Crystal (his copy) in for The Wind Crystal (one of the cards he was getting, so it leaves the `missing` list).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -369,6 +370,7 @@ have = [
   "Sword of Feast and Famine",
   { card = "Swords to Plowshares", copies = 2 },
   "Teleportation Circle",
+  "The Fire Crystal",
   "The Mind Stone",
   "The Soul Stone",
   "Thought Vessel",
@@ -429,7 +431,6 @@ missing = [
   "Steam Vents",
   "Taiga",
   "The Reaper, King No More",
-  "The Wind Crystal",
   "Transguild Courier",
   "Twitching Doll",
   "Volcanic Island",

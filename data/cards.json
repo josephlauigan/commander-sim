@@ -133316,6 +133316,64 @@
    "spell_prio": false
   },
   {
+   "name": "The Fire Crystal",
+   "types": "A",
+   "generic": 2,
+   "pips": "RR",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "red",
+     "amount": -1
+    },
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "haste",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": false
+     }
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{4}{R}{R}, {T}: Create a token that's a copy of target creature you control. Sacrifice it at the beginning of the next end step."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "The Gitrog Monster",
    "types": "C",
    "generic": 3,
