@@ -7,7 +7,7 @@
 1 Baleful Strix (otc) 215
 1 Battlefield Forge (blc) 293
 1 Bayou (3ed) 283
-1 Birthing Pod (nph) 120
+1 Birthing Pod (nph) 104
 1 Blood Crypt (rvr) 292
 1 Breeding Pool (unf) 286
 1 Breya, Etherium Shaper (mh3) 289

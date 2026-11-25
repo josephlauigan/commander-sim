@@ -55,7 +55,7 @@ What it does once it attacks:
 
 #### Getting The Ur-Dragon out earlier
 
-The deck's weakness is reaching its commander, so a package of cards works on speed. The Ur-Dragon is always cast from the command zone, and cost reducers remove only generic mana
+The deck's weakness is reaching its commander, so a package of cards works on speed. The Ur-Dragon has to be cast (no card in the list puts it onto the battlefield any more), and cost reducers remove only generic mana
 (its {4} is the only generic part of its cost); Eminence does not discount The Ur-Dragon itself.
 
 - **Urza's Incubator** ({3} artifact, naming Dragon): Dragon creature spells cost {2} less. The Ur-Dragon
