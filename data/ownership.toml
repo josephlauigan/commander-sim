@@ -12,7 +12,7 @@
 # (or in the spare list) and that is in the Karn list is `have` in the Karn deck; every card whose owned copy stays in the Arzakon deck, the Ur-Dragon
 # deck or the Sheoldred deck, and every new card, is `proxy` there (JD: "they will be proxies"). The retired decks' other owned cards are spares.
 # Mithril Coat, Giver of Runes, Tymna, Deadly Rollick, The Theorist and Sapphire Medallion (entered as proxy in the Ur-Dragon and Sheoldred decks while
-# their donor decks lived) are now `have` there. The Karn deck is unconfirmed: JD has not marked its cards one by one.
+# their donor decks lived) are now `have` there. The Karn deck was unconfirmed until 2026-11-25 (see below).
 # 2026-11-24 (JD): Karn deck list change: Deflecting Swat and Generous Gift out (owned, now spares), Yoshimaru, Ever Faithful in as `have` and Giver of Runes in as `proxy` (JD owns one Giver of Runes: it stays `have` in the Ur-Dragon).
 # 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (JD confirmed on 2026-11-24 that he owns them: `have`; his printings are not known).
 # 2026-11-24 (JD): Karn deck: Birthing Pod in for Shorikai, Genesis Engine (a proxy, now out); JD owns no Birthing Pod, so it is `proxy`.
@@ -26,6 +26,7 @@
 # deck too, so they carry copies = 4 and 3 and the spare copy of each is in a deck (Diabolic Tutor's spare copy went into the Sheoldred deck). In the Karn deck
 # Breya, Etherium Shaper, Karn, Gilded Guardian, The Mind Stone, The Soul Stone and Thought Vessel are `have`; JD sold his copies of Adarkar Wastes, Overgrown Tomb,
 # Temple Garden and Vito, Thorn of the Dusk Rose (now `proxy`; a sold copy is gone, not a spare) and of Blood Crypt; the 18 cards he marked Getting are `missing`.
+# 2026-11-25 (JD): the Karn deck is confirmed: his list of that day marks every card (Have, proxy or Getting; Getting is recorded as `missing`).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -327,6 +328,7 @@ proxy = [
 missing = []
 
 [deck.karn_gilded]
+confirmed = "2026-11-25"
 have = [
   "Akroma's Will",
   "Anguished Unmaking",
