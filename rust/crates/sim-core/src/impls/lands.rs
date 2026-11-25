@@ -672,9 +672,11 @@ pub(crate) fn bastion_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.perm_mut(l).tapped = true;
     g.player_mut(p).stat("proliferate_bastion", 1);
-    if ability_window_card(g, p, g.perm(l).card(), "proliferate", None, None)? {
-        super::common::proliferate(g, p, 1)?;
-    }
+    // a person's Rings of Brighthearth copy proliferates again (the AI never has Rings: its window is unchanged)
+    let cd = g.perm(l).card();
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "proliferate", None, None, |g| {
+        super::common::proliferate(g, p, 1)
+    })?;
     Ok(true)
 }
 

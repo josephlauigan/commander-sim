@@ -296,6 +296,42 @@ fn a_fetch_lands_copy_fetches_a_second_land() {
 }
 
 #[test]
+fn karns_bastions_copy_proliferates_again() {
+    let run = |rings: bool| {
+        let mut g = table(&["arzakon", "cloud"]);
+        let bastion = lands(&mut g, P0, "Karn's Bastion", 1, false)[0];
+        let walker = perm(&mut g, P0, "Arzakon");
+        g.perm_mut(walker).loyalty = Some(4);
+        if rings {
+            perm(&mut g, P0, RINGS);
+        }
+        pool(&mut g, P0, &[('C', 6)]);
+        // each proliferate: choose Arzakon, then done; Rings' question: yes
+        let h = Arc::new(ScriptHuman::from_fn(move |r| {
+            if &*r.kind == "priority" {
+                return Answer::Action(json!({"do": "pass"}));
+            }
+            if r.prompt.starts_with("Proliferate:") {
+                let w = r.choices.iter().position(|c| c.contains("Arzakon"));
+                return match w {
+                    Some(i) if r.prompt.contains("(0 chosen)") => Answer::Pick(i),
+                    _ => Answer::Decline,
+                };
+            }
+            Answer::Pick(0)
+        }));
+        g.humans.add(P0, h.clone());
+        let i = g.player(P0).lands.iter().position(|&x| x == bastion).unwrap();
+        let r = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "land": i})).unwrap();
+        assert_eq!(r, None);
+        let rings_asked = asked(&h).iter().any(|p| p.starts_with("Rings of Brighthearth: pay {2} to copy"));
+        (g.perm(walker).loyalty, rings_asked)
+    };
+    assert_eq!(run(false), (Some(5), false), "without Rings: one proliferate");
+    assert_eq!(run(true), (Some(6), true), "with Rings: the ability and its copy each proliferate");
+}
+
+#[test]
 fn a_karn_lands_ability_urzas_saga_is_copied() {
     let mut g = table(&["karn", "cloud"]);
     let saga = lands(&mut g, P0, "Urza's Saga", 1, false)[0];
