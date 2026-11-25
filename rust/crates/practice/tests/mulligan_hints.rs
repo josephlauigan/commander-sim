@@ -175,7 +175,7 @@ fn urdragon_one_lander_without_fast_mana_goes_back_by_its_row() {
     let (mut g, p) = game_with(
         "urdragon",
         &[
-            "Forest",
+            "Sokenzan, Crucible of Defiance",
             "Lightning Bolt",
             "Chaos Warp",
             "Nibelheim Aflame",
@@ -195,7 +195,7 @@ fn urdragon_one_lander_without_fast_mana_goes_back_by_its_row() {
             && rule.contains("\"dorks\" set: at most 1"),
         "{rule}"
     );
-    assert!(rule.contains("Forest"), "{rule}");
+    assert!(rule.contains("Sokenzan"), "{rule}");
     assert!(!has(&h, "2 to 5 lands"), "{h}");
     assert!(has(&h, "Line:"), "{h}");
 }

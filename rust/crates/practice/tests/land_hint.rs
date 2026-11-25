@@ -69,9 +69,13 @@ fn snapshot(g: &Game, p: PlayerId) -> (Vec<String>, usize, i32, u32) {
 
 #[test]
 fn the_hint_plays_the_ais_land_first_and_says_why() {
-    // The Ur-Dragon with a Forest out: Tundra (white and blue, untapped) against Path of Ancestry (four new colours, tapped)
-    let (mut g, p) =
-        game_with("urdragon", &["Forest"], &["Tundra", "Path of Ancestry", "Sol Ring", "Swords to Plowshares"]);
+    // The Ur-Dragon with a Sokenzan out (the list has had no basic land since 2026-11-24): Tundra (white and blue, untapped)
+    // against Path of Ancestry (four new colours, tapped)
+    let (mut g, p) = game_with(
+        "urdragon",
+        &["Sokenzan, Crucible of Defiance"],
+        &["Tundra", "Path of Ancestry", "Sol Ring", "Swords to Plowshares"],
+    );
     let before = snapshot(&g, p);
     let h = hint(&mut g, p);
     assert_eq!(snapshot(&g, p), before, "asking changes nothing: {h}");
@@ -110,7 +114,8 @@ fn a_new_colour_beats_a_basic_of_a_colour_you_have() {
 
 #[test]
 fn no_land_once_the_land_drop_is_used() {
-    let (mut g, p) = game_with("urdragon", &["Forest"], &["Tundra", "Sol Ring", "Swords to Plowshares"]);
+    let (mut g, p) =
+        game_with("urdragon", &["Sokenzan, Crucible of Defiance"], &["Tundra", "Sol Ring", "Swords to Plowshares"]);
     g.player_mut(p).lands_played = 1;
     let h = hint(&mut g, p);
     assert!(!h["text"].as_str().unwrap().starts_with("Play "), "{h}");
