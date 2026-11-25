@@ -1,8 +1,8 @@
 # Karn, Gilded Guardian — Colour-Draw Blink (WUBRG, High Bracket 4)
 
 Karn, Gilded Guardian draws a card for each colour among the *other* artifacts you control, up to five, every time he
-enters. The deck fills the table with coloured artifacts, casts Karn, and then makes him enter again and again: seven
-blink effects (Ephemerate, Cloudshift, Restoration Angel, Flickerwisp, Felidar Guardian, Teleportation Circle and the
+enters. The deck fills the table with coloured artifacts, casts Karn, and then makes him enter again and again: six
+blink effects (Ephemerate, Cloudshift, Restoration Angel, Flickerwisp, Teleportation Circle and the
 harnessed The Mind Stone) and two doublers (Gandalf the White and Elesh Norn, Mother of Machines) turn each entry into
 more draws. Around the engine sit four ways to win: Thassa's Oracle with Demonic Consultation or Doomsday, Exquisite
 Blood with Sanguine Bond or Vito, Exsanguinate off Cabal Coffers and Urborg, and combat with Karn carrying Buster Sword
@@ -41,6 +41,7 @@ Feast and Famine, the Robot and Pilot tokens, Treasures) count nothing. The deck
 |---|---|
 | The Mind Stone | W |
 | The Wind Crystal | W |
+| Esper Sentinel | W |
 | The Soul Stone | B |
 | Cursed Mirror | R |
 | Twitching Doll | G |
@@ -60,14 +61,14 @@ each multicolored permanent we control when it enters.
 
 ### The packages
 
-**Draw engine: coloured artifacts and Karn.** The thirteen artifacts above, plus Karn. Several do other work: Baleful
-Strix draws a card and trades with an attacker, The Reaper puts -1/-1 counters on two creatures and steals the ones that
+**Draw engine: coloured artifacts and Karn.** The fourteen artifacts above, plus Karn. Several do other work: Baleful
+Strix draws a card and trades with an attacker, Esper Sentinel draws a card whenever an opponent casts their first
+noncreature spell each turn unless that player pays {1}, The Reaper puts -1/-1 counters on two creatures and steals the ones that
 die, Breya makes two Thopters and turns two artifacts into removal or a drain, Shorikai draws two and discards one each
 turn, Gold-Forged Thopteryx gives every legendary permanent we control ward {2} (Karn included).
 
 **Blink.** Ephemerate (and its rebound), Cloudshift (a creature we control), Restoration Angel (flash, a non-Angel
-creature), Flickerwisp (the enter trigger is mandatory and exiles another permanent until the next end step), Felidar
-Guardian ("you may" exile another permanent we control), Teleportation Circle (an artifact or creature at our end step)
+creature), Flickerwisp (the enter trigger is mandatory and exiles another permanent until the next end step), Teleportation Circle (an artifact or creature at our end step)
 and The Mind Stone once harnessed ({5}{W}, {T}; then it blinks one other nonland permanent at our end step). Skyclave
 Apparition, Solitude, Orcish Bowmasters, Baleful Strix and Breya are the other things worth blinking.
 
@@ -83,8 +84,8 @@ Karn triggers per entry. With the Courier out as well, one entry is fifteen card
 **Tutors.** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Enlightened Tutor (an artifact or enchantment), Imperial Seal,
 Ringsight (a card that shares a colour with a legendary creature we control: with Karn out that is any coloured card;
 without a legendary creature it finds nothing) and Expedition Map (a land: Cabal Coffers, Urborg or Reliquary Tower).
-Ranger-Captain of Eos fetches one of the deck's two creatures with mana value 1 or less, Yoshimaru, Ever Faithful or
-Giver of Runes, and is also a blinkable body (each blink fetches again) and a sacrifice that stops the table's
+Ranger-Captain of Eos fetches one of the deck's three creatures with mana value 1 or less, Yoshimaru, Ever Faithful,
+Giver of Runes or Esper Sentinel, and is also a blinkable body (each blink fetches again) and a sacrifice that stops the table's
 noncreature spells for a turn. **Yoshimaru** ({W}, 1/1) gets a +1/+1 counter whenever another legendary permanent we
 control enters (Karn, The Mind Stone, The Wind Crystal, The Soul Stone, Shorikai, Breya, The Reaper, Infinite Guideline
 Station, Haliya, Vito, Gandalf, Elesh Norn), so he grows with the deck; he is a legendary creature that Ringsight can
@@ -95,8 +96,8 @@ colorless or from a colour of our choice until end of turn.
 (for Karn), Akroma's Will ("if you control a commander" gives both modes, so before Karn is out it is a single mode), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
 Apparition, Solitude, Farewell (a sweeper that also exiles our own artifacts: choose the modes).
 
-**Card flow and mana.** Rhystic Study, Smothering Tithe, Necropotence, Consecrated Sphinx, The One Ring, Gleaming
-Splendor, Buster Sword. Mana: Sol Ring, Arcane Signet, Coalition Relic, Thought Vessel, The Mind Stone, The Soul Stone,
+**Card flow and mana.** Rhystic Study, Esper Sentinel, Smothering Tithe, Necropotence, Consecrated Sphinx, The One Ring,
+Gleaming Splendor, Buster Sword. Mana: Sol Ring, Arcane Signet, Coalition Relic, Thought Vessel, The Mind Stone, The Soul Stone,
 Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
 
 ### Rules facts that matter
@@ -116,12 +117,7 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
   decline.
 - **An opponent's Flickerwisp, or any removal, exile or bounce on Karn,** can send him to the command zone (the
   simulator always does); the recast then costs {2} more.
-- **Instant-speed blinks resolve in one action** (Ephemerate, Cloudshift, Restoration Angel, Felidar Guardian), so Karn
-  simply returns.
-- **Restoration Angel and Felidar Guardian blink each other without end** (both are "may"): with Haliya and a drain card
-  that wins. Each trigger is spent blinking the other creature, so aiming one at Karn ends the loop; it draws Karn's cards
-  without end only with Elesh Norn out (her extra trigger blinks Karn while the other keeps the loop going; Gandalf does not
-  help, because neither creature is legendary or an artifact). Stop before the library is empty, or have Thassa's Oracle ready.
+- **Instant-speed blinks resolve in one action** (Ephemerate, Cloudshift, Restoration Angel), so Karn simply returns.
 - **Akroma's Will** gives both modes only with a commander on the battlefield: before Karn is out it is a single mode.
 
 ### How the deck wins
@@ -219,24 +215,24 @@ Coffers, Mistrise Village and Reliquary Tower.
 Heirloom and Station. White is the heavy colour, with 20 sources; red and green are thin, and almost all of that load is
 Station and The Reaper.
 
-**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.86 (183 over 64).
+**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.81 (180 over 64).
 
-- **1 (14):** Cloudshift, Demonic Consultation, Enlightened Tutor, Ephemerate, Expedition Map, Giver of Runes, Imperial
-  Seal, Mystical Tutor, Path to Exile, Silence, Sol Ring, Swords to Plowshares, Vampiric Tutor, Yoshimaru
+- **1 (15):** Cloudshift, Demonic Consultation, Enlightened Tutor, Ephemerate, Esper Sentinel, Expedition Map, Giver of
+  Runes, Imperial Seal, Mystical Tutor, Path to Exile, Silence, Sol Ring, Swords to Plowshares, Vampiric Tutor, Yoshimaru
 - **2 (14):** Arcane Signet, Baleful Strix, Counterspell, Demonic Tutor, Exsanguinate (X), Gleaming Splendor,
   Gold-Forged Thopteryx, Herd Heirloom, Orcish Bowmasters, Thassa's Oracle, The Mind Stone, The Soul Stone, Thought
   Vessel, Twitching Doll
 - **3 (16):** Anguished Unmaking, Buster Sword, Coalition Relic, Cursed Mirror, Doomsday, Flickerwisp, Haliya,
   Necropotence, Ranger-Captain of Eos, Rhystic Study, Ringsight, Skyclave Apparition, Sword of Feast and Famine,
   Teferi's Protection, Teferi, Time Raveler, Vito
-- **4 (10):** Akroma's Will, Breya, Felidar Guardian, Restoration Angel, Shorikai, Smothering Tithe, Teleportation
+- **4 (9):** Akroma's Will, Breya, Restoration Angel, Shorikai, Smothering Tithe, Teleportation
   Circle, The One Ring, The Wind Crystal, Transguild Courier
 - **5 (7):** Elesh Norn, Exquisite Blood, Force of Will, Gandalf the White, Infinite Guideline Station, Sanguine Bond,
   Solitude
 - **6 (3):** Consecrated Sphinx, Farewell, The Reaper, King No More
 
-**Card types** (the 64 spells): 15 artifacts, 6 artifact creatures, 15 other creatures, 14 instants, 6 sorceries,
-7 enchantments and 1 planeswalker; 21 artifacts in all and 21 creatures, without Karn.
+**Card types** (the 64 spells): 15 artifacts, 7 artifact creatures, 14 other creatures, 14 instants, 6 sorceries,
+7 enchantments and 1 planeswalker; 22 artifacts in all and 21 creatures, without Karn.
 
 ## Bracket and Rule 0
 
@@ -249,11 +245,9 @@ Disclose before the game:
 
 - **The fifteen Game Changers** above.
 - **Infinite or game-ending lines:** Thassa's Oracle with Demonic Consultation or Doomsday; Exquisite Blood with Sanguine
-  Bond or Vito (with Haliya or a lifelink source as the starter); Restoration Angel with Felidar Guardian (infinite
-  blink; with Elesh Norn out and Karn as a target, an infinite draw); Felidar Guardian with Cursed Mirror (the Mirror
-  copies the Guardian and the two blink each other without end).
+  Bond or Vito (with Haliya or a lifelink source as the starter).
 - **Tutors:** Demonic, Vampiric, Mystical, Enlightened, Imperial Seal, Ringsight, Expedition Map and Ranger-Captain of Eos
-  (a creature with mana value 1 or less: Yoshimaru or Giver of Runes).
+  (a creature with mana value 1 or less: Yoshimaru, Giver of Runes or Esper Sentinel).
 - **Free spells:** Force of Will (exile a blue card) and Solitude (exile a white card).
 - **Fast mana:** Sol Ring and no more.
 
@@ -263,7 +257,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Karn, Gilded Guardian
 
-**Creatures (21).** Baleful Strix, Breya, Etherium Shaper, Consecrated Sphinx, Elesh Norn, Mother of Machines, Felidar Guardian, Flickerwisp, Gandalf the White, Giver of Runes, Gold-Forged Thopteryx, Haliya, Guided by Light, Orcish Bowmasters, Ranger-Captain of Eos, Restoration Angel, Skyclave Apparition, Solitude, Thassa's Oracle, The Reaper, King No More, Transguild Courier, Twitching Doll, Vito, Thorn of the Dusk Rose, Yoshimaru, Ever Faithful
+**Creatures (21).** Baleful Strix, Breya, Etherium Shaper, Consecrated Sphinx, Elesh Norn, Mother of Machines, Esper Sentinel, Flickerwisp, Gandalf the White, Giver of Runes, Gold-Forged Thopteryx, Haliya, Guided by Light, Orcish Bowmasters, Ranger-Captain of Eos, Restoration Angel, Skyclave Apparition, Solitude, Thassa's Oracle, The Reaper, King No More, Transguild Courier, Twitching Doll, Vito, Thorn of the Dusk Rose, Yoshimaru, Ever Faithful
 
 **Enchantments (7).** Exquisite Blood, Gleaming Splendor, Necropotence, Rhystic Study, Sanguine Bond, Smothering Tithe, Teleportation Circle
 
@@ -308,11 +302,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Elesh Norn, Mother of Machines
 1 Enlightened Tutor
 1 Ephemerate
+1 Esper Sentinel
 1 Expedition Map
 1 Exquisite Blood
 1 Exsanguinate
 1 Farewell
-1 Felidar Guardian
 1 Flickerwisp
 1 Flooded Strand
 1 Force of Will

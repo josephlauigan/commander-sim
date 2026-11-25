@@ -9,7 +9,6 @@
 1 Bayou (ced) 279
 1 Birds of Paradise (dmr) 439
 1 Blightsteel Colossus (sld) 2223
-1 Bloodstained Mire (mh3) 352
 1 Brain Freeze (soa) 78
 1 Chaos Warp (pw24) 7
 1 Chrome Mox (2xm) 240
@@ -26,7 +25,6 @@
 1 Dovin's Veto (p30a) 27
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
-1 Esper Sentinel (mh2) 328
 1 Exsanguinate (som) 61
 1 Faeburrow Elder (plst) ELD-190
 1 Fellwar Stone (sld) 2557
@@ -50,7 +48,6 @@
 1 Mana Vault (4ed) 334
 1 Marsh Flats (spg) 110
 1 Meteor Golem (sld) 285
-1 Misty Rainforest (spg) 111
 1 Mox Opal (2xm) 362
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
@@ -61,6 +58,7 @@
 1 Polluted Delta (mh3) 356
 1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
+1 Reality Shift (tdc) 163
 1 Rhystic Study (wot) 71
 1 Rings of Brighthearth (ltc) 352
 1 Savannah (ced) 281
@@ -88,9 +86,11 @@
 1 Underground Sea (ced) 286
 1 Underworld Breach (pza) 10
 1 Urza, Lord High Artificer (fca) 5
+1 Urza's Mine (cmm) 1051
+1 Urza's Power Plant (cmm) 1052
 1 Urza's Saga (plst) MH2-259
+1 Urza's Tower (cmm) 1053
 1 Vampiric Tutor (soa) 100
-1 Verdant Catacombs (spg) 113
 1 Volcanic Island (cei) 287
 1 Voltaic Key (dde) 17
 1 Walking Ballista (sld) 58

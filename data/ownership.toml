@@ -14,6 +14,7 @@
 # Mithril Coat, Giver of Runes, Tymna, Deadly Rollick, The Theorist and Sapphire Medallion (entered as proxy in the Ur-Dragon and Sheoldred decks while
 # their donor decks lived) are now `have` there. The Karn deck is unconfirmed: JD has not marked its cards one by one.
 # 2026-11-24 (JD): Karn deck list change: Deflecting Swat and Generous Gift out (owned, now spares), Yoshimaru, Ever Faithful in as `have` and Giver of Runes in as `proxy` (JD owns one Giver of Runes: it stays `have` in the Ur-Dragon).
+# 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (listed as `have`, ownership not yet confirmed by JD).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -125,7 +126,6 @@ have = [
   "Dovin's Veto",
   "Enlightened Tutor",
   "Ephemerate",
-  "Esper Sentinel",
   { card = "Exsanguinate", copies = 3 },
   "Faeburrow Elder",
   "Fellwar Stone",
@@ -153,6 +153,7 @@ have = [
   "Pithing Needle",
   "Primeval Titan",
   "Ragavan, Nimble Pilferer",
+  "Reality Shift",
   "Rings of Brighthearth",
   "Sculpting Steel",
   "Silence",
@@ -170,6 +171,9 @@ have = [
   "The One Ring",
   "Tinker",
   "Underworld Breach",
+  "Urza's Mine",
+  "Urza's Power Plant",
+  "Urza's Tower",
   "Urza's Saga",
   "Urza, Lord High Artificer",
   "Vampiric Tutor",
@@ -181,11 +185,9 @@ proxy = [
   "Arid Mesa",
   "Badlands",
   "Bayou",
-  "Bloodstained Mire",
   "Flooded Strand",
   "Leyline of the Guildpact",
   "Marsh Flats",
-  "Misty Rainforest",
   "Mox Opal",
   "Plateau",
   "Polluted Delta",
@@ -198,7 +200,6 @@ proxy = [
   "Tropical Island",
   "Tundra",
   "Underground Sea",
-  "Verdant Catacombs",
   "Volcanic Island",
   "Watery Grave",
   "Windswept Heath",
@@ -331,6 +332,7 @@ have = [
   "Cursed Mirror",
   "Doomsday",
   "Elesh Norn, Mother of Machines",
+  "Esper Sentinel",
   "Expedition Map",
   { card = "Exsanguinate", copies = 3 },
   "Farewell",
@@ -372,7 +374,6 @@ proxy = [
   "Enlightened Tutor",
   "Ephemerate",
   "Exquisite Blood",
-  "Felidar Guardian",
   "Flickerwisp",
   "Flooded Strand",
   "Force of Will",

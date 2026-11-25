@@ -26,11 +26,11 @@
 1 Elesh Norn, Mother of Machines (one) 416
 1 Enlightened Tutor (dmr) 263
 1 Ephemerate (h1r) 1
+1 Esper Sentinel (mh2) 328
 1 Expedition Map (2xm) 359
 1 Exquisite Blood (lcc) 195
 1 Exsanguinate (cmm) 638
 1 Farewell (neo) 436
-1 Felidar Guardian (plst) AER-19
 1 Flickerwisp (2x2) 11
 1 Flooded Strand (mh3) 353
 1 Force of Will (dmr) 418
