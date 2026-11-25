@@ -578,7 +578,37 @@ fn the_first_seat_mulligans_and_undo_goes_back_across_the_mulligan_and_the_botto
     let e = engine();
     let (deck, guest) = pair(&e);
     for first in [&deck, &guest] {
-        let seed = seed_with_first(&e, &deck, &guest, first, 1);
+        // The first decisions depend on the two lists (a card in the opening hand can ask a "choose" of its own, which
+        // is not the bottom choice), so a deck change can move the seed. Search upward from the first seed with this
+        // seat order, deterministically and with a bound, for one where the bottom choice appears after a second
+        // mulligan and not after a first; the checks on that seed are unchanged.
+        const SEARCH: usize = 12;
+        let (mut seed, mut tried) = (0, 0);
+        let mut from = 1;
+        while tried < SEARCH {
+            let cand = seed_with_first(&e, &deck, &guest, first, from);
+            from = cand + 1;
+            tried += 1;
+            let shaped = [1, 2].iter().all(|&mulls| {
+                let cfg = Cfg { rounds: 3, cast: true, mulls };
+                let mut t = cfg.table(&e, &deck, &guest, cand);
+                t.run_to(mulls as usize + 3, None);
+                let bottom = t.asked.iter().any(|r| r["kind"] == "choose");
+                t.s.close(Duration::from_secs(10));
+                bottom == (mulls >= 2)
+            });
+            eprintln!(
+                "RECORD seed search, first seat {first}: seed {cand} has the bottom choice only after a second mulligan: {shaped}"
+            );
+            if shaped {
+                seed = cand;
+                break;
+            }
+        }
+        assert!(
+            seed > 0,
+            "no seed in the first {SEARCH} with first seat {first} has a bottom choice only after a second mulligan"
+        );
         let other = if first == &deck { &guest } else { &deck };
         for mulls in [1, 2] {
             let cfg = Cfg { rounds: 3, cast: true, mulls };
