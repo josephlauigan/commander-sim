@@ -39,6 +39,7 @@
 1 Hangarback Walker (plg20) 2
 1 Heroic Intervention (sld) 1750
 1 Karn Liberated (2xm) 333
+1 Karn's Bastion (onc) 156
 1 Karn, the Great Creator (war) 1★
 1 Leyline of the Guildpact (mkm) 217
 1 Lightning Greaves (sld) 1662
@@ -69,7 +70,6 @@
 1 Sol Ring (sld) 2093
 1 Staff of Domination (cmr) 343
 1 Steam Vents (rvr) 298
-1 Strip Mine (4ed) 363
 1 Sunpearl Kirin (slp) 53
 1 Swords to Plowshares (ice) 54
 1 Taiga (cei) 283

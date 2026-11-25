@@ -20,11 +20,12 @@
 # 2026-11-24 (JD): Karn deck: Conjurer's Closet (his copy, from the spare list) in for Cloudshift (a proxy, now out).
 # 2026-11-24 (JD): Ur-Dragon deck: Minas Tirith (his copy, from the spare list) in for the one basic Forest (basic lands are never listed).
 # 2026-11-24 (JD): Arzakon deck: Sunpearl Kirin (his copy, from the spare list) in for Rhystic Study (a proxy in this deck, now out).
+# 2026-11-25 (JD): Arzakon deck: Karn's Bastion (his copy) in for Strip Mine (his copy, now a spare).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
 version = 1
-updated = "2026-11-24"
+updated = "2026-11-25"
 
 [deck.sheoldred]
 confirmed = "2026-11-22"
@@ -144,6 +145,7 @@ have = [
   "Hangarback Walker",
   "Heroic Intervention",
   "Karn Liberated",
+  "Karn's Bastion",
   "Karn, the Great Creator",
   "Lightning Greaves",
   "Llanowar Elves",
@@ -165,7 +167,6 @@ have = [
   "Sneak Attack",
   { card = "Sol Ring", copies = 2 },
   "Steam Vents",
-  "Strip Mine",
   "Sunpearl Kirin",
   { card = "Swords to Plowshares", copies = 2 },
   "Tainted Pact",
@@ -474,6 +475,7 @@ cards = [
   "Steelshaper's Gift",
   "Sting, the Glinting Dagger",
   "Stormcarved Coast",
+  "Strip Mine",
   "Stroke of Midnight",
   "Sulfur Falls",
   "Sunpetal Grove",

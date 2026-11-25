@@ -18,7 +18,7 @@ Cali format, so the plan and the keep rule are a pilot's guide, not measured.
 | **Commander** | Arzakon ({W}{U}{B}{R}{G}, a legendary planeswalker with loyalty 4; "can be your commander"); a five-colour card |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
 | **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated, Dockside Extortionist and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI never copies loyalty abilities with Rings of Brighthearth; a person at a real table can. This list has not been simulated at the Cali format |
-| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated and Sunpearl Kirin are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination and Watery Grave |
+| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated, Karn's Bastion and Sunpearl Kirin are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mox Opal, Staff of Domination and Watery Grave |
 
 ## Strategy
 
@@ -106,7 +106,7 @@ below.
   check the colour count first. With infinite mana of every colour, draw the library with the Staff (stop at zero
   cards: drawing from an empty library loses) and cast Thassa's Oracle: an empty library wins. Or cast Walking
   Ballista for a huge X, or Blightsteel Colossus ({12}), whichever you hold or draw.
-- **What else Leyline does:** your lands become every basic land type as well, so Ancient Tomb, Strip Mine, Urza's
+- **What else Leyline does:** your lands become every basic land type as well, so Ancient Tomb, Karn's Bastion, Urza's
   Saga and the Urza lands each tap for any one colour (that tap does not hurt you). It also makes your nonland permanents blue and
   red, so Pyroblast, Red Elemental Blast and Hydroblast can destroy any of them (your lands stay colourless); Heroic
   Intervention is the answer.
@@ -156,7 +156,7 @@ If the combo is stopped, the deck still has threats and a way to grind:
 
 - **Arzakon** ({W}{U}{B}{R}{G}): the +2 is 3 damage every turn, a ten-turn clock at 30 life, and it clears Collector Ouphe,
   dorks and small blockers.
-- **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Strip Mine, or any two lands (two of the Urza lands, say), and attacks.
+- **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Karn's Bastion, or any two lands (two of the Urza lands, say), and attacks.
 - **Meteor Golem** ({7}): destroy any nonland permanent. **Hangarback Walker** ({X}{X}) is a mana sink that leaves
   fliers. **Walking Ballista** is a mana sink and a pinger. **Exsanguinate** ({X}{B}{B}) is a late finisher.
 
@@ -171,7 +171,7 @@ If the combo is stopped, the deck still has threats and a way to grind:
   game it watches one opponent.
 - **Urza, Lord High Artificer** ({2}{U}{U}): a Construct token, then every untapped artifact taps for {U}. Pays for
   Thassa's Oracle, and his {5} ability plays the top card free.
-- **Crucible of Worlds** ({3}): play lands from the graveyard: Strip Mine every turn, Urza's Saga again after it
+- **Crucible of Worlds** ({3}): play lands from the graveyard: a cracked fetchland every turn, Urza's Saga again after it
   sacrifices itself.
 - **Sculpting Steel** ({3}): enters as a copy of any artifact on the battlefield, yours or the opponent's, or stays a
   plain artifact if you decline. It is a mid-game card that makes the best artifact you already have a second time, not
@@ -374,7 +374,7 @@ nothing to tap.
 
 ## Mana
 
-27 lands, 6 of them colourless (Ancient Tomb, Strip Mine, Urza's Saga and the three Urza lands, Urza's Tower, Urza's Mine
+27 lands, 6 of them colourless (Ancient Tomb, Karn's Bastion, Urza's Saga and the three Urza lands, Urza's Tower, Urza's Mine
 and Urza's Power Plant): Command Tower (any colour, painless), the ten
 original duals (Tundra, Underground Sea, Volcanic Island, Tropical Island, Bayou, Badlands, Savannah, Scrubland,
 Plateau, Taiga), seven fetchlands (Flooded Strand, Polluted Delta, Windswept Heath, Scalding Tarn,
@@ -389,6 +389,12 @@ Oracle, Urza and Mystic Confluence), white needs {W}{W} for Grand Abolisher and 
 matters most for the three one-mana dorks (Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim). Red is the lightest: only Chaos Warp, Gamble,
 Underworld Breach, Sneak Attack, Ragavan and Dockside Extortionist need it, besides Arzakon. Arzakon needs all five at once, which the colourless sources
 (the six colourless lands and the colourless rocks) cannot help with.
+
+**Karn's Bastion.** A colourless land that taps for {C}; for {4} and {T} it proliferates, which adds one counter of each kind
+to every permanent or player that already has one. In this deck it adds loyalty to Arzakon, Karn Liberated, Karn, the Great Creator
+and Tezzeret, Cruel Captain, and counters to Walking Ballista (more pings) and Hangarback Walker, and it needs no colour. Use it
+at the end of the opponent's turn or when mana is spare, with a planeswalker on the table. Do not proliferate The One Ring:
+each burden counter costs you a life every upkeep.
 
 **Fetchlands in this list.** The list has no basic lands, so a fetchland finds an original dual or a shockland by its
 two land types. Every pair of colours has an original dual, so each fetchland works as a five-colour land for 1 life,
@@ -428,7 +434,7 @@ game. Check with the organiser whether proxies are allowed.
 
 **Sorceries (6).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Tinker
 
-**Lands (27).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Command Tower, Flooded Strand, Hallowed Fountain, Marsh Flats, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Steam Vents, Strip Mine, Taiga, Tropical Island, Tundra, Underground Sea, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills
+**Lands (27).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Command Tower, Flooded Strand, Hallowed Fountain, Karn's Bastion, Marsh Flats, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Steam Vents, Taiga, Tropical Island, Tundra, Underground Sea, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills
 
 ## Import list (100)
 
@@ -474,6 +480,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Hangarback Walker
 1 Heroic Intervention
 1 Karn Liberated
+1 Karn's Bastion
 1 Karn, the Great Creator
 1 Leyline of the Guildpact
 1 Lightning Greaves
@@ -504,7 +511,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Sol Ring
 1 Staff of Domination
 1 Steam Vents
-1 Strip Mine
 1 Sunpearl Kirin
 1 Swords to Plowshares
 1 Taiga
