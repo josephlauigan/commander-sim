@@ -22,9 +22,9 @@ use crate::engine::chars::colors;
 use crate::engine::life::{check_state, gain, lose_life_dealt};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
-use crate::engine::stack::{ability_run, trigger_window};
+use crate::engine::stack::{ability_run, ability_run_w, trigger_window};
 use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, die, draw, enter, make_tokens, max_by, sac_worth};
+use crate::engine::zones::{Enter, Tokens, die, draw, enter, enter_token_copy, make_tokens, max_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
@@ -687,6 +687,82 @@ fn doll_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         Ok(())
     })?;
     Ok(true)
+}
+
+// ================================================================== The Fire Crystal
+/// "Red spells you cast cost {1} less to cast." and "Creatures you control have haste." are compiled (the `static:cost`
+/// and `static:keyword` of its override); the copy ability is a person's ability only (`human::cards::abilities`): the
+/// AI never activates it, and it has no card-code hook, so the AI's valuation of the Crystal stays the compiled cost
+/// change's (`ai::pool`).
+
+/// may p's Crystal target its own creature m: not shrouded and not protected from red, the Crystal's colour (hexproof
+/// stops only an opponent)
+fn crystal_may_target(g: &Game, p: PlayerId, src: PermId, m: PermId) -> bool {
+    crate::impls::vondam_elspeth::may_target(g, p, m) && !protected_from(g, m, colors_of(g, src))
+}
+
+/// the creatures the Crystal's ability can target: p's own, with a card record to copy (a token without one, a Robot or a
+/// Treasure, can't be copied by this engine), that it may target
+fn crystal_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && g.perm(m).cd.is_some() && crystal_may_target(g, p, src, m))
+        .collect()
+}
+
+/// "{4}{R}{R}, {T}: Create a token that's a copy of target creature you control. Sacrifice it at the beginning of the
+/// next end step." Any time its controller has priority. The target is chosen, then the cost is paid from the pool, then
+/// the ability goes on the stack (the table may respond: a removed target makes it do nothing). The token is marked
+/// `DataKey::CopySac`: `turn::end_step` sacrifices it at the next end step to begin, whoever's turn it is, and a token
+/// made during an end step waits for the following one. The copy has haste from the Crystal's own static ability, and
+/// its enters trigger is the copied card's (Karn draws his colours again; the legend rule then keeps one Karn).
+pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<String>> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).neutered {
+        return Ok(Some("The Fire Crystal can't be activated now.".into()));
+    }
+    if g.perm(src).tapped {
+        return Ok(Some("The Fire Crystal is tapped.".into()));
+    }
+    let cs = crystal_targets(g, p, src);
+    if cs.is_empty() {
+        return Ok(Some("You control no creature to copy.".into()));
+    }
+    if let Some(why) = crate::human::mana::cost_problem(g, p, 4, "RR") {
+        return Ok(Some(format!("Can't activate The Fire Crystal. {why}")));
+    }
+    let prompt = "The Fire Crystal: copy which creature?";
+    let Some(t) = crate::human::cards::pick_perm(g, p, "target", prompt, &cs, Some("cancel"))? else {
+        return Ok(None); // targets first, then the costs
+    };
+    if let Some(why) = crate::human::mana::pay_from_pool(g, p, 4, "RR") {
+        return Ok(Some(format!("Can't activate The Fire Crystal. {why}")));
+    }
+    g.perm_mut(src).tapped = true; // the cost
+    crate::glog!(g, "  {} activates The Fire Crystal: a token copy of {}", pname(g, p), g.perm(t).name);
+    let what = format!("a token copy of {}", g.perm(t).name);
+    ability_run_w(g, p, Some(src), None, &what, Some(4.0), Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now = crystal_targets(g, p, src);
+            let prompt = "The copy of The Fire Crystal's ability: copy which creature?";
+            if let Some(n) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))? {
+                t = n;
+            }
+        }
+        // the target must still be a creature of ours the Crystal may target
+        if !live(g, t) || !g.is_creature(t) || owner(g, t) != p || !crystal_may_target(g, p, src, t) {
+            return Ok(());
+        }
+        let Some(cd) = g.perm(t).cd else { return Ok(()) };
+        if let Some(tok) = enter_token_copy(g, p, cd)? {
+            g.perm_mut(tok).data.set(DataKey::CopySac, Val::Bool(true));
+        }
+        check_state(g)
+    })?;
+    Ok(None)
 }
 
 // ================================================================== registration

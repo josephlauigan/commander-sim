@@ -75,8 +75,9 @@ Apparition, Solitude, Orcish Bowmasters, Baleful Strix and Breya are the other t
 
 **The Fire Crystal.** {2}{R}{R}, legendary: red spells cost {1} less, our creatures have haste (Karn attacks the turn he
 enters or returns, so a blink in the precombat main phase no longer costs his attack), and {4}{R}{R}, {T} makes a token copy of a creature we control that is
-sacrificed at the beginning of the next end step: a copy of Karn enters, draws, and (the legend rule) one Karn stays, while a copy of a creature with an enter
-trigger (Flickerwisp, Skyclave Apparition, Solitude, Orcish Bowmasters, Ranger-Captain of Eos) repeats it.
+sacrificed at the beginning of the next end step: a copy of Karn enters and draws five (the real Karn is another artifact of all five colours), then the
+legend rule keeps one Karn, while a copy of a creature with an enter trigger (Flickerwisp, Skyclave Apparition, Solitude, Orcish Bowmasters,
+Ranger-Captain of Eos) repeats it.
 
 **Doublers.** Gandalf the White doubles an enter trigger caused by a legendary permanent or an artifact entering (Karn is
 both), and also gives artifacts and legendary spells flash, so Karn can be cast at an opponent's end step. Elesh Norn,
@@ -196,6 +197,8 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Breya's 3-damage mode** takes a player, not a planeswalker.
 - **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
   kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
+- **The Fire Crystal's copy ability is for a person only:** the AI never activates it (it still casts the Crystal for its cost change and haste), and a creature token
+  with no card record (a Robot, a Pilot) can't be copied.
 - **The AI's use of Birthing Pod is unmeasured:** how often it activates it and what it fetches have not been tested in this list.
 - **Birthing Pod in the simulator:** the activation is paid with {G}, never with 2 life instead of the {G/P} (the card allows both); the Pod cannot
   be activated the turn it enters (the engine gives it the summoning sickness of a creature); it never sacrifices a token (Breya's Thopters and

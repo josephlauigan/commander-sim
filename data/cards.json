@@ -133353,9 +133353,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{4}{R}{R}, {T}: Create a token that's a copy of target creature you control. Sacrifice it at the beginning of the next end step."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

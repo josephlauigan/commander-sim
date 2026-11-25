@@ -937,6 +937,27 @@ pub fn no_max_hand(g: &Game, p: PlayerId) -> bool {
         || g.player(p).t0s.nomax
 }
 
+/// The Fire Crystal's token copies ("sacrifice it at the beginning of the next end step", `DataKey::CopySac`) that this end
+/// step sacrifices: the marked permanents of every player, taken as the step begins, so a copy made during the step is
+/// not among them and waits for the next end step
+pub fn copy_sacs_due(g: &Game) -> Vec<PermId> {
+    g.players
+        .iter()
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter(|&m| g.perm(m).data.truthy(crate::state::DataKey::CopySac))
+        .collect()
+}
+
+/// sacrifice the copies `copy_sacs_due` took (the ones still on the battlefield)
+pub fn sacrifice_copies(g: &mut Game, due: Vec<PermId>) -> Res {
+    for m in due {
+        if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::CopySac) {
+            die(g, m, "sac")?;
+        }
+    }
+    Ok(())
+}
+
 /// p's end step. Python's `ais.end_step`.
 pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     // Capture delayed triggers at the beginning: an activation during this step waits for the next end step.
@@ -959,6 +980,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             _ => None,
         })
         .collect();
+    let copy_sacs = copy_sacs_due(g); // The Fire Crystal's token copies, captured the same way
     cardcode::necro_deliver(g, p)?;
     cardcode::delayed_end_step(g, p)?; // Marchesa, The Eternal Wanderer, Eerie Interlude, Memory Jar
     if g.doomed_turn == Some(p) {
@@ -1002,6 +1024,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
         }
     }
+    sacrifice_copies(g, copy_sacs)?;
     for (q, m) in sneak_sacs {
         g.perm_mut(m).data.set(crate::state::DataKey::SneakAttack, crate::state::Val::Bool(true));
         // Only the player instructed to sacrifice can do so. The delayed trigger is used up either way.

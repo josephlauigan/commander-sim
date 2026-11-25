@@ -1089,6 +1089,10 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),
         "Nim Deathmantle" => vec![], // equip {4}: the Equip ability every equipment has
+        "The Fire Crystal" => vec![ability(
+            "{4}{R}{R}, {T}: a token copy of target creature you control, sacrificed at the beginning of the next end step",
+            crate::impls::karn_gilded_cards::fire_crystal_go,
+        )],
         n if PREPARED.iter().any(|x| x.0 == n) => prepared(g, m),
         n => return more_abilities(g, p, m, n),
     })
