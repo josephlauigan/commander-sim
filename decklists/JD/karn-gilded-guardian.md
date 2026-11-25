@@ -2,7 +2,7 @@
 
 Karn, Gilded Guardian draws a card for each colour among the *other* artifacts you control, up to five, every time he
 enters. The deck fills the table with coloured artifacts, casts Karn, and then makes him enter again and again: six
-blink effects (Ephemerate, Cloudshift, Restoration Angel, Flickerwisp, Teleportation Circle and the
+blink effects (Ephemerate, Conjurer's Closet, Restoration Angel, Flickerwisp, Teleportation Circle and the
 harnessed The Mind Stone) and two doublers (Gandalf the White and Elesh Norn, Mother of Machines) turn each entry into
 more draws. Around the engine sit four ways to win: Thassa's Oracle with Demonic Consultation or Doomsday, Exquisite
 Blood with Sanguine Bond or Vito, Exsanguinate off Cabal Coffers and Urborg, and combat with Karn carrying Buster Sword
@@ -35,7 +35,7 @@ creature spell).
 
 Karn counts colours among *other* artifacts: each of the five colours counts once however many artifacts have it, and
 colourless artifacts (Sol Ring, Arcane Signet, Coalition Relic, Thought Vessel, Expedition Map, Buster Sword, Sword of
-Feast and Famine, the Robot and Pilot tokens, Treasures) count nothing. The deck's coloured artifacts:
+Feast and Famine, Conjurer's Closet, the Robot and Pilot tokens, Treasures) count nothing. The deck's coloured artifacts:
 
 | Artifact | Colours |
 |---|---|
@@ -67,7 +67,8 @@ noncreature spell each turn unless that player pays {X}, where X is its power (1
 die, Breya makes two Thopters and turns two artifacts into removal or a drain, Birthing Pod is a green artifact that also
 upgrades a creature (below), Gold-Forged Thopteryx gives every legendary permanent we control ward {2} (Karn included).
 
-**Blink.** Ephemerate (and its rebound), Cloudshift (a creature we control), Restoration Angel (flash, a non-Angel
+**Blink.** Ephemerate (and its rebound), Conjurer's Closet ({5} artifact: at the beginning of our end step we may exile a creature
+we control and return it, so it blinks Karn every turn it is out), Restoration Angel (flash, a non-Angel
 creature), Flickerwisp (the enter trigger is mandatory and exiles another permanent until the next end step), Teleportation Circle (an artifact or creature at our end step)
 and The Mind Stone once harnessed ({5}{W}, {T}; then it blinks one other nonland permanent at our end step). Skyclave
 Apparition, Solitude, Orcish Bowmasters, Baleful Strix and Breya are the other things worth blinking.
@@ -102,7 +103,7 @@ because no creature has mana value 9. Pod needs a creature to sacrifice, is sorc
 costs {G} or 2 life; green is a thin colour (16 land sources).
 
 **Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
-(for Karn), Akroma's Will ("if you control a commander" gives both modes, so before Karn is out it is a single mode), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
+(for Karn), Ephemerate and Restoration Angel (they blink Karn in response to a spell or ability that targets him; Conjurer's Closet works only at our end step, so it does not), Akroma's Will ("if you control a commander" gives both modes, so before Karn is out it is a single mode), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
 Apparition, Solitude, Farewell (a sweeper that also exiles our own artifacts: choose the modes).
 
 **Card flow and mana.** Rhystic Study, Esper Sentinel, Smothering Tithe, Necropotence, Consecrated Sphinx, The One Ring,
@@ -113,8 +114,8 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
 
 - **The cost.** Five coloured mana when all five colours are on hand; every missing colour is {2} more (mana value 10 in
   the library and the command zone, a real cost of 5 to 10). Commander tax {2} per recast.
-- **Blinking at your own end step draws before cleanup.** Teleportation Circle and the harnessed The Mind Stone blink Karn
-  in our end step: he returns and draws then, and at cleanup everything above seven cards is discarded. **Thought Vessel
+- **Blinking at your own end step draws before cleanup.** Conjurer's Closet, Teleportation Circle and the harnessed The Mind Stone blink Karn
+  in our end step (the Closet says "may" and the Circle "up to one" target, so either can be declined when the library or the hand is the problem): he returns and draws then, and at cleanup everything above seven cards is discarded. **Thought Vessel
   and Reliquary Tower give no maximum hand size**, so keep one in play before an end-step blink. A blink in our own main
   phase or at an opponent's end step (Karn has flash with Gandalf out) avoids the problem.
 - **Karn's draw is mandatory.** There is no "may". With Gandalf, Elesh Norn and the Courier out, one entry is up to
@@ -126,7 +127,7 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
   decline.
 - **An opponent's Flickerwisp, or any removal, exile or bounce on Karn,** can send him to the command zone (the
   simulator always does); the recast then costs {2} more.
-- **Instant-speed blinks resolve in one action** (Ephemerate, Cloudshift, Restoration Angel), so Karn simply returns.
+- **Instant-speed blinks resolve in one action** (Ephemerate, Restoration Angel), so Karn simply returns.
 - **Akroma's Will** gives both modes only with a commander on the battlefield: before Karn is out it is a single mode.
 
 ### How the deck wins
@@ -174,7 +175,7 @@ This is a plan, not a measured keep rule.
 |---|---|---|---|
 | Mana short | Imperial Seal, Enlightened Tutor | Sol Ring, Signet, Thought Vessel | The Seal and Vampiric Tutor put the card on top: do it at an end step |
 | Colours short for Karn | Enlightened Tutor, Demonic Tutor | The Courier, Breya, Station | The Courier is the easiest fifth colour |
-| Karn out, no blink | Demonic Tutor, Vampiric Tutor | Ephemerate, Cloudshift or Restoration Angel | Count the library and the hand size first |
+| Karn out, no blink | Demonic Tutor, Vampiric Tutor (Enlightened Tutor finds Conjurer's Closet) | Ephemerate or Restoration Angel, or Conjurer's Closet for a blink every end step | Count the library and the hand size first |
 | Ready to win | Demonic Tutor, Mystical Tutor | Consultation or Doomsday, Thassa's Oracle, Exquisite Blood | Hold a counter or Silence |
 
 ## Limits (what the simulator and the engine do not do)
@@ -219,14 +220,14 @@ Coffers, Mistrise Village and Reliquary Tower.
 - **Blood Moon** turns every nonbasic land into a Mountain and leaves the deck with red mana only: there is no basic to
   fetch or play.
 
-**Pips.** The 64 spells have **white 37, blue 16, black 23, red 3 and green 4** coloured pips (Birthing Pod's Phyrexian
+**Pips.** The 64 spells have **white 36, blue 16, black 23, red 3 and green 4** coloured pips (Birthing Pod's Phyrexian
 {G/P} counted as a green pip), plus The Reaper's {2/B}{2/R}{2/G}. Red comes from Cursed Mirror, Breya and Station; green
 from Twitching Doll, Herd Heirloom, Birthing Pod and Station. White is the heavy colour, with 20 sources; red and green
 are thin, and almost all of that load is Station and The Reaper (Birthing Pod's pip can be paid with 2 life).
 
-**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.81 (180 over 64).
+**Curve** (64 spells; The Reaper counted as 6, Station as 5). Average mana value 2.88 (184 over 64).
 
-- **1 (15):** Cloudshift, Demonic Consultation, Enlightened Tutor, Ephemerate, Esper Sentinel, Expedition Map, Giver of
+- **1 (14):** Demonic Consultation, Enlightened Tutor, Ephemerate, Esper Sentinel, Expedition Map, Giver of
   Runes, Imperial Seal, Mystical Tutor, Path to Exile, Silence, Sol Ring, Swords to Plowshares, Vampiric Tutor, Yoshimaru
 - **2 (14):** Arcane Signet, Baleful Strix, Counterspell, Demonic Tutor, Exsanguinate (X), Gleaming Splendor,
   Gold-Forged Thopteryx, Herd Heirloom, Orcish Bowmasters, Thassa's Oracle, The Mind Stone, The Soul Stone, Thought
@@ -236,12 +237,12 @@ are thin, and almost all of that load is Station and The Reaper (Birthing Pod's 
   Teferi's Protection, Teferi, Time Raveler, Vito
 - **4 (9):** Akroma's Will, Birthing Pod, Breya, Restoration Angel, Smothering Tithe, Teleportation
   Circle, The One Ring, The Wind Crystal, Transguild Courier
-- **5 (7):** Elesh Norn, Exquisite Blood, Force of Will, Gandalf the White, Infinite Guideline Station, Sanguine Bond,
+- **5 (8):** Conjurer's Closet, Elesh Norn, Exquisite Blood, Force of Will, Gandalf the White, Infinite Guideline Station, Sanguine Bond,
   Solitude
 - **6 (3):** Consecrated Sphinx, Farewell, The Reaper, King No More
 
-**Card types** (the 64 spells): 15 artifacts, 7 artifact creatures, 14 other creatures, 14 instants, 6 sorceries,
-7 enchantments and 1 planeswalker; 22 artifacts in all and 21 creatures, without Karn.
+**Card types** (the 64 spells): 16 artifacts, 7 artifact creatures, 14 other creatures, 13 instants, 6 sorceries,
+7 enchantments and 1 planeswalker; 23 artifacts in all and 21 creatures, without Karn.
 
 ## Bracket and Rule 0
 
@@ -271,9 +272,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (7).** Exquisite Blood, Gleaming Splendor, Necropotence, Rhystic Study, Sanguine Bond, Smothering Tithe, Teleportation Circle
 
-**Artifacts (15).** Arcane Signet, Birthing Pod, Buster Sword, Coalition Relic, Cursed Mirror, Expedition Map, Herd Heirloom, Infinite Guideline Station, Sol Ring, Sword of Feast and Famine, The Mind Stone, The One Ring, The Soul Stone, The Wind Crystal, Thought Vessel
+**Artifacts (16).** Arcane Signet, Birthing Pod, Buster Sword, Coalition Relic, Conjurer's Closet, Cursed Mirror, Expedition Map, Herd Heirloom, Infinite Guideline Station, Sol Ring, Sword of Feast and Famine, The Mind Stone, The One Ring, The Soul Stone, The Wind Crystal, Thought Vessel
 
-**Instants (14).** Akroma's Will, Anguished Unmaking, Cloudshift, Counterspell, Demonic Consultation, Enlightened Tutor, Ephemerate, Force of Will, Mystical Tutor, Path to Exile, Silence, Swords to Plowshares, Teferi's Protection, Vampiric Tutor
+**Instants (13).** Akroma's Will, Anguished Unmaking, Counterspell, Demonic Consultation, Enlightened Tutor, Ephemerate, Force of Will, Mystical Tutor, Path to Exile, Silence, Swords to Plowshares, Teferi's Protection, Vampiric Tutor
 
 **Sorceries (6).** Demonic Tutor, Doomsday, Exsanguinate, Farewell, Imperial Seal, Ringsight
 
@@ -301,9 +302,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cabal Coffers
 1 Caves of Koilos
 1 City of Brass
-1 Cloudshift
 1 Coalition Relic
 1 Command Tower
+1 Conjurer's Closet
 1 Consecrated Sphinx
 1 Counterspell
 1 Cursed Mirror

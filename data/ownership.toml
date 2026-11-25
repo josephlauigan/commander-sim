@@ -17,6 +17,7 @@
 # 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (JD confirmed on 2026-11-24 that he owns them: `have`; his printings are not known).
 # 2026-11-24 (JD): Karn deck: Birthing Pod in for Shorikai, Genesis Engine (a proxy, now out); JD owns no Birthing Pod, so it is `proxy`.
 # 2026-11-24 (JD): Ur-Dragon deck: Rhythm of the Wild (his copy, from the spare list) in for Hellkite Courser (a proxy, now out).
+# 2026-11-24 (JD): Karn deck: Conjurer's Closet (his copy, from the spare list) in for Cloudshift (a proxy, now out).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -329,6 +330,7 @@ have = [
   "Caves of Koilos",
   { card = "Coalition Relic", copies = 2 },
   { card = "Command Tower", copies = 3 },
+  "Conjurer's Closet",
   "Consecrated Sphinx",
   { card = "Counterspell", copies = 2 },
   "Cursed Mirror",
@@ -371,7 +373,6 @@ proxy = [
   "Breeding Pool",
   "Breya, Etherium Shaper",
   "City of Brass",
-  "Cloudshift",
   "Demonic Consultation",
   "Demonic Tutor",
   "Enlightened Tutor",
@@ -434,7 +435,6 @@ cards = [
   "Cast Away Doubt",
   "Cloud, Midgar Mercenary",
   "Command Tower",
-  "Conjurer's Closet",
   "Court of Ardenvale",
   "Debt to the Deathless",
   "Decimate",
