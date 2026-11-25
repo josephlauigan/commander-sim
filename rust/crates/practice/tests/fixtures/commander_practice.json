@@ -3400,8 +3400,8 @@
       },
       "deck": "karn_gilded",
       "events": 101,
-      "game_hash": "9dc2c4ad75f3ae98",
-      "hash": "c4afd3916be497b7",
+      "game_hash": "189e14379b6f0b20",
+      "hash": "e05617810c4eb2ee",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3521,8 +3521,8 @@
       },
       "deck": "karn_gilded",
       "events": 131,
-      "game_hash": "4ef5ab063e547dea",
-      "hash": "4350ab97fc5a2470",
+      "game_hash": "3ba761eab153d934",
+      "hash": "3411b52e78caded1",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3545,8 +3545,8 @@
       },
       "deck": "karn_gilded",
       "events": 142,
-      "game_hash": "6436ec07a4f012cc",
-      "hash": "5caf19bcd77b0369",
+      "game_hash": "15f7afdf9d4b33f2",
+      "hash": "e6329b83f36c8bb4",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3569,8 +3569,8 @@
       },
       "deck": "karn_gilded",
       "events": 291,
-      "game_hash": "e463b1428cdf52e2",
-      "hash": "11b569dbd5fb0e25",
+      "game_hash": "f4edee78512e52f8",
+      "hash": "af15e0d5a111f3fe",
       "max_rounds": 30,
       "over": {
         "how": "damage",
