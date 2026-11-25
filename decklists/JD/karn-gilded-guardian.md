@@ -192,8 +192,9 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Breya's 3-damage mode** takes a player, not a planeswalker.
 - **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
   kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
-- **The AI's use of Birthing Pod is unmeasured:** how often it activates it, what it fetches and the life it pays have
-  not been tested in this list.
+- **The AI's use of Birthing Pod is unmeasured:** how often it activates it and what it fetches have not been tested in this list.
+- **Birthing Pod in the simulator:** the activation is paid with {G}, never with 2 life instead of the {G/P} (the card allows both), and a person
+  using it in practice is offered the one sacrifice-and-fetch pair the AI computes, not a free choice of what to sacrifice or fetch.
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
 - **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return).
 

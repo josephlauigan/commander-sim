@@ -183,6 +183,10 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn_gilded: Birthing Pod",
+        "the ability sacrifices a creature of yours and needs a creature one mana value higher in the library: the probe's table has none, so nothing is offered in its state (the person path is the card's `options` hook, which offers one computed sacrifice-and-fetch pair, not a free choice: a known practice limit of the Pod, see audit/karn_gilded/FINDINGS.md)",
+    ),
+    (
         "karn_gilded: Breya, Etherium Shaper",
         "the ability sacrifices two artifacts: the probe's table has no two spare artifacts, so nothing is offered in its state (the person path is the card's `options` hook, which asks for the mode, the target and the artifacts)",
     ),
