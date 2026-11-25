@@ -7,6 +7,7 @@
 # the Ur-Dragon deck); Kyodai, Soul of Kamigawa moved from the Arzakon deck to the Ur-Dragon deck in place of Klauth, Unrivaled Ancient
 # (a proxy, now out); Dockside Extortionist and Karn Liberated joined the Arzakon deck, and he has both.
 # 2026-11-24 (JD): the Ur-Dragon speed and protection/draw packages (eight pairs) and Cabal Ritual => Deadly Rollick in the Sheoldred deck.
+# 2026-11-24 (JD): he no longer owns Palantír of Orthanc or Y'shtola, Night's Blessed; both left the spare list.
 # 2026-11-24 (JD): the Karn, Gilded Guardian deck replaces the Y'shtola and Yoshimaru/Tymna decks (both retired). A card JD owned in a retired deck
 # (or in the spare list) and that is in the Karn list is `have` in the Karn deck; every card whose owned copy stays in the Arzakon deck, the Ur-Dragon
 # deck or the Sheoldred deck, and every new card, is `proxy` there (JD: "they will be proxies"). The retired decks' other owned cards are spares.
@@ -452,7 +453,6 @@ cards = [
   "Mind Stone",
   "Mindbreak Trap",
   "Notion Thief",
-  "Palantír of Orthanc",
   "Path to Exile",
   { card = "Plaza of Heroes", copies = 2 },
   "Polluted Bonds",
@@ -486,7 +486,6 @@ cards = [
   "Windborn Muse",
   "Woodland Cemetery",
   "Wrath of God",
-  "Y'shtola, Night's Blessed",
   "Yavimaya Coast",
   "Young Pyromancer",
   "Your Fate Ends Here",
