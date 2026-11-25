@@ -16,6 +16,7 @@
 # 2026-11-24 (JD): Karn deck list change: Deflecting Swat and Generous Gift out (owned, now spares), Yoshimaru, Ever Faithful in as `have` and Giver of Runes in as `proxy` (JD owns one Giver of Runes: it stays `have` in the Ur-Dragon).
 # 2026-11-24 (JD): Esper Sentinel moved from the Arzakon deck to the Karn deck in place of Felidar Guardian (a proxy, now out); Arzakon took Reality Shift (owned) and, for three proxy fetchlands, the Urza lands Tower, Mine and Power Plant (JD confirmed on 2026-11-24 that he owns them: `have`; his printings are not known).
 # 2026-11-24 (JD): Karn deck: Birthing Pod in for Shorikai, Genesis Engine (a proxy, now out); JD owns no Birthing Pod, so it is `proxy`.
+# 2026-11-24 (JD): Ur-Dragon deck: Rhythm of the Wild (his copy, from the spare list) in for Hellkite Courser (a proxy, now out).
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -238,6 +239,7 @@ have = [
   { card = "Path of Ancestry", copies = 2 },
   { card = "Path to Exile", copies = 2 },
   "Relic of Sauron",
+  "Rhythm of the Wild",
   "Sapphire Medallion",
   "Scion of Draco",
   "Shivan Dragon",
@@ -273,7 +275,6 @@ proxy = [
   "Flooded Strand",
   "Ganax, Astral Hunter",
   "Goldspan Dragon",
-  "Hellkite Courser",
   "Lathliss, Dragon Queen",
   "Llanowar Elves",
   "Maelstrom of the Spirit Dragon",
@@ -463,7 +464,6 @@ cards = [
   "Propaganda",
   "Puresteel Paladin",
   "Read the Bones",
-  "Rhythm of the Wild",
   "Shivan Reef",
   "Skyclave Apparition",
   "Sol Ring",

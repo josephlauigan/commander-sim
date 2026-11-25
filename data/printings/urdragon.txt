@@ -29,7 +29,6 @@
 1 Giver of Runes (plst) MH1-13
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (soc) 245
-1 Hellkite Courser (tdc) 218
 1 Hellkite Tyrant (fic) 295
 1 Jeska's Will (soa) 109
 1 Kura, the Boundless Sky (neo) 200
@@ -56,6 +55,7 @@
 1 Polluted Delta (mh3) 356
 1 Relic of Sauron (hoc) 46
 1 Rhystic Study (j22) 114
+1 Rhythm of the Wild (pza) 12
 1 Rivaz of the Claw (dmu) 215
 1 Sacred Foundry (unf) 285
 1 Sapphire Medallion (mh3) 349
