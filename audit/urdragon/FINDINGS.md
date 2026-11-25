@@ -4,7 +4,7 @@ The deck's living list of strengths and weaknesses and what was tested.
 
 **List:** `decklists/JD/urdragon-five-colour-dragons.md`, built 2026-11-13: an optimised high-bracket-4 Dragons list with
 proxies allowed, reworked 2026-11-14 (24 Dragons besides the commander, 25 with Morophon since 2026-11-23 (25 and 26 from 2026-11-23), ten original duals, seven fetches, five shocks; the Garth One-Eye + Spark Double + Twinflame +
-Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). Paired runs only (see the entries below). The findings of the
+Doubling Season combo). **Tiers:** t5 (`data/my_decks.toml`). Simulated: the 2026-11-23 baseline and the paired runs (see the entries below). The findings of the
 retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 
 ## 2026-11-24: eight swaps, a speed package and a protection and draw package (JD's choice; one paired run, below)
@@ -58,7 +58,7 @@ A speed package of five pairs, none of them simulated when written (the net pack
 
 ## Baseline 2026-11-23 (main f1ffd896, Stage 3; look-ahead, loose, 1,500 games, seed 500000)
 **t5: 27.6%** (about ±2.3 at 95%, binomial arithmetic), 4-player baseline 25%, average rounds survived 8.5. Raw (`--analyze`): `audit/stage3-baseline-2026-11-23/urdragon-analyze.txt`.
-This is the first simulation of this list (the intro above, written before it, still says "No sims yet"). It is a baseline from the new engine (exact X and alternative-cost pricing, hybrid mana, the
+This is the first simulation of this list. It is a baseline from the new engine (exact X and alternative-cost pricing, hybrid mana, the
 Stage 2 filters); no older number in this file is for this list or build, so none is comparable.
 
 - **How it wins:** damage 96.6% of wins, alt 2.9%, timeout 0.5%. It eliminates 0.82 opponents a game: combat 56.7%, triggers 39.9%, burn 2.2%, commander damage 1.0%. Damage dealt 42.4 a game: combat 30.3 (72%),
