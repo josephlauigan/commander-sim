@@ -500,7 +500,7 @@ fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_a_tutor_the_lotus_pays
 fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_one_of_the_plans_engines() {
     let mut g = tbl();
     let w = walker(&mut g, 4);
-    hand(&mut g, P0, &["Rhystic Study"]); // {2}{U}, in data/plans/arzakon.toml's engines
+    hand(&mut g, P0, &["Mystic Remora"]); // {U}, in data/plans/arzakon.toml's engines (Rhystic Study left the list 2026-11-24)
     let (minus, plus) = minus_and_plus(&mut g, w);
     assert!(minus.is_some_and(|m| m > plus), "-3 {minus:?} against +2 {plus}");
 }

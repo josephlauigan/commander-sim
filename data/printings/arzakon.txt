@@ -59,7 +59,6 @@
 1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
 1 Reality Shift (tdc) 163
-1 Rhystic Study (wot) 71
 1 Rings of Brighthearth (ltc) 352
 1 Savannah (ced) 281
 1 Scalding Tarn (spg) 112
@@ -71,6 +70,7 @@
 1 Staff of Domination (cmr) 343
 1 Steam Vents (rvr) 298
 1 Strip Mine (4ed) 363
+1 Sunpearl Kirin (slp) 53
 1 Swords to Plowshares (ice) 54
 1 Taiga (cei) 283
 1 Tainted Pact (ody) 164
