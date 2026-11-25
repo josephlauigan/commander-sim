@@ -8,12 +8,12 @@
 1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Cabal Coffers (prm) 91393
-1 Cabal Ritual (tor) 51
 1 Call of the Ring (ltr) 79
 1 Cost of Brilliance (sos) 77
 1 Damnable Pact (ncc) 245
 1 Dark Ritual (itp) 19
 1 Deadly Dispute (sld) 2091
+1 Deadly Rollick (cmm) 695
 1 Demonic Tutor (cmm) 696
 1 Diabolic Tutor (sld) 721
 1 Dreadhorde Invasion (mic) 114

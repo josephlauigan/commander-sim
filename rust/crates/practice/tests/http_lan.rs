@@ -109,7 +109,7 @@ fn open_table(s: &Server) -> (Browser, Browser, String) {
         "/api/new",
         // seed 10: after the Tier 2 list tuning seeds 7, 8, 9 end the game early (seed 7 since the 10-13 lists): they kill both human seats early and the AIs finish the game
         // before the test can pause the bots (the save test then waits for a decision that never comes)
-        json!({"deck": "yoshimaru", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false, "two": true}),
+        json!({"deck": "karn_gilded", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false, "two": true}),
     );
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let j = r.json();
@@ -129,7 +129,7 @@ fn test_two_needs_a_server_started_with_lan() {
         return;
     }
     let mut c = s.client();
-    let r = c.post("/api/new", json!({"deck": "yoshimaru", "tier": "t2", "two": true}));
+    let r = c.post("/api/new", json!({"deck": "karn_gilded", "tier": "t2", "two": true}));
     assert_eq!(r.status, 409);
     assert!(r.error().contains("--lan"), "{}", r.error());
 }
@@ -143,19 +143,19 @@ fn test_the_lobby_and_joining() {
     assert!(st["lobby"]["addresses"].is_array());
     let st = friend.get("/api/state");
     assert!(st["lobby"].get("code").is_none()); // the friend needs it from the host
-    assert_eq!(st["lobby"]["deck"], "yoshimaru");
+    assert_eq!(st["lobby"]["deck"], "karn_gilded");
     let wrong = if code != "000000" { "000000" } else { "111111" };
     assert_eq!(join(&mut friend, wrong, "sheoldred"), 409);
-    assert_eq!(join(&mut friend, &code, "yoshimaru"), 409);
+    assert_eq!(join(&mut friend, &code, "karn_gilded"), 409);
     assert_eq!(join(&mut host, &code, "sheoldred"), 409);
     assert_eq!(join(&mut friend, &code, "sheoldred"), 200);
     let a = host.get("/api/state");
     let b = friend.get("/api/state");
-    assert_eq!((a["game"]["you"].as_str(), b["game"]["you"].as_str()), (Some("yoshimaru"), Some("sheoldred")));
+    assert_eq!((a["game"]["you"].as_str(), b["game"]["you"].as_str()), (Some("karn_gilded"), Some("sheoldred")));
     let mut humans: Vec<&str> = a["game"]["humans"].as_array().unwrap().iter().map(|x| x.as_str().unwrap()).collect();
     humans.sort();
-    assert_eq!(humans, ["sheoldred", "yoshimaru"]);
-    assert_eq!(friend.post("/api/new", json!({"deck": "yoshimaru", "tier": "t2"})).status, 403);
+    assert_eq!(humans, ["karn_gilded", "sheoldred"]);
+    assert_eq!(friend.post("/api/new", json!({"deck": "karn_gilded", "tier": "t2"})).status, 403);
     assert_eq!(friend.post("/api/quit", json!({})).status, 403);
     assert_eq!(friend.post("/api/save", json!({})).status, 403);
     assert_eq!(friend.c.get("/api/saves").status, 403);
@@ -193,7 +193,7 @@ fn test_each_seat_sees_its_own_game() {
     host.stop.store(true, Ordering::Relaxed);
     friend.stop.store(true, Ordering::Relaxed);
     host.post("/api/quit", json!({}));
-    for (b, me) in [(&host, "yoshimaru"), (&friend, "sheoldred")] {
+    for (b, me) in [(&host, "karn_gilded"), (&friend, "sheoldred")] {
         let evs = b.events.lock().unwrap();
         let reqs: Vec<&Value> = evs.iter().filter(|e| e["kind"] == "request").collect();
         assert!(!reqs.is_empty());
@@ -339,9 +339,9 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     let lb = friend.get("/api/state")["lobby"].clone();
     assert_eq!(
         (lb["deck"].as_str(), lb["partner"].as_str(), lb["loaded"].as_bool()),
-        (Some("yoshimaru"), Some("sheoldred"), Some(true))
+        (Some("karn_gilded"), Some("sheoldred"), Some(true))
     );
-    assert_eq!(join(&mut friend, &code2, "yoshimaru"), 409);
+    assert_eq!(join(&mut friend, &code2, "karn_gilded"), 409);
     assert_eq!(join(&mut friend, &code2, "sheoldred"), 200);
     assert_eq!(friend.get("/api/state")["game"]["you"], "sheoldred");
     host.post("/api/quit", json!({}));
@@ -362,7 +362,7 @@ fn test_one_player_undo_is_at_once() {
     let Some(s) = server() else { return };
     let mut host = Browser::new(s.client());
     host.call("GET", "/", None);
-    host.post("/api/new", json!({"deck": "yoshimaru", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false}));
+    host.post("/api/new", json!({"deck": "karn_gilded", "tier": "t2", "seed": 10, "ai": "adaptive", "images": false}));
     host.auto.store(false, Ordering::Relaxed);
     host.listen(Arc::default());
     let ev = host.next_request(120).unwrap();

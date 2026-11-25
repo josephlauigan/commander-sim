@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 5] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 4] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -102,7 +102,7 @@ const OPTS: [Opt; 40] = [
         &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
         "play --deck against the opponents of the format's table (three outside decks for Commander, one for Cali) drawn from this tier (see decklists/pool/); all = the deck's own tiers
-         (data/my_decks.toml: e.g. yoshimaru t4-t5, sheoldred t3-t4). A tier outside them is refused unless --any-tier",
+         (data/my_decks.toml: e.g. karn_gilded t4-t5, sheoldred t3-t4). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
     opt(
@@ -259,8 +259,8 @@ pub fn help() -> String {
           Partial, Unmodeled) and up to 5 of its Unmodeled and Partial cards, commander and engine cards first; \
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
-    s += "\nExamples\n  commander-sim --deck yoshimaru --pool t4 --profile loose --games 960\n  commander-sim --deck yoshimaru \
-          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish arzakon,t6 --games 2000   (arzakon alone against one inert seat at 30 life, the six Tier 6 decks against three at 40)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
+    s += "\nExamples\n  commander-sim --deck karn_gilded --pool t4 --profile loose --games 960\n  commander-sim --deck karn_gilded \
+          --pool t4 --swap \"Arcane Signet=>Prismatic Lens\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish arzakon,t6 --games 2000   (arzakon alone against one inert seat at 30 life, the six Tier 6 decks against three at 40)\n  commander-sim --deck karn_gilded --pool t1 --any-tier   (only when asked: t1 is outside the Karn deck's tiers)\n";
     s
 }
 
@@ -471,15 +471,15 @@ mod tests {
 
     #[test]
     fn defaults_and_forms() {
-        let a = p("--deck yoshimaru --pool=t1 --profile loose --gam 960 --jobs 22").unwrap();
-        assert_eq!(a.deck.as_deref(), Some("yoshimaru"));
+        let a = p("--deck karn_gilded --pool=t1 --profile loose --gam 960 --jobs 22").unwrap();
+        assert_eq!(a.deck.as_deref(), Some("karn_gilded"));
         assert_eq!(a.pool.as_deref(), Some("t1"));
         assert_eq!(a.profiles, ["loose"]);
         assert_eq!((a.games, a.seed, a.jobs, a.ai.as_str(), a.temp), (960, 500000, 22, "lookahead", 1.0));
-        let a = p("--deck yoshimaru --pool t3 --n 200").unwrap();
+        let a = p("--deck karn_gilded --pool t3 --n 200").unwrap();
         assert_eq!(a.games, 200);
         assert_eq!(a.profiles, ["loose"]); // the default (JD 2026-10-19)
-        let a = p("--deck yoshimaru --pool t3 --profiles conservative,loose").unwrap();
+        let a = p("--deck karn_gilded --pool t3 --profiles conservative,loose").unwrap();
         assert_eq!(a.profiles, ["conservative", "loose"]);
         let a = p("--calibrate within").unwrap();
         assert_eq!(a.games, 1500);
@@ -487,7 +487,7 @@ mod tests {
 
     #[test]
     fn swaps_repeat_and_values_may_contain_spaces() {
-        let argv: Vec<String> = ["--deck", "yoshimaru", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"]
+        let argv: Vec<String> = ["--deck", "karn_gilded", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"]
             .iter()
             .map(|s| s.to_string())
             .collect();
@@ -519,9 +519,9 @@ mod any_tier_tests {
 
     #[test]
     fn any_tier_flag_parses() {
-        assert!(!p("--deck yoshimaru --pool t3").unwrap().any_tier);
-        assert!(p("--deck yoshimaru --pool t1 --any-tier").unwrap().any_tier);
-        assert!(p("--deck yoshimaru --pool t1 --any").unwrap().any_tier);
+        assert!(!p("--deck karn_gilded --pool t3").unwrap().any_tier);
+        assert!(p("--deck karn_gilded --pool t1 --any-tier").unwrap().any_tier);
+        assert!(p("--deck karn_gilded --pool t1 --any").unwrap().any_tier);
         assert!(p("--any-tier=x").is_err());
     }
 }
@@ -548,7 +548,7 @@ mod goldfish_flag_tests {
             (a.mulligan_oracle.as_deref(), a.hands, a.playouts, a.ai.as_str()),
             (Some("arzakon,t6"), 1000, 40, "adaptive")
         );
-        let a = p("--mulligan-oracle yoshimaru --hands 20 --playouts 8 --seed 7 --ai lookahead");
+        let a = p("--mulligan-oracle karn_gilded --hands 20 --playouts 8 --seed 7 --ai lookahead");
         assert_eq!((a.hands, a.playouts, a.seed, a.ai.as_str()), (20, 8, 7, "lookahead"));
         // every other mode keeps the lookahead default
         assert_eq!(p("--goldfish arzakon").ai, "lookahead");
@@ -615,8 +615,8 @@ mod explain_flag_tests {
 
     #[test]
     fn no_explain_is_a_flag_and_off_by_default() {
-        assert!(!p(&["--deck", "yoshimaru", "--swap", "A=>B"]).unwrap().no_explain);
-        assert!(p(&["--deck", "yoshimaru", "--swap", "A=>B", "--no-explain"]).unwrap().no_explain);
+        assert!(!p(&["--deck", "karn_gilded", "--swap", "A=>B"]).unwrap().no_explain);
+        assert!(p(&["--deck", "karn_gilded", "--swap", "A=>B", "--no-explain"]).unwrap().no_explain);
         // --n still means --games, and a prefix of --no-explain works
         assert_eq!(p(&["--n", "50"]).unwrap().games, 50);
         assert!(p(&["--no-ex"]).unwrap().no_explain);
@@ -633,10 +633,10 @@ mod preflight_flag_tests {
 
     #[test]
     fn preflight_is_on_by_default_and_the_flags_turn_it_off_or_stop_after_it() {
-        let a = p(&["--deck", "yoshimaru", "--swap", "A=>B"]).unwrap();
+        let a = p(&["--deck", "karn_gilded", "--swap", "A=>B"]).unwrap();
         assert!(!a.no_preflight && !a.preflight_only);
-        assert!(p(&["--deck", "yoshimaru", "--swap", "A=>B", "--no-preflight"]).unwrap().no_preflight);
-        assert!(p(&["--deck", "yoshimaru", "--swap", "A=>B", "--preflight-only"]).unwrap().preflight_only);
+        assert!(p(&["--deck", "karn_gilded", "--swap", "A=>B", "--no-preflight"]).unwrap().no_preflight);
+        assert!(p(&["--deck", "karn_gilded", "--swap", "A=>B", "--preflight-only"]).unwrap().preflight_only);
         assert!(help().contains("--no-preflight") && help().contains("--preflight-only"));
     }
 }

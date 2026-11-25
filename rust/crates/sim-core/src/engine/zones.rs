@@ -635,6 +635,12 @@ pub enum Zone {
 
 /// a nontoken card that left goes to a zone of its owner's; a commander goes to the command zone
 pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
+    to_zone_card_inner(g, m, zone, false);
+}
+
+/// `to_zone_card`; with `keep_cmd` a commander is left in the zone it was sent to instead of moving to the command zone
+/// (CR 903.9a: the owner may put it there, and a card that returns on its own, as Flickerwisp's does, is left in exile)
+fn to_zone_card_inner(g: &mut Game, m: PermId, zone: Zone, keep_cmd: bool) {
     // unearth: "if it would leave the battlefield, exile it instead of putting it anywhere else"
     let zone = if g.perm(m).data.truthy(DataKey::Unearth) { Zone::Exile } else { zone };
     if zone == Zone::Exile {
@@ -646,7 +652,7 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
     }
     let owner = x.orig;
     if let Some(cd) = x.phys {
-        if g.player(owner).is_commander(cd) {
+        if !keep_cmd && g.player(owner).is_commander(cd) {
             g.player_mut(owner).set_cmd_zone(cd, true); // --- scion: Scion as a copy is still the commander
             return;
         }
@@ -660,7 +666,7 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
     }
     let cd = x.cd.unwrap();
     let zone = if zone == Zone::Gy && crate::impls::karn_cards::shuffles_back(g, cd) { Zone::Lib } else { zone }; // Blightsteel Colossus
-    if g.player(owner).is_commander(cd) {
+    if !keep_cmd && g.player(owner).is_commander(cd) {
         if zone == Zone::Hand && crate::impls::cloud::cmd_stays_in_hand(g, owner) {
             g.player_mut(owner).hand.push(cd); // rule 903.9b: the owner may leave the commander in hand (no tax)
             return;
@@ -1107,6 +1113,16 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
 }
 
 pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
+    exile_perm_inner(g, m, false)
+}
+
+/// `exile_perm`, but a commander stays in exile (CR 903.9a: the owner may leave it there): for an exile that returns the
+/// card by itself (Flickerwisp's own commander, back at the end step; Eerie Interlude's `interlude_exile` does the same by hand)
+pub fn exile_perm_keep_cmd(g: &mut Game, m: PermId) -> Res {
+    exile_perm_inner(g, m, true)
+}
+
+fn exile_perm_inner(g: &mut Game, m: PermId, keep_cmd: bool) -> Res {
     let prev = g.exiling.replace(m); // Kaya's Ghostform sees the exile
     let r = leave(g, m);
     g.exiling = prev;
@@ -1117,7 +1133,7 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
             return exiled_from_bf_upto(g, m, Some(mark)); // it came back, but it was exiled first
         }
     }
-    to_zone_card(g, m, Zone::Exile);
+    to_zone_card_inner(g, m, Zone::Exile, keep_cmd);
     exiled_from_bf(g, m, None)
 }
 

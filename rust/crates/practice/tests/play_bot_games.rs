@@ -159,8 +159,8 @@ fn urdragon_t5() {
     play("urdragon", "t5", 1);
 }
 #[test]
-fn yshtola_t3() {
-    play("yshtola", "t3", 1);
+fn karn_gilded_t3() {
+    play("karn_gilded", "t3", 1);
 }
 #[test]
 fn sheoldred_t4() {
@@ -172,10 +172,10 @@ fn thanos_t5() {
     play("arzakon", "t5", 1);
 }
 #[test]
-fn yoshimaru_t4() {
-    play("yoshimaru", "t4", 1);
+fn karn_gilded_t4() {
+    play("karn_gilded", "t4", 1);
 }
 #[test]
-fn yoshimaru_t6() {
-    play("yoshimaru", "t6", 1);
+fn karn_gilded_t6() {
+    play("karn_gilded", "t6", 1);
 }

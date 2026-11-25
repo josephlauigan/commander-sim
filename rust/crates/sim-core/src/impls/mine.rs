@@ -4379,6 +4379,9 @@ pub fn t2_blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
 
 /// mine.blink_worth: what blinking p's creature m is worth: its enter effect (hand-tagged or compiled)
 pub fn blink_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    if let Some(v) = crate::impls::karn_gilded::reenter_now(g, p, m) {
+        return v; // Karn, Gilded Guardian: above the 2.0 enters floor, or the guard would leak past it
+    }
     if card_tag(g, m, Tag::Bahamut) {
         return etb_value(g, p, m); // its restart, not a flat enter hook
     }

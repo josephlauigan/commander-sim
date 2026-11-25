@@ -1,39 +1,10 @@
-//! A person playing the Partner deck `yoshimaru` (Yoshimaru, Ever Faithful + Tymna the Weaver): the setup list shows both
-//! commanders, the view gives both zones and taxes, and the commanders are cast from the command zone with
-//! `{"do": "cast", "zone": "cmd", "cmd": i}`.
+//! Partner decks in practice mode. No deck of JD's in `data/my_decks.toml` has two commanders since the `yoshimaru` key
+//! left on 2026-11-24 (the earlier partner decks, `thrasios` and `yoshimaru`, are retired as keys), so the tests that
+//! seated a person on a Partner deck (the catalog entry with both commanders, and a person casting either commander from the
+//! command zone and paying its own tax) are gone with them; what stays is the deck file line that names two commanders and
+//! the list of decks a person can play.
 
-#[path = "session_common/mod.rs"]
-mod common;
-use common::*;
-use practice::session::Session;
-use serde_json::{Value, json};
-use std::cell::Cell;
-use std::time::Duration;
-
-const LIMIT: Duration = Duration::from_secs(120);
-
-#[test]
-fn the_catalog_lists_yoshimaru_with_both_commanders() {
-    let data = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data");
-    let cat = practice::catalog::catalog(&data).unwrap();
-    let keys: Vec<&str> = cat["decks"].as_array().unwrap().iter().map(|d| d["key"].as_str().unwrap()).collect();
-    assert!(keys.contains(&"yoshimaru") && !keys.contains(&"thrasios"), "{keys:?}");
-    let k = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "yoshimaru").unwrap();
-    assert_eq!(k["commanders"], json!(["Yoshimaru, Ever Faithful", "Tymna the Weaver"]));
-    assert_eq!(
-        (k["commander"].as_str(), k["commander2"].as_str()),
-        (Some("Yoshimaru, Ever Faithful"), Some("Tymna the Weaver"))
-    );
-    assert_eq!(k["ident"], "WB");
-    assert_eq!(k["name"], "Yoshimaru and Tymna the Weaver"); // the deck file's two commanders
-    // one commander elsewhere: no second one
-    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "sheoldred").unwrap();
-    assert_eq!(s["commander2"], Value::Null);
-    assert_eq!(s["commanders"].as_array().unwrap().len(), 1);
-    // both commanders get their images fetched
-    let names = practice::catalog::commanders(&cat);
-    assert!(names.contains(&"Yoshimaru, Ever Faithful".to_string()) && names.contains(&"Tymna the Weaver".to_string()));
-}
+use serde_json::Value;
 
 #[test]
 fn the_deck_file_line_with_two_commanders() {
@@ -41,121 +12,6 @@ fn the_deck_file_line_with_two_commanders() {
         practice::catalog::display_name("x\n**Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero\n").unwrap(),
         "Tymna the Weaver and Thrasios"
     );
-}
-
-fn me(req: &Value) -> Option<&Value> {
-    req["data"]["view"]["players"].as_array()?.iter().find(|p| p["you"] == true)
-}
-
-/// the person's turns: play a land, tap everything, then cast a commander the mana in the pool pays for.
-/// One game of that policy with this seed: the casts of the person's commanders from the log, and the taxes at the end
-fn play(seed: u64) -> (Vec<String>, u64, u64) {
-    let mut o = opts("adaptive");
-    o.deck = "yoshimaru".into();
-    o.tier = "t3".into();
-    o.seed = Some(seed);
-    o.max_rounds = 14;
-    o.compare = false;
-    let s = Session::new(o).unwrap();
-    s.start();
-    let (round, landed, tried) = (Cell::new(0u64), Cell::new(false), Cell::new(false));
-    let seen_first_view = Cell::new(false);
-    let policy = |req: &Value, _n: usize| -> Option<Value> {
-        if req["kind"] != "priority" {
-            return None;
-        }
-        let m = me(req)?;
-        if !seen_first_view.get() {
-            // the view has both commanders, both in the zone, no tax yet
-            assert_eq!(m["commander"], "Yoshimaru, Ever Faithful");
-            assert_eq!(m["commander2"], "Tymna the Weaver");
-            assert!(m["commander_in_zone"] == true && m["commander2_in_zone"] == true);
-            assert_eq!((m["tax"].as_u64(), m["tax2"].as_u64()), (Some(0), Some(0)));
-            seen_first_view.set(true);
-        }
-        let r = req["data"]["view"]["round"].as_u64().unwrap();
-        if r != round.get() {
-            round.set(r);
-            landed.set(false);
-            tried.set(false);
-        }
-        // lands and spells only in your own main phases: a land asked for in an opponent's turn is refused (not
-        // sorcery timing), and which seat goes first would then decide whether the person ever played one
-        let view = &req["data"]["view"];
-        if view["active"] != "yoshimaru" || !matches!(view["step"].as_str(), Some("main1" | "main2")) {
-            return Some(json!({"do": "pass"}));
-        }
-        let in_zone = |k: &str| m[k] == true;
-        if !landed.get()
-            && let Some(i) = m["hand_land"].as_array().unwrap().iter().position(|l| l == true)
-        {
-            landed.set(true);
-            return Some(json!({"do": "land", "card": i}));
-        }
-        if in_zone("commander_in_zone") || in_zone("commander2_in_zone") {
-            // tap the source that makes the most colours still missing for a commander in the zone (W for Yoshimaru,
-            // WB for Tymna), so the games don't depend on which lands the list runs or in what order they come
-            let pool = m["mana_pool"].as_str().unwrap_or("");
-            let mut want = String::new();
-            if in_zone("commander_in_zone") {
-                want += "W";
-            }
-            if in_zone("commander2_in_zone") {
-                want += "WB";
-            }
-            let fills = |s: &Value| {
-                let cols = s["colours"].as_str().unwrap_or("");
-                want.chars().filter(|&c| !pool.contains(c) && cols.contains(c)).count()
-            };
-            let srcs = m["mana_sources"].as_array()?.iter().enumerate();
-            if let Some((_, best)) = srcs.max_by_key(|(i, s)| (fills(s), std::cmp::Reverse(*i))) {
-                return Some(json!({"do": "tap", "source": best["id"]}));
-            }
-        }
-        let pool = m["mana_pool"].as_str().unwrap_or("").chars().count() as u64;
-        if !tried.get() && pool > 0 {
-            let (t1, t2) = (1 + m["tax"].as_u64().unwrap(), 3 + m["tax2"].as_u64().unwrap());
-            let has = |cs: &str| cs.chars().all(|c| m["mana_pool"].as_str().unwrap_or("").contains(c));
-            if in_zone("commander2_in_zone") && pool >= t2 && has("WB") {
-                tried.set(true);
-                return Some(json!({"do": "cast", "zone": "cmd", "cmd": 1}));
-            }
-            if in_zone("commander_in_zone") && pool >= t1 && has("W") {
-                tried.set(true);
-                return Some(json!({"do": "cast", "zone": "cmd", "cmd": 0}));
-            }
-        }
-        Some(json!({"do": "pass"}))
-    };
-    let (_, evs) = drive(&s, 0, LIMIT, &policy);
-    // the last table the person saw shows the taxes
-    let last = over(&evs)["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap().clone();
-    let cast: Vec<String> = evs
-        .iter()
-        .filter_map(|e| e["text"].as_str())
-        .filter(|t| {
-            t.contains("Yoshimaru/Tymna casts Yoshimaru") || t.contains("Yoshimaru/Tymna casts Tymna the Weaver")
-        })
-        .map(String::from)
-        .collect();
-    s.close(Duration::from_secs(10));
-    (cast, last["tax"].as_u64().unwrap(), last["tax2"].as_u64().unwrap())
-}
-
-#[test]
-fn a_person_on_yoshimaru_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
-    let (mut yoshimaru_recast, mut tymna_seen) = (false, false);
-    for seed in 1..=48 {
-        let (cast, tax, tax2) = play(seed);
-        let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Yoshimaru/Tymna casts {n}"))).count() as u64;
-        // every cast raised that commander's own tax, and only its own
-        assert_eq!(tax, 2 * of("Yoshimaru"), "seed {seed}: {cast:?}");
-        assert_eq!(tax2, 2 * of("Tymna the Weaver"), "seed {seed}: {cast:?}");
-        yoshimaru_recast |= of("Yoshimaru") >= 2;
-        tymna_seen |= of("Tymna the Weaver") >= 1;
-    }
-    assert!(yoshimaru_recast, "no game recast Yoshimaru");
-    assert!(tymna_seen, "no game cast Tymna");
 }
 
 #[test]

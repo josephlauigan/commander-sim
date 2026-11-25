@@ -1,5 +1,7 @@
 # Yoshimaru and Tymna (key `yoshimaru`): findings
 
+**Retired 2026-11-24; key out of the simulator the same day.** The list is in `decklists/pool/retired/yoshimaru-tymna-blink.md` and this file is history only. The deck's cards went into the Karn, Gilded Guardian deck (`audit/karn_gilded/FINDINGS.md`).
+
 The deck's living list of strengths and weaknesses and what was tested.
 
 **List:** `decklists/JD/yoshimaru-tymna-blink.md` (Yoshimaru, Ever Faithful and Tymna the Weaver, plain Partner, white-black blink and

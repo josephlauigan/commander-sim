@@ -26,14 +26,44 @@ pub fn phyrexian(cache: &Cache, cd: &Cd) -> String {
     }
 }
 
-/// the two-colour hybrid symbols of the printed cost, in cost order ("GW" for {G/W}); {2/W} and Phyrexian symbols are
-/// not listed. The card's `pips` hold the first colour of each, so the engine can try the other one when it pays.
+/// the hybrid symbols of the printed cost, in cost order ("GW" for {G/W}, "W2" for {2/W}); Phyrexian symbols are not
+/// listed. The card's `pips` hold the first colour of each (the only colour of a {2/W}), so the engine can try the other
+/// one when it pays: a {2/W} is paid with {W} or with {2}. A card whose cost an override states (its `pips` are the
+/// override's, not Scryfall's) lists no {2/W}: the override has already decided how that symbol is paid.
 pub fn hybrid(cache: &Cache, cd: &Cd) -> Vec<String> {
     let Some(rec) = rec(cache, &cd.name) else { return vec![] };
     let (face, _) = crate::autotag::front(rec);
     let mc = face.s("mana_cost").filter(|s| !s.is_empty()).or_else(|| rec.s("mana_cost")).unwrap_or("");
     let mc = crate::py::first(mc, " // ");
-    crate::re::finditer(r"\{([WUBRG])/([WUBRG])\}", mc).into_iter().map(|m| format!("{}{}", m.gs(1), m.gs(2))).collect()
+    let mut v = hybrid_of_cost(mc);
+    if cd.cost_override {
+        v.retain(|h| !h.ends_with('2'));
+    }
+    v
+}
+
+/// `hybrid` for a printed mana cost ("{2/W}{G/U}" -> ["W2", "GU"])
+pub fn hybrid_of_cost(mc: &str) -> Vec<String> {
+    findall(r"\{([^}]+)\}", mc)
+        .into_iter()
+        .filter_map(|sym| {
+            let (a, b) = sym.split_once('/')?;
+            let col = |x: &str| x.len() == 1 && "WUBRG".contains(x);
+            if col(a) && col(b) {
+                Some(format!("{a}{b}"))
+            } else if a == "2" && col(b) {
+                Some(format!("{b}2"))
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
+/// a card's mana value: its generic mana and one for each symbol in `pips`, and 2 for a {2/W} (`hybrid` lists it as "W2";
+/// its `pips` hold the W, which counts for 1, so one more)
+pub fn mana_value(cd: &Cd, hybrid: &[String]) -> i64 {
+    cd.cmc + hybrid.iter().filter(|h| h.ends_with('2')).count() as i64
 }
 
 /// how many {X} symbols the printed cost has (Torment of Hailfire 1, Hangarback Walker 2): practice mode asks for X

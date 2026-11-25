@@ -473,6 +473,7 @@ pub fn aura_ward(g: &Game, m: PermId) -> u32 {
         + crate::impls::t45_urdragon::rith_ward(g, m) // --- Tiers 4/5 (urdragon): Rith, Liberated Primeval
         + crate::impls::t12_lightpaws::ward(g, m) // --- Tiers 1/2 (lightpaws): Chains of Custody, Thran Power Suit
         + crate::impls::card_models3::innkeeper_ward(g, m) // --- card-models-3: Innkeeper's Talent, level 2
+        + crate::impls::karn_gilded_cards::thopteryx_ward(g, m) // Gold-Forged Thopteryx: legendary permanents, ward {2}
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal
@@ -710,6 +711,7 @@ pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, d: PlayerId, a
 pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     crate::impls::partials::insight_draw(g, p, a, dmg)?;
     crate::impls::card_models3::cipher_hit(g, p, a)?; // --- card-models-3: cipher (Hidden Strings)
+    crate::impls::karn_gilded_cards::heirloom_draw(g, p, a, dmg)?; // Herd Heirloom's grant: draw a card
     if !g.player(p).emblems.is_empty() {
         crate::impls::rules::emblem_combat(g, p, a, d, dmg)?;
     }

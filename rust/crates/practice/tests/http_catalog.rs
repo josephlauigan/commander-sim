@@ -19,12 +19,12 @@ fn test_your_decks() {
     let o = s.client().get("/api/options").json();
     let d: std::collections::BTreeMap<&str, &serde_json::Value> =
         o["decks"].as_array().unwrap().iter().map(|x| (x["key"].as_str().unwrap(), x)).collect();
-    assert_eq!(d.keys().copied().collect::<Vec<_>>(), ["arzakon", "sheoldred", "urdragon", "yoshimaru", "yshtola"]);
+    assert_eq!(d.keys().copied().collect::<Vec<_>>(), ["arzakon", "karn_gilded", "sheoldred", "urdragon"]);
     assert_eq!(d["sheoldred"]["name"], "Sheoldred, the Apocalypse"); // the deck file's commander line
     assert_eq!(d["sheoldred"]["commander"], "Sheoldred, the Apocalypse"); // the card the engine (and image) uses
     assert_eq!(d["sheoldred"]["bracket"], 4);
-    assert_eq!(d["yoshimaru"]["bracket"], 4);
-    assert!(d["yshtola"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only Y'shtola, Seph FS above 3
+    assert_eq!(d["karn_gilded"]["bracket"], 4);
+    assert!(d["karn_gilded"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only the Karn deck and Seph FS above 3
     for x in d.values() {
         for k in ["key", "commander", "name", "bracket", "game_changers", "win_rates"] {
             assert!(x.get(k).is_some(), "{} lacks {k}", x["key"]);
@@ -36,7 +36,7 @@ fn test_your_decks() {
 fn test_win_rates_from_the_results_table() {
     let s = srv!();
     let o = s.client().get("/api/options").json();
-    for key in ["yshtola", "sheoldred"] {
+    for key in ["sheoldred"] {
         // not every deck has a results row yet
         let d = o["decks"].as_array().unwrap().iter().find(|x| x["key"] == key).unwrap();
         let w = d["win_rates"].as_object().unwrap_or_else(|| panic!("no win rates for {key}"));

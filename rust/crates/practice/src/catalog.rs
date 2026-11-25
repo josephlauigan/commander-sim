@@ -13,7 +13,7 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 5] = ["yshtola", "sheoldred", "arzakon", "urdragon", "yoshimaru"];
+pub const MY_DECKS: [&str; 4] = ["sheoldred", "arzakon", "urdragon", "karn_gilded"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -113,7 +113,6 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
         }
         let cells: Vec<&str> = line.trim().trim_matches('|').split('|').map(str::trim).collect();
         let key = match cells[0].to_lowercase().as_str() {
-            "y'shtola" | "yshtola" => "yshtola",
             "sheoldred" => "sheoldred",
             _ => continue,
         };

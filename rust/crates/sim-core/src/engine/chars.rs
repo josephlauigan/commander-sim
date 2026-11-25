@@ -530,6 +530,9 @@ pub enum NamedFx {
     /// layers 4 and 5: its controller's nonland permanents are all colours and their lands every basic land type
     /// (Leyline of the Guildpact; read through `leyline`)
     AllColors,
+    /// layer 5: it is all five colours (Transguild Courier: "is all colors", a characteristic-defining ability, so it holds
+    /// in every zone: `CardDef::colors` is WUBRG, set where the card is loaded)
+    SelfAllColors,
     /// layer 6: the creature it equips loses this keyword (Colossus Hammer: flying)
     EquippedLoses(&'static str),
     /// layer 7b: the creature it equips has this base power and toughness (Wrecking Ball Arm, Hulkbuster Armor)
@@ -550,11 +553,12 @@ pub struct Named {
 }
 
 /// The cards whose characteristic-changing effect is read by name (each was a name check at its use site).
-pub const NAMED: [Named; 9] = [
+pub const NAMED: [Named; 10] = [
     Named { name: "Maskwood Nexus", layer: "4", fx: NamedFx::AllCreatureTypes },
     Named { name: "Yavimaya, Cradle of Growth", layer: "4", fx: NamedFx::LandsAre('G') },
     Named { name: "Urborg, Tomb of Yawgmoth", layer: "4", fx: NamedFx::LandsAre('B') },
     Named { name: "Leyline of the Guildpact", layer: "4/5", fx: NamedFx::AllColors },
+    Named { name: "Transguild Courier", layer: "5", fx: NamedFx::SelfAllColors },
     Named { name: "Colossus Hammer", layer: "6", fx: NamedFx::EquippedLoses("flying") },
     Named { name: "Wrecking Ball Arm", layer: "7b", fx: NamedFx::EquippedBase(7, 7) },
     Named { name: "Hulkbuster Armor", layer: "7b", fx: NamedFx::EquippedBase(9, 9) },

@@ -1,5 +1,7 @@
 # Y'shtola, Night's Blessed — findings (living file)
 
+**Retired 2026-11-24; key out of the simulator the same day.** The list is in `decklists/pool/retired/yshtola-esper-drain.md` and this file is history only. The deck's cards went into the Karn, Gilded Guardian deck (`audit/karn_gilded/FINDINGS.md`).
+
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 

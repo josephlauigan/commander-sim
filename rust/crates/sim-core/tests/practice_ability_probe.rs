@@ -181,7 +181,28 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
 const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
-const FALSE_ALARMS: &[(&str, &str)] = &[];
+const FALSE_ALARMS: &[(&str, &str)] = &[
+    (
+        "karn_gilded: Breya, Etherium Shaper",
+        "the ability sacrifices two artifacts: the probe's table has no two spare artifacts, so nothing is offered in its state (the person path is the card's `options` hook, which asks for the mode, the target and the artifacts)",
+    ),
+    (
+        "karn_gilded: Herd Heirloom",
+        "the ability needs a creature of yours with power 4 or greater: the probe's table has none, so nothing is offered in its state (the person path is the card's `options` hook)",
+    ),
+    (
+        "karn_gilded: The Mind Stone",
+        "harnessing costs {5}{W}: the probe's table does not give that much mana, so nothing is offered in its state",
+    ),
+    (
+        "karn_gilded: The Soul Stone",
+        "harnessing costs {6}{B} and exiles a creature you control: the probe's table does not give that mana, so nothing is offered in its state",
+    ),
+    (
+        "karn_gilded: Twitching Doll",
+        "the sacrifice ability is sorcery speed and only matters with nest counters on the creature: nothing is offered in the probe's state, and it asks the person nothing (no choice)",
+    ),
+];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
 /// fixed and must come off the list (fails), and a FALSE_ALARMS entry no longer found must come off too (fails)

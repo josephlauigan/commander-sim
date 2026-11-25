@@ -314,8 +314,8 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
             if no_art_mana && d.types.has(crate::cards::Types::ARTIFACT) {
                 continue;
             }
-            if !restr_ok_for(g, p, pay_for, d.mana_restr) {
-                continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells
+            if !restr_ok_for(g, p, pay_for, d.mana_restr) && !(manual && d.mana_restr == Restr::CreatureSpell) {
+                continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells; Herd Heirloom: creature spells
             }
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1));
@@ -472,6 +472,7 @@ fn restr_ok_for(g: &Game, p: PlayerId, pay_for: Option<CardId>, r: Restr) -> boo
         Restr::CreatureType(t) => {
             pay_for.is_some_and(|c| g.db.get(c).creature && crate::impls::galadriel::card_is(g, p, c, t))
         }
+        Restr::CreatureSpell => spell().is_some_and(|d| d.creature),
     }
 }
 
@@ -497,6 +498,7 @@ pub fn restr_of(name: &str, tags: &crate::cards::Tags) -> Restr {
         "Giada, Font of Hope" => Restr::Subtype("angel"),
         "Hydro-Channeler" => Restr::InstantSorcery,
         "Rivaz of the Claw" => Restr::DragonCreature,
+        "Herd Heirloom" => Restr::CreatureSpell,
         _ => Restr::None,
     }
 }
@@ -1039,6 +1041,16 @@ pub fn cost_of_x(g: &Game, p: PlayerId, c: CardId, x: i32) -> (u32, String) {
 /// minimum counts them, Opposition Agent, hybrid and Morophon see them, and so do the Phyrexian and K'rrik choices (those
 /// two look at the printed card's own Phyrexian symbols, `d.phyrexian`, and at its black pips in the string).
 pub fn cost_of_with(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
+    let hybrid = &g.db.get(c).hybrid;
+    if !hybrid.is_empty() && hybrid.contains('2') {
+        return crate::engine::hybrid::mono_cost(g, p, c, x, pips); // {2/W}: the {2} is chosen first (engine::hybrid)
+    }
+    cost_of_base(g, p, c, x, pips)
+}
+
+/// `cost_of_with` for the printed symbols as they stand: the pipeline itself (`engine::hybrid::mono_cost` runs it once per
+/// choice of {2} for a card with {2/X} symbols)
+pub(crate) fn cost_of_base(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;

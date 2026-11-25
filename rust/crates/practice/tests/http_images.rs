@@ -25,7 +25,7 @@ macro_rules! rust_srv {
 
 fn images_event(c: &mut Client, images: bool) -> (Vec<serde_json::Value>, serde_json::Value) {
     let r =
-        c.post("/api/new", json!({"deck": "yoshimaru", "tier": "t2", "seed": 5, "ai": "adaptive", "images": images}));
+        c.post("/api/new", json!({"deck": "sheoldred", "tier": "t2", "seed": 5, "ai": "adaptive", "images": images}));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let mut evs = c.stream(0, None).until(120, |e| e["kind"] == "images");
     let img = evs.pop().unwrap();
@@ -65,12 +65,12 @@ fn test_cards_tokens_and_progress() {
     // progress: loading events count up to the total
     let last = loading.iter().rev().find(|e| e["kind"] == "loading").expect("loading events");
     assert_eq!(last["done"], last["total"]);
-    // your deck's own printings (data/printings/yoshimaru.txt): every copy by set and collector number
-    let own = img["printed"]["yoshimaru"].as_object().expect("Yoshimaru's printings");
-    let plains = own["Plains"].as_array().expect("Plains copies");
-    assert_eq!(plains.len(), 14); // 14 Plains (mdd 292)
-    assert!(plains[0][0].as_str().unwrap().starts_with("print-mdd-"), "{plains:?}");
-    let f = own["Sol Ring"][0][0].as_str().unwrap();
+    // your deck's own printings (data/printings/sheoldred.txt): every copy by set and collector number
+    let own = img["printed"]["sheoldred"].as_object().expect("Sheoldred's printings");
+    let swamps = own["Swamp"].as_array().expect("Swamp copies");
+    assert_eq!(swamps.len(), 30); // 30 Swamp (mdd 296)
+    assert!(swamps[0][0].as_str().unwrap().starts_with("print-mdd-"), "{swamps:?}");
+    let f = own["Arcane Signet"][0][0].as_str().unwrap();
     assert_eq!(c.get(&format!("/images/{f}")).status, 200);
     c.quit();
 }

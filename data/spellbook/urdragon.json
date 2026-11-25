@@ -6,7 +6,7 @@
   "commanders": [
     "The Ur-Dragon"
   ],
-  "request_sha256": "4b5a5169bcdf8ee7b7a1cd5ef40558cadcd7e153b43235c98446f658e563f071",
+  "request_sha256": "a5bd6df284a613f8475690e5bb986c5f7d8f7e691164ee99caf961994df4aa2d",
   "identity": "WUBRG",
   "included": [
     {
@@ -78,7 +78,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 371144,
+      "popularity": 371321,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -109,7 +109,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 79267,
+      "popularity": 79307,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -138,7 +138,7 @@
       "mana": "{2}{R}{R}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 74882,
+      "popularity": 74909,
       "missing": [
         "Dualcaster Mage"
       ]
@@ -168,7 +168,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 39110,
+      "popularity": 39137,
       "missing": [
         "Reiterate"
       ]
@@ -197,7 +197,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38255,
+      "popularity": 38265,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -226,7 +226,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28799,
+      "popularity": 28815,
       "missing": [
         "Ancient Gold Dragon"
       ]
@@ -256,7 +256,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 26388,
+      "popularity": 26380,
       "missing": [
         "Curiosity"
       ]
@@ -289,7 +289,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 24643,
+      "popularity": 24685,
       "missing": [
         "Aggravated Assault"
       ]
@@ -319,7 +319,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 22978,
+      "popularity": 22949,
       "missing": [
         "Niv-Mizzet, Visionary"
       ]
@@ -352,7 +352,7 @@
       "mana": "{5}{R}{R}",
       "bracket": "O",
       "legal": true,
-      "popularity": 21450,
+      "popularity": 21467,
       "missing": [
         "Hellkite Charger"
       ]
@@ -381,7 +381,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 16066,
+      "popularity": 16068,
       "missing": [
         "Orthion, Hero of Lavabrink"
       ]
@@ -417,7 +417,7 @@
       "mana": "{3}{B}{B}{R}{R}",
       "bracket": "O",
       "legal": true,
-      "popularity": 14789,
+      "popularity": 14785,
       "missing": [
         "Bladewing the Risen"
       ]
@@ -476,7 +476,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 13644,
+      "popularity": 13635,
       "missing": [
         "Ophidian Eye"
       ]
@@ -505,7 +505,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12517,
+      "popularity": 12540,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -535,7 +535,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12050,
+      "popularity": 12056,
       "missing": [
         "Mycosynth Lattice"
       ]
@@ -565,39 +565,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11868,
+      "popularity": 11862,
       "missing": [
         "Tandem Lookout"
-      ]
-    },
-    {
-      "id": "703-5291",
-      "cards": [
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite copies of noncreature permanents you control",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "Cursed Mirror cannot be copying a creature.",
-      "mana": "{6}{U}{U}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 11328,
-      "missing": [
-        "Astral Dragon"
       ]
     },
     {
@@ -622,7 +592,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 10051,
+      "popularity": 10060,
       "missing": [
         "Master Transmuter"
       ]
@@ -651,7 +621,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9929,
+      "popularity": 9939,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -680,7 +650,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 9648,
+      "popularity": 9683,
       "missing": [
         "Mayhem Devil"
       ]
@@ -707,7 +677,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 9388,
+      "popularity": 9392,
       "missing": [
         "Felidar Guardian"
       ]
@@ -765,7 +735,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8734,
+      "popularity": 8737,
       "missing": [
         "Rionya, Fire Dancer"
       ]
@@ -794,7 +764,7 @@
       "mana": "{10}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 7846,
+      "popularity": 7864,
       "missing": [
         "Devastating Onslaught"
       ]
@@ -823,7 +793,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7699,
+      "popularity": 7709,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -855,9 +825,39 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7276,
+      "popularity": 7280,
       "missing": [
         "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "2972-8168",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5992,
+      "missing": [
+        "Draconic Visitor"
       ]
     },
     {
@@ -895,39 +895,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5980,
+      "popularity": 5985,
       "missing": [
         "Aggravated Assault"
-      ]
-    },
-    {
-      "id": "2972-8168",
-      "cards": [
-        {
-          "name": "Ganax, Astral Hunter",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Draconic Visitor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Draw the game",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{R}{R}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 5936,
-      "missing": [
-        "Draconic Visitor"
       ]
     },
     {
@@ -954,7 +924,7 @@
       "mana": "{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 5909,
+      "popularity": 5925,
       "missing": [
         "Pyrohemia"
       ]
@@ -983,7 +953,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 5548,
+      "popularity": 5562,
       "missing": [
         "Pestilence"
       ]
@@ -1012,7 +982,7 @@
       "mana": "{7}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 5535,
+      "popularity": 5539,
       "missing": [
         "Rite of Replication"
       ]
@@ -1041,7 +1011,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5187,
+      "popularity": 5189,
       "missing": [
         "Body of Knowledge"
       ]
@@ -1072,7 +1042,7 @@
       "mana": "{R}{R}{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 5169,
+      "popularity": 5185,
       "missing": [
         "Chain Lightning"
       ]
@@ -1099,7 +1069,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5142,
+      "popularity": 5143,
       "missing": [
         "Pramikon, Sky Rampart"
       ]
@@ -1129,7 +1099,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 4451,
+      "popularity": 4454,
       "missing": [
         "Kefka, Court Mage // Kefka, Ruler of Ruin"
       ]
@@ -1158,7 +1128,7 @@
       "mana": "{4}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3817,
+      "popularity": 3816,
       "missing": [
         "Replication Technique"
       ]
@@ -1193,63 +1163,9 @@
       "mana": "{6}{U}{U}",
       "bracket": "O",
       "legal": true,
-      "popularity": 3765,
+      "popularity": 3763,
       "missing": [
         "Astral Dragon"
-      ]
-    },
-    {
-      "id": "2781-5291",
-      "cards": [
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3475,
-      "missing": [
-        "Felidar Guardian"
-      ]
-    },
-    {
-      "id": "1657-2376",
-      "cards": [
-        {
-          "name": "Murderous Redcap",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Rhythm of the Wild",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{B/R}{B/R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3446,
-      "missing": [
-        "Murderous Redcap"
       ]
     },
     {
@@ -1303,7 +1219,7 @@
       "mana": "{7}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 3027,
+      "popularity": 3032,
       "missing": [
         "Rite of Replication"
       ]
@@ -1333,7 +1249,7 @@
       "mana": "{3}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 3025,
+      "popularity": 3027,
       "missing": [
         "Terra, Magical Adept // Esper Terra"
       ]
@@ -1360,7 +1276,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2945,
+      "popularity": 2948,
       "missing": [
         "Vrondiss, Rage of Ancients"
       ]
@@ -1387,36 +1303,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2530,
+      "popularity": 2532,
       "missing": [
         "Vrondiss, Rage of Ancients"
-      ]
-    },
-    {
-      "id": "3362-5291",
-      "cards": [
-        {
-          "name": "Bladewing the Risen",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2252,
-      "missing": [
-        "Bladewing the Risen"
       ]
     },
     {
@@ -1470,7 +1359,7 @@
       "mana": "{2}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2195,
+      "popularity": 2198,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -1497,7 +1386,7 @@
       "mana": "{6}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2161,
+      "popularity": 2165,
       "missing": [
         "Polyraptor"
       ]
@@ -1529,7 +1418,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2002,
+      "popularity": 1999,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
       ]
@@ -1558,7 +1447,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2002,
+      "popularity": 1999,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
       ]
@@ -1587,7 +1476,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1977,
+      "popularity": 1979,
       "missing": [
         "Vrondiss, Rage of Ancients"
       ]
@@ -1617,7 +1506,7 @@
       "mana": "{4}{U/R}{U/R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1971,
+      "popularity": 1970,
       "missing": [
         "Soulfire Grand Master"
       ]
@@ -1647,7 +1536,7 @@
       "mana": "{1}{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1635,
+      "popularity": 1637,
       "missing": [
         "Jace, Cunning Castaway"
       ]
@@ -1676,7 +1565,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 1548,
+      "popularity": 1551,
       "missing": [
         "Orthion, Hero of Lavabrink"
       ]
@@ -1705,7 +1594,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1402,
+      "popularity": 1411,
       "missing": [
         "Havoc Jester"
       ]
@@ -1734,7 +1623,7 @@
       "mana": "{2}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1144,
+      "popularity": 1145,
       "missing": [
         "Mechanized Production"
       ]
@@ -1773,7 +1662,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1143,
+      "popularity": 1142,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -1800,7 +1689,7 @@
       "mana": "{4}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1098,
+      "popularity": 1100,
       "missing": [
         "Spawnsire of Ulamog"
       ]
@@ -1827,7 +1716,7 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1089,
+      "popularity": 1088,
       "missing": [
         "Meticulous Excavation"
       ]
@@ -1856,7 +1745,7 @@
       "mana": "{10}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 1061,
+      "popularity": 1070,
       "missing": [
         "Devastating Onslaught"
       ]
@@ -1891,7 +1780,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 898,
+      "popularity": 902,
       "missing": [
         "Najeela, the Blade-Blossom"
       ]
@@ -1920,7 +1809,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 896,
+      "popularity": 898,
       "missing": [
         "Time Sieve"
       ]
@@ -1947,9 +1836,38 @@
       "mana": "{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 853,
+      "popularity": 858,
       "missing": [
         "Dizzying Gaze"
+      ]
+    },
+    {
+      "id": "1707-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Last Laugh",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Treasure.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 853,
+      "missing": [
+        "Last Laugh"
       ]
     },
     {
@@ -1985,65 +1903,9 @@
       "mana": "{5}{G}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 850,
+      "popularity": 853,
       "missing": [
         "Oko, the Ringleader"
-      ]
-    },
-    {
-      "id": "1707-7839",
-      "cards": [
-        {
-          "name": "Smaug the Impenetrable",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Last Laugh",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage to all players"
-      ],
-      "requires": [],
-      "prerequisites": "You control a Treasure.",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 849,
-      "missing": [
-        "Last Laugh"
-      ]
-    },
-    {
-      "id": "2376-3575",
-      "cards": [
-        {
-          "name": "Aerie Ouphes",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rhythm of the Wild",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Aerie Ouphes does not have a -1/-1 counter on it.\nThere is a creature with flying on the battlefield.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 772,
-      "missing": [
-        "Aerie Ouphes"
       ]
     },
     {
@@ -2068,7 +1930,7 @@
       "mana": "{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 764,
+      "popularity": 765,
       "missing": [
         "Crown of Flames"
       ]
@@ -2101,7 +1963,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 762,
+      "popularity": 761,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -2137,7 +1999,7 @@
       "mana": "{3}{R}{R}",
       "bracket": "O",
       "legal": true,
-      "popularity": 721,
+      "popularity": 729,
       "missing": [
         "Draconic Visitor"
       ]
@@ -2176,7 +2038,7 @@
       "mana": "{3}{R}{R}",
       "bracket": "O",
       "legal": true,
-      "popularity": 702,
+      "popularity": 708,
       "missing": [
         "Draconic Visitor"
       ]
@@ -2236,7 +2098,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 504,
+      "popularity": 505,
       "missing": [
         "Keen Sense"
       ]
@@ -2269,7 +2131,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 450,
+      "popularity": 451,
       "missing": [
         "Mirror-Mad Phantasm"
       ]
@@ -2299,7 +2161,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 450,
+      "popularity": 449,
       "missing": [
         "Mind Over Matter"
       ]
@@ -2326,7 +2188,7 @@
       "mana": "{1}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 412,
+      "popularity": 414,
       "missing": [
         "Bladewing the Risen"
       ]
@@ -2356,9 +2218,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 390,
+      "popularity": 391,
       "missing": [
         "Snake Umbra"
+      ]
+    },
+    {
+      "id": "1110-3748",
+      "cards": [
+        {
+          "name": "Hornet Nest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Hornet Nest indestructible.\nYou have a way to deal damage to Hornet Nest.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 382,
+      "missing": [
+        "Hornet Nest"
       ]
     },
     {
@@ -2389,35 +2280,6 @@
       ]
     },
     {
-      "id": "1110-3748",
-      "cards": [
-        {
-          "name": "Hornet Nest",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Hornet Nest indestructible.\nYou have a way to deal damage to Hornet Nest.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 380,
-      "missing": [
-        "Hornet Nest"
-      ]
-    },
-    {
       "id": "2529-3363",
       "cards": [
         {
@@ -2439,7 +2301,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 371,
+      "popularity": 372,
       "missing": [
         "Vedalken Mastermind"
       ]
@@ -2493,7 +2355,7 @@
       "mana": "{2}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 339,
+      "popularity": 343,
       "missing": [
         "Stone-Giant of High Pass"
       ]
@@ -2520,7 +2382,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 331,
+      "popularity": 333,
       "missing": [
         "Essence Reliquary"
       ]
@@ -2547,7 +2409,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 317,
+      "popularity": 318,
       "missing": [
         "Umbilicus"
       ]
@@ -2574,7 +2436,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 307,
+      "popularity": 306,
       "missing": [
         "Keeper of the Nine Gales"
       ]
@@ -2601,7 +2463,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 300,
+      "popularity": 302,
       "missing": [
         "Blood Clock"
       ]
@@ -2635,7 +2497,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 280,
+      "popularity": 281,
       "missing": [
         "Garruk Relentless // Garruk, the Veil-Cursed"
       ]
@@ -2664,39 +2526,9 @@
       "mana": "{3}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 254,
+      "popularity": 253,
       "missing": [
         "Omarthis, Ghostfire Initiate"
-      ]
-    },
-    {
-      "id": "3778-7299",
-      "cards": [
-        {
-          "name": "Biorhythm",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Austere Command",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Draw the game",
-        "Each opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{10}{G}{G}{W}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 254,
-      "missing": [
-        "Biorhythm"
       ]
     },
     {
@@ -2752,7 +2584,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 217,
+      "popularity": 219,
       "missing": [
         "Pestilence Demon"
       ]
@@ -2809,9 +2641,36 @@
       "mana": "{8}{W}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 215,
+      "popularity": 216,
       "missing": [
         "Storm Herd"
+      ]
+    },
+    {
+      "id": "3809-4124",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whip Silk",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 194,
+      "missing": [
+        "Whip Silk"
       ]
     },
     {
@@ -2839,60 +2698,6 @@
       "popularity": 193,
       "missing": [
         "Changeling Titan"
-      ]
-    },
-    {
-      "id": "3809-4124",
-      "cards": [
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Whip Silk",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 192,
-      "missing": [
-        "Whip Silk"
-      ]
-    },
-    {
-      "id": "1621-5291",
-      "cards": [
-        {
-          "name": "Wispweaver Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 183,
-      "missing": [
-        "Wispweaver Angel"
       ]
     },
     {
@@ -2946,7 +2751,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 154,
+      "popularity": 155,
       "missing": [
         "Crypt Rats"
       ]
@@ -3044,7 +2849,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 125,
+      "popularity": 126,
       "missing": [
         "Swans of Bryn Argoll"
       ]
@@ -3434,38 +3239,9 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 73,
+      "popularity": 74,
       "missing": [
         "Thrashing Wumpus"
-      ]
-    },
-    {
-      "id": "2084-5291",
-      "cards": [
-        {
-          "name": "Mirror-Mad Phantasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{U}{R}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 66,
-      "missing": [
-        "Mirror-Mad Phantasm"
       ]
     },
     {
@@ -3528,6 +3304,33 @@
       ]
     },
     {
+      "id": "1858-3809",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "View from Above",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a white permanent.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 54,
+      "missing": [
+        "View from Above"
+      ]
+    },
+    {
       "id": "1699-7839",
       "cards": [
         {
@@ -3552,33 +3355,6 @@
       "popularity": 53,
       "missing": [
         "Scourge of Kher Ridges"
-      ]
-    },
-    {
-      "id": "1858-3809",
-      "cards": [
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "View from Above",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control a white permanent.",
-      "mana": "{1}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 53,
-      "missing": [
-        "View from Above"
       ]
     },
     {
@@ -3667,6 +3443,33 @@
       ]
     },
     {
+      "id": "3363-4780",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Sentinel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tolarian Sentinel does not have summoning sickness.\nYou have at least one card in hand.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37,
+      "missing": [
+        "Tolarian Sentinel"
+      ]
+    },
+    {
       "id": "3363-5278",
       "cards": [
         {
@@ -3691,33 +3494,6 @@
       "popularity": 36,
       "missing": [
         "Obelisk of Undoing"
-      ]
-    },
-    {
-      "id": "3363-4780",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Tolarian Sentinel",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Tolarian Sentinel does not have summoning sickness.\nYou have at least one card in hand.",
-      "mana": "{4}{U} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 36,
-      "missing": [
-        "Tolarian Sentinel"
       ]
     },
     {
@@ -3818,6 +3594,33 @@
       ]
     },
     {
+      "id": "3363-8189",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shi'ar Soldier",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Shi'ar Soldier doesn't have summoning sickness.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Shi'ar Soldier"
+      ]
+    },
+    {
       "id": "1235-2084",
       "cards": [
         {
@@ -3844,33 +3647,6 @@
       "popularity": 17,
       "missing": [
         "Mirror-Mad Phantasm"
-      ]
-    },
-    {
-      "id": "3363-8189",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Shi'ar Soldier",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Shi'ar Soldier doesn't have summoning sickness.",
-      "mana": "{4} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16,
-      "missing": [
-        "Shi'ar Soldier"
       ]
     },
     {

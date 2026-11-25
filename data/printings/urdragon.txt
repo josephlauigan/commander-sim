@@ -1,7 +1,6 @@
 1 Ancient Tomb (plst) TMP-315
 1 Arcane Signet (fdc) 245
 1 Arid Mesa (mh2) 436
-1 Austere Command (brc) 69
 1 Badlands (3ed) 282
 1 Bayou (3ed) 283
 1 Birds of Paradise (blc) 81
@@ -11,15 +10,13 @@
 1 City of Brass (2x2) 403
 1 Command Tower (plst) MIC-170
 1 Crux of Fate (fic) 275
-1 Cursed Mirror (mh3) 279
-1 Decimate (sld) 140
-1 Deflecting Swat (cmm) 698
 1 Delighted Halfling (pltr) 402s
 1 Demonic Tutor (cmm) 150
 1 Doubling Season (fdn) 428
 1 Dragon Tempest (fdc) 150
 1 Dragonlord Dromoka (2x2) 376
 1 Dragonlord Ojutai (slc) 2015
+1 Dragonspeaker Shaman (afc) 330
 1 Elvish Mystic (hoc) 205
 1 Exotic Orchard (brc) 185
 1 Fact or Fiction (cmm) 631
@@ -29,8 +26,10 @@
 1 Forest (mdd) 301
 1 Ganax, Astral Hunter (clb) 176
 1 Garth One-Eye (mh2) 420
+1 Giver of Runes (plst) MH1-13
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (soc) 245
+1 Hellkite Courser (tdc) 218
 1 Hellkite Tyrant (fic) 295
 1 Jeska's Will (soa) 109
 1 Kura, the Boundless Sky (neo) 200
@@ -42,6 +41,7 @@
 1 Mana Vault (3ed) 263
 1 Marsh Flats (mh2) 437
 1 Miirym, Sentinel Wyrm (sld) 2500
+1 Mithril Coat (hoc) 43
 1 Morophon, the Boundless (m3c) 157
 1 Mox Jasper (tdm) 325
 1 Nature's Lore (fic) 311
@@ -56,13 +56,12 @@
 1 Polluted Delta (mh3) 356
 1 Relic of Sauron (hoc) 46
 1 Rhystic Study (j22) 114
-1 Rhythm of the Wild (pza) 12
 1 Rivaz of the Claw (dmu) 215
 1 Sacred Foundry (unf) 285
+1 Sapphire Medallion (mh3) 349
 1 Savannah (3ed) 285
 1 Scalding Tarn (mh2) 439
 1 Scion of Draco (mh2) 323
-1 Scion of the Ur-Dragon (sld) 1531
 1 Scourge of Valkas (sld) 1490
 1 Scrubland (3ed) 286
 1 Shivan Dragon (slc) 1993
@@ -78,17 +77,19 @@
 1 Swords to Plowshares (cst) 54
 1 Sylvan Library (dmr) 179
 1 Taiga (3ed) 287
+1 Talisman of Curiosity (mkc) 241
 1 Talisman of Hierarchy (h1r) 36
 1 Terror of the Peaks (pspl) 1
 1 The One Ring (hoc) 44
+1 The Theorist, Jace Beleren (fra) 363
 1 The Ur-Dragon (sld) 11
 1 Three Visits (msc) 181
 1 Thundermaw Hellkite (scd) 164
 1 Tiamat (afr) 298
-1 Triple Triad (fin) 340
 1 Tropical Island (3ed) 288
 1 Tundra (3ed) 289
 1 Twinflame (soc) 258
+1 Tymna the Weaver (fca) 18
 1 Underground Sea (3ed) 290
 1 Urza's Incubator (mh3) 297
 1 Utvara Hellkite (rvr) 431
@@ -97,4 +98,3 @@
 1 Windswept Heath (mh3) 360
 1 Wooded Foothills (mh3) 361
 1 Worldly Tutor (dmr) 442
-1 Young Pyromancer (2x2) 364

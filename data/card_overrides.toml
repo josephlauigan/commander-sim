@@ -2626,6 +2626,11 @@ dsl = [] # a land isn't a permanent in `perms`, so its compiled proliferate neve
 status = "Full"
 note = "{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter on Summon: Bahamut)"
 
+["Karn, Gilded Guardian"]
+dsl = [] # the compiled "draw X" trigger counted artifacts, not colours; impls/karn_gilded.rs draws the colours. No cost line: the {2/X} symbols stay (cardinfo::hybrid)
+status = "Full"
+note = "{2/W}{2/U}{2/B}{2/R}{2/G} (each {2/X} is paid with that colour or with {2}, chosen before any reduction or tax; engine::hybrid) 5/5 vigilance trample Golem. The enter trigger (impls/karn_gilded.rs) is a stack trigger (the table may respond, an opposing Elesh Norn blanks it, Gandalf the White and your own Elesh Norn add triggers, each instance counting at its own resolution): draw a card for each colour among the other artifacts you control, counted as it resolves (CR 608.2h): the union of chars::colors over your artifacts (a Transguild Courier is five colours, a token has its token colour, a Cursed Mirror copy of Karn counts the original), not the number of artifacts; Karn himself, phased-out and face-down permanents are not counted; Treasure, Food, Clue and Blood are colourless counters; 0 draws nothing. AI (PROVISIONAL, never tuned by a sim): a hand-written cast priority, 40 plus 8 for each colour among your artifacts now (80 at five), no plan row. Blinking him (Ephemerate and its rebound, Cloudshift, Restoration Angel, Felidar Guardian, Teleportation Circle, the harnessed The Mind Stone, Flickerwisp; Ephemerate, Restoration Angel and Cloudshift also save him from removal): the AI values a blink at 1.5 per card drawn (0.25 per card it would discard at the cleanup step, no cap with no maximum hand size), counting the draws with Gandalf and your own Elesh Norn before the blink, and never blinks him when the draws would leave 3 or fewer cards in the library (except in your own main phase with Thassa's Oracle castable and the draws no larger than the library), when a Doomsday pile is being played, or when he is stolen; he stays your commander through every blink, and Flickerwisp leaves him in exile (not the command zone) until the end step; an opposing Flickerwisp still sends him to the command zone; a Cursed Mirror or Metamorph never copies a commander. tests/cards_karn_gilded.rs, tests/cards_karn_gilded_blink.rs"
+
 ["Karn, the Great Creator"]
 tags = "leg"
 dsl = []
@@ -3131,7 +3136,7 @@ note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or th
 
 ["The Mind Stone"]
 status = "Approximate"
-note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked)"
+note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature (picks Karn, Gilded Guardian by his draw count, with the decking and hand-size guards), else a tapped mana rock; never picks noncreature permanents other than tapped mana rocks (Infinite Guideline Station, The One Ring)"
 
 ["Mind Twist"]
 types = "S"
@@ -10424,3 +10429,46 @@ add_tags = ["noregen"] # "They can't be regenerated" (engine/removal.rs apply_wi
 dsl = [{ type = "spell", effects = [{ do = "exile", what = { sel = "target", filter = { type = "nonland" }, upto = false } }, { do = "opp_token", pow = 1, types = ["soldier"], color = "W" }] }] # "Its controller creates a 1/1 white Soldier creature token" (the compiled token was a plain 1/1 of no colour or type)
 status = "Full"
 note = "exiles target nonland permanent; its controller creates a 1/1 white Soldier creature token (the token goes to the permanent's controller, also when the target is ours)"
+
+["Transguild Courier"]
+status = "Full"
+note = "3/3 artifact creature, all colors: its colours are every colour in every zone (NamedFx::SelfAllColors, E2), so Medallions and colour-cost reducers see it as every colour, Leyline-style colour tests count it as multicoloured, and a card that needs a coloured creature finds it"
+
+["Infinite Guideline Station"]
+dsl = [] # the compiled attack trigger drew an unnamed X; impls/karn_gilded_cards.rs
+tags = "leg station=12" # `station=12`: a creature (7/15) while it has 12 or more charge counters, read by engine/chars.rs
+status = "Full"
+note = "enters: a tapped colourless 2/2 Robot artifact creature token for each multicolored permanent its controller has (counted as the trigger resolves, itself included; a stack trigger: Elesh Norn blanks it, Panharmonicon repeats it); Station: tap another untapped creature at sorcery timing (a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 12 at once, and stops at 12), charge counters equal to its power as the ability resolves; while it has 12 or more it is a 7/15 artifact creature with flying (the station=12 tag, read by engine/chars.rs, so any source of counters counts and removing them ends it; its printed 7/15 is its own power and toughness, set as it enters, so a later base-setting effect wins); whenever it attacks, its controller draws a card for each multicolored permanent they control. Engine limits: a copy that becomes it without entering (Mirage Mirror, Shifting Woodland) does not get its printed 7/15; a transforming effect followed by losing counters below 12 makes it a noncreature (the engine keeps no layer-4 record for it). AI (PROVISIONAL, never tuned by a sim): stationing only with creatures that cannot attack this turn, or when the taps reach 12 at once. tests/cards_karn_gilded_set.rs"
+
+["Breya, Etherium Shaper"]
+dsl = [] # the compiled enter trigger made Thopters without the artifact type; impls/karn_gilded_cards.rs
+status = "Full"
+note = "enters: two 1/1 blue Thopter artifact creature tokens with flying (blue, with the artifact type, so Karn's artifact counts, Mox Opal and Breya's own cost see them; a stack trigger); {2}, sacrifice two artifacts (artifact permanents only, never Treasure, Food or Clue counters, and never Breya herself): choose one, 3 damage to a player, target creature gets -4/-4 until end of turn, or you gain 5 life (the AI picks the mode by value: a lethal 3 damage, a kill worth 3 or more, or life at 10 or less, less the worth of the two artifacts, and sacrifices the two it values least; a person chooses the mode, target and artifacts). Engine limit: the damage mode takes a player; this engine has no damage to a planeswalker outside combat. AI (PROVISIONAL, never tuned by a sim): the utility numbers are hand-written (8 for a lethal 3 damage, 1 plus half the creature's worth for a kill, up to 3.5 for life), cut by 0.4 of the artifacts' worth, and nothing under 0.5 is done. tests/cards_karn_gilded_set.rs"
+
+["Gold-Forged Thopteryx"]
+dsl = []
+ward = 0 # the compiled card gave the Thopteryx itself ward {2}; the ward is its controller's legendary permanents' (karn_gilded_cards::thopteryx_ward, through cardcode::aura_ward)
+status = "Full"
+note = "1/3 flying, lifelink artifact creature (Dinosaur Thopter); each legendary permanent its controller has has ward {2}, two for each Thopteryx (karn_gilded_cards::thopteryx_ward, through cardcode::aura_ward, so the AI's look-ahead and a person's ward payment both see it); the Thopteryx itself has no ward unless it is legendary. tests/cards_karn_gilded_set.rs"
+
+["Shorikai, Genesis Engine"]
+dsl = [{ type = "activated", cost = { mana = "1", tap = true }, effects = [{ do = "draw", n = 2, who = "you" }, { do = "discard", n = 1, who = "you" }, { do = "token", n = 1, pow = 1, tgh = 1, keywords = [], attacking = false, warrior = false, types = ["pilot"], color = "" }] }] # the compiled ability had no Pilot token
+status = "Approximate"
+note = "{1}, {T}: draw two cards, then discard a card, and a 1/1 colourless Pilot creature token (the compiled ability, a stack ability: the table may respond). Not modelled: Crew 8 (unsupported engine-wide: Shorikai never becomes a creature) and the Pilot's \"crews Vehicles as though its power were 2 greater\" (it crews nothing). tests/cards_karn_gilded_set.rs"
+
+["The Reaper, King No More"]
+dsl = []
+status = "Full"
+note = "enters: a -1/-1 counter on each of up to two target creatures (the AI shrinks the two opposing creatures worth most, paying ward or skipping a creature it can't; a person chooses up to two); whenever a creature an opponent controls with a -1/-1 counter on it dies, its controller's Reaper may put that card onto the battlefield under their control, once each turn (read from the creature as it died; the card is taken from its owner's graveyard; a token or a card that is not in the graveyard does nothing; the AI always does it; a stack trigger). The {2/B}{2/R}{2/G} cost is the engine's hybrid cost (E1). Engine limit: the engine runs a dies trigger only for a Reaper still on the battlefield, so a wipe that kills the Reaper and the creature at the same time may not trigger it. AI (PROVISIONAL, never tuned by a sim): the two counters go on the opposing creatures worth most. tests/cards_karn_gilded_set.rs"
+
+["Herd Heirloom"]
+tags = "rock=1:A" # the compiled tags were a colourless rock and a draw engine
+dsl = []
+status = "Full"
+note = "{T}: one mana of any colour, spend only to cast a creature spell (Restr::CreatureSpell, used by no other card: it pays Karn, Gilded Guardian and not Infinite Guideline Station, an artifact spell, nor an ability; the engine's mana sources list it only for a creature spell, a person taps it from their sources); {T}: until end of turn, target creature you control with power 4 or more gains trample and \"whenever this creature deals combat damage to a player, draw a card\" (the grant stays on the creature, so it draws even if the Heirloom has left; the AI uses it before combat on its attacker with the most power, 4 or more; a person chooses the creature). AI (PROVISIONAL, never tuned by a sim): the second ability is offered at utility 1.4 in the first main phase, so it competes with spells for the Heirloom's mana. tests/cards_karn_gilded_set.rs"
+
+["Twitching Doll"]
+tags = "pow=2 dork=A noatk" # the compiled tags made a 2/2 token as it entered
+dsl = []
+status = "Full"
+note = "{T}: one mana of any colour and a nest counter on it (put as the mana ability is paid, through the counter replacements); {T}, sacrifice: a 2/2 green Spider creature token with reach for each nest counter on it, only as a sorcery (the AI does it with three counters or more, untapped, at a main phase; a person has it listed with the counters). The Doll is a summoning-sick creature: no {T} ability until the next turn. AI (PROVISIONAL, never tuned by a sim): sacrifices at three counters, so it waits for a turn the AI did not tap it for mana. tests/cards_karn_gilded_set.rs"

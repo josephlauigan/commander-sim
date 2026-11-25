@@ -90,7 +90,9 @@ pub fn num(s: &str) -> i64 {
     NUM.iter().find(|(k, _)| *k == s).map(|(_, v)| *v).unwrap_or(1)
 }
 
-/// '{2}{U}{U/P}{X}' -> '2UU' (X dropped, hybrid / Phyrexian take the first colour); '-' for no cost
+/// '{2}{U}{U/P}{X}' -> '2UU' (X dropped, hybrid / Phyrexian take the first colour); '-' for no cost. A monocoloured
+/// hybrid symbol ({2/W}) adds its colour pip (the engine pays {2} for it when it must: `cardinfo::hybrid` lists it as
+/// "W2", and the mana value counts it as 2)
 pub fn conv_cost(mc: &str) -> String {
     if mc.is_empty() {
         return "-".into();
@@ -107,6 +109,8 @@ pub fn conv_cost(mc: &str) -> String {
             let c = py::first(&sym, "/");
             if "WUBRG".contains(c) {
                 pips.push_str(c);
+            } else if c == "2" && sym.len() == 3 && "WUBRG".contains(&sym[2..]) {
+                pips.push_str(&sym[2..]); // {2/W}
             } else if py::isdigit(c) {
                 gen_ += c.parse::<i64>().unwrap();
             }

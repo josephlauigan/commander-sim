@@ -22,7 +22,10 @@
 # `tymna_cards::equip_holder_value`, and has two parts: Equipment that gives protection from white (Sword of Hearth and
 # Home, not Sting) never goes on Walking Ballista, and +power Equipment never goes on Tymna (Swiftfoot Boots and Mithril
 # Coat may). Court of Ardenvale never returns Walking Ballista to the battlefield (`legends.rs` `court`).
+# 2026-11-24: the deck was retired (JD) and the key left the simulator: the guide is decklists/pool/retired/yoshimaru-tymna-blink.md,
+# and this plan stays only because the card and plan tests seat the key as a testkit seat (`retired = true`).
 deck = "yoshimaru"
+retired = true
 default = "plan"
 # card engines the tutors want once no line wants a card
 engines = ["Delney, Streetwise Lookout", "Elas il-Kor, Sadistic Pilgrim", "Elesh Norn, Mother of Machines", "The One Ring"]

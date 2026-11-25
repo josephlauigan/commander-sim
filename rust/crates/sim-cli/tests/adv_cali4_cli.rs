@@ -29,7 +29,7 @@ fn no_game(out: &str) {
 /// Commander deck and for a Cali deck alike
 #[test]
 fn adv_a_bad_table_ai_stops_the_run_before_any_game() {
-    for deck in ["yshtola", "arzakon"] {
+    for deck in ["karn_gilded", "arzakon"] {
         for bad in ["bogus", "Commander", "go_rules,", "commander,go_rules", "all"] {
             let (code, out, err) = run(
                 &["--deck", deck, "--pool", "t5", "--games", "1", "--no-preflight", "--quiet", "--jobs", "1"],

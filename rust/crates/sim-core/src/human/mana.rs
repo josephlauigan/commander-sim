@@ -56,6 +56,8 @@ pub struct ManaPool {
     pub spell: u32,
     /// Rivaz: coloured mana only for Dragon creature spells, separate from a land's chosen type.
     pub dragon: [u32; 5],
+    /// Herd Heirloom: coloured mana only for creature spells, separate from a land's chosen type.
+    pub creature: [u32; 5],
     pub spending: Option<Spending>,
 }
 
@@ -66,6 +68,7 @@ struct Left {
     art: u32,
     spell: u32,
     dragon: [u32; 5],
+    creature: [u32; 5],
 }
 
 fn plan_plain(mut m: [u32; 7], generic: u32, pips: &str) -> Option<[u32; 7]> {
@@ -112,12 +115,14 @@ impl ManaPool {
             + self.art
             + self.spell
             + self.dragon.iter().sum::<u32>()
+            + self.creature.iter().sum::<u32>()
     }
 
     pub fn empty(&mut self) {
         self.m = [0; 7];
         self.k = [0; 6];
         self.dragon = [0; 5];
+        self.creature = [0; 5];
     }
 
     /// {B}{B}{C} style: coloured mana, then colourless, then any-colour ({3} would read as generic mana)
@@ -139,6 +144,15 @@ impl ManaPool {
                 }
             }
             out.push_str(" for Dragon creature spells");
+        }
+        if self.creature.iter().any(|&n| n > 0) {
+            out.push_str(" +");
+            for (i, c) in "WUBRG".chars().enumerate() {
+                for _ in 0..self.creature[i] {
+                    out.push_str(&format!("{{{c}}}"));
+                }
+            }
+            out.push_str(" for creature spells");
         }
         if self.spell > 0 {
             out.push_str(&format!(" +{} any colour for spells (until end of turn)", self.spell));
@@ -186,6 +200,8 @@ impl ManaPool {
         let mut dragon = self.dragon;
         let dragon_ok = matches!(self.spending, Some(Spending::Card(c))
             if g.db.get(c).creature && crate::impls::galadriel::card_is(g, owner, c, "dragon"));
+        let mut creature = self.creature;
+        let creature_ok = matches!(self.spending, Some(Spending::Card(c)) if g.db.get(c).creature);
         let mut spell = self.spell;
         let spell_ok = matches!(self.spending, Some(Spending::Card(_)));
         let mut plain = self.m;
@@ -202,6 +218,11 @@ impl ManaPool {
                 && dragon[i] > 0
             {
                 dragon[i] -= 1;
+            } else if creature_ok
+                && let Some(i) = idx(c).filter(|&i| i < 5)
+                && creature[i] > 0
+            {
+                creature[i] -= 1;
             } else if let Some(i) = idx(c)
                 && plain[i] > 0
             {
@@ -235,13 +256,20 @@ impl ManaPool {
                 need -= used;
             }
         }
+        if creature_ok {
+            for n in &mut creature {
+                let used = (*n).min(need);
+                *n -= used;
+                need -= used;
+            }
+        }
         let used_spell = if spell_ok { spell.min(need) } else { 0 };
         spell -= used_spell;
         need -= used_spell;
         let used_art = if self.art_ok(g) { self.art.min(need) } else { 0 };
         let art = self.art - used_art;
         let m = plan_plain(self.m, need - used_art, &rest)?;
-        Some(Left { m, k, art, spell, dragon })
+        Some(Left { m, k, art, spell, dragon, creature })
     }
 
     pub fn can_pay(&self, g: &Game, owner: PlayerId, generic: u32, pips: &str) -> bool {
@@ -256,6 +284,7 @@ impl ManaPool {
                 self.art = l.art;
                 self.spell = l.spell;
                 self.dragon = l.dragon;
+                self.creature = l.creature;
                 if let Some(k) = l.k {
                     self.k = k;
                 }
@@ -438,6 +467,11 @@ fn restricted_type(g: &Game, src: Source) -> Option<Sym> {
     {
         return Some("dragon");
     }
+    if let Source::Perm(m) = src
+        && g.perm(m).cd.is_some_and(|c| g.db.get(c).mana_restr == crate::engine::pool::Restr::CreatureSpell)
+    {
+        return Some("creature"); // Herd Heirloom: any creature spell
+    }
     let Source::Land(l) = src else { return None };
     let land = g.perm(l);
     if !RESTRICTED_LANDS.contains(&&*g.db.get(land.card()).name) {
@@ -541,7 +575,9 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
         }
         spend_unit(g, p, u, u.amt, "")?;
         for c in colours {
-            if matches!(u.src, Source::Perm(_)) {
+            if matches!(u.src, Source::Perm(_)) && kt == "creature" {
+                g.player_mut(p).pool.creature[idx(c).unwrap()] += 1;
+            } else if matches!(u.src, Source::Perm(_)) {
                 g.player_mut(p).pool.dragon[idx(c).unwrap()] += 1;
             } else {
                 g.player_mut(p).pool.add_restricted(c, 1, kt);
@@ -550,11 +586,11 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
         let sn = unit_label(g, u.src);
         crate::glog!(
             g,
-            "  {} taps {} for {{{}}} (only for {} creature spells)",
+            "  {} taps {} for {{{}}} (only for {} spells)",
             name,
             sn,
             col,
-            super::legal::title(kt)
+            if kt == "creature" { "creature".to_string() } else { format!("{} creature", super::legal::title(kt)) }
         );
         return Ok(None);
     }
@@ -579,7 +615,12 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
     }
     let cols = unit_colours(g, &u);
     if matches!(u.src, Source::Perm(_)) && restricted_type(g, u.src).is_some() {
-        return Ok(Some("Rivaz can only make coloured mana for Dragon creature spells.".into()));
+        let only = if restricted_type(g, u.src) == Some("creature") {
+            "Herd Heirloom can only make coloured mana for creature spells."
+        } else {
+            "Rivaz can only make coloured mana for Dragon creature spells."
+        };
+        return Ok(Some(only.into()));
     }
     let colour = colour.unwrap_or_else(|| cols.chars().next().unwrap());
     if !cols.contains(colour) {

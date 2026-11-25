@@ -620,8 +620,13 @@ const NO_CHOICE: &[&str] = &[
     "Thunderclap Drake",
     "Tolsimir Wolfblood",
     "Twilight Drover",
+    "Twitching Doll",
     "Marvin, Murderous Mimic",
 ];
+
+/// the creatures whose `options` hook asks the person its own questions (the hook runs for a person with the same
+/// choices as for the AI's pick: Breya's mode, target and the two artifacts, impls/karn_gilded_cards.rs)
+const ASKS_IN_HOOK: &[&str] = &["Breya, Etherium Shaper"];
 
 #[test]
 fn every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_an_ability() {
@@ -636,6 +641,7 @@ fn every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_
         let known = BORROWED.contains(&n)
             || HOOK_NAMES.contains(&n)
             || NO_CHOICE.contains(&n)
+            || ASKS_IN_HOOK.contains(&n)
             || sim_core::impls::newcards_b::NOT_ACTIVATED.contains(&n);
         // a creature of the pool decks whose person path the Karn / Cloud / Sauron decks keep elsewhere
         let elsewhere =

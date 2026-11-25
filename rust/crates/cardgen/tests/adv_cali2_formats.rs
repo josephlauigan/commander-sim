@@ -111,8 +111,9 @@ fn my_decks_format_field_edge_cases() {
     assert!(try_with("format = \"cali\"", "format = [\"cali\"]").unwrap_err().contains("format must be text"));
     assert!(try_with("format = \"cali\"", "formats = \"cali\"").unwrap_err().contains("unknown key"));
     // a deck with a second commander on the Cali format loads (the format says seats, not commanders)
-    let ok = try_with("[yoshimaru]", "[yoshimaru]\nformat = \"cali\"").unwrap();
-    assert_eq!(ok.iter().find(|d| d.key == "yoshimaru").unwrap().format, "cali");
+    let ok = try_with("[karn_gilded]", "[karn_gilded]\ncommander2 = \"Tymna the Weaver\"\nformat = \"cali\"").unwrap();
+    let two = ok.iter().find(|d| d.key == "karn_gilded").unwrap();
+    assert_eq!((two.format.as_str(), two.commander2.as_deref()), ("cali", Some("Tymna the Weaver")));
     // the format table can be edited: a deck can name a format the file adds
     std::fs::write(
         p.data("formats.toml"),

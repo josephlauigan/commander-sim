@@ -115,11 +115,7 @@ fn texts_for_a_commander_request_are_as_before() {
     let keys = pool_keys(&e, &tier).join(", ");
     let mut c = s.client();
     let cases: Vec<(Value, &str, String)> = vec![
-        (
-            json!({"deck": "nope", "tier": tier}),
-            "",
-            "deck: one of yshtola, sheoldred, arzakon, urdragon, yoshimaru".into(),
-        ),
+        (json!({"deck": "nope", "tier": tier}), "", "deck: one of sheoldred, arzakon, urdragon, karn_gilded".into()),
         (json!({"deck": deck, "tier": "t9"}), "", "tier: one of t0, t1, t2, t3, t4, t5, t6".into()),
         (json!({"deck": deck, "tier": tier, "opponents": "x"}), "", "opponents: a list of deck keys".into()),
         (json!({"deck": deck, "tier": tier, "seats": "x"}), "", "seats: four deck keys in turn order".into()),
@@ -548,10 +544,10 @@ fn terminal_arguments() {
         (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "3"], "seat is 1 to 2"),
         (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "0"], "seat is 1 to 2"),
         (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--seat", "9", "--format", "cali"], "seat is 1 to 2"),
-        (vec!["--text", "--deck", "yoshimaru", "--seat", "9"], "seat is 1 to 4"),
-        (vec!["--text", "--deck", "yoshimaru", "--seat", "0"], "seat is 1 to 4"),
-        (vec!["--text", "--deck", "yoshimaru", "--seat", "18446744073709551615"], "seat is 1 to 4"),
-        (vec!["--text", "--deck", "yoshimaru", "--opponents", "a,b"], "pick three of: "),
+        (vec!["--text", "--deck", "karn_gilded", "--seat", "9"], "seat is 1 to 4"),
+        (vec!["--text", "--deck", "karn_gilded", "--seat", "0"], "seat is 1 to 4"),
+        (vec!["--text", "--deck", "karn_gilded", "--seat", "18446744073709551615"], "seat is 1 to 4"),
+        (vec!["--text", "--deck", "karn_gilded", "--opponents", "a,b"], "pick three of: "),
         (vec!["--text", "--deck", "arzakon", "--tier", "t5", "--opponents", "a,b,c"], "pick one of: "),
     ] {
         let (code, _, err) = run(&args);
@@ -559,7 +555,7 @@ fn terminal_arguments() {
         assert!(err.contains(want), "{args:?}: wanted {want:?} in {err:?}");
     }
     // `--format=cali` (inline value) is the same as two words
-    let (code, _, err) = run(&["--text", "--deck", "yoshimaru", "--format=cali", "--seat", "3"]);
+    let (code, _, err) = run(&["--text", "--deck", "karn_gilded", "--format=cali", "--seat", "3"]);
     assert_eq!(code, 1, "{err}");
     assert!(err.contains("seat is 1 to 2"), "{err}");
 }

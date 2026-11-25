@@ -65,7 +65,7 @@ fn the_four_seat_modes_are_refused_for_a_cali_deck() {
     let cases: [(&[&str], &str); 5] = [
         (&["--deck", "arzakon", "--calibrate", "within", "--quiet"], "--calibrate"),
         (&["--mulligan-oracle", "arzakon", "--quiet"], "--mulligan-oracle"),
-        (&["--mulligan-oracle", "yoshimaru,arzakon", "--quiet"], "--mulligan-oracle"),
+        (&["--mulligan-oracle", "karn_gilded,arzakon", "--quiet"], "--mulligan-oracle"),
         (&["--mulligan-oracle", "arzakon", "--vs-tier", "--quiet"], "--vs-tier"),
         (&["--mulligan-oracle", "t6,arzakon", "--vs-tier", "--quiet"], "--vs-tier"),
     ];
@@ -87,8 +87,8 @@ fn the_four_seat_modes_are_refused_at_a_cali_table() {
         (&["--calibrate", "within", "--format", "cali", "--quiet"], "--calibrate"),
         (&["--realism", "--pool", "t5", "--format", "cali", "--quiet"], "--realism"),
         (&["--fit", "--pool", "t5", "--format", "cali", "--quiet"], "--fit"),
-        (&["--deck", "yshtola", "--calibrate", "within", "--format", "cali", "--quiet"], "--calibrate"),
-        (&["--mulligan-oracle", "yshtola", "--format", "cali", "--quiet"], "--mulligan-oracle"),
+        (&["--deck", "karn_gilded", "--calibrate", "within", "--format", "cali", "--quiet"], "--calibrate"),
+        (&["--mulligan-oracle", "karn_gilded", "--format", "cali", "--quiet"], "--mulligan-oracle"),
     ];
     for (args, mode) in cases {
         refused(args, &[mode, "Cali Commander", "is not available for Cali Commander yet"]);
@@ -123,7 +123,7 @@ fn a_deckless_trace_refuses_a_cali_format() {
 #[test]
 fn the_format_flag_is_checked() {
     refused(
-        &["--deck", "yshtola", "--pool", "t5", "--format", "nowhere", "--quiet"],
+        &["--deck", "karn_gilded", "--pool", "t5", "--format", "nowhere", "--quiet"],
         &["--format nowhere", "cali, commander"],
     );
     refused(&["--all-decks", "--pool", "t5", "--format", "cali", "--quiet"], &["--format", "--all-decks"]);

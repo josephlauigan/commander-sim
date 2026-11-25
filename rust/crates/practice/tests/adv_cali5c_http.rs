@@ -789,7 +789,9 @@ fn a_commander_lobby_whose_opponents_spoil_the_first_placeholder_is_refused_as_b
     let c = cat(&mut s.client());
     let mut host = s.client();
     host.get("/");
-    let h = c.cmdr.clone();
+    // the second Commander deck as the host: the first other deck of mine is then a Commander deck (with the first one as
+    // the host it would be `arzakon`, a Cali deck, since the yshtola key left, and a Commander table refuses that placeholder)
+    let h = c.cmdr2.clone();
     let first_other = MY_DECKS.iter().find(|k| **k != h.as_str()).unwrap().to_string();
     let o = host.get("/api/options").json();
     let tier_keys: Vec<String> = o["tiers"][0]["decks"]

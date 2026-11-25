@@ -28,9 +28,7 @@ fn every_decision_of_several_games_has_a_hint() {
     let seen = RefCell::new(BTreeMap::<String, usize>::new());
     let mut mulligan_texts = vec![];
     for (i, (deck, seed)) in
-        [("urdragon", 4242u64), ("sheoldred", 7), ("yoshimaru", 11), ("arzakon", 3), ("yshtola", 5)]
-            .into_iter()
-            .enumerate()
+        [("urdragon", 4242u64), ("sheoldred", 7), ("karn_gilded", 11), ("arzakon", 3)].into_iter().enumerate()
     {
         let mut o = opts("adaptive");
         o.deck = deck.into();
@@ -78,7 +76,8 @@ fn every_decision_of_several_games_has_a_hint() {
 
 fn game() -> (Game, PlayerId) {
     let e = engine();
-    let seats: Vec<String> = ["yshtola", "sheoldred", "urdragon", "arzakon"].iter().map(|s| s.to_string()).collect();
+    let seats: Vec<String> =
+        ["karn_gilded", "sheoldred", "urdragon", "arzakon"].iter().map(|s| s.to_string()).collect();
     let (g, _) =
         practice::session::setup::build_game(&e, settings("loose", "adaptive", 1.0).unwrap(), 77, &seats, &[]).unwrap();
     (g, PlayerId(0))

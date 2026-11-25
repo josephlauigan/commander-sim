@@ -270,7 +270,8 @@ fn old_and_new_seating_agree_for_every_call_shape() {
         }
     }
     eprintln!("compared {} calls ({} were errors); tiers with fewer than 3 decks: {small_tiers:?}", t.calls, t.errors);
-    assert!(t.calls > 100_000, "the comparison did not run: {}", t.calls);
+    // 100_000 with four Commander decks of yours; three since the yshtola and yoshimaru keys left (2026-11-24)
+    assert!(t.calls > 75_000, "the comparison did not run: {}", t.calls);
     assert!(t.errors > 10_000, "the error paths were not exercised: {}", t.errors);
 }
 
@@ -293,7 +294,8 @@ fn a_tier_with_too_few_decks_is_an_error_not_a_short_table() {
         if keys.len() >= 3 {
             continue;
         }
-        let a = SeatArgs { deck: "yoshimaru", tier, partner: None, seed: 1, seat: None, opponents: None, seats: None };
+        let a =
+            SeatArgs { deck: "karn_gilded", tier, partner: None, seed: 1, seat: None, opponents: None, seats: None };
         let old = old_choose_seats(&e, &a).unwrap();
         let new = choose_seats(&e, &a);
         eprintln!("{tier}: {} decks; old seated {} ; new: {new:?}", keys.len(), old.len());
@@ -341,7 +343,7 @@ fn choose_seats_without_a_format_is_the_decks_own_table() {
 #[test]
 fn old_seatings_are_accepted_back_as_exact_seats() {
     let e = sess::engine();
-    for deck in ["yoshimaru", "sheoldred", "urdragon", "yshtola"] {
+    for deck in ["karn_gilded", "sheoldred", "urdragon"] {
         for tier in ["t1", "t3", "t5", "t6"] {
             for seed in 1..=15u64 {
                 let base = SeatArgs { deck, tier, partner: None, seed, seat: None, opponents: None, seats: None };

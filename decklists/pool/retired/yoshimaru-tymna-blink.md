@@ -1,5 +1,11 @@
 # Yoshimaru, Ever Faithful & Tymna the Weaver — Blink and Enter-the-Battlefield Value (W/B)
 
+**Retired 2026-11-24 (JD).** The deck is dismantled: its blink package moved into the Karn, Gilded Guardian deck,
+`decklists/JD/karn-gilded-guardian.md`. This guide moved here from `decklists/JD/` on 2026-11-24. The `yoshimaru` key left
+the simulator and practice catalog the same day and stays only as a testkit seat of its card code (`testkit::retired_decks`),
+seated with this guide's Import list (both commanders), so that list is frozen: the tests read it (`include_str!`), and
+editing or moving this file changes or breaks them. Findings: `audit/retired/yoshimaru/FINDINGS.md`.
+
 Put creatures with enter effects on the battlefield, then use them again, and back them with an Equipment package that protects the board, gives a second way to connect and tutors for itself. Solitude, Skyclave Apparition, Ranger-Captain of Eos, Recruiter of the Guard, Cloud and Stoneforge Mystic each do their job every time they come back, and seven blink cards bring them back. A life layer (Elas il-Kor, Haliya, Vito) turns every enter and every blink into drain, and Tymna with Delney draws twice as many cards. Four short lines can end the game: Vito with Exquisite Blood, Heliod with Walking Ballista, Archangel of Thune with Walking Ballista and a lifelink source, and Restoration Angel with Felidar Guardian and a payoff. Yoshimaru's counters are a bonus, not the engine: about a 4/4 to 5/5 by turn 6 (an estimate). The deck is weak to effects that stop enter triggers, to fast combo (its answers are Silence, Ranger-Captain of Eos and instant removal, it has no counterspell and no board shield for its own win turn), to graveyard and stax effects, to a sweeper when it taps out, to noncreature permanents it cannot remove, and to life loss. **This list has not been simulated; every number below is a count from the list or a labelled estimate.**
 
 | | |

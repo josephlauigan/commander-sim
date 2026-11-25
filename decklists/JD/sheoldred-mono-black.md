@@ -37,7 +37,7 @@ Phyrexian Delver or Yawgmoth's Will: Reanimate is {B} and 4 life, Animate Dead {
 her from the graveyard for {2}{B}{B} with no tax. With none of those, move her to the command zone and pay the tax.
 
 **When to cast her.** Turn 3 with a rock and three lands (Arcane Signet or Mind Stone), turn 4 off four
-lands, a turn earlier with Dark Ritual or Cabal Ritual, or with a turn-2 Jet Medallion ({1} off her {2}{B}{B}). In the sims she resolves on turn 6 on average, so a rock plus three lands is a
+lands, a turn earlier with Dark Ritual, or with a turn-2 Jet Medallion ({1} off her {2}{B}{B}). In the sims she resolves on turn 6 on average, so a rock plus three lands is a
 real edge. Cast her before any symmetric draw card. If the table is holding up removal mana, cast her anyway: she makes
 them spend it, and Underworld Dreams, Fate Unraveler and the drain pieces don't need her.
 
@@ -54,8 +54,8 @@ Generic mana, {X} and colourless costs are not reduced.
 | Card | Cost | With K'rrik out (all {B} paid with life) |
 |---|---|---|
 | Dark Ritual | {B} | 2 life, and it still makes {B}{B}{B} |
-| Cabal Ritual | {1}{B} | {1} and 2 life, and it still makes {B}{B}{B} |
 | Entomb | {B} | 2 life |
+| Deadly Rollick | {3}{B} | {3} and 2 life (or free while you control a commander) |
 | Reanimate | {B} | 2 life, plus the target's mana value |
 | Demonic Tutor, Animate Dead | {1}{B} | {1} and 2 life |
 | Yawgmoth's Will | {2}{B} | {2} and 2 life |
@@ -364,7 +364,7 @@ is drawn: cast it as soon as the mana allows, after Sheoldred.
 
 #### Remove threats
 
-Five removal spells and Grave Pact keep the board manageable: **Overkill**
+Six removal spells and Grave Pact keep the board manageable: **Deadly Rollick** ({3}{B} instant, exile target creature, free while you control a commander, so free while Sheoldred is out), **Overkill**
 (-0/-9999), **Foolish Fate**, **Sephiroth's Intervention** (destroy, gain 2 life), **Invoke
 Despair** (edict for a creature, an enchantment and a planeswalker, with 2 life lost and a card for you each time they
 have none; needs {B}{B}{B}{B}) and **Silence the Echo** (cheap with a creature to sacrifice, or pay {3}).
@@ -387,7 +387,7 @@ turn from the graveyard (Line 6).
 #### Ramp
 
 Two rocks, Arcane Signet and Mind Stone (it can cash in for a card), **Jet Medallion** (each black spell costs {1} less; it
-cuts only the generic part of a cost), plus **Dark Ritual** and **Cabal Ritual** ({1}{B} instant: {B}{B}{B}, or {B}{B}{B}{B}{B} with seven cards in your graveyard; Jet Medallion makes it cost {B}) (Sheoldred a
+cuts only the generic part of a cost), plus **Dark Ritual** (Sheoldred a
 turn early), Ashnod's Altar and Undercity Dire Rat (a Treasure when it dies). Memory Jar, The One Ring and Bolas's
 Citadel are the bigger artifacts you cast once the rocks are out. **Cabal Coffers** is the late-game ramp, and
 **K'rrik, Son of Yawgmoth** turns life into mana: each {B} in a cost can be paid with 2 life.
@@ -399,7 +399,7 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 
 | Hand | Keep when |
 |---|---|
-| 7 cards | 2-5 lands including a source of {B} (Swamp or Barad-dûr); a play on turns 2-4 (a rock, Dark Ritual, Cabal Ritual, a two-drop, a punisher or Sheoldred's four mana by turn 4); and one reason to go: a tutor, a punisher (Underworld Dreams, Fate Unraveler), a draw engine, a drain piece or Entomb with Animate Dead. A two-lander needs a rock, Dark Ritual or Cabal Ritual and cheap plays. Five lands need two real spells. 0-1 lands and 6+ lands go back |
+| 7 cards | 2-5 lands including a source of {B} (Swamp or Barad-dûr); a play on turns 2-4 (a rock, Dark Ritual, a two-drop, a punisher or Sheoldred's four mana by turn 4); and one reason to go: a tutor, a punisher (Underworld Dreams, Fate Unraveler), a draw engine, a drain piece or Entomb with Animate Dead. A two-lander needs a rock or Dark Ritual and cheap plays. Five lands need two real spells. 0-1 lands and 6+ lands go back |
 | 6 or 5 cards | 2-4 lands including a {B} source, and two plays that cost 3 or less |
 | 4 cards | Keep |
 
@@ -408,7 +408,7 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 - **Count turn 3-4 mana.** Three lands plus a rock is Sheoldred on turn 3; four lands is turn 4. A hand with only
   6-7 mana spells (Peer into the Abyss, Bolas's Citadel, Invoke Despair) is a ship, whatever the lands. K'rrik counts as
   a 4-mana spell ({4} and 6 life), not a 7.
-- **Bottom first:** lands past the fourth, Peer into the Abyss, Bolas's Citadel, Memory Jar. Keep rocks, Dark Ritual, Cabal Ritual,
+- **Bottom first:** lands past the fourth, Peer into the Abyss, Bolas's Citadel, Memory Jar. Keep rocks, Dark Ritual,
   tutors and the cheap punishers.
 - **Symmetric draw cards** (Howling Mine, Memory Jar) are not a reason to keep: they are dead until a punisher is out.
 
@@ -453,7 +453,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 
 | Your mana and hand | Opponents | Tutor | Target | Why, and what to watch |
 |---|---|---|---|---|
-| Turn 2, two lands, no rock, nothing to do on turn 3 | Slow or empty boards | Demonic Tutor | Dark Ritual, Cabal Ritual | Turn 3: three lands plus Dark Ritual ({B} for {B}{B}{B}) is 5 mana, Sheoldred plus 1 spare; Cabal Ritual ({1}{B} for {B}{B}{B}) is 4 mana, Sheoldred and nothing spare (6 with seven cards in the graveyard). Use one when the hand has no better play. A rock (Arcane Signet, Mind Stone) is turn-4 Sheoldred, which the lands already give |
+| Turn 2, two lands, no rock, nothing to do on turn 3 | Slow or empty boards | Demonic Tutor | Dark Ritual | Turn 3: three lands plus Dark Ritual ({B} for {B}{B}{B}) is 5 mana, Sheoldred plus 1 spare. Use it when the hand has no better play. A rock (Arcane Signet, Mind Stone) is turn-4 Sheoldred, which the lands already give |
 | Turn 3 or 4, Sheoldred castable this turn, your hand has no protection | White or blue-black with open mana, or cheap removal shown | Demonic Tutor if there is mana left, else next turn | Swiftfoot Boots | Cast Sheoldred first, Boots and equip ({2} plus {1}) the turn after. Boots stop targeted removal only, not wipes, edicts or Council's Judgment |
 | Turn 3, three Swamps, hand holds Howling Mine, Seizan or Memory Jar and no punisher | Anything | Demonic Tutor | Underworld Dreams | {B}{B}{B} turns the symmetric cards on and works with Sheoldred dead or not yet cast. Sheoldred still comes first if she is castable |
 | Turn 3, a creature wipe is likely (Damn, Toxic Deluge, Blasphemous Act, Farewell shown) | Wipe deck | Any tutor | Underworld Dreams, Sanguine Bond or Exquisite Blood | Enchantments survive a creature wipe. Hold creatures in hand and do not tutor for Mikaeus, K'rrik or the Merchant into it |
@@ -483,7 +483,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | Sheoldred in the graveyard, no Animate Dead in hand | Demonic Tutor | Animate Dead | {1}{B}, no life. Reanimate pays 4 life and Phyrexian Delver is 5 mana and 4 life. Yawgmoth's Will casts her for {2}{B}{B} with no tax. If she is in the graveyard and you hold one of these, leave her there |
 | Sheoldred exiled, bounced or stolen | Any tutor | Underworld Dreams or Fate Unraveler | Recast her from the command zone ({2} more per earlier cast). The punishers hold the damage meanwhile. If she was stolen, kill the thief's creature or sacrifice her in response (Viscera Seer, Ashnod's Altar, Yawgmoth, Deadly Dispute) |
 | A wipe just resolved, Sheoldred was the only creature | Any tutor | Animate Dead, then Sheoldred | Enchantments (Dreams, Arena, Bond, Blood) are still out. Rebuild with Phyrexian Delver or Perigee Beckoner |
-| An opponent has a combo that wins next turn | Demonic Tutor, then hold three mana (four for Sephiroth's Intervention) | Foolish Fate, Overkill or Sephiroth's Intervention (all instants) | You tutor at sorcery speed, so you need the answer in hand and the mana up at the right time. Rooftop Assassin only kills a creature that has been dealt damage |
+| An opponent has a combo that wins next turn | Demonic Tutor, then hold three mana (four for Sephiroth's Intervention) | Deadly Rollick (free with Sheoldred out), Foolish Fate, Overkill or Sephiroth's Intervention (all instants) | You tutor at sorcery speed, so you need the answer in hand and the mana up at the right time. Rooftop Assassin only kills a creature that has been dealt damage |
 | An opponent has graveyard hate out (Bojuka Bog, Dauthi Voidwalker, Skullsnatcher, Farewell) | Any tutor except Entomb | The card itself, hard-cast | Line 6 is off, Entomb finds nothing you can use |
 | Life 15 or less, Sheoldred out | Demonic Tutor only | Gray Merchant, Exsanguinate or Rooftop Assassin | Grim Tutor and K'rrik's life payments are off. Merchant and Exsanguinate gain it back |
 | Life 15 or less, Sheoldred not out | Demonic Tutor | Gray Merchant or Exsanguinate | You cannot gain from draws yet. Do not pay life for a tutor or for K'rrik |
@@ -511,7 +511,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 
 #### Priority order for the common cases
 
-1. **Sheoldred cannot land on turn 4 (no rock, three lands).** A mana source that makes turn 3 or 4 work (Dark Ritual, Cabal Ritual, Arcane Signet, Mind Stone).
+1. **Sheoldred cannot land on turn 4 (no rock, three lands).** A mana source that makes turn 3 or 4 work (Dark Ritual, Arcane Signet, Mind Stone).
 2. **An opponent wins next turn.** The instant answer (Foolish Fate, Overkill) with mana kept up, before anything else.
 3. **Sheoldred is out, the table has removal.** Swiftfoot Boots, then a second punisher (Underworld Dreams, Fate Unraveler).
 4. **Sheoldred is out and safe.** Sanguine Bond (works alone), then the missing Line 1 piece (Blood last), or Mikaeus and Triskelion, whichever half you lack.
@@ -568,10 +568,11 @@ The deck's instant-speed answers. Everything else is a sorcery.
 | Overkill | {2}{B} instant | The biggest threat, or a creature with regeneration or indestructible (it shrinks, it doesn't destroy). Not a hexproof creature |
 | Sephiroth's Intervention | {3}{B} instant | A creature; the 2 life gained also starts Line 1 if the pieces are out |
 | Rooftop Assassin | {3}{B} flash | After blocks and damage: it destroys an opposing creature that was dealt damage this turn and survived. Also a flying lifelink blocker |
+| Deadly Rollick | {3}{B} instant, free while you control a commander | Exile target creature: with Sheoldred out it costs no mana, so it is the answer you can hold on a tapped-out turn. Without her it is four mana |
 | Deadly Dispute | {1}{B} instant | In response to removal, a steal or an edict aimed at your creature: sacrifice it, draw two and make a Treasure (4 life with Sheoldred out) |
 | Viscera Seer, Ashnod's Altar, Phyrexian Tower, Yawgmoth | Free or cheap | In response to a steal effect on one of your creatures, or to get value from a creature that is about to die |
 | Mikokoro, Geier Reach Sanitarium | {2}, {T} | An opponent's end step: each player draws, and Sheoldred drains the opponents |
-| Entomb, Dark Ritual, Cabal Ritual | {B} instant ({1}{B} for Cabal Ritual) | Entomb at their end step to set up Animate Dead; Dark Ritual or Cabal Ritual to pay for an instant above |
+| Entomb, Dark Ritual | {B} instant | Entomb at their end step to set up Animate Dead; Dark Ritual to pay for an instant above |
 
 - **Hold {3}{B} (four mana) on the opponent's turn** when Rooftop Assassin or a removal spell would change a fight.
 - **Don't fight what you can't answer.** The deck has no enchantment or artifact removal (Invoke Despair is a
@@ -674,9 +675,9 @@ types: with 30 Swamps, six Swamps out make it net {B}{B}{B}{B}, more every turn,
 Phyrexian Tower makes {C}, or {B}{B} by sacrificing a creature. Bonders' Enclave, Mikokoro and the Sanitarium make {C}
 and draw cards.
 
-Other mana: two rocks (Arcane Signet, which makes {B}; Mind Stone), Jet Medallion ({1} off each black spell), Dark Ritual, Cabal Ritual, Ashnod's Altar, and the Treasures from Undercity Dire Rat and
+Other mana: two rocks (Arcane Signet, which makes {B}; Mind Stone), Jet Medallion ({1} off each black spell), Dark Ritual, Ashnod's Altar, and the Treasures from Undercity Dire Rat and
 Deadly Dispute, and K'rrik, which pays each {B} with 2 life. Tutors: Demonic Tutor, Diabolic Tutor and
-Grim Tutor, plus Entomb. Interaction: five removal spells, Nevinyrral's Disk, Accursed Marauder, Rooftop Assassin and Grave Pact; protection: Swiftfoot Boots and
+Grim Tutor, plus Entomb. Interaction: six removal spells (Deadly Rollick among them), Nevinyrral's Disk, Accursed Marauder, Rooftop Assassin and Grave Pact; protection: Swiftfoot Boots and
 Perigee Beckoner (and Mikaeus's undying).
 
 ## Bracket and Rule 0
@@ -705,7 +706,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Sorceries (14).** Ambition's Cost, Cost of Brilliance, Damnable Pact, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
-**Instants (7).** Cabal Ritual, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
+**Instants (7).** Dark Ritual, Deadly Dispute, Deadly Rollick, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
 
 ## Import list (100)
 
@@ -720,12 +721,12 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Cabal Coffers
-1 Cabal Ritual
 1 Call of the Ring
 1 Cost of Brilliance
 1 Damnable Pact
 1 Dark Ritual
 1 Deadly Dispute
+1 Deadly Rollick
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Dreadhorde Invasion

@@ -522,15 +522,17 @@ fn try_case(
     true
 }
 
-fn try_everywhere(first_is_cali: bool) {
-    let _g = serial();
-    let e = engine();
-    let (deck, guest) = pair(&e);
-    let seed = seed_with_first(&e, &deck, &guest, if first_is_cali { &deck } else { &guest });
-    let style = Style::Aggro;
-    let script = script_of(&e, &deck, &guest, seed, 3, style);
+/// The decisions (index, seat) of the reference game of `seed` that have a one-action AI choice, with its answers.
+fn try_choices(
+    e: &Arc<Engine>,
+    deck: &str,
+    guest: &str,
+    seed: u64,
+    style: Style,
+) -> (Vec<(String, Value)>, Vec<(usize, String)>) {
+    let script = script_of(e, deck, guest, seed, 3, style);
     // which decisions have an AI choice at all: one reference run
-    let mut r = Rig::open(Session::new(opts(&e, &deck, &guest, seed, 3, true)).unwrap(), style);
+    let mut r = Rig::open(Session::new(opts(e, deck, guest, seed, 3, true)).unwrap(), style);
     r.run_to(script.len(), Some(&script));
     assert_eq!(r.at["kind"], "over");
     let mut cases = vec![];
@@ -540,15 +542,44 @@ fn try_everywhere(first_is_cali: bool) {
         }
     }
     r.s.close(Duration::from_secs(10));
-    let by_seat = |s: &str| cases.iter().filter(|c| c.1 == s).count();
-    eprintln!(
-        "RECORD Try it: seed {seed}, Cali deck first {first_is_cali}, game of {} answers: {} decisions have a one-action AI choice ({} the Cali deck's, {} the guest's)",
-        script.len(),
-        cases.len(),
-        by_seat(&deck),
-        by_seat(&guest)
-    );
-    assert!(by_seat(&deck) > 0 && by_seat(&guest) > 0, "need an AI choice for each seat");
+    (script, cases)
+}
+
+fn try_everywhere(first_is_cali: bool) {
+    let _g = serial();
+    let e = engine();
+    let (deck, guest) = pair(&e);
+    let first = if first_is_cali { &deck } else { &guest };
+    let style = Style::Aggro;
+    // The reference game depends on the Cali deck's list (and the guest's), so a deck change can leave a game with
+    // no one-action AI choice for one seat. Search upward from the first seed with this seat order, deterministically
+    // and with a bound, for a reference game where each seat has one; the checks on that game are unchanged.
+    const SEARCH: usize = 12;
+    let mut tried = vec![];
+    let mut found = None;
+    for seed in (1..400u64).filter(|&s| Session::new(opts(&e, &deck, &guest, s, 3, false)).unwrap().seats[0] == *first)
+    {
+        if tried.len() == SEARCH {
+            break;
+        }
+        let (script, cases) = try_choices(&e, &deck, &guest, seed, style);
+        let by_seat = |s: &str| cases.iter().filter(|c| c.1 == s).count();
+        eprintln!(
+            "RECORD Try it: seed {seed}, Cali deck first {first_is_cali}, game of {} answers: {} decisions have a one-action AI choice ({} the Cali deck's, {} the guest's)",
+            script.len(),
+            cases.len(),
+            by_seat(&deck),
+            by_seat(&guest)
+        );
+        tried.push(seed);
+        if by_seat(&deck) > 0 && by_seat(&guest) > 0 {
+            found = Some((seed, script, cases));
+            break;
+        }
+    }
+    let Some((seed, script, cases)) = found else {
+        panic!("need an AI choice for each seat: seeds tried {tried:?} (Cali deck first {first_is_cali}) have none");
+    };
     let ok = std::sync::atomic::AtomicUsize::new(0);
     par(cases.len(), |i| {
         let (n, seat) = &cases[i];
