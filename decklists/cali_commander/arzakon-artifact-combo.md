@@ -390,11 +390,10 @@ matters most for the three one-mana dorks (Birds of Paradise, Llanowar Elves, Av
 Underworld Breach, Sneak Attack, Ragavan and Dockside Extortionist need it, besides Arzakon. Arzakon needs all five at once, which the colourless sources
 (the six colourless lands and the colourless rocks) cannot help with.
 
-**Karn's Bastion.** A colourless land that taps for {C}; for {4} and {T} it proliferates, which adds one counter of each kind
-to every permanent or player that already has one. In this deck it adds loyalty to Arzakon, Karn Liberated, Karn, the Great Creator
+**Karn's Bastion.** A colourless land that taps for {C}; for {4} and {T} it proliferates: you choose any number of permanents and players that have a counter, and each gets one more counter of each kind it already has. In this deck it adds loyalty to Arzakon, Karn Liberated, Karn, the Great Creator
 and Tezzeret, Cruel Captain, and counters to Walking Ballista (more pings) and Hangarback Walker, and it needs no colour. Use it
-at the end of the opponent's turn or when mana is spare, with a planeswalker on the table. Do not proliferate The One Ring:
-each burden counter costs you a life every upkeep.
+at the end of the opponent's turn or when mana is spare, with a planeswalker on the table. Usually leave The One Ring out: each burden
+counter costs a life every upkeep for one more card on the next tap. Once you have stopped tapping it, never add one.
 
 **Fetchlands in this list.** The list has no basic lands, so a fetchland finds an original dual or a shockland by its
 two land types. Every pair of colours has an original dual, so each fetchland works as a five-colour land for 1 life,
