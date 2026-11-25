@@ -40,7 +40,7 @@ Win rate 23.6%   (4-player baseline 25%)   average rounds survived 7.8
     by Prosper  via combat              3.5% of games
 
 -- Game plan timing --
-  Plan: 
+  Plan:
   Online by turn:  T2 0%  T3 1%  T4 2%  T5 5%  T6 9%  T7 14%  T8 17%  T9 20%  T10 22%  T11 23%  T12 23%
   Online at all: 24.3% of games
   Commander resolves on turn: median 6.0, mean 6.0 (over the 55.2% of games it resolves)
@@ -142,7 +142,7 @@ Game ends: timeout 4 (0.3%), engine step cap 0, no winner 1
     by Yawgmoth via drain               2.9% of games
 
 -- Game plan timing --
-  Plan: 
+  Plan:
   Online by turn:  T2 0%  T3 0%  T4 1%  T5 4%  T6 7%  T7 10%  T8 14%  T9 16%  T10 18%  T11 19%  T12 20%
   Online at all: 22.2% of games
   Commander resolves on turn: median 6.0, mean 6.3 (over the 54.9% of games it resolves)
