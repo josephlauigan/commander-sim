@@ -17,7 +17,7 @@ mandatory. **This list has not been simulated; every number below is a count fro
 | **Commander** | Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}, mana value 10, 5/5 artifact creature, vigilance and trample; all five colours). When Karn enters, draw a card for each colour among other artifacts you control |
 | **Bracket** | 4: 15 Game Changers and four short winning lines. Played against Tier 4 and Tier 5 |
 | **Game Changers (15)** | Consecrated Sphinx, Demonic Tutor, Enlightened Tutor, Farewell, Force of Will, Imperial Seal, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Teferi's Protection, Thassa's Oracle, The One Ring, Vampiric Tutor |
-| **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. No sims yet |
+| **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. First runs and their limits are in the findings file; the current list is not simulated |
 | **Buys** | None: every card not owned is proxied |
 
 ## Strategy
@@ -63,7 +63,7 @@ each multicolored permanent we control when it enters.
 
 **Draw engine: coloured artifacts and Karn.** The fourteen artifacts above, plus Karn. Several do other work: Baleful
 Strix draws a card and trades with an attacker, Esper Sentinel draws a card whenever an opponent casts their first
-noncreature spell each turn unless that player pays {1}, The Reaper puts -1/-1 counters on two creatures and steals the ones that
+noncreature spell each turn unless that player pays {X}, where X is its power (1, more with an Equipment on it), The Reaper puts -1/-1 counters on two creatures and steals the ones that
 die, Breya makes two Thopters and turns two artifacts into removal or a drain, Shorikai draws two and discards one each
 turn, Gold-Forged Thopteryx gives every legendary permanent we control ward {2} (Karn included).
 

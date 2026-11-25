@@ -394,8 +394,8 @@ real duals and shocklands.
 **The Urza lands.** Urza's Tower, Urza's Mine and Urza's Power Plant each tap for {C}; with all three on the battlefield
 the Tower taps for {C}{C}{C} and the Mine and the Power-Plant for {C}{C} each, seven colourless mana from three lands.
 Seven is exactly Karn Liberated or Meteor Golem, and most of Blightsteel Colossus's {12}. With one or two of them out each
-is only a colourless land, and none of them pays a colour toward Arzakon, so a hand with just the Urza lands as its
-mana has no coloured source. Primeval Titan can fetch two of them at once.
+is only a colourless land, and, without Leyline, none of them pays a colour toward Arzakon, so a hand with just the Urza lands as its
+mana (and no Leyline) has no coloured source. Primeval Titan can fetch two of them at once.
 
 ## Format and Rule 0
 
