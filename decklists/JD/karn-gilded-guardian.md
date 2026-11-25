@@ -100,7 +100,7 @@ Bowmasters, Thassa's Oracle, Twitching Doll; 3 Flickerwisp, Haliya, Ranger-Capta
 Breya, Restoration Angel, Transguild Courier; 5 Elesh Norn, Gandalf the White, Solitude; 6 Consecrated Sphinx, The Reaper.
 Limits: the chain ends at the two 6-drops (no creature has mana value 7), Karn (mana value 10) can never be fetched
 because no creature has mana value 9. Pod needs a creature to sacrifice, is sorcery speed, and each Phyrexian {G/P}
-costs {G} or 2 life; green is a thin colour (16 land sources).
+costs {G} or 2 life (the simulator limits are under Limits); green is a thin colour (16 land sources).
 
 **Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
 (for Karn), Ephemerate and Restoration Angel (they blink Karn in response to a spell or ability that targets him; Conjurer's Closet works only at our end step, so it does not), Akroma's Will ("if you control a commander" gives both modes, so before Karn is out it is a single mode), Swords to Plowshares, Path to Exile, Anguished Unmaking (for a noncreature permanent), Skyclave
@@ -193,8 +193,10 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
   kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
 - **The AI's use of Birthing Pod is unmeasured:** how often it activates it and what it fetches have not been tested in this list.
-- **Birthing Pod in the simulator:** the activation is paid with {G}, never with 2 life instead of the {G/P} (the card allows both), and a person
-  using it in practice is offered the one sacrifice-and-fetch pair the AI computes, not a free choice of what to sacrifice or fetch.
+- **Birthing Pod in the simulator:** the activation is paid with {G}, never with 2 life instead of the {G/P} (the card allows both); the Pod cannot
+  be activated the turn it enters (the engine gives it the summoning sickness of a creature); it never sacrifices a token (Breya's Thopters and
+  the Station's Robots are not used as fodder, though the card allows it); and a person using it in practice is offered the one
+  sacrifice-and-fetch pair the AI computes, not a free choice of what to sacrifice or fetch.
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
 - **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return).
 
