@@ -271,7 +271,9 @@ fn many_cali_games_scan_for_self_targets_and_odd_log_lines() {
         games += 1;
         let mut cast = None;
         for (i, l) in log.iter().enumerate() {
-            if l.contains("Arzakon +2 (Arzakon)") && l.contains("decides") && l.contains("->") {
+            // only the Arzakon seat's own decisions: an opponent that gains control of the walker (a Commandeer on the
+            // Arzakon spell, seed 3027) and aims its +2 at the Arzakon player is not a self-target
+            if l.contains("Arzakon +2 (Arzakon)") && l.contains("[Arzakon decides") && l.contains("->") {
                 selfhit += 1;
                 odd.push(format!("seed {seed} vs {o}: {l}"));
             }
