@@ -6,7 +6,7 @@
   "commanders": [
     "Karn, Gilded Guardian"
   ],
-  "request_sha256": "d7f951c2c233c5228f4e95c2800b82932f9b57a9192c80426ea189c6be040dd0",
+  "request_sha256": "aed90c0e2e70bc8623f9c5750bcfbb02c56fab7e2ee45a729e05d65dbd112d8f",
   "identity": "WUBRG",
   "included": [
     {
@@ -702,42 +702,6 @@
       "popularity": 17187,
       "missing": [
         "Blood Tribute"
-      ]
-    },
-    {
-      "id": "372-1090-3603",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16678,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -1514,38 +1478,6 @@
       ]
     },
     {
-      "id": "467-1636",
-      "cards": [
-        {
-          "name": "Shorikai, Genesis Engine",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Intruder Alarm",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite creature tokens",
-        "Near-infinite card draw",
-        "Near-infinite untap of all creatures",
-        "Near-infinite looting"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to cause Shorikai to become a creature this turn. You control a creature that can tap to produce at least {1}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 7117,
-      "missing": [
-        "Intruder Alarm"
-      ]
-    },
-    {
       "id": "4365-4682-7890",
       "cards": [
         {
@@ -1646,33 +1578,6 @@
       "popularity": 5972,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
-      ]
-    },
-    {
-      "id": "147-3603",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Cloudshift.",
-      "mana": "{1}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5581,
-      "missing": [
-        "Dualcaster Mage"
       ]
     },
     {
@@ -2515,33 +2420,6 @@
       ]
     },
     {
-      "id": "141-3603",
-      "cards": [
-        {
-          "name": "Naru Meha, Master Wizard",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Cloudshift.",
-      "mana": "{2}{W}{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1796,
-      "missing": [
-        "Naru Meha, Master Wizard"
-      ]
-    },
-    {
       "id": "4682-4772-7890",
       "cards": [
         {
@@ -2607,39 +2485,6 @@
       "bracket": "E",
       "legal": true,
       "popularity": 1699,
-      "missing": [
-        "Lumbering Battlement"
-      ]
-    },
-    {
-      "id": "1090-3603-4344",
-      "cards": [
-        {
-          "name": "Lumbering Battlement",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1607,
       "missing": [
         "Lumbering Battlement"
       ]
@@ -3032,6 +2877,33 @@
       "popularity": 993,
       "missing": [
         "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "205-933",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conjurer's Closet",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 988,
+      "missing": [
+        "Azor, the Lawbringer"
       ]
     },
     {
@@ -3630,6 +3502,42 @@
       "popularity": 255,
       "missing": [
         "Primal Vigor"
+      ]
+    },
+    {
+      "id": "933-1558-6741",
+      "cards": [
+        {
+          "name": "Infinite Guideline Station",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Time Sieve",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conjurer's Closet",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five multicolored permanents.",
+      "mana": "{W}{U}{B}{R}{G} plus commander tax if applicable",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 222,
+      "missing": [
+        "Time Sieve"
       ]
     },
     {
