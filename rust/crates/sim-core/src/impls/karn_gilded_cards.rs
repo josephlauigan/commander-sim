@@ -27,7 +27,7 @@ use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval,
 use crate::engine::zones::{Enter, TOKEN_CAP, Tokens, die, draw, enter, make_tokens, max_by, sac_worth, token_copy_of};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -703,14 +703,16 @@ const CRYSTAL: &str = "The Fire Crystal";
 // `fire_crystal_go`) and the AI's option (`crystal_options`, below). Both end in `crystal_activate` and
 // `crystal_resolve`, so the stack window and the copy are the same for a person and for the AI.
 //
-// **The AI** (PROVISIONAL: no constant here has been tuned by a sim; the switch is `AI_CRYSTAL`, `ai::table_fixes`).
+// **The AI** (PROVISIONAL: no constant here has been tuned by a sim; the switches are `AI_CRYSTAL` and
+// `AI_CRYSTAL_HOLD`, `ai::table_fixes`).
 // The Crystal untaps only in its controller's untap step, so there is one activation per turn cycle, and the
 // end-of-turn window just before the controller's own turn (`ai::end_of_turn_window`) is the best moment: the {4}{R}{R}
 // stays up through the opponents' turns, whatever is unspent then is free (the lands untap next), the copy is there for
 // the whole of the controller's turn (it can attack and use {T} abilities, haste being the Crystal's own) and a Karn
 // copy's cards arrive before the draw step. So in that window the AI copies the best target by `copy_value` when it is
 // worth at least `FC_EOT_MIN`; in a main phase it copies only to win (a copy of
-// Thassa's Oracle that empties the library into its trigger).
+// Thassa's Oracle that empties the library into its trigger). The hold rule (`crystal_hold`, read by
+// `ai::brain::main_options`) keeps the mana up in the main phase when that copy is worth three cards or more.
 
 /// may p's Crystal target its own creature m: not shrouded and not protected from red, the Crystal's colour (hexproof
 /// stops only an opponent)
@@ -815,6 +817,17 @@ const FC_REMOVAL: f64 = 0.8;
 const FC_ORACLE_LOOK: f64 = 0.3;
 /// The Reaper's counter on a creature it does not kill (it feeds the second ability): `reaper_etb` shrinks the two worth most
 const FC_REAPER_COUNTER: f64 = 0.4;
+/// the hold rule (`crystal_hold`): a best copy worth at least this (three cards) is held mana for
+pub const FC_HOLD_MIN: f64 = 4.5;
+/// the share of the end-of-turn utility that "stop" is worth when it holds the mana
+pub const FC_HOLD_SHARE: f64 = 0.6;
+/// the share of the hold's worth that a cast which would break the reserve loses
+pub const FC_HOLD_PEN: f64 = 0.7;
+/// an opponent this close to winning (`Situation::danger`): the mana is spent on the table, not held
+const FC_HOLD_DANGER: f64 = 0.8;
+/// a combo piece (`cardcode::combo_imp`) at least this important is cast whatever it leaves
+const FC_HOLD_COMBO: f64 = 7.0;
+
 const ORACLE: &str = "Thassa's Oracle";
 
 /// does p control the Crystal `src` ready to use: on the battlefield, p's, untapped, with its abilities on
@@ -1039,6 +1052,60 @@ fn fire_crystal_ai(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool
     }
     crystal_activate(g, p, src, t)?;
     Ok(true)
+}
+
+// ------------------------------------------------------------------ the hold rule (AI_CRYSTAL_HOLD)
+/// what keeping {4}{R}{R} up for the end-of-turn copy is worth now, as a utility for "stop" (`FC_HOLD_SHARE` of the copy's
+/// utility), None when there is nothing to hold for: the switch off, no ready Crystal of p's (a person has none), the
+/// cost not payable now, an opponent near a win (`danger` at least `FC_HOLD_DANGER`: the mana goes to the table), or the
+/// best copy at the end-of-turn window under `FC_HOLD_MIN`, or a win (taken now, in the main phase, by `crystal_options`).
+/// Reads the game only.
+pub fn crystal_hold(g: &Game, p: PlayerId, danger: f64) -> Option<f64> {
+    if !crate::ai::table_fixes::crystal_hold_on() || !crate::ai::table_fixes::crystal_on() || danger >= FC_HOLD_DANGER {
+        return None;
+    }
+    if human(g, p) {
+        return None;
+    }
+    let src =
+        g.player(p).perms.iter().copied().find(|&m| card_name_of(g, m) == Some(CRYSTAL) && crystal_ready(g, p, m))?;
+    if !can_pay(g, p, 4, "RR", false) {
+        return None;
+    }
+    let (_, v) = best_copy(g, p, src, true)?;
+    if v >= FC_WIN || v < FC_HOLD_MIN {
+        return None;
+    }
+    Some(FC_HOLD_SHARE * (FC_EOT_BASE + v.min(FC_EOT_VALUE_CAP)))
+}
+
+/// the hold rule made "stop" worth `crystal_hold` this turn: counted once a turn (`main_options` is asked after each play)
+pub fn note_hold(g: &mut Game, p: PlayerId) {
+    let key = intern("fc_hold");
+    let stamp = g.turn_stamp();
+    let pl = g.player_mut(p);
+    if pl.flag_turn.get(key) != Some(&stamp) {
+        pl.flag_turn.insert(key, stamp);
+        pl.stat("fc_hold", 1);
+    }
+}
+
+/// does casting c now leave p unable to pay {4}{R}{R}? Never for a cast that is exempt: a mana source (a Rock, a Dork,
+/// Fastmana, a ritual that pays for itself), p's commander, a combo piece (`combo_imp` at least `FC_HOLD_COMBO`).
+pub fn crystal_reserve_broken(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    let t = &d.tags;
+    if t.has(Tag::Rock)
+        || t.has(Tag::Dork)
+        || t.has(Tag::Fastmana)
+        || crate::engine::mana::ritual_net(g, p, c) > 0
+        || g.player(p).is_commander(c)
+        || crate::cardcode::combo_imp(g, p, c) >= FC_HOLD_COMBO
+    {
+        return false;
+    }
+    let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+    !can_pay(g, p, cg + 4, &format!("{cp}RR"), false)
 }
 
 // ================================================================== registration

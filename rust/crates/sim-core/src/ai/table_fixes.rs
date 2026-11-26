@@ -1,4 +1,4 @@
-//! Three generic AI fixes found in the pool rebalance's traces (2026-11-02), and the switch of The Fire Crystal's
+//! Three generic AI fixes found in the pool rebalance's traces (2026-11-02), and the two switches of The Fire Crystal's
 //! AI (2026-11-25). Each has its own switch, read like `AI_SEARCH_B` / `AI_RULES` / `AI_T6STOPS`: unset, empty or
 //! anything but `0` is on (the default); `=0` is off. The three fixes off: today's play, byte for byte.
 //!
@@ -12,6 +12,8 @@
 //! - `AI_CRYSTAL`: the AI activates The Fire Crystal's copy ability (`impls::karn_gilded_cards::crystal_options`). Off:
 //!   no option, as before the hook (the Crystal stays a registered card, so its cast priority and its threat value to
 //!   opponents are the hook's either way).
+//! - `AI_CRYSTAL_HOLD`: in its main phase the AI keeps {4}{R}{R} up for the end-of-turn copy
+//!   (`impls::karn_gilded_cards::crystal_hold`, read by `ai::brain::main_options`). Off: no penalty and no raised stop.
 
 use std::cell::Cell;
 use std::sync::OnceLock;

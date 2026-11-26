@@ -3,6 +3,7 @@
 //! Oracle text and the design (/tmp/handoff/opus-fire-design-out.md, D3), on hand-built boards:
 //!   - the AI copies in the end-of-turn window just before its own turn (the mana and the Crystal are free there), the best
 //!     target by `karn_gilded_cards::copy_value`; in a main phase it copies only to win with Thassa's Oracle;
+//!   - the hold rule (`AI_CRYSTAL_HOLD`) keeps {4}{R}{R} up in the main phase when the copy is worth three cards or more;
 //!   - a person's ability is untouched (`human::abilities_of` returns the Crystal's own arm), and `AI_CRYSTAL=0` removes
 //!     the AI's option.
 //! P0 is the AI seat (Karn's deck); P1 is Krenko's deck and gives opposing creatures. Every constant is PROVISIONAL, so a
@@ -16,7 +17,7 @@ use sim_core::engine::life::check_state;
 use sim_core::engine::zones;
 use sim_core::hooks::Opt;
 use sim_core::impls::karn_gilded::KARN_GILDED;
-use sim_core::impls::karn_gilded_cards::copy_value;
+use sim_core::impls::karn_gilded_cards::{FC_HOLD_PEN, FC_HOLD_SHARE, copy_value};
 use sim_core::state::{DataKey, Step, Val};
 use std::sync::Arc;
 
@@ -392,12 +393,91 @@ fn copy_value_draws_no_random_numbers_and_changes_nothing() {
     assert_eq!(g.player(P0).library.len(), witness.player(P0).library.len());
 }
 
+// ======================================================== 12. the hold rule (C6)
+/// P0's main phase with Karn and the Crystal out and `lands` lands (two Mountains, two Swamps, Islands), and Vampire
+/// Nighthawk ({1}{B}{B}) in hand: with seven mana casting it leaves four, which cannot pay {4}{R}{R}
+fn hold_board(lands_n: usize) -> Game {
+    let mut g = tbl();
+    main_phase(&mut g);
+    karn_on_the_table(&mut g);
+    perm(&mut g, P0, CRYSTAL);
+    self::lands(&mut g, P0, "Mountain", 2, false);
+    self::lands(&mut g, P0, "Swamp", 2, false);
+    self::lands(&mut g, P0, "Island", lands_n - 4, false);
+    hand(&mut g, P0, &["Vampire Nighthawk"]);
+    g
+}
+
+fn utility(opts: &[Opt], label: &str) -> f64 {
+    opts.iter().find(|o| o.label == label).unwrap_or_else(|| panic!("{label} not offered")).utility
+}
+
+fn stop(opts: &[Opt]) -> f64 {
+    opts.iter().find(|o| o.act.is_none()).expect("a stop").utility
+}
+
+#[test]
+fn the_hold_rule_cuts_a_cast_that_breaks_the_reserve_and_raises_stop() {
+    table_fixes::force_crystal_hold(Some(false));
+    let mut g = hold_board(7);
+    let off = brain::main_options(&mut g, P0, false).unwrap();
+    let off_cast = utility(&off, "Vampire Nighthawk");
+    let off_stop = stop(&off);
+
+    table_fixes::force_crystal_hold(Some(true));
+    let hold = ai::table_fixes::crystal_hold_on();
+    assert!(hold);
+    let mut g = hold_board(7);
+    let h = sim_core::impls::karn_gilded_cards::crystal_hold(&g, P0, 0.0).expect("a hold for the Karn copy");
+    assert!((h - FC_HOLD_SHARE * 8.5).abs() < 1e-9, "0.6 of the copy's utility (1 + 7.5): {h}");
+    let on = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(
+        (utility(&on, "Vampire Nighthawk") - (off_cast - FC_HOLD_PEN * h)).abs() < 1e-9,
+        "the cast is cut by 0.7 x hold"
+    );
+    assert!(stop(&on) >= h, "stop is worth at least the hold: {}", stop(&on));
+    assert!(stop(&on) >= off_stop);
+    assert_eq!(g.player(P0).stats.get("fc_hold"), Some(&1));
+
+    // nine mana: the cast keeps {4}{R}{R}, it is not cut and the stop is not raised
+    let mut g = hold_board(9);
+    let nine = brain::main_options(&mut g, P0, false).unwrap();
+    table_fixes::force_crystal_hold(Some(false));
+    let mut g = hold_board(9);
+    let nine_off = brain::main_options(&mut g, P0, false).unwrap();
+    assert_eq!(utility(&nine, "Vampire Nighthawk"), utility(&nine_off, "Vampire Nighthawk"), "not cut");
+    assert_eq!(stop(&nine), stop(&nine_off), "stop not raised");
+
+    // the switch off with the Crystal ready equals a tapped Crystal (nothing to hold for)
+    let mut g = hold_board(7);
+    let c = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == CRYSTAL).unwrap();
+    g.perm_mut(c).tapped = true;
+    table_fixes::force_crystal_hold(Some(true));
+    let tapped = brain::main_options(&mut g, P0, false).unwrap();
+    assert_eq!(utility(&tapped, "Vampire Nighthawk"), off_cast, "a tapped Crystal holds nothing");
+    assert_eq!(stop(&tapped), off_stop);
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn the_hold_rule_exempts_mana_sources_and_a_near_win() {
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = hold_board(7);
+    let rock = hand(&mut g, P0, &["Thought Vessel"])[0];
+    let night = card(&g, "Vampire Nighthawk");
+    assert!(!sim_core::impls::karn_gilded_cards::crystal_reserve_broken(&g, P0, rock), "a mana rock is exempt");
+    assert!(sim_core::impls::karn_gilded_cards::crystal_reserve_broken(&g, P0, night));
+    assert!(sim_core::impls::karn_gilded_cards::crystal_hold(&g, P0, 0.8).is_none(), "an opponent near a win: no hold");
+    table_fixes::force_crystal_hold(None);
+}
+
 // ======================================================== 13. the switch
 #[test]
-fn ai_crystal_off_gives_no_options() {
+fn ai_crystal_off_gives_no_options_and_no_hold() {
     table_fixes::force_crystal(Some(false));
     let (mut g, _, _) = karn_board();
     assert!(fc_opts(&mut g, None).is_empty());
+    assert!(sim_core::impls::karn_gilded_cards::crystal_hold(&g, P0, 0.0).is_none());
     table_fixes::force_crystal(None);
     assert_eq!(fc_opts(&mut g, None).len(), 1);
 }
