@@ -225,9 +225,10 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
   else the Tiller itself, and never kills a creature of its own on purpose; it skips an opposing creature whose ward it can't pay. It always puts a land when it has one
   in its hand or graveyard: first a land that adds a colour its lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and
-  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand is at seven cards), and never Mana Confluence or City of Brass at 10 life or less.
-  These rankings are provisional and untuned by any sim. A wipe that kills the Tiller and then another creature with a -1/-1 counter does not trigger it for that
-  creature (the simulator runs death triggers one death at a time; The Reaper has the same limit).
+  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the Lunarch, that the counter would kill is not counted as a kill (it comes back bigger).
+  These rankings are provisional and untuned by any sim. Named limit: the simulator kills creatures one at a time, in list order (seat order, then the order
+  the permanents entered), in a wipe, in combat damage and in state-based deaths, so a creature with a -1/-1 counter that dies in the same event after the Tiller does not trigger it,
+  while one that dies before it does (The Reaper has the same limit; a Farewell exiles, so it is no case).
 - **Iron Man's counter is not a trigger on the stack** in the simulator: it is put as each card is drawn, so the table cannot respond to it; the AI puts it on the creature
   it values most (a person chooses).
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.

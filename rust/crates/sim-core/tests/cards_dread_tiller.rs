@@ -269,15 +269,40 @@ fn equal_lands_a_hand_at_the_limit_gives_up_its_copy() {
             "Lightning Bolt",
             "Lightning Bolt",
             "Lightning Bolt",
+            "Lightning Bolt",
         ],
     );
     gy_land(&mut g, P0, "Plains");
     perm(&mut g, P1, ELVES);
     perm(&mut g, P0, TILLER);
     assert_eq!(n_lands(&g, P0), 6);
-    assert_eq!(g.player(P0).hand.len(), 6, "seven cards: the one that would be discarded is the land");
+    assert_eq!(g.player(P0).hand.len(), 7, "eight cards: the cleanup would discard one, so the land goes");
     assert!(!in_hand(&g, P0, "Plains"));
     assert!(in_gy(&g, P0, "Plains"), "the graveyard keeps its copy");
+}
+
+#[test]
+fn equal_lands_a_hand_of_seven_keeps_its_copy() {
+    let mut g = tbl();
+    all_colours(&mut g);
+    hand(
+        &mut g,
+        P0,
+        &[
+            "Plains",
+            "Lightning Bolt",
+            "Lightning Bolt",
+            "Lightning Bolt",
+            "Lightning Bolt",
+            "Lightning Bolt",
+            "Lightning Bolt",
+        ],
+    );
+    gy_land(&mut g, P0, "Plains");
+    perm(&mut g, P1, ELVES);
+    perm(&mut g, P0, TILLER);
+    assert!(in_hand(&g, P0, "Plains"), "seven cards are kept at the cleanup: the graveyard copy goes");
+    assert!(!in_gy(&g, P0, "Plains"));
 }
 
 #[test]

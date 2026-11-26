@@ -23,7 +23,9 @@ use crate::engine::life::{check_state, gain, lose_life_dealt};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, trigger_window};
-use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval, untargetable};
+use crate::engine::values::{
+    colors_of, epow, etgh, protected_from, ptypes, pval, untargetable, untargetable_by_its_controller,
+};
 use crate::engine::zones::{Enter, TOKEN_CAP, Tokens, die, draw, enter, make_tokens, max_by, sac_worth, token_copy_of};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -274,7 +276,12 @@ fn breya_fodder(g: &Game, p: PlayerId, src: PermId) -> Option<[PermId; 2]> {
 /// can `src`'s ability or trigger target `m`: not hexproof or shroud against an opponent, and no protection from one of
 /// the source's colours (Breya is white, blue, black and red; The Reaper black, red and green)
 fn targetable_by(g: &Game, src: PermId, m: PermId) -> bool {
-    owner(g, m) == owner(g, src) || !(untargetable(g, m) || protected_from(g, m, colors_of(g, src)))
+    if owner(g, m) == owner(g, src) {
+        // our own creature: hexproof lets us target it, shroud (the keyword, Lightning Greaves, Whispersilk Cloak) and
+        // protection from a colour of the source do not
+        return !untargetable_by_its_controller(g, m, colors_of(g, src));
+    }
+    !(untargetable(g, m) || protected_from(g, m, colors_of(g, src)))
 }
 
 /// the opposing creature the -4/-4 mode kills that is worth most (4 toughness or less, worth 3 or more), one whose ward
@@ -473,6 +480,13 @@ fn reaper_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let targets: Vec<PermId> = if human(g, o) {
         let mut left: Vec<PermId> =
             crate::human::cards::creatures(g, o, false).into_iter().filter(|&m| targetable_by(g, src, m)).collect();
+        if g.trig_probe {
+            // only whether the trigger goes on the stack: the targets are chosen (and a person asked) once, as it does
+            if left.is_empty() {
+                return Ok(());
+            }
+            return trigger_window(g, o, Some(src), "a -1/-1 counter on up to two creatures", Some(5.0)).map(|_| ());
+        }
         let mut picked = vec![];
         for i in 0..2 {
             if left.is_empty() {
@@ -569,6 +583,8 @@ const TILLER_UTILITY: [&str; 6] = [
     "Path of Ancestry",
     "Command Tower",
 ];
+/// the hand size the cleanup step keeps (`turn::cleanup` discards while a hand holds more)
+const TILLER_HAND_LIMIT: usize = 7;
 /// the tie-break between two copies of the same land: the graveyard one goes first, so the hand keeps its choice, except
 /// that a hand at the cleanup limit goes first
 const TILLER_ZONE: f64 = 0.5;
@@ -584,6 +600,26 @@ fn tiller_targets(g: &Game, src: PermId) -> Vec<PermId> {
         .collect()
 }
 
+/// would t come back as it dies, with a +1/+1 counter, so that the counter that kills it only makes it bigger: undying
+/// (`zones::die_rest`: a card of its owner's with the keyword and no +1/+1 counter now) or its owner's Mikaeus, the Lunarch
+/// (a nonhuman creature card, not a commander, not Mikaeus; the AI's one that already came back does not again). The
+/// cap on returns in one turn (`zones::returns_left`) is not looked at: it changes state
+fn tiller_returns(g: &Game, t: PermId) -> bool {
+    let x = g.perm(t);
+    let Some(cd) = x.cd else { return false };
+    let p = x.owner;
+    if x.token || x.orig != p || x.plus > 0 || g.player(p).is_commander(cd) || repl::no_graveyard(g, p) {
+        return false;
+    }
+    let d = g.db.get(cd);
+    let mikaeus = crate::engine::values::has(g, p, Tag::Mikaeus)
+        && d.creature
+        && !d.tag(Tag::Human)
+        && !d.tag(Tag::Mikaeus)
+        && (human(g, p) || !x.undying);
+    mikaeus || d.has_kw("undying")
+}
+
 /// what the AI thinks a counter on t is worth to o (see `tiller_etb`): an opposing creature it kills is worth most, then
 /// the opposing creature worth most (`pval`); a creature that can't have the counter is worth nothing either way; one of
 /// ours is a loss, the least for the Tiller itself, the most for a creature the counter would kill
@@ -596,6 +632,9 @@ fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
     if opposing {
         if !crate::engine::ward::ward_affordable(g, o, t, 0, "") {
             return TILLER_NO_USE;
+        }
+        if dies && tiller_returns(g, t) {
+            return -pval(g, t); // it dies and comes back with a +1/+1 counter: a gift, not a kill
         }
         return if dies { TILLER_KILL + pval(g, t) } else { pval(g, t) };
     }
@@ -703,7 +742,7 @@ fn tiller_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     if g.perm(src).neutered || g.perm(m).plus >= 0 || !g.is_creature(m) {
         return Ok(());
     }
-    let p = owner(g, src);
+    let p = crate::engine::hooks::trigger_controller(g, src);
     if !g.player(p).alive || tiller_lands(g, p).is_empty() {
         return Ok(());
     }
@@ -733,7 +772,8 @@ fn tiller_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     } else {
         let made =
             g.player(p).lands.iter().fold(Colors::NONE, |a, &l| a.union(crate::engine::mana::land_colors_now(g, p, l)));
-        let hand_full = !crate::engine::turn::no_max_hand(g, p) && crate::engine::values::hand_proper(g, p).len() >= 7;
+        let hand_full = !crate::engine::turn::no_max_hand(g, p)
+            && crate::engine::values::hand_proper(g, p).len() > TILLER_HAND_LIMIT;
         let best = lands
             .iter()
             .filter_map(|&(c, gy)| tiller_land_worth(g, p, c, gy, made, hand_full).map(|w| ((c, gy), w)))
