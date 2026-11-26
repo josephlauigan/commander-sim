@@ -939,19 +939,30 @@ pub fn no_max_hand(g: &Game, p: PlayerId) -> bool {
 
 /// The Fire Crystal's token copies ("sacrifice it at the beginning of the next end step", `DataKey::CopySac`) that this end
 /// step sacrifices: the marked permanents of every player, taken as the step begins, so a copy made during the step is
-/// not among them and waits for the next end step
-pub fn copy_sacs_due(g: &Game) -> Vec<PermId> {
+/// not among them and waits for the next end step. The mark is the Crystal's controller, the player told to sacrifice it.
+pub fn copy_sacs_due(g: &Game) -> Vec<(PlayerId, PermId)> {
     g.players
         .iter()
         .flat_map(|pl| pl.perms.iter().copied())
-        .filter(|&m| g.perm(m).data.truthy(crate::state::DataKey::CopySac))
+        .filter_map(|m| match g.perm(m).data.get(crate::state::DataKey::CopySac) {
+            Some(crate::state::Val::Player(q)) => Some((*q, m)),
+            _ => None,
+        })
         .collect()
 }
 
-/// sacrifice the copies `copy_sacs_due` took (the ones still on the battlefield)
-pub fn sacrifice_copies(g: &mut Game, due: Vec<PermId>) -> Res {
-    for m in due {
-        if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::CopySac) {
+/// sacrifice the copies `copy_sacs_due` took, as the Sneak Attack block does: the delayed trigger is used up either way,
+/// and only the player instructed to sacrifice can do so, so a copy that is phased out or under another player's control
+/// stays. The controller gets a window to respond (a Ranger-Captain copy can be sacrificed for value first).
+pub fn sacrifice_copies(g: &mut Game, due: Vec<(PlayerId, PermId)>) -> Res {
+    for (q, m) in due {
+        g.perm_mut(m).data.remove(crate::state::DataKey::CopySac);
+        if !g.perm(m).on_bf || g.perm(m).phased || g.perm(m).owner != q {
+            continue;
+        }
+        let name = format!("The Fire Crystal: sacrifice {}", g.perm(m).name);
+        if trigger_window(g, q, None, &name, Some(1.0))? && g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).owner == q
+        {
             die(g, m, "sac")?;
         }
     }

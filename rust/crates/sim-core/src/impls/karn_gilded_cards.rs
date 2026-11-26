@@ -758,7 +758,7 @@ pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<Str
         }
         let Some(cd) = g.perm(t).cd else { return Ok(()) };
         if let Some(tok) = enter_token_copy(g, p, cd)? {
-            g.perm_mut(tok).data.set(DataKey::CopySac, Val::Bool(true));
+            g.perm_mut(tok).data.set(DataKey::CopySac, Val::Player(p));
         }
         check_state(g)
     })?;

@@ -16,8 +16,9 @@ use sim_core::engine::zones::{self, Enter, Tokens};
 use sim_core::engine::{combat, turn};
 use sim_core::human::abilities::PermAbility;
 use sim_core::human::script::ScriptHuman;
-use sim_core::state::{DataKey, Step};
+use sim_core::state::{DataKey, Step, Val};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 const CRYSTAL: &str = "The Fire Crystal";
 const KARN: &str = "Karn, Gilded Guardian";
@@ -77,6 +78,27 @@ fn person(g: &mut Game, target: &'static str, keep: usize) -> Arc<ScriptHuman> {
     }));
     g.humans.add(P0, h.clone());
     h
+}
+
+/// `person`, but in the first window to respond (`kind` "priority") the person first casts the card at index 0 of the hand
+/// (and any target it asks for is the first choice containing `aim`)
+fn person_responding(g: &mut Game, target: &'static str, aim: &'static str) -> Arc<AtomicBool> {
+    let done = Arc::new(AtomicBool::new(false));
+    let flag = done.clone();
+    let h = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" && !flag.swap(true, Ordering::SeqCst) {
+            Answer::Action(json!({"do": "cast", "card": 0}))
+        } else if &*r.kind == "target" && !r.prompt.contains("copy which creature") {
+            Answer::Pick(r.choices.iter().position(|c| c.contains(aim)).unwrap_or(0))
+        } else if r.prompt.contains("copy which creature") {
+            Answer::Pick(r.choices.iter().position(|c| !target.is_empty() && c.contains(target)).unwrap_or(0))
+        } else {
+            Answer::Action(json!({"do": "pass"}))
+        }
+    }));
+    h.set_autopass("all"); // a person gets priority on their own ability only with auto-pass off
+    g.humans.add(P0, h);
+    done
 }
 
 /// the Crystal, a person at P0's seat who copies the first creature listed, and `r` red mana and `c` more in the pool
@@ -380,15 +402,193 @@ fn a_copy_made_during_an_end_step_waits_for_the_next_end_step() {
 }
 
 #[test]
-fn a_copy_that_is_already_gone_is_not_sacrificed_twice_and_the_original_is_never_marked() {
+fn a_copy_that_left_before_the_end_step_costs_nothing_and_the_original_is_never_marked() {
     let mut g = tbl();
     let c = ready(&mut g, 2, 4);
     let orig = sick_creature(&mut g, P0, BAT);
     assert!(activate(&mut g, P0, c).is_none());
     assert!(!g.perm(orig).data.truthy(DataKey::CopySac));
+    let t = tokens_named(&g, P0, BAT)[0];
+    assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)), "marked with its controller");
+    zones::die(&mut g, t, "destroy").unwrap(); // gone before the first end step
+    assert!(!g.perm(t).on_bf);
+    let other = sick_creature(&mut g, P0, "Grave Titan");
+    let gy = g.player(P0).gy.len();
     turn::end_step(&mut g, P0).unwrap();
     turn::end_step(&mut g, P1).unwrap();
     assert!(g.perm(orig).on_bf, "a later end step does nothing to the original");
+    assert!(g.perm(other).on_bf, "nor to any other creature");
+    assert_eq!(g.player(P0).gy.len(), gy, "nothing else was sacrificed");
+}
+
+#[test]
+fn a_marked_copy_that_is_phased_out_stays_and_the_mark_is_used_up() {
+    // "sacrifice it" is an instruction to its controller, who can't while it is phased out; the delayed trigger is used up
+    let mut g = tbl();
+    let c = ready(&mut g, 2, 4);
+    sick_creature(&mut g, P0, BAT);
+    assert!(activate(&mut g, P0, c).is_none());
+    let t = tokens_named(&g, P0, BAT)[0];
+    g.perm_mut(t).phased = true;
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(g.perm(t).on_bf, "not sacrificed while phased out");
+    assert!(!g.perm(t).data.truthy(DataKey::CopySac), "the mark is gone");
+    g.perm_mut(t).phased = false; // it phases back in
+    turn::end_step(&mut g, P1).unwrap();
+    assert!(g.perm(t).on_bf, "a later end step leaves it");
+}
+
+#[test]
+fn a_marked_copy_under_another_players_control_is_not_sacrificed() {
+    let mut g = tbl();
+    let c = ready(&mut g, 2, 4);
+    sick_creature(&mut g, P0, BAT);
+    assert!(activate(&mut g, P0, c).is_none());
+    let t = tokens_named(&g, P0, BAT)[0];
+    assert!(sim_core::engine::control::gain_control(&mut g, P1, t, sim_core::engine::control::Duration::Permanent));
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(g.perm(t).on_bf && g.perm(t).owner == P1, "its new controller was never told to sacrifice it");
+    assert!(!g.perm(t).data.truthy(DataKey::CopySac));
+}
+
+#[test]
+fn the_controller_gets_a_window_to_respond_before_the_copy_is_sacrificed() {
+    // the sacrifice is a delayed trigger: its controller may respond (here by casting a card) before it resolves
+    let mut g = tbl();
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 4)]);
+    sick_creature(&mut g, P0, BAT);
+    person(&mut g, "", 0);
+    assert!(activate(&mut g, P0, c).is_none());
+    let t = tokens_named(&g, P0, BAT)[0];
+    let h = Arc::new(ScriptHuman::from_fn(|_| Answer::Action(json!({"do": "pass"}))));
+    h.set_autopass("all"); // a person gets priority on their own trigger only with auto-pass off
+    g.humans.add(P0, h.clone());
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(t).on_bf, "sacrificed");
+    assert!(
+        h.asked().iter().any(|r| r.prompt.contains("The Fire Crystal: sacrifice")),
+        "{:?}",
+        h.asked().iter().map(|r| r.prompt.clone()).collect::<Vec<_>>()
+    );
+}
+
+// ---- the paths around the activation
+#[test]
+fn rings_of_brighthearth_copies_the_ability_and_the_copy_may_pick_a_new_target() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Rings of Brighthearth");
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 6)]); // {4}{R}{R}, and {2} for Rings
+    sick_creature(&mut g, P0, BAT);
+    sick_creature(&mut g, P0, "Grave Titan");
+    let h = Arc::new(ScriptHuman::from_fn(|r| {
+        if r.prompt.starts_with("Rings of Brighthearth: pay {2} to copy") {
+            Answer::Pick(0) // yes
+        } else if r.prompt.contains("The copy of The Fire Crystal's ability") {
+            Answer::Pick(r.choices.iter().position(|c| c.contains("Grave Titan")).unwrap()) // a new target
+        } else if r.prompt.contains("copy which creature") {
+            Answer::Pick(r.choices.iter().position(|c| c.contains("Nighthawk")).unwrap())
+        } else if r.prompt.contains("choose a target") {
+            Answer::Pick(0)
+        } else {
+            Answer::Action(json!({"do": "pass"}))
+        }
+    }));
+    g.humans.add(P0, h.clone());
+    assert!(activate(&mut g, P0, c).is_none());
+    let asked: Vec<String> = h.asked().iter().map(|r| r.prompt.clone()).collect();
+    assert!(asked.iter().any(|p| p.contains("The copy of The Fire Crystal's ability")), "{asked:?}");
+    assert_eq!(tokens_named(&g, P0, BAT).len(), 1, "the ability itself copies the Nighthawk");
+    assert_eq!(tokens_named(&g, P0, "Grave Titan").len(), 1, "the copy of the ability copies the Titan");
+    for m in tokens_named(&g, P0, BAT).into_iter().chain(tokens_named(&g, P0, "Grave Titan")) {
+        assert!(g.perm(m).data.truthy(DataKey::CopySac), "{}: every token is marked", g.perm(m).name);
+    }
+}
+
+#[test]
+fn a_target_removed_in_response_makes_no_copy_and_the_cost_is_spent() {
+    let mut g = tbl();
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 4), ('W', 1)]);
+    let orig = sick_creature(&mut g, P0, BAT);
+    hand(&mut g, P0, &["Swords to Plowshares"]);
+    let responded = person_responding(&mut g, "", "Nighthawk");
+    assert!(activate(&mut g, P0, c).is_none());
+    assert!(responded.load(Ordering::SeqCst), "the person responded");
+    assert!(!g.perm(orig).on_bf, "the target was exiled in response");
+    assert!(tokens_named(&g, P0, BAT).is_empty(), "the ability fizzled: no token");
+    assert!(g.perm(c).tapped, "the cost was paid");
+}
+
+#[test]
+fn the_crystal_destroyed_in_response_still_makes_the_copy() {
+    // the ability is independent of its source once it is on the stack
+    let mut g = tbl();
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 4), ('W', 2)]);
+    sick_creature(&mut g, P0, BAT);
+    hand(&mut g, P0, &["Disenchant"]);
+    let responded = person_responding(&mut g, "", "Fire Crystal");
+    assert!(activate(&mut g, P0, c).is_none());
+    assert!(responded.load(Ordering::SeqCst), "the person responded");
+    assert!(!g.perm(c).on_bf, "the Crystal was destroyed in response");
+    let toks = tokens_named(&g, P0, BAT);
+    assert_eq!(toks.len(), 1, "the copy is still made");
+    assert!(g.perm(toks[0]).data.truthy(DataKey::CopySac));
+}
+
+#[test]
+fn at_the_token_limit_the_cost_is_paid_and_nothing_is_made() {
+    let mut g = tbl();
+    let c = ready(&mut g, 2, 4);
+    sick_creature(&mut g, P0, BAT);
+    let n = g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count();
+    zones::make_tokens(&mut g, P0, Tokens::new((zones::TOKEN_CAP - n) as u32, 1)).unwrap();
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), zones::TOKEN_CAP);
+    assert!(activate(&mut g, P0, c).is_none());
+    assert!(g.perm(c).tapped);
+    assert_eq!(pool_total(&g, P0), 0, "{}", pool_text(&g, P0));
+    assert!(tokens_named(&g, P0, BAT).is_empty(), "no room for a token");
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), zones::TOKEN_CAP);
+}
+
+#[test]
+fn your_own_hexproof_creature_is_a_target_but_a_shroud_creature_is_not() {
+    let mut g = tbl();
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 4)]);
+    let hex = sick_creature(&mut g, P0, BAT);
+    g.perm_mut(hex).eot_kw.push("hexproof");
+    let shr = sick_creature(&mut g, P0, "Grave Titan");
+    g.perm_mut(shr).eot_kw.push("shroud");
+    let h = person(&mut g, "Nighthawk", 0);
+    assert!(activate(&mut g, P0, c).is_none());
+    let asked = h.asked();
+    assert!(
+        asked[0].choices.iter().any(|x| x.contains("Nighthawk")),
+        "hexproof only stops opponents: {:?}",
+        asked[0].choices
+    );
+    assert!(
+        asked[0].choices.iter().all(|x| !x.contains("Grave Titan")),
+        "shroud stops everyone: {:?}",
+        asked[0].choices
+    );
+    assert_eq!(tokens_named(&g, P0, BAT).len(), 1);
+}
+
+#[test]
+fn the_crystal_is_not_a_creature_so_it_gets_no_haste_and_is_not_a_target() {
+    let mut g = tbl();
+    let c = ready(&mut g, 2, 4);
+    sick_creature(&mut g, P0, BAT);
+    g.perm_mut(c).sick = true;
+    assert!(!g.is_creature(c));
+    assert!(!combat::has_haste(&g, c), "creatures have haste, and the Crystal is an artifact");
+    let h = person(&mut g, "", 0);
+    assert!(activate(&mut g, P0, c).is_none());
+    assert!(h.asked()[0].choices.iter().all(|x| !x.contains("Fire Crystal")), "{:?}", h.asked()[0].choices);
 }
 
 // ---- Karn: the enters trigger and the legend rule
