@@ -1,0 +1,34 @@
+#!/bin/sh
+# Run the card knowledge base CLI from any worktree. Never builds. Uses this checkout's binary, else the main
+# checkout's (git common dir's parent). --root pins the project to this checkout; the catalog (oracle.json) falls
+# back to the main checkout's inside cardgen itself.
+self=$(readlink -f "$0" 2>/dev/null) || self=$0
+here=$(cd "$(dirname "$self")/.." && pwd)
+bin=$here/rust/target/release/cardgen
+if [ ! -x "$bin" ]; then
+  common=$(git -C "$here" rev-parse --git-common-dir 2>/dev/null) && main=$(cd "$here" && cd "$common/.." && pwd)
+  bin=${main:+$main/rust/target/release/cardgen}
+fi
+if [ -z "$bin" ] || [ ! -x "$bin" ]; then
+  echo "cardgen binary not built. Build it (JD approves builds; memory cap per CLAUDE.md):" >&2
+  echo "  cd ${main:-$here}/rust && systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 cargo build --release -p cardgen" >&2
+  exit 1
+fi
+# a recommendation never refreshes data: these three write the shared catalog, roles or exported files, except the
+# read-only forms (roles --lint/--audit/--show/--stats/--validate, export --out DIR to a scratch directory)
+cmd=$1; [ "$1" = --root ] && cmd=$3
+case "$cmd" in
+  bulk-sync|roles|export)
+    readonly=
+    for a in "$@"; do
+      case "$a" in --out|--lint|--audit|--show|--stats|--validate) readonly=1 ;; esac
+    done
+    if [ -z "$readonly" ] && [ "$CARDGEN_ALLOW_WRITE" != 1 ]; then
+      echo "scripts/cardgen: '$cmd' would write shared data and is not run in a recommendation (CLAUDE.md); set CARDGEN_ALLOW_WRITE=1 only for a refresh JD approved." >&2
+      exit 1
+    fi ;;
+esac
+for a in "$@"; do
+  case "$a" in --root|--root=*) exec "$bin" "$@" ;; esac
+done
+exec "$bin" --root "$here" "$@"
