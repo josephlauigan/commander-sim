@@ -40,6 +40,57 @@ fn marchesa_pending_return_leaves_the_commander_in_the_graveyard() {
 }
 
 #[test]
+fn marchesa_pending_return_with_no_graveyard_keeps_the_commander_in_the_command_zone() {
+    for pending in [false, true] {
+        let mut g = table(&["sauron", "cloud"]);
+        let m = commander(&mut g, MARCHESA);
+        g.perm_mut(m).plus = 1;
+        perm(&mut g, PlayerId(1), "Rest in Peace");
+        assert!(sim_core::engine::repl::no_graveyard(&g, P0));
+        if pending {
+            marchesa::marchesa_dies(&mut g, P0, m).unwrap();
+        }
+        assert_eq!(g.marchesa_due.len(), usize::from(pending));
+        // Exercise the zone-placement shortcut with a pending entry: die's initial replacement check would
+        // otherwise redirect straight to exile before reaching the graveyard placement.
+        zones::leave(&mut g, m).unwrap();
+        zones::to_zone_card(&mut g, m, zones::Zone::Gy);
+        sim_core::engine::life::check_state(&mut g).unwrap();
+        assert!(!g.player(P0).exile.contains(&card(&g, MARCHESA)), "pending={pending}");
+        assert!(g.player(P0).cmd_in_zone, "pending={pending}");
+        assert!(!in_gy(&g, P0, MARCHESA));
+        turn::end_step(&mut g, P0).unwrap();
+        assert!(g.player(P0).cmd_in_zone);
+        assert!(on_bf(&g, P0, MARCHESA).is_none());
+        assert_eq!(g.player(P0).stats.get("marchesa_returns"), None);
+    }
+}
+
+#[test]
+fn marchesa_pending_return_cannot_keep_a_stolen_commander_out_of_its_owners_command_zone() {
+    let mut g = table(&["sauron", "cloud"]);
+    let owner = PlayerId(1);
+    perm(&mut g, P0, MARCHESA);
+    set_commander(&mut g, owner, "Cloud, Midgar Mercenary");
+    g.player_mut(owner).cmd_in_zone = false;
+    let m = perm(&mut g, owner, "Cloud, Midgar Mercenary");
+    g.perm_mut(m).is_cmd = true;
+    assert!(marchesa::steal(&mut g, P0, m, false).unwrap());
+    assert_eq!(g.perm(m).orig, owner);
+    assert_eq!(g.perm(m).owner, P0);
+    g.perm_mut(m).plus = 1;
+    zones::die(&mut g, m, "sac").unwrap();
+    assert_eq!(g.marchesa_due, vec![(P0, card(&g, "Cloud, Midgar Mercenary"), owner)]);
+    assert!(g.player(owner).cmd_in_zone);
+    assert!(!in_gy(&g, owner, "Cloud, Midgar Mercenary"));
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(g.player(owner).cmd_in_zone);
+    assert!(on_bf(&g, P0, "Cloud, Midgar Mercenary").is_none());
+    assert!(on_bf(&g, owner, "Cloud, Midgar Mercenary").is_none());
+    assert_eq!(g.player(P0).stats.get("marchesa_returns"), None);
+}
+
+#[test]
 fn marchesa_commander_returns_from_the_graveyard_at_the_end_step() {
     let mut g = table(&["sauron", "cloud"]);
     let m = commander(&mut g, MARCHESA);

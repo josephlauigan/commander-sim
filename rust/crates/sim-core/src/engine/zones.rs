@@ -679,7 +679,10 @@ fn to_zone_card_inner(g: &mut Game, m: PermId, zone: Zone, keep_cmd: bool) {
     // Decline the command-zone move when Marchesa is waiting to return this card from the graveyard.
     let keep_cmd = keep_cmd
         || (zone == Zone::Gy
-            && g.marchesa_due.iter().any(|&(p, cd, o)| o == owner && Some(cd) == x.phys.or(x.cd) && g.player(p).alive));
+            && !crate::engine::repl::no_graveyard(g, owner)
+            && g.marchesa_due
+                .iter()
+                .any(|&(p, cd, o)| p == o && o == owner && Some(cd) == x.phys.or(x.cd) && g.player(p).alive));
     if let Some(cd) = x.phys {
         if !keep_cmd && g.player(owner).is_commander(cd) {
             g.player_mut(owner).set_cmd_zone(cd, true); // --- scion: Scion as a copy is still the commander
