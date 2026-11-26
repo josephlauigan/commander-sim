@@ -1,6 +1,6 @@
-//! Three generic AI fixes found in the pool rebalance's traces (2026-11-02). Each has its own switch, read like
-//! `AI_SEARCH_B` / `AI_RULES` / `AI_T6STOPS`: unset, empty or anything but `0` is on (the default); `=0` is off. All
-//! three off: today's play, byte for byte.
+//! Three generic AI fixes found in the pool rebalance's traces (2026-11-02), and the switch of The Fire Crystal's
+//! AI (2026-11-25). Each has its own switch, read like `AI_SEARCH_B` / `AI_RULES` / `AI_T6STOPS`: unset, empty or
+//! anything but `0` is on (the default); `=0` is off. The three fixes off: today's play, byte for byte.
 //!
 //! - `AI_SACSTEAL`: a sacrifice (an edict, a sacrifice outlet's cost, Torment of Hailfire's choice, Korvold's trigger)
 //!   counts what the sacrificed nontoken permanent is worth to an opponent whose Tergrid, God of Fright takes it.
@@ -9,6 +9,9 @@
 //!   (`cmd_recast_penalty`), unless the table is about to kill us or the commander is the only play.
 //! - `AI_WIPEVALUE`: a board wipe is cast only when the caster is better off than the average opponent, or the
 //!   table's leader loses much more than the caster, or the caster is in danger (`wipe_blocked`).
+//! - `AI_CRYSTAL`: the AI activates The Fire Crystal's copy ability (`impls::karn_gilded_cards::crystal_options`). Off:
+//!   no option, as before the hook (the Crystal stays a registered card, so its cast priority and its threat value to
+//!   opponents are the hook's either way).
 
 use std::cell::Cell;
 use std::sync::OnceLock;
@@ -46,6 +49,14 @@ macro_rules! switch {
 switch!(force_sacsteal, sacsteal_on, FORCE_SACSTEAL, "AI_SACSTEAL", "the steal-on-sacrifice cost");
 switch!(force_cmdrisk, cmdrisk_on, FORCE_CMDRISK, "AI_CMDRISK", "the commander recast risk");
 switch!(force_wipevalue, wipevalue_on, FORCE_WIPEVALUE, "AI_WIPEVALUE", "the relative wipe value");
+switch!(force_crystal, crystal_on, FORCE_CRYSTAL, "AI_CRYSTAL", "the AI's Fire Crystal activations");
+switch!(
+    force_crystal_hold,
+    crystal_hold_on,
+    FORCE_CRYSTAL_HOLD,
+    "AI_CRYSTAL_HOLD",
+    "holding mana for the Fire Crystal"
+);
 
 // ------------------------------------------------------------------ fix 1: sacrifice and Tergrid
 /// does an opponent of p control a permanent that takes p's sacrificed nontoken permanents (Tergrid, God of Fright)?

@@ -432,6 +432,13 @@ fn wisp_pick(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
     max_by(&cs, |m| wisp_worth(g, p, src, m))
 }
 
+/// what Flickerwisp's enters trigger would be worth to p's AI if `src` (a permanent standing in for the one that
+/// enters: The Fire Crystal's copy is valued with its original, which is never the target) entered now: the value of the
+/// best target, 0 when there is none or it is not worth it. A pure read.
+pub fn wisp_value(g: &Game, p: PlayerId, src: PermId) -> f64 {
+    wisp_pick(g, p, src).map_or(0.0, |t| wisp_worth(g, p, src, t)).max(0.0)
+}
+
 /// the permanents a person may aim Flickerwisp's trigger at: any other permanent, lands and tokens included
 fn wisp_targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
     super::yoshimaru_p7::targets_from(g, o, src, |_, m| m != src)

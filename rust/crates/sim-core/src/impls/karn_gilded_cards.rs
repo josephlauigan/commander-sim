@@ -24,12 +24,13 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, trigger_window};
 use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, die, draw, enter, make_tokens, max_by, sac_worth, token_copy_of};
+use crate::engine::zones::{Enter, TOKEN_CAP, Tokens, die, draw, enter, make_tokens, max_by, sac_worth, token_copy_of};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
-use crate::sym::Sym;
+use crate::sym::{Sym, intern};
+use crate::tag::Tag;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
     g.perm(m).owner
@@ -695,10 +696,21 @@ fn doll_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 // ================================================================== The Fire Crystal
-/// "Red spells you cast cost {1} less to cast." and "Creatures you control have haste." are compiled (the `static:cost`
-/// and `static:keyword` of its override); the copy ability is a person's ability only (`human::cards::abilities`): the
-/// AI never activates it, and it has no card-code hook, so the AI's valuation of the Crystal stays the compiled cost
-/// change's (`ai::pool`).
+const CRYSTAL: &str = "The Fire Crystal";
+
+// "Red spells you cast cost {1} less to cast." and "Creatures you control have haste." are compiled (the `static:cost`
+// and `static:keyword` of its override); the copy ability is card code: a person's ability (`human::cards::abilities`,
+// `fire_crystal_go`) and the AI's option (`crystal_options`, below). Both end in `crystal_activate` and
+// `crystal_resolve`, so the stack window and the copy are the same for a person and for the AI.
+//
+// **The AI** (PROVISIONAL: no constant here has been tuned by a sim; the switch is `AI_CRYSTAL`, `ai::table_fixes`).
+// The Crystal untaps only in its controller's untap step, so there is one activation per turn cycle, and the
+// end-of-turn window just before the controller's own turn (`ai::end_of_turn_window`) is the best moment: the {4}{R}{R}
+// stays up through the opponents' turns, whatever is unspent then is free (the lands untap next), the copy is there for
+// the whole of the controller's turn (it can attack and use {T} abilities, haste being the Crystal's own) and a Karn
+// copy's cards arrive before the draw step. So in that window the AI copies the best target by `copy_value` when it is
+// worth at least `FC_EOT_MIN`; in a main phase it copies only to win (a copy of
+// Thassa's Oracle that empties the library into its trigger).
 
 /// may p's Crystal target its own creature m: not shrouded and not protected from red, the Crystal's colour (hexproof
 /// stops only an opponent)
@@ -756,11 +768,19 @@ pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<Str
         return Ok(Some(format!("Can't activate The Fire Crystal. {why}")));
     }
     g.perm_mut(src).tapped = true; // the cost
+    crystal_activate(g, p, src, t)?;
+    Ok(None)
+}
+
+/// the ability, cost paid and `src` tapped: on the stack with target t (the table may respond: a removed target makes it
+/// do nothing, Rings of Brighthearth copies it), then its effect (`crystal_resolve`). A copy of the ability lets its
+/// controller pick a new target when that is a person; an AI keeps the target. True if the original resolved.
+fn crystal_activate(g: &mut Game, p: PlayerId, src: PermId, t: PermId) -> Res<bool> {
     crate::glog!(g, "  {} activates The Fire Crystal: a token copy of {}", pname(g, p), g.perm(t).name);
     let what = format!("a token copy of {}", g.perm(t).name);
     ability_run_w(g, p, Some(src), None, &what, Some(4.0), Some(t), 0.0, |g, is_copy| {
         let mut t = t;
-        if is_copy {
+        if is_copy && human(g, p) {
             // "you may choose a new target for the copy"
             let now = crystal_targets(g, p, src);
             let prompt = "The copy of The Fire Crystal's ability: copy which creature?";
@@ -769,8 +789,256 @@ pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<Str
             }
         }
         crystal_resolve(g, p, src, t)
-    })?;
-    Ok(None)
+    })
+}
+
+// ------------------------------------------------------------------ the AI's copy
+/// PROVISIONAL (never tuned by a sim), like every `FC_` constant. The scale is cards: `karn_gilded::PER_CARD` (1.5) per
+/// card that stays in hand, as the blink choosers use.
+/// a copy that wins the game (Thassa's Oracle with the library inside its reach)
+const FC_WIN: f64 = 50.0;
+/// the utility of that copy, in any window
+const FC_WIN_U: f64 = 9.5;
+/// the end-of-turn window: the mana and the Crystal are free there, so a copy worth anything is made
+const FC_EOT_MIN: f64 = 0.5;
+/// the utility there is `FC_EOT_BASE` plus the value (at most `FC_EOT_VALUE_CAP`)
+const FC_EOT_BASE: f64 = 1.0;
+const FC_EOT_VALUE_CAP: f64 = 8.0;
+/// per point of power of a copy that is there for p's next combat (times 1.5 flying), at most `FC_BODY_CAP`
+const FC_BODY: f64 = 0.15;
+const FC_BODY_CAP: f64 = 2.0;
+/// a lasting creature token an enters trigger makes
+const FC_TOKEN: f64 = 0.8;
+/// the share of the removed permanent's `pval` that an enters trigger that removes it is worth
+const FC_REMOVAL: f64 = 0.8;
+/// what a copy of Thassa's Oracle is worth when it does not win (a look at the top cards)
+const FC_ORACLE_LOOK: f64 = 0.3;
+/// The Reaper's counter on a creature it does not kill (it feeds the second ability): `reaper_etb` shrinks the two worth most
+const FC_REAPER_COUNTER: f64 = 0.4;
+const ORACLE: &str = "Thassa's Oracle";
+
+/// does p control the Crystal `src` ready to use: on the battlefield, p's, untapped, with its abilities on
+fn crystal_ready(g: &Game, p: PlayerId, src: PermId) -> bool {
+    live(g, src) && owner(g, src) == p && !g.perm(src).tapped && !g.perm(src).neutered
+}
+
+/// the name of the card m is a copy or the card of (a token with no card record: None)
+fn card_name_of(g: &Game, m: PermId) -> Option<&str> {
+    g.perm(m).cd.map(|c| &*g.db.get(c).name)
+}
+
+/// would a token copy of p's Thassa's Oracle `m` win now: the copy's trigger is not blanked and the library is inside the
+/// Oracle's reach (devotion to blue, the copy's {U}{U} counting at resolution; the test of `combos::oracle_prio`)
+fn oracle_wins(g: &Game, p: PlayerId, m: PermId) -> bool {
+    card_name_of(g, m) == Some(ORACLE)
+        && !crate::engine::hooks::enter_silenced(g, p, Some(m))
+        && g.player(p).library.len() <= crate::impls::combos::oracle_devotion(g, p) + 2
+}
+
+/// what a token copy of p's creature `m`, made by p's Crystal `src` now, is worth to p's AI (cards x `PER_CARD`).
+/// `at_eot`: in the end-of-turn window before p's turn (the copy lives through that turn); false: a main phase.
+/// `f64::NEG_INFINITY`: never copy it. A pure read: no RNG, no change.
+///
+/// 1. Never: a card with the `Wipe` tag; p at `TOKEN_CAP` tokens; under a Doomsday pile (after the Oracle check).
+/// 2. A copy of Thassa's Oracle that wins: `FC_WIN`.
+/// 3. The enters trigger, times its instances (`enters_trigger_times`: 0 under an opposing Elesh Norn or Hushbringer,
+///    more with Gandalf or p's own Norn), by card:
+///    - Karn, Gilded Guardian: `karn_gilded::copy_draw_value` (the cards, `DECKING` when it would deck p);
+///    - Restoration Angel: the best `t2::flicker_worth` among p's non-Angel creatures, when at least 3.0 (the Angel's own
+///      threshold);
+///    - Flickerwisp: `t12_brago_meren::wisp_value` (the original is never the target);
+///    - Solitude: `FC_REMOVAL` times the `pval` of the best opposing creature p can afford the ward of, when that is 2.0
+///      or more (`common::solitude`);
+///    - The Reaper, King No More: the `pval` of each of the two creatures it shrinks if the counter kills it, else
+///      `FC_REAPER_COUNTER`;
+///    - Breya, Etherium Shaper: two Thopters; Infinite Guideline Station: a Robot for each multicoloured permanent, the
+///      copy included (it is five colours); each `FC_TOKEN`;
+///    - Thassa's Oracle that does not win: `FC_ORACLE_LOOK`;
+///    - a card with a triggered `rem` (Skyclave Apparition): `FC_REMOVAL` times the best `pval` it can take
+///      (`removal::legal_targets`, as `etb_removal_pick`), at least 2.0, less the Illusion its owner gets when the copy
+///      is sacrificed (`0.5 + 0.25 * mana value`);
+///    - any other legendary creature: 0 (the copy dies to the legend rule, and the generic value would score its
+///      watcher hooks as enters effects: Yoshimaru, Haliya);
+///    - any other card: `ai::card_etb_value` (Bowmasters 2.5, Baleful Strix's draw 1.5, a card-code or compiled enters
+///      trigger at least 1.5);
+///    - a token with no card record: 0.
+/// 4. The body, only at the end-of-turn window and not for a legendary copy (the real card stays): `FC_BODY` per point of
+///    power, times 1.5 flying, at most `FC_BODY_CAP`.
+pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) -> f64 {
+    let x = g.perm(m);
+    let Some(cd) = x.cd else { return 0.0 };
+    let d = g.db.get(cd);
+    if d.tags.has(Tag::Wipe) || g.player(p).perms.iter().filter(|&&q| g.perm(q).token).count() >= TOKEN_CAP {
+        return f64::NEG_INFINITY;
+    }
+    if oracle_wins(g, p, m) {
+        return FC_WIN;
+    }
+    if crate::impls::doomsday::active(g, p) {
+        return f64::NEG_INFINITY; // the pile is planned: no copy may draw into it
+    }
+    let times = crate::engine::hooks::enters_trigger_times(g, p, None, Some(m)) as f64;
+    let legendary = crate::cardcode::is_legendary(g, m);
+    let etb = match &*d.name {
+        crate::impls::karn_gilded::KARN_GILDED => crate::impls::karn_gilded::copy_draw_value(g, p, m),
+        "Restoration Angel" => {
+            let best = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&y| {
+                    g.is_creature(y)
+                        && !g.perm(y).phased
+                        && y != m
+                        && !crate::engine::values::has_type(g, y, "angel")
+                        && !protected_from(g, y, colors_of(g, m))
+                })
+                .map(|y| crate::impls::t2::flicker_worth(g, p, y))
+                .fold(0.0_f64, f64::max);
+            if best >= 3.0 { best * times } else { 0.0 }
+        }
+        "Flickerwisp" => crate::impls::t12_brago_meren::wisp_value(g, p, m) * times,
+        "Solitude" => {
+            let target =
+                crate::impls::common::best_opp_creature(g, p, |y| crate::engine::ward::ward_affordable(g, p, y, 0, ""));
+            match target.map(|t| pval(g, t)) {
+                Some(v) if v >= 2.0 => FC_REMOVAL * v * times,
+                _ => 0.0,
+            }
+        }
+        REAPER => {
+            let v: f64 = reaper_targets(g, p, m)
+                .into_iter()
+                .map(|t| if etgh(g, t) <= 1 { pval(g, t) } else { FC_REAPER_COUNTER })
+                .sum();
+            v * times
+        }
+        BREYA => 2.0 * FC_TOKEN * times,
+        STATION => (multicoloured(g, p) + 1) as f64 * FC_TOKEN * times,
+        ORACLE => FC_ORACLE_LOOK * times,
+        _ if d.tags.str(Tag::Rem).is_some_and(|r| !crate::engine::zones::rem_is_static(r)) && d.tags.has(Tag::Etb) => {
+            let rem = d.tags.str(Tag::Rem).unwrap_or("destroy");
+            let tg = crate::engine::removal::legal_targets(
+                g,
+                p,
+                rem,
+                d.tags.str(Tag::Tgt).unwrap_or("c"),
+                d.tags.has(Tag::Mv4),
+                Some(cd),
+            );
+            let best = max_by(&tg, |t| pval(g, t));
+            match best.filter(|&t| pval(g, t) >= 2.0) {
+                Some(t) => {
+                    // Skyclave Apparition: its owner gets an X/X Illusion when the copy is sacrificed
+                    let illusion = if &*d.name == "Skyclave Apparition" {
+                        let cmc = g.perm(t).cd.map_or(0, |c| g.db.get(c).cmc);
+                        0.5 + 0.25 * cmc as f64
+                    } else {
+                        0.0
+                    };
+                    (FC_REMOVAL * pval(g, t) - illusion) * times
+                }
+                None => 0.0,
+            }
+        }
+        _ if legendary => 0.0,
+        _ => crate::ai::card_etb_value(g, p, cd) * times,
+    };
+    let body = if legendary || !at_eot {
+        0.0
+    } else {
+        let fly = if x.fly || crate::dsl::has_kw(g, m, "flying") { 1.5 } else { 1.0 };
+        (FC_BODY * epow(g, m).max(0) as f64 * fly).min(FC_BODY_CAP)
+    };
+    etb + body
+}
+
+/// the creatures the Crystal can copy and what each copy is worth now, the best first (ties: the older, `born`). In a main
+/// phase only a copy of Thassa's Oracle that wins is looked at: nothing else is worth the mana there (see the module
+/// section's doc), and the scoring of the rest is skipped.
+fn best_copy(g: &Game, p: PlayerId, src: PermId, at_eot: bool) -> Option<(PermId, f64)> {
+    let mut best: Option<(PermId, f64)> = None;
+    for m in crystal_targets(g, p, src) {
+        if !at_eot && !oracle_wins(g, p, m) {
+            continue;
+        }
+        let v = copy_value(g, p, src, m, at_eot);
+        if v == f64::NEG_INFINITY {
+            continue;
+        }
+        let better = match best {
+            None => true,
+            Some((b, bv)) => v > bv || (v == bv && g.perm(m).born < g.perm(b).born),
+        };
+        if better {
+            best = Some((m, v));
+        }
+    }
+    best
+}
+
+/// the AI's use of the Crystal: `{4}{R}{R}, {T}` for the best copy, in the end-of-turn window before p's own turn when it
+/// is worth `FC_EOT_MIN`, and in any window when it wins (Thassa's Oracle). Nothing for a person (their ability is
+/// `fire_crystal_go`), with `AI_CRYSTAL` off, with the cost not payable, or with nothing worth copying. The activation
+/// is `fire_crystal_ai`; its argument is the target and the window (`(target << 1) | at_eot`).
+fn crystal_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if human(g, p) || !crystal_ready(g, p, src) || !crate::ai::table_fixes::crystal_on() {
+        return Ok(vec![]);
+    }
+    if !can_pay(g, p, 4, "RR", false) {
+        return Ok(vec![]);
+    }
+    let at_eot = post.is_none();
+    if at_eot {
+        // the end-of-turn window asks every option again after each play: count the window once
+        let key = intern("fc_eot_ready");
+        if g.player(p).flag_turn.get(key) != Some(&g.turn_stamp()) {
+            let stamp = g.turn_stamp();
+            let pl = g.player_mut(p);
+            pl.flag_turn.insert(key, stamp);
+            pl.stat("fc_eot_ready", 1);
+        }
+    }
+    let Some((t, v)) = best_copy(g, p, src, at_eot) else { return Ok(vec![]) };
+    let Some(u) = copy_utility(v, at_eot) else { return Ok(vec![]) };
+    let arg = ((t.0 as i64) << 1) | at_eot as i64;
+    Ok(vec![ability(u, &format!("The Fire Crystal: copy {}", g.perm(t).name), src, fire_crystal_ai, arg)])
+}
+
+/// the utility of a copy worth v in this window: a win in any window, anything worth `FC_EOT_MIN` in the end-of-turn one
+fn copy_utility(v: f64, at_eot: bool) -> Option<f64> {
+    if v >= FC_WIN {
+        Some(FC_WIN_U)
+    } else if at_eot && v >= FC_EOT_MIN {
+        Some(FC_EOT_BASE + v.min(FC_EOT_VALUE_CAP))
+    } else {
+        None
+    }
+}
+
+/// the AI's activation: as a person's, the target and then the cost and then the tap, with everything checked again and
+/// nothing spent on a refusal. `arg` is `(target << 1) | at_eot` (see `crystal_options`).
+fn fire_crystal_ai(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let (t, at_eot) = (PermId((arg >> 1) as u32), arg & 1 == 1);
+    if human(g, p) || !crystal_ready(g, p, src) || !crystal_targets(g, p, src).contains(&t) {
+        return Ok(false);
+    }
+    let v = copy_value(g, p, src, t, at_eot);
+    if copy_utility(v, at_eot).is_none() || !pay(g, p, 4, "RR", false)? {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true; // the cost
+    let (win, name) = (v >= FC_WIN, g.perm(t).name);
+    let pl = g.player_mut(p);
+    pl.stat("fc_acts", 1);
+    pl.stat(if win { "fc_acts_win" } else { "fc_acts_eot" }, 1);
+    pl.stat(intern(&format!("fc_copy:{name}")), 1);
+    if !win {
+        pl.stat("fc_value10", (v * 10.0).round() as i64); // a win's value is a sentinel, not a worth in cards
+    }
+    crystal_activate(g, p, src, t)?;
+    Ok(true)
 }
 
 // ================================================================== registration
@@ -791,5 +1059,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, DOLL)?;
     c.on_tap_perm = Some(doll_tap);
     c.options = Some(doll_options);
+    r.card(db, CRYSTAL)?.options = Some(crystal_options);
     Ok(())
 }

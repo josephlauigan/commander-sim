@@ -141,16 +141,34 @@ pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Op
     if n == 0 {
         return Some(0.0);
     }
+    let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
+    Some(draw_worth(g, p, n, capped))
+}
+
+/// the worth of `n` draws to p now (the tail of `reenter_bonus`, shared with `copy_draw_value`): `DECKING` if they leave
+/// the library at or under `LIBRARY_FLOOR` (the Oracle exception as in `oracle_covers`; also under a Doomsday pile: a
+/// draw that takes the pile down to the floor is no protection), 0 under a Doomsday pile, else `PER_CARD` for each card
+/// kept and `PER_DISCARD` for each one discarded at the cleanup step when `capped`
+fn draw_worth(g: &Game, p: PlayerId, n: usize, capped: bool) -> f64 {
     let library = g.player(p).library.len();
     if library <= n + LIBRARY_FLOOR && !oracle_covers(g, p, n, library) {
-        return Some(DECKING); // also under a Doomsday pile: a blink that draws the pile down to the floor is no protection
+        return DECKING;
     }
     if crate::impls::doomsday::active(g, p) {
-        return Some(0.0); // the pile is planned: the choosers never blink him for it
+        return 0.0; // the pile is planned: the choosers never blink him for it
     }
-    let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
     let kept = if capped { n.min(HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len())) } else { n };
-    Some(PER_CARD * kept as f64 + PER_DISCARD * (n - kept) as f64)
+    PER_CARD * kept as f64 + PER_DISCARD * (n - kept) as f64
+}
+
+/// a token copy of Karn entering (The Fire Crystal): its trigger draws a card for each colour among the other artifacts,
+/// and the real Karn is one of them (all five colours), so it counts every colour among p's artifacts as they are now,
+/// times the instances of the trigger (`enters_trigger_times`: 0 under an opposing Elesh Norn). The cards come before
+/// p's turn, so none is discarded (uncapped). `karn` is the permanent the copy stands in for. Reads the game only.
+pub fn copy_draw_value(g: &Game, p: PlayerId, karn: PermId) -> f64 {
+    let n = colour_set(g, p, None).count() as usize
+        * crate::engine::hooks::enters_trigger_times(g, p, None, Some(karn)) as usize;
+    if n == 0 { 0.0 } else { draw_worth(g, p, n, false) }
 }
 
 /// `reenter_bonus` with the timing read from the game: the draw is in p's own end step now

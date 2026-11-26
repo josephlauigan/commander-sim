@@ -378,6 +378,7 @@ impl Analysis {
             if k.starts_with("ty_")
                 || k.starts_with("gl_")
                 || k.starts_with("jr_garland")
+                || k.starts_with("fc_")
                 || *k == "jr_tymna_draws"
                 || k.starts_with("sf_")
                 || *k == "creatures_sacrificed"
@@ -530,6 +531,28 @@ pub fn print_analysis(
         }
     }
 
+    if deck_is_crystal(r) {
+        let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
+        println!("\n-- The Fire Crystal --");
+        println!(
+            "  End-of-turn windows with {{4}}{{R}}{{R}} ready per game {:.2}; activations per game {:.2} (end of turn {:.2}, a win {:.2}); holds per game {:.2}",
+            get("fc_eot_ready") / n,
+            get("fc_acts") / n,
+            get("fc_acts_eot") / n,
+            get("fc_acts_win") / n,
+            get("fc_hold") / n
+        );
+        println!(
+            "  Average worth of an end-of-turn copy {:.2} (in cards x 1.5: the scale of `copy_value`)",
+            get("fc_value10") / 10.0 / get("fc_acts_eot").max(1.0)
+        );
+        let mut copied: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("fc_copy:")).collect();
+        copied.sort_by(|a, b| b.1.cmp(a.1).then(a.0.cmp(b.0)));
+        for (k, v) in copied.into_iter().take(8) {
+            println!("    copied {} {:.2} per game", &k["fc_copy:".len()..], *v as f64 / n);
+        }
+    }
+
     if deck_is_sephfs(r) {
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("\n-- Sephiroth --");
@@ -562,8 +585,9 @@ pub fn print_analysis(
         );
     }
 
-    if r.ty.keys().any(|k| !k.starts_with("sf_") && k != "creatures_sacrificed" && !k.starts_with("rean_"))
-        && !deck_is_garland(r)
+    if r.ty.keys().any(|k| {
+        !k.starts_with("sf_") && k != "creatures_sacrificed" && !k.starts_with("rean_") && !k.starts_with("fc_")
+    }) && !deck_is_garland(r)
     {
         println!("\n-- Partner decks (Tymna) --");
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
@@ -885,6 +909,11 @@ fn print_speed(r: &Analysis) {
 /// does this analysis hold Garland counters (the deck's own `gl_` stats)?
 fn deck_is_garland(r: &Analysis) -> bool {
     r.ty.keys().any(|k| k.starts_with("gl_"))
+}
+
+/// does this analysis hold The Fire Crystal's counters (the AI's copies, `fc_`)?
+fn deck_is_crystal(r: &Analysis) -> bool {
+    r.ty.keys().any(|k| k.starts_with("fc_"))
 }
 
 /// does this analysis hold the Sephiroth FS deck's counters?

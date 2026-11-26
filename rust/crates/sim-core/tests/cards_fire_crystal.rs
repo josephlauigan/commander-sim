@@ -6,7 +6,7 @@
 //!     next end step." (a person's ability, `impls::karn_gilded_cards::fire_crystal_go`; the token carries
 //!     `DataKey::CopySac` and `turn::end_step` sacrifices it)
 //!
-//! The AI has no use of the copy ability (no card-code hook): `the_ai_has_no_hook_for_the_crystal` pins that.
+//! The AI's use of the copy ability (the card-code `options` hook, `crystal_options`) is tested in `ai_fire_crystal.rs`.
 
 mod play_common;
 use play_common::*;
@@ -733,18 +733,4 @@ fn a_creature_with_an_enters_trigger_repeats_it_through_the_copy() {
     let asked: Vec<String> = h.asked().iter().map(|r| format!("{} {:?}", r.prompt, r.choices)).collect();
     assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "the copy's enters trigger exiled the other: {asked:?}");
     assert!(g.perm(sky).on_bf);
-}
-
-// ======================================================== the AI
-#[test]
-fn the_ai_has_no_hook_for_the_crystal() {
-    // the copy ability is a person's ability: no `options` hook, so the AI never activates it, and the card stays a
-    // compiled cost change in the AI's cast ranking (`ai::pool`) rather than a hooked card
-    let g = tbl();
-    let c = card(&g, CRYSTAL);
-    assert!(g.registry.get(c).and_then(|i| i.options).is_none(), "no AI option for the copy ability");
-    assert!(g.registry.get(c).is_none_or(|i| !i.live()), "no card code runs for it: the compiled statics do the rest");
-    let d = g.db.get(c);
-    assert!(d.abilities.iter().any(|a| a.static_kind() == Some("cost")));
-    assert!(d.abilities.iter().any(|a| a.static_kind() == Some("keyword")));
 }
