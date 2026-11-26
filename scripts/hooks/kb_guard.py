@@ -6,9 +6,11 @@ State: append-only JSONL under ${XDG_STATE_HOME:-~/.local/state}/commander-sim/k
 Fails open: any exception exits 0 with a one-line warning on stderr; exit 2 is never used.
 The check is that the KB was used, not that it was used well.
 """
+import hashlib
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -78,7 +80,12 @@ def deck_words(root):
 
 
 def is_brief(prompt):
-    return "/tmp/handoff/" in prompt or (len(prompt) > 4000 and "GOAL:" in prompt)
+    """A handoff brief for a worker: names a handoff path AND asks for the results file (or states a GOAL:).
+    A human prompt that merely mentions /tmp/handoff/ is not exempt."""
+    if "/tmp/handoff/" in prompt and (
+            "GOAL:" in prompt or re.search(r"write (?:your |the )?results? to\s+/tmp/handoff/", prompt, re.I)):
+        return True
+    return len(prompt) > 4000 and "GOAL:" in prompt
 
 
 NAME_INTENT = re.compile(r"\?|\b(want|how about|what about|keep|drop|put|add|cut|take|move|use|play|run)\b", re.I)
@@ -102,7 +109,8 @@ def classify(prompt, decks=(), names=None):
     """Return (tier, brief): tier is strong, weak or none. `names` is (set of lower-case card names, longest)."""
     if is_brief(prompt):
         return "none", True
-    text = NOISE.sub(" ", prompt)
+    # the noise patterns scan long non-space runs; cap the text so a pasted megabyte cannot stall the hook
+    text = NOISE.sub(" ", prompt[:20000])
     domain = bool(DOMAIN.search(text))
     if not domain and decks:
         domain = bool(re.search(r"\b(" + "|".join(re.escape(d) for d in decks) + r")\b", text, re.I))
@@ -163,7 +171,13 @@ def state_dir():
 
 
 def safe_id(s):
-    return re.sub(r"[^A-Za-z0-9_.-]", "_", str(s or "nosession"))[:100]
+    """A file-name-safe session id. Ids that need sanitising or truncating get a hash suffix, so two different ids
+    never share a state file; ordinary ids (UUIDs, short words) keep their own name."""
+    raw = str(s or "nosession")
+    clean = re.sub(r"[^A-Za-z0-9_.-]", "_", raw)
+    if clean == raw and len(clean) <= 100:
+        return clean
+    return clean[:80] + "-" + hashlib.sha1(raw.encode("utf-8", "replace")).hexdigest()[:10]
 
 
 def append(path, obj):
@@ -182,9 +196,11 @@ def load(path):
         with open(path, encoding="utf-8") as f:
             for ln in f:
                 try:
-                    out.append(json.loads(ln))
+                    rec = json.loads(ln)
                 except Exception:
-                    pass
+                    continue
+                if isinstance(rec, dict):  # a stray `[]` or `1` line must not break the scan
+                    out.append(rec)
     except FileNotFoundError:
         pass
     return out
@@ -244,21 +260,52 @@ def kb_status(root):
 
 # ---------------------------------------------------------------------------------------------- tool detection
 
-TOKEN = re.compile(r"[;&|]+|[^\s;&|()<>'\"`]+")
-HELP = {"--help", "-h", "help"}
-FIND_FLAGS = {
-    "--name", "--name-contains", "--ident", "--type", "--text", "--role", "--deck", "--gc", "--cmc",
+SEP = re.compile(r"^[;&|()<>]+$")
+HELP = {"--help", "-h"}
+# flags that need a value (a bare `--name` is not a query); --gc takes none
+FIND_VALUED = {
+    "--name", "--name-contains", "--ident", "--type", "--text", "--role", "--deck", "--cmc",
     "--status", "--in-deck", "--not-in-deck",
 }
-SEPARATOR = re.compile(r"^[;&|]+$")
+# commands that print or inspect text without running what they are given
+NONEXEC = {"echo", "printf", "cat", "grep", "rg", "git", "which", "type", "ls", "less", "head", "tail", "sed", "awk",
+           "wc", "man", "file", "stat", "command", "diff", "cmp"}
+
+
+def _lex(line):
+    lex = shlex.shlex(line, posix=True, punctuation_chars=True)
+    lex.whitespace_split = True
+    lex.commenters = "#"
+    return list(lex)
+
+
+def _tokens(cmd):
+    """Shell-like tokens with statements separated by ';'. Quoted text stays one token, comments are dropped."""
+    cmd = cmd or ""
+    try:
+        out = []
+        for line in cmd.splitlines():
+            out.extend(_lex(line))
+            out.append(";")
+        return out
+    except ValueError:  # a quote spans lines: lex the whole command
+        try:
+            return _lex(cmd)
+        except ValueError:
+            return []
+
+
+def _has_value(args, i):
+    return i + 1 < len(args) and not args[i + 1].startswith("--")
 
 
 def bash_is_query(cmd):
-    """True when the command runs cardgen map, digest or find with a real argument."""
-    toks = TOKEN.findall(cmd or "")
+    """True when a command runs cardgen map, digest or find with a real argument (a printed or commented mention does
+    not count; `a || cardgen map` cannot be told apart from a run branch, which is accepted)."""
+    toks = _tokens(cmd)
     cg_vars = set()
     for t in toks:
-        m = re.match(r"^([A-Za-z_]\w*)=(.*)$", t)
+        m = re.match(r"^([A-Za-z_]\w*)=(.*)$", t, re.S)
         if m and os.path.basename(m.group(2).rstrip("/")) == "cardgen":
             cg_vars.add(m.group(1))
 
@@ -268,48 +315,75 @@ def bash_is_query(cmd):
         m = re.match(r"^\$\{?(\w+)\}?$", t)
         return bool(m and m.group(1) in cg_vars)
 
-    for i, t in enumerate(toks):
-        if not is_cardgen(t) or re.match(r"^[A-Za-z_]\w*=", t):
+    stmts, cur = [], []
+    for t in toks:
+        if SEP.match(t):
+            stmts.append(cur)
+            cur = []
+        else:
+            cur.append(t)
+    stmts.append(cur)
+
+    for st in stmts:
+        k = 0
+        while k < len(st) and re.match(r"^[A-Za-z_]\w*=", st[k]):
+            k += 1
+        if k < len(st) and os.path.basename(st[k]) in NONEXEC:
             continue
-        j = i + 1
-        while j < len(toks):  # options before the subcommand: `--` and `--root DIR`
-            if toks[j] == "--":
-                j += 1
-            elif toks[j] == "--root":
-                j += 2
-            else:
-                break
-        if j >= len(toks):
-            continue
-        sub = toks[j]
-        args = []
-        for a in toks[j + 1:]:
-            if SEPARATOR.match(a):
-                break
-            args.append(a)
-        if sub not in ("map", "digest", "find") or any(a in HELP for a in args):
-            continue
-        if sub == "map":
-            return True
-        if sub == "digest" and any(a in ("--deck", "--ident") for a in args):
-            return True
-        if sub == "find" and any(a in FIND_FLAGS for a in args):
-            return True
+        for i in range(k, len(st)):
+            if not is_cardgen(st[i]):
+                continue
+            j = i + 1
+            while j < len(st):  # options before the subcommand: `--` and `--root DIR`
+                if st[j] == "--":
+                    j += 1
+                elif st[j] == "--root":
+                    j += 2
+                else:
+                    break
+            if j >= len(st):
+                continue
+            sub, args = st[j], st[j + 1:]
+            if sub not in ("map", "digest", "find") or any(a in HELP for a in args) or (args and args[0] == "help"):
+                continue
+            if sub == "map":
+                return True
+            if sub == "digest" and any(a in ("--deck", "--ident") and _has_value(args, n) for n, a in enumerate(args)):
+                return True
+            if sub == "find" and any((a in FIND_VALUED and _has_value(args, n)) or a == "--gc"
+                                     for n, a in enumerate(args)):
+                return True
     return False
 
 
 READ_PATH = re.compile(r"(?:^|/)data/knowledge/(?:map\.md|digests/[^/]+\.txt)$")
 
 
+ERR_TEXT = re.compile(r"\s*Error: Exit code [1-9]")
+
+
 def response_failed(resp):
     """A Bash tool_response that shows a failure (the shape is not documented, so look at several fields)."""
     if isinstance(resp, str):
-        return bool(re.match(r"\s*Error: Exit code [1-9]", resp))
+        return bool(ERR_TEXT.match(resp))
+    if isinstance(resp, list):
+        for item in resp:
+            if isinstance(item, str) and ERR_TEXT.match(item):
+                return True
+            if isinstance(item, dict) and (response_failed(item) or
+                                           (isinstance(item.get("text"), str) and ERR_TEXT.match(item["text"]))):
+                return True
+        return False
     if not isinstance(resp, dict):
         return False
     for k in ("exit_code", "exitCode", "returncode", "returnCode", "code", "status"):
         v = resp.get(k)
         if isinstance(v, int) and not isinstance(v, bool) and v != 0:
+            return True
+        if k != "status" and isinstance(v, str) and re.fullmatch(r"\s*[1-9]\d*\s*", v):
+            return True
+    for k in ("stderr", "error"):
+        if isinstance(resp.get(k), str) and ERR_TEXT.match(resp[k]):
             return True
     if resp.get("is_error") is True or resp.get("isError") is True or resp.get("success") is False:
         return True
@@ -334,9 +408,21 @@ def tool_is_query(data):
 
 # ---------------------------------------------------------------------------------------------- stop logic
 
-KB_LINE = re.compile(r"(?m)^\W{0,4}KB:(.*)$")
+KB_LAST = re.compile(r"^([\W_]{0,6})KB:(.*)$")
 NAMES_KB = re.compile(r"\b(map|digest|find)\b", re.I)
 OPTOUT = re.compile(r"not applicable\s*\(([^)]*)\)", re.I)
+
+
+def closing_kb_body(text):
+    """The text after `KB:` when the LAST non-empty line of the answer is the KB line (bold or italic label allowed;
+    a quoted line, a line inside a code fence, a line before further text and a mid-answer line do not count)."""
+    lines = [ln for ln in (text or "").splitlines() if ln.strip()]
+    if not lines:
+        return None
+    m = KB_LAST.match(lines[-1].strip())
+    if not m or ">" in m.group(1):
+        return None
+    return m.group(2)
 
 
 def last_assistant_text(data):
@@ -371,11 +457,11 @@ def last_assistant_text(data):
 
 
 def kb_line_kind(text):
-    """(kind, detail): kind is queries, optout, unavailable or none; looks at the last KB: line."""
-    lines = KB_LINE.findall(text or "")
-    if not lines:
+    """(kind, detail): kind is queries, optout, unavailable or none; looks at the closing KB line."""
+    raw = closing_kb_body(text)
+    if raw is None:
         return "none", ""
-    body = lines[-1].strip().strip("*_ ").strip()
+    body = raw.strip().strip("*_ ").strip()
     m = OPTOUT.search(body)
     if re.match(r"(?i)^\W*not applicable", body):
         if m and len(m.group(1).split()) >= 3:
@@ -399,11 +485,18 @@ def stop_decision(data, events, sdir):
     if p.get("tier") in (None, "none") or p.get("brief"):
         return None
     after = events[last + 1:]
+    if any(e.get("ev") == "passed" for e in after):  # this question already got a compliant answer
+        return None
     blocked = any(e.get("ev") == "blocked" for e in after)
     text = last_assistant_text(data)
     kind, detail = kb_line_kind(text)
     prev = idx[-2] if len(idx) > 1 else -1
-    evidence = any(e.get("ev") == "query" for e in events[prev + 1:])
+    allowed = {p.get("pid")} | ({events[prev].get("pid")} if prev >= 0 else set())
+
+    def current(e):  # a query from a subagent, or with no ids, or for this or the previous prompt
+        return e.get("agent") or e.get("pid") is None or p.get("pid") is None or e.get("pid") in allowed
+
+    evidence = any(e.get("ev") == "query" and current(e) for e in events[prev + 1:])
     unavail = bool(p.get("unavail"))
     tier = p["tier"]
 
@@ -423,6 +516,7 @@ def stop_decision(data, events, sdir):
                            + ("" if tier == "weak" else " (`not applicable` is not accepted for this prompt)"))
 
     if not missing:
+        append(sf, {"ev": "passed"})
         if tier == "weak" and kind == "optout" and not unavail:
             append(os.path.join(sdir, "optouts.jsonl"), {
                 "t": int(time.time()), "session": data.get("session_id"), "prompt": p.get("snippet", ""),

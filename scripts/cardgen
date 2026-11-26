@@ -2,7 +2,8 @@
 # Run the card knowledge base CLI from any worktree. Never builds. Uses this checkout's binary, else the main
 # checkout's (git common dir's parent). --root pins the project to this checkout; the catalog (oracle.json) falls
 # back to the main checkout's inside cardgen itself.
-here=$(cd "$(dirname "$0")/.." && pwd)
+self=$(readlink -f "$0" 2>/dev/null) || self=$0
+here=$(cd "$(dirname "$self")/.." && pwd)
 bin=$here/rust/target/release/cardgen
 if [ ! -x "$bin" ]; then
   common=$(git -C "$here" rev-parse --git-common-dir 2>/dev/null) && main=$(cd "$here" && cd "$common/.." && pwd)
@@ -13,5 +14,7 @@ if [ -z "$bin" ] || [ ! -x "$bin" ]; then
   echo "  cd $here/rust && systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 cargo build --release -p cardgen" >&2
   exit 1
 fi
-case " $* " in *" --root "*) exec "$bin" "$@" ;; esac
+for a in "$@"; do
+  [ "$a" = "--root" ] && exec "$bin" "$@"
+done
 exec "$bin" --root "$here" "$@"
