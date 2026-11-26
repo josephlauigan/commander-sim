@@ -534,6 +534,7 @@ pub fn print_analysis(
     if deck_is_crystal(r) {
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("\n-- The Fire Crystal --");
+        println!("  The Crystal was in play in {:.1}% of the games", 100.0 * get("fc_seen") / n);
         println!(
             "  End-of-turn windows with {{4}}{{R}}{{R}} ready per game {:.2}; activations per game {:.2} (end of turn {:.2}, a win {:.2}); holds per game {:.2}",
             get("fc_eot_ready") / n,
@@ -543,7 +544,7 @@ pub fn print_analysis(
             get("fc_hold") / n
         );
         println!(
-            "  Average worth of an end-of-turn copy {:.2} (in cards x 1.5: the scale of `copy_value`)",
+            "  Average worth of an end-of-turn copy {:.2} (`copy_value`, in units of a card kept in hand: 1.5)",
             get("fc_value10") / 10.0 / get("fc_acts_eot").max(1.0)
         );
         let mut copied: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("fc_copy:")).collect();

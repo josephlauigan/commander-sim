@@ -142,14 +142,15 @@ pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Op
         return Some(0.0);
     }
     let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
-    Some(draw_worth(g, p, n, capped))
+    Some(draw_worth(g, p, n, capped.then(|| HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len()))))
 }
 
 /// the worth of `n` draws to p now (the tail of `reenter_bonus`, shared with `copy_draw_value`): `DECKING` if they leave
 /// the library at or under `LIBRARY_FLOOR` (the Oracle exception as in `oracle_covers`; also under a Doomsday pile: a
 /// draw that takes the pile down to the floor is no protection), 0 under a Doomsday pile, else `PER_CARD` for each card
-/// kept and `PER_DISCARD` for each one discarded at the cleanup step when `capped`
-fn draw_worth(g: &Game, p: PlayerId, n: usize, capped: bool) -> f64 {
+/// that stays in hand and `PER_DISCARD` for each one discarded at the cleanup step. `room`: how many of the cards stay
+/// (None: all of them)
+fn draw_worth(g: &Game, p: PlayerId, n: usize, room: Option<usize>) -> f64 {
     let library = g.player(p).library.len();
     if library <= n + LIBRARY_FLOOR && !oracle_covers(g, p, n, library) {
         return DECKING;
@@ -157,18 +158,30 @@ fn draw_worth(g: &Game, p: PlayerId, n: usize, capped: bool) -> f64 {
     if crate::impls::doomsday::active(g, p) {
         return 0.0; // the pile is planned: the choosers never blink him for it
     }
-    let kept = if capped { n.min(HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len())) } else { n };
+    let kept = room.map_or(n, |r| n.min(r));
     PER_CARD * kept as f64 + PER_DISCARD * (n - kept) as f64
 }
+
+/// PROVISIONAL: cards of a copy's draw that p can plausibly play in the turn that follows, beyond the empty places in its
+/// hand: the new cards arrive before p's turn, and what is still in hand at that turn's cleanup is discarded to seven
+pub const COPY_PLAYABLE: usize = 2;
 
 /// a token copy of Karn entering (The Fire Crystal): its trigger draws a card for each colour among the other artifacts,
 /// and the real Karn is one of them (all five colours), so it counts every colour among p's artifacts as they are now,
 /// times the instances of the trigger (`enters_trigger_times`: 0 under an opposing Elesh Norn). The cards come before
-/// p's turn, so none is discarded (uncapped). `karn` is the permanent the copy stands in for. Reads the game only.
+/// p's turn, but p's cleanup discard still applies: the first `HAND_SIZE - hand + COPY_PLAYABLE` cards are worth
+/// `PER_CARD` and the rest `PER_DISCARD`, unless p has no maximum hand size. `karn` is the permanent the copy stands in
+/// for. Reads the game only.
 pub fn copy_draw_value(g: &Game, p: PlayerId, karn: PermId) -> f64 {
     let n = colour_set(g, p, None).count() as usize
         * crate::engine::hooks::enters_trigger_times(g, p, None, Some(karn)) as usize;
-    if n == 0 { 0.0 } else { draw_worth(g, p, n, false) }
+    if n == 0 { 0.0 } else { draw_worth(g, p, n, copy_room(g, p)) }
+}
+
+/// how many new cards p's hand keeps in value after a copy's draw (None: no maximum hand size)
+pub fn copy_room(g: &Game, p: PlayerId) -> Option<usize> {
+    (!crate::engine::turn::no_max_hand(g, p))
+        .then(|| HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len()) + COPY_PLAYABLE)
 }
 
 /// `reenter_bonus` with the timing read from the game: the draw is in p's own end step now

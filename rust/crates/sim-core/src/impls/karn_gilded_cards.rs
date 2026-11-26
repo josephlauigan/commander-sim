@@ -28,6 +28,7 @@ use crate::engine::zones::{Enter, TOKEN_CAP, Tokens, die, draw, enter, make_toke
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::impls::karn_gilded::{PER_CARD, PER_DISCARD, copy_room};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -707,8 +708,10 @@ const CRYSTAL: &str = "The Fire Crystal";
 // `AI_CRYSTAL_HOLD`, `ai::table_fixes`).
 // The Crystal untaps only in its controller's untap step, so there is one activation per turn cycle, and the
 // end-of-turn window just before the controller's own turn (`ai::end_of_turn_window`) is the best moment: the {4}{R}{R}
-// stays up through the opponents' turns, whatever is unspent then is free (the lands untap next), the copy is there for
-// the whole of the controller's turn (it can attack and use {T} abilities, haste being the Crystal's own) and a Karn
+// is whatever p left unspent in its own turn and did not use in the opponents' (the window makes no mana: the lands
+// untap only in p's untap step, which comes right after), so what is spent there is free, and without the hold rule the
+// AI spends its mana on anything with a utility above "stop", so the window sees six spare mana only late in the game;
+// the copy is there for the whole of the controller's turn (it can attack and use {T} abilities, haste being the Crystal's own) and a Karn
 // copy's cards arrive before the draw step. So in that window the AI copies the best target by `copy_value` when it is
 // worth at least `FC_EOT_MIN`; in a main phase it copies only to win (a copy of
 // Thassa's Oracle that empties the library into its trigger). The hold rule (`crystal_hold`, read by
@@ -827,12 +830,47 @@ pub const FC_HOLD_PEN: f64 = 0.7;
 const FC_HOLD_DANGER: f64 = 0.8;
 /// a combo piece (`cardcode::combo_imp`) at least this important is cast whatever it leaves
 const FC_HOLD_COMBO: f64 = 7.0;
+/// a hand this large (cards) is cast from, not held against: the cleanup would discard the rest
+const FC_HOLD_HAND: usize = 7;
+/// a tutor of at most this mana value is exempt from the reserve
+const FC_HOLD_TUTOR_CMC: u32 = 2;
 
 const ORACLE: &str = "Thassa's Oracle";
 
 /// does p control the Crystal `src` ready to use: on the battlefield, p's, untapped, with its abilities on
 fn crystal_ready(g: &Game, p: PlayerId, src: PermId) -> bool {
     live(g, src) && owner(g, src) == p && !g.perm(src).tapped && !g.perm(src).neutered
+}
+
+/// is p's Crystal `src` locked now: an activated-ability lock (`cardcode::ability_locked`: Pithing Needle or Phyrexian Revoker
+/// naming it, Collector Ouphe, Karn, the Great Creator, Abeyance, split second), or, `window`, at the end-of-turn window
+/// before p's turn (a Grand Abolisher or Myrel, Shield of Argive of the seat before p stops p's artifacts then: `g.active`
+/// is still that seat, so `ability_locked` sees it only in the window itself, and the main phase before it asks ahead)
+fn crystal_locked(g: &Game, p: PlayerId, src: PermId, window: bool) -> bool {
+    if crate::cardcode::ability_locked(g, src, p) {
+        return true;
+    }
+    window
+        && g.after(p).filter(|&q| g.player(q).alive).last().is_some_and(|q| {
+            g.player(q).perms.iter().any(|&m| {
+                let x = g.perm(m);
+                x.on_bf
+                    && !x.phased
+                    && !x.neutered
+                    && matches!(card_name_of(g, m), Some("Grand Abolisher" | "Myrel, Shield of Argive"))
+            })
+        })
+}
+
+/// may p's AI activate its Crystal `src` now, or, `window`, in the end-of-turn window: p is not a person, `AI_CRYSTAL` is on,
+/// the Crystal is ready and not locked, and {4}{R}{R} can be paid. The one predicate of `crystal_options` (the activation)
+/// and `crystal_hold` (keeping the mana up for it), so the hold is never offered for an activation that would be refused.
+fn crystal_usable(g: &Game, p: PlayerId, src: PermId, window: bool) -> bool {
+    !human(g, p)
+        && crate::ai::table_fixes::crystal_on()
+        && crystal_ready(g, p, src)
+        && !crystal_locked(g, p, src, window)
+        && can_pay(g, p, 4, "RR", false)
 }
 
 /// the name of the card m is a copy or the card of (a token with no card record: None)
@@ -956,7 +994,13 @@ pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) 
             }
         }
         _ if legendary => 0.0,
-        _ => crate::ai::card_etb_value(g, p, cd) * times,
+        _ => {
+            // a card that draws is worth `PER_DISCARD` for the cards beyond the room p's hand has (as a copy of Karn)
+            let draws = d.tags.int_or_0(Tag::Draw).max(0) as usize;
+            let surplus = copy_room(g, p).map_or(0, |r| draws.saturating_sub(r)) as f64;
+            let kept = crate::ai::card_etb_value(g, p, cd) - (PER_CARD - PER_DISCARD) * surplus;
+            kept.max(0.0) * times
+        }
     };
     let body = if legendary || !at_eot {
         0.0
@@ -971,6 +1015,9 @@ pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) 
 /// phase only a copy of Thassa's Oracle that wins is looked at: nothing else is worth the mana there (see the module
 /// section's doc), and the scoring of the rest is skipped.
 fn best_copy(g: &Game, p: PlayerId, src: PermId, at_eot: bool) -> Option<(PermId, f64)> {
+    if crystal_locked(g, p, src, at_eot) {
+        return None;
+    }
     let mut best: Option<(PermId, f64)> = None;
     for m in crystal_targets(g, p, src) {
         if !at_eot && !oracle_wins(g, p, m) {
@@ -996,13 +1043,13 @@ fn best_copy(g: &Game, p: PlayerId, src: PermId, at_eot: bool) -> Option<(PermId
 /// `fire_crystal_go`), with `AI_CRYSTAL` off, with the cost not payable, or with nothing worth copying. The activation
 /// is `fire_crystal_ai`; its argument is the target and the window (`(target << 1) | at_eot`).
 fn crystal_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if human(g, p) || !crystal_ready(g, p, src) || !crate::ai::table_fixes::crystal_on() {
-        return Ok(vec![]);
-    }
-    if !can_pay(g, p, 4, "RR", false) {
-        return Ok(vec![]);
-    }
     let at_eot = post.is_none();
+    if !human(g, p) && !g.player(p).stats.contains_key("fc_seen") {
+        g.player_mut(p).stat("fc_seen", 1); // the Crystal was in play in this game (the report's denominator)
+    }
+    if !crystal_usable(g, p, src, at_eot) {
+        return Ok(vec![]);
+    }
     if at_eot {
         // the end-of-turn window asks every option again after each play: count the window once
         let key = intern("fc_eot_ready");
@@ -1034,7 +1081,11 @@ fn copy_utility(v: f64, at_eot: bool) -> Option<f64> {
 /// nothing spent on a refusal. `arg` is `(target << 1) | at_eot` (see `crystal_options`).
 fn fire_crystal_ai(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (t, at_eot) = (PermId((arg >> 1) as u32), arg & 1 == 1);
-    if human(g, p) || !crystal_ready(g, p, src) || !crystal_targets(g, p, src).contains(&t) {
+    if human(g, p)
+        || !crystal_ready(g, p, src)
+        || crystal_locked(g, p, src, at_eot)
+        || !crystal_targets(g, p, src).contains(&t)
+    {
         return Ok(false);
     }
     let v = copy_value(g, p, src, t, at_eot);
@@ -1042,8 +1093,9 @@ fn fire_crystal_ai(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool
         return Ok(false);
     }
     g.perm_mut(src).tapped = true; // the cost
-    let (win, name) = (v >= FC_WIN, g.perm(t).name);
+    let (win, name, stamp) = (v >= FC_WIN, g.perm(t).name, g.turn_stamp());
     let pl = g.player_mut(p);
+    pl.flag_turn.insert(intern("fc_acted"), stamp); // the hold's starvation bound reads it (`crystal_hold`)
     pl.stat("fc_acts", 1);
     pl.stat(if win { "fc_acts_win" } else { "fc_acts_eot" }, 1);
     pl.stat(intern(&format!("fc_copy:{name}")), 1);
@@ -1058,18 +1110,25 @@ fn fire_crystal_ai(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool
 /// what keeping {4}{R}{R} up for the end-of-turn copy is worth now, as a utility for "stop" (`FC_HOLD_SHARE` of the copy's
 /// utility), None when there is nothing to hold for: the switch off, no ready Crystal of p's (a person has none), the
 /// cost not payable now, an opponent near a win (`danger` at least `FC_HOLD_DANGER`: the mana goes to the table), or the
-/// best copy at the end-of-turn window under `FC_HOLD_MIN`, or a win (taken now, in the main phase, by `crystal_options`).
-/// Reads the game only.
+/// best copy at the end-of-turn window under `FC_HOLD_MIN`, or a win (taken now, in the main phase, by `crystal_options`);
+/// also None when the activation would be refused (`crystal_usable`: a lock now or at the window), when p's hand is
+/// `FC_HOLD_HAND` cards or more, and for one turn after a hold whose window did not activate (`fc_hold` and `fc_acted`
+/// rounds; a game without a hold has neither flag). Reads the game only.
 pub fn crystal_hold(g: &Game, p: PlayerId, danger: f64) -> Option<f64> {
     if !crate::ai::table_fixes::crystal_hold_on() || !crate::ai::table_fixes::crystal_on() || danger >= FC_HOLD_DANGER {
         return None;
     }
-    if human(g, p) {
-        return None;
+    if human(g, p) || crate::engine::values::hand_proper(g, p).len() >= FC_HOLD_HAND {
+        return None; // a full hand is cast from: the cleanup would throw the rest away
     }
     let src =
         g.player(p).perms.iter().copied().find(|&m| card_name_of(g, m) == Some(CRYSTAL) && crystal_ready(g, p, m))?;
-    if !can_pay(g, p, 4, "RR", false) {
+    // starvation: p held last turn and the Crystal then did not activate in the window: no second hold in a row
+    let round = |k: &str| g.player(p).flag_turn.get(intern(k)).map(|s| s.round);
+    if round("fc_hold").is_some_and(|h| h + 1 == g.round) && round("fc_acted") != Some(g.round) {
+        return None;
+    }
+    if !crystal_usable(g, p, src, true) {
         return None;
     }
     let (_, v) = best_copy(g, p, src, true)?;
@@ -1091,13 +1150,15 @@ pub fn note_hold(g: &mut Game, p: PlayerId) {
 }
 
 /// does casting c now leave p unable to pay {4}{R}{R}? Never for a cast that is exempt: a mana source (a Rock, a Dork,
-/// Fastmana, a ritual that pays for itself), p's commander, a combo piece (`combo_imp` at least `FC_HOLD_COMBO`).
+/// Fastmana, a ritual that pays for itself), a cheap tutor (a `tut` or `seal` card of mana value 2 or less: Vampiric,
+/// Demonic, Mystical, Enlightened, Imperial Seal), p's commander, a combo piece (`combo_imp` at least `FC_HOLD_COMBO`).
 pub fn crystal_reserve_broken(g: &Game, p: PlayerId, c: CardId) -> bool {
     let d = g.db.get(c);
     let t = &d.tags;
     if t.has(Tag::Rock)
         || t.has(Tag::Dork)
         || t.has(Tag::Fastmana)
+        || ((t.has(Tag::Tut) || t.has(Tag::Seal)) && d.cmc <= FC_HOLD_TUTOR_CMC)
         || crate::engine::mana::ritual_net(g, p, c) > 0
         || g.player(p).is_commander(c)
         || crate::cardcode::combo_imp(g, p, c) >= FC_HOLD_COMBO

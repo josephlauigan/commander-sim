@@ -339,7 +339,7 @@ fn flickerwisp_is_worth_its_best_target() {
     lands(&mut g, P1, "Mountain", 1, false); // an untapped land of the player whose turn it is: mana lost to them
     let with = value(&g, c, wisp, true);
     assert!(with > before, "an opposing land to exile until the end step: {with} against {before}");
-    assert_eq!(with, before + sim_core::impls::t12_brago_meren::wisp_value(&g, P0, wisp));
+    assert!((with - before - 1.0).abs() < 1e-9, "an untapped land of the active player is worth 1.0 to exile: {with}");
 }
 
 // ======================================================== 9. the legend rule
@@ -502,4 +502,222 @@ fn the_activation_pays_six_taps_the_crystal_and_marks_the_token_for_the_end_step
     );
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 0, "exactly the six lands were spent");
     check_state(&mut g).unwrap();
+}
+
+// ======================================================== C6b: locks, the hand, the starvation bound, tutors
+use sim_core::impls::karn_gilded::{DECKING, PER_CARD, PER_DISCARD};
+use sim_core::impls::karn_gilded_cards::{crystal_hold, crystal_reserve_broken};
+
+fn fill_hand(g: &mut Game, n: usize) {
+    let c = card(g, "Island");
+    g.player_mut(P0).hand.extend(std::iter::repeat_n(c, n));
+}
+
+fn untap_all(g: &mut Game) {
+    for m in g.player(P0).perms.clone().into_iter().chain(g.player(P0).lands.clone()) {
+        g.perm_mut(m).tapped = false;
+    }
+}
+
+fn crystal_perm(g: &Game) -> PermId {
+    named(g, CRYSTAL)[0]
+}
+
+/// the main-phase utilities of the hold board with the Crystal tapped: what the AI does with nothing to hold for
+fn baseline_opts(lands_n: usize) -> Vec<Opt> {
+    let mut g = hold_board(lands_n);
+    let c = crystal_perm(&g);
+    g.perm_mut(c).tapped = true;
+    brain::main_options(&mut g, P0, false).unwrap()
+}
+
+/// the AI casts as if there were no Crystal: the cast keeps its utility and stop is not raised
+fn assert_no_hold(g: &mut Game, why: &str) {
+    assert!(crystal_hold(g, P0, 0.0).is_none(), "{why}: no hold");
+    let base = baseline_opts(7);
+    let now = brain::main_options(g, P0, false).unwrap();
+    assert_eq!(utility(&now, "Vampire Nighthawk"), utility(&base, "Vampire Nighthawk"), "{why}: the cast is not cut");
+    assert_eq!(stop(&now), stop(&base), "{why}: stop is not raised");
+}
+
+#[test]
+fn a_lock_on_the_crystal_means_no_hold_and_the_ai_casts_normally() {
+    table_fixes::force_crystal_hold(Some(true));
+    // a Pithing Needle naming the Crystal
+    let mut g = hold_board(7);
+    assert!(crystal_hold(&g, P0, 0.0).is_some(), "without the Needle it holds");
+    let needle = perm(&mut g, P1, "Pithing Needle");
+    let c = card(&g, CRYSTAL);
+    g.perm_mut(needle).data.set(DataKey::Imprint, Val::Card(c));
+    assert_no_hold(&mut g, "Pithing Needle");
+    // Collector Ouphe stops activated abilities of artifacts
+    let mut g = hold_board(7);
+    perm(&mut g, P1, "Collector Ouphe");
+    assert_no_hold(&mut g, "Collector Ouphe");
+    // Grand Abolisher of the seat before P0 stops it at the window (P1 is the seat before P0 at this table)
+    let mut g = hold_board(7);
+    perm(&mut g, P1, "Grand Abolisher");
+    assert_no_hold(&mut g, "Grand Abolisher at the window");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn the_held_mana_becomes_the_copy_end_to_end() {
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = hold_board(7);
+    let hand0 = g.player(P0).hand.len();
+    ai::main(&mut g, P0, false).unwrap();
+    assert!(g.player(P0).hand.contains(&card(&g, "Vampire Nighthawk")), "the AI held the Nighthawk back");
+    assert_eq!(g.player(P0).hand.len(), hand0);
+    assert_eq!(g.player(P0).stats.get("fc_hold"), Some(&1), "a hold is counted once");
+    // the opponents' turns, then the window before P0's turn
+    g.round += 1;
+    g.active = Some(P1);
+    g.step = Step::End;
+    ai::end_of_turn_window(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).stats.get("fc_acts_eot"), Some(&1), "the window copied");
+    assert_eq!(g.player(P0).hand.len(), hand0 + 5, "Karn's five cards");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn a_copy_of_karn_is_worth_the_cards_p_can_keep() {
+    let value_with = |hand: usize, nomax: bool| {
+        let (mut g, karn, c) = karn_board();
+        fill_hand(&mut g, hand);
+        if nomax {
+            let t = g.player(P0).turns;
+            g.player_mut(P0).nomax_turn = Some(t);
+        }
+        value(&g, c, karn, true)
+    };
+    let all = 5.0 * PER_CARD;
+    assert_eq!(value_with(0, false), all, "an empty hand keeps all five");
+    assert_eq!(value_with(4, false), all, "seven - 4 + 2 = 5 places");
+    assert_eq!(value_with(5, false), 4.0 * PER_CARD + PER_DISCARD, "four places");
+    assert_eq!(value_with(7, false), 2.0 * PER_CARD + 3.0 * PER_DISCARD, "a full hand keeps two");
+    assert_eq!(value_with(7, true), all, "no maximum hand size: nothing is discarded");
+    // the library guard still wins over the hand
+    let (mut g, karn, c) = karn_board();
+    g.player_mut(P0).library.truncate(6);
+    assert_eq!(value(&g, c, karn, true), DECKING);
+}
+
+#[test]
+fn a_karn_copy_with_a_full_hand_is_still_made_in_the_window() {
+    let (mut g, _, _) = karn_board();
+    fill_hand(&mut g, 7);
+    let opts = fc_opts(&mut g, None);
+    assert_eq!(opts.len(), 1);
+    assert!((opts[0].utility - (1.0 + 2.0 * PER_CARD + 3.0 * PER_DISCARD)).abs() < 1e-9, "{}", opts[0].utility);
+    assert!(do_opt(&mut g, &opts[0]));
+    assert_eq!(g.player(P0).hand.len(), 7 + 5, "the cards arrive; the cleanup discards them later");
+}
+
+#[test]
+fn a_hand_of_seven_is_cast_from_not_held_against() {
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = hold_board(7);
+    fill_hand(&mut g, 5); // Nighthawk and five Islands: six cards, room for 3 new ones: worth 5.0, over the minimum
+    assert!(crystal_hold(&g, P0, 0.0).is_some(), "six cards: still held for");
+    fill_hand(&mut g, 1);
+    assert!(crystal_hold(&g, P0, 0.0).is_none(), "seven cards: cast something instead");
+    // with no maximum hand size the copy is worth all five cards, and the guard alone says no
+    let t = g.player(P0).turns;
+    g.player_mut(P0).nomax_turn = Some(t);
+    let c = crystal_perm(&g);
+    let karn = named(&g, KARN)[0];
+    assert_eq!(value(&g, c, karn, true), 5.0 * PER_CARD);
+    assert!(crystal_hold(&g, P0, 0.0).is_none(), "seven cards: the guard, not the value");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn a_hold_whose_window_did_not_copy_is_not_repeated_the_next_turn() {
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = hold_board(7);
+    ai::main(&mut g, P0, false).unwrap(); // holds: round r
+    assert_eq!(g.player(P0).stats.get("fc_hold"), Some(&1));
+    // the window before the next turn: the Crystal is tapped (or locked, or Karn is gone), so nothing is copied
+    g.round += 1;
+    g.active = Some(P1);
+    g.step = Step::End;
+    let c = crystal_perm(&g);
+    g.perm_mut(c).tapped = true;
+    ai::end_of_turn_window(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).stats.get("fc_acts"), None, "no copy in the window");
+    // P0's untap step, then its main phase (round r + 1): the reason to hold is back, but it held last turn for nothing
+    untap_all(&mut g);
+    main_phase(&mut g);
+    assert!(crystal_hold(&g, P0, 0.0).is_none(), "no second hold in a row");
+    // the turn after that, it may hold again
+    g.round += 1;
+    assert!(crystal_hold(&g, P0, 0.0).is_some(), "the bound lasts one turn");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn a_hold_whose_window_copied_may_be_repeated() {
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = hold_board(7);
+    ai::main(&mut g, P0, false).unwrap();
+    g.round += 1;
+    g.active = Some(P1);
+    g.step = Step::End;
+    ai::end_of_turn_window(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).stats.get("fc_acts"), Some(&1));
+    untap_all(&mut g);
+    main_phase(&mut g);
+    assert!(crystal_hold(&g, P0, 0.0).is_some(), "the hold paid off: hold again");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn a_game_without_a_crystal_or_a_hold_is_never_bound() {
+    let mut g = tbl();
+    main_phase(&mut g);
+    assert!(crystal_hold(&g, P0, 0.0).is_none(), "no Crystal: nothing to hold");
+    g.round += 5;
+    assert!(g.player(P0).flag_turn.is_empty(), "no flag was set");
+}
+
+#[test]
+fn a_cheap_tutor_is_exempt_from_the_reserve_and_a_dear_one_is_not() {
+    let mut g = hold_board(7);
+    let ids = hand(&mut g, P0, &["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Ringsight"]);
+    for &c in &ids[..3] {
+        assert!(!crystal_reserve_broken(&g, P0, c), "{}", g.db.get(c).name);
+    }
+    assert!(crystal_reserve_broken(&g, P0, ids[3]), "a three-mana tutor is an ordinary cast");
+}
+
+#[test]
+fn a_stale_option_spends_nothing() {
+    let stale = |what: &str, spoil: &dyn Fn(&mut Game, PermId, PermId)| {
+        let (mut g, karn, c) = karn_board();
+        let opts = fc_opts(&mut g, None);
+        assert_eq!(opts.len(), 1);
+        let mana = sim_core::engine::mana::total_mana(&g, P0, false);
+        let hand = g.player(P0).hand.len();
+        spoil(&mut g, karn, c);
+        let before = sim_core::engine::mana::total_mana(&g, P0, false);
+        assert!(!do_opt(&mut g, &opts[0]), "{what}: refused");
+        assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), before, "{what}: nothing was spent");
+        assert_eq!(g.player(P0).hand.len(), hand, "{what}: nothing drawn");
+        assert!(before <= mana);
+        assert_eq!(g.player(P0).stats.get("fc_acts"), None, "{what}: no activation counted");
+    };
+    stale("the Crystal is tapped", &|g, _, c| g.perm_mut(c).tapped = true);
+    stale("the target is gone", &|g, karn, _| g.perm_mut(karn).on_bf = false);
+    stale("the cost is no longer payable", &|g, _, _| {
+        for l in g.player(P0).lands.clone().into_iter().take(2) {
+            g.perm_mut(l).tapped = true;
+        }
+    });
+    stale("a lock appeared", &|g, _, c| {
+        let needle = perm(g, P1, "Pithing Needle");
+        let card = card(g, CRYSTAL);
+        g.perm_mut(needle).data.set(DataKey::Imprint, Val::Card(card));
+        let _ = c;
+    });
 }
