@@ -8793,7 +8793,7 @@ note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 d
 
 ["Mana Confluence"]
 status = "Full"
-note = "{T}, pay 1 life: any colour of the identity; the life is paid on every tap, colourless use included (t6_lands.rs confluence_tap)"
+note = "{T}, pay 1 life: any colour of the identity; the life is paid on every tap, colourless use included, but not when a Lantern, Leyline or Dryad gives the land a free ability, and the land makes no mana at 1 life or with the life total locked (t6_lands.rs confluence_tap, confluence_mana); the AI taps it late like a painland (mana.rs is_pain). Not modelled: the combined life cost of several such lands in one payment"
 
 ["City of Traitors"]
 status = "Full"
