@@ -14,7 +14,7 @@ deck = "karn_gilded"
 default = "plan"
 # card engines the tutors want once no line wants a card: the five-colour artifacts that make Karn's draw big, the doublers
 # and the card-flow engines
-engines = ["Transguild Courier", "Infinite Guideline Station", "Gandalf the White", "Elesh Norn, Mother of Machines", "Rhystic Study", "Necropotence"]
+engines = ["Infinite Guideline Station", "Gandalf the White", "Elesh Norn, Mother of Machines", "Rhystic Study", "Necropotence"]
 
 # win lines, best first: the tutors want the first missing piece. The first names are the combo catalogue's (they must match)
 [[line]]

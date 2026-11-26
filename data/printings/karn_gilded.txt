@@ -7,7 +7,6 @@
 1 Baleful Strix (blc) 86
 1 Battlefield Forge (ori) 244
 1 Bayou (3ed) 283
-1 Birthing Pod (sld) 2349
 1 Blood Crypt (trk) 278
 1 Breeding Pool (unf) 286
 1 Breya, Etherium Shaper (sld) 454
@@ -24,6 +23,7 @@
 1 Demonic Consultation (ice) 121
 1 Demonic Tutor (sta) 90
 1 Doomsday (sld) 1115
+1 Dread Tiller (ecc) 40
 1 Elesh Norn, Mother of Machines (one) 416
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
@@ -42,9 +42,10 @@
 1 Gold-Forged Thopteryx (mat) 31
 1 Haliya, Guided by Light (eoe) 289
 1 Hallowed Fountain (rvr) 295
-1 Herd Heirloom (tdm) 347
+1 Herd Heirloom (tdm) 144
 1 Imperial Seal (2x2) 354
 1 Infinite Guideline Station (eoe) 219
+1 Iron Man, Armored Avenger (msc) 33
 1 Karn, Gilded Guardian (fra) 316
 1 Mana Confluence (sld) 1012a
 1 Marsh Flats (spg) 110
@@ -58,7 +59,7 @@
 1 Plateau (3ed) 284
 1 Polluted Delta (mh3) 356
 1 Ranger-Captain of Eos (fca) 2
-1 Reliquary Tower (trc) 551
+1 Reliquary Tower (sld) 7104
 1 Restoration Angel (2x2) 421
 1 Rhystic Study (wot) 71
 1 Ringsight (ltr) 220
@@ -86,7 +87,6 @@
 1 The Reaper, King No More (ecc) 4
 1 The Soul Stone (spm) 66
 1 Thought Vessel (sld) 2561
-1 Transguild Courier (dmc) 194
 1 Tropical Island (3ed) 288
 1 Tundra (3ed) 289
 1 Twitching Doll (dsk) 417

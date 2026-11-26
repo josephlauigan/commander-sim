@@ -28,6 +28,7 @@
 # Temple Garden and Vito, Thorn of the Dusk Rose (now `proxy`; a sold copy is gone, not a spare) and of Blood Crypt; the 18 cards he marked Getting are `missing` (17 after 2026-11-25).
 # 2026-11-25 (JD): the Karn deck is confirmed: his list of that day marks every card (Have, proxy or Getting; Getting is recorded as `missing`).
 # 2026-11-25 (JD): Karn deck: The Fire Crystal (his copy) in for The Wind Crystal (one of the cards he was getting, so it leaves the `missing` list).
+# 2026-11-25 (JD, his final Karn list): Birthing Pod and Transguild Courier leave the Karn deck (he no longer plans to get them: they are in no other deck and not in [spare]); Dread Tiller (ecc 40) and Iron Man, Armored Avenger (msc 33) come in as `have`. Baleful Strix, Infinite Guideline Station, The Reaper, King No More and Reliquary Tower are now `have` (he has them); the 11 other cards he was getting are `proxy`. The Karn deck has no `missing` card.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -334,6 +335,7 @@ have = [
   "Akroma's Will",
   "Anguished Unmaking",
   { card = "Arcane Signet", copies = 4 },
+  "Baleful Strix",
   "Battlefield Forge",
   "Breya, Etherium Shaper",
   "Buster Sword",
@@ -346,6 +348,7 @@ have = [
   { card = "Counterspell", copies = 2 },
   "Cursed Mirror",
   "Doomsday",
+  "Dread Tiller",
   "Elesh Norn, Mother of Machines",
   "Esper Sentinel",
   "Expedition Map",
@@ -354,6 +357,8 @@ have = [
   "Gandalf the White",
   "Gleaming Splendor",
   "Imperial Seal",
+  "Infinite Guideline Station",
+  "Iron Man, Armored Avenger",
   "Karn, Gilded Guardian",
   "Mistrise Village",
   "Necropotence",
@@ -361,6 +366,7 @@ have = [
   { card = "Path of Ancestry", copies = 2 },
   { card = "Path to Exile", copies = 2 },
   "Ranger-Captain of Eos",
+  "Reliquary Tower",
   "Restoration Angel",
   "Ringsight",
   "Sanguine Bond",
@@ -372,6 +378,7 @@ have = [
   "Teleportation Circle",
   "The Fire Crystal",
   "The Mind Stone",
+  "The Reaper, King No More",
   "The Soul Stone",
   "Thought Vessel",
   "Urborg, Tomb of Yawgmoth",
@@ -382,6 +389,7 @@ proxy = [
   "Arid Mesa",
   "Badlands",
   "Bayou",
+  "Blood Crypt",
   "Breeding Pool",
   "City of Brass",
   "Demonic Consultation",
@@ -394,17 +402,24 @@ proxy = [
   "Force of Will",
   "Giver of Runes",
   "Godless Shrine",
+  "Gold-Forged Thopteryx",
   "Haliya, Guided by Light",
   "Hallowed Fountain",
+  "Herd Heirloom",
   "Mana Confluence",
   "Marsh Flats",
   "Mystical Tutor",
   "Overgrown Tomb",
+  "Plateau",
   "Polluted Delta",
   "Rhystic Study",
+  "Sacred Foundry",
+  "Savannah",
   "Scrubland",
   "Silence",
   "Solitude",
+  "Steam Vents",
+  "Taiga",
   "Teferi's Protection",
   "Teferi, Time Raveler",
   "Temple Garden",
@@ -412,30 +427,15 @@ proxy = [
   "The One Ring",
   "Tropical Island",
   "Tundra",
+  "Twitching Doll",
   "Underground Sea",
   "Vampiric Tutor",
   "Vito, Thorn of the Dusk Rose",
-  "Watery Grave",
-]
-missing = [
-  "Baleful Strix",
-  "Birthing Pod",
-  "Blood Crypt",
-  "Gold-Forged Thopteryx",
-  "Herd Heirloom",
-  "Infinite Guideline Station",
-  "Plateau",
-  "Reliquary Tower",
-  "Sacred Foundry",
-  "Savannah",
-  "Steam Vents",
-  "Taiga",
-  "The Reaper, King No More",
-  "Transguild Courier",
-  "Twitching Doll",
   "Volcanic Island",
+  "Watery Grave",
   "Wooded Foothills",
 ]
+missing = []
 
 [spare]
 cards = [
