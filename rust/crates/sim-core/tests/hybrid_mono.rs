@@ -1,6 +1,6 @@
 //! Monocoloured hybrid symbols ({2/W}: Karn, Gilded Guardian, The Reaper, King No More, Spectral Procession) and a card that
 //! "is all colors" (Transguild Courier). A {2/X} is paid with its colour or with {2}; the {2} is chosen before any reduction
-//! or tax (CR 601.2b, 601.2f), so a generic reducer applies to it and the commander tax comes after. Oracle text is the
+//! or tax (CR 601.2b, 601.2f), so a generic reducer applies to it and the commander tax is summed with it before the floor. Oracle text is the
 //! expectation throughout.
 
 mod play_common;

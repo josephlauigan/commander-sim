@@ -220,8 +220,6 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **The AI never** activates the Crystal in response to removal, copies for a lethal hasty attack, makes a Ranger-Captain copy to sacrifice on a combo turn, or
   sacrifices a copy for value; it never copies a token with no card behind it; in the legend rule it keeps the real card over a copy; and its attack
   planning does not count a hasty creature that is still summoning sick (a copy) as an attacker, although the attack itself uses it.
-- **The Fire Crystal and the commander tax (simulator):** the Crystal's {1} does not reach the commander tax in the engine until the cost-order change
-  merges, so a Karn recast paid with all five colours costs {1} more there than at a table.
 - **An animated land can't be copied** by the Crystal, for a person or the AI (no such land is in the list).
 - **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
   else the Tiller itself, and never kills a creature of its own on purpose; an opposing creature whose ward it can't pay is worth nothing to it (the ward counters

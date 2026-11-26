@@ -1262,7 +1262,7 @@ fn n_targets(o: &Opt) -> usize {
 
 #[test]
 fn twinflame_plan_and_payment_follow_the_rules_price_for_every_target_count_and_board() {
-    // the rules price (601.2f): {1}{R} + {2}{R} per extra target, less reductions (floored at 0), plus taxes, then the
+    // the rules price (601.2f): {1}{R} + {2}{R} per extra target, plus taxes, less reductions, floored at 0 once, then the
     // Trinisphere minimum counted over every symbol
     let mut bad = Bad::default();
     for board in 0..=8 {
@@ -1275,7 +1275,7 @@ fn twinflame_plan_and_payment_follow_the_rules_price_for_every_target_count_and_
                     continue;
                 }
                 let n = n_targets(&oo[0]);
-                let mut gn = (1 + 2 * (n as i64 - 1) - red as i64).max(0) + tax as i64;
+                let mut gn = (1 + 2 * (n as i64 - 1) - red as i64 + tax as i64).max(0);
                 if trini {
                     gn = gn.max(3 - n as i64);
                 }
@@ -1321,7 +1321,7 @@ fn twinflame_never_plans_more_targets_than_the_pool_has_red_for() {
 #[test]
 fn twinflame_strive_is_still_paid_under_tamiyos_emblem() {
     // Tamiyo's emblem lets the spell be cast without paying its mana cost, but strive is a cost increase and still applies
-    // (601.2f, 118.9d): every extra target costs {2}{R}. (The other taxes the engine drops under the emblem stay dropped.)
+    // (601.2f, 118.9d): every extra target costs {2}{R}, and the taxes apply to it as to any cost (board 0: none on the table).
     let (mut g, c, ..) = twinflame_board(0, 3, 12, 0);
     g.player_mut(P).emblems.push("tamiyo");
     let oo = twinflame_opts(&mut g, c);
@@ -1402,9 +1402,9 @@ fn harmonize_case(bad: &mut Bad, forests: usize, others: usize, power: i32, boar
         bad.add(format!("{tag}: plan X {x_plan}, brute force X' {best:?} + power {power}"));
     }
     let b = best.unwrap();
-    // the generic part is the rules' (reductions floor once, taxes after; every symbol of {X}{G}{G}{G}{G} is four, so
-    // the Trinisphere minimum never raises it)
-    let rules = (b as i64 - med).max(0) + tax;
+    // the generic part is the rules' (601.2f: taxes and reductions are summed, then floored once; every symbol of
+    // {X}{G}{G}{G}{G} is four, so the Trinisphere minimum never raises it)
+    let rules = (b as i64 - med + tax).max(0);
     let (gn, pips) = cost_of_with(&g, P, c, b, "GGGG");
     if gn as i64 != rules || pips != "GGGG" {
         bad.add(format!("{tag}: X' {b}: pipeline {gn} {pips:?}, rules {rules} GGGG"));

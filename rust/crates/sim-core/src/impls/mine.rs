@@ -3381,11 +3381,11 @@ pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spel
 /// tax and the Trinisphere minimum to the whole cost in the engine's order. One target is exactly `cost_of`
 fn twinflame_cost(g: &Game, p: PlayerId, c: CardId, n: usize) -> (u32, String) {
     let extra = n.saturating_sub(1);
-    // Tamiyo's emblem casts the spell without paying its mana cost, but strive is a cost increase and is still paid
-    // (601.2f). `cost_of_with` returns nothing at all under the emblem, so the increase is priced here; the other taxes
-    // the engine drops under the emblem stay dropped (the engine's open rules question)
+    // Tamiyo's emblem casts the spell without paying its mana cost, but strive is an additional cost and is still paid
+    // (601.2f, 118.9d): the engine prices the emblem's {0} with the strive added, so the taxes, Disruptor Flute and the
+    // Trinisphere minimum apply to it as to any cost
     if g.player(p).emblems.contains(&"tamiyo") && g.player(p).hand.contains(&c) {
-        return (2 * extra as u32, "R".repeat(extra));
+        return crate::engine::mana::cost_of_free_with_extra(g, p, c, 2 * extra as u32, &"R".repeat(extra));
     }
     let pips = format!("{}{}", g.db.get(c).pips, "R".repeat(extra));
     crate::engine::mana::cost_of_with(g, p, c, 2 * extra as i32, &pips)

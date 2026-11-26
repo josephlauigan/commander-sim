@@ -1,6 +1,6 @@
 //! `mana::cost_of_x`: the cost of a spell cast with X = x, through the same reductions, taxes, floors and minimums as
-//! `cost_of` (a generic reducer takes its {1} off the generic part that includes X; a later tax is added after it; every
-//! step floors the generic cost at 0). Damnable Pact ({X}{B}{B}) is the X spell; Jet Medallion is the reducer; Sphere of
+//! `cost_of` (a generic reducer takes its {1} off the generic part that includes X; every increase and reduction is summed
+//! first and the generic cost is floored at 0 once, CR 601.2f). Damnable Pact ({X}{B}{B}) is the X spell; Jet Medallion is the reducer; Sphere of
 //! Resistance (all spells cost {1} more) and Trinisphere (a spell costs at least three) are the taxes.
 //! Damping Sphere is not used: it taxes by the spells already cast this turn, which `cost_of_x` does not change.
 
@@ -51,19 +51,19 @@ fn jet_medallion_then_a_later_tax() {
     let mut g = game();
     perm(&mut g, P0, "Jet Medallion");
     perm(&mut g, P1, "Sphere of Resistance");
-    assert_eq!(x_cost(&g, 0), (1, "BB".into()), "floored at 0 by the reducer, then the tax");
+    assert_eq!(x_cost(&g, 0), (0, "BB".into()), "-1 and +1 are summed before the floor (601.2f)");
     assert_eq!(x_cost(&g, 3), (3, "BB".into()), "3 - 1 + 1");
 }
 
 #[test]
-fn a_reduction_larger_than_the_generic_part_floors_at_zero_before_the_tax() {
+fn a_reduction_larger_than_the_generic_part_is_summed_with_the_tax_and_floors_once() {
     let mut g = game();
     perm(&mut g, P0, "Jet Medallion");
     perm(&mut g, P0, "Jet Medallion");
     assert_eq!(x_cost(&g, 1), (0, "BB".into()), "1 - 2 floors at 0");
     assert_eq!(x_cost(&g, 4), (2, "BB".into()));
     perm(&mut g, P1, "Sphere of Resistance");
-    assert_eq!(x_cost(&g, 1), (1, "BB".into()), "floored at 0, then {{1}} more: not 1 - 2 + 1");
+    assert_eq!(x_cost(&g, 1), (0, "BB".into()), "1 - 2 + 1 = 0: the tax is taken from by the reduction (601.2f)");
     assert_eq!(x_cost(&g, 4), (3, "BB".into()));
 }
 

@@ -981,8 +981,8 @@ pub fn freyalise_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 
 // ================================================================== harmonize, bargain, improvise, transmute, cycling
 /// the part of X the mana pays for a harmonize cast, {X}{G}{G}{G}{G}: the most X' for which `harmonize_cost` at X' is
-/// payable; the tapped creature's power comes off the generic cost with the other reductions, so X = X' + power (the
-/// reductions all come off before a tax, and the floors fall at the same point). None when even X' = 0 can't be paid.
+/// payable; the tapped creature's power comes off the generic cost with the other reductions, so X = X' + power (taxes
+/// and reductions are summed first and the generic cost is floored once, 601.2f). None when even X' = 0 can't be paid.
 /// `max_x` at the printed {G}{G} bounds X' from above: with X' the alternative cost never costs less than the printed one
 fn harmonize_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     let ok = |x: i32| {
