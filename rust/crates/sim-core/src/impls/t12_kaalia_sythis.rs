@@ -382,6 +382,11 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
 }
 
 // ================================================================== Valgavoth, Terror Eater
+/// is m Valgavoth, Terror Eater ("Ward—Sacrifice three nonland permanents"): a pure check
+pub fn has_sac_ward(g: &Game, m: PermId) -> bool {
+    named(g, m, VALGAVOTH)
+}
+
 /// engine/removal.rs `legal_targets`: p can't pay Valgavoth's ward (fewer than three nonland permanents), so it
 /// doesn't aim removal at it
 pub fn ward_blocks(g: &Game, p: PlayerId, m: PermId) -> bool {

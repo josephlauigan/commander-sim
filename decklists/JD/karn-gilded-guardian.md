@@ -224,14 +224,17 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
   merges, so a Karn recast paid with all five colours costs {1} more there than at a table.
 - **An animated land can't be copied** by the Crystal, for a person or the AI (no such land is in the list).
 - **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
-  else the Tiller itself, and never kills a creature of its own on purpose; an opposing creature whose ward it can't pay is worth nothing to it (the ward counters the trigger), so it aims there before shrinking its own creatures. It always puts a land when it has one
-  in its hand or graveyard: first a land that adds a colour its lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and
-  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the Unhallowed, that the counter would kill is not counted as a kill (it comes back bigger).
+  else the Tiller itself, and never kills a creature of its own on purpose; an opposing creature whose ward it can't pay is worth nothing to it (the ward counters
+  the trigger), so it aims there before shrinking its own creatures. It always puts a land when it has one in its hand or graveyard: first a land that adds a colour its
+  lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and Command Tower, the graveyard copy before the hand copy (the hand
+  copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the
+  Unhallowed, that the counter would kill is not counted as a kill (it comes back bigger).
   These rankings are provisional and untuned by any sim. Named limit: the simulator kills creatures one at a time, in list order (seat order, then the order
   the permanents entered), in a wipe, in combat damage and in state-based deaths, so a creature with a -1/-1 counter that dies in the same event after the Tiller does not trigger it,
   while one that dies before it does (The Reaper has the same limit; a Farewell exiles, so it is no case).
 - **Iron Man's counter is not a trigger on the stack** in the simulator: it is put as each card is drawn, so the table cannot respond to it; the AI puts it on its own creature
-  it values most, and on an opposing creature (paying its ward) only when none of its own is a legal target, as under Akroma's Will (a person chooses).
+  it values most, and only when none of its own is a legal target (as under Akroma's Will) on an opposing one: it never pays a ward there, it aims at a creature with a ward,
+  which counters the ability, else at the opposing creature worth least (a person chooses).
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
 - **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return) unless The Fire Crystal is out.
 

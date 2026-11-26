@@ -241,22 +241,38 @@ fn the_ai_with_no_legal_creature_of_its_own_and_no_mana_for_the_ward_puts_no_cou
 }
 
 #[test]
-fn the_ai_with_no_legal_creature_of_its_own_pays_the_ward_and_puts_the_counter() {
+fn the_ai_with_no_legal_creature_of_its_own_never_pays_a_ward() {
     let mut g = tbl();
-    all_protected(&mut g);
+    let own = all_protected(&mut g);
     let w = perm(&mut g, P1, WARDED);
     let m = lands(&mut g, P0, "Mountain", 1, false)[0];
     zones::draw(&mut g, P0, 1, false).unwrap();
-    assert!(g.perm(m).tapped, "ward {{1}} paid");
-    assert_eq!(g.perm(w).plus, 1);
+    assert!(!g.perm(m).tapped, "ward {{1}} is not paid: the ability is countered");
+    assert_eq!(g.perm(w).plus, 0);
+    assert!(own.iter().all(|&m| g.perm(m).plus == 0), "no counter anywhere");
 }
 
 #[test]
-fn the_ai_prefers_an_opposing_creature_it_can_ward_free_to_one_whose_ward_it_cannot_pay() {
+fn the_ai_aims_at_a_warded_creature_rather_than_give_an_unwarded_one_the_counter() {
+    let mut g = tbl();
+    let own = all_protected(&mut g);
+    let w = perm(&mut g, P1, WARDED); // worth more than the Elves, so only the ward decides
+    let free = perm(&mut g, P1, "Llanowar Elves");
+    let m = lands(&mut g, P0, "Mountain", 1, false)[0];
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert!(!g.perm(m).tapped, "the land stays untapped");
+    assert_eq!((g.perm(w).plus, g.perm(free).plus), (0, 0), "no counter anywhere");
+    assert!(own.iter().all(|&m| g.perm(m).plus == 0));
+}
+
+#[test]
+fn the_ai_with_no_legal_creature_of_its_own_never_pays_life_for_a_ward() {
     let mut g = tbl();
     all_protected(&mut g);
-    let w = perm(&mut g, P1, WARDED); // worth less, but its ward can't be paid
-    let free = perm(&mut g, P1, HOOF);
+    perm(&mut g, P1, "Hexing Squelcher"); // "Ward - Pay 2 life", on itself and its controller's other creatures
+    let creature = perm(&mut g, P1, HOOF);
+    let life = g.player(P0).life;
     zones::draw(&mut g, P0, 1, false).unwrap();
-    assert_eq!((g.perm(w).plus, g.perm(free).plus), (0, 1));
+    assert_eq!(g.player(P0).life, life, "no life paid");
+    assert_eq!(g.perm(creature).plus, 0, "countered by the ward");
 }

@@ -648,9 +648,10 @@ fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
 /// nothing of an opponent's can be used. The AI: an opposing creature the counter kills, the one worth most first (the
 /// death feeds the second ability); else the opposing creature worth most; else a creature of ours that can't have the
 /// counter; else the Tiller itself; else our least valuable creature that survives; a creature of ours that it would kill
-/// last of all. An opposing creature whose ward the AI can't pay is worth nothing to it (the ward counters the trigger and no counter is put), like a creature that can't take the counter: above shrinking a creature of ours; a person is asked (no way to decline) and pays
-/// the ward as it resolves, and the creature is then skipped if they don't. A creature that can't have -1/-1 counters
-/// (Melira, Sylvok Outcast) is a legal target but gets none.
+/// last of all. An opposing creature whose ward the AI can't pay is worth nothing to it (the ward counters the trigger and
+/// no counter is put), like a creature that can't take the counter: above shrinking a creature of ours. A person is asked
+/// (no way to decline) and pays the ward as it resolves, and the creature is then skipped if they don't. A creature that
+/// can't have -1/-1 counters (Melira, Sylvok Outcast) is a legal target but gets none.
 fn tiller_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
