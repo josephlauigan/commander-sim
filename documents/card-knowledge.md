@@ -30,9 +30,10 @@ gets layer 3 before it is proposed.
 ## How an agent uses it
 
 The working steps are the section "Card recommendations: use the card knowledge base" in `CLAUDE.md` and `AGENTS.md`
-(the same text in both). In short: read the map, read the deck's digest (header first), query `find` for what the digest
+(the same text in both, apart from the Claude hook paragraph). In short: read the map, read the deck's digest (header first), query `find` for what the digest
 trimmed, read `find --name NAME --full` before proposing a card, run the swap checks and put a `--swap` test in the plan JD approves, and
-say which digest and data date the answer used.
+say which digest and data date the answer used, as the closing `KB:` line (Claude Code hooks check for it; see the
+"Card recommendations" section for the forms and `scripts/cardgen` for the invocation).
 
 | Command | What it gives | Writes |
 |---|---|---|

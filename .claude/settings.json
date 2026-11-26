@@ -1,3 +1,27 @@
 {
-  "model": "claude-sonnet-5-5"
+  "model": "claude-sonnet-5-5",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" prompt" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Read",
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" tool" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" stop" }
+        ]
+      }
+    ]
+  }
 }

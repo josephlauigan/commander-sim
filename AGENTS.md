@@ -19,9 +19,10 @@ This applies in worktrees and sessions started from a parent directory too; run 
 root (or use `git -C <repo>`). If fetching is unavailable, state that the remote rules could not be refreshed and
 use the available copies.
 
-Three rules must never be missed: ask the user for approval before starting work, keep swap and package
-explanations enabled for deck decisions, and simulate each owned deck only against its matched tiers in
-`data/my_decks.toml`. Details appear in the rules below.
+Four rules must never be missed: ask the user for approval before starting work, keep swap and package
+explanations enabled for deck decisions, simulate each owned deck only against its matched tiers in
+`data/my_decks.toml`, and answer any card, commander, deck, strategy, package or buy question from the card knowledge
+base (`scripts/cardgen`), not from memory, ending with a `KB:` line. Details appear in the rules below.
 
 ## Codex model policy
 
@@ -62,7 +63,9 @@ Opus 5.5 as advisor and final reviewer and Haiku 5.5 for searches and lookups; t
 - Keep to the handoff contract in the prompt: GOAL, SCOPE (only those files change), DONE WHEN (command and expected
   result), CONSTRAINTS (minimal diff; do not refactor outside scope; no new deps without asking; no destructive git).
   Write results to the handoff file the prompt names (`/tmp/handoff/<name>.md`, sections Summary / Changes /
-  Verification run / Open questions) and reply with only that path.
+  Verification run / Open questions) and reply with only that path. A task that involves choosing, ranking or checking
+  cards follows "Card recommendations" below, and its handoff ends with a `KB:` section naming the queries run;
+  card-related reports end with a `KB:` line.
 - Your diff is reviewed by the coordinator and then by Opus before it merges; you are never the final check on your
   own work.
 - Reasoning effort: medium by default, high for debugging and reviews, xhigh/max for competing attempts on hard bugs.
@@ -204,10 +207,14 @@ payoffs, enablers and tutors; a combo with its protection; an answer suite; a ma
 
 ## Card recommendations: use the card knowledge base
 
-When JD asks what to swap, cut, buy or adopt, or what a deck should be doing, work from the catalog tools, not from
-memory (approach, data and limits: `documents/card-knowledge.md`). This adds to the rules above and overrides none
-of them (approval, swap checks, packages, tiers, explain, FINDINGS). Steps 1-4 are read-only investigation: `map` and `digest`
-also rewrite their own gitignored view file (even with `--stdout`), and nothing else is written.
+Any answer that names, ranks, compares or evaluates a card, commander, strategy, package, deck or purchase works from
+the catalog tools, not memory (approach, data and limits: `documents/card-knowledge.md`). This includes brainstorming,
+hypothetical or new decks, decks JD does not own, and card facts (commander eligibility, legality, colour identity,
+what a card does). This adds to the rules above and overrides none of them (approval, swap checks, packages, tiers,
+explain, FINDINGS). Steps 1-4 are read-only investigation: `map` and `digest` also rewrite their own gitignored view
+file (even with `--stdout`), and nothing else is written. Below, `cardgen` means `scripts/cardgen`: it runs this
+checkout's binary, else the main checkout's, and never builds (if it exits 1, the binary is not built: that is "KB
+unavailable" in step 6, and a build needs JD's approval).
 
 1. **Map**: `cardgen map --stdout` (about 3k tokens): what exists, role and colour counts, JD's decks.
 2. **Digest**: `cardgen digest --deck KEY --stdout` (about 40k tokens). Read its header first: data date, role table
@@ -217,13 +224,18 @@ also rewrite their own gitignored view file (even with `--stdout`), and nothing 
 3. **Query**: `cardgen find ...` for what the digest trimmed (`--deck KEY` applies the colour ceiling and leaves out
    the deck's cards; also `--role`, `--text`, `--status`, `--in-deck`, `--not-in-deck`; status, decks and FINDINGS
    hits show only with `--json` or `--full`).
-4. **Read before proposing**: `cardgen find --name NAME --full` for every card you intend to propose: Oracle text,
-   roles with their evidence line, engine status, which of JD's decks play it, FINDINGS hits.
+   No deck key (a new or hypothetical deck): `digest --ident LETTERS` (`C` for colourless) and `find --ident LETTERS ...`,
+   for example `find --ident C --text 'can be your commander'`.
+4. **Read before proposing**: `cardgen find --name NAME --full` for every card or commander you name as a pick,
+   recommendation or example: Oracle text, roles with their evidence line, engine status, which of JD's decks play it,
+   FINDINGS hits.
 5. **Check, then test**: do the swap checks above yourself (flags are a pre-filter: no `BAN` is not the legality
    check, `*` and `d:` are not the cut check), then put the `--swap` runs (explain on, the deck's own tiers) in the
    plan JD approves. The `--swap` explain output is the model-status authority, not `m:`.
-6. **Say what you used**: the digest or queries, the data date and role table from the digest header, and which
-   role tags are unreviewed (`?`).
+6. **Say what you used**, as the closing line of the answer: `KB: <queries run> (data <date>, roles
+   <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
+   only when the answer names, ranks or evaluates no card; `KB: unavailable (<reason>)` when the catalog or binary is
+   not reachable (cloud, no build), which also tells JD the answer is from memory and unverified.
 
 How the flags mislead if read carelessly:
 - `m:N` = NO engine record: status unknown, not fine and not Unmodeled. An incoming card with `m:N` or below Full
