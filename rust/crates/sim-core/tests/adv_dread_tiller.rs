@@ -262,6 +262,18 @@ fn an_unpayable_ward_ranks_above_killing_our_own_creature() {
     assert_eq!((g.perm(own).plus, g.perm(warded).plus), (0, 0), "the ward countered the trigger: no counter anywhere");
 }
 
+/// with the Tiller on the table the AI aims at a creature whose ward it can't pay (nothing happens, which costs nothing)
+/// rather than shrinking its own Tiller or any creature of ours
+#[test]
+fn an_unpayable_ward_is_aimed_at_before_shrinking_our_own_creatures() {
+    let mut g = tbl();
+    let own = token(&mut g, P0, 1);
+    let warded = perm(&mut g, P1, "Unflinching Hortimancer"); // a 2/1 with ward {1}: P0 has no mana
+    let t = perm(&mut g, P0, TILLER);
+    assert_eq!((g.perm(t).plus, g.perm(own).plus, g.perm(warded).plus), (0, 0, 0));
+    assert!(on(&g, own) && on(&g, warded));
+}
+
 // ============================================================== 4. counter bookkeeping
 /// a creature with a -1/-1 counter and a non-counter pump (an effect until end of turn) still has the counter
 #[test]

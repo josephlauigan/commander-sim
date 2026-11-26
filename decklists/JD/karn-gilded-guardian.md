@@ -115,7 +115,7 @@ is three counters, which kills a toughness-3 creature at once. **Iron Man, Armor
 card, put a +1/+1 counter on target creature; whenever it attacks, our other attacking modified creatures (a counter, an Equipment or an Aura on them) gain flying
 until end of turn. Karn's five draws put five counters, ten or fifteen with the doublers, all on one creature or spread out (Karn himself, Iron Man, Yoshimaru); the
 draw step, Rhystic Study, Consecrated Sphinx, Baleful Strix, Esper Sentinel and The One Ring count too. Karn with Buster Sword, Sword of Feast and Famine or a
-counter on him attacks as a flying creature of at least 5/5 with trample while Iron Man attacks beside him; the AI puts each counter on the creature it values most, a person chooses.
+counter on him attacks as a flying creature of at least 5/5 with trample while Iron Man attacks beside him; the AI puts each counter on its own creature it values most, a person chooses.
 Iron Man is a blue artifact (blue rises to four coloured artifacts) and a legendary creature (Yoshimaru grows when it enters, Thopteryx gives it ward {2}).
 
 **Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
@@ -224,14 +224,14 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
   merges, so a Karn recast paid with all five colours costs {1} more there than at a table.
 - **An animated land can't be copied** by the Crystal, for a person or the AI (no such land is in the list).
 - **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
-  else the Tiller itself, and never kills a creature of its own on purpose; it skips an opposing creature whose ward it can't pay. It always puts a land when it has one
+  else the Tiller itself, and never kills a creature of its own on purpose; an opposing creature whose ward it can't pay is worth nothing to it (the ward counters the trigger), so it aims there before shrinking its own creatures. It always puts a land when it has one
   in its hand or graveyard: first a land that adds a colour its lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and
   Command Tower, the graveyard copy before the hand copy (the hand copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the Unhallowed, that the counter would kill is not counted as a kill (it comes back bigger).
   These rankings are provisional and untuned by any sim. Named limit: the simulator kills creatures one at a time, in list order (seat order, then the order
   the permanents entered), in a wipe, in combat damage and in state-based deaths, so a creature with a -1/-1 counter that dies in the same event after the Tiller does not trigger it,
   while one that dies before it does (The Reaper has the same limit; a Farewell exiles, so it is no case).
-- **Iron Man's counter is not a trigger on the stack** in the simulator: it is put as each card is drawn, so the table cannot respond to it; the AI puts it on the creature
-  it values most (a person chooses).
+- **Iron Man's counter is not a trigger on the stack** in the simulator: it is put as each card is drawn, so the table cannot respond to it; the AI puts it on its own creature
+  it values most, and on an opposing creature (paying its ward) only when none of its own is a legal target, as under Akroma's Will (a person chooses).
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
 - **Not weighed by the AI:** blinking Karn in the precombat main phase loses his attack (he is summoning sick on return) unless The Fire Crystal is out.
 

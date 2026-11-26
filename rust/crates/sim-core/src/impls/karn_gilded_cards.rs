@@ -567,9 +567,6 @@ const TILLER_KILL: f64 = 100.0;
 const TILLER_SELF_HARM: f64 = 0.1;
 /// the AI never puts a counter that kills one of its own creatures, unless nothing else can be targeted
 const TILLER_OWN_KILL: f64 = -1000.0;
-/// a target the AI can't use (an opposing creature whose ward it can't pay): the counter is simply not put, which costs
-/// nothing, so it ranks above `TILLER_OWN_KILL` (a card lost) and below everything that does something
-const TILLER_WARDED_OUT: f64 = -500.0;
 /// the life total at or under which the AI no longer puts a land that costs life to tap (Mana Confluence, City of Brass)
 const TILLER_LIFE_FLOOR: i32 = 10;
 /// the AI's value for each colour of the deck's identity that none of its lands makes yet, which the land would add
@@ -633,7 +630,7 @@ fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
     let dies = etgh(g, t) <= 1;
     if opposing {
         if !crate::engine::ward::ward_affordable(g, o, t, 0, "") {
-            return TILLER_WARDED_OUT;
+            return 0.0; // the ward counters the trigger: nothing happens, which costs nothing
         }
         if dies && tiller_returns(g, t) {
             return -pval(g, t); // it dies and comes back with a +1/+1 counter: a gift, not a kill
@@ -651,7 +648,7 @@ fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
 /// nothing of an opponent's can be used. The AI: an opposing creature the counter kills, the one worth most first (the
 /// death feeds the second ability); else the opposing creature worth most; else a creature of ours that can't have the
 /// counter; else the Tiller itself; else our least valuable creature that survives; a creature of ours that it would kill
-/// last of all. An opposing creature's ward the AI can't pay rules it out; a person is asked (no way to decline) and pays
+/// last of all. An opposing creature whose ward the AI can't pay is worth nothing to it (the ward counters the trigger and no counter is put), like a creature that can't take the counter: above shrinking a creature of ours; a person is asked (no way to decline) and pays
 /// the ward as it resolves, and the creature is then skipped if they don't. A creature that can't have -1/-1 counters
 /// (Melira, Sylvok Outcast) is a legal target but gets none.
 fn tiller_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {

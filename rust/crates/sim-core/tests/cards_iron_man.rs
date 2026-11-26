@@ -179,7 +179,84 @@ fn a_person_who_does_not_pay_the_ward_loses_the_counter() {
     let (hoof, tok) = board(&mut g);
     let w = perm(&mut g, P1, WARDED);
     lands(&mut g, P0, "Mountain", 1, false);
-    person(&mut g, "Hortimancer", false);
+    let h = person(&mut g, "Hortimancer", false);
     zones::draw(&mut g, P0, 1, false).unwrap();
-    assert_eq!((g.perm(w).plus, g.perm(hoof).plus, g.perm(tok).plus), (0, 0, 0), "countered by ward");
+    assert!(offered(&h).iter().any(|c| c.contains("Hortimancer")), "it is offered: {:?}", offered(&h));
+    assert_eq!(g.perm(w).plus, 0);
+    let iron = g.perm(iron(&g)).plus;
+    assert_eq!((iron, g.perm(hoof).plus, g.perm(tok).plus), (0, 0, 0), "countered by ward: no counter anywhere");
+}
+
+#[test]
+fn a_person_whose_only_source_is_restricted_mana_is_not_offered_the_warded_creature() {
+    let mut g = tbl();
+    board(&mut g);
+    let w = perm(&mut g, P1, WARDED);
+    perm(&mut g, P0, "Herd Heirloom"); // {T}: one mana, only to cast a creature spell: it can't pay a ward
+    let h = person(&mut g, "Hortimancer", true);
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert!(!offered(&h).iter().any(|c| c.contains("Hortimancer")), "{:?}", offered(&h));
+    assert_eq!(g.perm(w).plus, 0);
+}
+
+/// every creature of the AI's has protection from blue (Akroma's Will): the trigger must still target
+fn all_protected(g: &mut Game) -> Vec<PermId> {
+    let (hoof, tok) = board(g);
+    let iron = iron(g);
+    for m in [hoof, tok, iron] {
+        g.perm_mut(m).eot_kw.push("pro_U");
+    }
+    vec![hoof, tok, iron]
+}
+
+#[test]
+fn the_ai_with_no_legal_creature_of_its_own_targets_an_opposing_one() {
+    let mut g = tbl();
+    let own = all_protected(&mut g);
+    let big = perm(&mut g, P1, HOOF);
+    let small = perm(&mut g, P1, "Llanowar Elves");
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert!(own.iter().all(|&m| g.perm(m).plus == 0));
+    assert_eq!((g.perm(small).plus, g.perm(big).plus), (1, 0), "the opposing creature worth least");
+}
+
+#[test]
+fn the_ai_with_no_legal_creature_of_its_own_ignores_an_opposing_creature_with_protection_from_blue() {
+    let mut g = tbl();
+    all_protected(&mut g);
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    g.perm_mut(theirs).eot_kw.push("pro_U");
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert_eq!(g.perm(theirs).plus, 0);
+}
+
+#[test]
+fn the_ai_with_no_legal_creature_of_its_own_and_no_mana_for_the_ward_puts_no_counter() {
+    let mut g = tbl();
+    let own = all_protected(&mut g);
+    let w = perm(&mut g, P1, WARDED);
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert_eq!(g.perm(w).plus, 0, "ward {{1}} not paid: countered");
+    assert!(own.iter().all(|&m| g.perm(m).plus == 0));
+}
+
+#[test]
+fn the_ai_with_no_legal_creature_of_its_own_pays_the_ward_and_puts_the_counter() {
+    let mut g = tbl();
+    all_protected(&mut g);
+    let w = perm(&mut g, P1, WARDED);
+    let m = lands(&mut g, P0, "Mountain", 1, false)[0];
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert!(g.perm(m).tapped, "ward {{1}} paid");
+    assert_eq!(g.perm(w).plus, 1);
+}
+
+#[test]
+fn the_ai_prefers_an_opposing_creature_it_can_ward_free_to_one_whose_ward_it_cannot_pay() {
+    let mut g = tbl();
+    all_protected(&mut g);
+    let w = perm(&mut g, P1, WARDED); // worth less, but its ward can't be paid
+    let free = perm(&mut g, P1, HOOF);
+    zones::draw(&mut g, P0, 1, false).unwrap();
+    assert_eq!((g.perm(w).plus, g.perm(free).plus), (0, 1));
 }

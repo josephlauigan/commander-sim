@@ -59,19 +59,17 @@ pub fn leveler_pick(g: &Game, p: PlayerId, when: &str) -> Res<Option<PermId>> {
 }
 
 // ------------------------------------------------------------------ Iron Man, Armored Avenger
-/// can the person pay the ward of the opposing creature m: `ward_affordable` reads only the floating pool for a person, a
-/// person also pays by tapping their untapped sources (`ward::pay_ward` asks them), so a ward {N} is payable if they have
-/// N mana available; no ward: `ward_affordable`'s other checks
+/// can the person pay the ward of the opposing creature m: the check `ward::pay_ward` makes as it pays (`can_tap_to_pay`:
+/// floating mana and untapped sources that are not restricted); no ward: `ward_affordable`'s other checks
 fn ward_payable(g: &Game, p: PlayerId, m: PermId) -> bool {
     let ward = g.perm(m).cd.map_or(0, |c| g.db.get(c).ward) + crate::cardcode::aura_ward(g, m);
     if ward == 0 {
         return crate::engine::ward::ward_affordable(g, p, m, 0, "");
     }
-    super::mana::available(g, p) >= ward
+    super::mana::can_tap_to_pay(g, p, ward, "")
 }
 
-/// "Whenever you draw a card, put a +1/+1 counter on target creature": the creature the person picks (the AI always
-/// feeds its Army)
+/// "Whenever you draw a card, put a +1/+1 counter on target creature": the creature the person picks
 pub fn ironman_counter(g: &mut Game, p: PlayerId) -> Res {
     // the legal targets: our own creature unless it has shroud or protection from Iron Man's colours (hexproof is fine),
     // an opposing one only if it is targetable, not protected, and its ward (if any) can be paid

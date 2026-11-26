@@ -118,6 +118,25 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
                 .collect();
             if let Some(t) = max_by(&own, |m| pval(g, m) + if g.perm(m).army { 0.01 } else { 0.0 }) {
                 repl::put_plus(g, t, 1);
+            } else {
+                // none of ours is a legal target (all have shroud or protection from blue: Akroma's Will) and the trigger
+                // must target: the opposing creature it can target that is worth least (one whose ward it can pay first);
+                // a ward it does not pay counters the ability
+                let theirs: Vec<PermId> = g
+                    .opps(p)
+                    .flat_map(|q| g.player(q).perms.iter().copied())
+                    .filter(|&m| {
+                        g.is_creature(m) && !g.perm(m).phased && !untargetable(g, m) && !protected_from(g, m, cols)
+                    })
+                    .collect();
+                let key = |m: PermId| {
+                    -pval(g, m) + if crate::engine::ward::ward_affordable(g, p, m, 0, "") { 1000.0 } else { 0.0 }
+                };
+                if let Some(t) = max_by(&theirs, key)
+                    && crate::engine::ward::pay_ward(g, p, t)?
+                {
+                    repl::put_plus(g, t, 1);
+                }
             }
         }
         if g.dsl_on {
