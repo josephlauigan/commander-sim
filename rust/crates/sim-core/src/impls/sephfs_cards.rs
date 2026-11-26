@@ -372,7 +372,7 @@ pub fn rabid_dies(g: &mut Game, p: PlayerId) -> Res {
 /// **Kaya's Ghostform** (Aura, enchant creature or planeswalker you control): when the enchanted permanent dies or is
 /// put into exile, return that card to the battlefield under your control. Only creatures are enchanted here. When the
 /// host leaves, `host_dies` marks it (`DataKey::Ghostform`, the Aura's controller) and `die_rest` / `exile_perm` return
-/// the card instead of putting it into the graveyard or exile. A commander returns from the command zone's place.
+/// the card from the graveyard or exile. A commander is left there instead of moving to the command zone.
 fn ghostform_mark(g: &mut Game, p: PlayerId, _a: PermId, host: PermId) -> Res {
     g.perm_mut(host).data.set(DataKey::Ghostform, Val::Player(p));
     Ok(())
@@ -384,11 +384,15 @@ static GHOSTFORM: AuraSpec = AuraSpec { host_dies: Some(ghostform_mark), host_ex
 pub fn ghostform_return(g: &mut Game, m: PermId, p: PlayerId) -> Res<bool> {
     g.perm_mut(m).data.set(DataKey::Ghostform, Val::None);
     let x = g.perm(m).clone();
-    let Some(c) = x.cd else { return Ok(false) };
+    let Some(c) = x.phys.or(x.cd) else { return Ok(false) };
     if x.token || !g.player(p).alive {
         return Ok(false);
     }
     let cmd = g.player(x.orig).is_commander(c);
+    if !super::partials::remove_card(&mut g.player_mut(x.orig).gy, c) {
+        let Some(i) = g.player(x.orig).exile.iter().position(|&cd| cd == c) else { return Ok(false) };
+        g.player_mut(x.orig).exile.remove(i);
+    }
     let how = Enter { orig: (x.orig != p).then_some(x.orig), ..Enter::default() };
     let n = enter(g, p, c, how)?;
     if cmd {
