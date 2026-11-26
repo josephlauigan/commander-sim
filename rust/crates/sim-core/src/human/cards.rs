@@ -1089,6 +1089,10 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),
         "Nim Deathmantle" => vec![], // equip {4}: the Equip ability every equipment has
+        "The Fire Crystal" => vec![ability(
+            "{4}{R}{R}, {T}: a token copy of target creature you control, sacrificed at the beginning of the next end step",
+            crate::impls::karn_gilded_cards::fire_crystal_go,
+        )],
         n if PREPARED.iter().any(|x| x.0 == n) => prepared(g, m),
         n => return more_abilities(g, p, m, n),
     })
@@ -2011,7 +2015,7 @@ fn niv_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = tapped(g, m, None) {
         return Ok(Some(why));
     }
-    if g.perm(m).sick {
+    if crate::engine::combat::tap_sick(g, m) {
         return Ok(Some("Niv-Mizzet has summoning sickness (it came under your control this turn).".into()));
     }
     g.perm_mut(m).tapped = true;
@@ -2268,7 +2272,7 @@ pub fn cast_target(g: &Game, p: PlayerId, c: CardId) -> Res<CastTarget> {
 // ------------------------------------------------------------------ Galadriel's deck (Bant Rebels)
 pub(super) fn creature_tap_ok(g: &Game, m: PermId) -> Why {
     tapped(g, m, None).or_else(|| {
-        if g.perm(m).sick {
+        if crate::engine::combat::tap_sick(g, m) {
             Some(format!("{} has summoning sickness (it came under your control this turn).", pm_name(g, m)))
         } else {
             None

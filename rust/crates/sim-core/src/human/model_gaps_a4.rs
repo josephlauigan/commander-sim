@@ -149,7 +149,7 @@ fn kiki(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if x.tapped {
         return Ok(Some(format!("{} is tapped.", x.name)));
     }
-    if x.sick && !crate::dsl::has_kw(g, m, "haste") && !crate::impls::t45_krenko::elixir(g, p) {
+    if crate::engine::combat::tap_sick(g, m) {
         return Ok(Some(format!("{} has summoning sickness (it came under your control this turn).", x.name)));
     }
     let cands: Vec<PermId> = g

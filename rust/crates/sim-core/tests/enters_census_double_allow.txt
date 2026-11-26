@@ -35,6 +35,7 @@ Defy Death | [fixture] This spell is SETUP by its own Oracle text, but its blink
 Doomwake Giant | [nonlinear] Repeated counters or -X/-X kill different toughness bands on successive instances; removal, graveyard and death-trigger life metrics are nonlinear.
 Dragon Tempest | [idempotent] The standard cast entrant is a non-Dragon flier; tempest_etb grants the same haste keyword again, and no Dragon-damage clause is exercised.
 Dragon's Hoard | [fixture] No standard observer entrant is a Dragon; the Dragon-enter guard is not exercised.
+Dread Tiller | [exhausted] The first instance consumes its chosen target and its graveyard land; the extra instance picks another seat's creature and a land from the hand, so the first seat's removal and graveyard metrics do not repeat (both instances happen: two creatures dead, two lands).
 Elvish Warmaster | [fixture] No standard observer entrant is an Elf; the another-Elf guard is not exercised.
 Endurance | [exhausted] The first chosen graveyard is emptied; the extra instance can affect a different player's graveyard, so the original player's graveyard metrics do not repeat (graveyard target selection).
 Galadhrim Brigade | [fixture] The cast pays no squad cost, so the entry hook has zero squad tokens to create.

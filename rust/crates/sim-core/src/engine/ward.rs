@@ -93,6 +93,17 @@ fn shown(g: &Game, m: PermId) -> String {
     g.perm(m).cd.map_or_else(|| g.perm(m).name.to_string(), |c| g.db.get(c).name.to_string())
 }
 
+/// Does `m` have a ward of any kind (a pure check, nothing is paid): ward {N} (the card's own and an Aura's), Sauron's
+/// "sacrifice a legendary artifact or creature", Hexing Squelcher's "pay 2 life", Prismari's "pay 5 life" and Valgavoth's
+/// "sacrifice three nonland permanents": the wards `pay_ward` pays
+pub fn has_ward(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.map_or(0, |c| g.db.get(c).ward) + cardcode::aura_ward(g, m) > 0
+        || card_tag(g, m, Tag::Sauron)
+        || crate::impls::t45_krenko::has_life_ward(g, m)
+        || crate::impls::t6_scion::has_life_ward(g, m)
+        || crate::impls::t12_kaalia_sythis::has_sac_ward(g, m)
+}
+
 /// Can `actor` pay for a spell or ability that targets `m` (the AI's look-ahead): no ward, or one it can afford now
 /// (`extra` more mana is spent first). Covers ward {N} (the card's own and an Aura's), Sauron's "sacrifice a legendary
 /// artifact or creature" and Valgavoth's "sacrifice three nonland permanents", the same wards `removal::legal_targets`

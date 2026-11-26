@@ -250,6 +250,11 @@ pub fn mountainwalk(g: &Game, b: PermId, a: PermId) -> bool {
 }
 
 // ------------------------------------------------------------------ Hexing Squelcher
+/// does m carry Hexing Squelcher's "Ward—Pay 2 life" (a creature of a controller who has a Squelcher): a pure check
+pub fn has_life_ward(g: &Game, m: PermId) -> bool {
+    g.is_creature(m) && mine(g, owner(g, m), SQUELCHER).is_some()
+}
+
 /// "Ward—Pay 2 life" on m (Hexing Squelcher, or another creature of its controller's): actor pays 2 life, or the
 /// spell is countered (false) when the AI is at 4 life or less (a person is asked, and can pay at any life total of 2
 /// or more)

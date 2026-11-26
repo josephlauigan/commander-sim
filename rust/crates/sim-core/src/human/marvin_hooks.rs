@@ -33,7 +33,7 @@ fn pay(g: &mut Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {
 }
 
 /// why m can't pay a {T} cost now (tapped, or summoning sick without haste)
-fn tap_problem(g: &Game, p: PlayerId, m: PermId) -> Why {
+fn tap_problem(g: &Game, _p: PlayerId, m: PermId) -> Why {
     let x = g.perm(m);
     if !live(g, m) {
         return Some(format!("{} is not on the battlefield.", x.name));
@@ -41,7 +41,7 @@ fn tap_problem(g: &Game, p: PlayerId, m: PermId) -> Why {
     if x.tapped {
         return Some(format!("{} is tapped.", x.name));
     }
-    if x.sick && !crate::engine::combat::has_haste(g, m) && !crate::impls::t45_krenko::elixir(g, p) {
+    if crate::engine::combat::tap_sick(g, m) {
         return Some(format!("{} has summoning sickness (it came under your control this turn).", x.name));
     }
     None

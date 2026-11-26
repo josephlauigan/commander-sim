@@ -396,6 +396,17 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
                     }
                 }
             }
+            // the creatures that die in the driven moments carry a -1/-1 counter (the trigger hears only those): the
+            // Tiller, the person's creatures and the opponent's
+            ("Dread Tiller", Sc::DieSelf | Sc::DieOwn | Sc::DieOpp) => {
+                for p in [P0, P1] {
+                    for m in g.player(p).perms.clone() {
+                        if g.is_creature(m) {
+                            g.perm_mut(m).plus = -1;
+                        }
+                    }
+                }
+            }
             // counters on The Ozolith (a creature with counters left earlier)
             ("The Ozolith", Sc::Combat) => g.player_mut(P0).ozolith_counters = 2,
             // an opponent was dealt combat damage this turn
@@ -635,7 +646,11 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
             }
             Sc::DieSelf => zones::die(&mut g, m, destroy)?,
             Sc::DieOwn => zones::die(&mut g, e0, destroy)?,
-            Sc::DieOpp => zones::die(&mut g, e1, destroy)?,
+            // (the Dread Tiller's own enters trigger killed one of the opponent's two 1/1s as it entered: the other dies)
+            Sc::DieOpp => {
+                let victim = if g.perm(e1).on_bf { e1 } else { b1 };
+                zones::die(&mut g, victim, destroy)?
+            }
             Sc::SacOwn => zones::die(&mut g, b0, intern("sac"))?,
             Sc::GainLife => life::gain(&mut g, P0, 3)?,
             Sc::LoseLife => life::lose_life(&mut g, P0, 2, Some(P1), intern("other"), None)?,
@@ -928,10 +943,6 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    (
-        "karn_gilded: Birthing Pod (Activate(0))",
-        "an activated ability that sacrifices a creature of yours: the probe's table has no creature of yours and no library target, so nothing is offered in its state; the person path is the card's `options` hook, which offers one computed sacrifice-and-fetch pair (a known practice limit of the Pod, see audit/karn_gilded/FINDINGS.md)",
-    ),
     (
         "karn_gilded: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",

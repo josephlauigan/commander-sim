@@ -1530,6 +1530,26 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     if rsv.is_some() {
         stop_u = stop_u.max(4.5); // ninjutsu window: go to combat, cast after
     }
+    // The Fire Crystal (AI_CRYSTAL_HOLD): keep {4}{R}{R} up for the end-of-turn copy. A cast that would leave it unpayable
+    // loses a share of the hold's worth; once nothing that keeps the reserve beats "stop", "stop" is worth the hold
+    if let Some(h) = crate::impls::karn_gilded_cards::crystal_hold(g, p, s.danger) {
+        let mut other = false;
+        for o in opts.iter_mut() {
+            match &o.act {
+                Some(Action::Cast { card, .. })
+                    if crate::impls::karn_gilded_cards::crystal_reserve_broken(g, p, *card) =>
+                {
+                    o.utility -= crate::impls::karn_gilded_cards::FC_HOLD_PEN * h;
+                }
+                Some(_) => other |= o.utility > stop_u, // a play that keeps the reserve and beats today's stop
+                None => {}
+            }
+        }
+        if !other {
+            stop_u = stop_u.max(h);
+            crate::impls::karn_gilded_cards::note_hold(g, p);
+        }
+    }
     let label = if hold_card.is_some() { "stop (hold mana)" } else { "stop" };
     opts.push(Opt { utility: stop_u, label: label.into(), act: None });
     Ok(opts)

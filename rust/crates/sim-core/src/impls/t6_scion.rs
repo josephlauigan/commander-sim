@@ -211,6 +211,11 @@ fn prismari_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     Ok(())
 }
 
+/// is m Prismari (or Scion as a copy of it), which has "Ward—Pay 5 life": a pure check
+pub fn has_life_ward(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| cname(g, c) == PRISMARI)
+}
+
 /// "Ward—Pay 5 life" on Prismari (or Scion as a copy of it): the actor pays 5 life, or (at 5 life or less) the
 /// spell is countered (false)
 pub fn prismari_ward(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {

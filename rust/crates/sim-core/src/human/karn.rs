@@ -79,14 +79,20 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
     if x.tapped {
         return Some(format!("{} is tapped.", x.name));
     }
-    if creature && x.sick {
+    if creature && crate::engine::combat::tap_sick(g, m) {
         return Some(format!("{} has summoning sickness (it came under your control this turn).", x.name));
     }
     None
 }
 
 fn land_tap_ok(g: &Game, l: PermId) -> Why {
-    if g.perm(l).tapped { Some(format!("{} is tapped.", lname(g, l))) } else { None }
+    if g.perm(l).tapped {
+        Some(format!("{} is tapped.", lname(g, l)))
+    } else if crate::engine::combat::tap_sick(g, l) {
+        Some(format!("{} is a summoning-sick creature: it can't use a {{T}} ability.", lname(g, l)))
+    } else {
+        None
+    }
 }
 
 fn lname(g: &Game, l: PermId) -> String {

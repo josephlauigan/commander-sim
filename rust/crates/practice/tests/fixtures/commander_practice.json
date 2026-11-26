@@ -132,12 +132,12 @@
     "deck": "karn_gilded",
     "partner": null,
     "replay": {
-      "events": 69,
-      "game_hash": "aebff05949a3494c",
-      "hash": "da1e807da194785f",
-      "live_answers": 7,
+      "events": 65,
+      "game_hash": "dfc45a4ff45d3732",
+      "hash": "062c7cc30c081650",
+      "live_answers": 5,
       "live_by_seat": {
-        "karn_gilded": 7
+        "karn_gilded": 5
       },
       "over": {
         "how": "timeout",
@@ -176,13 +176,8 @@
           "do": "pass"
         },
         {
-          "card": 2,
+          "card": 4,
           "do": "land"
-        },
-        0,
-        {
-          "do": "tap",
-          "source": 0
         },
         {
           "do": "tap",
@@ -239,6 +234,12 @@
         },
         {
           "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
         }
       ],
       "autopass": {
@@ -270,12 +271,12 @@
     "deck": "karn_gilded",
     "partner": "sheoldred",
     "replay": {
-      "events": 104,
-      "game_hash": "45b4ae1605bbaabd",
-      "hash": "fc52bcce144ef5c8",
-      "live_answers": 39,
+      "events": 100,
+      "game_hash": "a8dd6b382fbe291c",
+      "hash": "aa989fe4279f746f",
+      "live_answers": 37,
       "live_by_seat": {
-        "karn_gilded": 22,
+        "karn_gilded": 20,
         "sheoldred": 17
       },
       "over": {
@@ -407,7 +408,7 @@
           "do": "pass"
         },
         {
-          "card": 2,
+          "card": 4,
           "do": "land"
         }
       ],
@@ -3370,14 +3371,14 @@
   },
   "sessions": [
     {
-      "answers": 34,
+      "answers": 32,
       "answers_by_seat": {
-        "karn_gilded": 34
+        "karn_gilded": 32
       },
       "deck": "karn_gilded",
-      "events": 89,
-      "game_hash": "ddefd1fccf9194e8",
-      "hash": "27a5ac838c8b3c04",
+      "events": 84,
+      "game_hash": "79ea3c423dd76e3f",
+      "hash": "18794ba0f29df98d",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3394,14 +3395,14 @@
       "tier": "t4"
     },
     {
-      "answers": 38,
+      "answers": 36,
       "answers_by_seat": {
-        "karn_gilded": 38
+        "karn_gilded": 36
       },
       "deck": "karn_gilded",
-      "events": 101,
-      "game_hash": "9dc2c4ad75f3ae98",
-      "hash": "c4afd3916be497b7",
+      "events": 97,
+      "game_hash": "8ec0c38ab20807e7",
+      "hash": "0c4f227f3b26132c",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3514,15 +3515,15 @@
       "tier": "t5"
     },
     {
-      "answers": 63,
+      "answers": 61,
       "answers_by_seat": {
-        "karn_gilded": 32,
+        "karn_gilded": 30,
         "sheoldred": 31
       },
       "deck": "karn_gilded",
-      "events": 131,
-      "game_hash": "4ef5ab063e547dea",
-      "hash": "4350ab97fc5a2470",
+      "events": 126,
+      "game_hash": "be5d1927768b22d2",
+      "hash": "c00e8f0530dd31e2",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3539,14 +3540,14 @@
       "tier": "t4"
     },
     {
-      "answers": 55,
+      "answers": 53,
       "answers_by_seat": {
-        "karn_gilded": 55
+        "karn_gilded": 53
       },
       "deck": "karn_gilded",
-      "events": 142,
-      "game_hash": "6436ec07a4f012cc",
-      "hash": "5caf19bcd77b0369",
+      "events": 137,
+      "game_hash": "8178258d1124bc57",
+      "hash": "fdb29389f48c1174",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3563,14 +3564,14 @@
       "tier": "t6"
     },
     {
-      "answers": 106,
+      "answers": 77,
       "answers_by_seat": {
-        "karn_gilded": 106
+        "karn_gilded": 77
       },
       "deck": "karn_gilded",
-      "events": 291,
-      "game_hash": "e463b1428cdf52e2",
-      "hash": "11b569dbd5fb0e25",
+      "events": 263,
+      "game_hash": "ca587bb0eb90b6f7",
+      "hash": "4f4ca0379d0be3d9",
       "max_rounds": 30,
       "over": {
         "how": "damage",

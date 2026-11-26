@@ -2253,9 +2253,8 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     if gn > 0 && cost.x.is_none() && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)) {
         gn = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, gn, (!pips.is_empty()) as u32);
     }
-    // --- Tiers 4/5 (krenko): Thousand-Year Elixir, "as though those creatures had haste"
-    let sick = x.sick && !crate::impls::t45_krenko::elixir(g, p);
-    if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && sick)) {
+    // CR 302.6: a sick creature without haste (printed, granted, Greaves, Shang-Chi, Elixir) can't pay a {T} cost
+    if cost.tap == Some(true) && (x.tapped || crate::engine::combat::tap_sick(g, src)) {
         return Ok(false);
     }
     if cost.life.is_some_and(|l| g.player(p).life <= l + 5) {

@@ -67,6 +67,11 @@ pub enum DataKey {
     MyriadTok,
     /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
     EotSac,
+    /// a token copy sacrificed at the beginning of the next end step, whoever's turn it is (The Fire Crystal): the value is
+    /// `Val::Player(controller)`, the player told to sacrifice it. `turn::end_step` captures the marked permanents as the
+    /// step begins, so one made during the step waits for the next end step; it skips a copy that is phased out or under
+    /// another player's control
+    CopySac,
     /// Sneak Attack: activating player until the next end step, then Bool(true); grants lasting haste.
     SneakAttack,
     /// a permanent cast for its warp cost: the player who cast it (`Val::Player`). Its delayed exile at the beginning of

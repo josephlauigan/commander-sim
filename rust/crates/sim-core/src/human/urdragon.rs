@@ -161,7 +161,7 @@ fn squire_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if g.perm(m).tapped {
         return Ok(Some("Brass Squire is tapped.".into()));
     }
-    if g.perm(m).sick {
+    if crate::engine::combat::tap_sick(g, m) {
         return Ok(Some("Brass Squire has summoning sickness (it came under your control this turn).".into()));
     }
     let eqs: Vec<PermId> = g
@@ -328,7 +328,7 @@ fn jaxis_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if g.perm(m).tapped {
         return Ok(Some("Jaxis, the Troublemaker is tapped.".into()));
     }
-    if g.perm(m).sick {
+    if crate::engine::combat::tap_sick(g, m) {
         return Ok(Some("Jaxis has summoning sickness (it came under your control this turn).".into()));
     }
     if g.player(p).hand.is_empty() {
