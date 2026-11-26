@@ -1,13 +1,13 @@
 //! Card code for the other cards of the karn_gilded deck that had no record (E5): Infinite Guideline Station, Breya,
-//! Etherium Shaper, Gold-Forged Thopteryx, The Reaper, King No More, Herd Heirloom and Twitching Doll. Transguild
-//! Courier is data only (its colours are `NamedFx::SelfAllColors`), and Shorikai, Genesis Engine's ability is compiled
-//! (the `dsl` of its override in data/card_overrides.toml), so neither has code here. The audit verdicts are in
+//! Etherium Shaper, Gold-Forged Thopteryx, The Reaper, King No More, Dread Tiller, Herd Heirloom and Twitching Doll.
+//! Transguild Courier is data only (its colours are `NamedFx::SelfAllColors`), and Shorikai, Genesis Engine's ability is
+//! compiled (the `dsl` of its override in data/card_overrides.toml), so neither has code here. The audit verdicts are in
 //! data/card_overrides.toml; each function's doc comment says how the card is modeled and what is left out.
 //!
 //! One path per card: every card here has `dsl = []` in its override.
 //!
-//! - **Triggers** (Station's and Breya's enter triggers, Station's attack trigger, The Reaper's two) go on the stack
-//!   through `trigger_window`, so an opponent's Elesh Norn blanks them and the doublers repeat them.
+//! - **Triggers** (Station's and Breya's enter triggers, Station's attack trigger, The Reaper's two, Dread Tiller's two)
+//!   go on the stack through `trigger_window`, so an opponent's Elesh Norn blanks them and the doublers repeat them.
 //! - **Activated abilities** (Station, Breya's modal ability, Herd Heirloom's second ability, Twitching Doll's
 //!   sacrifice) are `Opt`s of the card's `options` hook: the AI picks them by utility and a person gets them through the
 //!   same hook, with their own choice of target, mode or creature where the AI would pick by value.
@@ -540,6 +540,219 @@ fn reaper_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     crate::impls::partials::remove_card(&mut g.player_mut(orig).gy, cd);
     enter(g, p, cd, Enter { orig: Some(orig), ..Enter::default() })?;
     crate::glog!(g, "    {}: {} comes back under {}'s control", REAPER, g.db.get(cd).name, pname(g, p));
+    Ok(())
+}
+
+// ================================================================== Dread Tiller
+const TILLER: &str = "Dread Tiller";
+/// the value the AI gives a -1/-1 counter that kills an opposing creature: the death feeds the Tiller's own second
+/// ability (a land) and any Reaper, so every such target ranks above every counter that does not kill
+const TILLER_KILL: f64 = 100.0;
+/// the harm of a -1/-1 counter on the Tiller itself (2/4 becomes 1/3): less than on any other creature of ours
+const TILLER_SELF_HARM: f64 = 0.1;
+/// the AI never puts a counter that kills one of its own creatures, unless nothing else can be targeted
+const TILLER_OWN_KILL: f64 = -1000.0;
+/// a target the AI can't use (an opposing creature whose ward it can't pay): only if nothing else is left
+const TILLER_NO_USE: f64 = -2000.0;
+/// the life total at or under which the AI no longer puts a land that costs life to tap (Mana Confluence, City of Brass)
+const TILLER_LIFE_FLOOR: i32 = 10;
+/// the AI's value for each colour of the deck's identity that none of its lands makes yet, which the land would add
+const TILLER_NEW_COLOUR: f64 = 10.0;
+/// the utility lands the AI prefers, best first: a land that makes no new colour is ranked by this list (the points are
+/// the position from the end, so Cabal Coffers is worth the most); any other land is worth 0, and Mana Confluence and
+/// City of Brass half a point less than that
+const TILLER_UTILITY: [&str; 6] = [
+    "Cabal Coffers",
+    "Urborg, Tomb of Yawgmoth",
+    "Reliquary Tower",
+    "Mistrise Village",
+    "Path of Ancestry",
+    "Command Tower",
+];
+/// the tie-break between two copies of the same land: the graveyard one goes first, so the hand keeps its choice, except
+/// that a hand at the cleanup limit goes first
+const TILLER_ZONE: f64 = 0.5;
+
+/// the creatures the enters trigger may target: any creature on the battlefield (ours, an opponent's, the Tiller
+/// itself) that `src` may target
+fn tiller_targets(g: &Game, src: PermId) -> Vec<PermId> {
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&m| live(g, m) && g.is_creature(m) && targetable_by(g, src, m))
+        .collect()
+}
+
+/// what the AI thinks a counter on t is worth to o (see `tiller_etb`): an opposing creature it kills is worth most, then
+/// the opposing creature worth most (`pval`); a creature that can't have the counter is worth nothing either way; one of
+/// ours is a loss, the least for the Tiller itself, the most for a creature the counter would kill
+fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
+    let opposing = owner(g, t) != o;
+    if !repl::minus_ok(g, t) {
+        return 0.0;
+    }
+    let dies = etgh(g, t) <= 1;
+    if opposing {
+        if !crate::engine::ward::ward_affordable(g, o, t, 0, "") {
+            return TILLER_NO_USE;
+        }
+        return if dies { TILLER_KILL + pval(g, t) } else { pval(g, t) };
+    }
+    if dies {
+        return TILLER_OWN_KILL;
+    }
+    if t == src { -TILLER_SELF_HARM } else { -(TILLER_SELF_HARM + pval(g, t)) }
+}
+
+/// "When this creature enters, put a -1/-1 counter on target creature." Any creature on the battlefield, ours or an
+/// opponent's, the Tiller itself too; the trigger must target, so it goes on the least harmful creature of ours when
+/// nothing of an opponent's can be used. The AI: an opposing creature the counter kills, the one worth most first (the
+/// death feeds the second ability); else the opposing creature worth most; else a creature of ours that can't have the
+/// counter; else the Tiller itself; else our least valuable creature that survives; a creature of ours that it would kill
+/// last of all. An opposing creature's ward the AI can't pay rules it out; a person is asked (no way to decline) and pays
+/// the ward as it resolves, and the creature is then skipped if they don't. A creature that can't have -1/-1 counters
+/// (Melira, Sylvok Outcast) is a legal target but gets none.
+fn tiller_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = crate::engine::hooks::trigger_controller(g, src);
+    let cands = tiller_targets(g, src);
+    if cands.is_empty() {
+        return Ok(());
+    }
+    const NAME: &str = "a -1/-1 counter on target creature";
+    if g.trig_probe {
+        // only whether the trigger goes on the stack: its target is chosen (and a person asked) once, as it does
+        return trigger_window(g, o, Some(src), NAME, Some(5.0)).map(|_| ());
+    }
+    let target = if human(g, o) {
+        let prompt = "Dread Tiller: put a -1/-1 counter on which creature?";
+        crate::human::cards::pick_perm(g, o, "target", prompt, &cands, None)?.unwrap_or(cands[0])
+    } else {
+        max_by(&cands, |t| tiller_worth(g, o, src, t)).unwrap_or(cands[0])
+    };
+    if !trigger_window(g, o, Some(src), NAME, Some(5.0))? {
+        return Ok(());
+    }
+    if !live(g, target) || !targetable_by(g, src, target) {
+        return Ok(());
+    }
+    if owner(g, target) != o && !crate::engine::ward::pay_ward(g, o, target)? {
+        return Ok(());
+    }
+    if repl::minus_ok(g, target) {
+        repl::put_counters(g, o, target, -1);
+        crate::glog!(g, "    {}: a -1/-1 counter on {}", TILLER, g.perm(target).name);
+    }
+    g.bf_ver += 1;
+    check_state(g)
+}
+
+/// the land cards p may put onto the battlefield: (card, true if it is in the graveyard), one entry for each card of each
+/// zone (copies of a basic land are one card)
+fn tiller_lands(g: &Game, p: PlayerId) -> Vec<(CardId, bool)> {
+    let mut out: Vec<(CardId, bool)> = vec![];
+    for (zone, gy) in [(&g.player(p).hand, false), (&g.player(p).gy, true)] {
+        for &c in zone {
+            if g.db.get(c).land && !out.contains(&(c, gy)) {
+                out.push((c, gy));
+            }
+        }
+    }
+    out
+}
+
+/// the colours a land card taps for (its tag: 'A' is the deck's whole identity, 'C' none)
+fn tiller_land_colours(g: &Game, p: PlayerId, c: CardId) -> Colors {
+    match g.db.get(c).tags.str(Tag::C).unwrap_or("C") {
+        "A" => g.player(p).ident,
+        "C" => Colors::NONE,
+        s => Colors::from_letters(s),
+    }
+}
+
+/// the AI's worth of putting land card c (in the graveyard if `gy`) onto the battlefield, None if it never would: a land
+/// that costs life to tap when the life is at or under `TILLER_LIFE_FLOOR`. More for each colour of the deck's identity
+/// that none of its lands makes now, then the utility lands, then the graveyard copy (the hand copy when the hand is at
+/// the limit and p has no way around it)
+fn tiller_land_worth(g: &Game, p: PlayerId, c: CardId, gy: bool, made: Colors, hand_full: bool) -> Option<f64> {
+    let d = g.db.get(c);
+    let pays = matches!(&*d.name, "Mana Confluence" | "City of Brass");
+    if pays && g.player(p).life <= TILLER_LIFE_FLOOR {
+        return None;
+    }
+    let ident = g.player(p).ident;
+    let own = tiller_land_colours(g, p, c);
+    let new = "WUBRG".chars().filter(|&ch| ident.has(ch) && own.has(ch) && !made.has(ch)).count();
+    let utility = TILLER_UTILITY.iter().position(|&n| n == &*d.name).map_or(0.0, |i| (TILLER_UTILITY.len() - i) as f64);
+    let zone = if gy != hand_full { TILLER_ZONE } else { 0.0 };
+    Some(TILLER_NEW_COLOUR * new as f64 + utility + zone - if pays { 0.5 } else { 0.0 })
+}
+
+/// "Whenever a creature with a -1/-1 counter on it dies, you may put a land card from your hand or graveyard onto the
+/// battlefield tapped." Any creature on any side that dies with a -1/-1 counter on it (read from the creature as it died:
+/// the engine nets +1/+1 and -1/-1 counters in `plus`, so a creature whose counters cancel has none), a token, the Tiller
+/// itself, and a creature that died to its own enters trigger; each Tiller triggers on its own. The Tiller sees its own
+/// death (`self_dies`) and that of every creature that dies while it is on the battlefield (`dies`). The AI always does it
+/// when it has a land card in either zone, and puts the land `tiller_land_worth` ranks first; a person is asked which land
+/// (each card of each zone is listed) and may decline. The land is not played (no land drop) and enters tapped, with its
+/// own enters ability and landfall.
+fn tiller_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if g.perm(src).neutered || g.perm(m).plus >= 0 || !g.is_creature(m) {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    if !g.player(p).alive || tiller_lands(g, p).is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(
+        g,
+        p,
+        Some(src),
+        "put a land card from your hand or graveyard onto the battlefield tapped",
+        Some(3.0),
+    )? {
+        return Ok(());
+    }
+    let lands = tiller_lands(g, p); // read again as the trigger resolves
+    if lands.is_empty() {
+        return Ok(());
+    }
+    let pick = if human(g, p) {
+        let labels: Vec<String> = lands
+            .iter()
+            .map(|&(c, gy)| format!("{} ({})", g.db.get(c).name, if gy { "graveyard" } else { "hand" }))
+            .collect();
+        let prompt = "Dread Tiller: put a land from your hand or graveyard onto the battlefield tapped?";
+        match crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("decline"), None)? {
+            Some(i) => lands[i],
+            None => return Ok(()),
+        }
+    } else {
+        let made =
+            g.player(p).lands.iter().fold(Colors::NONE, |a, &l| a.union(crate::engine::mana::land_colors_now(g, p, l)));
+        let hand_full = !crate::engine::turn::no_max_hand(g, p) && crate::engine::values::hand_proper(g, p).len() >= 7;
+        let best = lands
+            .iter()
+            .filter_map(|&(c, gy)| tiller_land_worth(g, p, c, gy, made, hand_full).map(|w| ((c, gy), w)))
+            .fold(
+                None,
+                |best: Option<((CardId, bool), f64)>, x| if best.is_none_or(|b| x.1 > b.1) { Some(x) } else { best },
+            );
+        let Some((pick, _)) = best else { return Ok(()) };
+        pick
+    };
+    let (cd, gy) = pick;
+    let zone = if gy { &mut g.player_mut(p).gy } else { &mut g.player_mut(p).hand };
+    if !crate::impls::partials::remove_card(zone, cd) {
+        return Ok(());
+    }
+    let l = g.add_land(p, cd, true);
+    crate::cardcode::land_etb(g, p, l)?;
+    crate::engine::turn::land_arrives(g, p, l, cd)?;
+    crate::glog!(g, "    {}: {} puts {} onto the battlefield tapped", TILLER, pname(g, p), g.db.get(cd).name);
     Ok(())
 }
 
@@ -1207,6 +1420,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, REAPER)?;
     c.etb = Some(reaper_etb);
     c.dies = Some(reaper_dies);
+    let c = r.card(db, TILLER)?;
+    c.etb = Some(tiller_etb);
+    c.dies = Some(tiller_dies);
+    c.self_dies = Some(tiller_dies);
     r.card(db, HEIRLOOM)?.options = Some(heirloom_options);
     let c = r.card(db, DOLL)?;
     c.on_tap_perm = Some(doll_tap);

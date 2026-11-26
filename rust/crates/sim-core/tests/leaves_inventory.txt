@@ -41,6 +41,8 @@ Disciple of the Vault | Dies | T
 Disciple of the Vault | Sacrifice | T | | a Treasure, Food or Clue token (an artifact) put into a graveyard from the battlefield by a sacrifice
 Dour Port-Mage | Leaves | T
 Dread Slaver | Dies | T
+Dread Tiller | Dies | T | | 'Whenever a creature with a -1/-1 counter on it dies, you may put a land card from your hand or graveyard onto the battlefield tapped': a trigger, for any creature that dies while the Tiller is on the battlefield
+Dread Tiller | SelfDies | T | | the same trigger for the Tiller's own death (it sees its own counter)
 Edgar, Charmed Groom // Edgar Markov's Coffin | SelfDies | T
 Elderfang Ritualist | SelfDies | T
 Elenda, the Dusk Rose | SelfDies | T

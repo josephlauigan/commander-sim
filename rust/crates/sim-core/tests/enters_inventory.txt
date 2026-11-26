@@ -119,6 +119,7 @@ Dragon Tempest | Etb | T
 Dragon's Hoard | Etb | T
 Dragonlord Silumgar | Etb | T
 Dragoon's Lance | Etb | T
+Dread Tiller | Etb | T | | a triggered ability on the stack: a -1/-1 counter on target creature (the target is chosen as it goes on the stack)
 Dreamtide Whale | Etb | S
 Druid Class | Landfall | T
 Duplicant | Etb | T

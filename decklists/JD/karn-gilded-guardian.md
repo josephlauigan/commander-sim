@@ -17,7 +17,7 @@ mandatory. **This list has not been simulated; every number below is a count fro
 | **Commander** | Karn, Gilded Guardian ({2/W}{2/U}{2/B}{2/R}{2/G}, mana value 10, 5/5 artifact creature, vigilance and trample; all five colours). When Karn enters, draw a card for each colour among other artifacts you control |
 | **Bracket** | 4: 15 Game Changers and four short winning lines. Played against Tier 4 and Tier 5 |
 | **Game Changers (15)** | Consecrated Sphinx, Demonic Tutor, Enlightened Tutor, Farewell, Force of Will, Imperial Seal, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Teferi's Protection, Thassa's Oracle, The One Ring, Vampiric Tutor |
-| **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. First runs and their limits are in the findings file; the current list is not simulated. Dread Tiller is below Full in the simulator: Partial, body only (its enter trigger and its land trigger do not run); JD has not yet decided whether to model it. Iron Man, Armored Avenger is Full |
+| **Simulator** | Deck key `karn_gilded`, tiers t4-t5; findings in `audit/karn_gilded/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/karn_gilded.toml`. First runs and their limits are in the findings file; the current list is not simulated. Dread Tiller and Iron Man, Armored Avenger are Full |
 | **Buys** | None: every card he does not own is proxied |
 
 ## Strategy
@@ -222,8 +222,12 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **The Fire Crystal and the commander tax (simulator):** the Crystal's {1} does not reach the commander tax in the engine until the cost-order change
   merges, so a Karn recast paid with all five colours costs {1} more there than at a table.
 - **An animated land can't be copied** by the Crystal, for a person or the AI (no such land is in the list).
-- **Dread Tiller is Partial in the simulator** (body only): its enter trigger puts no -1/-1 counter and its land trigger never runs, so the simulator plays it as
-  a 2/4 for {1}{B}{G} that adds black and green to Karn's draw; The Reaper's steal still works on the counters The Reaper itself puts. JD has not yet decided whether to model it.
+- **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
+  else the Tiller itself, and never kills a creature of its own on purpose; it skips an opposing creature whose ward it can't pay. It always puts a land when it has one
+  in its hand or graveyard: first a land that adds a colour its lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and
+  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand is at seven cards), and never Mana Confluence or City of Brass at 10 life or less.
+  These rankings are provisional and untuned by any sim. A wipe that kills the Tiller and then another creature with a -1/-1 counter does not trigger it for that
+  creature (the simulator runs death triggers one death at a time; The Reaper has the same limit).
 - **Iron Man's counter is not a trigger on the stack** in the simulator: it is put as each card is drawn, so the table cannot respond to it; the AI puts it on the creature
   it values most (a person chooses).
 - **The AI numbers for Station, Breya, Herd Heirloom and Twitching Doll are provisional** and untuned by any sim.
