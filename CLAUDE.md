@@ -221,9 +221,17 @@ checkout's binary, else the main checkout's, and never builds (if it exits 1, th
 unavailable" in step 6, and a build needs JD's approval).
 
 Claude Code hooks (`.claude/settings.json`, `scripts/hooks/kb_guard.py`) add a reminder to card questions and, when the
-turn ends, check once for a KB query and a `KB:` line. The check runs after the answer was shown: if it asks for a
-correction, post one that says what changed, ending with the `KB:` line. Handoff briefs (`/tmp/handoff/` in the prompt)
-are exempt, and sessions started before the hooks existed need a restart.
+turn ends, check once for a KB query and a closing `KB:` line. The check runs after the answer was shown: if it asks for
+a correction, post one that says what changed, ending with the `KB:` line. Details of the check:
+- Only queries made in this session or by Agent-tool subagents count; queries by herdr or Sol workers do not (they run
+  elsewhere), so a coordinator that relays a worker's card claims runs `find --name NAME --full` itself (step 4).
+- On a prompt the hook classes as strong, `KB: not applicable` is rejected; on a weak one it is rejected when the answer
+  names a catalog card of two or more words. Opt-outs are logged (`kb_guard.py report` summarises them).
+- A handoff brief is exempt: its prompt names `/tmp/handoff/` and has `GOAL:` or "write your results to
+  /tmp/handoff/..." (or is over 4000 characters with `GOAL:`). Follow-up messages to a worker repeat the path, or they are
+  checked like any prompt.
+- The check waits while background work started for the question is still running, and warns once, not on every later
+  turn, when a question ends without the KB. Sessions started before the hooks existed need a restart.
 
 1. **Map**: `cardgen map --stdout` (about 3k tokens): what exists, role and colour counts, JD's decks.
 2. **Digest**: `cardgen digest --deck KEY --stdout` (about 40k tokens). Read its header first: data date, role table
@@ -241,8 +249,8 @@ are exempt, and sessions started before the hooks existed need a restart.
 5. **Check, then test**: do the swap checks above yourself (flags are a pre-filter: no `BAN` is not the legality
    check, `*` and `d:` are not the cut check), then put the `--swap` runs (explain on, the deck's own tiers) in the
    plan JD approves. The `--swap` explain output is the model-status authority, not `m:`.
-6. **Say what you used**, as the closing line of the answer: `KB: <queries run> (data <date>, roles
-   <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
+6. **Say what you used**, as the last line of the answer (or just before a closing question to JD such as "Approve
+   this plan?"): `KB: <queries run> (data <date>, roles <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
    only when the answer names, ranks or evaluates no card; `KB: unavailable (<reason>)` when the catalog or binary is
    not reachable (cloud, no build), which also tells JD the answer is from memory and unverified.
 

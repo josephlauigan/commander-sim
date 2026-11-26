@@ -287,5 +287,92 @@ class HookFlow(Base):
         self.assertIn("strong 1", p.stdout)
 
 
+class OpusReviewFixes(Base):
+    """Fixes from the final review: hook commands never exit 2, card-fact questions are caught, background tasks and
+    repeated warnings, opt-outs that name a card, and closing-line endings."""
+
+    def _catalog(self, names):
+        with open(os.path.join(self.e.proj, "data", "knowledge", "oracle.json"), "w") as f:
+            json.dump({"cards": [{"name": n} for n in names]}, f)
+
+    def test_hook_commands_exit_zero_when_the_script_is_missing(self):
+        repo = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
+        with open(os.path.join(repo, ".claude", "settings.json")) as f:
+            hooks = json.load(f)["hooks"]
+        self.assertEqual(set(hooks), {"UserPromptSubmit", "PostToolUse", "Stop"})
+        for groups in hooks.values():
+            for g in groups:
+                for h in g["hooks"]:
+                    r = subprocess.run(["sh", "-c", h["command"]], input="{}", capture_output=True, text=True,
+                                       env=dict(os.environ, CLAUDE_PROJECT_DIR="/nonexistent-project"))
+                    self.assertEqual(r.returncode, 0, h["command"])
+
+    def test_card_fact_questions_are_flagged(self):
+        decks = ["sheoldred", "arzakon", "urdragon"]
+        for q in ["can planeswalkers be commanders?", "which planeswalkers can be your commander",
+                  "can Karn be my commander", "what colorless commanders are there", "rank the sheoldred removal",
+                  "explain the arzakon game plan", "tell me about Arzakon", "does sheoldred punish fetch lands",
+                  "list the cards in the urdragon deck", "send me the ban list again"]:
+            self.assertIn(kb_guard.classify(q, decks)[0], ("strong", "weak"), q)
+        for q in ["run the rust tests", "fix the borrow error in sim-core", "git status", "how do I run the tests"]:
+            self.assertEqual(kb_guard.classify(q, decks)[0], "none", q)
+
+    def test_old_background_task_does_not_defer_the_check(self):
+        bg = [{"id": "sim1", "status": "running"}]
+        self.e.prompt("run the rust tests")
+        self.e.stop("Started.", background_tasks=bg)  # the Stop that first sees sim1
+        self.e.prompt(COLORLESS)
+        self.assertBlocks(self.e.stop("No KB here.", background_tasks=bg))
+
+    def test_new_background_task_defers_the_check(self):
+        self.e.prompt(COLORLESS)
+        r = self.e.stop("Running a digest.", background_tasks=[{"id": "new1", "status": "running"}])
+        self.assertPasses(r)
+        self.assertTrue([x for x in self.e.events() if x["ev"] == "deferred"])
+
+    def test_unresolved_warns_once(self):
+        self.e.prompt(COLORLESS)
+        self.assertBlocks(self.e.stop("No KB."))
+        code, out, _ = self.e.stop("Still none.")
+        self.assertIn("systemMessage", json.loads(out))
+        code, out, _ = self.e.stop("Notification turn.")
+        self.assertEqual((code, out.strip()), (0, ""))
+        rows = open(os.path.join(self.e.state, "unresolved.jsonl")).read().splitlines()
+        self.assertEqual(len(rows), 1)
+
+    def test_opt_out_is_rejected_when_the_answer_names_a_card(self):
+        self._catalog(["Sol Ring", "Mana Crypt"])
+        self.e.prompt("is Sol Ring good in my commander decks")
+        self.assertBlocks(self.e.stop("Sol Ring is a fine card.\nKB: not applicable (general chat question only)"))
+
+    def test_opt_out_passes_when_no_card_is_named(self):
+        self._catalog(["Sol Ring", "Mana Crypt"])
+        self.e.prompt("is Sol Ring good in my commander decks")
+        self.assertPasses(self.e.stop("That depends on pacing.\nKB: not applicable (general chat question only)"))
+
+    def test_closing_line_endings(self):
+        self.e.prompt(COLORLESS)
+        self.e.bash("scripts/cardgen map --stdout")
+        self.assertPasses(self.e.stop("Advice.\n**KB**: map, find (data 2026-11-22, roles rules-only)"))
+
+    def test_kb_line_before_a_closing_question_passes(self):
+        self.e.prompt(COLORLESS)
+        self.e.bash("scripts/cardgen map --stdout")
+        self.assertPasses(self.e.stop("Plan.\nKB: map (data 2026-11-22, roles rules-only)\nApprove this plan?"))
+
+    def test_kb_line_followed_by_text_says_to_move_it(self):
+        self.e.prompt(COLORLESS)
+        self.e.bash("scripts/cardgen map --stdout")
+        code, out, _ = self.e.stop("KB: map (data 2026-11-22, roles rules-only)\nSome more text after it.")
+        self.assertIn("very last line", json.loads(out)["reason"])
+
+    def test_snippet_only_for_flagged_prompts(self):
+        self.e.prompt("run the rust tests")
+        self.e.prompt(COLORLESS)
+        snippets = [x["snippet"] for x in self.e.events() if x["ev"] == "prompt"]
+        self.assertEqual(snippets[0], "")
+        self.assertTrue(snippets[1])
+
+
 if __name__ == "__main__":
     unittest.main()

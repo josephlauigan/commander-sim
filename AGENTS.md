@@ -232,8 +232,8 @@ unavailable" in step 6, and a build needs JD's approval).
 5. **Check, then test**: do the swap checks above yourself (flags are a pre-filter: no `BAN` is not the legality
    check, `*` and `d:` are not the cut check), then put the `--swap` runs (explain on, the deck's own tiers) in the
    plan JD approves. The `--swap` explain output is the model-status authority, not `m:`.
-6. **Say what you used**, as the closing line of the answer: `KB: <queries run> (data <date>, roles
-   <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
+6. **Say what you used**, as the last line of the answer (or just before a closing question to JD such as "Approve
+   this plan?"): `KB: <queries run> (data <date>, roles <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
    only when the answer names, ranks or evaluates no card; `KB: unavailable (<reason>)` when the catalog or binary is
    not reachable (cloud, no build), which also tells JD the answer is from memory and unverified.
 

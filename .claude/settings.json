@@ -4,7 +4,7 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" prompt" }
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" prompt || true" }
         ]
       }
     ],
@@ -12,14 +12,14 @@
       {
         "matcher": "Bash|Read",
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" tool" }
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" tool || true" }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" stop" }
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/hooks/kb_guard.py\" stop || true" }
         ]
       }
     ]

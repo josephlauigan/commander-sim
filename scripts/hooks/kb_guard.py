@@ -29,7 +29,7 @@ DOMAIN = re.compile(
 )
 STRONG_INTENT = re.compile(
     r"\b(recommend\w*|suggest\w*|swap\w*|cuts?|buy\w*|upgrad\w+|replac\w+|adopt\w*|options?|ideas?|brainstorm\w*|"
-    r"what (?:cards?|strateg\w+|commanders?)|which (?:cards?|commanders?|strateg\w+)|"
+    r"what (?:\w+ ){0,3}(?:cards?|strateg\w+|commanders?)|which (?:\w+ ){0,3}(?:cards?|commanders?|strateg\w+)|"
     r"(?:build|make|making|building)\b[^.?!]{0,40}\bdeck)\b",
     re.I,
 )
@@ -42,10 +42,13 @@ WEAK_INTENT = re.compile(
 CARD_QUESTION = re.compile(
     r"\b(is|are)\s+[\w',\- ]{2,40}?\s+(good|legal|banned|worth|playable)\b|"
     r"\bhow (?:does|do)\s+[\w',\- ]{2,40}?\s+work\b|"
-    r"\bcan\s+[\w',\- ]{2,40}?\s+be\s+(?:a |your |used |played )?(?:commander|played|used)\b|"
+    r"\bcan\s+[\w',\- ]{2,40}?\s+be\s+(?:an? |your |my |the |used |played )?(?:commanders?|played|used)\b|"
     r"\bwhat does\s+[\w',\- ]{2,40}?\s+do\b",
     re.I,
 )
+# a question or a request for information (a card-fact question with a domain word is at least weak)
+QUESTION_FORM = re.compile(
+    r"\?|^\s*(?:what|which|who|how|can|does|do|is|are|should|tell me|explain|rank|list|show|send me|give me)\b", re.I)
 # things that make "card"/"commander" mean the repository, not the game
 NOISE = re.compile(
     r"commander[-_ ]sim\w*|`[^`]*`|\S*[/\\]\S*|\S+\.(?:json|md|toml|rs|py|sh|txt|jsonl)\b|"
@@ -120,6 +123,8 @@ def classify(prompt, decks=(), names=None):
     if (domain or named) and WEAK_INTENT.search(text):
         return "weak", False
     if named and NAME_INTENT.search(text):
+        return "weak", False
+    if (domain or named) and QUESTION_FORM.search(text):
         return "weak", False
     if SWAP_QUESTION.search(text):
         return "weak", False
@@ -408,7 +413,8 @@ def tool_is_query(data):
 
 # ---------------------------------------------------------------------------------------------- stop logic
 
-KB_LAST = re.compile(r"^([\W_]{0,6})KB:(.*)$")
+KB_LAST = re.compile(r"^([\W_]{0,6})KB[*_]{0,3}\s?:(.*)$")
+KB_ANY = re.compile(r"(?m)^[\W_]{0,6}KB[*_]{0,3}\s?:")
 NAMES_KB = re.compile(r"\b(map|digest|find)\b", re.I)
 OPTOUT = re.compile(r"not applicable\s*\(([^)]*)\)", re.I)
 
@@ -419,7 +425,11 @@ def closing_kb_body(text):
     lines = [ln for ln in (text or "").splitlines() if ln.strip()]
     if not lines:
         return None
-    m = KB_LAST.match(lines[-1].strip())
+    cand = lines[-1]
+    # one closing question to JD ("Approve this plan?") may follow the KB line
+    if len(lines) >= 2 and cand.rstrip().endswith("?") and len(cand) <= 240 and not KB_LAST.match(cand.strip()):
+        cand = lines[-2]
+    m = KB_LAST.match(cand.strip())
     if not m or ">" in m.group(1):
         return None
     return m.group(2)
@@ -474,9 +484,46 @@ def kb_line_kind(text):
     return "none", ""
 
 
+FINISHED = ("completed", "failed", "killed", "cancelled", "done")
+
+
+def running_task_ids(data):
+    """Ids of the background tasks still running at this Stop (the entries carry no start time)."""
+    bg = data.get("background_tasks")
+    out = []
+    if isinstance(bg, list):
+        for b in bg:
+            if isinstance(b, dict) and str(b.get("status", "")).lower() in FINISHED:
+                continue
+            key = b.get("id") or b.get("command") or b.get("description") if isinstance(b, dict) else b
+            out.append(str(key))
+    return out
+
+
+def answer_names_card(data, text):
+    """True when the answer (outside its KB line) names a catalog card of two or more words: then
+    `KB: not applicable` is not a valid opt-out. Single-word names are skipped (common words)."""
+    try:
+        root = project_root(data)
+        roots = [root] + [m for m in [main_checkout(root)] if m and m != root]
+        names = load_names(roots)
+        if not names:
+            return False
+        multi = {n for n in names[0] if " " in n}
+        if not multi:
+            return False
+        body = re.sub(r"(?m)^.*\bKB[*_]{0,3}\s?:.*$", " ", text or "")
+        return has_card_name(body, (multi, max(n.count(" ") + 1 for n in multi)))
+    except Exception:
+        return False
+
+
 def stop_decision(data, events, sdir):
     """Return a dict to print as JSON, or None. Appends events through `sdir`'s session file as needed."""
     sf = session_file(data)
+    ids = running_task_ids(data)
+    if ids:  # remember which background tasks each Stop saw, so only tasks started for a prompt defer its check
+        append(sf, {"ev": "bg", "ids": ids})
     idx = [i for i, e in enumerate(events) if e.get("ev") == "prompt"]
     if not idx:
         return None
@@ -485,11 +532,14 @@ def stop_decision(data, events, sdir):
     if p.get("tier") in (None, "none") or p.get("brief"):
         return None
     after = events[last + 1:]
-    if any(e.get("ev") == "passed" for e in after):  # this question already got a compliant answer
+    if any(e.get("ev") in ("passed", "unresolved") for e in after):  # settled: answered, or already warned once
         return None
     blocked = any(e.get("ev") == "blocked" for e in after)
     text = last_assistant_text(data)
     kind, detail = kb_line_kind(text)
+    optout_rejected = False
+    if kind == "optout" and answer_names_card(data, text):
+        kind, detail, optout_rejected = "none", "", True
     prev = idx[-2] if len(idx) > 1 else -1
     allowed = {p.get("pid")} | ({events[prev].get("pid")} if prev >= 0 else set())
 
@@ -502,7 +552,7 @@ def stop_decision(data, events, sdir):
 
     missing = []
     if unavail:
-        if kind != "unavailable":
+        if kind != "unavailable" and not (kind == "queries" and evidence):
             missing.append("a closing `KB: unavailable (<reason>)` line (the knowledge base cannot be reached here)")
     elif kind == "unavailable":
         missing.append("a real KB query (the catalog is available here, so `KB: unavailable` is not accepted)")
@@ -512,8 +562,13 @@ def stop_decision(data, events, sdir):
         if not evidence:
             missing.append("a knowledge base query (map, digest or find)")
         if kind != "queries":
-            missing.append("a closing `KB: <queries run> (data <date>, roles <rules-only|merged>)` line naming them"
-                           + ("" if tier == "weak" else " (`not applicable` is not accepted for this prompt)"))
+            if KB_ANY.search(text or "") and not optout_rejected:
+                missing.append("your `KB:` line as the very last line of the answer (after any question to JD); "
+                               "re-posting just that line is enough")
+            else:
+                missing.append("a closing `KB: <queries run> (data <date>, roles <rules-only|merged>)` line naming them"
+                               + (" (`not applicable` is not accepted: the answer names a card)" if optout_rejected else
+                                  "" if tier == "weak" else " (`not applicable` is not accepted for this prompt)"))
 
     if not missing:
         append(sf, {"ev": "passed"})
@@ -525,13 +580,11 @@ def stop_decision(data, events, sdir):
         return None
 
     # background work started for this prompt may still be reporting: recheck on the next stop
-    bg = data.get("background_tasks")
-    if isinstance(bg, list):
-        running = [b for b in bg if not (isinstance(b, dict) and str(b.get("status", "")).lower() in
-                                         ("completed", "failed", "killed", "cancelled", "done"))]
-        if running and kind == "none":
-            append(sf, {"ev": "deferred", "n": len(running)})
-            return None
+    seen_before = {i for e in events[:last] if e.get("ev") == "bg" for i in e.get("ids", [])}
+    started_since = [i for i in ids if i not in seen_before]
+    if started_since and kind == "none":
+        append(sf, {"ev": "deferred", "n": len(started_since)})
+        return None
 
     if blocked:
         append(sf, {"ev": "unresolved", "missing": missing})
@@ -552,7 +605,7 @@ def stop_decision(data, events, sdir):
            "`digest --ident LETTERS --stdout` / `find --ident LETTERS ...` (a new deck; C = colourless), and "
            "`find --name NAME --full` for every card or commander you named.\n" if not unavail else "")
         + "If anything in the answer you gave is wrong or unverified, post a corrected answer and say what changed. "
-        + "End with the closing `KB:` line. (Asked once per question.)"
+        + "The `KB:` line must be the very last line (after any question to JD). (Asked once per question.)"
     )
     append(sf, {"ev": "blocked", "missing": missing})
     return {"decision": "block", "reason": reason}
@@ -573,7 +626,7 @@ def inject_text(root, tier, decks_note):
         "hypothetical deck `digest --ident LETTERS --stdout` and `find --ident LETTERS ...` (C = colourless, e.g. "
         "`find --ident C --text 'can be your commander'`).\n"
         "2. `find --name NAME --full` for every card or commander you name as a pick, example or fact.\n"
-        f"3. End the answer with {closing}.\n"
+        f"3. End the answer with {closing} as the very last line (after any question to JD).\n"
         "A Stop hook checks for the queries and the KB line once per question."
     )
 
@@ -593,7 +646,7 @@ def ev_prompt(data):
     avail, why = kb_status(root) if tier != "none" else (True, "")
     append(session_file(data), {
         "ev": "prompt", "pid": data.get("prompt_id"), "t": int(time.time()), "tier": tier, "brief": brief,
-        "unavail": not avail, "snippet": prompt[:160],
+        "unavail": not avail, "snippet": prompt[:160] if tier != "none" else "",
     })
     if tier == "none":
         return None

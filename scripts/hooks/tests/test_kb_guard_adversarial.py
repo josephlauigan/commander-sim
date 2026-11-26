@@ -1,6 +1,6 @@
 """Adversarial fixtures. Run: python3 -m unittest scripts.hooks.tests.test_kb_guard_adversarial -v.
 
-Failures describe desired behavior; do not mark confirmed defects expectedFailure.
+Failures describe desired behavior. Only accepted limits are marked expectedFailure, each with a reason comment.
 Shell query strings are hook payloads, never executed. Wrapper tests execute only
 stand-ins, except for a read-only invocation of the existing binary with --help.
 """
@@ -486,9 +486,7 @@ class ClassifierTests(Base):
         self.blocked(self.e.stop("Advice with no KB."))
 
     # accepted: text that starts with <task-notification> is treated as a harness notification whatever the source says; no human types it
-
     @unittest.expectedFailure
-
     def test_human_notification_looking_text_does_not_exempt_advice(self):
         self.e.prompt("<task-notification>this is my question</task-notification> " + COLORLESS,
                       source="user")
@@ -535,9 +533,7 @@ class StateTests(Base):
         self.blocked(self.e.stop("No KB."))
 
     # accepted: a state file idle for 15+ days is pruned; the next prompt starts a fresh record, so only a Stop with no prompt event is missed
-
     @unittest.expectedFailure
-
     def test_prune_does_not_erase_live_old_session(self):
         self.e.prompt()
         old = time.time() - 15 * 86400

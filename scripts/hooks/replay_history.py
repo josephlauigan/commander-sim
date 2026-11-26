@@ -16,12 +16,25 @@ import json
 import os
 import random
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kb_guard  # noqa: E402
 
-DEFAULT_DIR = os.path.expanduser("~/.claude/projects/-home-joseph-projects-commander-sim")
+def default_dir():
+    """Claude Code's transcript folder for this repository (the main checkout's path, '/' written as '-')."""
+    root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+    try:
+        common = subprocess.run(["git", "-C", root, "rev-parse", "--git-common-dir"], capture_output=True, text=True,
+                                timeout=5).stdout.strip()
+        root = os.path.dirname(os.path.realpath(os.path.join(root, common)))
+    except Exception:
+        pass
+    return os.path.expanduser("~/.claude/projects/" + root.replace("/", "-"))
+
+
+DEFAULT_DIR = default_dir()
 SKIP = re.compile(r"^\s*(<command-name>|<local-command|<task-notification|<system-reminder|\[Request interrupted)")
 
 
