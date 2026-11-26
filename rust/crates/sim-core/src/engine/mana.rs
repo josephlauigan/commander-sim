@@ -1020,8 +1020,8 @@ pub fn x_free(g: &Game, p: PlayerId, c: CardId) -> bool {
 
 /// what card c costs p now when cast with X = x: the printed cost with x added to the generic part, then every
 /// reduction, tax, floor and minimum `cost_of` applies, in the same order (a generic reducer such as Jet Medallion
-/// takes its {1} off the generic part that includes X; a later tax is added after it; each step floors the generic cost
-/// at 0). The Trinisphere minimum comes after every reduction and tax and counts every symbol (rule 601.2f); delve, a way of
+/// takes its {1} off the generic part that includes X, and off a tax; every increase and reduction is summed and the
+/// generic cost floored at 0 once, see `cost_of_base`). The Trinisphere minimum comes after every reduction and tax and counts every symbol (rule 601.2f); delve, a way of
 /// paying, and the choices to pay life for a Phyrexian or K'rrik {B} come after it. `cost_of` is this at x = 0 (for a
 /// card whose own code picks X, see there). Never reads `CardImpl::auto_x`: it is the price at the X it is given.
 /// K'rrik's life payment stays with `phyrexian_life`.
@@ -1049,8 +1049,161 @@ pub fn cost_of_with(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u3
 }
 
 /// `cost_of_with` for the printed symbols as they stand: the pipeline itself (`engine::hybrid::mono_cost` runs it once per
-/// choice of {2} for a card with {2/X} symbols)
+/// choice of {2} for a card with {2/X} symbols).
+///
+/// Rule 601.2f: the total cost is the mana cost or an alternative cost, plus every increase (the commander tax, Disruptor
+/// Flute's {3}, Thalia-style taxes), minus every reduction, never below {0}; only then do effects such as Trinisphere's
+/// minimum apply. So the pipeline picks one base (Tamiyo's emblem, Dracogenesis and spectacle are alternative costs of
+/// {0}, {0} and {R}; otherwise the printed generic part plus X), sums every increase and reduction of the generic part
+/// into ONE signed running total with no floor between steps, and floors that once at 0. A reduction larger than the
+/// generic part therefore takes from the commander tax and from Disruptor Flute's {3} as from any generic mana.
+///
+/// Temporary shadow probe: with the environment variable `PRICE_SHADOW=1` every call also runs `cost_of_base_legacy`
+/// (the previous body, which floored at 0 after each step) and prints each distinct (deck key, card, old, new) to stderr
+/// once per thread, only where the two differ. The coordinator records that table; a later commit deletes the legacy body
+/// and this switch. Without the variable the legacy body never runs and the switch costs one cached atomic load.
 pub(crate) fn cost_of_base(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
+    let new = cost_of_base_new(g, p, c, x, pips);
+    if price_shadow_on() {
+        let old = cost_of_base_legacy(g, p, c, x, pips);
+        if old != new {
+            price_shadow_report(g, p, c, &old, &new);
+        }
+    }
+    new
+}
+
+/// `PRICE_SHADOW=1` (read once): compare `cost_of_base` with `cost_of_base_legacy`. Temporary, see `cost_of_base`.
+fn price_shadow_on() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var("PRICE_SHADOW").is_ok_and(|v| v == "1"))
+}
+
+/// print one `PRICE_SHADOW` line per distinct (deck key or seat index, card, old, new) on this thread. Temporary.
+fn price_shadow_report(g: &Game, p: PlayerId, c: CardId, old: &(u32, String), new: &(u32, String)) {
+    thread_local! {
+        static SEEN: std::cell::RefCell<std::collections::HashSet<String>> = std::cell::RefCell::new(Default::default());
+    }
+    let key = g.player(p).key.to_string();
+    let who = if key.is_empty() { format!("seat{}", p.0) } else { key };
+    let line = format!(
+        "PRICE_SHADOW deck={} card={} old=({}, {:?}) new=({}, {:?})",
+        who,
+        g.db.get(c).name,
+        old.0,
+        old.1,
+        new.0,
+        new.1
+    );
+    if SEEN.with(|s| s.borrow_mut().insert(line.clone())) {
+        eprintln!("{line}");
+    }
+}
+
+/// the pipeline of rule 601.2f (see `cost_of_base`): one base, one signed running total of every increase and reduction
+/// of the generic part, one floor at 0, then the Trinisphere minimum, delve, Phyrexian life, K'rrik, Opposition Agent and
+/// hybrid, all unchanged
+fn cost_of_base_new(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
+    let d = g.db.get(c);
+    let pl = g.player(p);
+    let t = &d.tags;
+    // 1. the mana cost or an alternative cost (601.2b)
+    let (mut gn, mut pips): (i64, String) = if pl.emblems.contains(&"tamiyo") && pl.hand.contains(&c) {
+        (0, String::new()) // Tamiyo's emblem: cast without paying its mana cost
+    } else if crate::impls::t45_urdragon::free_dragon(g, p, c) {
+        (0, String::new()) // --- Tiers 4/5 (urdragon): Dracogenesis: no mana cost (the commander tax is still paid)
+    } else if t.has(Tag::Spectacle) && pl.hit_turn == pl.turns as i32 {
+        (0, "R".into()) // spectacle's cost (X is not added, as before)
+    } else {
+        (d.generic as i64 + x.max(0) as i64, pips.to_string())
+    };
+    // 2. every increase (+) and reduction (-) of the generic part, summed with no floor between them (601.2f)
+    let mut delta: i64 = 0;
+    if t.has(Tag::PerCreature) {
+        // Blasphemous Act, Vanquish the Horde
+        let n = g
+            .players
+            .iter()
+            .filter(|q| q.alive)
+            .flat_map(|q| q.perms.iter())
+            .filter(|&&m| g.is_creature(m) && !g.perm(m).phased)
+            .count() as i64;
+        delta -= n;
+    }
+    if t.has(Tag::Eris) {
+        // -2 per distinct mana value among instants and sorceries in the graveyard
+        let mut mvs: Vec<u32> =
+            pl.gy.iter().map(|&x| g.db.get(x)).filter(|x| x.instant || x.sorcery).map(|x| x.cmc).collect();
+        mvs.sort();
+        mvs.dedup();
+        delta -= 2 * mvs.len() as i64;
+    }
+    if t.has(Tag::Dawning) {
+        delta -= pl.gy.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count() as i64;
+    }
+    crate::impls::t45_urdragon::morophon_pips(g, p, c, &mut pips); // --- Tiers 4/5 (urdragon): Morophon (coloured)
+    delta += crate::impls::t45_urdragon::eminence(g, p, c) as i64; // --- Tiers 4/5 (urdragon): The Ur-Dragon's eminence
+    delta += crate::dsl::cost_delta(g, p, c) as i64; // Medallions, The Fire Crystal, compiled taxes and reductions
+    delta += crate::impls::t0_stella::kaza_delta(g, p, c) as i64; // Kaza, Roil Chaser
+    if !g.hooks.is_empty() {
+        delta += hooks::total_cost(g, p, c) as i64;
+        if crate::impls::blue_cards::defiler_discount(g, p, c) {
+            pips = pips.replacen('U', "", 1); // Defiler of Dreams: pay 2 life for {U} less
+        }
+    }
+    // a card's own reduction (Draco's domain, Emry's affinity, Shadow of Mortality...); delve is a way of paying the total,
+    // not a reduction of it (702.66a), so it comes after the minimum
+    let delve = crate::impls::partials::is_delve_card(&d.name);
+    if !delve {
+        delta += cardcode::self_cost(g, p, c) as i64;
+    }
+    if crate::engine::values::stopped(g, &d.name) {
+        delta += 3; // Disruptor Flute tax
+    }
+    if pl.is_commander(c) && !pl.hand.contains(&c) && &*d.name != "Liesa, Shroud of Dusk" {
+        delta += pl.tax_of(c) as i64; // no tax from hand
+    }
+    // 3. the one floor
+    gn = (gn + delta).max(0);
+    // 4. after the floor: Trinisphere's minimum, delve, Phyrexian life, K'rrik, Opposition Agent, hybrid (as before)
+    if !g.hooks.is_empty() {
+        // Trinisphere: the minimum applies to the total cost, every symbol counted (the pips a player may later pay with
+        // life are part of it), after every reduction and tax (601.2f)
+        let floor = hooks::max_min_cost(g, p, c);
+        gn = gn.max(floor as i64 - pips.chars().count() as i64);
+    }
+    if delve {
+        gn = (gn + cardcode::self_cost(g, p, c) as i64).max(0);
+    }
+    // Paying life for a coloured pip is decided against the generic cost as it now stands, after every reduction and tax
+    // above (a reducer such as Jet Medallion may make the mana enough, so no life is paid) and before Opposition Agent
+    let mut paid_life = 0;
+    for col in d.phyrexian.chars() {
+        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
+        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, to_u32(gn), &pips, false) {
+            pips = pips.replacen(col, "", 1);
+            paid_life += 2;
+        }
+    }
+    crate::impls::krrik::drop_black(g, p, c, gn.clamp(i32::MIN as i64, i32::MAX as i64) as i32, &mut pips); // K'rrik: 2 life for a {B}
+    if pl.agent_ids.contains(&c) {
+        // Opposition Agent: spend mana as though it were mana of any type (a pip turned into generic keeps the total
+        // the same, so the minimum above is unaffected)
+        let off: String = pips.chars().filter(|&x| !pl.ident.has(x)).collect();
+        if !off.is_empty() {
+            gn += off.chars().count() as i64;
+            pips = pips.chars().filter(|&x| pl.ident.has(x)).collect();
+        }
+    }
+    crate::engine::hybrid::resolve(g, p, c, to_u32(gn), &mut pips); // {G/W}: the other colour when the first can't be paid
+    (to_u32(gn), pips)
+}
+
+/// The body `cost_of_base` had before the 601.2f restructure, verbatim: every step floored the generic part at 0 before the
+/// next (so a reduction larger than the generic part was lost before the commander tax or Disruptor Flute was added).
+/// Kept only for the `PRICE_SHADOW=1` probe (see `cost_of_base`); a later commit deletes it and the switch.
+fn cost_of_base_legacy(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;
