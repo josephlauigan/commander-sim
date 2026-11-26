@@ -171,7 +171,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Relic of Sauron** ({4}): taps for two mana in any mix of blue, black and red, which pays for a seven-drop and fixes
   the blue and black the elves don't make. Later, {3} and a tap draws two cards and discards one. Its own mana can't pay
   for the loot.
-- **Birds of Paradise, Llanowar Elves, Elvish Mystic, Delighted Halfling:** one-mana dorks. The Halfling makes any colour
+- **Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim, Delighted Halfling:** one-mana dorks. Llanowar makes {G}; Avacyn's Pilgrim costs {G} and makes {W}, one of the two thinnest colours here. The Halfling makes any colour
   for a legendary spell (The Ur-Dragon, Garth, Tiamat, Miirym, Smaug...) and that spell can't be countered.
 - **Nature's Lore, Three Visits:** each fetches a Forest dual (a shock land costs 2 life to enter untapped; the deck has no basic Forest), which fixes colours and adds
   basic types for Scion of Draco.
@@ -221,7 +221,7 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
 |---|---|---|---|
 | 1 | Taiga, Windswept Heath, Birds of Paradise, Sol Ring, Terror of the Peaks, Lightning Bolt, Swords to Plowshares | Keep | Turn 2: Sol Ring and Birds; turn 3 Terror with removal behind it |
 | 2 | Ancient Tomb, Mana Vault, Mox Jasper, Old Gnawbone, Tiamat, Utvara Hellkite, Rivaz of the Claw | Ship | One land that only makes colourless, and nothing to cast before turn 5 |
-| 3 | Tundra, Bayou, Elvish Mystic, Nature's Lore, Three Visits, Lathliss, Doubling Season | Keep (close) | Two duals plus Nature's Lore and Three Visits fetch two more duals, and the Mystic adds mana: Lathliss and Doubling Season by turn 5 |
+| 3 | Tundra, Bayou, Avacyn's Pilgrim, Nature's Lore, Three Visits, Lathliss, Doubling Season | Keep (close) | Two duals plus Nature's Lore and Three Visits fetch two more duals, and the Pilgrim adds mana: Lathliss and Doubling Season by turn 5 |
 | 4 | Demonic Tutor, Vampiric Tutor, Command Tower, Sol Ring, Garth One-Eye, Spark Double, Twinflame | Keep (close) | Tutors and Sol Ring find the rest, but it needs a second land and Doubling Season to be a combo |
 
 ### What to tutor for
@@ -323,7 +323,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Commander (1).** The Ur-Dragon
 
-**Creatures (34).** Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Dragonspeaker Shaman, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Giver of Runes, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Kura, the Boundless Sky, Kyodai, Soul of Kamigawa, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Tymna the Weaver, Utvara Hellkite
+**Creatures (34).** Avacyn's Pilgrim, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Dragonspeaker Shaman, Ganax, Astral Hunter, Garth One-Eye, Giver of Runes, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Kura, the Boundless Sky, Kyodai, Soul of Kamigawa, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Tymna the Weaver, Utvara Hellkite
 
 **Artifacts (11).** Arcane Signet, Mana Vault, Mithril Coat, Mox Jasper, Relic of Sauron, Sapphire Medallion, Sol Ring, Talisman of Curiosity, Talisman of Hierarchy, The One Ring, Urza's Incubator
 
@@ -343,6 +343,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Ancient Tomb
 1 Arcane Signet
 1 Arid Mesa
+1 Avacyn's Pilgrim
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -359,7 +360,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Dragonlord Dromoka
 1 Dragonlord Ojutai
 1 Dragonspeaker Shaman
-1 Elvish Mystic
 1 Exotic Orchard
 1 Fact or Fiction
 1 Field of the Dead

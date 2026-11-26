@@ -178,10 +178,10 @@ else = 40
 fastmana = ["Sol Ring", "Mana Vault"]
 visits = ["Three Visits"]
 tomb = ["Ancient Tomb"]
-dorks = ["Birds of Paradise", "Llanowar Elves", "Elvish Mystic", "Delighted Halfling"]
+dorks = ["Birds of Paradise", "Llanowar Elves", "Avacyn's Pilgrim", "Delighted Halfling"]
 bigs = ["Old Gnawbone", "Tiamat", "Morophon, the Boundless", "Smaug the Impenetrable",
     "Utvara Hellkite", "Summon: Bahamut"]
-plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Talisman of Hierarchy", "Talisman of Curiosity", "Birds of Paradise", "Llanowar Elves", "Elvish Mystic",
+plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Talisman of Hierarchy", "Talisman of Curiosity", "Birds of Paradise", "Llanowar Elves", "Avacyn's Pilgrim",
     "Delighted Halfling", "Relic of Sauron", "Nature's Lore", "Rivaz of the Claw", "Scion of Draco", "Three Visits", "Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Rhystic Study",
     "The One Ring", "Terror of the Peaks", "Goldspan Dragon", "Glorybringer", "Thundermaw Hellkite",
     "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
