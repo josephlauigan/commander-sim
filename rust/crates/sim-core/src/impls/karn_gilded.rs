@@ -125,6 +125,16 @@ const HAND_SIZE: usize = 7;
 /// not one), None when it is not (the caller keeps its own value): see the module doc for the three-way result.
 /// `own_end_step`: the draw lands in p's own end step, before the cleanup step's discard. Reads the game only (no RNG).
 pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Option<f64> {
+    reenter_with_room(g, p, m, || {
+        (own_end_step && !crate::engine::turn::no_max_hand(g, p))
+            .then(|| HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len()))
+    })
+}
+
+/// `reenter_bonus` with the hand room given by the caller (asked only when the draw is counted): how many of the new cards
+/// stay in hand, None for all of them. The Fire Crystal's copy values the blinks of the real Karn (Restoration Angel's,
+/// Flickerwisp's) with `copy_room`, the cards arriving before p's turn, not at its end step.
+pub fn reenter_with_room(g: &Game, p: PlayerId, m: PermId, room: impl FnOnce() -> Option<usize>) -> Option<f64> {
     let x = g.perm(m);
     if x.token || x.owner != p {
         return None;
@@ -141,8 +151,7 @@ pub fn reenter_bonus(g: &Game, p: PlayerId, m: PermId, own_end_step: bool) -> Op
     if n == 0 {
         return Some(0.0);
     }
-    let capped = own_end_step && !crate::engine::turn::no_max_hand(g, p);
-    Some(draw_worth(g, p, n, capped.then(|| HAND_SIZE.saturating_sub(crate::engine::values::hand_proper(g, p).len()))))
+    Some(draw_worth(g, p, n, room()))
 }
 
 /// the worth of `n` draws to p now (the tail of `reenter_bonus`, shared with `copy_draw_value`): `DECKING` if they leave

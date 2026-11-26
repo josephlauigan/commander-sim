@@ -377,7 +377,10 @@ fn mage_leaves(g: &mut Game, src: Src, m: PermId) -> Res {
 
 // ================================================================== Flickerwisp
 /// what exiling m until the end step is worth to p (a token is gone for good)
-fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
+///
+/// `karn_room` Some(room): the real Karn's draw is valued with that hand room (None: the cards kept in
+/// hand: `reenter_with_room`), as The Fire Crystal's copy of Flickerwisp does (`wisp_value`)
+fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId, karn_room: Option<Option<usize>>) -> f64 {
     let x = g.perm(m);
     let is_land = g.player(x.owner).lands.contains(&m);
     if x.owner == p {
@@ -392,7 +395,11 @@ fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
         if is_named(g, m, ACID) {
             return x.attached.filter(|&h| live(g, h)).map_or(0.0, |h| pval(g, h) + 1.0);
         }
-        if let Some(v) = super::karn_gilded::reenter_bonus(g, p, m, g.active == Some(p) && g.step != Step::End) {
+        let karn = match karn_room {
+            Some(room) => super::karn_gilded::reenter_with_room(g, p, m, || room),
+            None => super::karn_gilded::reenter_bonus(g, p, m, g.active == Some(p) && g.step != Step::End),
+        };
+        if let Some(v) = karn {
             // Karn, Gilded Guardian: his draw when he returns at the end step (his own commander stays in exile meanwhile)
             return v - if m == src { 99.0 } else { 0.0 };
         }
@@ -415,7 +422,7 @@ fn wisp_worth(g: &Game, p: PlayerId, src: PermId, m: PermId) -> f64 {
 }
 
 /// "another target permanent": the best for p, or the least bad (the target isn't optional). Lands are permanents too.
-fn wisp_pick(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
+fn wisp_pick(g: &Game, p: PlayerId, src: PermId, karn_room: Option<Option<usize>>) -> Option<PermId> {
     let cs: Vec<PermId> = g
         .players
         .iter()
@@ -426,17 +433,18 @@ fn wisp_pick(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
                 && live(g, m)
                 && !protected_from(g, m, colors_of(g, src))
                 && !super::tymna_cards::hexproof_from(g, m, colors_of(g, src))
-                && wisp_worth(g, p, src, m) > f64::NEG_INFINITY
+                && wisp_worth(g, p, src, m, karn_room) > f64::NEG_INFINITY
         })
         .collect();
-    max_by(&cs, |m| wisp_worth(g, p, src, m))
+    max_by(&cs, |m| wisp_worth(g, p, src, m, karn_room))
 }
 
 /// what Flickerwisp's enters trigger would be worth to p's AI if `src` (a permanent standing in for the one that
 /// enters: The Fire Crystal's copy is valued with its original, which is never the target) entered now: the value of the
-/// best target, 0 when there is none or it is not worth it. A pure read.
-pub fn wisp_value(g: &Game, p: PlayerId, src: PermId) -> f64 {
-    wisp_pick(g, p, src).map_or(0.0, |t| wisp_worth(g, p, src, t)).max(0.0)
+/// best target, 0 when there is none or it is not worth it. `karn_room`: how many of the real Karn's cards stay in hand
+/// (None: all of them). A pure read.
+pub fn wisp_value(g: &Game, p: PlayerId, src: PermId, karn_room: Option<usize>) -> f64 {
+    wisp_pick(g, p, src, Some(karn_room)).map_or(0.0, |t| wisp_worth(g, p, src, t, Some(karn_room))).max(0.0)
 }
 
 /// the permanents a person may aim Flickerwisp's trigger at: any other permanent, lands and tokens included
@@ -453,7 +461,7 @@ fn wisp_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = owner(g, src);
     let human = crate::human::is_human(g, o);
-    let any = if human { !wisp_targets(g, o, src).is_empty() } else { wisp_pick(g, o, src).is_some() };
+    let any = if human { !wisp_targets(g, o, src).is_empty() } else { wisp_pick(g, o, src, None).is_some() };
     if !any {
         return Ok(());
     }
@@ -464,7 +472,7 @@ fn wisp_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let cands = wisp_targets(g, o, src);
         crate::human::gaps_t2::pick_target(g, o, &cands, "Flickerwisp: exile which other permanent?", None)?
     } else {
-        wisp_pick(g, o, src)
+        wisp_pick(g, o, src, None)
     };
     let Some(t) = t else { return Ok(()) };
     exile_until_end(g, o, t)

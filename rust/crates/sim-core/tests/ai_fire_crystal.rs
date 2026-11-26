@@ -672,13 +672,137 @@ fn a_hold_whose_window_copied_may_be_repeated() {
     table_fixes::force_crystal_hold(None);
 }
 
+/// the (utility, label) of every option, for comparing two runs
+fn shape(opts: &[Opt]) -> Vec<(u64, String)> {
+    opts.iter().map(|o| (o.utility.to_bits(), o.label.clone())).collect()
+}
+
 #[test]
 fn a_game_without_a_crystal_or_a_hold_is_never_bound() {
-    let mut g = tbl();
-    main_phase(&mut g);
-    assert!(crystal_hold(&g, P0, 0.0).is_none(), "no Crystal: nothing to hold");
-    g.round += 5;
+    // Karn's deck with no Crystal on the table: main_options sets no flag and no fc_ stat, hold on or off
+    let build = || {
+        let mut g = tbl();
+        main_phase(&mut g);
+        karn_on_the_table(&mut g);
+        self::lands(&mut g, P0, "Mountain", 2, false);
+        self::lands(&mut g, P0, "Swamp", 2, false);
+        self::lands(&mut g, P0, "Island", 3, false);
+        hand(&mut g, P0, &["Vampire Nighthawk"]);
+        g
+    };
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = build();
+    let on = brain::main_options(&mut g, P0, false).unwrap();
     assert!(g.player(P0).flag_turn.is_empty(), "no flag was set");
+    assert!(g.player(P0).stats.keys().all(|k| !k.starts_with("fc_")), "no fc_ stat");
+    table_fixes::force_crystal_hold(Some(false));
+    let mut g = build();
+    let off = brain::main_options(&mut g, P0, false).unwrap();
+    assert_eq!(shape(&on), shape(&off), "no Crystal: the hold switch changes nothing");
+    table_fixes::force_crystal_hold(None);
+}
+
+#[test]
+fn another_deck_plays_the_same_main_phase_with_the_hold_on_and_off() {
+    let build = || {
+        let mut g = table(&["sheoldred", OPP]);
+        main_phase(&mut g);
+        g.player_mut(P0).hand.clear();
+        self::lands(&mut g, P0, "Swamp", 7, false);
+        hand(&mut g, P0, &["Vampire Nighthawk", "Demonic Tutor", "Thought Vessel"]);
+        g
+    };
+    table_fixes::force_crystal_hold(Some(true));
+    let mut g = build();
+    let on = brain::main_options(&mut g, P0, false).unwrap();
+    table_fixes::force_crystal_hold(Some(false));
+    let mut g = build();
+    let off = brain::main_options(&mut g, P0, false).unwrap();
+    table_fixes::force_crystal_hold(None);
+    assert!(on.len() > 1, "something to choose from");
+    assert_eq!(shape(&on), shape(&off));
+}
+
+#[test]
+fn the_hold_stops_at_the_danger_line() {
+    table_fixes::force_crystal_hold(Some(true));
+    let g = hold_board(7);
+    assert!(crystal_hold(&g, P0, 0.79).is_some());
+    assert!(crystal_hold(&g, P0, 0.8).is_none());
+    table_fixes::force_crystal_hold(None);
+}
+
+// ======================================================== C6c
+#[test]
+fn a_station_copy_counts_the_multicoloured_permanents_now_not_itself() {
+    let mut g = tbl();
+    let station = perm(&mut g, P0, "Infinite Guideline Station"); // five colours: one multicoloured permanent
+    karn_on_the_table(&mut g); // a second one
+    let c = perm(&mut g, P0, CRYSTAL);
+    six_lands(&mut g);
+    assert!(
+        (value(&g, c, station, true) - 2.0 * 0.8).abs() < 1e-9,
+        "two Robots, not three: the copy dies to the legend rule"
+    );
+}
+
+#[test]
+fn a_face_down_creature_is_a_vanilla_two_two() {
+    let mut g = tbl();
+    let sol = perm(&mut g, P0, "Solitude"); // first: nothing to exile yet
+    perm(&mut g, P1, "Terror of the Peaks");
+    let c = perm(&mut g, P0, CRYSTAL);
+    six_lands(&mut g);
+    assert!(value(&g, c, sol, true) > 5.0, "face up: it exiles the Terror");
+    g.perm_mut(sol).data.set(DataKey::Facedown, Val::Bool(true));
+    assert!((value(&g, c, sol, true) - 0.3).abs() < 1e-9, "face down: a 2/2 body and nothing else");
+    assert_eq!(value(&g, c, sol, false), 0.0, "and not in a main phase");
+}
+
+/// Restoration Angel (and Flickerwisp when `wisp`) first, then Karn, five coloured artifacts, the Crystal and six lands
+fn blink_board(wisp: bool) -> (Game, PermId, PermId) {
+    let mut g = tbl();
+    let copier = perm(&mut g, P0, if wisp { "Flickerwisp" } else { "Restoration Angel" });
+    karn_on_the_table(&mut g);
+    for ch in "WUBRG".chars() {
+        let spec = zones::Tokens {
+            types: vec!["thopter", "artifact"],
+            color: Some(Colors::from_letters(&ch.to_string())),
+            sick: false,
+            ..zones::Tokens::new(1, 1)
+        };
+        zones::make_tokens(&mut g, P0, spec).unwrap();
+    }
+    let c = perm(&mut g, P0, CRYSTAL);
+    six_lands(&mut g);
+    (g, copier, c)
+}
+
+#[test]
+fn a_blink_of_the_real_karn_is_valued_with_the_hand_room_too() {
+    // the copy's cards arrive before p's turn and the cleanup discard still applies: the room is 7 - hand + 2
+    let angel = |hand: usize| {
+        let (mut g, a, c) = blink_board(false);
+        fill_hand(&mut g, hand);
+        value(&g, c, a, true)
+    };
+    assert!((angel(0) - (8.0 + 0.675)).abs() < 1e-9, "five cards, rounded as blink_value rounds: {}", angel(0));
+    assert!((angel(4) - (8.0 + 0.675)).abs() < 1e-9, "room for five at four cards");
+    assert!((angel(5) - (6.0 + 0.675)).abs() < 1e-9, "6.25 rounded: {}", angel(5));
+    assert!((angel(7) - (4.0 + 0.675)).abs() < 1e-9, "3.75 rounded: {}", angel(7));
+    let wisp = |hand: usize| {
+        let (mut g, w, c) = blink_board(true);
+        fill_hand(&mut g, hand);
+        value(&g, c, w, true)
+    };
+    assert!((wisp(0) - (7.5 + 0.675)).abs() < 1e-9, "{}", wisp(0));
+    assert!((wisp(5) - (6.25 + 0.675)).abs() < 1e-9, "{}", wisp(5));
+    assert!((wisp(7) - (3.75 + 0.675)).abs() < 1e-9, "{}", wisp(7));
+    // the blink choosers themselves are unchanged: at the window the real Karn's blink is uncapped at any hand size
+    let (mut g, _, _) = blink_board(false);
+    fill_hand(&mut g, 7);
+    let karn = named(&g, KARN)[0];
+    assert_eq!(sim_core::impls::karn_gilded::reenter_now(&g, P0, karn), Some(5.0 * PER_CARD));
 }
 
 #[test]

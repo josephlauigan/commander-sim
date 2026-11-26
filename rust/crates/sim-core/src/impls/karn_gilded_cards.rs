@@ -886,24 +886,38 @@ fn oracle_wins(g: &Game, p: PlayerId, m: PermId) -> bool {
         && g.player(p).library.len() <= crate::impls::combos::oracle_devotion(g, p) + 2
 }
 
+/// what blinking p's creature y is worth to p's AI for a copy of Restoration Angel: `t2::flicker_worth`, except that the real
+/// Karn's draw is valued as a copy's is (`karn_gilded::reenter_with_room` with `copy_room`: the cards arrive before p's
+/// turn and its cleanup discard still applies), rounded as `t2::blink_value` rounds it. Used only by `copy_value`; the
+/// blink choosers keep `reenter_now`.
+fn blink_worth_for_copy(g: &Game, p: PlayerId, y: PermId) -> f64 {
+    match crate::impls::karn_gilded::reenter_with_room(g, p, y, || copy_room(g, p)) {
+        Some(v) => v.round(),
+        None => crate::impls::t2::flicker_worth(g, p, y),
+    }
+}
+
 /// what a token copy of p's creature `m`, made by p's Crystal `src` now, is worth to p's AI (cards x `PER_CARD`).
 /// `at_eot`: in the end-of-turn window before p's turn (the copy lives through that turn); false: a main phase.
 /// `f64::NEG_INFINITY`: never copy it. A pure read: no RNG, no change.
 ///
+/// 0. A face-down creature: its copy is a vanilla 2/2, so only the body of one (the step below), never the card's name.
 /// 1. Never: a card with the `Wipe` tag; p at `TOKEN_CAP` tokens; under a Doomsday pile (after the Oracle check).
 /// 2. A copy of Thassa's Oracle that wins: `FC_WIN`.
 /// 3. The enters trigger, times its instances (`enters_trigger_times`: 0 under an opposing Elesh Norn or Hushbringer,
 ///    more with Gandalf or p's own Norn), by card:
 ///    - Karn, Gilded Guardian: `karn_gilded::copy_draw_value` (the cards, `DECKING` when it would deck p);
-///    - Restoration Angel: the best `t2::flicker_worth` among p's non-Angel creatures, when at least 3.0 (the Angel's own
+///    - Restoration Angel: the best blink worth (`blink_worth_for_copy`: `t2::flicker_worth`, with the real Karn's draw
+///      valued with `copy_room` like a copy of Karn) among p's non-Angel creatures, when at least 3.0 (the Angel's own
 ///      threshold);
-///    - Flickerwisp: `t12_brago_meren::wisp_value` (the original is never the target);
+///    - Flickerwisp: `t12_brago_meren::wisp_value` with the same `copy_room` (the original is never the target);
 ///    - Solitude: `FC_REMOVAL` times the `pval` of the best opposing creature p can afford the ward of, when that is 2.0
 ///      or more (`common::solitude`);
 ///    - The Reaper, King No More: the `pval` of each of the two creatures it shrinks if the counter kills it, else
 ///      `FC_REAPER_COUNTER`;
-///    - Breya, Etherium Shaper: two Thopters; Infinite Guideline Station: a Robot for each multicoloured permanent, the
-///      copy included (it is five colours); each `FC_TOKEN`;
+///    - Breya, Etherium Shaper: two Thopters; Infinite Guideline Station: a Robot for each multicoloured permanent p has
+///      now (the copy is not counted: it is legendary and the legend rule removes it before the trigger counts); each
+///      `FC_TOKEN`;
 ///    - Thassa's Oracle that does not win: `FC_ORACLE_LOOK`;
 ///    - a card with a triggered `rem` (Skyclave Apparition): `FC_REMOVAL` times the best `pval` it can take
 ///      (`removal::legal_targets`, as `etb_removal_pick`), at least 2.0, less the Illusion its owner gets when the copy
@@ -919,8 +933,15 @@ pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) 
     let x = g.perm(m);
     let Some(cd) = x.cd else { return 0.0 };
     let d = g.db.get(cd);
-    if d.tags.has(Tag::Wipe) || g.player(p).perms.iter().filter(|&&q| g.perm(q).token).count() >= TOKEN_CAP {
+    let facedown = x.data.truthy(DataKey::Facedown);
+    if (!facedown && d.tags.has(Tag::Wipe))
+        || g.player(p).perms.iter().filter(|&&q| g.perm(q).token).count() >= TOKEN_CAP
+    {
         return f64::NEG_INFINITY;
+    }
+    if facedown {
+        // its copy is a vanilla colourless 2/2 with no name or abilities (CR 708.2): a body, whatever the card is
+        return if at_eot { (FC_BODY * 2.0).min(FC_BODY_CAP) } else { 0.0 };
     }
     if oracle_wins(g, p, m) {
         return FC_WIN;
@@ -945,11 +966,11 @@ pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) 
                         && !crate::engine::values::has_type(g, y, "angel")
                         && !protected_from(g, y, colors_of(g, m))
                 })
-                .map(|y| crate::impls::t2::flicker_worth(g, p, y))
+                .map(|y| blink_worth_for_copy(g, p, y))
                 .fold(0.0_f64, f64::max);
             if best >= 3.0 { best * times } else { 0.0 }
         }
-        "Flickerwisp" => crate::impls::t12_brago_meren::wisp_value(g, p, m) * times,
+        "Flickerwisp" => crate::impls::t12_brago_meren::wisp_value(g, p, m, copy_room(g, p)) * times,
         "Solitude" => {
             let target =
                 crate::impls::common::best_opp_creature(g, p, |y| crate::engine::ward::ward_affordable(g, p, y, 0, ""));
@@ -966,7 +987,7 @@ pub fn copy_value(g: &Game, p: PlayerId, _src: PermId, m: PermId, at_eot: bool) 
             v * times
         }
         BREYA => 2.0 * FC_TOKEN * times,
-        STATION => (multicoloured(g, p) + 1) as f64 * FC_TOKEN * times,
+        STATION => multicoloured(g, p) as f64 * FC_TOKEN * times,
         ORACLE => FC_ORACLE_LOOK * times,
         _ if d.tags.str(Tag::Rem).is_some_and(|r| !crate::engine::zones::rem_is_static(r)) && d.tags.has(Tag::Etb) => {
             let rem = d.tags.str(Tag::Rem).unwrap_or("destroy");
@@ -1118,11 +1139,14 @@ pub fn crystal_hold(g: &Game, p: PlayerId, danger: f64) -> Option<f64> {
     if !crate::ai::table_fixes::crystal_hold_on() || !crate::ai::table_fixes::crystal_on() || danger >= FC_HOLD_DANGER {
         return None;
     }
-    if human(g, p) || crate::engine::values::hand_proper(g, p).len() >= FC_HOLD_HAND {
-        return None; // a full hand is cast from: the cleanup would throw the rest away
+    if human(g, p) {
+        return None;
     }
     let src =
         g.player(p).perms.iter().copied().find(|&m| card_name_of(g, m) == Some(CRYSTAL) && crystal_ready(g, p, m))?;
+    if crate::engine::values::hand_proper(g, p).len() >= FC_HOLD_HAND {
+        return None; // a full hand is cast from: the cleanup would throw the rest away
+    }
     // starvation: p held last turn and the Crystal then did not activate in the window: no second hold in a row
     let round = |k: &str| g.player(p).flag_turn.get(intern(k)).map(|s| s.round);
     if round("fc_hold").is_some_and(|h| h + 1 == g.round) && round("fc_acted") != Some(g.round) {

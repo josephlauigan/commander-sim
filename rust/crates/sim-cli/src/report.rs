@@ -536,7 +536,7 @@ pub fn print_analysis(
         println!("\n-- The Fire Crystal --");
         println!("  The Crystal was in play in {:.1}% of the games", 100.0 * get("fc_seen") / n);
         println!(
-            "  End-of-turn windows with {{4}}{{R}}{{R}} ready per game {:.2}; activations per game {:.2} (end of turn {:.2}, a win {:.2}); holds per game {:.2}",
+            "  End-of-turn windows with {{4}}{{R}}{{R}} ready per game {:.2}; activations per game {:.2} (end of turn {:.2}, a win {:.2}); turns the hold was offered per game {:.2}",
             get("fc_eot_ready") / n,
             get("fc_acts") / n,
             get("fc_acts_eot") / n,
