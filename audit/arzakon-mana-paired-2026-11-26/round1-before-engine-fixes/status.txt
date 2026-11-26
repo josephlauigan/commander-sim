@@ -1,0 +1,6 @@
+disk: 1269G
+commit: dfcbe3c6480b0e131af317b1967563baf0c28712
+start: 2026-11-26T00:21:35-07:00
+run1 done: 2026-11-26T00:32:27-07:00 exit=0
+run2 done: 2026-11-26T00:40:48-07:00 exit=0
+ALL SIMS DONE

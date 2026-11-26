@@ -34,6 +34,48 @@ fn brass_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     lose_life(g, p, 1, Some(p), "other", Some(true))
 }
 
+// ================================================================== Mana Confluence
+/// **Mana Confluence**: {T}, Pay 1 life: Add one mana of any colour (tag c=A). The life is a cost of the mana ability,
+/// paid each time the land taps for its own ability (colourless use included): life loss, not damage, so no damage
+/// prevention applies. A cost can't be paid when the life can't change (Teferi's Protection, Flare of Fortitude) or is
+/// 1 (the AI never taps it then, as with Mount Doom); `confluence_mana` makes the land make no mana in those cases.
+/// Not charged when another free ability of the land makes the mana (`confluence_free_now`). Not modelled: the combined
+/// cost of several life-cost lands in one payment (two of them at 2 life), a named limit.
+fn confluence_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
+    if confluence_free_now(g, p) {
+        return Ok(());
+    }
+    lose_life(g, p, 1, Some(p), "other", Some(false))
+}
+
+fn confluence_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
+    (confluence_always_free(g, p) || (g.player(p).life > 1 && !g.player(p).life_locked)) as u32
+}
+
+/// p has a free "{T}: add one mana of any colour" on its lands whatever is being paid, so a tap of Mana Confluence
+/// pays no life: a Chromatic Lantern or The World Tree (`lands_any_colour`), Leyline of the Guildpact (every land is
+/// every basic type), Dryad of the Ilysian Grove (the same)
+fn confluence_always_free(g: &Game, p: PlayerId) -> bool {
+    crate::engine::mana::lands_any_colour(g, p)
+        || (!g.hooks.is_empty() && (crate::engine::chars::leyline(g, p) || crate::cardcode::dryad_colors(g, p)))
+}
+
+/// `confluence_always_free`, or Urborg / Yavimaya's one-colour ability when the mana being paid is only {B} / {G} (or
+/// generic): `g.tap_cols` is the colour of the payment, set by `spend_unit` before `on_tap_land` runs. The mana
+/// enumeration (`confluence_mana`) cannot know it, so it counts the land as costing life then, which can only make the
+/// AI more careful.
+fn confluence_free_now(g: &Game, p: PlayerId) -> bool {
+    if confluence_always_free(g, p) {
+        return true;
+    }
+    if g.hooks.is_empty() {
+        return false;
+    }
+    let (b, gr) = (crate::engine::chars::lands_are(g, 'B'), crate::engine::chars::lands_are(g, 'G'));
+    let cols = g.tap_cols;
+    (b || gr) && "WUR".chars().all(|c| !cols.has(c)) && (!cols.has('B') || b) && (!cols.has('G') || gr)
+}
+
 // ================================================================== City of Traitors
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
@@ -974,6 +1016,9 @@ fn gates_defend(
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "City of Brass")?.on_tap_land = Some(brass_tap);
+    let mc = r.card(db, "Mana Confluence")?;
+    mc.on_tap_land = Some(confluence_tap);
+    mc.dyn_mana_land = Some(confluence_mana);
     // City of Traitors: land_etb on every land that has none yet (the City itself included: playing a second City
     // sacrifices the first, and the new one stays)
     let lands: Vec<String> = db.iter().filter(|d| d.land).map(|d| d.name.to_string()).collect();

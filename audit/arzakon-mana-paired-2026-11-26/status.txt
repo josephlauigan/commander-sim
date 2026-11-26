@@ -1,0 +1,9 @@
+disk: 1343G
+commit: dd15c5b0846360043ee7e738e32114bebcb054a3
+start: 2026-11-26T01:07:44-07:00
+   Compiling sim-cli v0.1.0 (/home/joseph/projects/commander-sim-wt-arz-mana/rust/crates/sim-cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 40.91s
+run1 done: 2026-11-26T01:08:26-07:00 exit=0
+run2 done: 2026-11-26T01:17:09-07:00 exit=0
+ALL SIMS DONE
+run1 rerun done (no-preflight): 2026-11-26T01:26:15-07:00

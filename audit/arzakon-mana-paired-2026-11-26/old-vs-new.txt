@@ -1,0 +1,238 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exsanguinate [pool] S BB :: xdrain
+Model status of the swapped-in cards (cardgen audit):
+  Llanowar Elves: Full (tags: `dork=G noatk human`)
+  Avacyn's Pilgrim: Full (mana dork: {T}: add {W})
+  Exsanguinate: Full (each opponent loses X life and you gain the total; the AI casts it for a kill or a big X (sephfs: option in impls/sephfs.rs, X = all spare mana, when lethal or X >= 4 and the board is safe; plan from impls/yshtola.rs x_drain_go))
+  Coalition Relic: Full ({T}: one mana of any colour; untapped at your end step it takes a charge counter instead (unless held-up instants need it), released as extra mana on your next turn)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  arzakon                      100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  arzakon (swapped)            100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)   5 decks, 500 cards: Full 438, Full-auto 32, Approximate 30, Partial 0, Unmodeled 0
+  opponents Tier 6 (cEDH, B5)  5 decks, 500 cards: Full 462, Full-auto 13, Approximate 14, Partial 11, Unmodeled 0
+
+Format: Cali Commander, 1v1, 30 life, the starting player skips its first draw; the opponents are 4-player pool lists playing 1v1 (Cali Commander, opponents: 4-player pool lists 1v1, tier knobs fitted on 4-seat tables; AI profile: learned eval off, go rules every seat, duel cover on)
+Swaps: Mana Confluence -> Llanowar Elves; City of Brass -> Avacyn's Pilgrim; Misty Rainforest -> Exsanguinate; Chromatic Lantern -> Coalition Relic
+
+=== Arzakon vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws; Cali Commander, opponents: 4-player pool lists 1v1, tier knobs fitted on 4-seat tables; AI profile: learned eval off, go rules every seat, duel cover on) ===
+[loose       ] win  23.6% ->  21.7%  (delta -1.9 pts, noise ±1.4, paired)   n=3000
+               eliminated by (variant): Kinnan 16.1%  Miirym 15.6%  Urza 16.0%  Yawgmoth 15.1%  Zur the Enchanter 15.0%
+               game ends (baseline): timeout 2 (0.1%), engine step cap 0, no winner 1
+               game ends (variant):  timeout 4 (0.1%), engine step cap 0, no winner 1
+               on the play win  24.1% ->  21.7%  (delta -2.3 pts, noise ±1.9, paired)   n=1500
+               on the draw win  23.1% ->  21.6%  (delta -1.5 pts, noise ±2.0, paired)   n=1500
+VERDICT: WORSE under the loose profile (the only one run)
+
+--- What changed, by strength axis (arzakon) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for arzakon: first combo attempt
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.6% ->  21.7%  -1.9pt   ±2.2 
+    Rounds survived (or game length)                   7.83 ->   7.85   +0.01  ±0.11 
+
+  Mana & consistency
+    Extra mulligans per game                           0.66 ->   0.82   +0.16  ±0.06*
+    Missed land drops, turns 1-5                       1.17 ->   1.39   +0.23  ±0.06*
+    Mana available on your turn 4                      4.58 ->   4.48   -0.11  ±0.11 
+    Mana available on your turn 6                      6.68 ->   6.36   -0.32  ±0.17*
+
+  Speed
+    Games where the game plan came online             12.5% ->  11.5%  -1.0pt   ±1.7 
+    Turn the game plan came online                     7.02 ->   6.94   -0.08  ±0.34 
+    Turn the commander first resolved                  5.87 ->   6.01   +0.14  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            10.26 ->  10.20   -0.06  ±0.53 
+    Tutors resolved per game                           1.25 ->   1.18   -0.07  ±0.06*
+    Spells cast per game                               8.68 ->   8.46   -0.22  ±0.23 
+
+  Interaction
+    Counterspells cast                                 0.34 ->   0.34   -0.01  ±0.03 
+    Spot removal cast                                  0.43 ->   0.41   -0.02  ±0.03 
+    Board wipes cast                                   0.02 ->   0.02   -0.00  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.27 ->   0.26   -0.01  ±0.03 
+    Your spells countered                              0.52 ->   0.51   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                 5.28 ->   4.91   -0.37  ±0.43 
+      ...of which combat damage                        3.59 ->   3.51   -0.08  ±0.36 
+      ...of which magecraft / burn                     1.64 ->   1.36   -0.29  ±0.16*
+      ...of which drain triggers                       0.00 ->   0.00   +0.00  ±0.00 
+      ...of which other triggers                       0.04 ->   0.03   -0.00  ±0.02 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Extra mulligans per game (both profiles)
+    worse  - Missed land drops, turns 1-5 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Tutors resolved per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 3000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Llanowar Elves                        16.4      69.0         4.1     31.0       29.1      0.00
+    Avacyn's Pilgrim                      16.3      69.3         4.0     30.7       25.1      0.00
+    Exsanguinate                          14.9       1.1         7.6     98.9       60.0      0.00
+    Coalition Relic                       18.4      80.9         4.2     19.1       28.7      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mana Confluence                       18.4       0.0           -    100.0          -      0.00
+    City of Brass                         18.0       0.0           -    100.0          -      0.00
+    Misty Rainforest                      19.0       0.0           -    100.0          -      0.00
+    Chromatic Lantern                     16.9      83.6         4.4     16.4       30.9      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.6      21.7     -1.9
+    rounds survived                                   7.83      7.85    +0.01
+    eliminated, % of games                            76.4      78.3     +1.9
+    opponents it eliminated, per game                 0.21      0.19    -0.02
+    damage dealt, per game                             5.3       4.9     -0.4
+    plan: first combo attempt
+      plan online by turn 4, %                         1.4       1.2     -0.3
+      plan online by turn 6, %                         5.6       5.5     -0.0
+      plan online by turn 8, %                         9.7       9.2     -0.5
+      plan online by turn 12, %                       12.2      11.2     -1.0
+      plan online at all, %                           12.5      11.5     -1.0
+    commander resolved by turn 4, %                    9.2       8.5     -0.7
+    commander resolved by turn 6, %                   31.0      25.8     -5.2
+    commander removals, per game                      0.29      0.26    -0.03
+    lands on the battlefield, turn 4                  3.30      3.13    -0.17
+    lands on the battlefield, turn 8                  5.48      5.06    -0.42
+    mana available, turn 4                            4.58      4.48    -0.11
+    mana available, turn 8                            8.80      8.39    -0.40
+    cards in hand after the land drop, turn 4         4.22      4.28    +0.06
+    cards in hand after the land drop, turn 8         3.67      3.97    +0.29
+    wins by (current):  combo 51%, damage 49%, timeout 0%
+    wins by (swapped):  combo 50%, damage 49%, timeout 0%
+    eliminated by (current): Kinnan via combat 11.4%, Miirym via combat 10.5%, Urza via combo 7.9%, Urza via combat 7.4%
+    eliminated by (swapped): Kinnan via combat 10.9%, Miirym via combat 10.8%, Urza via combo 7.8%, Urza via combat 7.5%
+Swaps: Mana Confluence -> Llanowar Elves; City of Brass -> Avacyn's Pilgrim; Misty Rainforest -> Exsanguinate; Chromatic Lantern -> Coalition Relic
+
+=== Arzakon vs Tier 6 (cEDH, B5): baseline vs variant (paired, same opponents and draws; Cali Commander, opponents: 4-player pool lists 1v1, tier knobs fitted on 4-seat tables; AI profile: learned eval off, go rules every seat, duel cover on) ===
+[loose       ] win  34.8% ->  31.7%  (delta -3.1 pts, noise ±1.5, paired)   n=3000
+               eliminated by (variant): Kinnan 14.3%  Kraum/Tymna 15.1%  Rograkh/Silas 10.2%  Rograkh/Thrasios 13.6%  Sisay 14.6%
+               game ends (baseline): timeout 5 (0.2%), engine step cap 0, no winner 1
+               game ends (variant):  timeout 4 (0.1%), engine step cap 0, no winner 1
+               on the play win  33.4% ->  29.9%  (delta -3.5 pts, noise ±2.2, paired)   n=1500
+               on the draw win  36.2% ->  33.5%  (delta -2.7 pts, noise ±2.2, paired)   n=1500
+VERDICT: WORSE under the loose profile (the only one run)
+
+--- What changed, by strength axis (arzakon) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for arzakon: first combo attempt
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.8% ->  31.7%  -3.1pt   ±2.4*
+    Rounds survived (or game length)                   8.24 ->   8.27   +0.02  ±0.14 
+
+  Mana & consistency
+    Extra mulligans per game                           0.66 ->   0.82   +0.16  ±0.06*
+    Missed land drops, turns 1-5                       1.15 ->   1.38   +0.23  ±0.06*
+    Mana available on your turn 4                      4.55 ->   4.45   -0.10  ±0.11 
+    Mana available on your turn 6                      6.65 ->   6.36   -0.28  ±0.17*
+
+  Speed
+    Games where the game plan came online             15.0% ->  14.5%  -0.4pt   ±1.8 
+    Turn the game plan came online                     7.59 ->   8.11   +0.52  ±0.36*
+    Turn the commander first resolved                  6.14 ->   6.22   +0.08  ±0.16 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            11.43 ->  11.50   +0.07  ±0.59 
+    Tutors resolved per game                           1.32 ->   1.26   -0.05  ±0.06 
+    Spells cast per game                               9.70 ->   9.55   -0.15  ±0.27 
+
+  Interaction
+    Counterspells cast                                 0.40 ->   0.39   -0.01  ±0.03 
+    Spot removal cast                                  0.48 ->   0.45   -0.02  ±0.03 
+    Board wipes cast                                   0.02 ->   0.01   -0.00  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.02 ->   0.02   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.29 ->   0.27   -0.03  ±0.03 
+    Your spells countered                              0.90 ->   0.87   -0.04  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                 5.71 ->   5.20   -0.51  ±0.48*
+      ...of which combat damage                        4.88 ->   4.49   -0.39  ±0.43 
+      ...of which magecraft / burn                     0.75 ->   0.63   -0.12  ±0.11*
+      ...of which other triggers                       0.09 ->   0.09   -0.00  ±0.04 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Win rate (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Extra mulligans per game (both profiles)
+    worse  - Missed land drops, turns 1-5 (both profiles)
+    worse  - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 3000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Llanowar Elves                        16.9      73.7         4.4     26.3       41.0      0.01
+    Avacyn's Pilgrim                      17.9      72.3         4.4     27.7       41.0      0.00
+    Exsanguinate                          15.5       2.8         7.2     97.2       38.5      0.00
+    Coalition Relic                       20.2      80.6         4.7     19.4       41.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mana Confluence                       19.5       0.0           -    100.0          -      0.00
+    City of Brass                         20.5       0.0           -    100.0          -      0.00
+    Misty Rainforest                      19.4       0.0           -    100.0          -      0.00
+    Chromatic Lantern                     18.2      82.9         4.8     17.1       47.6      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.8      31.7     -3.1
+    rounds survived                                   8.24      8.27    +0.02
+    eliminated, % of games                            65.1      68.2     +3.1
+    opponents it eliminated, per game                 0.31      0.28    -0.03
+    damage dealt, per game                             5.7       5.2     -0.5
+    plan: first combo attempt
+      plan online by turn 4, %                         1.3       1.0     -0.3
+      plan online by turn 6, %                         5.4       4.5     -0.9
+      plan online by turn 8, %                        10.2       8.7     -1.5
+      plan online by turn 12, %                       14.3      13.6     -0.8
+      plan online at all, %                           15.0      14.5     -0.4
+    commander resolved by turn 4, %                    9.8       8.5     -1.3
+    commander resolved by turn 6, %                   31.2      26.7     -4.5
+    commander removals, per game                      0.22      0.20    -0.02
+    lands on the battlefield, turn 4                  3.30      3.13    -0.17
+    lands on the battlefield, turn 8                  5.51      5.11    -0.41
+    mana available, turn 4                            4.55      4.45    -0.10
+    mana available, turn 8                            8.88      8.46    -0.42
+    cards in hand after the land drop, turn 4         4.23      4.30    +0.08
+    cards in hand after the land drop, turn 8         3.67      3.85    +0.18
+    wins by (current):  damage 61%, combo 39%, timeout 0%
+    wins by (swapped):  damage 58%, combo 42%, timeout 0%
+    eliminated by (current): Rograkh/Silas via combo 8.2%, Sisay via combat 7.4%, Kinnan via combat 7.4%, Rograkh/Thrasios via combat 7.0%
+    eliminated by (swapped): Rograkh/Silas via combo 8.2%, Kinnan via combat 8.1%, Kraum/Tymna via combo 7.8%, Sisay via combo 7.1%
+
+(529s total)
+systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0  --deck      11168.99s user 0.87s system 2109% cpu 8:49.49 total

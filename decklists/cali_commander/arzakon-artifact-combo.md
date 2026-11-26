@@ -10,15 +10,15 @@ Thassa's Oracle or a Walking Ballista with a huge X, **Tinker into Blightsteel C
 **Thassa's Oracle with Demonic Consultation or Tainted Pact** (the singleton library exiles itself), and **Underworld
 Breach with Brain Freeze** as a storm line into the Oracle. Sneak Attack is a second way to put Blightsteel onto the
 battlefield. It is weak to Null Rod and Collector Ouphe effects, to stax that stops free spells and rocks, and to a
-hand that holds the answers (counters and removal) with no engine. Nothing in this document has been simulated at the
-Cali format, so the plan and the keep rule are a pilot's guide, not measured.
+hand that holds the answers (counters and removal) with no engine. The plan and the keep rule are a pilot's guide that no sim has
+tuned.
 
 | | |
 |---|---|
 | **Commander** | Arzakon ({W}{U}{B}{R}{G}, a legendary planeswalker with loyalty 4; "can be your commander"); a five-colour card |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
-| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated, Dockside Extortionist and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI's Rings of Brighthearth copies nothing outside the Basalt Monolith loop, so never a loyalty ability; a person's Rings copies them, in practice mode and at a real table. This list has not been simulated at the Cali format |
-| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated, Karn's Bastion, Sunpearl Kirin and Mox Opal are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Staff of Domination and Watery Grave |
+| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated, Dockside Extortionist and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI's Rings of Brighthearth copies nothing outside the Basalt Monolith loop, so never a loyalty ability; a person's Rings copies them, in practice mode and at a real table. |
+| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated, Karn's Bastion, Sunpearl Kirin and Mox Opal are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mana Confluence, City of Brass, Chromatic Lantern, Staff of Domination and Watery Grave |
 
 ## Strategy
 
@@ -31,7 +31,7 @@ commander.*
 
 **When to cast it.** It costs one mana of each colour and nothing else, so the colourless rocks (Sol Ring, Mana Crypt, Mana
 Vault, Basalt Monolith, Ancient Tomb) pay nothing toward it. The sources that can pay a colour are the dual lands and
-fetchlands, Command Tower, Arcane Signet, Coalition Relic, Birds of Paradise, Paradise Druid, Lotus Petal, Fellwar Stone (only a colour an
+fetchlands, Command Tower, Mana Confluence, City of Brass, Arcane Signet, Chromatic Lantern (which also lets every land tap for any colour), Birds of Paradise, Paradise Druid, Lotus Petal, Fellwar Stone (only a colour an
 opponent's land can make), Chrome Mox (one colour), Mox Opal (with three artifacts) and Leyline of the Guildpact, which turns every land into every
 basic land type so that each land taps for any colour. Expect it on turn 4 or 5, not turn 2 or 3. If it leaves the
 battlefield you may return it to the command zone and cast it again for {2} more.
@@ -158,7 +158,7 @@ If the combo is stopped, the deck still has threats and a way to grind:
   dorks and small blockers.
 - **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Karn's Bastion, or any two lands (two of the Urza lands, say), and attacks.
 - **Meteor Golem** ({7}): destroy any nonland permanent. **Hangarback Walker** ({X}{X}) is a mana sink that leaves
-  fliers. **Walking Ballista** is a mana sink and a pinger. **Exsanguinate** ({X}{B}{B}) is a late finisher.
+  fliers. **Walking Ballista** is a mana sink and a pinger.
 
 ### The engines
 
@@ -354,9 +354,9 @@ it first. Keep a Force of Will for the retry, and rebuild mana with the rocks yo
 
 You start at 30. Mana Crypt costs 3 life on a lost coin flip each upkeep (about 1.5 life per turn on average), The One
 Ring costs 1 per burden counter, Ancient Tomb costs 2 per tap, each fetchland costs 1 (a fetched shockland costs 2
-more life to enter untapped, so fetch an original), Talisman of Progress costs 1 per coloured tap, Diabolic Intent is a creature sacrifice, and
-Exsanguinate gains life for the X it costs. If you are on the draw against a fast deck, hold off on Mana Crypt and
-Ring until you know the matchup. Exsanguinate pays some of it back. The original duals and Command Tower cost
+more life to enter untapped, so fetch an original), Mana Confluence costs 1 per tap, City of Brass deals 1 damage to you per tap,
+Talisman of Progress costs 1 per coloured tap and Diabolic Intent is a creature sacrifice. If you are on the draw against a fast
+deck, hold off on Mana Crypt and Ring until you know the matchup. The original duals and Command Tower cost
 nothing to tap.
 
 ### Common mistakes
@@ -374,19 +374,20 @@ nothing to tap.
 
 ## Mana
 
-27 lands, 6 of them colourless (Ancient Tomb, Karn's Bastion, Urza's Saga and the three Urza lands, Urza's Tower, Urza's Mine
-and Urza's Power Plant): Command Tower (any colour, painless), the ten
+30 lands, 6 of them colourless (Ancient Tomb, Karn's Bastion, Urza's Saga and the three Urza lands, Urza's Tower, Urza's Mine
+and Urza's Power Plant): Command Tower (any colour, painless), Mana Confluence and City of Brass (any colour, 1 life or 1 damage per tap), the ten
 original duals (Tundra, Underground Sea, Volcanic Island, Tropical Island, Bayou, Badlands, Savannah, Scrubland,
-Plateau, Taiga), seven fetchlands (Flooded Strand, Polluted Delta, Windswept Heath, Scalding Tarn,
-Wooded Foothills, Marsh Flats, Arid Mesa) and three shocklands (Hallowed Fountain,
-Steam Vents, Watery Grave). Coloured sources among the lands, counting each fetchland as any colour: blue 15, white 13,
-black 13, red 13, green 12. The deck also has 5 mana dorks (Birds of Paradise, Llanowar Elves, Paradise Druid,
-Avacyn's Pilgrim, Faeburrow Elder), 13 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
-Chrome Mox, Mox Opal, Arcane Signet, Coalition Relic, Fellwar Stone, Talisman of Progress,
+Plateau, Taiga), eight fetchlands (Flooded Strand, Polluted Delta, Windswept Heath, Scalding Tarn,
+Wooded Foothills, Marsh Flats, Arid Mesa, Misty Rainforest) and three shocklands (Hallowed Fountain,
+Steam Vents, Watery Grave). Coloured sources among the lands, counting each fetchland as any colour: blue 18, white 16,
+black 16, red 16, green 15. The deck also has 3 mana dorks (Birds of Paradise, Paradise Druid,
+Faeburrow Elder), 13 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
+Chrome Mox, Mox Opal, Arcane Signet, Chromatic Lantern, Fellwar Stone, Talisman of Progress,
 The Mightstone and Weakstone, Basalt Monolith) and Voltaic Key to untap them, and Dockside Extortionist, which makes Treasures from the
 opponent's artifacts and enchantments. Blue is the heaviest colour ({U}{U} for Counterspell, Thassa's
-Oracle, Urza and Mystic Confluence), white needs {W}{W} for Grand Abolisher and one {W} for Silence, Sunpearl Kirin and several other spells, and green
-matters most for the three one-mana dorks (Birds of Paradise, Llanowar Elves, Avacyn's Pilgrim). Red is the lightest: only Chaos Warp, Gamble,
+Oracle, Urza and Mystic Confluence) and black the second main colour (the tutors, Demonic Consultation, Tainted Pact and Dark Ritual for the Oracle line; {B}{B} only for Grim Tutor). White is a heavy
+splash: {W}{W} for Grand Abolisher and one {W} for Silence, Sunpearl Kirin and several other spells. Green
+matters most for Birds of Paradise, the one-mana dork. Red is the lightest: only Chaos Warp, Gamble,
 Underworld Breach, Sneak Attack, Ragavan and Dockside Extortionist need it, besides Arzakon. Arzakon needs all five at once, which the colourless sources
 (the six colourless lands and the colourless rocks) cannot help with.
 
@@ -397,11 +398,15 @@ counter costs a life every upkeep for one more card on the next tap. Once you ha
 
 **Fetchlands in this list.** The list has no basic lands, so a fetchland finds an original dual or a shockland by its
 two land types. Every pair of colours has an original dual, so each fetchland works as a five-colour land for 1 life,
-and there are 13 lands to find for 7 fetchlands. Fetch an original dual, not a shockland (a fetched shockland costs 2 more
+and there are 13 lands to find for 8 fetchlands. Fetch an original dual, not a shockland (a fetched shockland costs 2 more
 life to enter untapped). Prismatic Vista would find nothing. Crucible of Worlds lets you replay a cracked fetchland from the graveyard as your land drop each turn, and each
 crack thins the library a little before the Oracle line. Leyline of the Guildpact makes every land every basic type,
 but it does not affect cards in the library, which keep their printed land types, so fetchlands still find only the
 real duals and shocklands.
+
+**Chromatic Lantern.** {3}: lands you control have "{T}: Add one mana of any color", and the Lantern itself taps for any colour. With it out every land is a
+five-colour land, the Urza lands, Karn's Bastion and Ancient Tomb included (each still makes its own colourless mana, or one coloured mana instead), so it is the card that rescues a hand of colourless lands.
+It is the one rock the opponent can destroy that fixes the whole land base at once: hold it back when a sweeper or artifact removal is likely.
 
 **The Urza lands.** Urza's Tower, Urza's Mine and Urza's Power Plant each tap for {C}; with all three on the battlefield
 the Tower taps for {C}{C}{C} and the Mine and the Power-Plant for {C}{C} each, seven colourless mana from three lands.
@@ -421,9 +426,9 @@ game. Check with the organiser whether proxies are allowed.
 
 **Commander (1).** Arzakon
 
-**Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Dockside Extortionist, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Sunpearl Kirin, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
+**Creatures (14).** Birds of Paradise, Blightsteel Colossus, Dockside Extortionist, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Sunpearl Kirin, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
 
-**Artifacts (20).** Arcane Signet, Basalt Monolith, Chrome Mox, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
+**Artifacts (20).** Arcane Signet, Basalt Monolith, Chromatic Lantern, Chrome Mox, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
 
 **Enchantments (4).** Leyline of the Guildpact, Mystic Remora, Sneak Attack, Underworld Breach
 
@@ -431,9 +436,9 @@ game. Check with the organiser whether proxies are allowed.
 
 **Instants (23).** An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Reality Shift, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (6).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Tinker
+**Sorceries (5).** Demonic Tutor, Diabolic Intent, Gamble, Grim Tutor, Tinker
 
-**Lands (27).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Command Tower, Flooded Strand, Hallowed Fountain, Karn's Bastion, Marsh Flats, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Steam Vents, Taiga, Tropical Island, Tundra, Underground Sea, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills
+**Lands (30).** Ancient Tomb, Arid Mesa, Badlands, Bayou, City of Brass, Command Tower, Flooded Strand, Hallowed Fountain, Karn's Bastion, Mana Confluence, Marsh Flats, Misty Rainforest, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Steam Vents, Taiga, Tropical Island, Tundra, Underground Sea, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills
 
 ## Import list (100)
 
@@ -443,7 +448,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Arcane Signet
 1 Arid Mesa
 1 Arzakon
-1 Avacyn's Pilgrim
 1 Badlands
 1 Basalt Monolith
 1 Bayou
@@ -451,8 +455,9 @@ game. Check with the organiser whether proxies are allowed.
 1 Blightsteel Colossus
 1 Brain Freeze
 1 Chaos Warp
+1 Chromatic Lantern
 1 Chrome Mox
-1 Coalition Relic
+1 City of Brass
 1 Command Tower
 1 Counterspell
 1 Crucible of Worlds
@@ -465,7 +470,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Dovin's Veto
 1 Enlightened Tutor
 1 Ephemerate
-1 Exsanguinate
 1 Faeburrow Elder
 1 Fellwar Stone
 1 Flooded Strand
@@ -483,12 +487,13 @@ game. Check with the organiser whether proxies are allowed.
 1 Karn, the Great Creator
 1 Leyline of the Guildpact
 1 Lightning Greaves
-1 Llanowar Elves
 1 Lotus Petal
+1 Mana Confluence
 1 Mana Crypt
 1 Mana Vault
 1 Marsh Flats
 1 Meteor Golem
+1 Misty Rainforest
 1 Mox Opal
 1 Mystic Confluence
 1 Mystic Remora

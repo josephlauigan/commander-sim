@@ -206,12 +206,18 @@ pub fn human_sources(g: &Game, p: PlayerId) -> Vec<Unit> {
     units(g, p, false, true, paying(g))
 }
 
+/// p's lands have a free "{T}: add one mana of any colour" of their own: Chromatic Lantern, The World Tree
+pub fn lands_any_colour(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    has(g, p, Tag::Lantern)
+        || (pl.lands.iter().any(|&l| g.db.get(g.perm(l).card()).tag(Tag::Worldtree)) && pl.lands.len() >= 6)
+}
+
 fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<CardId>) -> Vec<Unit> {
     let pl = g.player(p);
     let ident = pl.ident;
     let mut u = vec![];
-    let anyc = has(g, p, Tag::Lantern)
-        || (pl.lands.iter().any(|&l| g.db.get(g.perm(l).card()).tag(Tag::Worldtree)) && pl.lands.len() >= 6);
+    let anyc = lands_any_colour(g, p);
     let hooked = !g.hooks.is_empty();
     let moon = hooked && cardcode::blood_moon(g);
     let dryad = hooked && cardcode::dryad_colors(g, p);
@@ -231,8 +237,10 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
             continue; // Mishra's Workshop: artifact spells only
         }
         let leyline = !plain && !granted_cols_for(g, p, Colors::NONE, plain).is_empty();
+        // a granted "{T}: add one mana of any colour" (Leyline's basic types, a Lantern) that deals no damage and costs no life
+        let granted_any = leyline || (anyc && !plain);
         if !plain && t.has(Tag::Tomb) && pl.life <= 2 {
-            if leyline {
+            if granted_any {
                 // Ancient Tomb's 2 damage would kill you, but its Leyline ability ({T}: one mana of any colour) deals none
                 u.push(Unit {
                     src: Source::Land(l),
@@ -251,7 +259,11 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         if hooked {
             amt += hooks::total_land_mana(g, p, l);
         }
-        let mut cols = land_cols(g, p, l, anyc, moon, dryad);
+        // a Lantern recolours a land that makes one mana; a land that makes several (Ancient Tomb, the Urza lands) keeps its
+        // own ability and gets the Lantern's one mana of any colour as an alternative, like Leyline's (`Shape::Alt` below)
+        // (a land with two or more own colours and several mana, a Karoo, keeps the old reading: any one colour, free)
+        let keep_old = anyc && !one && land_cols(g, p, l, false, moon, dryad).count() > 1;
+        let mut cols = land_cols(g, p, l, anyc && (one || keep_old), moon, dryad);
         if one {
             // Urborg / Yavimaya: also {B} / {G} (see granted_cols); Leyline of the Guildpact: any colour
             cols = cols.union(granted_cols_for(g, p, granted, plain));
@@ -263,13 +275,13 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         let amt = amt.max(0) as u32;
         // several mana from one land: all one colour (Lotus Field), or one of each colour of its pair (a Karoo). Only
         // its own tagged colours: a land turned any-colour by a Lantern, Dryad or a card's rule stays free
-        let mut shape = if amt >= 2 && !anyc && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
+        let mut shape = if amt >= 2 && !keep_old && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
             let printed = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
             shape_of(t, t.str(Tag::C).unwrap_or("C"), cols, printed, amt, true)
         } else {
             Shape::Free
         };
-        if leyline && !one && !anyc && !dryad && amt >= 2 && shape == Shape::Free && cols.count() <= 1 {
+        if granted_any && !one && !dryad && amt >= 2 && shape == Shape::Free && cols.count() <= 1 {
             // Leyline of the Guildpact: Ancient Tomb, Cabal Coffers, Gaea's Cradle, Mishra's Workshop also have the
             // basic types' ability, one mana of any colour: an alternative to their own, never both in one tap
             if cardcode::land_colors(g, p, l).is_none() {
@@ -571,8 +583,12 @@ fn restricted_float(src: Source) -> bool {
 fn is_pain(g: &Game, src: Source) -> bool {
     match src {
         Source::Land(l) => {
-            let t = &g.db.get(g.perm(l).card()).tags;
-            (t.has(Tag::Tomb) || t.has(Tag::Pain)) && !moon_land(g, l)
+            let d = g.db.get(g.perm(l).card());
+            // Mana Confluence (1 life per tap) and City of Brass (1 damage per tap) hurt like a painland: tapped late
+            let hurts = d.tags.has(Tag::Tomb)
+                || d.tags.has(Tag::Pain)
+                || matches!(&*d.name, "Mana Confluence" | "City of Brass");
+            hurts && !moon_land(g, l)
         }
         Source::Perm(m) => mana_card(g, m).is_some_and(|c| g.db.get(c).tag(Tag::Pain)),
         _ => false,

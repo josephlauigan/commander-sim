@@ -3,7 +3,6 @@
 1 Arcane Signet (cmr) 297
 1 Arid Mesa (spg) 109
 1 Arzakon (mbc) 33
-1 Avacyn's Pilgrim (isd) 170
 1 Badlands (ced) 278
 1 Basalt Monolith (3ed) 235
 1 Bayou (ced) 279
@@ -11,8 +10,9 @@
 1 Blightsteel Colossus (sld) 2223
 1 Brain Freeze (soa) 78
 1 Chaos Warp (pw24) 7
+1 Chromatic Lantern (frc) 54
 1 Chrome Mox (2xm) 240
-1 Coalition Relic (fut) 161
+1 City of Brass (2x2) 403
 1 Command Tower (sld) 7030
 1 Counterspell (pf26) 5
 1 Crucible of Worlds (2x2) 393
@@ -25,7 +25,6 @@
 1 Dovin's Veto (p30a) 27
 1 Enlightened Tutor (dmr) 412
 1 Ephemerate (sta) 68
-1 Exsanguinate (som) 61
 1 Faeburrow Elder (plst) ELD-190
 1 Fellwar Stone (sld) 2557
 1 Flooded Strand (mh3) 353
@@ -43,12 +42,13 @@
 1 Karn, the Great Creator (war) 1★
 1 Leyline of the Guildpact (mkm) 217
 1 Lightning Greaves (sld) 1662
-1 Llanowar Elves (btd) 58
 1 Lotus Petal (p30m) 2
+1 Mana Confluence (sld) 1012a
 1 Mana Crypt (2xm) 361
 1 Mana Vault (4ed) 334
 1 Marsh Flats (spg) 110
 1 Meteor Golem (sld) 285
+1 Misty Rainforest (mh2) 250
 1 Mox Opal (2xm) 275
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
