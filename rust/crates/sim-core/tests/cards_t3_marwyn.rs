@@ -88,6 +88,24 @@ fn joraga_warcaller_is_multikicked_with_the_spare_mana() {
 }
 
 #[test]
+fn joraga_warcaller_kicks_are_priced_with_a_discount_and_a_tax_summed() {
+    // {G} + {1}{G} per kick, +{1} (Sphere of Resistance), -{1} (Emerald Medallion), floored once (CR 601.2f): one kick
+    // costs {1}{G}{G} (3 mana), two kick {2}{G}{G}{G} (5). Four Forests are one kick, not two.
+    let mut g = tbl();
+    perm(&mut g, P0, "Emerald Medallion");
+    perm(&mut g, P1, "Sphere of Resistance");
+    lands(&mut g, P0, "Forest", 4, false);
+    let c = hand(&mut g, P0, &["Joraga Warcaller"])[0];
+    let o = hand_opts(&mut g, c, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("1 extra"), "four mana pay one kick: {}", o[0].label);
+    assert!(run(&mut g, P0, &o[0]));
+    let j = g.player(P0).perms.iter().copied().find(|&m| &*g.perm(m).name == "Joraga Warcaller").unwrap();
+    assert_eq!(g.perm(j).plus, 1, "one kick, one counter");
+    assert_eq!(total_mana(&g, P0, false), 1, "three of the four Forests were spent");
+}
+
+#[test]
 fn immaculate_magistrate_counts_elves() {
     let mut g = tbl();
     let m = perm(&mut g, P0, "Immaculate Magistrate");

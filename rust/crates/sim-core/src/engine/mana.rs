@@ -1090,7 +1090,8 @@ pub fn cost_of_base_probed(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str,
 /// what a card cast from the hand under Tamiyo's emblem costs when the cast also has an additional cost of `generic`
 /// and `pips` (Twinflame's strive: {2}{R} for each target beyond the first). The emblem's alternative cost is {0}, the
 /// additional cost is added to it, and every increase and reduction, the Trinisphere minimum (counting these symbols)
-/// and the rest apply as to any cost. With no extra it is `cost_of`.
+/// and the rest apply as to any cost. Only for a card cast from the hand under Tamiyo's emblem (the caller checks); it prices
+/// the emblem's {0} base whatever the card's own cost is.
 pub fn cost_of_free_with_extra(g: &Game, p: PlayerId, c: CardId, generic: u32, pips: &str) -> (u32, String) {
     cost_of_pipeline(g, p, c, 0, "", Some((generic as i64, pips)))
 }

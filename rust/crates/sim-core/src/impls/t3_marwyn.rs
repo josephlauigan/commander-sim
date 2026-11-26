@@ -28,7 +28,9 @@
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
+use crate::engine::mana::{
+    can_pay, can_pay_spell, cost_of, cost_of_with, pay, pay_spell, total_mana, total_mana_spell,
+};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::stack::ability_window;
@@ -490,13 +492,12 @@ fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ================================================================== squad and multikicker: Brigade, Warcaller
-/// what casting c with k extra payments of {1}{G} costs p: its cost now, plus {1}{G} each (a discount the spell's own
-/// cost had no generic mana to take goes to the kicker: Emerald Medallion on Joraga Warcaller)
+/// what casting c with k extra payments of {1}{G} costs p: the extra payments are an additional cost added before every
+/// increase and reduction, so the engine prices them with the printed cost (CR 601.2f: a discount the spell's own cost had no
+/// generic mana to take goes to the kicker: Emerald Medallion on Joraga Warcaller; a tax is added to the same total)
 fn kicked_cost(g: &Game, p: PlayerId, c: CardId, k: u32) -> (u32, String) {
-    let (cg, cp) = cost_of(g, p, c);
-    let unused = if cg == 0 { crate::dsl::cost_delta(g, p, c).min(0) } else { 0 };
-    let gn = (cg as i32 + k as i32 + unused).max(0) as u32;
-    (gn, format!("{cp}{}", "G".repeat(k as usize)))
+    let pips = format!("{}{}", g.db.get(c).pips, "G".repeat(k as usize));
+    cost_of_with(g, p, c, k as i32, &pips)
 }
 
 /// the most extra payments p can make now (up to 6)
