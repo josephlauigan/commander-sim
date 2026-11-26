@@ -1321,7 +1321,7 @@ fn twinflame_never_plans_more_targets_than_the_pool_has_red_for() {
 #[test]
 fn twinflame_strive_is_still_paid_under_tamiyos_emblem() {
     // Tamiyo's emblem lets the spell be cast without paying its mana cost, but strive is a cost increase and still applies
-    // (601.2f, 118.9d): every extra target costs {2}{R}. (The other taxes the engine drops under the emblem stay dropped.)
+    // (601.2f, 118.9d): every extra target costs {2}{R}, and the taxes apply to it as to any cost (board 0: none on the table).
     let (mut g, c, ..) = twinflame_board(0, 3, 12, 0);
     g.player_mut(P).emblems.push("tamiyo");
     let oo = twinflame_opts(&mut g, c);

@@ -7,7 +7,8 @@
 
 mod play_common;
 use play_common::*;
-use sim_core::engine::mana::{can_pay_spell, cost_of, cost_of_x};
+use sim_core::engine::mana::{can_pay_spell, cost_of, cost_of_base_probed, cost_of_free_with_extra, cost_of_x};
+use sim_core::hooks::Opt;
 use sim_core::state::{DataKey, Val};
 use sim_core::testkit::{set_commander, table};
 
@@ -230,4 +231,161 @@ fn x_spells_spectacle_and_delve_keep_their_values() {
     assert_eq!(cost_of_x(&g, P0, cruise, 0), (4, "U".to_string()), "delve takes {{3}} of the generic mana");
     perm(&mut g, P0, "Sapphire Medallion");
     assert_eq!(cost_of_x(&g, P0, cruise, 0), (3, "U".to_string()));
+}
+
+// ======================================================== 9. each reducer on its own, then a later increase
+/// instants and sorceries of distinct mana values 1..: enough of them in the graveyard for Eris to take `2 * k` off
+fn distinct_spells(g: &mut Game, k: usize) {
+    let names =
+        ["Mystical Tutor", "Counterspell", "Cultivate", "Cryptic Command", "Treasure Cruise", "Blasphemous Act"];
+    for n in &names[..k] {
+        let c = card(g, n);
+        g.player_mut(P0).gy.push(c);
+    }
+}
+
+#[test]
+fn eris_dawning_eminence_and_kaza_are_summed_with_a_later_increase() {
+    // each reduction alone drives the running total below zero; a hook tax (Sphere of Resistance, +1) after it must still
+    // be taken from the same sum, so the price is 0. A floor after any one of these steps would give {1}.
+    // Eris: -2 for each distinct mana value among the instants and sorceries in the graveyard
+    let mut g = dragon_table();
+    let eris = card(&g, "Eris, Roar of the Storm");
+    let generic = g.db.get(eris).generic as usize;
+    let k = (generic + 1).div_ceil(2);
+    assert!(k <= 6, "{generic}");
+    distinct_spells(&mut g, k);
+    perm(&mut g, P1, "Sphere of Resistance");
+    assert_eq!(price(&g, eris), (0, sorted(&g.db.get(eris).pips)), "{generic} - {} + 1", 2 * k);
+    // Dawning: -1 for each instant and sorcery card in the graveyard
+    let mut g = dragon_table();
+    let dawning = card(&g, "The Dawning Archaic");
+    let bolt = card(&g, "Lightning Bolt");
+    let generic = g.db.get(dawning).generic as usize;
+    g.player_mut(P0).gy.extend(vec![bolt; generic + 1]);
+    perm(&mut g, P1, "Sphere of Resistance");
+    assert_eq!(price(&g, dawning), (0, sorted(&g.db.get(dawning).pips)), "{generic} - {} + 1", generic + 1);
+    // the Ur-Dragon's eminence, from the command zone and from a copy on the battlefield: -2 on Scaled Nurturer {1}{G}
+    let mut g = dragon_table();
+    set_commander(&mut g, P0, UR);
+    perm(&mut g, P0, UR);
+    let nurturer = hand(&mut g, P0, &["Scaled Nurturer"])[0];
+    assert_eq!(sim_core::impls::t45_urdragon::eminence(&g, P0, nurturer), -2);
+    perm(&mut g, P1, "Sphere of Resistance");
+    assert_eq!(price(&g, nurturer), (0, "G".to_string()), "1 - 2 + 1");
+    // Kaza, Roil Chaser: instants and sorceries cost {1} less (once): Counterspell {U}{U} with Sphere's +1
+    let mut g = dragon_table();
+    let c = hand(&mut g, P0, &["Counterspell"])[0];
+    g.player_mut(P0).t0s.kaza = Some((g.turn_stamp(), 1));
+    perm(&mut g, P1, "Sphere of Resistance");
+    assert_eq!(price(&g, c), (0, "UU".to_string()), "-1 and +1");
+}
+
+#[test]
+fn disruptor_flute_on_a_commander_is_summed_with_the_tax_and_the_reducers() {
+    // The Ur-Dragon {4}{W}{U}{B}{R}{G}: Flute +3, tax +2 (cast once before), Incubator -2, Shaman -2, Sapphire Medallion -1
+    let mut g = dragon_table();
+    set_commander(&mut g, P0, UR);
+    let ur = card(&g, UR);
+    taxed(&mut g, ur, 1);
+    let flute = perm(&mut g, P1, "Disruptor Flute");
+    g.flutes.clear();
+    g.flutes.push((flute, ur));
+    let w = sorted("WUBRG");
+    assert_eq!(price(&g, ur), (9, w.clone()), "4 + 3 + 2");
+    perm(&mut g, P0, "Urza's Incubator");
+    perm(&mut g, P0, "Dragonspeaker Shaman");
+    perm(&mut g, P0, "Sapphire Medallion");
+    assert_eq!(price(&g, ur), (4, w), "4 + 3 + 2 - 5 (old pipeline: the reducers stopped at 4, then 3 + 2 = 5)");
+}
+
+#[test]
+fn tamiyos_emblem_with_disruptor_flute_pays_the_flutes_three() {
+    let mut g = dragon_table();
+    g.player_mut(P0).emblems.push("tamiyo");
+    let bolt = hand(&mut g, P0, &["Lightning Bolt"])[0];
+    let flute = perm(&mut g, P1, "Disruptor Flute");
+    g.flutes.clear();
+    g.flutes.push((flute, bolt));
+    assert_eq!(price(&g, bolt), (3, String::new()), "the emblem's {{0}} plus the Flute's {{3}} (old pipeline: 0)");
+}
+
+#[test]
+fn delve_comes_after_trinisphere_with_seven_cards_in_the_graveyard() {
+    // Treasure Cruise {7}{U}: Trinisphere's minimum of three is met by the printed cost, then delve exiles seven cards: {U}
+    // alone. (Delve inside the running total would give {2}{U} from the minimum.)
+    let mut g = dragon_table();
+    perm(&mut g, P1, "Trinisphere");
+    let cruise = card(&g, "Treasure Cruise");
+    let plains = card(&g, "Plains");
+    g.player_mut(P0).gy.extend(vec![plains; 7]);
+    assert_eq!(price(&g, cruise), (0, "U".to_string()));
+}
+
+// ======================================================== 10. Twinflame under the emblem, and the probe
+fn n_targets(o: &Opt) -> usize {
+    o.label.split(|ch: char| !ch.is_ascii_digit()).find(|s| !s.is_empty()).unwrap().parse().unwrap()
+}
+
+#[test]
+fn twinflame_under_tamiyos_emblem_pays_strive_and_the_taxes() {
+    // one target: Twinflame is free, Thalia makes the noncreature spell {1}: cost_of and the AI's own price agree
+    let mut g = dragon_table();
+    g.player_mut(P0).emblems.push("tamiyo");
+    let tf = hand(&mut g, P0, &["Twinflame"])[0];
+    perm(&mut g, P1, "Thalia, Guardian of Thraben");
+    assert_eq!(cost_of(&g, P0, tf), (1, String::new()));
+    assert_eq!(cost_of_free_with_extra(&g, P0, tf, 0, ""), cost_of(&g, P0, tf), "no extra: the same as cost_of");
+    // two extra targets: strive {2}{R} each on top; Trinisphere's minimum counts the strive symbols too
+    assert_eq!(
+        cost_of_free_with_extra(&g, P0, tf, 4, "RR"),
+        (5, "RR".to_string()),
+        "{{1}} + {{2}}{{2}} and {{R}}{{R}}"
+    );
+    perm(&mut g, P1, "Trinisphere");
+    assert_eq!(cost_of_free_with_extra(&g, P0, tf, 0, ""), (3, String::new()));
+    assert_eq!(
+        cost_of_free_with_extra(&g, P0, tf, 2, "R"),
+        (3, "R".to_string()),
+        "min 3 over {{3}}{{R}}: the sum is 4 symbols"
+    );
+    // the AI's plan pays the same: three Grave Titans' worth of targets, Thalia on the table
+    let mut g = dragon_table();
+    g.player_mut(P0).emblems.push("tamiyo");
+    lands(&mut g, P0, "Mountain", 12, false);
+    for _ in 0..3 {
+        perm(&mut g, P0, "Grave Titan");
+    }
+    let tf = hand(&mut g, P0, &["Twinflame"])[0];
+    perm(&mut g, P1, "Thalia, Guardian of Thraben");
+    let oo = g.registry.get(tf).unwrap().hand_options.unwrap()(&mut g, tf, P0, Some(false)).unwrap();
+    let n = n_targets(&oo[0]);
+    assert!(n >= 2, "{n}");
+    let before = g.player(P0).lands.iter().filter(|&&m| g.perm(m).tapped).count();
+    assert!(sim_core::ai::act::perform(&mut g, P0, oo[0].act.as_ref().unwrap()).unwrap());
+    let tapped = g.player(P0).lands.iter().filter(|&&m| g.perm(m).tapped).count() - before;
+    assert_eq!(tapped, 3 * (n - 1) + 1, "{n} targets: {{2}}{{R}} for each extra and Thalia's {{1}}");
+}
+
+#[test]
+fn the_shadow_probe_changes_nothing_but_stderr() {
+    // Leyline of the Guildpact {G/W}{G/U}{B/G}{R/G} (a card with two-colour hybrid symbols) with a Medallion and a Sphere:
+    // the old and new prices differ, and the price and the colours `hybrid::resolve` records are the same with the probe
+    // on and off
+    let build = || {
+        let mut g = dragon_table();
+        for (n, c) in [("Forest", 1), ("Island", 1), ("Swamp", 1), ("Mountain", 1)] {
+            lands(&mut g, P0, n, c, false);
+        }
+        perm(&mut g, P0, "Emerald Medallion");
+        perm(&mut g, P1, "Sphere of Resistance");
+        let c = hand(&mut g, P0, &["Leyline of the Guildpact"])[0];
+        (g, c)
+    };
+    let (g1, c1) = build();
+    let (g2, c2) = build();
+    let off = cost_of_base_probed(&g1, P0, c1, 0, &g1.db.get(c1).pips, false);
+    let on = cost_of_base_probed(&g2, P0, c2, 0, &g2.db.get(c2).pips, true);
+    assert_eq!(off, on);
+    assert_eq!(sim_core::engine::hybrid::priced(&g1, c1), sim_core::engine::hybrid::priced(&g2, c2));
 }

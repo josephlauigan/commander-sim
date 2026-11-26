@@ -1063,14 +1063,36 @@ pub fn cost_of_with(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u3
 /// once per thread, only where the two differ. The coordinator records that table; a later commit deletes the legacy body
 /// and this switch. Without the variable the legacy body never runs and the switch costs one cached atomic load.
 pub(crate) fn cost_of_base(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
-    let new = cost_of_base_new(g, p, c, x, pips);
-    if price_shadow_on() {
+    cost_of_base_probed(g, p, c, x, pips, price_shadow_on())
+}
+
+/// `cost_of_base` with the shadow probe switched by `shadow` (the environment switch is read once, so a test passes it
+/// here). The probe must not change the game: the legacy body runs FIRST and the colours `hybrid::resolve` records in
+/// `Game::hybrid_paid` are put back afterwards, so the real run's hybrid choice is the new body's. Temporary, see
+/// `cost_of_base`.
+#[doc(hidden)]
+pub fn cost_of_base_probed(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str, shadow: bool) -> (u32, String) {
+    let old = shadow.then(|| {
+        let kept = g.hybrid_paid.borrow().clone();
         let old = cost_of_base_legacy(g, p, c, x, pips);
-        if old != new {
-            price_shadow_report(g, p, c, &old, &new);
-        }
+        *g.hybrid_paid.borrow_mut() = kept;
+        old
+    });
+    let new = cost_of_pipeline(g, p, c, x, pips, None);
+    if let Some(old) = old
+        && old != new
+    {
+        price_shadow_report(g, p, c, &old, &new);
     }
     new
+}
+
+/// what a card cast from the hand under Tamiyo's emblem costs when the cast also has an additional cost of `generic`
+/// and `pips` (Twinflame's strive: {2}{R} for each target beyond the first). The emblem's alternative cost is {0}, the
+/// additional cost is added to it, and every increase and reduction, the Trinisphere minimum (counting these symbols)
+/// and the rest apply as to any cost. With no extra it is `cost_of`.
+pub fn cost_of_free_with_extra(g: &Game, p: PlayerId, c: CardId, generic: u32, pips: &str) -> (u32, String) {
+    cost_of_pipeline(g, p, c, 0, "", Some((generic as i64, pips)))
 }
 
 /// `PRICE_SHADOW=1` (read once): compare `cost_of_base` with `cost_of_base_legacy`. Temporary, see `cost_of_base`.
@@ -1103,17 +1125,23 @@ fn price_shadow_report(g: &Game, p: PlayerId, c: CardId, old: &(u32, String), ne
 /// the pipeline of rule 601.2f (see `cost_of_base`): one base, one signed running total of every increase and reduction
 /// of the generic part, one floor at 0, then the Trinisphere minimum, delve, Phyrexian life, K'rrik, Opposition Agent and
 /// hybrid, all unchanged
-fn cost_of_base_new(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str) -> (u32, String) {
+///
+/// `extra` is an additional cost (generic, coloured symbols) added to Tamiyo's emblem's {0} base and to nothing else
+/// (`cost_of_free_with_extra`); every other caller passes `None`
+fn cost_of_pipeline(g: &Game, p: PlayerId, c: CardId, x: i32, pips: &str, extra: Option<(i64, &str)>) -> (u32, String) {
     let d = g.db.get(c);
     let pl = g.player(p);
     let t = &d.tags;
     // 1. the mana cost or an alternative cost (601.2b)
     let (mut gn, mut pips): (i64, String) = if pl.emblems.contains(&"tamiyo") && pl.hand.contains(&c) {
-        (0, String::new()) // Tamiyo's emblem: cast without paying its mana cost
+        // Tamiyo's emblem: cast without paying its mana cost (an additional cost is still paid, 118.9d)
+        extra.map_or((0, String::new()), |(n, s)| (n, s.to_string()))
     } else if crate::impls::t45_urdragon::free_dragon(g, p, c) {
         (0, String::new()) // --- Tiers 4/5 (urdragon): Dracogenesis: no mana cost (the commander tax is still paid)
     } else if t.has(Tag::Spectacle) && pl.hit_turn == pl.turns as i32 {
-        (0, "R".into()) // spectacle's cost (X is not added, as before)
+        // spectacle's cost (X is not added, as before). Moving this base before the card's own reductions is equivalent to
+        // the old order only because no spectacle card has PerCreature, Eris or Dawning (only Light Up the Stage has spectacle)
+        (0, "R".into())
     } else {
         (d.generic as i64 + x.max(0) as i64, pips.to_string())
     };
