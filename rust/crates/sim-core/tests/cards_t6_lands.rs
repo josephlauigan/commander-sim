@@ -32,6 +32,22 @@ fn city_of_brass_deals_one_damage_each_time_it_is_tapped() {
     assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
 }
 
+// ------------------------------------------------------------------ Mana Confluence
+#[test]
+fn mana_confluence_costs_one_life_each_time_it_is_tapped() {
+    let mut g = pod();
+    lands(&mut g, P0, "Mana Confluence", 1, false);
+    let life = g.player(P0).life;
+    assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
+    assert_eq!(g.player(P0).life, life - 1, "pay 1 life as part of the cost, for a generic payment too");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
+    // a second land of the same name pays its own life; an untapped land does not
+    lands(&mut g, P0, "Mana Confluence", 1, false);
+    let life = g.player(P0).life;
+    assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
+    assert_eq!(g.player(P0).life, life - 1);
+}
+
 // ------------------------------------------------------------------ City of Traitors
 #[test]
 fn city_of_traitors_is_sacrificed_when_you_play_another_land() {

@@ -8791,6 +8791,10 @@ note = "an opponent's second draw each turn gives you a Treasure (the draw hook 
 status = "Full"
 note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
 
+["Mana Confluence"]
+status = "Full"
+note = "{T}, pay 1 life: any colour of the identity; the life is paid on every tap, colourless use included (t6_lands.rs confluence_tap)"
+
 ["City of Traitors"]
 status = "Full"
 note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed: t6_lands.rs traitors_check, the land_etb of every land without one of its own, and turn::play_land_card runs it for every played land (Bojuka Bog, Urza's Saga and the other lands with an enters ability of their own too)"

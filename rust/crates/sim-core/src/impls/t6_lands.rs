@@ -34,6 +34,13 @@ fn brass_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     lose_life(g, p, 1, Some(p), "other", Some(true))
 }
 
+// ================================================================== Mana Confluence
+/// **Mana Confluence**: {T}, Pay 1 life: Add one mana of any colour (tag c=A). The life is a cost of the mana ability,
+/// paid each time the land taps (colourless use included): life loss, not damage, so no damage prevention applies.
+fn confluence_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
+    lose_life(g, p, 1, Some(p), "other", Some(false))
+}
+
 // ================================================================== City of Traitors
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
@@ -974,6 +981,7 @@ fn gates_defend(
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "City of Brass")?.on_tap_land = Some(brass_tap);
+    r.card(db, "Mana Confluence")?.on_tap_land = Some(confluence_tap);
     // City of Traitors: land_etb on every land that has none yet (the City itself included: playing a second City
     // sacrifices the first, and the new one stays)
     let lands: Vec<String> = db.iter().filter(|d| d.land).map(|d| d.name.to_string()).collect();
