@@ -261,7 +261,9 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         }
         // a Lantern recolours a land that makes one mana; a land that makes several (Ancient Tomb, the Urza lands) keeps its
         // own ability and gets the Lantern's one mana of any colour as an alternative, like Leyline's (`Shape::Alt` below)
-        let mut cols = land_cols(g, p, l, anyc && one, moon, dryad);
+        // (a land with two or more own colours and several mana, a Karoo, keeps the old reading: any one colour, free)
+        let keep_old = anyc && !one && land_cols(g, p, l, false, moon, dryad).count() > 1;
+        let mut cols = land_cols(g, p, l, anyc && (one || keep_old), moon, dryad);
         if one {
             // Urborg / Yavimaya: also {B} / {G} (see granted_cols); Leyline of the Guildpact: any colour
             cols = cols.union(granted_cols_for(g, p, granted, plain));
@@ -273,7 +275,7 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         let amt = amt.max(0) as u32;
         // several mana from one land: all one colour (Lotus Field), or one of each colour of its pair (a Karoo). Only
         // its own tagged colours: a land turned any-colour by a Lantern, Dryad or a card's rule stays free
-        let mut shape = if amt >= 2 && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
+        let mut shape = if amt >= 2 && !keep_old && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
             let printed = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
             shape_of(t, t.str(Tag::C).unwrap_or("C"), cols, printed, amt, true)
         } else {
