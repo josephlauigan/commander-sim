@@ -12,3 +12,9 @@ echo "run1 done: $(date -Is) exit=$?" >> $OUT/status.txt
 $CAP $BIN --deck arzakon --pool all --games 3000 --swap "Meteor Golem=>Avacyn's Pilgrim" --quiet > $OUT/a-vs-new.txt 2>&1
 echo "run2 done: $(date -Is) exit=$?" >> $OUT/status.txt
 echo "ALL SIMS DONE" >> $OUT/status.txt
+
+# NOTE (added after the run): the first attempt of run 1 was stopped by the preflight (the AI casts Exsanguinate in almost no game); the
+# result in old-vs-new.txt is from this rerun, which took the same swaps with the preflight skipped:
+#   commander-sim --deck arzakon --pool all --games 3000 --no-preflight \
+#     --swap "Mana Confluence=>Llanowar Elves" --swap "City of Brass=>Avacyn's Pilgrim" \
+#     --swap "Misty Rainforest=>Exsanguinate" --swap "Chromatic Lantern=>Coalition Relic" --quiet
