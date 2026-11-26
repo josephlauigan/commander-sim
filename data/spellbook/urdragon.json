@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-24",
+  "fetched": "2026-11-25",
   "deck": "urdragon",
   "commanders": [
     "The Ur-Dragon"
   ],
-  "request_sha256": "a5bd6df284a613f8475690e5bb986c5f7d8f7e691164ee99caf961994df4aa2d",
+  "request_sha256": "e900ef24d0effec6692d43c526c5aa17d81c6b491785b92b1497428a627498f9",
   "identity": "WUBRG",
   "included": [
     {
@@ -1169,6 +1169,33 @@
       ]
     },
     {
+      "id": "1657-2376",
+      "cards": [
+        {
+          "name": "Murderous Redcap",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Rhythm of the Wild",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{B/R}{B/R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3447,
+      "missing": [
+        "Murderous Redcap"
+      ]
+    },
+    {
       "id": "3363-4331",
       "cards": [
         {
@@ -1906,6 +1933,33 @@
       "popularity": 853,
       "missing": [
         "Oko, the Ringleader"
+      ]
+    },
+    {
+      "id": "2376-3575",
+      "cards": [
+        {
+          "name": "Aerie Ouphes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rhythm of the Wild",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Aerie Ouphes does not have a -1/-1 counter on it.\nThere is a creature with flying on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 775,
+      "missing": [
+        "Aerie Ouphes"
       ]
     },
     {

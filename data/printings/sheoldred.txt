@@ -15,7 +15,7 @@
 1 Deadly Dispute (sld) 2091
 1 Deadly Rollick (cmm) 695
 1 Demonic Tutor (cmm) 696
-1 Diabolic Tutor (sld) 721
+1 Diabolic Tutor (sld) 1592
 1 Dreadhorde Invasion (mic) 114
 1 Enduring Tenacity (dsk) 390
 1 Entomb (dmr) 426
@@ -35,7 +35,7 @@
 1 K'rrik, Son of Yawgmoth (sld) 1204
 1 Leech Collector // Bloodletting (sos) 88
 1 Memory Jar (ulg) 129
-1 Mikaeus, the Unhallowed (cmm) 1061
+1 Mikaeus, the Unhallowed (cmm) 675
 1 Mikokoro, Center of the Sea (dmc) 217
 1 Mind Stone (dmr) 385
 1 Nevinyrral's Disk (4ed) 338

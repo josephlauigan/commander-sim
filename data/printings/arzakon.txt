@@ -39,6 +39,7 @@
 1 Hangarback Walker (plg20) 2
 1 Heroic Intervention (sld) 1750
 1 Karn Liberated (2xm) 333
+1 Karn's Bastion (onc) 156
 1 Karn, the Great Creator (war) 1★
 1 Leyline of the Guildpact (mkm) 217
 1 Lightning Greaves (sld) 1662
@@ -48,7 +49,7 @@
 1 Mana Vault (4ed) 334
 1 Marsh Flats (spg) 110
 1 Meteor Golem (sld) 285
-1 Mox Opal (2xm) 362
+1 Mox Opal (2xm) 275
 1 Mystic Confluence (tsr) 312
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
@@ -58,8 +59,7 @@
 1 Polluted Delta (mh3) 356
 1 Primeval Titan (fca) 48
 1 Ragavan, Nimble Pilferer (mh2) 315
-1 Reality Shift (tdc) 163
-1 Rhystic Study (wot) 71
+1 Reality Shift (sld) 1781
 1 Rings of Brighthearth (ltc) 352
 1 Savannah (ced) 281
 1 Scalding Tarn (spg) 112
@@ -70,7 +70,7 @@
 1 Sol Ring (sld) 2093
 1 Staff of Domination (cmr) 343
 1 Steam Vents (rvr) 298
-1 Strip Mine (4ed) 363
+1 Sunpearl Kirin (slp) 53
 1 Swords to Plowshares (ice) 54
 1 Taiga (cei) 283
 1 Tainted Pact (ody) 164
@@ -86,10 +86,10 @@
 1 Underground Sea (ced) 286
 1 Underworld Breach (pza) 10
 1 Urza, Lord High Artificer (fca) 5
-1 Urza's Mine (cmm) 1051
-1 Urza's Power Plant (cmm) 1052
+1 Urza's Mine (chr) 114a
+1 Urza's Power Plant (2xm) 371
 1 Urza's Saga (plst) MH2-259
-1 Urza's Tower (cmm) 1053
+1 Urza's Tower (2xm) 372
 1 Vampiric Tutor (soa) 100
 1 Volcanic Island (cei) 287
 1 Voltaic Key (dde) 17

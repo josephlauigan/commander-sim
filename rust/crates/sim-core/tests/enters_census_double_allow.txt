@@ -44,7 +44,6 @@ Goblin Ringleader | [exhausted] The successive revealed library slices contain d
 Grasp of Fate | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Grinding Station | [idempotent] Its may-untap trigger sees an already untapped Station; all standard artifact entrants leave it untapped.
 Guardian Project | [fixture] The cast Serra Angel shares its name with a fixture creature; tokens do not qualify, so the nontoken distinct-name condition is never met.
-Hellkite Courser | [exhausted] The first instance puts the fixture's one commander from the command zone onto the battlefield; the queued extra instance finds no commander left in the command zone and does nothing (rule-correct: a doubled trigger cannot return a commander that is already out).
 Hero's Blade | [fixture] No standard observer entrant is legendary; the legendary-creature attach guard is not exercised.
 Heroic Return | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
 Hydroelectric Specimen // Hydroelectric Laboratory | [fixture] No single-target instant or sorcery is waiting on the stack for the entry trigger to redirect; its land face is not the tested entry.

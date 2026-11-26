@@ -132,12 +132,12 @@
     "deck": "karn_gilded",
     "partner": null,
     "replay": {
-      "events": 61,
-      "game_hash": "4fe048c51a970624",
-      "hash": "de738ca1718b935f",
-      "live_answers": 3,
+      "events": 69,
+      "game_hash": "aebff05949a3494c",
+      "hash": "da1e807da194785f",
+      "live_answers": 7,
       "live_by_seat": {
-        "karn_gilded": 3
+        "karn_gilded": 7
       },
       "over": {
         "how": "timeout",
@@ -149,64 +149,74 @@
       "answers": [
         0,
         {
-          "card": 3,
+          "card": 2,
+          "do": "land"
+        },
+        0,
+        {
+          "do": "tap",
+          "source": 0
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "card": 2,
+          "do": "land"
+        },
+        0,
+        {
+          "do": "tap",
+          "source": 0
+        },
+        {
+          "do": "tap",
+          "source": 0
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "do": "pass"
+        },
+        {
+          "card": 4,
           "do": "land"
         },
         {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "card": 5,
-          "do": "land"
-        },
-        {
-          "do": "tap",
-          "source": 0
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "card": 5,
-          "do": "land"
-        },
-        {
           "do": "tap",
           "source": 0
         },
@@ -217,18 +227,6 @@
         {
           "do": "tap",
           "source": 0
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
-        },
-        {
-          "do": "pass"
         },
         {
           "do": "pass"
@@ -272,12 +270,12 @@
     "deck": "karn_gilded",
     "partner": "sheoldred",
     "replay": {
-      "events": 94,
-      "game_hash": "a3200c10fa7b2ee9",
-      "hash": "92ac350aaa6aad19",
-      "live_answers": 34,
+      "events": 104,
+      "game_hash": "45b4ae1605bbaabd",
+      "hash": "fc52bcce144ef5c8",
+      "live_answers": 39,
       "live_by_seat": {
-        "karn_gilded": 17,
+        "karn_gilded": 22,
         "sheoldred": 17
       },
       "over": {
@@ -302,6 +300,8 @@
         "karn_gilded",
         "karn_gilded",
         "karn_gilded",
+        "karn_gilded",
+        "karn_gilded",
         "sheoldred",
         "sheoldred",
         "karn_gilded",
@@ -314,8 +314,6 @@
         "sheoldred",
         "sheoldred",
         "sheoldred",
-        "karn_gilded",
-        "karn_gilded",
         "karn_gilded",
         "karn_gilded"
       ],
@@ -352,8 +350,13 @@
           "do": "pass"
         },
         {
-          "card": 3,
+          "card": 2,
           "do": "land"
+        },
+        0,
+        {
+          "do": "tap",
+          "source": 0
         },
         {
           "do": "pass"
@@ -404,15 +407,8 @@
           "do": "pass"
         },
         {
-          "card": 5,
+          "card": 2,
           "do": "land"
-        },
-        {
-          "do": "tap",
-          "source": 0
-        },
-        {
-          "do": "pass"
         }
       ],
       "autopass": {
@@ -3374,14 +3370,14 @@
   },
   "sessions": [
     {
-      "answers": 33,
+      "answers": 34,
       "answers_by_seat": {
-        "karn_gilded": 33
+        "karn_gilded": 34
       },
       "deck": "karn_gilded",
-      "events": 87,
-      "game_hash": "c54e82d762927f4f",
-      "hash": "b622b507ad13c663",
+      "events": 89,
+      "game_hash": "ddefd1fccf9194e8",
+      "hash": "27a5ac838c8b3c04",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3398,14 +3394,14 @@
       "tier": "t4"
     },
     {
-      "answers": 37,
+      "answers": 38,
       "answers_by_seat": {
-        "karn_gilded": 37
+        "karn_gilded": 38
       },
       "deck": "karn_gilded",
-      "events": 99,
-      "game_hash": "ec110d163a1ea2e7",
-      "hash": "ed77a393baee11cb",
+      "events": 101,
+      "game_hash": "9dc2c4ad75f3ae98",
+      "hash": "c4afd3916be497b7",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3476,8 +3472,8 @@
       },
       "deck": "urdragon",
       "events": 93,
-      "game_hash": "b7efb59b9ba3a50a",
-      "hash": "207c3f621d658c5b",
+      "game_hash": "e4088cc374de696f",
+      "hash": "4e6c525ebe5a434f",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3500,8 +3496,8 @@
       },
       "deck": "urdragon",
       "events": 101,
-      "game_hash": "fad5f4d5a8d05d02",
-      "hash": "70df1a305ec4c66c",
+      "game_hash": "46635b86a6bb73e6",
+      "hash": "13cc466b23cdc078",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3525,8 +3521,8 @@
       },
       "deck": "karn_gilded",
       "events": 131,
-      "game_hash": "40365ba763319a9b",
-      "hash": "d733446e51569d76",
+      "game_hash": "4ef5ab063e547dea",
+      "hash": "4350ab97fc5a2470",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3549,8 +3545,8 @@
       },
       "deck": "karn_gilded",
       "events": 142,
-      "game_hash": "5f0f4c3ccced2f13",
-      "hash": "c5b815e99a93346a",
+      "game_hash": "6436ec07a4f012cc",
+      "hash": "5caf19bcd77b0369",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -3567,14 +3563,14 @@
       "tier": "t6"
     },
     {
-      "answers": 105,
+      "answers": 106,
       "answers_by_seat": {
-        "karn_gilded": 105
+        "karn_gilded": 106
       },
       "deck": "karn_gilded",
-      "events": 285,
-      "game_hash": "0bee17fbaca03995",
-      "hash": "94cfd4e7b3f4a38d",
+      "events": 291,
+      "game_hash": "e463b1428cdf52e2",
+      "hash": "11b569dbd5fb0e25",
       "max_rounds": 30,
       "over": {
         "how": "damage",

@@ -1,5 +1,5 @@
 # JD's The Ur-Dragon five-colour Dragons deck (decklists/JD/urdragon-five-colour-dragons.md, key `urdragon`, tier t5;
-# rewritten 2026-11-14 for the list with Utvara Hellkite, Summon: Bahamut and the spells package; 2026-11-23: Sylvan Library, Urza's Incubator and Jeska's Will in; 2026-11-23: Talisman of Hierarchy and Kyodai, Soul of Kamigawa in, Klauth, Unrivaled Ancient out; 2026-11-24: the speed and protection/draw packages: Mithril Coat, The Theorist, Giver of Runes, Talisman of Curiosity, Dragonspeaker Shaman, Hellkite Courser, Tymna the Weaver and Sapphire Medallion in, and eight cards out, whose rows are gone). The
+# rewritten 2026-11-14 for the list with Utvara Hellkite, Summon: Bahamut and the spells package; 2026-11-23: Sylvan Library, Urza's Incubator and Jeska's Will in; 2026-11-23: Talisman of Hierarchy and Kyodai, Soul of Kamigawa in, Klauth, Unrivaled Ancient out; 2026-11-24: the speed and protection/draw packages: Mithril Coat, The Theorist, Giver of Runes, Talisman of Curiosity, Dragonspeaker Shaman, Hellkite Courser, Tymna the Weaver and Sapphire Medallion in, and eight cards out, whose rows are gone; 2026-11-24: Hellkite Courser out again for Rhythm of the Wild, its rows are gone). The
 # deck has no hand-written AI code, so the generic policy reads this file: `[style]`, `[commander]`, `[key_cards]`,
 # `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp first, an engine (Rhystic Study, The
 # One Ring, Terror of the Peaks) on turns 3-5, then The Ur-Dragon and the Dragons, then attack; the Garth One-Eye +
@@ -50,7 +50,7 @@
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon), Urza's Incubator
 # (dead before a Dragon, added 2026-11-23, provisional), Jeska's Will, Garth One-Eye, Mithril Coat, Giver of Runes, The Theorist
 # (a four-mana planeswalker that only draws), Tymna the Weaver and Sapphire Medallion (none makes mana or finds a Dragon by itself);
-# Dragonspeaker Shaman is in it (a three-mana body that makes the first Dragon cheaper) and so is Hellkite Courser.
+# Dragonspeaker Shaman is in it (a three-mana body that makes the first Dragon cheaper). Rhythm of the Wild (2026-11-24) is not (it does nothing by itself), and it has no row.
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
 # against `pieces`, and a catalogue combo has none).
 deck = "urdragon"
@@ -108,20 +108,12 @@ when = ["commander-out"]
 score = 76
 
 # PROVISIONAL (2026-11-23, no sim yet): Urza's Incubator (names Dragon: Dragon spells cost {2} less) early, before the big
-# Dragons it discounts; Demonic and Vampiric Tutor can fetch it, Worldly Tutor cannot (an artifact). Hellkite Courser
-# (five mana with The Ur-Dragon in the command zone, Eminence takes one off, three with Urza's Incubator naming Dragon:
-# puts The Ur-Dragon onto the battlefield with haste, back to the command zone at the end step) while the
-# commander is still in the command zone and five mana is there; all three tutors can fetch it (a creature). Both sit below
-# the Garth rows above, which always come first. (The Courser rows came back on 2026-11-24 with the speed package.)
+# Dragons it discounts; Demonic and Vampiric Tutor can fetch it, Worldly Tutor cannot (an artifact). It sits below
+# the Garth rows above, which always come first. (Hellkite Courser's rows were removed on 2026-11-24 with the card.)
 [[wish]]
 cards = ["Urza's Incubator"]
 when = ["turn<=4 & not out:Urza's Incubator"]
 score = 74
-
-[[wish]]
-cards = ["Hellkite Courser"]
-when = ["commander-zone & lands+mana-perms>=5"]
-score = 72
 
 # The damage engines (each Dragon entering or attacking is a burst), the draw engines, and the Treasure and ping Dragons.
 # Ramp keeps its generic rating (Sol Ring and Mana Vault 88, the dorks and rocks 85 through turn 5, Three Visits farseek_prio):
@@ -157,9 +149,7 @@ value = 60
 
 # PROVISIONAL (2026-11-23, no sim yet; neither is in a paired test). Urza's Incubator ({3}, names Dragon) goes down early,
 # before the big Dragons it discounts (the plan cannot say "a Dragon is in hand", so it is cast on rating alone). Sylvan Library
-# ({1}{G}) is a cheap draw engine, like Rhystic Study. Hellkite Courser ({4}{R}{R}, five mana with Eminence) is a bridge: while
-# The Ur-Dragon is still in the command zone it puts it onto the battlefield with haste to attack from turn 5-6 (Dragons attacking draw cards);
-# with the commander already out it is only a 6/5 flier, so it ranks with the plain Dragons. Dragonspeaker Shaman ({1}{R}{R}, Dragon spells
+# ({1}{G}) is a cheap draw engine, like Rhystic Study. Dragonspeaker Shaman ({1}{R}{R}, Dragon spells
 # cost {2} less) is cast on rating alone early, like Urza's Incubator: the plan cannot say "a Dragon is in hand", and after turn 6 the discount
 # matters less, so it drops to 40.
 [[prio]]
@@ -173,12 +163,6 @@ cards = ["Sylvan Library"]
 when = ["turn<=6"]
 value = 64
 else = 50
-
-[[prio]]
-cards = ["Hellkite Courser"]
-when = ["commander-zone & lands+mana-perms>=5"]
-value = 70
-else = 58
 
 # PROVISIONAL (2026-11-24, no sim yet; not in a paired test): the early body that makes the first Dragons cheaper.
 [[prio]]
@@ -203,7 +187,7 @@ plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Talisman of Hierarchy", "Ta
     "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
     "Ganax, Astral Hunter", "Kura, the Boundless Sky", "Dragonlord Ojutai", "Kyodai, Soul of Kamigawa", "Dragon Tempest",
     "Lathliss, Dragon Queen", "Miirym, Sentinel Wyrm", "Dragonlord Dromoka",
-    "Hellkite Tyrant", "Niv-Mizzet, the Firemind", "Hellkite Courser", "Sylvan Library", "Dragonspeaker Shaman"]
+    "Hellkite Tyrant", "Niv-Mizzet, the Firemind", "Sylvan Library", "Dragonspeaker Shaman"]
 
 [mulligan]
 [[mulligan.rule]]

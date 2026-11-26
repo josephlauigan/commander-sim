@@ -500,7 +500,7 @@ fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_a_tutor_the_lotus_pays
 fn at_four_loyalty_the_ai_still_takes_the_minus_three_for_one_of_the_plans_engines() {
     let mut g = tbl();
     let w = walker(&mut g, 4);
-    hand(&mut g, P0, &["Rhystic Study"]); // {2}{U}, in data/plans/arzakon.toml's engines
+    hand(&mut g, P0, &["Mystic Remora"]); // {U}, in data/plans/arzakon.toml's engines (Rhystic Study left the list 2026-11-24)
     let (minus, plus) = minus_and_plus(&mut g, w);
     assert!(minus.is_some_and(|m| m > plus), "-3 {minus:?} against +2 {plus}");
 }
@@ -660,11 +660,20 @@ fn free_with_the_commander_out_only_while_arzakon_is_on_the_battlefield() {
 #[test]
 fn jeskas_will_takes_both_modes_with_arzakon_out() {
     let opp_hand = ["Brainstorm", "Ponder", "Counterspell"];
+    // the exile mode plays a land it finds on top, which would add mana here: put nonland cards on top so the count depends on
+    // the modes only, not on the shuffled list
+    fn nonland_on_top(g: &mut Game) {
+        let mut lib = std::mem::take(&mut g.player_mut(P0).library);
+        lib.sort_by_key(|&c| !g.db.get(c).land); // stable: lands first (the bottom), nonland cards last (the top)
+        g.player_mut(P0).library = lib;
+    }
     let mut g = tbl();
+    nonland_on_top(&mut g);
     hand(&mut g, P1, &opp_hand);
     sim_core::engine::tutors::jeskas_will(&mut g, P0).unwrap();
     assert_eq!(total_mana(&g, P0, false), 0, "Arzakon in the command zone: one mode only (the AI took the exile)");
     let mut g = tbl();
+    nonland_on_top(&mut g);
     walker(&mut g, 4);
     hand(&mut g, P1, &opp_hand);
     sim_core::engine::tutors::jeskas_will(&mut g, P0).unwrap();

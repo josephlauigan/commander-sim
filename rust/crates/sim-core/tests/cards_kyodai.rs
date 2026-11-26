@@ -86,12 +86,12 @@ fn kyodai_etb_target_gains_indestructible() {
 
 #[test]
 fn ai_picks_a_plan_engine_then_the_most_wanted_permanent_then_a_land() {
-    // the thanos plan's engines: The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible of Worlds
+    // the arzakon plan's engines: The One Ring, Mystic Remora, Urza, Crucible of Worlds (Rhystic Study left 2026-11-24)
     let mut g = tbl();
     let elf = perm(&mut g, P0, "Llanowar Elves");
-    let rhystic = perm(&mut g, P0, "Rhystic Study");
+    let remora = perm(&mut g, P0, "Mystic Remora");
     perm(&mut g, P0, KYODAI);
-    assert!(indestructible(&g, rhystic), "the plan's engine");
+    assert!(indestructible(&g, remora), "the plan's engine");
     assert!(!indestructible(&g, elf));
 
     // no land is chosen while a nonland permanent can be

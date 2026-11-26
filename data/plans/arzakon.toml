@@ -1,8 +1,8 @@
 # JD's Arzakon Cali Commander artifact-combo deck (decklists/cali_commander/arzakon-artifact-combo.md, key
-# `arzakon`, `kyodai` until 2026-11-23, `thanos` until 2026-11-22; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `arzakon` is not a Tier
+# `arzakon`, `kyodai` until 2026-11-23, `thanos` until 2026-11-22; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list; 2026-11-24: Rhystic Study out and Sunpearl Kirin in, so Rhystic Study is removed from the rows below and the Kirin has no row). `arzakon` is not a Tier
 # 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Arzakon first,
-# the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
+# the engines (The One Ring, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
 # into Walking Ballista. Arzakon is the commander (a five-colour planeswalker, {W}{U}{B}{R}{G}, so it needs all five colours and has no flash body),
 # Kyodai, Soul of Kamigawa left the list on 2026-11-23 (his card code, impls/kyodai.rs, stays in the engine). Leyline of the Guildpact
 # (engine/chars.rs, impls/card_models.rs) is card code; the plan only values it, by the Faeburrow Elder. The old commander's card code
@@ -14,7 +14,7 @@
 # below is provisional (Opus design consult 2026-11-23), not tuned.
 deck = "arzakon"
 default = "plan"
-engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
+engines = ["The One Ring", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 
 # The deck plans to have its commander down on turn 3 and then play value, not a goldfish combo: pool defaults for temperature, a little
 # above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
@@ -55,7 +55,7 @@ when = ["out:Basalt Monolith & out:Rings of Brighthearth"]
 score = 95
 
 [[wish]]
-cards = ["The One Ring", "Rhystic Study"]
+cards = ["The One Ring"]
 when = ["turn<=3"]
 score = 80
 
@@ -80,7 +80,7 @@ else = 46
 # PROVISIONAL (2026-11-23): the card's values are a guess, not simulated.
 
 [[prio]]
-cards = ["Rhystic Study", "The One Ring", "Mystic Remora"]
+cards = ["The One Ring", "Mystic Remora"]
 when = ["turn<=6"]
 value = 78
 else = 62
@@ -141,7 +141,7 @@ protects = ["commander", "The One Ring"]
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Mystical Tutor", "Worldly Tutor", "Grim Tutor",
     "Tinker"]
-engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
+engines = ["The One Ring", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista", "Staff of Domination", "Thassa's Oracle",
     "Blightsteel Colossus"]
 

@@ -1,22 +1,23 @@
 1 Adarkar Wastes (dmu) 377
 1 Akroma's Will (soa) 66
-1 Anguished Unmaking (pip) 209
+1 Anguished Unmaking (soc) 293
 1 Arcane Signet (lcc) 104
-1 Arid Mesa (mh2) 436
+1 Arid Mesa (spg) 109
 1 Badlands (3ed) 282
-1 Baleful Strix (otc) 215
-1 Battlefield Forge (blc) 293
+1 Baleful Strix (blc) 86
+1 Battlefield Forge (ori) 244
 1 Bayou (3ed) 283
-1 Blood Crypt (rvr) 292
+1 Birthing Pod (sld) 2349
+1 Blood Crypt (trk) 278
 1 Breeding Pool (unf) 286
-1 Breya, Etherium Shaper (mh3) 289
+1 Breya, Etherium Shaper (sld) 454
 1 Buster Sword (fin) 351
 1 Cabal Coffers (mh2) 325
 1 Caves of Koilos (dmu) 378
 1 City of Brass (2x2) 403
-1 Cloudshift (tle) 152
-1 Coalition Relic (m3c) 286
+1 Coalition Relic (dmc) 180
 1 Command Tower (sld) 1697
+1 Conjurer's Closet (inr) 321
 1 Consecrated Sphinx (sld) 1657
 1 Counterspell (wc00) tvdl61b
 1 Cursed Mirror (mh3) 279
@@ -24,77 +25,76 @@
 1 Demonic Tutor (sta) 90
 1 Doomsday (sld) 1115
 1 Elesh Norn, Mother of Machines (one) 416
-1 Enlightened Tutor (dmr) 263
-1 Ephemerate (h1r) 1
+1 Enlightened Tutor (dmr) 412
+1 Ephemerate (sta) 68
 1 Esper Sentinel (mh2) 328
 1 Expedition Map (2xm) 359
-1 Exquisite Blood (lcc) 195
+1 Exquisite Blood (sld) 206
 1 Exsanguinate (cmm) 638
 1 Farewell (neo) 436
-1 Flickerwisp (2x2) 11
+1 Flickerwisp (2x2) 339
 1 Flooded Strand (mh3) 353
-1 Force of Will (dmr) 418
+1 Force of Will (all) 28
 1 Gandalf the White (ltr) 442
-1 Giver of Runes (plst) MH1-13
+1 Giver of Runes (h1r) 3
 1 Gleaming Splendor (hob) 15
 1 Godless Shrine (rvr) 294
 1 Gold-Forged Thopteryx (mat) 31
-1 Haliya, Guided by Light (eoe) 19
-1 Hallowed Fountain (clu) 277
-1 Herd Heirloom (tdm) 144
+1 Haliya, Guided by Light (eoe) 289
+1 Hallowed Fountain (rvr) 295
+1 Herd Heirloom (tdm) 347
 1 Imperial Seal (2x2) 354
 1 Infinite Guideline Station (eoe) 219
-1 Karn, Gilded Guardian (fra) 272
+1 Karn, Gilded Guardian (fra) 316
 1 Mana Confluence (sld) 1012a
-1 Marsh Flats (mh2) 476
+1 Marsh Flats (spg) 110
 1 Mistrise Village (tdm) 397
 1 Mystical Tutor (dmr) 421
 1 Necropotence (wot) 74
 1 Orcish Bowmasters (hoc) 19
-1 Overgrown Tomb (trk) 289
-1 Path of Ancestry (cmm) 661
-1 Path to Exile (ss2) 3
+1 Overgrown Tomb (rvr) 296
+1 Path of Ancestry (brc) 192
+1 Path to Exile (cmm) 626
 1 Plateau (3ed) 284
 1 Polluted Delta (mh3) 356
 1 Ranger-Captain of Eos (fca) 2
-1 Reliquary Tower (con) 143
+1 Reliquary Tower (trc) 551
 1 Restoration Angel (2x2) 421
-1 Rhystic Study (pcy) 45
+1 Rhystic Study (wot) 71
 1 Ringsight (ltr) 220
-1 Sacred Foundry (unf) 285
+1 Sacred Foundry (trk) 295
 1 Sanguine Bond (tsr) 330
 1 Savannah (3ed) 285
-1 Scrubland (cei) 282
-1 Shorikai, Genesis Engine (nec) 4
-1 Silence (m14) 35
-1 Skyclave Apparition (soc) 173
+1 Scrubland (3ed) 286
+1 Silence (sld) 7003
+1 Skyclave Apparition (blc) 154
 1 Smothering Tithe (2x2) 342
 1 Sol Ring (fic) 357
-1 Solitude (h2r) 3
+1 Solitude (mh2) 307
 1 Steam Vents (trk) 298
 1 Sword of Feast and Famine (plst) 2XM-296
 1 Swords to Plowshares (ice) 54
 1 Taiga (3ed) 287
 1 Teferi's Protection (sta) 74
-1 Teferi, Time Raveler (rvr) 232
+1 Teferi, Time Raveler (sld) 252
 1 Teleportation Circle (afr) 39
 1 Temple Garden (rvr) 300
-1 Thassa's Oracle (thb) 73
+1 Thassa's Oracle (sld) 1280
 1 The Mind Stone (msh) 21
-1 The One Ring (ltr) 246
+1 The One Ring (ltr) 451
 1 The Reaper, King No More (ecc) 4
 1 The Soul Stone (spm) 66
-1 The Wind Crystal (fin) 43
-1 Thought Vessel (msc) 222
+1 The Wind Crystal (fin) 330
+1 Thought Vessel (sld) 2561
 1 Transguild Courier (dmc) 194
 1 Tropical Island (3ed) 288
-1 Tundra (ced) 285
-1 Twitching Doll (dsk) 201
-1 Underground Sea (cei) 286
+1 Tundra (3ed) 289
+1 Twitching Doll (dsk) 417
+1 Underground Sea (3ed) 290
 1 Urborg, Tomb of Yawgmoth (ltc) 375
-1 Vampiric Tutor (soa) 100
-1 Vito, Thorn of the Dusk Rose (j25) 71
+1 Vampiric Tutor (dmr) 430
+1 Vito, Thorn of the Dusk Rose (slz) 294
 1 Volcanic Island (3ed) 291
 1 Watery Grave (rvr) 301
-1 Wooded Foothills (mh3) 361
+1 Wooded Foothills (mh3) 236
 1 Yoshimaru, Ever Faithful (pf25) 5

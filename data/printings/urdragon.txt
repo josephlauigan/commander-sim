@@ -1,5 +1,5 @@
 1 Ancient Tomb (plst) TMP-315
-1 Arcane Signet (fdc) 245
+1 Arcane Signet (fic) 333
 1 Arid Mesa (mh2) 436
 1 Badlands (3ed) 282
 1 Bayou (3ed) 283
@@ -8,28 +8,26 @@
 1 Cavern of Souls (lci) 269
 1 Chaos Warp (fic) 291
 1 City of Brass (2x2) 403
-1 Command Tower (plst) MIC-170
+1 Command Tower (cmm) 659
 1 Crux of Fate (fic) 275
-1 Delighted Halfling (pltr) 402s
+1 Delighted Halfling (hoc) 25
 1 Demonic Tutor (cmm) 150
 1 Doubling Season (fdn) 428
 1 Dragon Tempest (fdc) 150
 1 Dragonlord Dromoka (2x2) 376
 1 Dragonlord Ojutai (slc) 2015
-1 Dragonspeaker Shaman (afc) 330
+1 Dragonspeaker Shaman (pw25) 3
 1 Elvish Mystic (hoc) 205
 1 Exotic Orchard (brc) 185
 1 Fact or Fiction (cmm) 631
 1 Field of the Dead (spg) 28
 1 Fierce Guardianship (cmm) 694
 1 Flooded Strand (mh3) 353
-1 Forest (mdd) 301
 1 Ganax, Astral Hunter (clb) 176
 1 Garth One-Eye (mh2) 420
-1 Giver of Runes (plst) MH1-13
+1 Giver of Runes (mh1) 13
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (soc) 245
-1 Hellkite Courser (tdc) 218
 1 Hellkite Tyrant (fic) 295
 1 Jeska's Will (soa) 109
 1 Kura, the Boundless Sky (neo) 200
@@ -41,6 +39,7 @@
 1 Mana Vault (3ed) 263
 1 Marsh Flats (mh2) 437
 1 Miirym, Sentinel Wyrm (sld) 2500
+1 Minas Tirith (hoc) 49
 1 Mithril Coat (hoc) 43
 1 Morophon, the Boundless (m3c) 157
 1 Mox Jasper (tdm) 325
@@ -56,6 +55,7 @@
 1 Polluted Delta (mh3) 356
 1 Relic of Sauron (hoc) 46
 1 Rhystic Study (j22) 114
+1 Rhythm of the Wild (pza) 12
 1 Rivaz of the Claw (dmu) 215
 1 Sacred Foundry (unf) 285
 1 Sapphire Medallion (mh3) 349
@@ -66,18 +66,18 @@
 1 Scrubland (3ed) 286
 1 Shivan Dragon (slc) 1993
 1 Smaug the Impenetrable (hoc) 9
-1 Smaug the Magnificent (hob) 110
+1 Smaug the Magnificent (hob) 229
 1 Sokenzan, Crucible of Defiance (prm) 98131
-1 Sol Ring (sld) 2683
+1 Sol Ring (fdc) 286
 1 Spark Double (rvr) 421
 1 Steam Vents (trk) 298
 1 Stomping Ground (clu) 281
 1 Sulfurous Springs (prm) 103478
 1 Summon: Bahamut (fin) 356
 1 Swords to Plowshares (cst) 54
-1 Sylvan Library (dmr) 179
+1 Sylvan Library (5ed) 329
 1 Taiga (3ed) 287
-1 Talisman of Curiosity (mkc) 241
+1 Talisman of Curiosity (pip) 245
 1 Talisman of Hierarchy (h1r) 36
 1 Terror of the Peaks (pspl) 1
 1 The One Ring (hoc) 44
@@ -91,7 +91,7 @@
 1 Twinflame (soc) 258
 1 Tymna the Weaver (fca) 18
 1 Underground Sea (3ed) 290
-1 Urza's Incubator (mh3) 297
+1 Urza's Incubator (dmr) 453
 1 Utvara Hellkite (rvr) 431
 1 Vampiric Tutor (dmr) 108
 1 Volcanic Island (3ed) 291

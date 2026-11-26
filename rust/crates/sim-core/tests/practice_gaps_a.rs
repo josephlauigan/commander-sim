@@ -63,6 +63,13 @@ fn main_table(key: &str) -> Game {
     g
 }
 
+/// a basic Forest at the bottom of seat 0's library: the Ur-Dragon list has had no basic land since 2026-11-24 (Minas
+/// Tirith took the Forest's place), and these searches are about a basic card
+fn basic_forest_in_library(g: &mut Game) {
+    let forest = g.db.id("Forest").expect("Forest is in data/cards.json");
+    g.player_mut(P0).library.push(forest);
+}
+
 fn use_perm(g: &Game, m: PermId) -> Value {
     json!({"do": "use", "perm": g.player(P0).perms.iter().position(|&x| x == m).unwrap()})
 }
@@ -663,6 +670,7 @@ fn natures_lore_finds_a_forest_card_untapped() {
 /// seat 0 casts `spell` and answers its Forest search with the choice that is exactly `land`
 fn forest_search(spell: &str, land: &'static str) -> (Game, Log) {
     let mut g = main_table("urdragon");
+    basic_forest_in_library(&mut g);
     hand(&mut g, P0, &[spell]);
     pool(&mut g, P0, &all_mana());
     let first = Some(cast_last(&g));
@@ -769,6 +777,7 @@ fn opposition_agent_takes_the_forest_a_person_finds() {
     // libraries, they exile each card they find. You may play those cards ..." (held in the Agent player's hand here)
     for spell in ["Three Visits", "Nature's Lore"] {
         let mut g = main_table("urdragon");
+        basic_forest_in_library(&mut g);
         perm(&mut g, P1, "Opposition Agent");
         hand(&mut g, P0, &[spell]);
         pool(&mut g, P0, &all_mana());
@@ -811,6 +820,7 @@ fn opposition_agent_takes_the_forest_the_ai_finds() {
 #[test]
 fn rampant_growth_finds_a_basic_land_tapped() {
     let mut g = main_table("urdragon");
+    basic_forest_in_library(&mut g);
     hand(&mut g, P0, &["Rampant Growth"]);
     pool(&mut g, P0, &all_mana());
     let first = Some(cast_last(&g));

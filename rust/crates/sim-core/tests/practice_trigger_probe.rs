@@ -929,6 +929,10 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn_gilded: Birthing Pod (Activate(0))",
+        "an activated ability that sacrifices a creature of yours: the probe's table has no creature of yours and no library target, so nothing is offered in its state; the person path is the card's `options` hook, which offers one computed sacrifice-and-fetch pair (a known practice limit of the Pod, see audit/karn_gilded/FINDINGS.md)",
+    ),
+    (
         "karn_gilded: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
