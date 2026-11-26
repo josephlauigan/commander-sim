@@ -24,7 +24,7 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, trigger_window};
 use crate::engine::values::{colors_of, epow, etgh, protected_from, ptypes, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, die, draw, enter, enter_token_copy, make_tokens, max_by, sac_worth};
+use crate::engine::zones::{Enter, Tokens, die, draw, enter, make_tokens, max_by, sac_worth, token_copy_of};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
@@ -701,15 +701,26 @@ fn crystal_may_target(g: &Game, p: PlayerId, src: PermId, m: PermId) -> bool {
     crate::impls::vondam_elspeth::may_target(g, p, m) && !protected_from(g, m, colors_of(g, src))
 }
 
-/// the creatures the Crystal's ability can target: p's own, with a card record to copy (a token without one, a Robot or a
-/// Treasure, can't be copied by this engine), that it may target
+/// the creatures the Crystal's ability can target: p's own, tokens with no card record included (`zones::token_copy_of`
+/// copies those too), that it may target
 fn crystal_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     g.player(p)
         .perms
         .iter()
         .copied()
-        .filter(|&m| live(g, m) && g.is_creature(m) && g.perm(m).cd.is_some() && crystal_may_target(g, p, src, m))
+        .filter(|&m| live(g, m) && g.is_creature(m) && crystal_may_target(g, p, src, m))
         .collect()
+}
+
+/// the ability as it resolves (or as a copy of it resolves): if the target is still a creature of ours that the Crystal
+/// may target, p creates a token that's a copy of it (`zones::token_copy_of`: the state-based actions run before the
+/// copy's triggers go on the stack), marked with p, the player told to sacrifice it at the next end step
+fn crystal_resolve(g: &mut Game, p: PlayerId, src: PermId, t: PermId) -> Res {
+    if !live(g, t) || !g.is_creature(t) || owner(g, t) != p || !crystal_may_target(g, p, src, t) {
+        return Ok(());
+    }
+    token_copy_of(g, p, t, &[(DataKey::CopySac, Val::Player(p))])?;
+    Ok(())
 }
 
 /// "{4}{R}{R}, {T}: Create a token that's a copy of target creature you control. Sacrifice it at the beginning of the
@@ -717,7 +728,7 @@ fn crystal_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
 /// the ability goes on the stack (the table may respond: a removed target makes it do nothing). The token is marked
 /// `DataKey::CopySac`: `turn::end_step` sacrifices it at the next end step to begin, whoever's turn it is, and a token
 /// made during an end step waits for the following one. The copy has haste from the Crystal's own static ability, and
-/// its enters trigger is the copied card's (Karn draws his colours again; the legend rule then keeps one Karn).
+/// its enters trigger is the copied card's (a copy of Karn: the legend rule removes one Karn first, then the trigger draws).
 pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<String>> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).neutered {
         return Ok(Some("The Fire Crystal can't be activated now.".into()));
@@ -752,15 +763,7 @@ pub fn fire_crystal_go(g: &mut Game, p: PlayerId, src: PermId) -> Res<Option<Str
                 t = n;
             }
         }
-        // the target must still be a creature of ours the Crystal may target
-        if !live(g, t) || !g.is_creature(t) || owner(g, t) != p || !crystal_may_target(g, p, src, t) {
-            return Ok(());
-        }
-        let Some(cd) = g.perm(t).cd else { return Ok(()) };
-        if let Some(tok) = enter_token_copy(g, p, cd)? {
-            g.perm_mut(tok).data.set(DataKey::CopySac, Val::Player(p));
-        }
-        check_state(g)
+        crystal_resolve(g, p, src, t)
     })?;
     Ok(None)
 }

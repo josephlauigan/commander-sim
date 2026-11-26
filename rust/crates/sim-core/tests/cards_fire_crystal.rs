@@ -10,6 +10,7 @@
 
 mod play_common;
 use play_common::*;
+use sim_core::engine::life::check_state;
 use sim_core::engine::mana::cost_of;
 use sim_core::engine::values::{epow, etgh};
 use sim_core::engine::zones::{self, Enter, Tokens};
@@ -602,8 +603,9 @@ fn karn_on_the_table(g: &mut Game) -> PermId {
 }
 
 #[test]
-fn a_copy_of_karn_draws_for_every_colour_among_the_other_artifacts_then_the_legend_rule_keeps_one() {
-    // the original Karn is another artifact of all five colours, so the copy's enters trigger draws five whatever else is out
+fn the_legend_rule_keeps_the_real_karn_then_the_copys_trigger_draws_for_the_five_colours_he_is() {
+    // the legend rule (a state-based action) comes before the copy's enters trigger resolves. The person keeps the real Karn,
+    // another artifact of all five colours, so the copy's trigger draws five whatever else is out
     let mut g = tbl();
     let karn = karn_on_the_table(&mut g);
     let c = ready(&mut g, 2, 4);
@@ -611,6 +613,7 @@ fn a_copy_of_karn_draws_for_every_colour_among_the_other_artifacts_then_the_lege
     assert!(activate(&mut g, P0, c).is_none());
     assert_eq!(g.player(P0).hand.len(), hand + 5, "the copy's enters trigger: a card for each of the five colours");
     assert_eq!(perms_named(&g, P0, KARN).len(), 1, "the legend rule: the controller keeps one Karn");
+    assert!(tokens_named(&g, P0, KARN).is_empty(), "the token is the one that left");
     assert!(g.perm(karn).on_bf, "the first one listed, the real Karn, is kept");
 }
 
@@ -633,12 +636,14 @@ fn the_person_chooses_which_karn_the_legend_rule_keeps_and_the_commander_can_sta
 #[test]
 fn keeping_the_token_karn_is_legal_and_it_is_sacrificed_at_the_end_step() {
     // 704.5j: the controller chooses; keeping the token puts the real Karn into the graveyard (the commander
-    // replacement then applies); the token still goes at the end step
+    // replacement then applies); the token still goes at the end step. The legend rule comes before the copy's trigger
+    // resolves, so the trigger counts the colours among the other artifacts without the real Karn: the Crystal's red
     let mut g = tbl();
     let karn = karn_on_the_table(&mut g);
     let c = crystal(&mut g, P0);
     pool(&mut g, P0, &[('R', 2), ('C', 4)]);
     let h = person(&mut g, "", 1); // the second one listed: the token, which entered last
+    let hand = g.player(P0).hand.len();
     assert!(activate(&mut g, P0, c).is_none());
     let legend = h.asked().into_iter().find(|r| r.prompt.contains("legend rule")).expect("asked which Karn to keep");
     assert_eq!(legend.choices.len(), 2, "{:?}", legend.choices);
@@ -646,9 +651,64 @@ fn keeping_the_token_karn_is_legal_and_it_is_sacrificed_at_the_end_step() {
     assert_eq!(now.len(), 1);
     assert!(g.perm(now[0]).token, "the token was kept");
     assert!(!g.perm(karn).on_bf, "the real Karn left");
+    assert_eq!(
+        g.player(P0).hand.len(),
+        hand + 1,
+        "one card, for red: the real Karn was gone before the trigger resolved"
+    );
     assert!(g.perm(now[0]).data.truthy(DataKey::CopySac));
     turn::end_step(&mut g, P0).unwrap();
     assert!(perms_named(&g, P0, KARN).is_empty(), "the token was sacrificed at the end step");
+}
+
+#[test]
+fn the_ai_keeps_the_real_karn_even_when_it_is_tapped() {
+    // a copy marked to be sacrificed at the next end step never beats the card (the AI's legend rule choice)
+    let mut g = tbl(); // no person seat
+    let karn = karn_on_the_table(&mut g);
+    g.perm_mut(karn).tapped = true;
+    let cd = g.perm(karn).cd.unwrap();
+    let t = zones::enter_token_copy(&mut g, P0, cd).unwrap().unwrap();
+    g.perm_mut(t).data.set(DataKey::CopySac, Val::Player(P0));
+    check_state(&mut g).unwrap();
+    assert!(g.perm(karn).on_bf && !g.perm(t).on_bf, "the real Karn stays, tapped as he is");
+    // without the mark, an untapped token would have been kept
+    let mut g = tbl();
+    let karn = karn_on_the_table(&mut g);
+    g.perm_mut(karn).tapped = true;
+    let cd = g.perm(karn).cd.unwrap();
+    let t = zones::enter_token_copy(&mut g, P0, cd).unwrap().unwrap();
+    check_state(&mut g).unwrap();
+    assert!(g.perm(t).on_bf && !g.perm(karn).on_bf, "an unmarked untapped token beats a tapped card");
+}
+
+#[test]
+fn a_token_with_no_card_record_is_a_target_and_its_copy_is_marked() {
+    // a Breya Thopter: the person lists it and copies it (a 1/1 blue flying Thopter artifact token)
+    let mut g = tbl();
+    let c = crystal(&mut g, P0);
+    pool(&mut g, P0, &[('R', 2), ('C', 4)]);
+    let spec = Tokens {
+        fly: true,
+        sick: false,
+        color: Some(sim_core::cards::Colors::from_letters("U")),
+        types: vec!["thopter", "artifact"],
+        ..Tokens::new(1, 1)
+    };
+    let src = zones::make_tokens(&mut g, P0, spec).unwrap()[0];
+    let h = person(&mut g, "", 0);
+    assert!(activate(&mut g, P0, c).is_none());
+    let asked = h.asked();
+    assert_eq!(asked[0].choices.len(), 2, "the Thopter and 'cancel': {:?}", asked[0].choices);
+    let toks: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token && m != src).collect();
+    assert_eq!(toks.len(), 1, "a copy of the Thopter");
+    let t = toks[0];
+    assert!(g.perm(t).fly && (epow(&g, t), etgh(&g, t)) == (1, 1));
+    assert_eq!(g.perm(t).ttypes, vec!["thopter", "artifact"]);
+    assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)));
+    assert!(!g.perm(src).data.truthy(DataKey::CopySac), "the original is never marked");
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(t).on_bf && g.perm(src).on_bf, "the copy is sacrificed at the end step");
 }
 
 #[test]

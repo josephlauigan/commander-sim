@@ -352,7 +352,8 @@ fn sba_toughness(g: &mut Game) -> Res {
 /// puts the rest into their owners' graveyards (not destruction: indestructible does not help; `die(.., "sba")`).
 /// Legendary-ness reads `mine::is_legendary` (copy exceptions: a Helm of the Host token is not legendary). The AI
 /// keeps the better one: untapped, equipped, with counters, the real card over a token copy, then the older one
-/// (not `pval`: a token copy of a card has no card to value).
+/// (not `pval`: a token copy of a card has no card to value). A token copy marked to be sacrificed at the next end step
+/// (The Fire Crystal's, `DataKey::CopySac`) never beats the card: the AI keeps the one that stays.
 /// Cheap: a player with fewer than two permanents is skipped, and names are compared only among legendary ones.
 fn sba_legend(g: &mut Game) -> Res {
     for i in 0..g.players.len() {
@@ -394,6 +395,7 @@ fn sba_legend(g: &mut Game) -> Res {
                     + 1.5 * gear as f64
                     + 0.5 * x.plus.max(0) as f64
                     + if x.token { 0.0 } else { 0.25 }
+                    - if x.data.truthy(crate::state::DataKey::CopySac) { 10.0 } else { 0.0 }
                     - x.born as f64 * 1e-6
             };
             let pid = g.players[i].id;

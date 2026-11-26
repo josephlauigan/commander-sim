@@ -1459,6 +1459,100 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     enter_token_copy_inner(g, p, cd, exc, 0)
 }
 
+/// Data keys that are copiable values of a token made by `make_tokens` (abilities or characteristics its spec gave it;
+/// CR 707.2). Every other key is state (counters, marks, effects) and is never copied. A new token ability stored in
+/// `data` must be added here.
+pub const COPIABLE_TOKEN_DATA: [DataKey; 6] =
+    [DataKey::Kws, DataKey::Manatok, DataKey::Construct, DataKey::WeirdToken, DataKey::KujaWiz, DataKey::Legendary];
+
+/// p creates a token that's a copy of permanent `src` (CR 707.2-707.3), once for each token a doubler makes
+/// (`repl::tokens`), and returns the tokens that stayed on the battlefield:
+/// - a card-backed permanent: its card, with the copy exceptions it was itself made with (`exc`, a copiable value under
+///   707.9b: a Helm of the Host token stays nonlegendary, a Cursed Mirror copy keeps "has haste") except `revert_to`, the
+///   duration of the Mirror's own effect;
+/// - a face-down permanent: a 2/2 colourless creature with no name, types or abilities (708.2);
+/// - a token with no card record: the characteristics `make_tokens` gave it (name, base power and toughness, colours,
+///   types, fly, deathtouch, lifelink, vigilance, warrior, army, noatk, and the `COPIABLE_TOKEN_DATA` keys).
+///
+/// Never copied: counters (`plus`, `DataKey::Counters`...), damage, tapped, sick (the token enters sick), attachments,
+/// `eot_pt`/`eot_kw`, phasing, `neutered`, `temp`, `undying`, loyalty, and every other data key.
+/// `marks` are set on each new token before any of its triggers resolve and before the state-based actions. (A hook that
+/// runs inside `enter` itself, Thassa's Oracle's `at_once` enters, runs before the marks are set: nothing reads them
+/// there.)
+/// At top level (`g.resolving == 0` on entry) the state-based actions are checked and only then are the queued triggers
+/// flushed (704.3 before 603.3: the legend rule removes a legendary copy before its enters trigger resolves; the trigger
+/// still resolves). Nested inside another resolution, it does neither: the outer resolution does both.
+pub fn token_copy_of(g: &mut Game, p: PlayerId, src: PermId, marks: &[(DataKey, Val)]) -> Res<Vec<PermId>> {
+    let top = g.resolving == 0;
+    g.resolving += 1;
+    let r = (|| -> Res<Vec<PermId>> {
+        let x = g.perm(src).clone(); // last known information: src may have left in response
+        if x.data.truthy(DataKey::Facedown) || x.cd.is_none() {
+            let face_down = x.cd.is_some();
+            let mut spec = if face_down {
+                Tokens { color: Some(Colors::NONE), ..Tokens::new(1, 2) }
+            } else {
+                Tokens {
+                    fly: x.fly,
+                    warrior: x.warrior,
+                    lifelink: x.lifelink,
+                    dt: x.dt,
+                    color: Some(x.colors),
+                    types: x.ttypes.clone(),
+                    ..Tokens { tgh: Some(x.tgh), ..Tokens::new(1, x.pow) }
+                }
+            };
+            if !face_down {
+                for k in COPIABLE_TOKEN_DATA {
+                    if let Some(v) = x.data.get(k) {
+                        spec.data.set(k, v.clone());
+                    }
+                }
+            }
+            for (k, v) in marks {
+                spec.data.set(*k, v.clone());
+            }
+            let made = make_tokens(g, p, spec)?; // doublers, Jinnie Fay, Divine Visitation, TOKEN_CAP
+            if !face_down {
+                for &t in &made {
+                    let y = g.perm_mut(t);
+                    y.name = x.name;
+                    y.vig |= x.vig;
+                    y.army = x.army;
+                    y.noatk = x.noatk;
+                }
+            }
+            Ok(made)
+        } else {
+            let exc = CopyExc { revert_to: None, ..x.exc };
+            let n = repl::tokens(g, p, 1);
+            let mut made = vec![];
+            for _ in 0..n {
+                let Some(t) = enter_token_copy_with(g, p, x.cd.unwrap(), (exc != CopyExc::default()).then_some(exc))?
+                else {
+                    break; // TOKEN_CAP
+                };
+                for (k, v) in marks {
+                    g.perm_mut(t).data.set(*k, v.clone());
+                }
+                if g.perm(t).on_bf {
+                    made.push(t);
+                }
+            }
+            Ok(made)
+        }
+    })();
+    g.resolving -= 1;
+    let made = r?;
+    if top {
+        crate::engine::life::check_state(g)?;
+        if !g.trig_queue.is_empty() && !g.over {
+            crate::engine::stack::flush_triggers(g)?;
+        }
+    }
+    Ok(made)
+}
+
 fn enter_token_copy_inner(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<CopyExc>, x: i32) -> Res<Option<PermId>> {
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
     if have >= TOKEN_CAP {
