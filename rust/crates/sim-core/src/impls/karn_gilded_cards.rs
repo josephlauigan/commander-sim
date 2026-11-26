@@ -172,7 +172,8 @@ fn station_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
         return Ok(vec![]); // the AI has nothing more to gain from it
     }
     let have = charge(g, src);
-    let idle = |g: &Game, m: PermId| g.perm(m).sick || g.perm(m).noatk;
+    // a creature with haste (the Crystal's, Greaves) can attack the turn it came, so it is not idle
+    let idle = |g: &Game, m: PermId| (g.perm(m).sick && !crate::engine::combat::has_haste(g, m)) || g.perm(m).noatk;
     let total: i64 = cands.iter().map(|&m| epow(g, m).max(0) as i64).sum();
     let finish = have + total >= STATION_GOAL;
     let mut best: Option<(PermId, f64)> = None;
@@ -560,7 +561,7 @@ fn heirloom_target(g: &Game, p: PlayerId) -> Option<PermId> {
                 && g.is_creature(m)
                 && epow(g, m) >= 4
                 && !x.eot_kw.contains(&HEIRLOOM_DRAW)
-                && !x.sick
+                && (!x.sick || crate::engine::combat::has_haste(g, m))
                 && !x.tapped
                 && !x.noatk
         })
@@ -656,7 +657,7 @@ fn doll_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
         return Ok(vec![]);
     }
     let x = g.perm(src);
-    if x.tapped || x.sick || crate::human::legal::sorcery_timing(g, p).is_some() {
+    if x.tapped || crate::engine::combat::tap_sick(g, src) || crate::human::legal::sorcery_timing(g, p).is_some() {
         return Ok(vec![]);
     }
     let n = nest(g, src);
@@ -671,7 +672,11 @@ fn doll_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 /// creature. Activate only as a sorcery." The counters are counted as the cost is paid.
 fn doll_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let x = g.perm(src);
-    if !live(g, src) || owner(g, src) != p || x.tapped || x.sick || crate::human::legal::sorcery_timing(g, p).is_some()
+    if !live(g, src)
+        || owner(g, src) != p
+        || x.tapped
+        || crate::engine::combat::tap_sick(g, src)
+        || crate::human::legal::sorcery_timing(g, p).is_some()
     {
         return Ok(false);
     }

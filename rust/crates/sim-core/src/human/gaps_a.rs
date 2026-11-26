@@ -39,7 +39,7 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
     if x.tapped {
         return Some(format!("{} is tapped.", x.name));
     }
-    if creature && x.sick && !crate::dsl::has_kw(g, m, "haste") {
+    if creature && crate::engine::combat::tap_sick(g, m) {
         return Some(format!("{} has summoning sickness (it came under your control this turn).", x.name));
     }
     None

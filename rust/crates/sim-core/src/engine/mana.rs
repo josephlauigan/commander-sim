@@ -221,7 +221,7 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
         if land.tapped {
             continue;
         }
-        if land.sick && g.is_creature(l) && !crate::impls::t6_legends1b::ability_haste(g, p) {
+        if crate::engine::combat::tap_sick(g, l) {
             continue; // a creature land (Astral Dragon's copy) is summoning sick: no {T} ability, its mana included
         }
         let t = &g.db.get(land.card()).tags;
@@ -281,8 +281,6 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
     }
     let rite = has(g, p, Tag::Rite);
     let no_art_mana = hooked && hooks::total_count(g, Event::NoArtifactMana, p) != 0;
-    // Shang-Chi, Tyvar: creature mana abilities work while summoning sick (checked lazily)
-    let ahaste = || crate::impls::t6_legends1b::ability_haste(g, p);
     for &m in &pl.perms {
         let x = g.perm(m);
         if x.tapped || x.phased {
@@ -292,9 +290,11 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
             continue; // Arrest, Encrust: no mana abilities either
         }
         let Some(c) = x.cd else {
-            if rite && (!x.sick || ahaste()) {
+            if rite && !crate::engine::combat::tap_sick(g, m) {
                 u.push(Unit::free(Source::Perm(m), ident, 1));
-            } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick || ahaste()) {
+            } else if let Some(Val::Str(cols)) =
+                x.data.get(DataKey::Manatok).filter(|_| !crate::engine::combat::tap_sick(g, m))
+            {
                 u.push(Unit::free(Source::Perm(m), Colors::from_letters(cols), 1));
             } else if x.ttypes.contains(&"scion") || x.ttypes.contains(&"spawn") {
                 u.push(Unit::free(Source::Scion(m), Colors::NONE, 1));
@@ -339,7 +339,7 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
                 let shape = shape_of(t, col, cols, a.parse().unwrap_or(1), amt, true);
                 u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
-        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
+        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !crate::engine::combat::tap_sick(g, m)) {
             if d.mana_restr == Restr::DragonCreature && x.neutered {
                 continue;
             }
@@ -367,11 +367,11 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
                 };
                 u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
-        } else if &*d.name == crate::impls::newcards_b::MARVIN && (!x.sick || ahaste()) {
+        } else if &*d.name == crate::impls::newcards_b::MARVIN && !crate::engine::combat::tap_sick(g, m) {
             if let Some(unit) = marvin_mana(g, p, m) {
                 u.push(unit);
             }
-        } else if rite && d.creature && (!x.sick || ahaste()) && x.noatk {
+        } else if rite && d.creature && !crate::engine::combat::tap_sick(g, m) && x.noatk {
             u.push(Unit::free(Source::Perm(m), ident, 1));
         }
     }
@@ -1512,8 +1512,7 @@ pub fn next_turn_perm_units(g: &Game, p: PlayerId) -> Vec<Unit> {
                 u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
         } else if let Some(dork) = t.str(Tag::Dork) {
-            let ahaste = || crate::impls::t6_legends1b::ability_haste(g, p);
-            let counted_now = !x.tapped && (!x.sick || ahaste());
+            let counted_now = !x.tapped && !crate::engine::combat::tap_sick(g, m);
             let special = matches!(&*d.name, "Delighted Halfling" | "Bloom Tender");
             if counted_now || special || d.mana_restr != Restr::None {
                 continue;

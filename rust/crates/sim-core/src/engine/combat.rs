@@ -182,6 +182,21 @@ pub fn has_haste(g: &Game, m: PermId) -> bool {
     })
 }
 
+/// CR 302.6: can creature m not use a {T} or {Q} ability now (its mana abilities included) because of summoning sickness?
+/// True only for a creature its controller has not controlled continuously since the turn began (`sick`) that has no
+/// haste of any kind (`has_haste`: printed, granted by a static ability such as The Fire Crystal's, Equipment, Lightning
+/// Greaves / Swiftfoot Boots, Tyvar's emblem) and no "as though it had haste" for abilities (Shang-Chi, Tyvar Kell:
+/// `t6_legends1b::ability_haste`; Thousand-Year Elixir: `t45_krenko::elixir`). A noncreature permanent never is.
+/// A read: it never changes `sick`, so haste that ends this turn leaves the creature sick again.
+pub fn tap_sick(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.sick
+        && g.is_creature(m)
+        && !has_haste(g, m)
+        && !crate::impls::t6_legends1b::ability_haste(g, x.owner)
+        && !crate::impls::t45_krenko::elixir(g, x.owner)
+}
+
 /// (generic mana per attacker, max attackers or None) for p attacking d
 pub fn attack_restrictions(g: &Game, p: PlayerId, d: PlayerId) -> (i32, Option<i32>) {
     let tax: i32 = hooks::hooked(g, Event::AttackTax)

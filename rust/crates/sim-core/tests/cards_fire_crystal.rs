@@ -195,6 +195,7 @@ fn a_creature_that_entered_before_the_crystal_has_haste() {
     crystal(&mut g, P0);
     assert!(combat::has_haste(&g, m));
     assert!(can_attack(&g, P0, m), "the Crystal gives it haste");
+    assert!(g.perm(m).sick && !combat::tap_sick(&g, m), "it is sick, but haste lets it use a {{T}} ability");
 }
 
 #[test]
@@ -204,6 +205,7 @@ fn a_creature_that_enters_after_the_crystal_has_haste() {
     let m = sick_creature(&mut g, P0, BAT);
     assert!(g.perm(m).sick, "it did just come under your control");
     assert!(can_attack(&g, P0, m));
+    assert!(!combat::tap_sick(&g, m), "haste covers its {{T}} abilities too");
 }
 
 #[test]
@@ -233,6 +235,7 @@ fn haste_ends_when_the_crystal_leaves() {
     zones::die(&mut g, c, "destroy").unwrap();
     assert!(!combat::has_haste(&g, m));
     assert!(!can_attack(&g, P0, m));
+    assert!(g.perm(m).sick && combat::tap_sick(&g, m), "sick again: the flag was never cleared");
 }
 
 // ======================================================== "{4}{R}{R}, {T}: Create a token that's a copy ..."
@@ -353,6 +356,7 @@ fn the_token_is_a_copy_with_haste_from_the_crystal_itself() {
     assert_eq!((epow(&g, t), etgh(&g, t)), (2, 3));
     assert!(g.perm(t).sick, "it did just enter");
     assert!(can_attack(&g, P0, t), "creatures you control have haste: the copy too");
+    assert!(!combat::tap_sick(&g, t), "and it may use a {{T}} ability");
     assert!(g.perm(orig).on_bf, "the original stays");
 }
 

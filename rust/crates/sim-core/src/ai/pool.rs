@@ -1299,7 +1299,7 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>, m: Op
             let Some(s) = src.filter(|&s| g.perm(s).on_bf && g.perm(s).owner == p) else { return Ok(false) };
             match wh {
                 Where::BfTap => {
-                    if g.perm(s).tapped || g.perm(s).sick {
+                    if g.perm(s).tapped || crate::engine::combat::tap_sick(g, s) {
                         return Ok(false);
                     }
                     g.perm_mut(s).tapped = true;
