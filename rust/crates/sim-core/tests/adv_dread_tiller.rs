@@ -242,6 +242,26 @@ fn the_enters_trigger_still_resolves_when_the_tiller_has_left() {
     assert_eq!(g.perm(big).plus, -2, "the counter of the trigger whose source is gone");
 }
 
+/// the AI's ranking of targets it can't use: an opposing creature whose ward it can't pay costs nothing (the counter is just
+/// not put), killing a creature of its own costs a card, so with the Tiller gone from the table the AI aims at the warded one
+#[test]
+fn an_unpayable_ward_ranks_above_killing_our_own_creature() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, TILLER);
+    zones::leave(&mut g, t).unwrap();
+    let own = token(&mut g, P0, 1); // a 1/1 that makes no mana (a Llanowar Elves would pay the ward)
+    let warded = perm(&mut g, P1, "Unflinching Hortimancer"); // a 2/1 with ward {1}: P0 has no mana
+    sim_core::engine::hooks::run_hook(
+        &mut g,
+        t,
+        sim_core::hooks::Event::Etb,
+        &sim_core::hooks::Call::Etb { p: P0, m: t },
+    )
+    .unwrap();
+    assert!(on(&g, own), "our 1/1 is not killed");
+    assert_eq!((g.perm(own).plus, g.perm(warded).plus), (0, 0), "the ward countered the trigger: no counter anywhere");
+}
+
 // ============================================================== 4. counter bookkeeping
 /// a creature with a -1/-1 counter and a non-counter pump (an effect until end of turn) still has the counter
 #[test]

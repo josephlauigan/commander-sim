@@ -16,15 +16,17 @@
 //! - **Vision, Synthezoid Avenger**: the mode chosen when a spell is cast outside its caster's turn.
 
 use super::{Target, cards, choices, legal};
+use crate::cards::Colors;
 use crate::engine::hooks::fire_trigger;
 use crate::engine::repl;
-use crate::engine::values::untargetable;
+use crate::engine::values::{colors_of, find, protected_from, untargetable, untargetable_by_its_controller};
 use crate::engine::zones::{Tokens, die, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Sacrificed};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::intern;
+use crate::tag::Tag;
 
 fn live(g: &Game, m: PermId) -> bool {
     g.perm(m).on_bf && !g.perm(m).phased
@@ -57,10 +59,33 @@ pub fn leveler_pick(g: &Game, p: PlayerId, when: &str) -> Res<Option<PermId>> {
 }
 
 // ------------------------------------------------------------------ Iron Man, Armored Avenger
+/// can the person pay the ward of the opposing creature m: `ward_affordable` reads only the floating pool for a person, a
+/// person also pays by tapping their untapped sources (`ward::pay_ward` asks them), so a ward {N} is payable if they have
+/// N mana available; no ward: `ward_affordable`'s other checks
+fn ward_payable(g: &Game, p: PlayerId, m: PermId) -> bool {
+    let ward = g.perm(m).cd.map_or(0, |c| g.db.get(c).ward) + crate::cardcode::aura_ward(g, m);
+    if ward == 0 {
+        return crate::engine::ward::ward_affordable(g, p, m, 0, "");
+    }
+    super::mana::available(g, p) >= ward
+}
+
 /// "Whenever you draw a card, put a +1/+1 counter on target creature": the creature the person picks (the AI always
 /// feeds its Army)
 pub fn ironman_counter(g: &mut Game, p: PlayerId) -> Res {
-    let cre = cards::creatures(g, p, false);
+    // the legal targets: our own creature unless it has shroud or protection from Iron Man's colours (hexproof is fine),
+    // an opposing one only if it is targetable, not protected, and its ward (if any) can be paid
+    let cols = find(g, p, Tag::Ironman).first().map_or(Colors::NONE, |&m| colors_of(g, m));
+    let cre: Vec<PermId> = cards::creatures(g, p, false)
+        .into_iter()
+        .filter(|&m| {
+            if g.perm(m).owner == p {
+                !untargetable_by_its_controller(g, m, cols)
+            } else {
+                !protected_from(g, m, cols) && ward_payable(g, p, m)
+            }
+        })
+        .collect();
     if cre.is_empty() {
         return Ok(());
     }
@@ -68,6 +93,9 @@ pub fn ironman_counter(g: &mut Game, p: PlayerId) -> Res {
     else {
         return Ok(());
     };
+    if g.perm(t).owner != p && !crate::engine::ward::pay_ward(g, p, t)? {
+        return Ok(()); // ward countered the ability
+    }
     crate::glog!(g, "    Iron Man puts a +1/+1 counter on {}", g.perm(t).name);
     repl::put_plus(g, t, 1);
     Ok(())

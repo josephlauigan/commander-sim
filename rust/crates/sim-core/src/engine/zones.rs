@@ -107,8 +107,15 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         } else if has(g, p, Tag::Ironman) {
             // "put a +1/+1 counter on target creature": the AI picks the creature it values most (the Army before,
             // whatever else it had; the Army still wins a tie)
-            let own: Vec<PermId> =
-                g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
+            // (our own creature with shroud or protection from Iron Man's colours is no legal target; hexproof is)
+            let cols = find(g, p, Tag::Ironman).first().map_or(Colors::NONE, |&m| colors_of(g, m));
+            let own: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !untargetable_by_its_controller(g, m, cols))
+                .collect();
             if let Some(t) = max_by(&own, |m| pval(g, m) + if g.perm(m).army { 0.01 } else { 0.0 }) {
                 repl::put_plus(g, t, 1);
             }

@@ -1,7 +1,8 @@
 //! Card code for the other cards of the karn_gilded deck that had no record (E5): Infinite Guideline Station, Breya,
 //! Etherium Shaper, Gold-Forged Thopteryx, The Reaper, King No More, Dread Tiller, Herd Heirloom and Twitching Doll.
-//! Transguild Courier is data only (its colours are `NamedFx::SelfAllColors`), and Shorikai, Genesis Engine's ability is
-//! compiled (the `dsl` of its override in data/card_overrides.toml), so neither has code here. The audit verdicts are in
+//! Transguild Courier (out of the deck since 2026-11-25, in no deck now) keeps only its data (its colours are
+//! `NamedFx::SelfAllColors`), and Shorikai, Genesis Engine's ability is compiled (the `dsl` of its override in
+//! data/card_overrides.toml), so neither has code here. The audit verdicts are in
 //! data/card_overrides.toml; each function's doc comment says how the card is modeled and what is left out.
 //!
 //! One path per card: every card here has `dsl = []` in its override.
@@ -566,8 +567,9 @@ const TILLER_KILL: f64 = 100.0;
 const TILLER_SELF_HARM: f64 = 0.1;
 /// the AI never puts a counter that kills one of its own creatures, unless nothing else can be targeted
 const TILLER_OWN_KILL: f64 = -1000.0;
-/// a target the AI can't use (an opposing creature whose ward it can't pay): only if nothing else is left
-const TILLER_NO_USE: f64 = -2000.0;
+/// a target the AI can't use (an opposing creature whose ward it can't pay): the counter is simply not put, which costs
+/// nothing, so it ranks above `TILLER_OWN_KILL` (a card lost) and below everything that does something
+const TILLER_WARDED_OUT: f64 = -500.0;
 /// the life total at or under which the AI no longer puts a land that costs life to tap (Mana Confluence, City of Brass)
 const TILLER_LIFE_FLOOR: i32 = 10;
 /// the AI's value for each colour of the deck's identity that none of its lands makes yet, which the land would add
@@ -601,7 +603,7 @@ fn tiller_targets(g: &Game, src: PermId) -> Vec<PermId> {
 }
 
 /// would t come back as it dies, with a +1/+1 counter, so that the counter that kills it only makes it bigger: undying
-/// (`zones::die_rest`: a card of its owner's with the keyword and no +1/+1 counter now) or its owner's Mikaeus, the Lunarch
+/// (`zones::die_rest`: a card of its owner's with the keyword and no +1/+1 counter now) or its owner's Mikaeus, the Unhallowed
 /// (a nonhuman creature card, not a commander, not Mikaeus; the AI's one that already came back does not again). The
 /// cap on returns in one turn (`zones::returns_left`) is not looked at: it changes state
 fn tiller_returns(g: &Game, t: PermId) -> bool {
@@ -631,7 +633,7 @@ fn tiller_worth(g: &Game, o: PlayerId, src: PermId, t: PermId) -> f64 {
     let dies = etgh(g, t) <= 1;
     if opposing {
         if !crate::engine::ward::ward_affordable(g, o, t, 0, "") {
-            return TILLER_NO_USE;
+            return TILLER_WARDED_OUT;
         }
         if dies && tiller_returns(g, t) {
             return -pval(g, t); // it dies and comes back with a +1/+1 counter: a gift, not a kill

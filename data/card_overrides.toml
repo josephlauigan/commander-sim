@@ -2472,7 +2472,7 @@ note = "the most threatening opponent sacrifices a creature, an enchantment and 
 
 ["Iron Man, Armored Avenger"]
 status = "Full"
-note = "flying; a +1/+1 counter on the Army per card you draw; attacking gives your other attacking modified creatures flying"
+note = "flying; whenever you draw a card, a +1/+1 counter on target creature (the AI: its own creature with the highest pval, the Army only on a tie; a person picks any legal target; your own creature with shroud or protection from blue is not a legal target, hexproof is; an opposing creature must be targetable and not protected, and a person pays its ward or does not pick it); attacking gives your other attacking modified creatures (a counter, an Equipment or an Aura on them) flying. Named limit: the counter is put as each card is drawn, in the draw loop, not as a trigger on the stack: it cannot be responded to, and a draw of several cards chooses each target as that card is drawn, not after the draw"
 
 ["Isochron Scepter"]
 types = "A"
@@ -10459,7 +10459,7 @@ note = "{1}, {T}: draw two cards, then discard a card, and a 1/1 colourless Pilo
 ["The Reaper, King No More"]
 dsl = []
 status = "Full"
-note = "enters: a -1/-1 counter on each of up to two target creatures (the AI shrinks the two opposing creatures worth most, paying ward or skipping a creature it can't; a person chooses up to two); whenever a creature an opponent controls with a -1/-1 counter on it dies, its controller's Reaper may put that card onto the battlefield under their control, once each turn (read from the creature as it died; the card is taken from its owner's graveyard; a token or a card that is not in the graveyard does nothing; the AI always does it; a stack trigger). The {2/B}{2/R}{2/G} cost is the engine's hybrid cost (E1). Engine limit: the engine runs a dies trigger only for a Reaper still on the battlefield, so a wipe that kills the Reaper and the creature at the same time may not trigger it. AI (PROVISIONAL, never tuned by a sim): the two counters go on the opposing creatures worth most. tests/cards_karn_gilded_set.rs"
+note = "enters: a -1/-1 counter on each of up to two target creatures (the AI shrinks the two opposing creatures worth most, paying ward or skipping a creature it can't; a person chooses up to two); whenever a creature an opponent controls with a -1/-1 counter on it dies, its controller's Reaper may put that card onto the battlefield under their control, once each turn (read from the creature as it died; the card is taken from its owner's graveyard; a token or a card that is not in the graveyard does nothing; the AI always does it; a stack trigger). The {2/B}{2/R}{2/G} cost is the engine's hybrid cost (E1). Named limit (CR 603.10a, simultaneous deaths, is not modelled): the engine kills creatures one at a time, in list order (seat order, then the order permanents entered), in a wipe, in combat damage and in state-based deaths, and runs a dies trigger only for a Reaper still on the battlefield, so a creature with a -1/-1 counter that dies in the same event after the Reaper is not heard, while one that dies before it is (a Farewell exiles, so it is no case). AI (PROVISIONAL, never tuned by a sim): the two counters go on the opposing creatures worth most. tests/cards_karn_gilded_set.rs"
 
 ["Dread Tiller"]
 dsl = []

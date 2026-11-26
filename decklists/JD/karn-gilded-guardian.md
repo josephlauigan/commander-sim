@@ -115,7 +115,7 @@ is three counters, which kills a toughness-3 creature at once. **Iron Man, Armor
 card, put a +1/+1 counter on target creature; whenever it attacks, our other attacking modified creatures (a counter, an Equipment or an Aura on them) gain flying
 until end of turn. Karn's five draws put five counters, ten or fifteen with the doublers, all on one creature or spread out (Karn himself, Iron Man, Yoshimaru); the
 draw step, Rhystic Study, Consecrated Sphinx, Baleful Strix, Esper Sentinel and The One Ring count too. Karn with Buster Sword, Sword of Feast and Famine or a
-counter on him attacks as a flying 5/5 with trample while Iron Man attacks beside him; the AI puts each counter on the creature it values most, a person chooses.
+counter on him attacks as a flying creature of at least 5/5 with trample while Iron Man attacks beside him; the AI puts each counter on the creature it values most, a person chooses.
 Iron Man is a blue artifact (blue rises to four coloured artifacts) and a legendary creature (Yoshimaru grows when it enters, Thopteryx gives it ward {2}).
 
 **Protection and answers.** Force of Will, Counterspell, Silence, Teferi's Protection, Teferi, Time Raveler, Giver of Runes
@@ -211,8 +211,9 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Teferi's Protection is Approximate** (JD waived the Full requirement).
 - **Infinite Guideline Station**: a copy that becomes it without entering (a Mirage Mirror) does not get its printed 7/15.
 - **Breya's 3-damage mode** takes a player, not a planeswalker.
-- **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
-  kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
+- **The Reaper's second ability** (named limit, same as Dread Tiller's): the simulator kills creatures one at a time, in list order (seat order, then the order the
+  permanents entered), in a wipe, in combat damage and in state-based deaths, and runs the trigger only for a Reaper still on the battlefield, so a creature with a -1/-1 counter
+  that dies in the same event after the Reaper is not heard, while one that dies before it is (a Farewell exiles, so it is no case).
 - **The Fire Crystal and the AI:** the AI activates the copy only in the end-of-turn window before its own turn, with the mana it left unspent, for the
   creature whose copy is worth most (Karn when its hand has room for the draw, Restoration Angel, Solitude, Skyclave Apparition...); in a main phase it copies
   only a Thassa's Oracle that wins. In its main phase it keeps {4}{R}{R} up when that copy is worth three cards or more. Its numbers are provisional and unmeasured.
@@ -225,7 +226,7 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Dread Tiller's choices (simulator):** the AI puts the counter on the opposing creature it kills (the one worth most first), else the opposing creature worth most,
   else the Tiller itself, and never kills a creature of its own on purpose; it skips an opposing creature whose ward it can't pay. It always puts a land when it has one
   in its hand or graveyard: first a land that adds a colour its lands don't make, then Cabal Coffers, Urborg, Reliquary Tower, Mistrise Village, Path of Ancestry and
-  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the Lunarch, that the counter would kill is not counted as a kill (it comes back bigger).
+  Command Tower, the graveyard copy before the hand copy (the hand copy when its hand holds more than seven cards); it does not put Mana Confluence or City of Brass at 10 life or less. An undying creature, or one under Mikaeus, the Unhallowed, that the counter would kill is not counted as a kill (it comes back bigger).
   These rankings are provisional and untuned by any sim. Named limit: the simulator kills creatures one at a time, in list order (seat order, then the order
   the permanents entered), in a wipe, in combat damage and in state-based deaths, so a creature with a -1/-1 counter that dies in the same event after the Tiller does not trigger it,
   while one that dies before it does (The Reaper has the same limit; a Farewell exiles, so it is no case).
