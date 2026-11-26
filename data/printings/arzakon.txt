@@ -3,7 +3,6 @@
 1 Arcane Signet (cmr) 297
 1 Arid Mesa (spg) 109
 1 Arzakon (mbc) 33
-1 Avacyn's Pilgrim (isd) 170
 1 Badlands (ced) 278
 1 Basalt Monolith (3ed) 235
 1 Bayou (ced) 279
@@ -48,6 +47,7 @@
 1 Mana Crypt (2xm) 361
 1 Mana Vault (4ed) 334
 1 Marsh Flats (spg) 110
+1 Meteor Golem (sld) 285
 1 Misty Rainforest (mh2) 250
 1 Mox Opal (2xm) 275
 1 Mystic Confluence (tsr) 312

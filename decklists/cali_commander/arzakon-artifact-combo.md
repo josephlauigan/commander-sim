@@ -10,15 +10,15 @@ Thassa's Oracle or a Walking Ballista with a huge X, **Tinker into Blightsteel C
 **Thassa's Oracle with Demonic Consultation or Tainted Pact** (the singleton library exiles itself), and **Underworld
 Breach with Brain Freeze** as a storm line into the Oracle. Sneak Attack is a second way to put Blightsteel onto the
 battlefield. It is weak to Null Rod and Collector Ouphe effects, to stax that stops free spells and rocks, and to a
-hand that holds the answers (counters and removal) with no engine. Nothing in this document has been simulated at the
-Cali format, so the plan and the keep rule are a pilot's guide, not measured.
+hand that holds the answers (counters and removal) with no engine. The plan and the keep rule are a pilot's guide that no sim has
+tuned.
 
 | | |
 |---|---|
 | **Commander** | Arzakon ({W}{U}{B}{R}{G}, a legendary planeswalker with loyalty 4; "can be your commander"); a five-colour card |
 | **Format** | Cali Commander: 1v1, 30 starting life, the player on the play skips their first draw, and the Cali ban list (below) |
-| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated, Dockside Extortionist and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI's Rings of Brighthearth copies nothing outside the Basalt Monolith loop, so never a loyalty ability; a person's Rings copies them, in practice mode and at a real table. This list has not been simulated at the Cali format |
-| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated, Karn's Bastion, Sunpearl Kirin and Mox Opal are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mana Confluence, City of Brass, Staff of Domination and Watery Grave |
+| **Simulator** | Deck key `arzakon`, played from `data/plans/arzakon.toml`; findings in `audit/arzakon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. The engine plays Cali Commander (1v1, 30 life, the Cali ban list). Karn Liberated, Dockside Extortionist and Leyline of the Guildpact are modelled (Full); Arzakon is modelled (Full: a hand-written walker; its +2 can hit any other player, creature, planeswalker or battle), and its loyalty choices are provisional rules that nothing has tested. The AI's Rings of Brighthearth copies nothing outside the Basalt Monolith loop, so never a loyalty ability; a person's Rings copies them, in practice mode and at a real table. |
+| **Buys** | None. Arzakon, Karn, the Great Creator, Voltaic Key, Pithing Needle, Dockside Extortionist, Karn Liberated, Karn's Bastion, Sunpearl Kirin and Mox Opal are owned. Proxies: Leyline of the Guildpact, the original duals, the fetchlands, Mana Confluence, City of Brass, Chromatic Lantern, Staff of Domination and Watery Grave |
 
 ## Strategy
 
@@ -127,7 +127,8 @@ below.
   Attack.
 - **Sneak Attack** ({3}{R}, then {R}): put a creature card from your hand onto the battlefield with haste. Blightsteel
   from hand, attack, and it is sacrificed at the end step and shuffles back. It needs {3}{R} up front and {R} each
-  activation, so it is a backup when Blightsteel is drawn, and it also puts Primeval Titan in free.
+  activation, so it is a backup when Blightsteel is drawn, and it also puts Meteor Golem (destroy a permanent) or
+  Primeval Titan in free.
 - **Sculpting Steel is a second Blightsteel.** Blightsteel Colossus is an artifact creature, so once it is on the
   battlefield, Steel ({3}) enters as a copy of it: another 11/11 indestructible infect trampler, summoning sick, with
   Lightning Greaves ({0} to move) as the way to give it haste. Use it when the first Blightsteel was blocked or fogged
@@ -156,7 +157,7 @@ If the combo is stopped, the deck still has threats and a way to grind:
 - **Arzakon** ({W}{U}{B}{R}{G}): the +2 is 3 damage every turn, a ten-turn clock at 30 life, and it clears Collector Ouphe,
   dorks and small blockers.
 - **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Karn's Bastion, or any two lands (two of the Urza lands, say), and attacks.
-- **Hangarback Walker** ({X}{X}) is a mana sink that leaves
+- **Meteor Golem** ({7}): destroy any nonland permanent. **Hangarback Walker** ({X}{X}) is a mana sink that leaves
   fliers. **Walking Ballista** is a mana sink and a pinger.
 
 ### The engines
@@ -258,7 +259,7 @@ one). The player on the play skips their first draw.
 | 6 or 5 cards | 1-4 lands plus mana, and any tutor or route piece |
 | 4 cards | Keep |
 
-- **Bottom first:** lands past the fourth, the top end (Karn Liberated, Blightsteel Colossus if Tinker isn't in hand),
+- **Bottom first:** lands past the fourth, the top end (Meteor Golem, Blightsteel Colossus if Tinker isn't in hand),
   then situational answers.
 - **Blightsteel in the opening hand is a tutor that can't win by itself.** It needs {12} or a Sneak Attack, so treat it
   as a dead card unless you hold Sneak Attack or a rock-heavy hand.
@@ -322,8 +323,8 @@ speed, not a new route; cast it at the end of the opponent's turn:
 
 - **Spot removal:** Swords to Plowshares (a creature, including an artifact creature), Reality Shift ({1}{U} instant: exile
   target creature, and its controller manifests the top card of their library, so a face-down 2/2 takes its place) and Chaos Warp (any permanent),
-  Cyclonic Rift (overloaded at {6}{U}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game) and
-  Karn Liberated (-3 exiles any permanent).
+  Cyclonic Rift (overloaded at {6}{U}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game),
+  Meteor Golem (destroy any nonland permanent) and Karn Liberated (-3 exiles any permanent).
 - **Hate pieces to expect:** Null Rod and Collector Ouphe hit the artifacts, Stony Silence, Pithing Needle and Cursed
   Totem hit abilities (a +2 from Arzakon kills Collector Ouphe), Rule of Law and Eidolon of the Great Revel hit spells. Route E (a creature, but without Greaves it has no haste) and Route O (two spells and a
   creature) mostly dodge artifact hate.
@@ -339,7 +340,7 @@ The matchup notes are expectations, not measured.
 |---|---|
 | Fast combo | Race it with Route E or Route O. Hold Force of Will and Silence. You are the beatdown on turn 3-4 |
 | Stax (Null Rod, Collector Ouphe, Stony Silence, Cursed Totem) | Route O (spells and a creature) and Route E (Blightsteel is a creature, but Greaves' equip is stopped, so it attacks a turn later). Remove the stax piece first if you must |
-| Creature-heavy midrange | Remove the blocker (Swords, Chaos Warp, Karn Liberated) or reset the board with Cyclonic Rift, then a Blightsteel attack or Ballista |
+| Creature-heavy midrange | Remove the blocker (Swords, Chaos Warp, Meteor Golem, Karn Liberated) or reset the board with Cyclonic Rift, then a Blightsteel attack or Ballista |
 | Artifact combo (Urza, Kinnan) | Karn, the Great Creator stops every activated ability of their artifacts, mana abilities included; Pithing Needle names one card for the abilities that are not mana abilities |
 | Control (counters and removal) | Bait with Brain Freeze and Mystic Confluence, then go with a free counter behind it. The One Ring protects you for a turn |
 
@@ -379,14 +380,14 @@ original duals (Tundra, Underground Sea, Volcanic Island, Tropical Island, Bayou
 Plateau, Taiga), eight fetchlands (Flooded Strand, Polluted Delta, Windswept Heath, Scalding Tarn,
 Wooded Foothills, Marsh Flats, Arid Mesa, Misty Rainforest) and three shocklands (Hallowed Fountain,
 Steam Vents, Watery Grave). Coloured sources among the lands, counting each fetchland as any colour: blue 18, white 16,
-black 16, red 16, green 15. The deck also has 4 mana dorks (Birds of Paradise, Paradise Druid,
-Avacyn's Pilgrim, Faeburrow Elder), 13 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
+black 16, red 16, green 15. The deck also has 3 mana dorks (Birds of Paradise, Paradise Druid,
+Faeburrow Elder), 13 rocks and rituals (Mana Crypt, Sol Ring, Mana Vault, Lotus Petal, Dark Ritual,
 Chrome Mox, Mox Opal, Arcane Signet, Chromatic Lantern, Fellwar Stone, Talisman of Progress,
 The Mightstone and Weakstone, Basalt Monolith) and Voltaic Key to untap them, and Dockside Extortionist, which makes Treasures from the
 opponent's artifacts and enchantments. Blue is the heaviest colour ({U}{U} for Counterspell, Thassa's
 Oracle, Urza and Mystic Confluence) and black the second main colour (the tutors, Demonic Consultation, Tainted Pact and Dark Ritual for the Oracle line; {B}{B} only for Grim Tutor). White is a heavy
 splash: {W}{W} for Grand Abolisher and one {W} for Silence, Sunpearl Kirin and several other spells. Green
-matters most for the two one-mana dorks (Birds of Paradise, Avacyn's Pilgrim). Red is the lightest: only Chaos Warp, Gamble,
+matters most for Birds of Paradise, the one-mana dork. Red is the lightest: only Chaos Warp, Gamble,
 Underworld Breach, Sneak Attack, Ragavan and Dockside Extortionist need it, besides Arzakon. Arzakon needs all five at once, which the colourless sources
 (the six colourless lands and the colourless rocks) cannot help with.
 
@@ -409,7 +410,7 @@ It is the one rock the opponent can destroy that fixes the whole land base at on
 
 **The Urza lands.** Urza's Tower, Urza's Mine and Urza's Power Plant each tap for {C}; with all three on the battlefield
 the Tower taps for {C}{C}{C} and the Mine and the Power-Plant for {C}{C} each, seven colourless mana from three lands.
-Seven is exactly Karn Liberated, and most of Blightsteel Colossus's {12}. With one or two of them out each
+Seven is exactly Karn Liberated or Meteor Golem, and most of Blightsteel Colossus's {12}. With one or two of them out each
 is only a colourless land, and, without Leyline, none of them pays a colour toward Arzakon, so a hand with just the Urza lands as its
 mana (and no Leyline) has no coloured source. Primeval Titan can fetch two of them at once.
 
@@ -425,7 +426,7 @@ game. Check with the organiser whether proxies are allowed.
 
 **Commander (1).** Arzakon
 
-**Creatures (14).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Dockside Extortionist, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Sunpearl Kirin, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
+**Creatures (14).** Birds of Paradise, Blightsteel Colossus, Dockside Extortionist, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Sunpearl Kirin, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista
 
 **Artifacts (20).** Arcane Signet, Basalt Monolith, Chromatic Lantern, Chrome Mox, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mox Opal, Pithing Needle, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Voltaic Key
 
@@ -447,7 +448,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Arcane Signet
 1 Arid Mesa
 1 Arzakon
-1 Avacyn's Pilgrim
 1 Badlands
 1 Basalt Monolith
 1 Bayou
@@ -492,6 +492,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Mana Crypt
 1 Mana Vault
 1 Marsh Flats
+1 Meteor Golem
 1 Misty Rainforest
 1 Mox Opal
 1 Mystic Confluence

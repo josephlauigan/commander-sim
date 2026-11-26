@@ -43,7 +43,7 @@ kind = "combo"
 pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Staff of Domination", "Urza, Lord High Artificer"]]
 
 # What the tutors fetch (the guide's "What to tutor for"): the combo's missing piece first, an engine on turns 2-3 when
-# nothing is going, or the Rings when the board can't be beaten.
+# nothing is going, Meteor Golem or the Rings when the board can't be beaten.
 [[wish]]
 cards = ["Basalt Monolith", "Rings of Brighthearth"]
 when = ["lands+rocks>=3"]
@@ -59,10 +59,15 @@ cards = ["The One Ring"]
 when = ["turn<=3"]
 score = 80
 
+[[wish]]
+cards = ["Meteor Golem"]
+when = ["opp-power>=15"]
+score = 76
+
 # Acceleration and fixing are the first plays; Arzakon and the engines next; the big top end last.
 [[prio]]
 cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Birds of Paradise",
-    "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Progress",
+    "Paradise Druid", "Talisman of Progress",
     "Mox Opal", "Chrome Mox", "Fellwar Stone"]
 when = ["turn<=4"]
 value = 86
@@ -120,6 +125,13 @@ value = 68
 
 # No row for Karn Liberated ({7}, in since 2026-11-23 for Kyodai): the plan has no row for Tezzeret or Karn, the Great Creator
 # either, so it is left to the generic rating (not checked how that rates a seven-mana planeswalker).
+
+# The top end: after the board is built
+[[prio]]
+cards = ["Meteor Golem"]
+when = ["lands+rocks>=7"]
+value = 66
+else = 20
 
 [[hold]]
 card = "Teferi's Protection"
