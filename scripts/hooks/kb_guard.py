@@ -427,7 +427,8 @@ def closing_kb_body(text):
         return None
     cand = lines[-1]
     # one closing question to JD ("Approve this plan?") may follow the KB line
-    if len(lines) >= 2 and cand.rstrip().endswith("?") and len(cand) <= 240 and not KB_LAST.match(cand.strip()):
+    if (len(lines) >= 2 and re.search(r"\?[\s*_]*(?:\([^)]{0,40}\))?[\s*_]*$", cand) and len(cand) <= 240
+            and not KB_LAST.match(cand.strip())):
         cand = lines[-2]
     m = KB_LAST.match(cand.strip())
     if not m or ">" in m.group(1):
@@ -500,22 +501,39 @@ def running_task_ids(data):
     return out
 
 
+TOKEN_ORIG = re.compile(r"[A-Za-z0-9][A-Za-z0-9'\u2019\-]*")
+
+
+def find_card_name(text, multi, longest):
+    """The first catalog card of two or more words written like a name in the text (Title Case first and last word; a
+    leading lowercase `the` is fine), or None. Plain phrases such as "the moment" or "game plan" do not count."""
+    toks = TOKEN_ORIG.findall(text or "")
+    low = [t.lower().replace("\u2019", "'") for t in toks]
+    for i in range(len(toks)):
+        for n in range(2, min(longest, len(toks) - i) + 1):
+            if " ".join(low[i:i + n]) in multi:
+                first, last = toks[i], toks[i + n - 1]
+                if (first[0].isupper() or low[i] == "the") and last[0].isupper():
+                    return " ".join(toks[i:i + n])
+    return None
+
+
 def answer_names_card(data, text):
-    """True when the answer (outside its KB line) names a catalog card of two or more words: then
+    """The name of a catalog card of two or more words that the answer (outside its KB line) names, else None: then
     `KB: not applicable` is not a valid opt-out. Single-word names are skipped (common words)."""
     try:
         root = project_root(data)
         roots = [root] + [m for m in [main_checkout(root)] if m and m != root]
         names = load_names(roots)
         if not names:
-            return False
+            return None
         multi = {n for n in names[0] if " " in n}
         if not multi:
-            return False
+            return None
         body = re.sub(r"(?m)^.*\bKB[*_]{0,3}\s?:.*$", " ", text or "")
-        return has_card_name(body, (multi, max(n.count(" ") + 1 for n in multi)))
+        return find_card_name(body, multi, max(n.count(" ") + 1 for n in multi))
     except Exception:
-        return False
+        return None
 
 
 def stop_decision(data, events, sdir):
@@ -537,9 +555,11 @@ def stop_decision(data, events, sdir):
     blocked = any(e.get("ev") == "blocked" for e in after)
     text = last_assistant_text(data)
     kind, detail = kb_line_kind(text)
-    optout_rejected = False
-    if kind == "optout" and answer_names_card(data, text):
-        kind, detail, optout_rejected = "none", "", True
+    optout_rejected = None
+    if kind == "optout":
+        named = answer_names_card(data, text)
+        if named:
+            kind, detail, optout_rejected = "none", "", named
     prev = idx[-2] if len(idx) > 1 else -1
     allowed = {p.get("pid")} | ({events[prev].get("pid")} if prev >= 0 else set())
 
@@ -562,12 +582,12 @@ def stop_decision(data, events, sdir):
         if not evidence:
             missing.append("a knowledge base query (map, digest or find)")
         if kind != "queries":
-            if KB_ANY.search(text or "") and not optout_rejected:
-                missing.append("your `KB:` line as the very last line of the answer (after any question to JD); "
-                               "re-posting just that line is enough")
+            if KB_ANY.search(text or "") and closing_kb_body(text) is None and not optout_rejected:
+                missing.append("your `KB:` line as the very last line of the answer (or just before a closing "
+                               "question to JD); re-posting just that line is enough")
             else:
                 missing.append("a closing `KB: <queries run> (data <date>, roles <rules-only|merged>)` line naming them"
-                               + (" (`not applicable` is not accepted: the answer names a card)" if optout_rejected else
+                               + (f" (`not applicable` is not accepted: the answer names {optout_rejected})" if optout_rejected else
                                   "" if tier == "weak" else " (`not applicable` is not accepted for this prompt)"))
 
     if not missing:
@@ -605,7 +625,7 @@ def stop_decision(data, events, sdir):
            "`digest --ident LETTERS --stdout` / `find --ident LETTERS ...` (a new deck; C = colourless), and "
            "`find --name NAME --full` for every card or commander you named.\n" if not unavail else "")
         + "If anything in the answer you gave is wrong or unverified, post a corrected answer and say what changed. "
-        + "The `KB:` line must be the very last line (after any question to JD). (Asked once per question.)"
+        + "The `KB:` line must be the last line (or just before a closing question to JD). (Asked once per question.)"
     )
     append(sf, {"ev": "blocked", "missing": missing})
     return {"decision": "block", "reason": reason}
@@ -626,7 +646,7 @@ def inject_text(root, tier, decks_note):
         "hypothetical deck `digest --ident LETTERS --stdout` and `find --ident LETTERS ...` (C = colourless, e.g. "
         "`find --ident C --text 'can be your commander'`).\n"
         "2. `find --name NAME --full` for every card or commander you name as a pick, example or fact.\n"
-        f"3. End the answer with {closing} as the very last line (after any question to JD).\n"
+        f"3. End the answer with {closing} as the last line (or just before a closing question to JD).\n"
         "A Stop hook checks for the queries and the KB line once per question."
     )
 

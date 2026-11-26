@@ -250,9 +250,10 @@ a correction, post one that says what changed, ending with the `KB:` line. Detai
    check, `*` and `d:` are not the cut check), then put the `--swap` runs (explain on, the deck's own tiers) in the
    plan JD approves. The `--swap` explain output is the model-status authority, not `m:`.
 6. **Say what you used**, as the last line of the answer (or just before a closing question to JD such as "Approve
-   this plan?"): `KB: <queries run> (data <date>, roles <rules-only|merged>)`, plus which role tags are unreviewed (`?`). Two other forms: `KB: not applicable (<reason>)`,
-   only when the answer names, ranks or evaluates no card; `KB: unavailable (<reason>)` when the catalog or binary is
-   not reachable (cloud, no build), which also tells JD the answer is from memory and unverified.
+   this plan?"): `KB: <queries run> (data <date>, roles <rules-only|merged>)`, plus which role tags are unreviewed
+   (`?`). Two other forms: `KB: not applicable (<reason>)`, only when the answer names, ranks or evaluates no card;
+   `KB: unavailable (<reason>)` when the catalog or binary is not reachable (cloud, no build), which also tells JD the
+   answer is from memory and unverified.
 
 How the flags mislead if read carelessly:
 - `m:N` = NO engine record: status unknown, not fine and not Unmodeled. An incoming card with `m:N` or below Full

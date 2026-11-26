@@ -14,11 +14,17 @@ if [ -z "$bin" ] || [ ! -x "$bin" ]; then
   echo "  cd ${main:-$here}/rust && systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 cargo build --release -p cardgen" >&2
   exit 1
 fi
-# a recommendation never refreshes data: these three write the shared catalog, roles or exported files
-case "$1" in
+# a recommendation never refreshes data: these three write the shared catalog, roles or exported files, except the
+# read-only forms (roles --lint/--audit/--show/--stats/--validate, export --out DIR to a scratch directory)
+cmd=$1; [ "$1" = --root ] && cmd=$3
+case "$cmd" in
   bulk-sync|roles|export)
-    if [ "$CARDGEN_ALLOW_WRITE" != 1 ]; then
-      echo "scripts/cardgen: '$1' writes shared data and is not run in a recommendation (CLAUDE.md). Set CARDGEN_ALLOW_WRITE=1 only for an approved refresh." >&2
+    readonly=
+    for a in "$@"; do
+      case "$a" in --out|--lint|--audit|--show|--stats|--validate) readonly=1 ;; esac
+    done
+    if [ -z "$readonly" ] && [ "$CARDGEN_ALLOW_WRITE" != 1 ]; then
+      echo "scripts/cardgen: '$cmd' would write shared data and is not run in a recommendation (CLAUDE.md); set CARDGEN_ALLOW_WRITE=1 only for a refresh JD approved." >&2
       exit 1
     fi ;;
 esac

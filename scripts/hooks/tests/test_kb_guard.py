@@ -374,5 +374,46 @@ class OpusReviewFixes(Base):
         self.assertTrue(snippets[1])
 
 
+class DeltaReviewFixes(Base):
+    def _catalog(self, names):
+        with open(os.path.join(self.e.proj, "data", "knowledge", "oracle.json"), "w") as f:
+            json.dump({"cards": [{"name": n} for n in names]}, f)
+
+    def _reason(self, res):
+        code, out, _ = res
+        self.assertEqual(code, 0)
+        return json.loads(out)["reason"]
+
+    def test_strong_opt_out_on_the_last_line_is_not_told_to_move_it(self):
+        self.e.prompt(COLORLESS)
+        reason = self._reason(self.e.stop("Advice.\nKB: not applicable (general rules question here)"))
+        self.assertIn("not accepted for this prompt", reason)
+        self.assertNotIn("re-posting", reason)
+
+    def test_short_opt_out_reason_is_not_told_to_move_it(self):
+        self.e.prompt("is Sol Ring good in my commander decks")
+        reason = self._reason(self.e.stop("Advice.\nKB: not applicable (short)"))
+        self.assertNotIn("re-posting", reason)
+
+    def test_bold_and_parenthesised_closing_questions_follow_the_kb_line(self):
+        self.e.prompt(COLORLESS)
+        self.e.bash("scripts/cardgen map --stdout")
+        self.assertPasses(self.e.stop("Plan.\nKB: map (data 2026-11-22, roles rules-only)\n**Approve this plan?**"))
+        self.assertPasses(self.e.stop("Plan.\nKB: map (data 2026-11-22, roles rules-only)\nApprove this plan? (yes / no)"))
+
+    def test_plain_phrases_are_not_card_names_but_titled_names_are(self):
+        multi = {"the moment", "cut down", "game plan", "the ur-dragon"}
+        f = lambda t: kb_guard.find_card_name(t, multi, 2)  # noqa: E731
+        self.assertIsNone(f("At the moment the game plan is to cut down on tokens."))
+        self.assertEqual(f("Cut Down is a removal spell."), "Cut Down")
+        self.assertEqual(f("I would put the Ur-Dragon in the command zone."), "the Ur-Dragon")
+
+    def test_block_reason_names_the_card_that_rejected_the_opt_out(self):
+        self._catalog(["Sol Ring"])
+        self.e.prompt("is Sol Ring good in my commander decks")
+        reason = self._reason(self.e.stop("Sol Ring is a fine card.\nKB: not applicable (general chat question only)"))
+        self.assertIn("names Sol Ring", reason)
+
+
 if __name__ == "__main__":
     unittest.main()
