@@ -1459,11 +1459,27 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     enter_token_copy_inner(g, p, cd, exc, 0)
 }
 
-/// Data keys that are copiable values of a token made by `make_tokens` (abilities or characteristics its spec gave it;
-/// CR 707.2). Every other key is state (counters, marks, effects) and is never copied. A new token ability stored in
-/// `data` must be added here.
-pub const COPIABLE_TOKEN_DATA: [DataKey; 6] =
-    [DataKey::Kws, DataKey::Manatok, DataKey::Construct, DataKey::WeirdToken, DataKey::KujaWiz, DataKey::Legendary];
+/// Data keys that define a token made by `make_tokens` (abilities or characteristics its creator gave it in `spec.data`,
+/// CR 707.2): keywords and markers (`Kws`, `Manatok`, `Construct`, `WeirdToken`, `KujaWiz`), "legendary" (`Legendary`),
+/// "is an artifact" (`Artifact`: how Hangarback Walker's Thopters, Urza's Constructs, Sai's Thopters and others are
+/// artifacts without "artifact" in `ttypes`; copied only as `Val::Bool`, since a `Val::Stamp` is a this-turn effect on a
+/// permanent), and the named-token flags (`Indestr`: Marit Lage and Kaldra, `Kaldra`, `MordDog`, `Voja`). Every other key is
+/// treated as state (counters, marks, effects) and is never copied. A token-defining key that a new card stores in `data`
+/// must be added here, or a copy of its token loses it. Limit: `Indestr` is also a one-shot grant on any permanent
+/// (`rules.rs`, `partials.rs`), which a copy of that permanent would inherit.
+pub const COPIABLE_TOKEN_DATA: [DataKey; 11] = [
+    DataKey::Kws,
+    DataKey::Manatok,
+    DataKey::Construct,
+    DataKey::WeirdToken,
+    DataKey::KujaWiz,
+    DataKey::Legendary,
+    DataKey::Artifact,
+    DataKey::Indestr,
+    DataKey::Kaldra,
+    DataKey::MordDog,
+    DataKey::Voja,
+];
 
 /// p creates a token that's a copy of permanent `src` (CR 707.2-707.3), once for each token a doubler makes
 /// (`repl::tokens`), and returns the tokens that stayed on the battlefield:
@@ -1474,11 +1490,16 @@ pub const COPIABLE_TOKEN_DATA: [DataKey; 6] =
 /// - a token with no card record: the characteristics `make_tokens` gave it (name, base power and toughness, colours,
 ///   types, fly, deathtouch, lifelink, vigilance, warrior, army, noatk, and the `COPIABLE_TOKEN_DATA` keys).
 ///
+/// Replacement effects of creating a token (614) apply to every branch alike, as they do in `make_tokens`: with Divine
+/// Visitation out a creature token is a 4/4 white flying vigilance Angel instead, and with Jinnie Fay out a token whose
+/// power is under 2 is a 2/2 with haste. Such a token is not a copy (nothing of the source is copied onto it); it is made
+/// by `make_tokens` alone, which also applies the doublers.
+///
 /// Never copied: counters (`plus`, `DataKey::Counters`...), damage, tapped, sick (the token enters sick), attachments,
 /// `eot_pt`/`eot_kw`, phasing, `neutered`, `temp`, `undying`, loyalty, and every other data key.
-/// `marks` are set on each new token before any of its triggers resolve and before the state-based actions. (A hook that
-/// runs inside `enter` itself, Thassa's Oracle's `at_once` enters, runs before the marks are set: nothing reads them
-/// there.)
+/// `marks` are set on each new token (the ones that stayed on the battlefield) before any of its triggers resolve and
+/// before the state-based actions, whatever it turned out to be. (A hook that runs inside `enter` itself, Thassa's
+/// Oracle's `at_once` enters, runs before the marks are set: nothing reads them there.)
 /// At top level (`g.resolving == 0` on entry) the state-based actions are checked and only then are the queued triggers
 /// flushed (704.3 before 603.3: the legend rule removes a legendary copy before its enters trigger resolves; the trigger
 /// still resolves). Nested inside another resolution, it does neither: the outer resolution does both.
@@ -1487,8 +1508,18 @@ pub fn token_copy_of(g: &mut Game, p: PlayerId, src: PermId, marks: &[(DataKey, 
     g.resolving += 1;
     let r = (|| -> Res<Vec<PermId>> {
         let x = g.perm(src).clone(); // last known information: src may have left in response
-        if x.data.truthy(DataKey::Facedown) || x.cd.is_none() {
-            let face_down = x.cd.is_some();
+        let face_down = x.cd.is_some() && x.data.truthy(DataKey::Facedown);
+        let creature = x.cd.is_none() || face_down || g.is_creature(src);
+        let (base_pow, base_tgh) = match x.cd {
+            _ if face_down => (2, 2),
+            Some(cd) => (g.db.get(cd).pow, g.db.get(cd).tgh),
+            None => (x.pow, x.tgh),
+        };
+        let replaced =
+            (creature && crate::impls::t0_zurgo::divine_visitation(g, p)) || (has(g, p, Tag::Jinnie) && base_pow < 2);
+        let made = if replaced {
+            make_tokens(g, p, Tokens { tgh: Some(base_tgh), ..Tokens::new(1, base_pow) })? // not a copy
+        } else if face_down || x.cd.is_none() {
             let mut spec = if face_down {
                 Tokens { color: Some(Colors::NONE), ..Tokens::new(1, 2) }
             } else {
@@ -1504,15 +1535,13 @@ pub fn token_copy_of(g: &mut Game, p: PlayerId, src: PermId, marks: &[(DataKey, 
             };
             if !face_down {
                 for k in COPIABLE_TOKEN_DATA {
-                    if let Some(v) = x.data.get(k) {
+                    // an artifact stamp is an effect of this turn on the permanent, not what the token is
+                    if let Some(v) = x.data.get(k).filter(|v| k != DataKey::Artifact || matches!(v, Val::Bool(_))) {
                         spec.data.set(k, v.clone());
                     }
                 }
             }
-            for (k, v) in marks {
-                spec.data.set(*k, v.clone());
-            }
-            let made = make_tokens(g, p, spec)?; // doublers, Jinnie Fay, Divine Visitation, TOKEN_CAP
+            let made = make_tokens(g, p, spec)?; // doublers, TOKEN_CAP
             if !face_down {
                 for &t in &made {
                     let y = g.perm_mut(t);
@@ -1522,7 +1551,7 @@ pub fn token_copy_of(g: &mut Game, p: PlayerId, src: PermId, marks: &[(DataKey, 
                     y.noatk = x.noatk;
                 }
             }
-            Ok(made)
+            made
         } else {
             let exc = CopyExc { revert_to: None, ..x.exc };
             let n = repl::tokens(g, p, 1);
@@ -1532,15 +1561,18 @@ pub fn token_copy_of(g: &mut Game, p: PlayerId, src: PermId, marks: &[(DataKey, 
                 else {
                     break; // TOKEN_CAP
                 };
-                for (k, v) in marks {
-                    g.perm_mut(t).data.set(*k, v.clone());
-                }
                 if g.perm(t).on_bf {
                     made.push(t);
                 }
             }
-            Ok(made)
+            made
+        };
+        for &t in &made {
+            for (k, v) in marks {
+                g.perm_mut(t).data.set(*k, v.clone());
+            }
         }
+        Ok(made)
     })();
     g.resolving -= 1;
     let made = r?;

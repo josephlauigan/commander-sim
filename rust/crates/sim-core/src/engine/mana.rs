@@ -371,7 +371,7 @@ fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<Car
             if let Some(unit) = marvin_mana(g, p, m) {
                 u.push(unit);
             }
-        } else if rite && d.creature && !crate::engine::combat::tap_sick(g, m) && x.noatk {
+        } else if rite && d.creature && x.noatk && !crate::engine::combat::tap_sick(g, m) {
             u.push(Unit::free(Source::Perm(m), ident, 1));
         }
     }
@@ -1310,7 +1310,9 @@ pub fn can_pay_with_rituals(g: &Game, p: PlayerId, generic: u32, pips: &str, ski
 // --- ai-fix: D
 /// p's mana units once card `c` is cast from `u`: its cost paid, and the mana it makes this turn added (a ritual's, or
 /// a noncreature rock's: it can tap as it enters; a dork is summoning sick, Chrome Mox's colour is unknown, so neither
-/// adds any). None if `u` can't pay for it.
+/// adds any). None if `u` can't pay for it. A dork adds none even where haste would let it tap (The Fire Crystal, Lightning
+/// Greaves): the creature is not on the battlefield yet, so `combat::tap_sick` has nothing to read, and the AI's same-turn
+/// "cast a dork, then pay with it" planning stays conservative (it under-counts, never over-counts).
 pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
     if ritual_out(g, p, c).is_some() {
         return units_after_ritual(g, p, c, u);
@@ -1468,7 +1470,7 @@ pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
 }
 
 /// The mana units of p's mana permanents that `mana_units` leaves out now but p has on its next turn: a tapped Rock,
-/// Dork or Chrome Mox (it untaps) and an untapped Dork still summoning sick (it will not be). Colours and amounts as
+/// Dork or Chrome Mox (it untaps) and an untapped Dork still summoning sick without haste (it will not be). Colours and amounts as
 /// `units` makes them. A permanent with a special rule (Star Compass, Fellwar Stone, Bloom Tender, Delighted Halfling,
 /// restricted mana, a lock, no mana from artifacts) is left out, and so is a tapped permanent that will not untap
 /// (`nountap`: Mana Vault, Grim Monolith; a "frozen" lock), so the list errs towards less mana. Not handled, so it can

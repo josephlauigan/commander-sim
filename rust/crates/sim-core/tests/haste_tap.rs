@@ -58,7 +58,8 @@ fn a_noncreature_permanent_is_never_tap_sick() {
     let ring = perm(&mut g, P0, "Sol Ring");
     g.perm_mut(ring).sick = true;
     assert!(!combat::tap_sick(&g, ring));
-    assert_eq!(mana_now(&g), 2, "it taps for mana the turn it came");
+    let m = sick(&mut g, P0, ELVES);
+    assert!(combat::tap_sick(&g, m), "control: the creature beside it is");
 }
 
 // ======================================================== mana now
@@ -212,4 +213,86 @@ fn a_person_activates_a_sick_giver_of_runes_under_the_crystal() {
     let why = try_it(false).expect("control: refused");
     assert!(why.contains("summoning sickness"), "{why}");
     assert_eq!(try_it(true), None, "the Crystal's haste: it works");
+}
+
+// ======================================================== the other C3 sites
+fn options(g: &mut Game, src: PermId, post: Option<bool>) -> Vec<sim_core::hooks::Opt> {
+    let c = g.perm(src).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, src, P0, post).unwrap()
+}
+
+#[test]
+fn station_leaves_a_hasty_creature_to_attack_and_taps_a_sick_one() {
+    // the AI stations with the creatures that can't attack this turn; with haste a new creature can
+    let station_options = |with_crystal: bool| {
+        let mut g = tbl();
+        let st = perm(&mut g, P0, "Infinite Guideline Station");
+        let m = token(&mut g, P0, 3);
+        g.perm_mut(m).sick = true;
+        g.player_mut(P0).hand.clear();
+        if with_crystal {
+            perm(&mut g, P0, CRYSTAL);
+        }
+        options(&mut g, st, Some(false)).len()
+    };
+    assert_eq!(station_options(false), 1, "a sick creature is tapped for charge");
+    assert_eq!(station_options(true), 0, "a hasty one attacks instead");
+}
+
+#[test]
+fn herd_heirloom_needs_a_creature_that_can_attack_haste_included() {
+    let heirloom_options = |with_crystal: bool| {
+        let mut g = tbl();
+        let h = perm(&mut g, P0, "Herd Heirloom");
+        let m = token(&mut g, P0, 4);
+        g.perm_mut(m).sick = true;
+        if with_crystal {
+            perm(&mut g, P0, CRYSTAL);
+        }
+        options(&mut g, h, Some(false)).len()
+    };
+    assert_eq!(heirloom_options(false), 0, "a sick 4/4 can't attack");
+    assert_eq!(heirloom_options(true), 1, "with haste it can");
+}
+
+#[test]
+fn the_ais_mother_of_runes_protects_the_turn_it_came_under_haste_only() {
+    let protect = |with_crystal: bool| {
+        let mut g = tbl();
+        let m = perm(&mut g, P0, "Grave Titan");
+        let mother = sick(&mut g, P0, "Mother of Runes");
+        if with_crystal {
+            perm(&mut g, P0, CRYSTAL);
+        }
+        g.active = Some(P1);
+        let s = card(&g, "Swords to Plowshares");
+        let r = sim_core::ai::protect_response(&mut g, P0, m, "exile", Some(P1), Some(s)).unwrap();
+        (r, g.perm(mother).tapped)
+    };
+    assert_eq!(protect(false), (false, false), "control: a sick Mother can't tap");
+    assert_eq!(protect(true), (true, true));
+}
+
+#[test]
+fn a_sick_card_less_token_taps_for_cryptolith_rite_only_with_haste() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Cryptolith Rite");
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(1, 1)).unwrap(); // sick: it just came
+    assert_eq!(mana_now(&g), 0, "control");
+    perm(&mut g, P0, CRYSTAL);
+    assert_eq!(mana_now(&g), 1, "'creatures you control have \"{{T}}: add one mana\"', and haste");
+}
+
+#[test]
+fn an_animated_land_is_a_sick_creature_until_it_has_haste() {
+    let mut g = tbl();
+    let l = lands(&mut g, P0, "Forest", 1, false)[0];
+    g.perm_mut(l).data.set(DataKey::Anim, Val::Bool(true));
+    g.perm_mut(l).sick = true;
+    assert!(g.is_creature(l) && combat::tap_sick(&g, l));
+    assert_eq!(mana_now(&g), 0, "a summoning-sick creature land can't tap for mana");
+    equip(&mut g, "Lightning Greaves", l);
+    assert!(!combat::tap_sick(&g, l));
+    assert_eq!(mana_now(&g), 1, "with Greaves it can");
 }

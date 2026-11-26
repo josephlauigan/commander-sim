@@ -419,11 +419,35 @@ fn a_copy_that_left_before_the_end_step_costs_nothing_and_the_original_is_never_
     assert!(!g.perm(t).on_bf);
     let other = sick_creature(&mut g, P0, "Grave Titan");
     let gy = g.player(P0).gy.len();
+    let h = Arc::new(ScriptHuman::from_fn(|_| Answer::Action(json!({"do": "pass"}))));
+    h.set_autopass("all");
+    g.humans.add(P0, h.clone());
     turn::end_step(&mut g, P0).unwrap();
     turn::end_step(&mut g, P1).unwrap();
     assert!(g.perm(orig).on_bf, "a later end step does nothing to the original");
     assert!(g.perm(other).on_bf, "nor to any other creature");
     assert_eq!(g.player(P0).gy.len(), gy, "nothing else was sacrificed");
+    assert!(
+        h.asked().iter().all(|r| !r.prompt.contains("The Fire Crystal: sacrifice")),
+        "a copy that is already gone gets no sacrifice trigger"
+    );
+}
+
+#[test]
+fn a_copy_listed_twice_is_sacrificed_once() {
+    // the delayed trigger is used up when it resolves: a second entry for the same token does nothing
+    let mut g = tbl();
+    let c = ready(&mut g, 2, 4);
+    sick_creature(&mut g, P0, BAT);
+    assert!(activate(&mut g, P0, c).is_none());
+    let t = tokens_named(&g, P0, BAT)[0];
+    let h = Arc::new(ScriptHuman::from_fn(|_| Answer::Action(json!({"do": "pass"}))));
+    h.set_autopass("all");
+    g.humans.add(P0, h.clone());
+    turn::sacrifice_copies(&mut g, vec![(P0, t), (P0, t)]).unwrap();
+    assert!(!g.perm(t).on_bf);
+    let n = h.asked().iter().filter(|r| r.prompt.contains("The Fire Crystal: sacrifice")).count();
+    assert_eq!(n, 1, "one sacrifice trigger, not two");
 }
 
 #[test]

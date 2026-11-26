@@ -13,6 +13,7 @@ use play_common::*;
 use sim_core::cards::Colors;
 use sim_core::engine::life::check_state;
 use sim_core::engine::repl;
+use sim_core::engine::turn;
 use sim_core::engine::values::{colors_of, epow, etgh};
 use sim_core::engine::zones::{self, TOKEN_CAP, Tokens};
 use sim_core::state::{CopyExc, DataKey, Step, Val};
@@ -240,4 +241,134 @@ fn a_marked_copy_of_a_legendary_creature_never_beats_the_card_in_the_legend_rule
     g.perm_mut(real).tapped = true;
     let t = zones::token_copy_of(&mut g, P0, real, &mark()).unwrap();
     assert!(g.perm(real).on_bf && !g.perm(t[0]).on_bf, "a marked copy loses");
+}
+
+// ======================================================== token-defining data keys
+/// a token made the way Hangarback Walker's Thopters are: an artifact by `DataKey::Artifact`, not by `ttypes`
+fn artifact_thopter(g: &mut Game, colour: &str) -> PermId {
+    let mut spec = Tokens {
+        fly: true,
+        sick: false,
+        color: Some(Colors::from_letters(colour)),
+        types: vec!["thopter"],
+        ..Tokens::new(1, 1)
+    };
+    spec.data.set(DataKey::Artifact, Val::Bool(true));
+    zones::make_tokens(g, P0, spec).unwrap()[0]
+}
+
+#[test]
+fn a_copy_of_a_thopter_made_an_artifact_by_data_is_an_artifact() {
+    let mut g = tbl();
+    let karn = perm(&mut g, P0, KARN);
+    let src = artifact_thopter(&mut g, "U");
+    assert!(!g.perm(src).ttypes.contains(&"artifact"), "control: the type list does not say artifact");
+    assert!(sim_core::impls::t5::is_artifact(&g, src));
+    let t = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap()[0];
+    assert!(sim_core::impls::t5::is_artifact(&g, t), "the copy is an artifact too");
+    zones::die(&mut g, src, "destroy").unwrap();
+    assert_eq!(
+        sim_core::impls::karn_gilded::colours_among_other_artifacts(&g, P0, karn),
+        1,
+        "Karn counts the copy's blue"
+    );
+}
+
+#[test]
+fn an_artifact_that_is_only_this_turns_effect_is_not_copied() {
+    // Liquimetal Torque marks a permanent with a `Val::Stamp`: that is what happened to it, not what the token is
+    let mut g = tbl();
+    let src = thopter(&mut g);
+    let st = g.turn_stamp();
+    g.perm_mut(src).data.set(DataKey::Artifact, Val::Stamp(st));
+    let t = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap()[0];
+    assert!(g.perm(t).data.get(DataKey::Artifact).is_none());
+}
+
+#[test]
+fn a_copy_of_a_token_keeps_each_token_defining_flag() {
+    for k in [DataKey::Indestr, DataKey::Kaldra, DataKey::MordDog, DataKey::Voja, DataKey::Construct, DataKey::KujaWiz]
+    {
+        let mut g = tbl();
+        let mut spec = Tokens { sick: false, ..Tokens::new(1, 3) };
+        spec.data.set(k, Val::Bool(true));
+        let src = zones::make_tokens(&mut g, P0, spec).unwrap()[0];
+        assert!(g.perm(src).data.truthy(k));
+        let t = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap()[0];
+        assert!(g.perm(t).data.truthy(k), "{k:?} is part of what the token is");
+        assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)));
+    }
+}
+
+// ======================================================== replacement effects of creating a token
+#[test]
+fn under_divine_visitation_a_card_less_copy_is_a_marked_angel_sacrificed_at_the_end_step() {
+    let mut g = tbl();
+    let src = artifact_thopter(&mut g, "U");
+    g.perm_mut(src).name = "Hangarback Thopter";
+    perm(&mut g, P0, "Divine Visitation");
+    let made = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap();
+    assert_eq!(made.len(), 1);
+    let t = made[0];
+    assert_eq!((epow(&g, t), etgh(&g, t)), (4, 4), "a 4/4 Angel instead");
+    assert!(g.perm(t).fly && g.perm(t).vig);
+    assert_eq!(colors_of(&g, t), Colors::from_letters("W"));
+    assert_eq!(g.perm(t).ttypes, vec!["angel"]);
+    assert_ne!(g.perm(t).name, g.perm(src).name, "it is not a copy: it does not take the Thopter's name");
+    assert!(!sim_core::impls::t5::is_artifact(&g, t), "nor its artifact flag");
+    assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)), "the mark survives the replacement");
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(t).on_bf, "sacrificed at the next end step");
+    assert!(g.perm(src).on_bf);
+}
+
+#[test]
+fn under_divine_visitation_a_card_backed_copy_is_the_same_marked_angel() {
+    let mut g = tbl();
+    let bat = perm(&mut g, P0, BAT);
+    perm(&mut g, P0, "Divine Visitation");
+    let made = zones::token_copy_of(&mut g, P0, bat, &mark()).unwrap();
+    assert_eq!(made.len(), 1);
+    let t = made[0];
+    assert!(g.perm(t).cd.is_none(), "an Angel token, not a Nighthawk");
+    assert_eq!((epow(&g, t), etgh(&g, t)), (4, 4));
+    assert!(g.perm(t).fly && g.perm(t).vig);
+    assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)));
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(t).on_bf && g.perm(bat).on_bf);
+}
+
+#[test]
+fn divine_visitation_and_a_doubler_make_two_marked_angels() {
+    let mut g = tbl();
+    g.dsl_on = true;
+    let src = thopter(&mut g);
+    perm(&mut g, P0, "Divine Visitation");
+    perm(&mut g, P0, "Parallel Lives");
+    let made = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap();
+    assert_eq!(made.len(), 2);
+    for &t in &made {
+        assert_eq!((epow(&g, t), etgh(&g, t)), (4, 4));
+        assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)));
+    }
+}
+
+#[test]
+fn under_jinnie_fay_a_small_copy_is_the_same_2_2_in_both_branches() {
+    for card_backed in [false, true] {
+        let mut g = tbl();
+        let src = if card_backed { perm(&mut g, P0, "Llanowar Elves") } else { thopter(&mut g) };
+        perm(&mut g, P0, "Jinnie Fay, Jetmir's Second");
+        let t = zones::token_copy_of(&mut g, P0, src, &mark()).unwrap()[0];
+        assert_eq!((epow(&g, t), etgh(&g, t)), (2, 2), "card_backed {card_backed}");
+        assert!(!g.perm(t).sick, "haste");
+        assert!(g.perm(t).cd.is_none());
+        assert_eq!(g.perm(t).data.get(DataKey::CopySac), Some(&Val::Player(P0)));
+    }
+    // a power-2 creature is not replaced: a real copy
+    let mut g = tbl();
+    let bat = perm(&mut g, P0, BAT);
+    perm(&mut g, P0, "Jinnie Fay, Jetmir's Second");
+    let t = zones::token_copy_of(&mut g, P0, bat, &mark()).unwrap()[0];
+    assert!(g.perm(t).cd.is_some());
 }
