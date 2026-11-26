@@ -29,13 +29,13 @@ color among other artifacts you control.*
 
 Each hybrid symbol is paid with its colour or with {2}. With all five colours available Karn costs **five**; each colour
 you cannot pay adds one more mana, so the worst case is ten. The commander tax adds {2} for every recast from the command
-zone. The Fire Crystal makes red spells cost {1} less (Karn is red, like every colour), but it only reduces the generic part (a {2} paid for a hybrid
+zone. The Fire Crystal makes red spells cost {1} less (Karn is every colour, red included), but it only reduces the generic part (a {2} paid for a hybrid
 symbol, or the tax), so it does nothing for a clean five-colour cast. Herd Heirloom's mana pays for Karn (he is a
 creature spell).
 
 Karn counts colours among *other* artifacts: each of the five colours counts once however many artifacts have it, and
 colourless artifacts (Sol Ring, Arcane Signet, Coalition Relic, Thought Vessel, Expedition Map, Buster Sword, Sword of
-Feast and Famine, Conjurer's Closet, the Robot and Pilot tokens, Treasures) count nothing. The deck's coloured artifacts:
+Feast and Famine, Conjurer's Closet, the Robot tokens, Treasures) count nothing. The deck's coloured artifacts:
 
 | Artifact | Colours |
 |---|---|
@@ -73,11 +73,13 @@ creature), Flickerwisp (the enter trigger is mandatory and exiles another perman
 and The Mind Stone once harnessed ({5}{W}, {T}; then it blinks one other nonland permanent at our end step). Skyclave
 Apparition, Solitude, Orcish Bowmasters, Baleful Strix and Breya are the other things worth blinking.
 
-**The Fire Crystal.** {2}{R}{R}, legendary: red spells cost {1} less, our creatures have haste (Karn attacks the turn he
-enters or returns, so a blink in the precombat main phase no longer costs his attack), and {4}{R}{R}, {T} makes a token copy of a creature we control that is
-sacrificed at the beginning of the next end step: a copy of Karn enters and draws five (the real Karn is another artifact of all five colours), then the
-legend rule keeps one Karn, while a copy of a creature with an enter trigger (Flickerwisp, Skyclave Apparition, Solitude, Orcish Bowmasters,
-Ranger-Captain of Eos) repeats it.
+**The Fire Crystal.** {2}{R}{R}, legendary: red spells cost {1} less (Karn is every colour, red included, but the discount takes off only
+generic mana: a {2} paid for a hybrid symbol, or the tax), our creatures have haste, and {4}{R}{R}, {T} makes a token copy of a creature we control that is
+sacrificed at the beginning of the next end step. Haste covers attacks and {T} abilities and ends with the Crystal: Karn attacks the turn he enters or
+returns, so a blink in the precombat main phase no longer costs his attack, and Giver of Runes, Twitching Doll and the mana creatures work the turn they come
+down, the Crystal's copies included. Any creature we control can be copied, a token too (Breya's Thopters, Twitching Doll's Spiders, the Station's Robots). A copy of Karn
+enters and the legend rule comes first: we keep the real Karn, then the copy's trigger draws five (the real Karn is another artifact of all five colours). A copy of a
+creature with an enter trigger (Flickerwisp, Skyclave Apparition, Solitude, Orcish Bowmasters, Ranger-Captain of Eos) repeats it.
 
 **Doublers.** Gandalf the White doubles an enter trigger caused by a legendary permanent or an artifact entering (Karn is
 both), and also gives artifacts and legendary spells flash, so Karn can be cast at an opponent's end step. Elesh Norn,
@@ -132,6 +134,11 @@ Cursed Mirror, Twitching Doll, Herd Heirloom and the 35 lands (see Mana).
   decline.
 - **An opponent's Flickerwisp, or any removal, exile or bounce on Karn,** can send him to the command zone (the
   simulator always does); the recast then costs {2} more.
+- **The Fire Crystal's copy and the end step.** The copy is sacrificed at the beginning of the next end step to begin, and a copy made during an end
+  step waits for the following one. Made in the end step of the player just before us, it stays through our whole turn (it can attack, and a Karn
+  copy's cards arrive before our turn, so we can play them before our cleanup), is sacrificed in our end step, and the Crystal untaps with the rest of our permanents.
+  Made in our own end step, it stays through the next player's turn (it can block there) and goes in that player's end step; a Karn copy's draw then
+  comes before our cleanup, like an end-step blink. Made in a main phase, it is gone at that turn's end step. The {4}{R}{R} is mana we left open.
 - **Instant-speed blinks resolve in one action** (Ephemerate, Restoration Angel), so Karn simply returns.
 - **Akroma's Will** gives both modes only with a commander on the battlefield: before Karn is out it is a single mode.
 
@@ -197,8 +204,15 @@ These are the limits that matter to a player; the engine notes are in `audit/kar
 - **Breya's 3-damage mode** takes a player, not a planeswalker.
 - **The Reaper's second ability** runs only for a Reaper still on the battlefield when the creature dies: a sweeper that
   kills the Reaper and a creature with a -1/-1 counter together may not trigger it.
-- **The Fire Crystal's copy ability is for a person only:** the AI never activates it (it still casts the Crystal for its cost change and haste), and a creature token
-  with no card record (a Robot, a Pilot) can't be copied.
+- **The Fire Crystal and the AI:** the AI activates the copy only in the end-of-turn window before its own turn, with the mana it left unspent, for the
+  creature whose copy is worth most (Karn when its hand has room for the draw, Restoration Angel, Solitude, Skyclave Apparition...); in a main phase it copies
+  only a Thassa's Oracle that wins. In its main phase it keeps {4}{R}{R} up when that copy is worth three cards or more. Its numbers are provisional and unmeasured.
+- **The AI never** activates the Crystal in response to removal, copies for a lethal hasty attack, makes a Ranger-Captain copy to sacrifice on a combo turn, or
+  sacrifices a copy for value; it never copies a token with no card behind it; in the legend rule it keeps the real card over a copy; and its attack
+  planning does not count a hasty creature that is still summoning sick (a copy) as an attacker, although the attack itself uses it.
+- **The Fire Crystal and the commander tax (simulator):** the Crystal's {1} does not reach the commander tax in the engine until the cost-order change
+  merges, so a Karn recast paid with all five colours costs {1} more there than at a table.
+- **An animated land can't be copied** by the Crystal, for a person or the AI (no such land is in the list).
 - **The AI's use of Birthing Pod is unmeasured:** how often it activates it and what it fetches have not been tested in this list.
 - **Birthing Pod in the simulator:** the activation is paid with {G}, never with 2 life instead of the {G/P} (the card allows both); the Pod cannot
   be activated the turn it enters (the engine gives it the summoning sickness of a creature); it never sacrifices a token (Breya's Thopters and
