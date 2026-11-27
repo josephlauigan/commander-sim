@@ -41,11 +41,11 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 
 ### The packages
 
-1. **Fast mana (16 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
-   Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn
-   Simulacrum and Hedron Archive. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the
-   Monoliths. *Chrome Mox, Mox Amber, Arcane Signet and Commander's Sphere are not in the list: they cannot make mana
-   with a colourless commander.*
+1. **Fast mana (15 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
+   Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone and Solemn
+   Simulacrum. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the Monoliths, and
+   Unwinding Clock untaps the artifacts you control during an opponent's untap step. *Chrome Mox, Mox Amber, Arcane
+   Signet and Commander's Sphere are not in the list: they cannot make mana with a colourless commander.*
 2. **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry
    Inspector, Retrofitter Foundry and Wayfarer's Bauble raise Karn's count for little, and Walking Ballista, Hangarback
    Walker and Retrofitter Foundry are mana sinks for the Karn mana.
@@ -105,7 +105,7 @@ and twelve Wastes. The three Urza lands make {C}{C}{C} together and Urza's Saga 
 Mana Vault, Mox Opal, Lotus Petal, Mox Diamond, Ornithopter, Mishra's Bauble, Voltaic Key, Wayfarer's Bauble, Skullclamp,
 Shadowspear, Sensei's Divining Top, Expedition Map, Hope of Ghirapur, Retrofitter Foundry; not Walking Ballista, which would enter
 with no counters and die). With
-the sixteen mana artifacts, that is 44 mana sources before Karn. War Room draws for {3} and no life, because Karn has no
+the fifteen mana artifacts, that is 43 mana sources before Karn. War Room draws for {3} and no life, because Karn has no
 colours. Bonders' Enclave draws for {3} and {T} when you control a creature with power 4 or more (Karn is at least 5/5).
 
 ## Bracket and Rule 0
@@ -131,7 +131,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Lands (28).** Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant, Urza's Tower, Strip Mine, Wasteland, Mutavault, Inventors' Fair, Rogue's Passage, War Room, Bonders' Enclave, Buried Ruin, 12 Wastes
 
-**Mana artifacts (16).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith, Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn Simulacrum, Hedron Archive
+**Mana artifacts (15).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith, Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn Simulacrum
 
 **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry Inspector, Retrofitter Foundry, Wayfarer's Bauble
 
@@ -142,6 +142,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 **Threats and equipment (16).** Wurmcoil Engine, Myr Battlesphere, Steel Hellkite, Blightsteel Colossus, Triplicate Titan, Sword of Fire and Ice, Sword of Feast and Famine, Sword of Truth and Justice, Sword of Forge and Frontier, Sword of War and Peace, Sword of Sinew and Steel, Whispersilk Cloak, Batterskull, Umezawa's Jitte, Shadowspear, Champion's Helm
 
 **Interaction (5).** Meteor Golem, Duplicant, Spine of Ish Sah, All Is Dust, The Mightstone and Weakstone
+
+**Untap engine (1).** Unwinding Clock
 
 **Protection (3).** Swiftfoot Boots, Lightning Greaves, Mithril Coat
 
@@ -173,7 +175,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grim Monolith
 1 Hammer of Nazahn
 1 Hangarback Walker
-1 Hedron Archive
 1 Hope of Ghirapur
 1 Inventors' Fair
 1 Karn, Legacy Reforged
@@ -228,6 +229,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Ugin, the Ineffable
 1 Ugin, the Spirit Dragon
 1 Umezawa's Jitte
+1 Unwinding Clock
 1 Urza's Mine
 1 Urza's Power Plant
 1 Urza's Saga

@@ -58,7 +58,7 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 - Wasteland and Umezawa's Jitte are modelled in `impls/kr_model.rs`. Jitte limits (none can matter at t4-t5 per the Opus review, JD to accept): one blocker per attacker (engine-wide), no trigger for Pariah-redirected damage, Gisela's halving not applied, and the counters are added at once instead of by a stack trigger (the opponent gets no response, lifelink comes after). The AI spends Jitte counters only after blocks and in its own main phase, never in response to removal or between first-strike and regular damage.
 - Aetherflux Reservoir and Steel Overseer have no shared plan with the rest of the list (Opus review); keep them only if the
   baseline shows them cast and useful.
-- Winter Orb, Defense Grid and Unwinding Clock were cut on 2026-11-27 (see the next section); the stax lines above describe the baseline list.
+- Winter Orb and Defense Grid were cut on 2026-11-27 (see the last section; JD kept Unwinding Clock); the stax lines above describe the baseline list.
 - Ownership: every card is recorded as `proxy`; JD has not marked which he owns.
 
 ### Opus diagnosis (2026-11-27; a rough mana model and six goldfish traces, not a paired test)
@@ -74,20 +74,20 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 - Possible tickets: the t5 Urza opponent has no plan file, so its Winter Orb, Static Orb, Back to Basics and Unwinding Clock may never be cast (unconfirmed);
   Karn, Gilded Guardian may share the Sword tag gap (unconfirmed).
 
-## 2026-11-27: stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like")
-- **Out (job lost):** Winter Orb (a stax lock that only stops lands untapping; it was dead in the baseline sim and chokes the deck's own Urza lands and Workshop), Defense Grid (counter protection on the turn Karn lands; it taxes everyone's spells outside their own turn), Unwinding Clock (untaps our artifacts on opponents' turns; not a lock, cut for tempo on the Opus diagnosis, never cast in the baseline).
-- **In (job gained):** two Wastes (lands 26 -> 28; the Opus mana model puts Karn by turn 4 at about 45% instead of 41%, an estimate) and Hedron Archive (a {C}{C} rock that draws two later; Full). It was cut in the 2026-11-26 list review as too slow for tempo and returns because it is an artifact for Karn's count and Karn's upkeep mana pays both its cast and its {2} draw ability; its effect is unmeasured (it is in neither card-report list in the new run). Mana artifacts 15 -> 16.
-- **Kept on purpose (JD):** Karn, the Great Creator and the Mycosynth Lattice lock; Strip Mine and Wasteland.
-- **Counts after (before):** lands 28 (26); mana artifacts 16 (15); disruption 0 (3); Game Changers 6 (6). Nothing now protects Karn on the stack (Defense Grid was the only answer to a counterspell on him); once he is on the battlefield Swiftfoot Boots (hexproof), Lightning Greaves (shroud), Champion's Helm (hexproof), Whispersilk Cloak (shroud), Mithril Coat and Hammer of Nazahn (indestructible) protect him, and Command Beacon returns him to hand.
-- **Measured (same sims as the baseline: loose, look-ahead, 1,500 games per tier, seed 500000, `--analyze`; goldfish 1,000; two separate runs, not a paired test, one tier is about +/-1 point of noise):**
+## 2026-11-27: stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like, so like defense grid and winter orb")
+- **Out (job lost):** Winter Orb (a stax lock that only stops lands untapping; cast in 0-0.9% of games in the baseline, and it chokes the deck's own Urza lands and Workshop) and Defense Grid (counter protection on the turn Karn lands; it taxes everyone's spells outside their own turn; it was cast in 16.6% of t4 games in the baseline, win rate when cast 24.1%, +5.8, correlation only, so this cut is a real loss).
+- **In (job gained):** two Wastes (lands 26 -> 28; the Opus mana model put Karn by turn 4 at about 45% instead of 41%, an estimate). Nothing else changed.
+- **Kept on purpose (JD):** Karn, the Great Creator and the Mycosynth Lattice lock; Unwinding Clock (JD: "Keep unwinding clock"; it is an untap engine, not a lock); Strip Mine and Wasteland. A first version of this change also replaced the Clock with Hedron Archive; JD reversed that, and the sims below are of the final list.
+- **Counts after (before):** lands 28 (26); mana artifacts 15 (15); disruption 0 stax pieces (Winter Orb, Defense Grid); Game Changers 6 (6). Nothing now protects Karn on the stack (Defense Grid was the only answer to a counterspell on him); once he is on the battlefield Swiftfoot Boots (hexproof), Lightning Greaves (shroud), Champion's Helm (hexproof), Whispersilk Cloak (shroud), Mithril Coat and Hammer of Nazahn (indestructible) protect him, and Command Beacon returns him to hand.
+- **Measured (same sims as the baseline: loose, look-ahead, 1,500 games per tier, seed 500000, `--analyze`; goldfish 1,000; two separate runs, not a paired test, about +/-1 point of noise per tier; outputs `/tmp/handoff/kr-sims/` before and `/tmp/handoff/kr-sims-clock/` after):**
 
 | | before (t4 / t5) | after (t4 / t5) |
 |---|---|---|
-| Win rate | 18.3% / 18.8% | 21.3% / 17.5% |
-| Eliminated | 81.7% / 81.1% | 78.7% / 82.5% |
-| Karn resolves | 84.5% / 81.9% | 85.8% / 84.3% |
-| Karn resolved by T4 | 56% / 52% | 55% / 52% |
+| Win rate | 18.3% / 18.8% | 20.7% / 19.1% |
+| Eliminated | 81.7% / 81.1% | 79.2% / 80.8% |
+| Karn resolves | 84.5% / 81.9% | 85.7% / 83.9% |
+| Karn resolved by T4 | 56% / 52% | 58% / 54% |
 | Goldfish median kill turn | 10 | 9 |
-| Goldfish won by T7 / T8 (cumulative) | 7.4% / 23.9% | 8.4% / 25.9% |
+| Goldfish won by T7 / T8 (cumulative) | 7.4% / 23.9% | 7.7% / 26.9% |
 
-  Reading: Winter Orb and Unwinding Clock were dead cards in the baseline (cast in 0-0.9% of games). Defense Grid was not: it was cast in 16.6% of t4 games (win rate when cast 24.1%, +5.8, correlation only), so its cut is a real loss of counter protection. The net is within noise: the t4 gain (+3.0) is about 2 standard errors of the difference, suggestive and not proven, and t5 (-1.3) is about 1 standard error; averaged over t4-t5 it is +0.85 with a 95% interval of about -1.2 to +2.9. So the data shows no measurable cost, and cannot show a gain or tell the three moves (the cuts, two Wastes, Hedron Archive) apart. A paired `--swap` package test would be needed for a confirmed number. Combo opponents (Kinnan, Urza, Zur) now eliminate it in about 43% of t5 games (41% before). The two extra lands did not move Karn's timing (resolved by T4: 56% -> 55% at t4, 52% -> 52% at t5), although the Opus mana model predicted 41% -> 45%: the mana ceiling is not the whole story, and the AI sequencing fixes (Mana Vault held for Karn, tutors fetching Sol Ring) are still unmeasured.
+  Reading: the net is within noise. t4 +2.4 is about 1.6 standard errors of the difference (about 1.46 points each tier), t5 +0.3 is nothing; averaged over t4-t5 it is +1.35 (18.55% -> 19.9%) with a 95% interval of about -0.7 to +3.4. So the data shows no measurable cost and cannot show a gain; a paired `--swap` package test would be needed for a confirmed number. Winter Orb was nearly dead in the baseline; Defense Grid was not, so its counter protection is a real loss that the sim does not show as a cost. Unwinding Clock is still a dead card: cast in 0.4% of the games it was drawn at t4 and never at t5 (the AI values it at 0). The two extra lands moved Karn's timing little (resolved by T4: 56% -> 58% at t4, 52% -> 54% at t5), less than the Opus mana model predicted (41% -> 45%): the mana ceiling is not the whole story, and the AI sequencing fixes (Mana Vault held for Karn, tutors fetching Sol Ring) and a plan row for the Clock are still unmeasured. Combo opponents (Kinnan, Urza, Zur) eliminate it in 41.5% of t5 games (41.3% before).
