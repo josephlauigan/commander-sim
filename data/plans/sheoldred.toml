@@ -17,10 +17,13 @@ default = "plan"
 # lands; Dark Deal and Otherworld Atlas left the deck 2026-11-07), which the generic policy offers for this deck too
 plays = [
     "Exsanguinate",
+    "Torment of Hailfire",
     "Peer into the Abyss",
     "Geier Reach Sanitarium",
     "Mikokoro, Center of the Sea",
     "Damnable Pact", # {X}{B}{B}: X draws and X life, at the lowest-life opponent with a draw punisher out (sheoldred.rs pact_options)
+    "Painful Lesson", # {2}{B}: two draws at the lowest-life opponent while Sheoldred is out (sheoldred.rs lesson_options)
+    "Temple Bell", # {T}: each player draws, at an opponent's end step with a draw punisher out (sheoldred.rs punish_window_utility)
 ]
 
 # Sheoldred as early as the mana allows
@@ -51,10 +54,6 @@ cards = ["Howling Mine"]
 when = ["commander-out", "out:Underworld Dreams", "out:Fate Unraveler"]
 value = 70
 else = 0
-
-[[prio]]
-cards = ["Perigee Beckoner"]
-value = 52
 
 [[prio]]
 cards = ["Ambition's Cost"]

@@ -87,6 +87,7 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Splatter Technique" => &[Ask::Mode(SPLATTER)],
         "Blood on the Snow" => &[Ask::Mode(BLOOD)],
         "Comet Storm" => &[Ask::Comet],
+        "Sign in Blood" => &[Ask::Target(Tk::Player)],
         "Cost of Brilliance" | "Painful Lesson" | "Peer into the Abyss" | "Decorum Dissertation" => {
             &[Ask::Target(Tk::Player)]
         }

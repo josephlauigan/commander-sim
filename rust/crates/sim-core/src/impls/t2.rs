@@ -866,8 +866,30 @@ fn aurelia_ex(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// upkeep: draw a card, lose 1 life (above 10 life)
+/// upkeep: target player draws a card and loses 1 life. The AI picks itself (above 10 life); a person picks the player
 fn bloodgift(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p == owner(g, src) && crate::human::is_human(g, p) {
+        let who: Vec<PlayerId> = g
+            .players
+            .iter()
+            .map(|x| x.id)
+            .filter(|&q| q == p || crate::human::legal::player_targetable(g, q))
+            .collect();
+        let labels: Vec<String> =
+            who.iter().map(|&q| crate::human::legal::describe_target(g, p, crate::human::Target::Player(q))).collect();
+        let k = choices::choose_one(
+            g,
+            p,
+            "target",
+            "Bloodgift Demon: target player draws a card and loses 1 life?",
+            &labels,
+        )?;
+        if trigger_window(g, p, Some(src), "target player draws a card and loses 1 life", None)? {
+            draw(g, who[k], 1, false)?;
+            lose_life(g, who[k], 1, Some(p), "other", None)?;
+        }
+        return Ok(());
+    }
     if p == owner(g, src) && g.player(p).life > 10 && trigger_window(g, p, Some(src), "draw a card, lose 1 life", None)?
     {
         draw(g, p, 1, false)?;

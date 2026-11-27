@@ -8,6 +8,13 @@ commander = "Sheoldred, the Apocalypse"
 ident = "B"
 tiers = ["t3", "t4"]
 
+[marchesa]
+file = "JD/marchesa-grixis-sacrifice-recursion.md"
+name = "Marchesa"
+commander = "Marchesa, the Black Rose"
+ident = "UBR"
+tiers = ["t3", "t4"]
+
 [arzakon]
 file = "cali_commander/arzakon-artifact-combo.md"
 name = "Arzakon"

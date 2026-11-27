@@ -31,7 +31,8 @@ const P1: PlayerId = PlayerId(1);
 
 /// the decks with Rings of Brighthearth (karn, thanos) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
-const DECKS: &[&str] = &["karn", "alela", "cloud", "galadriel", "sheoldred", "arzakon", "urdragon", "yshtola"];
+const DECKS: &[&str] =
+    &["karn", "alela", "cloud", "galadriel", "sheoldred", "marchesa", "arzakon", "urdragon", "yshtola"];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -435,10 +436,10 @@ const EXCEPTIONS: &[(&str, &str)] = &[
     ),
     ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
     (
-        "sheoldred: Bolas's Citadel #0",
+        "marchesa: Bolas's Citadel #0",
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
     ),
-    ("sheoldred: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
+    ("marchesa: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
 ];
 
 /// both boards: a key is bad if either board shows it unanswered, offered if either board offers it

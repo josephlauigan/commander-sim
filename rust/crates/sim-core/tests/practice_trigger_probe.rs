@@ -189,7 +189,7 @@ fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
         ]
         .iter()
         .any(|w| has(w));
-        if lc == "chapter" || has("upkeep") || has("draw step") || has("precombat main") {
+        if lc == "chapter" || has("upkeep") || has("draw step") || has("precombat main") || has("first main") {
             out.insert(Sc::Start);
             if opp {
                 out.insert(Sc::OppTurn);

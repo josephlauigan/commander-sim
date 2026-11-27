@@ -970,8 +970,9 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str], Option<&str>); 4] = [
+        let want: [(&str, &[&str], Option<&str>); 5] = [
             ("sheoldred", &["t3", "t4"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
+            ("marchesa", &["t3", "t4"], None),
             ("arzakon", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
             ("urdragon", &["t5"], None),
             ("karn_gilded", &["t4", "t5"], None), // JD 11/24: replaces yshtola (t5) and yoshimaru (t4-t5)
@@ -1027,12 +1028,13 @@ mod tier_tests {
         assert!(select_tiers("arzakon", &v(&["t5", "t6"]), "t6", false).is_ok(), "the tier rule alone is unchanged");
     }
 
-    /// `--all-decks` leaves the deck out with a note and plays the other three with their tiers unchanged
+    /// `--all-decks` leaves the deck out with a note and plays the other four with their tiers unchanged
     #[test]
     fn all_decks_skips_the_deck_and_keeps_the_others_tiers() {
         let sim = sim();
         let want = vec![
             ("sheoldred".to_string(), v(&["t3", "t4"])),
+            ("marchesa".to_string(), v(&["t3", "t4"])),
             ("urdragon".to_string(), v(&["t5"])),
             ("karn_gilded".to_string(), v(&["t4", "t5"])),
         ];
@@ -1050,7 +1052,7 @@ mod tier_tests {
         let plan = tier_plan(&sim, &args("--all-decks --pool all --any-tier")).unwrap();
         assert_eq!(
             plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
-            ["sheoldred", "urdragon", "karn_gilded"]
+            ["sheoldred", "marchesa", "urdragon", "karn_gilded"]
         );
         assert!(plan.per_deck.iter().all(|(_, t)| t.len() == 7));
         assert_eq!(plan.skipped.len(), 1);

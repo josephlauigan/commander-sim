@@ -115,7 +115,11 @@ fn texts_for_a_commander_request_are_as_before() {
     let keys = pool_keys(&e, &tier).join(", ");
     let mut c = s.client();
     let cases: Vec<(Value, &str, String)> = vec![
-        (json!({"deck": "nope", "tier": tier}), "", "deck: one of sheoldred, arzakon, urdragon, karn_gilded".into()),
+        (
+            json!({"deck": "nope", "tier": tier}),
+            "",
+            "deck: one of sheoldred, marchesa, arzakon, urdragon, karn_gilded".into(),
+        ),
         (json!({"deck": deck, "tier": "t9"}), "", "tier: one of t0, t1, t2, t3, t4, t5, t6".into()),
         (json!({"deck": deck, "tier": tier, "opponents": "x"}), "", "opponents: a list of deck keys".into()),
         (json!({"deck": deck, "tier": tier, "seats": "x"}), "", "seats: four deck keys in turn order".into()),

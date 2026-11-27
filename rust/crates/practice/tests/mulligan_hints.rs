@@ -309,7 +309,7 @@ fn karn_gilded_and_sheoldred_have_no_table_and_say_so() {
     assert!(lines(&h)[0].contains("no keep table of its own") && lines(&h)[0].contains("2 to 5 lands"), "{h}");
     let (mut g, p) = game_with(
         "sheoldred",
-        &["Swamp", "Swamp", "Demonic Tutor", "Dark Ritual", "Grave Titan", "Reanimate", "Entomb"],
+        &["Swamp", "Swamp", "Demonic Tutor", "Dark Ritual", "Gray Merchant of Asphodel", "Sign in Blood", "Night's Whisper"],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
@@ -322,7 +322,7 @@ fn karn_gilded_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["arzakon", "karn_gilded", "sheoldred", "urdragon", "kraum-tymna-blue-breach-midrange"] {
+    for deck in ["arzakon", "karn_gilded", "sheoldred", "marchesa", "urdragon", "kraum-tymna-blue-breach-midrange"] {
         let others = ["sheoldred", "urdragon", "arzakon", "karn_gilded"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));

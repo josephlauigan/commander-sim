@@ -2486,7 +2486,7 @@ status = "Full"
 note = "attack-caused triggers of your permanents fire twice (hand tags, compiled triggers and hooks); ETB of tokens entering attacking is not doubled, matching the card"
 
 ["Izzet Signet"]
-pool_add_tags = ["rock=1:UR"]
+add_tags = ["rock=1:UR"]  # in JD's decks too: the autotag reads {1},{T}: Add {U}{R} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 

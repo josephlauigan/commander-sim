@@ -845,9 +845,20 @@ type OutletEffect = fn(&mut Game, PlayerId, PermId, i32) -> Res;
 
 /// cards._outlet: a free sacrifice outlet: "Sacrifice a creature: <text>". effect(g, p, m, power) after the sacrifice
 fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
-    vec![ability(format!("sacrifice a creature: {text}"), move |g: &mut Game, p: PlayerId, m: PermId| {
-        let cre: Vec<PermId> =
-            g.player(p).perms.iter().copied().filter(|&x| g.is_creature(x) && !g.perm(x).phased).collect();
+    outlet_of(text, effect, false)
+}
+
+/// an outlet; `another`: it can't sacrifice itself ("Sacrifice another creature", Woe Strider)
+fn outlet_of(text: &'static str, effect: OutletEffect, another: bool) -> Vec<PermAbility> {
+    let what = if another { "another creature" } else { "a creature" };
+    vec![ability(format!("sacrifice {what}: {text}"), move |g: &mut Game, p: PlayerId, m: PermId| {
+        let cre: Vec<PermId> = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| g.is_creature(x) && !g.perm(x).phased && !(another && x == m))
+            .collect();
         if cre.is_empty() {
             return Ok(Some("You have no creature to sacrifice.".into()));
         }
@@ -1062,6 +1073,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         "Otherworld Atlas" => atlas(),
         "Carrion Feeder" => outlet("put a +1/+1 counter on Carrion Feeder", feeder),
         "Viscera Seer" => outlet("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false)),
+        "Woe Strider" => outlet_of("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false), true),
         "Ashnod's Altar" => outlet("add {C}{C}", |g, p, _m, _pw| {
             g.player_mut(p).pool.add('C', 2);
             Ok(())
