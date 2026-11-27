@@ -696,90 +696,90 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Barad-dûr, Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 30 Swamp
+**Lands (36).** Bonders' Enclave, Cabal Coffers, Castle Locthwain, Geier Reach Sanitarium, Mikokoro Center of the Sea, Urborg Tomb of Yawgmoth, 30 Swamp
 
-**Creatures (23).** Accursed Marauder, Blood Artist, Enduring Tenacity, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, K'rrik Son of Yawgmoth, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Witch of the Moors, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (18).** Bloodgift Demon, Bloodthirsty Conqueror, Enduring Tenacity, Fate Unraveler, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, K'rrik Son of Yawgmoth, Leech Collector // Bloodletting, Marauding Blight-Priest, Massacre Wurm, Ob Nixilis the Fallen, Orcish Bowmasters, Psychosis Crawler, Rooftop Assassin, Seizan Perverter of Truth, Vault Plunderer, Vito Thorn of the Dusk Rose, Witch of the Moors
 
-**Enchantments (8).** Animate Dead, Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
+**Enchantments (6).** Black Market Connections, Exquisite Blood, Phyrexian Arena, Polluted Bonds, Sanguine Bond, Underworld Dreams
 
-**Artifacts (11).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Howling Mine, Jet Medallion, Memory Jar, Mind Stone, Nevinyrral's Disk, Skullclamp, Swiftfoot Boots, The One Ring
+**Artifacts (11).** Arcane Signet, Charcoal Diamond, Howling Mine, Jet Medallion, Memory Jar, Mind Stone, Sol Ring, Swiftfoot Boots, Temple Bell, The One Ring, Thought Vessel
 
-**Sorceries (14).** Ambition's Cost, Cost of Brilliance, Damnable Pact, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
+**Sorceries (18).** Ambition's Cost, Cost of Brilliance, Damnable Pact, Demonic Tutor, Diabolic Tutor, Exsanguinate, Feed the Swarm, Grim Tutor, Invoke Despair, Night's Whisper, Painful Lesson, Peer into the Abyss, Profane Tutor, Sign in Blood, Syphon Mind, Torment of Hailfire, Toxic Deluge, Yawgmoth's Will
 
-**Instants (7).** Dark Ritual, Deadly Dispute, Deadly Rollick, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
+**Instants (10).** Bitter Triumph, Dark Ritual, Deadly Rollick, Foolish Fate, Go for the Throat, Infernal Grasp, Overkill, Sephiroth's Intervention, Snuff Out, Vampiric Tutor
 
 ## Import list (100)
 
 ```
-1 Accursed Marauder
 1 Ambition's Cost
-1 Animate Dead
 1 Arcane Signet
-1 Ashnod's Altar
-1 Barad-dûr
-1 Blood Artist
-1 Bolas's Citadel
+1 Bitter Triumph
+1 Black Market Connections
+1 Bloodgift Demon
+1 Bloodthirsty Conqueror
 1 Bonders' Enclave
 1 Cabal Coffers
-1 Call of the Ring
+1 Castle Locthwain
+1 Charcoal Diamond
 1 Cost of Brilliance
 1 Damnable Pact
 1 Dark Ritual
-1 Deadly Dispute
 1 Deadly Rollick
 1 Demonic Tutor
 1 Diabolic Tutor
-1 Dreadhorde Invasion
 1 Enduring Tenacity
-1 Entomb
 1 Exquisite Blood
 1 Exsanguinate
 1 Fate Unraveler
+1 Feed the Swarm
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
-1 Grave Pact
-1 Grave Titan
+1 Go for the Throat
 1 Gray Merchant of Asphodel
 1 Grim Tutor
 1 Howling Mine
+1 Infernal Grasp
 1 Invoke Despair
 1 Jet Medallion
 1 K'rrik, Son of Yawgmoth
 1 Leech Collector // Bloodletting
+1 Marauding Blight-Priest
+1 Massacre Wurm
 1 Memory Jar
-1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
-1 Nevinyrral's Disk
+1 Night's Whisper
 1 Ob Nixilis, the Fallen
+1 Orcish Bowmasters
 1 Overkill
+1 Painful Lesson
 1 Peer into the Abyss
-1 Perigee Beckoner
 1 Phyrexian Arena
-1 Phyrexian Delver
-1 Phyrexian Tower
-1 Reanimate
+1 Polluted Bonds
+1 Profane Tutor
+1 Psychosis Crawler
 1 Rooftop Assassin
 1 Sanguine Bond
 1 Seizan, Perverter of Truth
 1 Sephiroth's Intervention
-1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sheoldred, the Apocalypse
-1 Silence the Echo
-1 Skullclamp
+1 Sign in Blood
+1 Snuff Out
+1 Sol Ring
 1 Swiftfoot Boots
 1 Syphon Mind
+1 Temple Bell
 1 The One Ring
+1 Thought Vessel
 1 Torment of Hailfire
-1 Triskelion
-1 Undercity Dire Rat
+1 Toxic Deluge
 1 Underworld Dreams
+1 Urborg, Tomb of Yawgmoth
+1 Vampiric Tutor
 1 Vault Plunderer
-1 Viscera Seer
+1 Vito, Thorn of the Dusk Rose
 1 Witch of the Moors
 1 Yawgmoth's Will
-1 Yawgmoth, Thran Physician
-1 Zulaport Cutthroat
 30 Swamp
 ```
