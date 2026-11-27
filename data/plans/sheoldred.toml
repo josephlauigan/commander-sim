@@ -55,11 +55,6 @@ when = ["commander-out", "out:Underworld Dreams", "out:Fate Unraveler"]
 value = 70
 else = 0
 
-# kept although the card left the list (2026-11-26), so a paired run's old arm plays as it does on main
-[[prio]]
-cards = ["Perigee Beckoner"]
-value = 52
-
 [[prio]]
 cards = ["Ambition's Cost"]
 when = ["life<=6"]
