@@ -22,6 +22,8 @@ plays = [
     "Geier Reach Sanitarium",
     "Mikokoro, Center of the Sea",
     "Damnable Pact", # {X}{B}{B}: X draws and X life, at the lowest-life opponent with a draw punisher out (sheoldred.rs pact_options)
+    "Painful Lesson", # {2}{B}: two draws at the lowest-life opponent while Sheoldred is out (sheoldred.rs lesson_options)
+    "Temple Bell", # {T}: each player draws, at an opponent's end step with a draw punisher out (sheoldred.rs punish_window_utility)
 ]
 
 # Sheoldred as early as the mana allows
