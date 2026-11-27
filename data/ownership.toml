@@ -36,6 +36,7 @@
 # Cards whose owned copies stay in another deck, and cards not recorded as owned, are proxies; Marchesa awaits confirmation, and so do the 26 incoming Sheoldred statuses.
 # 2026-11-26 (JD): Marchesa: Barad-dûr and Bolas's Citadel (owned spares, so `have`, inferred) in for a Swamp and Chromatic Lantern; the Lantern (a proxy) is out and stays a proxy in Arzakon only.
 # 2026-11-26 (JD): Sheoldred: Ill-Gotten Inheritance (not recorded as owned: `proxy`) in for Massacre Wurm (his owned copy goes back to [spare]). The Sheoldred deck is `confirmed` from before the split, but this card's status is INFERRED (JD may own a copy: it was in his Y'shtola list until 2026-11-07); ask JD before cutting it as a proxy.
+# 2026-11-26 (JD): Marchesa: JD no longer owns Haunted Ridge or Spirebluff Canal (out of the list and the file); Underground River (one of his two spare copies) and Shivan Reef (owned spares, so `have`, inferred) come in for them.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
@@ -458,7 +459,6 @@ have = [
   "Fatal Push",
   "Grave Pact",
   "Grave Titan",
-  "Haunted Ridge",
   "Mikaeus, the Unhallowed",
   "Mindbreak Trap",
   "Perigee Beckoner",
@@ -466,10 +466,11 @@ have = [
   "Phyrexian Tower",
   "Propaganda",
   "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+  "Shivan Reef",
   "Skullclamp",
-  "Spirebluff Canal",
   "Sulfur Falls",
   "Triskelion",
+  "Underground River",
   "Viscera Seer",
   "Yawgmoth, Thran Physician",
   "Zulaport Cutthroat",
@@ -572,7 +573,6 @@ cards = [
   "Prayer of Binding",
   "Puresteel Paladin",
   "Read the Bones",
-  "Shivan Reef",
   "Silence the Echo",
   "Skyclave Apparition",
   "Sphere of Safety",
@@ -588,7 +588,7 @@ cards = [
   "Thanos, the Mad Titan",
   "Triple Triad",
   "Undercity Dire Rat",
-  { card = "Underground River", copies = 2 },
+  "Underground River",
   "Wayfarer's Bauble",
   "Windborn Muse",
   "Woodland Cemetery",

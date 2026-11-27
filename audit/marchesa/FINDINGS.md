@@ -46,10 +46,10 @@ replaying an enters trigger; Entomb into Reanimate; the aristocrats drain. Dethr
 **Game Changers: 3** (Bolas's Citadel, Demonic Tutor, Vampiric Tutor). The infinite loops make it Bracket 4.
 
 **Mana base.** 35 lands: Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull
-Summit, Drowned Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta,
-Scalding Tarn, Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island,
-2 Mountain, 9 Swamp. Land sources: 24 make {B} (25 counting Phyrexian Tower's {B}{B}), 16 make {U}, 16 make {R}; the
-rocks add five sources of each colour (Signets, Talismans and Arcane Signet), so about 29 / 21 / 21 with them. Counting rule: Command
+Summit, Drowned Catacomb, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta,
+Scalding Tarn, Shivan Reef, Steam Vents, Sulfur Falls, Underground River, Underground Sea, Volcanic Island, Watery Grave, 3 Island,
+2 Mountain, 9 Swamp. Land sources: 24 make {B} (25 counting Phyrexian Tower's {B}{B}), 17 make {U}, 15 make {R}; the
+rocks add five sources of each colour (Signets, Talismans and Arcane Signet), so about 29 / 22 / 20 with them. Counting rule: Command
 Tower and Path of Ancestry make any colour; the fetchlands count for the colours of the land types they fetch (Bloodstained
 Mire: Swamp or Mountain; Polluted Delta: Island or Swamp; Scalding Tarn: Island or Mountain). The hard costs are
 Mikaeus, Bolas's Citadel and Grave Pact ({B}{B}{B}), Counterspell and Mindbreak Trap ({U}{U}) and Bedevil ({B}{B}{R}).

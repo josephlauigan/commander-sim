@@ -276,7 +276,7 @@ is cast; **Counterspell** and **Arcane Denial** stop a piece; **Swan Song** stop
 The deck pays life: Reanimate (the creature's mana value), Grim Tutor (3), Vampiric Tutor (2), Bolas's Citadel (the mana value of
 each card cast off the top), Bitter Triumph (3 unless you
 discard), Yawgmoth (1 per activation, a Blood Artist or Zulaport trigger returns it), the shocklands (2 unless they
-enter tapped), the fetchlands (1), the Talismans (1 per coloured mana), Phyrexian Delver (the creature's mana value).
+enter tapped), the fetchlands (1), the Talismans, Shivan Reef and Underground River (1 per coloured mana), Phyrexian Delver (the creature's mana value).
 Keep your life above what the table can swing in a round, and don't pay life at all when an opponent has Exquisite Blood or
 Bloodthirsty Conqueror with Sanguine Bond, Vito or Marauding Blight-Priest on the battlefield: your life loss starts
 their loop.
@@ -316,11 +316,11 @@ their loop.
 ## Mana
 
 35 lands: Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned
-Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn,
-Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain and
-9 Swamp. Twenty-four lands make {B} (25 counting Phyrexian Tower's {B}{B} when you sacrifice a creature), 16 make {U} and 16 make {R}. Eight mana rocks, seven of which add colour (Sol Ring makes {C}{C}): five can make {B} (Arcane Signet, Dimir Signet, Rakdos
+Catacomb, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn, Shivan Reef,
+Steam Vents, Sulfur Falls, Underground River, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain and
+9 Swamp. Twenty-four lands make {B} (25 counting Phyrexian Tower's {B}{B} when you sacrifice a creature), 17 make {U} and 15 make {R}. Eight mana rocks, seven of which add colour (Sol Ring makes {C}{C}): five can make {B} (Arcane Signet, Dimir Signet, Rakdos
 Signet, Talisman of Dominance, Talisman of Indulgence), five {U}, five {R}; the Signets cost {1} to use and the Talismans
-deal 1 damage to you for coloured mana.
+deal 1 damage to you for coloured mana, and so do Shivan Reef ({U} or {R}) and Underground River ({U} or {B}).
 
 - **Heavy black:** Mikaeus ({3}{B}{B}{B}), Bolas's Citadel ({3}{B}{B}{B}) and Grave Pact ({1}{B}{B}{B}) are the hardest
   costs; the rest of the black cards need one or two {B}.
@@ -329,8 +329,8 @@ deal 1 damage to you for coloured mana.
 - **Red is light:** Bedevil ({B}{B}{R}) is the hardest; Lightning Bolt, Chaos Warp, Blasphemous Act, Terminate, Mayhem
   Devil and Vampire Socialite need one {R}.
 - **Marchesa needs all three** ({1}{U}{B}{R}): count the sources before you cast her.
-- **Tapped lands:** Crumbling Necropolis and Path of Ancestry always enter tapped; Haunted Ridge, Luxury Suite, Morphic Pool,
-  Dragonskull Summit, Drowned Catacomb, Spirebluff Canal and Sulfur Falls enter tapped under their conditions; the shocklands
+- **Tapped lands:** Crumbling Necropolis and Path of Ancestry always enter tapped; Luxury Suite, Morphic Pool,
+  Dragonskull Summit, Drowned Catacomb and Sulfur Falls enter tapped under their conditions; Shivan Reef and Underground River never do; the shocklands
   cost 2 life to enter untapped. Phyrexian Tower makes {C}, or {B}{B} by sacrificing a creature. Barad-dûr is not a Swamp (the fetchlands cannot find it) and
   enters tapped unless you control a legendary creature; seven are in the list (Marchesa, Mikaeus, Yawgmoth, Sauron,
   Sephiroth, Syr Konrad, Gonti). Late in the game, {X}{X}{B}, {T}: amass Orcs X, only if a creature died this turn; the Army
@@ -359,7 +359,7 @@ Mindbreak Trap are the interaction.
 
 **Instants (14).** Arcane Denial, Bedevil, Bitter Triumph, Chaos Warp, Counterspell, Deadly Dispute, Entomb, Fact or Fiction, Fatal Push, Lightning Bolt, Mindbreak Trap, Swan Song, Terminate, Vampiric Tutor
 
-**Lands (35).** Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn, Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain, 9 Swamp
+**Lands (35).** Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned Catacomb, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn, Shivan Reef, Steam Vents, Sulfur Falls, Underground River, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain, 9 Swamp
 
 ## Import list (100)
 
@@ -400,7 +400,6 @@ Mindbreak Trap are the interaction.
 1 Grave Titan
 1 Gravecrawler
 1 Grim Tutor
-1 Haunted Ridge
 1 Izzet Signet
 1 Jet Medallion
 1 Lightning Bolt
@@ -427,9 +426,9 @@ Mindbreak Trap are the interaction.
 1 Sauron, the Necromancer
 1 Scalding Tarn
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
+1 Shivan Reef
 1 Skullclamp
 1 Sol Ring
-1 Spirebluff Canal
 1 Steam Vents
 1 Sulfur Falls
 1 Swan Song
@@ -440,6 +439,7 @@ Mindbreak Trap are the interaction.
 1 Terminate
 1 The Ozolith
 1 Triskelion
+1 Underground River
 1 Underground Sea
 1 Vampire Socialite
 1 Vampiric Tutor
