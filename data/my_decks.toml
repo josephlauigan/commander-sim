@@ -36,3 +36,10 @@ name = "Karn, Gilded Guardian"
 commander = "Karn, Gilded Guardian"
 ident = "WUBRG"
 tiers = ["t4", "t5"]
+
+[karn_reforged]
+file = "JD/karn-reforged-tempo.md"
+name = "Karn, Legacy Reforged"
+commander = "Karn, Legacy Reforged"
+ident = "C"
+tiers = ["t4", "t5"]

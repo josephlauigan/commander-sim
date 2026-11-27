@@ -263,6 +263,14 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn_reforged: Inventors' Fair",
+        "the search is an activated ability, not an enter effect; the probe never activates this non-fetch land (play_karn_abilities inventors_fair_searches_with_three_artifacts covers the person path)",
+    ),
+    (
+        "karn_reforged: Mithril Coat",
+        "the probe has no legendary creature you control: no legal attach target (practice_gaps_c mithril_coat_attaches_to_the_legendary_creature_you_pick covers the person path)",
+    ),
+    (
         "urdragon: Maelstrom of the Spirit Dragon",
         "an activated ability, not used as it enters (its person path, human/model_gaps.rs, asks which Dragon to find: practice_trigger_probe's Activate pass)",
     ),

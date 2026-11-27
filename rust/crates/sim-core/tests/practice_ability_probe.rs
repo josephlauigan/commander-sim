@@ -176,9 +176,15 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
     check(&gaps);
 }
 
-/// gaps found on 2026-11-04 and not yet fixed: the person cannot activate these in practice mode (or only when the AI's
-/// own conditions say so). Fixing one means taking it off this list; a new gap fails the test.
-const TO_FIX: &[&str] = &[];
+/// gaps found on 2026-11-04 and not yet fixed (the four karn_reforged entries below were found on 2026-11-26): the person
+/// cannot activate these in practice mode (or only when the AI's own conditions say so). Fixing one means taking it
+/// off this list; a new gap fails the test.
+const TO_FIX: &[&str] = &[
+    "karn_reforged: Mutavault", // lands::manland_options retains AI attack/just-played guards; no unrestricted person path.
+    "karn_reforged: Retrofitter Foundry", // fixes::foundry offers only the AI's preferred token mode and no opponent-turn activation.
+    "karn_reforged: Scroll Rack", // topdeck::rack runs automatically at upkeep; there is no manual activation/hand selection.
+    "karn_reforged: Sensei's Divining Top", // topdeck only offers the AI-desired draw; rearranging is automatic at upkeep.
+];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[

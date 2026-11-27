@@ -288,7 +288,7 @@ mod tests {
     fn table_for_commander_is_seats_for_three_for_200_seeds() {
         let sim = sim();
         let cmd = &sim.engine.formats["commander"];
-        for me in ["karn_gilded", "sheoldred", "marchesa", "urdragon", "arzakon"] {
+        for me in ["karn_gilded", "karn_reforged", "sheoldred", "marchesa", "urdragon", "arzakon"] {
             for tier in ["t3", "t5", "t6"] {
                 let keys = sim.opponents(tier, cmd);
                 assert_eq!(keys, sim.pool_keys(tier), "a Commander table admits every pool deck");

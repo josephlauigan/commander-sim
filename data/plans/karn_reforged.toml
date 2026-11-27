@@ -1,0 +1,51 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Karn, Legacy Reforged deck (key `karn_reforged`, tiers t4-t5:
+# decklists/JD/karn-reforged-tempo.md, colourless artifact tempo, Commander Bracket 4). The plan: fast mana and cheap
+# artifacts first, Karn on turn 2-3, his upkeep mana spent on equip and artifact spells, equipment on Karn, and Basalt
+# Monolith + Rings of Brighthearth into Walking Ballista as the one infinite line. Karn's cast priority and his mana are CARD
+# CODE (karn_prio, search_bonus, impls/karn.rs): there is NO [commander] or [[prio]] row for Karn here, on purpose, because
+# the card-code priority decides (a plan row would override it).
+# PROVISIONAL: the rows below have not been measured (the baseline is in audit/karn_reforged/FINDINGS.md). The keep rule and the tutor order are the
+# generic ones plus the rows below.
+deck = "karn_reforged"
+default = "plan"
+# card engines the tutors want once no line wants a card: the card-flow pieces and the mana sinks for Karn's mana
+engines = ["The One Ring", "Skullclamp", "Mystic Forge", "Walking Ballista"]
+
+# A tempo deck: it wants its commander down on turn 2-3 and then equips and attacks.
+[style]
+temp = 1.0
+aggression = 0.7
+caution = 0.4
+
+[key_cards]
+"Walking Ballista" = 70
+
+# Win line: Basalt Monolith + Rings is two cards and then any mana sink: Walking Ballista from hand (a huge X) or Staff of
+# Domination on the battlefield (draw to the Ballista).
+[[line]]
+name = "Basalt Monolith + Rings of Brighthearth + a mana sink"
+kind = "combo"
+pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Staff of Domination"]]
+
+# What the tutors fetch: the combo's missing piece, a mana sink for Karn's mana.
+[[wish]]
+cards = ["Basalt Monolith", "Rings of Brighthearth"]
+when = ["lands+rocks>=3"]
+score = 90
+
+[[wish]]
+cards = ["Staff of Domination", "Walking Ballista"]
+when = ["out:Basalt Monolith & out:Rings of Brighthearth"]
+score = 95
+
+[[wish]]
+cards = ["The One Ring"]
+when = ["turn<=3"]
+score = 80
+
+# The deck's plan is equipment on Karn: the AI equips the commander first. PROVISIONAL: the utility is Cloud's equip value, not
+# tuned by any sim (the worker measured the default at 1.9, a Sword scoring about 2 higher).
+[equip]
+holder = "commander"
+utility = 4.5

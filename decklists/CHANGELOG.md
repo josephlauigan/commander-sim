@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` (and of the retired ones, now in `de
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Sheoldred, Thanos, Ur-Dragon, Karn, Gilded Guardian (Y'shtola, Yoshimaru/Tymna, Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
+JD's decks: Sheoldred, Marchesa, Arzakon, Ur-Dragon; Karn, Gilded Guardian (`karn_gilded`); Karn, Legacy Reforged (`karn_reforged`) (Y'shtola, Yoshimaru/Tymna, Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
@@ -142,6 +142,15 @@ Deck key `karn` (until 2026-11-05), `decklists/JD/karn-colorless-artifacts.md` (
   card that fits the plan (the Tron lands, Urza's Saga, Cave, Workshop and Factory, Mishra's Workshop, Factory and
   Foundry, both Baubles, Karn, Scion of Urza and others). All 99 checked Commander-legal and colourless on Scryfall.
   Bracket 4: five Game Changers. Eight expensive cards are proxied. Not simulated: many cards are not modeled yet.
+
+## Karn, Legacy Reforged — Artifact Tempo (Colourless, Bracket 4)
+
+Deck key `karn_reforged`, `decklists/JD/karn-reforged-tempo.md`. Tiers t4-t5. Sims and findings: `audit/karn_reforged/FINDINGS.md`.
+
+### Changes
+
+- **2026-11-26.** Registered (JD): a new Karn, Legacy Reforged tempo deck for Commander Bracket 4 (JD: "i want tempo. i can proxy any card"), built from the catalog's colourless cards. Started as a Cali Commander list; Mana Crypt, Jeweled Lotus and Sundering Titan were removed as Commander-banned, below-Full cards were swapped for Full ones except Wasteland and Umezawa's Jitte (modelled on branch `karn-reforged-model`), and an Opus list review cut Isochron Scepter, Academy Manufactor, Ratchet Bomb, Panharmonicon, Colossus Hammer, Hall of the Bandit Lord, Gilded Lotus, Hedron Archive and Burnished Hart and added Rings of Brighthearth, Rogue's Passage, Whispersilk Cloak, Hammer of Nazahn, Retrofitter Foundry, The Mightstone and Weakstone, Batterskull, War Room, Bonders' Enclave, Buried Ruin, Champion's Helm, Mazemind Tome, Defense Grid, Unwinding Clock and Scroll Rack. Not simulated.
+- **2026-11-27.** Stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like"): Winter Orb and Defense Grid => two Wastes (lands 28). Unwinding Clock (JD: keep), Karn, the Great Creator and the Lattice lock, Strip Mine and Wasteland stay. Re-run against the baseline (two separate runs, not a paired test): see `audit/karn_reforged/FINDINGS.md`.
 
 ## Kefka, Court Mage — Grixis Discard
 

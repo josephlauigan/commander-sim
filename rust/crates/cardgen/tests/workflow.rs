@@ -296,6 +296,7 @@ fn validate_covers_each_of_your_decks_under_its_own_format() {
         [
             ("arzakon", "cali"),
             ("karn_gilded", "commander"),
+            ("karn_reforged", "commander"),
             ("marchesa", "commander"),
             ("sheoldred", "commander"),
             ("urdragon", "commander")

@@ -43,9 +43,9 @@ fn hand_options(g: &mut Game, c: CardId, post: Option<bool>) -> Vec<Opt> {
 }
 
 // ------------------------------------------------------------------ the default is unchanged
-/// the new schema features are used by these three plan files only (and Sauron's `plays`), and they are always read
+/// the new schema features are used by these plan files only (and Sauron's `plays`), and they are always read
 #[test]
-fn only_the_three_plan_files_use_the_new_features() {
+fn only_the_listed_plan_files_use_the_new_features() {
     for (k, l) in plan_data::all() {
         let p = &l.plan;
         let uses = p.equip.is_some()
@@ -57,9 +57,9 @@ fn only_the_three_plan_files_use_the_new_features() {
         // --- generic-paths (2026-11-01): sauron's plan lists Exsanguinate in `plays` (its hand AI is deleted, so its
         // plan file is always read: that changes its default play, on purpose)
         let sauron_plays = *k == "sauron" && p.plays == ["Exsanguinate"];
-        assert_eq!(uses, matches!(*k, "cloud" | "yshtola" | "sheoldred") || sauron_plays, "{k}");
+        assert_eq!(uses, matches!(*k, "cloud" | "yshtola" | "sheoldred" | "karn_reforged") || sauron_plays, "{k}");
     }
-    for (key, t) in [("cloud", "t1"), ("yshtola", "t5"), ("sheoldred", "t3")] {
+    for (key, t) in [("cloud", "t1"), ("yshtola", "t5"), ("sheoldred", "t3"), ("karn_reforged", "t4")] {
         let g = seated(key, t);
         assert!(plan_data::active(&g, P).is_some(), "{key}: its plan file is read");
         assert!(plans::plays_plan(key));

@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 35); // five decks of yours x seven tiers (marchesa registered 2026-11-26)
+    assert_eq!(played, 42); // six decks of yours x seven tiers (karn_reforged registered 2026-11-26)
 }
 
 #[test]

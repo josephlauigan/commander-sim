@@ -970,12 +970,13 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str], Option<&str>); 5] = [
+        let want: [(&str, &[&str], Option<&str>); 6] = [
             ("sheoldred", &["t3", "t4"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("marchesa", &["t3", "t4"], None),
             ("arzakon", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
             ("urdragon", &["t5"], None),
             ("karn_gilded", &["t4", "t5"], None), // JD 11/24: replaces yshtola (t5) and yoshimaru (t4-t5)
+            ("karn_reforged", &["t4", "t5"], None),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t, fmt) in want {
@@ -1037,6 +1038,7 @@ mod tier_tests {
             ("marchesa".to_string(), v(&["t3", "t4"])),
             ("urdragon".to_string(), v(&["t5"])),
             ("karn_gilded".to_string(), v(&["t4", "t5"])),
+            ("karn_reforged".to_string(), v(&["t4", "t5"])),
         ];
         let plan = tier_plan(&sim, &args("--all-decks --pool all")).unwrap();
         assert_eq!(plan.per_deck, want);
@@ -1046,13 +1048,16 @@ mod tier_tests {
         assert_eq!(plan.tiers, v(&["t3", "t4", "t5"]));
         // one tier: the decks that play it, arzakon still out (t6 has no deck of yours left)
         let plan = tier_plan(&sim, &args("--all-decks --pool t5")).unwrap();
-        assert_eq!(plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(), ["urdragon", "karn_gilded"]);
+        assert_eq!(
+            plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
+            ["urdragon", "karn_gilded", "karn_reforged"]
+        );
         assert!(tier_plan(&sim, &args("--all-decks --pool t6")).unwrap().per_deck.is_empty());
         // --any-tier lifts the tier limit, not the format one
         let plan = tier_plan(&sim, &args("--all-decks --pool all --any-tier")).unwrap();
         assert_eq!(
             plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
-            ["sheoldred", "marchesa", "urdragon", "karn_gilded"]
+            ["sheoldred", "marchesa", "urdragon", "karn_gilded", "karn_reforged"]
         );
         assert!(plan.per_deck.iter().all(|(_, t)| t.len() == 7));
         assert_eq!(plan.skipped.len(), 1);

@@ -39,6 +39,7 @@ pub mod karn_engines;
 pub mod karn_gilded; // --- karn_gilded (2026-11-24): Karn, Gilded Guardian's enter trigger
 pub mod karn_gilded_cards; // --- karn_gilded: the deck's other cards with no record
 pub mod kefka;
+pub mod kr_model; // --- karn_reforged (2026-11-26): Wasteland and Umezawa's Jitte, modelled before the deck is registered
 pub mod krrik;
 pub mod kuja;
 pub mod kyodai; // --- thanos (2026-11-22): Kyodai, Soul of Kamigawa's enter trigger
@@ -242,5 +243,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     dockside::register(&mut r, db)?; // --- arzakon: Dockside Extortionist
     karn_gilded::register(&mut r, db)?; // --- karn_gilded: Karn, Gilded Guardian
     karn_gilded_cards::register(&mut r, db)?; // --- karn_gilded: the deck's other cards
+    kr_model::register(&mut r, db)?; // --- karn_reforged: Wasteland, Umezawa's Jitte
     Ok(r)
 }
