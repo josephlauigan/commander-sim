@@ -220,7 +220,7 @@ hand; Vampiric Tutor ({B}, lose 2 life) puts it on top of your library, so you h
 
 | Threat | Answer in the deck |
 |---|---|
-| Targeted removal on Marchesa or an engine creature | Lightning Greaves (equip {0}, sorcery speed) on the creature before the table has priority; Counterspell, Arcane Denial and Swan Song against the removal spell |
+| Targeted removal on Marchesa or an engine creature | Lightning Greaves (equip {0}, sorcery speed: it gives shroud before the table targets, and is too late once removal is on the stack); Counterspell, Arcane Denial and Swan Song against the removal spell |
 | A wipe | Mikaeus's undying and Marchesa's counters bring the non-Humans back; keep cards in hand that don't rely on being on the board |
 | Graveyard hate (Farewell, Bojuka Bog, Dauthi Voidwalker, Skullsnatcher) | Entomb and Animate Dead are off; Counterspell or Swan Song the exile; the loops on the battlefield (Lines 1 to 3) don't need the graveyard |
 | Edicts | Keep tokens (Zombies, Goat, Soldier) and cheap fodder on the board, so the edict takes those; sacrifice a creature in response if it is the one that will be taken |
@@ -302,10 +302,11 @@ their loop.
 - **There is no Marchesa-specific AI.** The deck plays the generic policy plus `data/plans/marchesa.toml` (priorities for the
   outlets, payoffs and Marchesa). When to sacrifice a countered creature before the end step, when to cast Blasphemous Act and
   how to pay for Nim Deathmantle are not modelled as plans.
-- **The simulator returns Marchesa herself from the command zone.** By her text the trigger returns that card, so at the table
-  she has to be in the graveyard.
-- **The Yawgmoth loop check.** Engine PR #408 makes the simulator require two nontoken undying creatures for the Yawgmoth,
-  Mikaeus and fodder loop, as the rules do.
+- **Commander return.** Marchesa's return (and Kaya's Ghostform's) takes a commander only from the graveyard, as the rules do:
+  a commander put in the command zone is a new object and cannot be returned, so the simulator leaves her in the graveyard
+  while her own return is pending.
+- **The Yawgmoth loop check.** The simulator requires two nontoken undying creatures for the Yawgmoth, Mikaeus and fodder
+  loop, as the rules do.
 
 ## Mana
 

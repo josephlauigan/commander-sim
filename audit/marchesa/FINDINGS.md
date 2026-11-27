@@ -67,6 +67,7 @@ until JD marks the list.
 - **Yawgmoth loop readiness.** Engine PR #408 makes the check need two nontoken undying creatures, as the rules do
   (Mikaeus gives himself no undying and Yawgmoth is a Human); the earlier check was looser. Any combo number depends on
   the engine that includes it.
+- **Two Spellbook combos have no engine line** (listed in `KNOWN_GAPS` in `rust/crates/sim-core/tests/spellbook.rs`): Walking Ballista + Mikaeus (628-3693) and Priest of Gix + Nim Deathmantle + Phyrexian Altar (586-4050-5003). The AI does not recognise them as wins; the Nim + Ashnod's Altar + Priest of Gix loop is modelled, the Phyrexian Altar variant is not (the same family as the Nether Traitor + Phyrexian Altar gaps already listed for another deck).
 - **Murderous Redcap, Xander's Lounge and Scrawling Crawler have no engine record**, and the catalogue has no Redcap +
   Mikaeus + outlet loop; none is in the list.
 

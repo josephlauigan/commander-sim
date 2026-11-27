@@ -159,7 +159,7 @@ library and loses half their life. Round up each time.*
    or more. Mid-game libraries are 70 or more, so it kills any one opponent.
 3. With Underworld Dreams alone it is 1 a card: lethal when the library is at least their life total. With Dreams and
    Fate Unraveler it is 2 a card, the same as Sheoldred.
-4. With Orcish Bowmasters out, every one of those cards after the first is also 1 damage to any target and an Orc
+4. With Orcish Bowmasters out, each of those cards (Peer is cast on your own turn) is also 1 damage to any target and an Orc
    Army counter.
 
 Seven mana: Cabal Coffers, rocks and Dark Ritual get there. Demonic, Diabolic or Vampiric Tutor finds it. It is a
@@ -333,7 +333,7 @@ target creature, lose 2 life), **Go for the Throat** ({1}{B}: destroy target non
 creature, free while you control a commander, so free while Sheoldred is out) and **Snuff Out** ({3}{B}, or pay 4 life
 instead if you control a Swamp: destroy target nonblack creature; it can't be used on a black creature, which many of the
 table's commanders are). **Feed the Swarm** ({1}{B} sorcery: destroy target creature or enchantment an opponent controls,
-and you lose life equal to its mana value) is the deck's only answer to an enchantment such as Aluren, Intruder Alarm,
+and you lose life equal to its mana value) is the deck's only targeted answer to an enchantment such as Aluren, Intruder Alarm,
 Smothering Tithe or Rhystic Study. **Invoke Despair** (edict for a creature, an enchantment and a planeswalker, with 2
 life lost and a card for you each time they have none; needs {B}{B}{B}{B}). **Rooftop Assassin** (flash, flying,
 lifelink) destroys a creature that was dealt damage this turn, and Orcish Bowmasters' ping can set that up.
