@@ -451,7 +451,7 @@ fn actual_lantern_deck_land_boards_keep_total_mana_and_identity_colours() {
         .chain(decks.pool.iter())
         .filter(|d| d.cards.iter().any(|n| n == "Chromatic Lantern" || n == "The World Tree"))
         .collect();
-    assert_eq!(affected.iter().map(|d| d.key.as_str()).collect::<Vec<_>>(), ["arzakon", "marchesa", "atraxa-infect"]);
+    assert_eq!(affected.iter().map(|d| d.key.as_str()).collect::<Vec<_>>(), ["arzakon", "atraxa-infect"]);
     for d in affected {
         let mut g = table(&[&d.key, "karn_gilded"]);
         for n in &d.cards {

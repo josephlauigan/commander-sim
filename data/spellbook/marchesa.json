@@ -6,7 +6,7 @@
   "commanders": [
     "Marchesa, the Black Rose"
   ],
-  "request_sha256": "48159862b663f311cedcda5132b176a5e4536078a2e782fec80bb7b4ccb096d1",
+  "request_sha256": "0fd84fc174d39eb624145dd37ae790bc09b38763995f64e4b554b07f2f09e984",
   "identity": "UBR",
   "included": [
     {
@@ -2445,6 +2445,48 @@
       ]
     },
     {
+      "id": "2173-2292-2842-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 873,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
       "id": "2034-5003-7133",
       "cards": [
         {
@@ -3045,6 +3087,48 @@
       "popularity": 621,
       "missing": [
         "Sling-Gang Lieutenant"
+      ]
+    },
+    {
+      "id": "1385-2173-2292-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 609,
+      "missing": [
+        "Mortuary"
       ]
     },
     {
@@ -3896,6 +3980,48 @@
       ]
     },
     {
+      "id": "2173-2292-5220-6578",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 320,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
       "id": "237-2034-5003",
       "cards": [
         {
@@ -4052,6 +4178,48 @@
       "popularity": 299,
       "missing": [
         "Lord Skitter's Butcher"
+      ]
+    },
+    {
+      "id": "2173-2438-2842-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 297,
+      "missing": [
+        "Mortuary"
       ]
     },
     {
@@ -4262,6 +4430,48 @@
       "popularity": 275,
       "missing": [
         "Chainbreaker"
+      ]
+    },
+    {
+      "id": "1385-2173-2438-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Mortuary"
       ]
     },
     {
@@ -5025,6 +5235,48 @@
       ]
     },
     {
+      "id": "2173-2292-3025-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 212,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
       "id": "2034-3621-5003",
       "cards": [
         {
@@ -5369,6 +5621,40 @@
       "popularity": 182,
       "missing": [
         "Carnifex Demon"
+      ]
+    },
+    {
+      "id": "2173-3693-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 180,
+      "missing": [
+        "Mortuary"
       ]
     },
     {
@@ -5957,6 +6243,48 @@
       ]
     },
     {
+      "id": "2173-2438-3025-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 129,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
       "id": "628-1242-2438",
       "cards": [
         {
@@ -6192,6 +6520,48 @@
       "popularity": 117,
       "missing": [
         "Soulstinger"
+      ]
+    },
+    {
+      "id": "2173-2438-5220-6578",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 117,
+      "missing": [
+        "Mortuary"
       ]
     },
     {

@@ -11,7 +11,7 @@ decks that punish the life it pays (Reanimate, the tutors, the shocklands).
 | | |
 |---|---|
 | **Commander** | Marchesa, the Black Rose ({1}{U}{B}{R}, 3/3 Human Wizard) |
-| **Bracket** | 4 (2 Game Changers: Demonic Tutor, Vampiric Tutor; infinite loops: Mikaeus + Triskelion, Yawgmoth with two undying creatures and a death payoff, Nim Deathmantle + Ashnod's Altar + Priest of Gix or Grave Titan, Gravecrawler + Phyrexian Altar + a Zombie + a death payoff) |
+| **Bracket** | 4 (3 Game Changers: Bolas's Citadel, Demonic Tutor, Vampiric Tutor; infinite loops: Mikaeus + Triskelion, Yawgmoth with two undying creatures and a death payoff, Nim Deathmantle + Ashnod's Altar + Priest of Gix or Grave Titan, Gravecrawler + Phyrexian Altar + a Zombie + a death payoff) |
 | **Simulator** | deck key `marchesa` (tiers t3 and t4); plan file `data/plans/marchesa.toml`; findings in `audit/marchesa/FINDINGS.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -48,15 +48,15 @@ Each package has a job. The 64 spells split as follows (Marchesa is the 100th ca
 
 | Package | Cards | Job |
 |---|---|---|
-| Mana (10) | Sol Ring, Arcane Signet, Chromatic Lantern, Dimir Signet, Izzet Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, Jet Medallion | Nine mana rocks and a cost reducer ({1} off black spells). Priest of Gix (below) is a third mana source |
+| Mana (9) | Sol Ring, Arcane Signet, Dimir Signet, Izzet Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, Jet Medallion | Eight mana rocks and a cost reducer ({1} off black spells). Priest of Gix (below) is a third mana source |
 | Sacrifice outlets (6) | Viscera Seer, Carrion Feeder, Woe Strider, Ashnod's Altar, Phyrexian Altar, Altar of Dementia | Free, repeatable sacrifice (Seer, Feeder, Strider, the Altars). Phyrexian Tower (a land) is a seventh, and Yawgmoth, Sephiroth and Deadly Dispute sacrifice too |
 | Death payoffs (7) | Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Syr Konrad, Mayhem Devil, Sephiroth, Grave Pact | Each death drains (Artist, Zulaport, Bastion, Sephiroth, Konrad), pings (Mayhem Devil on any sacrifice) or makes the table sacrifice (Grave Pact) |
 | Undying, counters and combo pieces (8) | Mikaeus, Triskelion, Yawgmoth, Nim Deathmantle, The Ozolith, Walking Ballista, Vampire Socialite, Gravecrawler | Mikaeus gives undying; Triskelion and Ballista enter with counters; The Ozolith moves the counters of a creature that leaves onto another; Vampire Socialite adds counters to other Vampires; Nim returns creatures for {4}; Gravecrawler is endless fodder; Yawgmoth turns two undying creatures into a loop |
 | Enters-the-battlefield creatures (9) | Accursed Marauder, Plaguecrafter, Gonti, Mulldrifter, Grave Titan, Phyrexian Delver, Perigee Beckoner, Priest of Gix, Sauron | The value that returning creatures replay: edicts (Marauder, Plaguecrafter), a stolen card (Gonti), two cards (Mulldrifter), two Zombies (Titan), a reanimation (Delver), BBB (Priest), a copied enters trigger (Sauron), a one-turn return for another creature (Beckoner) |
 | Reanimation (3) | Entomb, Reanimate, Animate Dead | Entomb a creature, then Reanimate or Animate Dead it; they also take a creature from an opponent's graveyard |
-| Tutors (4) | Demonic Tutor, Diabolic Tutor, Grim Tutor, Vampiric Tutor | Find the missing combo piece. Demonic and Vampiric Tutor are the two Game Changers |
+| Tutors (4) | Demonic Tutor, Diabolic Tutor, Grim Tutor, Vampiric Tutor | Find the missing combo piece. Demonic and Vampiric Tutor are two of the three Game Changers (Bolas's Citadel is the third) |
 | Interaction (12) | Bitter Triumph, Fatal Push, Lightning Bolt, Terminate, Bedevil, Chaos Warp, Blasphemous Act, Counterspell, Arcane Denial, Swan Song, Mindbreak Trap, Propaganda | Cheap removal, one wipe, four counters and an attack tax |
-| Draw (4) | Fact or Fiction, Deadly Dispute, Skullclamp, Black Market Connections | Refill; Deadly Dispute and Skullclamp turn a death into cards |
+| Draw and finisher (5) | Fact or Fiction, Deadly Dispute, Skullclamp, Black Market Connections, Bolas's Citadel | Refill; Deadly Dispute and Skullclamp turn a death into cards; Bolas's Citadel plays cards off the top for life equal to their mana value (the deck averages under 3) and is an alternate finisher: {T}, sacrifice ten nonland permanents and each opponent loses 10 |
 | Protection (1) | Lightning Greaves | Shroud and haste for Marchesa or the engine creature |
 
 Plus 35 lands (see "Mana").
@@ -314,15 +314,15 @@ their loop.
 
 ## Mana
 
-35 lands: Badlands, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned
+35 lands: Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned
 Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn,
 Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain and
-10 Swamp. Twenty-four lands make {B} (25 counting Phyrexian Tower's {B}{B} when you sacrifice a creature), 16 make {U} and 16 make {R}. Nine mana rocks add colour: six can make {B} (Arcane Signet, Chromatic Lantern, Dimir Signet, Rakdos
-Signet, Talisman of Dominance, Talisman of Indulgence), six {U}, six {R}; the Signets cost {1} to use and the Talismans
+9 Swamp. Twenty-four lands make {B} (25 counting Phyrexian Tower's {B}{B} when you sacrifice a creature), 16 make {U} and 16 make {R}. Eight mana rocks add colour: five can make {B} (Arcane Signet, Dimir Signet, Rakdos
+Signet, Talisman of Dominance, Talisman of Indulgence), five {U}, five {R}; the Signets cost {1} to use and the Talismans
 deal 1 damage to you for coloured mana.
 
-- **Heavy black:** Mikaeus ({3}{B}{B}{B}) and Grave Pact ({1}{B}{B}{B}) are the hardest costs; the rest of the black
-  cards need one or two {B}.
+- **Heavy black:** Mikaeus ({3}{B}{B}{B}), Bolas's Citadel ({3}{B}{B}{B}) and Grave Pact ({1}{B}{B}{B}) are the hardest
+  costs; the rest of the black cards need one or two {B}.
 - **Blue is light:** Counterspell ({U}{U}) and Mindbreak Trap ({2}{U}{U}) are the only cards with two {U}; the other blue
   cards (Arcane Denial, Swan Song, Fact or Fiction, Mulldrifter, Propaganda) need one.
 - **Red is light:** Bedevil ({B}{B}{R}) is the hardest; Lightning Bolt, Chaos Warp, Blasphemous Act, Terminate, Mayhem
@@ -330,15 +330,18 @@ deal 1 damage to you for coloured mana.
 - **Marchesa needs all three** ({1}{U}{B}{R}): count the sources before you cast her.
 - **Tapped lands:** Crumbling Necropolis and Path of Ancestry always enter tapped; Haunted Ridge, Luxury Suite, Morphic Pool,
   Dragonskull Summit, Drowned Catacomb, Spirebluff Canal and Sulfur Falls enter tapped under their conditions; the shocklands
-  cost 2 life to enter untapped. Phyrexian Tower makes {C}, or {B}{B} by sacrificing a creature.
+  cost 2 life to enter untapped. Phyrexian Tower makes {C}, or {B}{B} by sacrificing a creature. Barad-dûr is not a Swamp (the fetchlands cannot find it) and
+  enters tapped unless you control a legendary creature; seven are in the list (Marchesa, Mikaeus, Yawgmoth, Sauron,
+  Sephiroth, Syr Konrad, Gonti). Late in the game, {X}{X}{B}, {T}: amass Orcs X, only if a creature died this turn; the Army
+  is a token, so Marchesa does not return it, but it is sacrifice fodder.
 
 ## Bracket and Rule 0
 
-Bracket 4: two Game Changers (Demonic Tutor, Vampiric Tutor) and the infinite combos named here. There are no extra
+Bracket 4: three Game Changers (Bolas's Citadel, Demonic Tutor, Vampiric Tutor) and the infinite combos named here. There are no extra
 turns and no mass land destruction, but there are infinite loops: Mikaeus + Triskelion (a two-card infinite-damage
 combo), Yawgmoth + Mikaeus + two undying creatures with a death payoff, Nim Deathmantle + Ashnod's Altar + Priest of Gix or
 Grave Titan, and Gravecrawler + Phyrexian Altar + a Zombie with a death payoff. Name these before the game. Tell the table
-about the two Game Changers and the five tutors (Demonic, Diabolic, Grim, Vampiric and Entomb), that Marchesa returns
+about the three Game Changers and the five tutors (Demonic, Diabolic, Grim, Vampiric and Entomb), that Marchesa returns
 creatures that die with a +1/+1 counter, so a board wipe is weak against the deck, and that Propaganda, Counterspell and
 Mindbreak Trap are the interaction.
 
@@ -349,13 +352,13 @@ Mindbreak Trap are the interaction.
 
 **Enchantments (5).** Animate Dead, Bastion of Remembrance, Black Market Connections, Grave Pact, Propaganda
 
-**Artifacts (17).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Dimir Signet, Izzet Signet, Jet Medallion, Lightning Greaves, Nim Deathmantle, Phyrexian Altar, Rakdos Signet, Skullclamp, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith
+**Artifacts (17).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Bolas's Citadel, Dimir Signet, Izzet Signet, Jet Medallion, Lightning Greaves, Nim Deathmantle, Phyrexian Altar, Rakdos Signet, Skullclamp, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith
 
 **Sorceries (5).** Blasphemous Act, Demonic Tutor, Diabolic Tutor, Grim Tutor, Reanimate
 
 **Instants (14).** Arcane Denial, Bedevil, Bitter Triumph, Chaos Warp, Counterspell, Deadly Dispute, Entomb, Fact or Fiction, Fatal Push, Lightning Bolt, Mindbreak Trap, Swan Song, Terminate, Vampiric Tutor
 
-**Lands (35).** Badlands, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn, Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain, 10 Swamp
+**Lands (35).** Badlands, Barad-dûr, Blood Crypt, Bloodstained Mire, Command Tower, Crumbling Necropolis, Dragonskull Summit, Drowned Catacomb, Haunted Ridge, Luxury Suite, Morphic Pool, Path of Ancestry, Phyrexian Tower, Polluted Delta, Scalding Tarn, Spirebluff Canal, Steam Vents, Sulfur Falls, Underground Sea, Volcanic Island, Watery Grave, 3 Island, 2 Mountain, 9 Swamp
 
 ## Import list (100)
 
@@ -367,6 +370,7 @@ Mindbreak Trap are the interaction.
 1 Arcane Signet
 1 Ashnod's Altar
 1 Badlands
+1 Barad-dûr
 1 Bastion of Remembrance
 1 Bedevil
 1 Bitter Triumph
@@ -375,9 +379,9 @@ Mindbreak Trap are the interaction.
 1 Blood Artist
 1 Blood Crypt
 1 Bloodstained Mire
+1 Bolas's Citadel
 1 Carrion Feeder
 1 Chaos Warp
-1 Chromatic Lantern
 1 Command Tower
 1 Counterspell
 1 Crumbling Necropolis
@@ -447,5 +451,5 @@ Mindbreak Trap are the interaction.
 1 Zulaport Cutthroat
 3 Island
 2 Mountain
-10 Swamp
+9 Swamp
 ```

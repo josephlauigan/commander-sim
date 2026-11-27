@@ -1033,4 +1033,5 @@ Deck key `marchesa`, `decklists/JD/marchesa-grixis-sacrifice-recursion.md`.
 
 ### Changes
 
-- **2026-11-26.** Out: nothing. In: nothing. Marchesa split: register JD’s final Grixis sacrifice and recursion list.
+- **2026-11-26.** Out: Chromatic Lantern, one Swamp. In: Barad-dûr, Bolas's Citadel. JD's choice, before any simulation, on the registered list. Barad-dûr is a Swamp-for-land swap (it makes {B} like the Swamp, enters untapped with any of the seven legendary creatures, and amasses Orcs late); fetchlands cannot find it. Bolas's Citadel replaces Chromatic Lantern, a proxy: it plays cards off the top for life (the deck averages under 3 mana value) and is a ten-permanent finisher; job lost: one of ten mana rocks and an any-colour source. Game Changers go from 2 to 3; black sources stay at 24 lands.
+- **2026-11-26.** Registered the Grixis sacrifice and recursion list (the Marchesa split, from Sheoldred's packages 4, 5 and 6).
