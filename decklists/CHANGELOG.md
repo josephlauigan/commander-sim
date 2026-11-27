@@ -145,7 +145,7 @@ Deck key `karn` (until 2026-11-05), `decklists/JD/karn-colorless-artifacts.md` (
 
 ## Karn, Legacy Reforged — Artifact Tempo (Colourless, Bracket 4)
 
-Deck key `karn_reforged`, `decklists/JD/karn-reforged-tempo.md`. Tiers t4-t5. Not simulated yet.
+Deck key `karn_reforged`, `decklists/JD/karn-reforged-tempo.md`. Tiers t4-t5. Sims and findings: `audit/karn_reforged/FINDINGS.md`.
 
 ### Changes
 
