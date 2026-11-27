@@ -220,7 +220,7 @@ hand; Vampiric Tutor ({B}, lose 2 life) puts it on top of your library, so you h
 
 | Threat | Answer in the deck |
 |---|---|
-| Targeted removal on Marchesa or an engine creature | Lightning Greaves (equip {0}, sorcery speed: it gives shroud before the table targets, and is too late once removal is on the stack); Counterspell, Arcane Denial and Swan Song against the removal spell |
+| Targeted removal on Marchesa or an engine creature | Lightning Greaves (equip {0}, sorcery speed: put it on before the table acts; the equip uses the stack, so it is too late once removal is on the stack); Counterspell, Arcane Denial and Swan Song against the removal spell |
 | A wipe | Mikaeus's undying and Marchesa's counters bring the non-Humans back; keep cards in hand that don't rely on being on the board |
 | Graveyard hate (Farewell, Bojuka Bog, Dauthi Voidwalker, Skullsnatcher) | Entomb and Animate Dead are off; Counterspell or Swan Song the exile; the loops on the battlefield (Lines 1 to 3) don't need the graveyard |
 | Edicts | Keep tokens (Zombies, Goat, Soldier) and cheap fodder on the board, so the edict takes those; sacrifice a creature in response if it is the one that will be taken |
@@ -307,6 +307,10 @@ their loop.
   while her own return is pending.
 - **The Yawgmoth loop check.** The simulator requires two nontoken undying creatures for the Yawgmoth, Mikaeus and fodder
   loop, as the rules do.
+- **Walking Ballista + Mikaeus is not played as a line.** Ballista pings itself, dies with no +1/+1 counter and undying returns
+  it with one; with Blood Artist, Zulaport Cutthroat, Syr Konrad or Bastion of Remembrance out it kills the table, but the
+  simulator has no entry for it, so the AI does not set it up. Priest of Gix + Nim Deathmantle + Phyrexian Altar (mana-neutral,
+  needs a payoff) is not modelled either.
 
 ## Mana
 
