@@ -309,7 +309,7 @@ fn karn_gilded_and_sheoldred_have_no_table_and_say_so() {
     assert!(lines(&h)[0].contains("no keep table of its own") && lines(&h)[0].contains("2 to 5 lands"), "{h}");
     let (mut g, p) = game_with(
         "sheoldred",
-        &["Swamp", "Swamp", "Demonic Tutor", "Dark Ritual", "Grave Titan", "Reanimate", "Entomb"],
+        &["Swamp", "Swamp", "Demonic Tutor", "Dark Ritual", "Massacre Wurm", "Sign in Blood", "Night's Whisper"],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
