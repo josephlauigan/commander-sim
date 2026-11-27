@@ -42,17 +42,18 @@ fn a_tapped_temple_bell_is_not_offered_to_a_person() {
     assert!(abilities_of(&mut g, P0, bell).unwrap().is_empty());
 }
 
-/// the Sheoldred plan's `plays` list does not name the Bell (it never did), so the AI's Bell hook stays silent
-/// even with a draw punisher out: giving a person the ability must not change that
+/// the Sheoldred plan's `plays` list names the Bell (2026-11-26), so the AI taps it only at the end of an opponent's
+/// turn and only while a draw punisher is out: giving a person the ability must not change that
 #[test]
-fn the_ai_seats_temple_bell_is_unchanged() {
+fn the_ai_seats_temple_bell_waits_for_a_draw_punisher() {
     let mut g = table(&["sheoldred", "seph"]);
     let bell = perm(&mut g, P0, "Temple Bell");
     let f = g.registry.get(g.perm(bell).card()).unwrap().options.unwrap();
     assert!(f(&mut g, bell, P0, None).unwrap().is_empty(), "no punisher");
     perm(&mut g, P0, "Underworld Dreams");
-    for post in [None, Some(false), Some(true)] {
-        assert!(f(&mut g, bell, P0, post).unwrap().is_empty(), "the plan does not play the Bell: {post:?}");
+    assert_eq!(f(&mut g, bell, P0, None).unwrap().len(), 1, "an opponent's end step with a punisher out");
+    for post in [Some(false), Some(true)] {
+        assert!(f(&mut g, bell, P0, post).unwrap().is_empty(), "not in a main phase unless it kills: {post:?}");
     }
     // the same hook for the person's seat is offered, unconditionally
     seat(&mut g, P0, vec![]);

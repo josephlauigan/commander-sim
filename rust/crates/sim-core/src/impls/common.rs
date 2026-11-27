@@ -2132,7 +2132,9 @@ fn sign_in_blood(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let q = if crate::human::is_human(g, p) { ctx.face.unwrap_or(p) } else { p };
     if super::sheoldred::player_target_ok(g, p, c, q) {
         draw(g, q, 2, false)?;
-        lose_life(g, q, 2, Some(p), "other", None)?;
+        if g.player(q).alive {
+            lose_life(g, q, 2, Some(p), "other", None)?;
+        }
     }
     Ok("gy")
 }

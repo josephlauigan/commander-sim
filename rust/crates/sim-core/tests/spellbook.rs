@@ -43,6 +43,8 @@ const KNOWN_GAPS: &[(&str, &str)] = &[
     ("rograkh-silas-turbo-breach", "1368-1414-4856"), // Underworld Breach + Lotus Petal + Brain Freeze
     ("sisay-legends-toolbox", "2364-2608-4499"), // Derevi, Empyrial Tactician + Emiel the Blessed + Mana Vault
     ("sisay-legends-toolbox", "527-2608-4499"), // Derevi, Empyrial Tactician + Emiel the Blessed + Selvala, Heart of the Wilds
+    ("marchesa", "628-3693"), // Walking Ballista + Mikaeus, the Unhallowed (2026-11-26; audit/marchesa/FINDINGS.md)
+    ("marchesa", "586-4050-5003"), // Priest of Gix + Nim Deathmantle + Phyrexian Altar (2026-11-26; audit/marchesa/FINDINGS.md)
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
