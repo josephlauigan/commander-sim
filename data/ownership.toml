@@ -31,8 +31,9 @@
 # 2026-11-25 (JD, his final Karn list): Birthing Pod and Transguild Courier leave the Karn deck (he no longer plans to get them: they are in no other deck and not in [spare]); Dread Tiller (ecc 40) and Iron Man, Armored Avenger (msc 33) come in as `have`. Baleful Strix, Infinite Guideline Station, The Reaper, King No More and Reliquary Tower are now `have` (he has them); the 11 other cards he was getting are `proxy`. The Karn deck has no `missing` card.
 # 2026-11-26 (JD): Arzakon mana package: Llanowar Elves, Avacyn's Pilgrim, Exsanguinate and Coalition Relic out (his owned copies are now spares; the Exsanguinate copy no longer in the Arzakon deck is a spare; Coalition Relic's owned copy stays in the Karn deck: copies = 1 there), Mana Confluence, City of Brass, Misty Rainforest and Chromatic Lantern in as `proxy` (JD: "I will proxy as needed"; his owned City of Brass stays in the Ur-Dragon deck). Meteor Golem stays (JD).
 # 2026-11-26 (JD): Ur-Dragon: Elvish Mystic out for Avacyn's Pilgrim (both owned: the Pilgrim leaves the spares, the Mystic joins them).
-# 2026-11-26 (JD): Marchesa split: owned copies leaving Sheoldred move to Marchesa or spares; incoming owned spares move into the lists.
-# Cards whose owned copies stay in another deck, and cards not recorded as owned, are proxies; Marchesa awaits confirmation.
+# 2026-11-26 (JD chose the Marchesa split and both lists; the have/proxy/spare moves below are INFERRED from this file's earlier records, not confirmed by JD):
+# owned copies leaving Sheoldred move to Marchesa or spares; incoming owned spares move into the lists.
+# Cards whose owned copies stay in another deck, and cards not recorded as owned, are proxies; Marchesa awaits confirmation, and so do the 26 incoming Sheoldred statuses.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
