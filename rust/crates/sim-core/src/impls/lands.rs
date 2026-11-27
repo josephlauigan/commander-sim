@@ -556,18 +556,20 @@ fn locthwain(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Ve
     Ok(vec![opt(1.5, "Castle Locthwain".into(), locthwain_go, l.0 as i64)])
 }
 
-fn locthwain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn locthwain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = PermId(arg as u32);
     if !has_land(g, p, l) || g.perm(l).tapped || !pay_without(g, p, l, 1, "BB")? {
         return Ok(false);
     }
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Castle Locthwain", g.player(p).name);
-    if ability_window_card(g, p, g.perm(l).card(), "draw a card", None, None)? {
+    // on the stack as an ability, so a person's Rings of Brighthearth copy it (each copy draws and loses life too)
+    let cd = g.perm(l).card();
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| {
         draw(g, p, 1, false)?;
         let n = g.player(p).hand.len() as i32;
-        lose_life(g, p, n, Some(p), "other", None)?;
-    }
+        lose_life(g, p, n, Some(p), "other", None)
+    })?;
     Ok(true)
 }
 

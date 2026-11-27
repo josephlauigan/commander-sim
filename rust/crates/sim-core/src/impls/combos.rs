@@ -1502,16 +1502,19 @@ fn yawg(g: &Game, p: PlayerId) -> Ready {
     if pl.yawg_loop == Some(pl.turns) && yawg_payoff(g, p).is_none() {
         return NOT_READY(); // looped already; a payoff drawn since wins
     }
+    let mik = on_bf(g, p, "Mikaeus, the Unhallowed");
     let und = pl
         .perms
         .iter()
-        .filter(|&&m| g.is_creature(m) && m != y && g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("undying")))
+        .filter(|&&m| {
+            g.is_creature(m)
+                && m != y
+                && !g.perm(m).token
+                && (g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("undying"))
+                    || (mik.is_some() && Some(m) != mik && !has_type(g, m, "human")))
+        })
         .count();
-    let mik = on_bf(g, p, "Mikaeus, the Unhallowed");
-    let fodder =
-        pl.perms.iter().filter(|&&m| g.is_creature(m) && m != y && Some(m) != mik && !has_type(g, m, "human")).count();
-    let looping = und >= 2 || (mik.is_some() && fodder >= 1);
-    if !looping {
+    if und < 2 {
         return NOT_READY();
     }
     if yawg_payoff(g, p).is_none() && !g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| g.is_creature(m))) {

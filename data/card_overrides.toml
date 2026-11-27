@@ -2486,7 +2486,7 @@ status = "Full"
 note = "attack-caused triggers of your permanents fire twice (hand tags, compiled triggers and hooks); ETB of tokens entering attacking is not doubled, matching the card"
 
 ["Izzet Signet"]
-pool_add_tags = ["rock=1:UR"]
+add_tags = ["rock=1:UR"]  # in JD's decks too: the autotag reads {1},{T}: Add {U}{R} as two mana
 status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
@@ -5346,6 +5346,11 @@ dsl = []
 status = "Full"
 note = "+2 3 damage, -X exiles coloured permanents (X chosen to hit the most opposing value), -10 gain 7, draw 7, seven permanents"
 
+["Umezawa's Jitte"]
+dsl = [{ type = "static", static = "equip_cost", mana = 2 }] # the equip ability only: the counters, the trigger and the three modes are card code (impls/kr_model.rs)
+status = "Full"
+note = "equip {2}; two charge counters (DataKey::Charge, so proliferate adds to them) for each combat damage step in which the equipped creature deals combat damage (to a player, a creature, a planeswalker or a battle; once for damage to several at once; not noncombat damage); remove one: +2/+2, target creature -1/-1 (a 1-toughness creature dies), or gain 2 life; the counters stay when it moves or its creature dies; the AI kills creatures with it, pumps or shrinks in a fight and gains life when low, a person picks each mode"
+
 ["Unbreakable Formation"]
 status = "Full"
 note = "your creatures gain indestructible; cast in your main phase, also a +1/+1 counter and vigilance"
@@ -5587,6 +5592,11 @@ tags = ""
 dsl = []
 status = "Full"
 note = ""
+
+["Wasteland"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled destroy (any land, no sacrifice cost) never ran; impls/kr_model.rs's land_options does it
+status = "Full"
+note = "{T}: {C}; {T}, sacrifice: destroy target nonbasic land (an ability on the stack; a basic land is not a legal target); the AI goes for an opponent's key nonbasic land with at least three other lands out, a person picks any nonbasic land"
 
 ["Waterlogged Grove"]
 dsl = [] # a land isn't a permanent in `perms`, so its compiled {1},{T}, sacrifice: draw never ran; impls/lands.rs's land_options does it (Phase 2)

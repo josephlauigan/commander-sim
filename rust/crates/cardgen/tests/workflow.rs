@@ -293,7 +293,13 @@ fn validate_covers_each_of_your_decks_under_its_own_format() {
     mine.sort();
     assert_eq!(
         mine,
-        [("arzakon", "cali"), ("karn_gilded", "commander"), ("sheoldred", "commander"), ("urdragon", "commander")]
+        [
+            ("arzakon", "cali"),
+            ("karn_gilded", "commander"),
+            ("marchesa", "commander"),
+            ("sheoldred", "commander"),
+            ("urdragon", "commander")
+        ]
     );
 }
 

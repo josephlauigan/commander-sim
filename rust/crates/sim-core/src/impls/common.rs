@@ -2126,10 +2126,16 @@ fn judgment(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-/// Sign in Blood (Full): you draw two and lose 2
-fn sign_in_blood(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    draw(g, p, 2, false)?;
-    lose_life(g, p, 2, Some(p), "other", None)?;
+/// Sign in Blood (Full): the AI targets itself (draws two, loses 2); a person names the target player (`ctx.face`),
+/// who is not drawn for or hurt when no longer a legal target
+fn sign_in_blood(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let q = if crate::human::is_human(g, p) { ctx.face.unwrap_or(p) } else { p };
+    if super::sheoldred::player_target_ok(g, p, c, q) {
+        draw(g, q, 2, false)?;
+        if g.player(q).alive {
+            lose_life(g, q, 2, Some(p), "other", None)?;
+        }
+    }
     Ok("gy")
 }
 

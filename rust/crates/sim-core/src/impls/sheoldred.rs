@@ -1710,7 +1710,7 @@ fn lesson_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// can p's spell c (Damnable Pact, Painful Lesson) still target the player q: a live player, and not one with hexproof
 /// (Shalai; p itself is always a legal target of its own spell)
-fn player_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
+pub(crate) fn player_target_ok(g: &Game, p: PlayerId, c: CardId, q: PlayerId) -> bool {
     g.player(q).alive && (q == p || !player_hexproof_from(g, q, g.db.get(c).colors))
 }
 
@@ -2012,7 +2012,13 @@ fn bell_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
         return Ok(vec![]);
     }
-    let Some(u) = punish_window_utility(g, p, post, g.perm(src).name) else { return Ok(vec![]) };
+    // a person decides when to tap it; the AI only in the punisher windows
+    let u = if human(g, p) {
+        0.0
+    } else {
+        let Some(u) = punish_window_utility(g, p, post, g.perm(src).name) else { return Ok(vec![]) };
+        u
+    };
     Ok(vec![Opt {
         utility: u,
         label: "Temple Bell: each player draws".into(),

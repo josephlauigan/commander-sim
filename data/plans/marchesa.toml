@@ -1,0 +1,14 @@
+# Generic policy with priorities for the sacrifice and recursion list.
+deck = "marchesa"
+default = "plan"
+
+[commander]
+prio = 90
+
+[[prio]]
+cards = ["Viscera Seer", "Carrion Feeder", "Woe Strider", "Ashnod's Altar", "Phyrexian Altar", "Altar of Dementia", "Yawgmoth, Thran Physician"]
+value = 60
+
+[[prio]]
+cards = ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance", "Mayhem Devil", "Syr Konrad, the Grim", "Grave Pact"]
+value = 60

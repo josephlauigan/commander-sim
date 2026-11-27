@@ -9,15 +9,16 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 4] = [
+pub const FILES: [(&str, &str, &str); 5] = [
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
+    ("marchesa", "JD", "marchesa-grixis-sacrifice-recursion.md"),
     ("arzakon", "cali_commander", "arzakon-artifact-combo.md"),
     ("urdragon", "JD", "urdragon-five-colour-dragons.md"),
     ("karn_gilded", "JD", "karn-gilded-guardian.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 4] = ["sheoldred", "arzakon", "urdragon", "karn_gilded"];
+pub const MINE: [&str; 5] = ["sheoldred", "marchesa", "arzakon", "urdragon", "karn_gilded"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
@@ -227,7 +228,7 @@ mod tests {
     fn the_repository_decks_load() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
         let mine = load_mine(&root).unwrap();
-        assert_eq!(mine.len(), 4);
+        assert_eq!(mine.len(), 5);
         for (k, v) in &mine {
             assert_eq!(v.len(), 100, "{k}");
         }

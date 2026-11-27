@@ -95,6 +95,9 @@ impl Inputs {
             ]
             .map(String::from),
         );
+        // Wasteland and Umezawa's Jitte: modelled before the karn_reforged deck lists them (2026-11-26), so the card data
+        // exists whichever deck lists them
+        extra.extend(["Wasteland", "Umezawa's Jitte"].map(String::from));
         // cards modeled before the Yoshimaru/Tymna deck is registered (it needs them in the card data first)
         extra.extend(
             [

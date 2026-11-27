@@ -32,7 +32,7 @@ fn marchesa_out(g: &Game, p: PlayerId) -> bool {
 // ================================================================== Marchesa, the Black Rose
 /// dethrone, and other creatures you control have dethrone; a creature you control with a +1/+1 counter that dies (a
 /// stolen one too, and those dying in the same wipe as Marchesa) returns under your control at the beginning of the
-/// next end step; she returns herself from the command zone the same way. The engine starts checking deaths for her
+/// next end step if the card stays in the graveyard. The engine starts checking deaths for her
 /// trigger once she has entered.
 fn marchesa_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
@@ -60,7 +60,6 @@ pub fn marchesa_dies(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     let cd = x.phys.unwrap_or(mcd);
     let owner = x.orig;
-    // (Python also sets `owner.cmd_pending` for a commander here; nothing reads it)
     g.marchesa_due.push((p, cd, owner));
     crate::glog!(g, "    Marchesa: {} returns at the beginning of the next end step", g.db.get(cd).name);
     Ok(())
@@ -74,13 +73,8 @@ pub fn marchesa_return(g: &mut Game) -> Res {
         if g.over || !g.player(p).alive {
             continue;
         }
-        let is_cmd = cd == g.player(owner).cmd;
-        if is_cmd {
-            if !g.player(owner).cmd_in_zone {
-                continue; // she went to the graveyard, not the command zone
-            }
-            g.player_mut(owner).cmd_in_zone = false;
-        } else if !remove_card(&mut g.player_mut(owner).gy, cd) {
+        let is_cmd = g.player(owner).is_commander(cd);
+        if g.player(owner).cmd_zone_of(cd) || !remove_card(&mut g.player_mut(owner).gy, cd) {
             continue; // exiled, reanimated or returned by something else meanwhile
         }
         let m = enter(g, p, cd, Enter { orig: Some(owner), ..Enter::default() })?;

@@ -467,6 +467,9 @@ fn bmc(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.perm(src).owner != p || !trigger_window(g, p, Some(src), "choose modes", None)? {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        return bmc_person(g, p); // a person chooses the modes
+    }
     add_treasure(g, p, 1)?;
     lose_life(g, p, 1, Some(p), "other", None)?;
     if g.player(p).life > 15 {
@@ -474,6 +477,36 @@ fn bmc(g: &mut Game, src: Src, p: PlayerId) -> Res {
         lose_life(g, p, 2, Some(p), "other", None)?;
     }
     if g.player(p).life > 20 {
+        make_tokens(g, p, Tokens { tgh: Some(2), color: Some(Colors::NONE), ..Tokens::new(1, 3) })?;
+        lose_life(g, p, 3, Some(p), "other", None)?;
+    }
+    Ok(())
+}
+
+/// Black Market Connections for a person: "choose one or more" of its three modes (the first is asked for with no way
+/// out, the others are each a yes or no), carried out in the printed order
+fn bmc_person(g: &mut Game, p: PlayerId) -> Res {
+    const MODES: [&str; 3] = [
+        "Sell Contraband: create a Treasure, lose 1 life",
+        "Buy Information: draw a card, lose 2 life",
+        "Hire a Mercenary: create a 3/2 colorless Shapeshifter with changeling, lose 3 life",
+    ];
+    let labels: Vec<String> = MODES.iter().map(|m| m.to_string()).collect();
+    let first = choices::choose_one(g, p, "choose", "Black Market Connections: choose a mode", &labels)?;
+    let mut on = [false; 3];
+    on[first] = true;
+    for k in (0..3).filter(|&k| k != first) {
+        on[k] = choices::yes_no(g, p, &format!("Black Market Connections: also choose {}?", MODES[k]))?;
+    }
+    if on[0] {
+        add_treasure(g, p, 1)?;
+        lose_life(g, p, 1, Some(p), "other", None)?;
+    }
+    if on[1] {
+        draw(g, p, 1, false)?;
+        lose_life(g, p, 2, Some(p), "other", None)?;
+    }
+    if on[2] {
         make_tokens(g, p, Tokens { tgh: Some(2), color: Some(Colors::NONE), ..Tokens::new(1, 3) })?;
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
