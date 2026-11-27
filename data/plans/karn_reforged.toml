@@ -43,3 +43,9 @@ score = 95
 cards = ["The One Ring"]
 when = ["turn<=3"]
 score = 80
+
+# The deck's plan is equipment on Karn: the AI equips the commander first. PROVISIONAL: the utility is Cloud's equip value, not
+# tuned by any sim (the worker measured the default at 1.9, a Sword scoring about 2 higher).
+[equip]
+holder = "commander"
+utility = 4.5

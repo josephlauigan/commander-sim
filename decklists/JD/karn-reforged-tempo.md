@@ -6,7 +6,7 @@ ability cost: equip, Mystic Forge, Skullclamp, land abilities and Rings of Brigh
 him on turn 2 or 3 with fast mana, then turn each later artifact into more mana: a Sword or a Clamp ramps like a rock, so
 the plan is to cast cheap artifacts, equip, and end the game with a hexproof or unblockable Karn, with Wurmcoil Engine,
 Blightsteel Colossus and the planeswalkers behind him. Mana Crypt and Jeweled Lotus (the turn-1 Karn line) are banned in
-Commander, so the fastest start is turn 2. The deck is colourless, so All Is Dust and the Ugin sweepers hit only the
+Commander, so the fastest start is turn 2. The deck is colourless, so All Is Dust, Ugin, the Spirit Dragon's -X and Ugin, the Ineffable's -3 hit only the
 opponents' coloured permanents. It is weak to artifact removal that exiles or destroys everything (Vandalblast, Bane of
 Progress, Austere Command), to Collector Ouphe, Null Rod and Stony Silence, to a counterspell on Karn when he is cast, and
 to chump blockers when Karn has no evasion. **No sim has measured this list; every number below is a count from the list or
@@ -32,8 +32,9 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 - The mana comes at upkeep and lasts the turn: with six artifacts that is {C}{C}{C}{C}{C}{C} for artifact spells and
   abilities, on top of your lands. The six nonartifact cards in the deck (five planeswalkers and All Is Dust) need lands,
   Sol Ring or other rocks, not Karn's mana. Mishra's Workshop pays for artifact spells only, so it also can't cast them.
-- **Fast starts.** Turn 2 Karn from Sol Ring or Mox Diamond plus Ancient Tomb, Mana Vault, Grim Monolith, Mox Opal,
-  Lotus Petal or Mishra's Workshop. A hand with Sol Ring and any two of those casts him.
+- **Fast starts.** Turn 2 Karn needs {5}: Sol Ring plus Ancient Tomb, Mana Vault, Grim Monolith, Lotus Petal or
+  Mishra's Workshop, or Mox Diamond plus Mana Vault, Grim Monolith or Mishra's Workshop. Mox Opal needs three artifacts,
+  so it is not a turn-2 piece.
 - **If he is removed.** Command Beacon ({T}, sacrifice) puts him into your hand from the command zone, so he is cast
   from hand without commander tax (from the command zone the recasts cost {7}, then {9}). Swiftfoot Boots (hexproof), Lightning Greaves (shroud and haste) and Mithril Coat (indestructible) keep him
   alive; Champion's Helm gives hexproof for equip {1} because he is legendary, and Hammer of Nazahn gives indestructible.
@@ -44,7 +45,7 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 1. **Fast mana (15 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
    Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone and Solemn
    Simulacrum. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the Monoliths, and
-   Unwinding Clock untaps all artifacts during an opponent's untap step. *Chrome Mox, Mox Amber, Arcane Signet and
+   Unwinding Clock untaps the artifacts you control during an opponent's untap step. *Chrome Mox, Mox Amber, Arcane Signet and
    Commander's Sphere are not in the list: they cannot make mana with a colourless commander.*
 2. **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry
    Inspector, Retrofitter Foundry and Wayfarer's Bauble raise Karn's count for little, and Walking Ballista, Hangarback
@@ -62,8 +63,9 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
    Weakstone (-5/-5 or draw two, and it is an artifact that Karn's mana pays for), Winter Orb (only lands stop untapping:
    Karn's mana and the rocks ignore it), Defense Grid and Unwinding Clock.
 7. **Late engines (4) and enablers (4).** Mycosynth Lattice (every permanent becomes an artifact, so Karn's upkeep mana
-   counts every permanent on the table and his size is the greatest mana value of any permanent; it also makes everything
-   colourless, which turns off All Is Dust and both Ugin sweepers, so don't count them live with it out), Platinum Angel, Cityscape Leveler, Portal to Phyrexia,
+   counts every permanent you control and his size is the greatest mana value among your permanents; it also makes everything
+   colourless, which turns off All Is Dust and Ugin, the Spirit Dragon's -X, so don't count them live with it out; with Karn,
+   the Great Creator it locks the opponents' lands, see below), Platinum Angel, Cityscape Leveler, Portal to Phyrexia,
    Aetherflux Reservoir, Hammer of Nazahn, Rings of Brighthearth and Steel Overseer.
 
 ### How the deck wins
@@ -72,9 +74,11 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
    he needs 21 commander damage: four hits as a 5/5, and fewer as he grows (Blightsteel makes him 12/12) or carries a
    Sword or Batterskull.
 2. **Basalt Monolith + Rings of Brighthearth.** With {5} available, Basalt Monolith's untap copied by Rings of Brighthearth
-   makes {C} each loop; Walking Ballista (or Staff of Domination, or Mycosynth Lattice with an artifact outlet) ends the
+   makes {C} each loop (it needs {2} spare and an untapped Monolith); Walking Ballista (or Staff of Domination) ends the
    game from that mana. Karn's upkeep mana pays for it.
-3. **Wurmcoil, Blightsteel, Portal and the Ugins** close when the commander plan is stopped.
+3. **Karn, the Great Creator + Mycosynth Lattice.** Every opposing permanent is an artifact and its activated abilities can't
+   be activated, so the opponents' lands stop making mana.
+4. **Wurmcoil, Blightsteel, Portal and the Ugins** close when the commander plan is stopped.
 
 ### Game plan
 
@@ -99,10 +103,12 @@ Walker or Ballista) and a land. Mulligan: only lands with no artifact; only five
 
 26 lands: Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant,
 Urza's Tower, Strip Mine, Wasteland, Mutavault, Inventors' Fair, Rogue's Passage, War Room, Bonders' Enclave, Buried Ruin
-and ten Wastes. The three Urza lands make {C}{C}{C} together and Urza's Saga fetches a zero- or one-mana artifact (Sol Ring,
-Mox Opal, Lotus Petal, Mox Diamond, Ornithopter, Mishra's Bauble, Walking Ballista, Voltaic Key, Wayfarer's Bauble). With
+and ten Wastes. The three Urza lands make {C}{C}{C} together and Urza's Saga fetches an artifact with mana cost {0} or {1} (Sol Ring,
+Mana Vault, Mox Opal, Lotus Petal, Mox Diamond, Ornithopter, Mishra's Bauble, Voltaic Key, Wayfarer's Bauble, Skullclamp,
+Shadowspear, Sensei's Divining Top, Expedition Map, Hope of Ghirapur, Retrofitter Foundry; not Walking Ballista, which would enter
+with no counters and die). With
 the fifteen mana artifacts, that is 41 mana sources before Karn. War Room draws for {3} and no life, because Karn has no
-colours. Bonders' Enclave draws when you control a creature with power 4 or more (Karn is at least 5/5).
+colours. Bonders' Enclave draws for {3} and {T} when you control a creature with power 4 or more (Karn is at least 5/5).
 
 ## Bracket and Rule 0
 
@@ -114,9 +120,10 @@ Disclose before the game:
 
 - **The six Game Changers** above.
 - **Infinite line:** Basalt Monolith with Rings of Brighthearth, ending in Walking Ballista.
+- **Lock:** Karn, the Great Creator with Mycosynth Lattice (the opponents' lands can't be activated).
 - **Land destruction and stax:** Strip Mine, Wasteland and Winter Orb.
-- **Tutors:** Urza's Saga (a zero- or one-mana artifact) and Expedition Map (a land).
-- **Fast mana:** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond and Ancient Tomb.
+- **Tutors:** Urza's Saga (an artifact with mana cost {0} or {1}), Expedition Map (a land) and Karn, the Great Creator's -2 (an artifact from exile).
+- **Fast mana:** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Ancient Tomb and Mishra's Workshop.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 

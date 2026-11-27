@@ -26,7 +26,7 @@ against the beatdown; whether that is enough is the first thing the baseline mus
 Nothing yet.
 
 ## Limits and open items
-- Wasteland and Umezawa's Jitte had no engine record when the deck was registered; they are modelled on branch `karn-reforged-model`.
+- Wasteland and Umezawa's Jitte are modelled in `impls/kr_model.rs`. Jitte limits (none can matter at t4-t5 per the Opus review, JD to accept): one blocker per attacker (engine-wide), no trigger for Pariah-redirected damage, Gisela's halving not applied, and the counters are added at once instead of by a stack trigger (the opponent gets no response, lifelink comes after). The AI spends Jitte counters only after blocks and in its own main phase, never in response to removal or between first-strike and regular damage.
 - Aetherflux Reservoir and Steel Overseer have no shared plan with the rest of the list (Opus review); keep them only if the
   baseline shows them cast and useful.
 - Winter Orb is asymmetric here (Karn's mana and the rocks ignore it) but chokes our own Tron lands and Workshop; keep it only with evidence.
