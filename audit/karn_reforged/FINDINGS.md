@@ -38,7 +38,7 @@ Outputs: `/tmp/handoff/kr-sims/` (`pool-all.txt`, `goldfish.txt`). All 100 cards
 | Opponents it eliminates per game | 0.48 (combat 61%, commander damage 25%) | 0.53 (combat 58%, commander damage 31%) |
 | Main killers | Krenko combat 12.4%, Edgar Markov combat 10.5%, Chulane combo 10.1%, Yuriko 8.3% | Kinnan combo 16.3%, Urza combo 15.1%, Zur combo 9.9%, Miirym 9.1% |
 
-Goldfish (three inert seats): median kill turn 10.0 (mean 9.8); won by turn 7 only 9.3% of games; 41% of kills are commander damage; Karn
+Goldfish (three inert seats): median kill turn 10.0 (mean 9.8); won by turn 7 in only 9.1% of games (by turn 8, 33.0%); 41% of kills are commander damage; Karn
 cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; the plan ("ready") is reached in 13.9% of games.
 
 ### Why (first reading, not yet confirmed by a trace)
