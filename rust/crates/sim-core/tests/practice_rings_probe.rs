@@ -435,11 +435,7 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
-    (
-        "sheoldred: Bolas's Citadel #0",
-        "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
-    ),
-    ("sheoldred: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
+    ("marchesa: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
 ];
 
 /// both boards: a key is bad if either board shows it unanswered, offered if either board offers it

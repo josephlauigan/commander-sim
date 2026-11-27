@@ -201,6 +201,11 @@ fn forced_land(g: &Game, l: PermId) -> Option<(String, Opt)> {
     Some(match &*g.db.get(g.perm(l).card()).name {
         "Command Beacon" => forced("{T}, sacrifice: put your commander into your hand", legends::beacon_go, n),
         "Karn's Bastion" => forced("{4}, {T}: proliferate", lands::bastion_go, n),
+        "Castle Locthwain" => forced(
+            "{1}{B}{B}, {T}: draw a card, then lose life equal to the cards in your hand",
+            lands::locthwain_go,
+            n,
+        ),
         "Geier Reach Sanitarium" => {
             forced("{2}, {T}: each player draws a card, then discards a card", sheoldred::geier_go, n)
         }
