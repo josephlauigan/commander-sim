@@ -4448,8 +4448,8 @@
       },
       "deck": "sheoldred",
       "events": 79,
-      "game_hash": "6ec32a56c825ccac",
-      "hash": "9edecb6d72413eab",
+      "game_hash": "c6e8100349907db9",
+      "hash": "fd59de0714b4ac0d",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
