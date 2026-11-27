@@ -228,7 +228,10 @@ fn a_game_through_the_routes() {
     let r = rig("game", false);
     let p = r.h.port;
     let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "nope", "tier": "t1"})));
-    assert_eq!((st, b["error"].as_str()), (400, Some("deck: one of sheoldred, arzakon, urdragon, karn_gilded")));
+    assert_eq!(
+        (st, b["error"].as_str()),
+        (400, Some("deck: one of sheoldred, marchesa, arzakon, urdragon, karn_gilded"))
+    );
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "sheoldred", "tier": "t9"}))).2["error"],
         "tier: one of t0, t1, t2, t3, t4, t5, t6"
@@ -421,7 +424,10 @@ fn lobby_and_join_with_lan() {
         join("host", &code, "karn_gilded")["error"],
         "This browser is the host's: join from the other computer."
     );
-    assert_eq!(join("guest", &code, "bogus")["error"], "deck: one of sheoldred, arzakon, urdragon, karn_gilded");
+    assert_eq!(
+        join("guest", &code, "bogus")["error"],
+        "deck: one of sheoldred, marchesa, arzakon, urdragon, karn_gilded"
+    );
     assert_eq!(join("guest", &code, "karn_gilded")["ok"], true);
     assert_eq!(join("guest", &code, "karn_gilded")["error"], "There is no game waiting for a second player.");
     let (_, _, s) = call(p, "GET", "/api/state", Some("guest"), None);
