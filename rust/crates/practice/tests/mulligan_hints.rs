@@ -322,7 +322,7 @@ fn karn_gilded_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["arzakon", "karn_gilded", "sheoldred", "urdragon", "kraum-tymna-blue-breach-midrange"] {
+    for deck in ["arzakon", "karn_gilded", "sheoldred", "marchesa", "urdragon", "kraum-tymna-blue-breach-midrange"] {
         let others = ["sheoldred", "urdragon", "arzakon", "karn_gilded"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
