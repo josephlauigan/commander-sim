@@ -41,7 +41,7 @@ Outputs: `/tmp/handoff/kr-sims/` (`pool-all.txt`, `goldfish.txt`). All 100 cards
 Goldfish (three inert seats): median kill turn 10.0 (mean 9.8); won by turn 7 in only 9.1% of games (by turn 8, 33.0%); 41% of kills are commander damage; Karn
 cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; the plan ("ready") is reached in 13.9% of games.
 
-### Why (first reading, not yet confirmed by a trace)
+### Why (first reading; the Opus diagnosis of 2026-11-27, `/tmp/handoff/kr-opus-diag.md`, is under it)
 - **It is not a tempo deck in the sim.** Karn lands on turn 4 at the median, not turn 2-3, and the goldfish kill is turn 10.
 - **Three cards are never cast by the sim and are dead in these numbers:** Sword of Feast and Famine (tag `sword`, but never offered as a play:
   payable in 980 goldfish turns), Winter Orb and Unwinding Clock (no tags: they come from Scryfall with no ability the AI plays). The
@@ -60,3 +60,17 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
   baseline shows them cast and useful.
 - Winter Orb is asymmetric here (Karn's mana and the rocks ignore it) but chokes our own Tron lands and Workshop; keep it only with evidence.
 - Ownership: every card is recorded as `proxy`; JD has not marked which he owns.
+
+### Opus diagnosis (2026-11-27; a rough mana model and six goldfish traces, not a paired test)
+- **Karn on turn 2-3 is rare for this list:** a rough Monte Carlo of the mana puts Karn by T3 at about 24% and by T4 at about 41% (the sim does
+  better, 56% by T4, T2 not reachable in most games). Causes: 26 lands, rocks that lose mana the turn they are cast (Coalition Relic, Worn Powerstone,
+  Thran Dynamo, the 2-mana rocks), and 15 nonland cards at mana value 6 or more. Karn's cast priority is not a cause (he is offered at 85 and picked 81-100% of the time when castable).
+- **AI sequencing cost three turns in 2 of 6 goldfish traces:** Mana Vault spent on Mazemind Tome instead of held for Karn, and Tezzeret's -3 fetching
+  Walking Ballista (the plan's `key_cards` 70) with no mana left instead of Sol Ring.
+- **The three never-cast cards** have a derived cast priority of 0 (worth 0.05 or less): Sword of Feast and Famine's `sword` tag is never read by
+  `ai/values.rs from_tags`; Winter Orb and Unwinding Clock have no tags. The engine models all three effects; only the AI's value is missing.
+- **Baseline numbers that mislead:** "Plan:" is empty and "online 2.2-2.4%" because `sim-cli` report.rs has no plan milestone for this deck (it counts only
+  the combo line); Fellwar Stone makes {C} in goldfish with no opposing lands.
+- Possible tickets: the t5 Urza opponent has no plan file, so its Winter Orb, Static Orb, Back to Basics and Unwinding Clock may never be cast (unconfirmed);
+  Karn, Gilded Guardian may share the Sword tag gap (unconfirmed).
+
