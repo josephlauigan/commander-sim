@@ -970,9 +970,9 @@ pub fn resolve_blocks(
             let (ap_raw, ap) = (ap, ap.saturating_mul(fs));
             let tr =
                 g.player(p).trample || has(g, p, Tag::Uprising) || card_tag(g, a, Tag::Trample) || kw(g, a, "trample");
-            // Umezawa's Jitte: the damage steps in which `a` dealt damage to its blocker (that damage step is one trigger,
-            // so trample damage to the player in the same step adds none)
-            let mut jit_na = 0u8;
+            // Umezawa's Jitte: the damage steps already counted for `a` (its damage to a blocker): one damage step is
+            // one trigger, however many recipients (trample into the player, a planeswalker or a battle) it has
+            let mut jit_cov = [false; 2];
             let mut dmg = match blocker_of(&assign, a) {
                 None => ap,
                 Some(b) if !(g.perm(b).on_bf && g.perm(b).owner == d) => {
@@ -1015,7 +1015,7 @@ pub fn resolve_blocks(
                     if b_dies && crate::impls::t0_captain::sac_creature(g, d, b, ap) {
                         b_dies = false; // Heroic Sacrifice: the damage goes to the chosen creature
                     }
-                    jit_na = crate::impls::kr_model::jitte_pair(g, a, b)?; // Umezawa's Jitte, before anything dies
+                    jit_cov = crate::impls::kr_model::jitte_pair(g, a, b)?; // Umezawa's Jitte, before anything dies
                     let (fa, fb) = (first_strike(g, a), first_strike(g, b));
                     // --- Tiers 4/5 (krenko): Sting, the Glinting Dagger (blocking or blocked by a Goblin or Orc)
                     let sting = crate::impls::t45_krenko::sting_first_strike;
@@ -1165,7 +1165,12 @@ pub fn resolve_blocks(
                 *tot = tot.saturating_add(dmg);
                 crate::glog!(g, "    {} deals {} to {} (loyalty {})", g.perm(a).name, dmg, g.perm(w).name, l);
                 carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // damage to a planeswalker
-                crate::impls::kr_model::jitte_hits(g, a, if twice_ok && dmg % 2 == 0 { 2 } else { 1 })?; // Umezawa's Jitte
+                crate::impls::kr_model::jitte_steps(
+                    g,
+                    a,
+                    &mut jit_cov,
+                    &crate::impls::kr_model::damage_steps(g, a, twice_ok && dmg % 2 == 0),
+                )?; // Umezawa's Jitte
                 if l <= 0 {
                     leave(g, w)?;
                     to_zone_card(g, w, Zone::Gy);
@@ -1182,7 +1187,12 @@ pub fn resolve_blocks(
             {
                 crate::impls::card_models3::battle_damage(g, p, a, w, dmg)?; // --- card-models-3: a battle
                 carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // damage to a battle
-                crate::impls::kr_model::jitte_hits(g, a, if twice_ok && dmg % 2 == 0 { 2 } else { 1 })?; // Umezawa's Jitte
+                crate::impls::kr_model::jitte_steps(
+                    g,
+                    a,
+                    &mut jit_cov,
+                    &crate::impls::kr_model::damage_steps(g, a, twice_ok && dmg % 2 == 0),
+                )?; // Umezawa's Jitte
                 dmg = 0;
             }
             if dmg > 0 && crate::human::is_human(g, p) && to_walker.iter().any(|x| x.0 == a) {
@@ -1241,9 +1251,15 @@ pub fn resolve_blocks(
                     };
                     conn.push(a);
                     *tot = tot.saturating_add(dmg);
-                    if jit_na == 0 {
-                        crate::impls::kr_model::jitte_hits(g, a, 1)?; // Umezawa's Jitte: combat damage to the player
-                    }
+                    // Umezawa's Jitte: combat damage to the player. A blocked double striker's damage past its blocker is
+                    // dealt in both steps (this loop runs once for it)
+                    let blocked = blocker_of(&assign, a).is_some();
+                    let steps = if hits == 2 {
+                        vec![step as usize]
+                    } else {
+                        crate::impls::kr_model::damage_steps(g, a, blocked)
+                    };
+                    crate::impls::kr_model::jitte_steps(g, a, &mut jit_cov, &steps)?;
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // toxic: compiled, Mite tokens, granted by Skrelv
                     if g.dsl_on {
                         let fired = crate::dsl::Fired {

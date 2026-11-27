@@ -140,17 +140,18 @@ fn a_person_picks_a_nonbasic_land_and_basics_are_not_offered() {
 }
 
 #[test]
-fn a_person_with_only_basics_to_target_is_offered_nothing() {
+fn a_person_with_only_basics_to_target_may_only_choose_wasteland_itself() {
     let mut g = tbl();
-    lands(&mut g, P0, WASTELAND, 1, false);
+    let w = lands(&mut g, P0, WASTELAND, 1, false)[0];
     lands(&mut g, P1, "Island", 3, false);
-    let h = main(&mut g, P0, vec![act(json!({"do": "use", "land": 0}))]);
-    assert!(
-        h.told().iter().any(|t| t.1.contains("no ability to activate")),
-        "nothing to destroy, nothing to activate: {:?}",
-        h.told()
-    );
-    assert!(g.player(P0).lands.len() == 1, "Wasteland stays");
+    let only_itself: F = Box::new(|r| {
+        assert_eq!(r.choices.len(), 2, "Wasteland itself (nonbasic) and cancel: {:?}", r.choices);
+        assert!(r.choices[0].contains("Wasteland"), "{:?}", r.choices);
+        Answer::Pick(0)
+    });
+    main(&mut g, P0, vec![act(json!({"do": "use", "land": 0})), pick(0), only_itself]);
+    assert!(!g.player(P0).lands.contains(&w), "sacrificed as the cost; its ability then has no target left");
+    assert_eq!(g.player(P1).lands.len(), 3, "no basic was touched");
 }
 
 #[test]

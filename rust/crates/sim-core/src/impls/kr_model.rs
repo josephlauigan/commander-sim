@@ -67,13 +67,22 @@ fn pack(l: PermId, t: u32) -> i64 {
     ((t as i64) << 32) | l.0 as i64
 }
 
-/// every nonbasic land on the battlefield except `except`, with its controller
-fn nonbasic_lands(g: &Game, except: PermId) -> Vec<(PlayerId, PermId)> {
+/// every nonbasic land on the battlefield that Wasteland `wl` of `p` can target, with its controller: Wasteland itself
+/// is one (it is nonbasic, and a target is chosen before the cost is paid), an opposing land with hexproof or shroud,
+/// or one that protection stops, is not
+fn nonbasic_lands(g: &Game, p: PlayerId, wl: PermId) -> Vec<(PlayerId, PermId)> {
     g.players
         .iter()
         .filter(|q| q.alive)
         .flat_map(|q| q.lands.iter().map(move |&x| (q.id, x)))
-        .filter(|&(_, x)| x != except && !g.db.get(g.perm(x).card()).basic)
+        .filter(|&(q, x)| {
+            !g.db.get(g.perm(x).card()).basic
+                && if q == p {
+                    !untargetable_by_its_controller(g, x, colors_of(g, wl))
+                } else {
+                    !(untargetable(g, x) || protected_from(g, x, colors_of(g, wl)))
+                }
+        })
         .collect()
 }
 
@@ -88,7 +97,7 @@ fn land_label(g: &Game, p: PlayerId, q: PlayerId, x: PermId) -> String {
 /// the land the AI destroys: the key nonbasic land (or one making two or more mana) of the most threatening opponent
 /// that destruction can take
 fn wasteland_target(g: &Game, p: PlayerId, wl: PermId) -> Option<(PlayerId, PermId)> {
-    let key: Vec<(PlayerId, PermId)> = nonbasic_lands(g, wl)
+    let key: Vec<(PlayerId, PermId)> = nonbasic_lands(g, p, wl)
         .into_iter()
         .filter(|&(q, x)| {
             q != p
@@ -108,7 +117,7 @@ fn wasteland_options(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) 
         return Ok(vec![]);
     }
     if human(g, p) {
-        if nonbasic_lands(g, l).is_empty() {
+        if nonbasic_lands(g, p, l).is_empty() {
             return Ok(vec![]);
         }
         return Ok(vec![Opt {
@@ -134,7 +143,7 @@ fn wasteland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let x = if t == ASK {
-        let cands = nonbasic_lands(g, l);
+        let cands = nonbasic_lands(g, p, l);
         let labels: Vec<String> = cands.iter().map(|&(q, x)| land_label(g, p, q, x)).collect();
         let Some(k) = ask(g, p, "Wasteland: destroy which nonbasic land?", &labels)? else { return Ok(false) };
         cands[k].1
@@ -142,8 +151,8 @@ fn wasteland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         PermId(t)
     };
     let q = owner(g, x);
-    if !g.player(q).lands.contains(&x) || g.db.get(g.perm(x).card()).basic {
-        return Ok(false); // gone, or not a nonbasic land
+    if !nonbasic_lands(g, p, l).contains(&(q, x)) {
+        return Ok(false); // gone, not a nonbasic land, or one it can't target
     }
     let cd = g.perm(l).real_card();
     // the cost: {T} (it was untapped) and sacrifice it
@@ -154,7 +163,7 @@ fn wasteland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         let (mut q, mut x) = (q, x);
         if is_copy && human(g, p) {
             // "you may choose a new target for the copy" (a person's Rings of Brighthearth)
-            let cands = nonbasic_lands(g, l);
+            let cands = nonbasic_lands(g, p, l);
             let labels: Vec<String> = cands.iter().map(|&(o, y)| land_label(g, p, o, y)).collect();
             let prompt = "The copy of Wasteland's ability: destroy which nonbasic land?";
             if let Some(k) =
@@ -211,29 +220,59 @@ pub fn jitte_hits(g: &mut Game, c: PermId, steps: u8) -> Res {
     Ok(())
 }
 
-/// In how many of the two combat damage steps (first strike, regular) each creature of a blocked pair deals combat
-/// damage to the other: (a, b). `*_hits`: its damage is more than 0 and not prevented; `*_kills`: it destroys the other
-/// (lethal damage or deathtouch, not indestructible); `*_fs`, `*_ds`: first strike (a double striker has it too) and
-/// double strike. A creature that dies in the first step deals nothing in the second; a creature whose foe died in the
-/// first step has nothing left to damage.
-pub fn pair_steps(
+/// In which of the two combat damage steps (first strike, regular) each creature of a blocked pair deals combat
+/// damage to the other: (a's steps, b's steps). `*_hits`: its damage is more than 0 and not prevented; `*_kills`: it
+/// destroys the other (lethal damage or deathtouch, not indestructible); `*_fs`, `*_ds`: first strike (a double striker
+/// has it too) and double strike. A creature that dies in the first step deals nothing in the second; a creature whose
+/// foe died in the first step has nothing left to damage.
+pub fn pair_step_flags(
     (a_hits, a_kills, a_fs, a_ds): (bool, bool, bool, bool),
     (b_hits, b_kills, b_fs, b_ds): (bool, bool, bool, bool),
-) -> (u8, u8) {
+) -> ([bool; 2], [bool; 2]) {
     let a_alive = !(b_fs && b_hits && b_kills);
     let b_alive = !(a_fs && a_hits && a_kills);
-    let first = |hits: bool, fs: bool| u8::from(hits && fs);
-    let second = |hits: bool, fs: bool, ds: bool| u8::from(hits && (!fs || ds) && a_alive && b_alive);
-    (first(a_hits, a_fs) + second(a_hits, a_fs, a_ds), first(b_hits, b_fs) + second(b_hits, b_fs, b_ds))
+    let second = |hits: bool, fs: bool, ds: bool| hits && (!fs || ds) && a_alive && b_alive;
+    ([a_hits && a_fs, second(a_hits, a_fs, a_ds)], [b_hits && b_fs, second(b_hits, b_fs, b_ds)])
+}
+
+/// `pair_step_flags` as counts: in how many damage steps each creature of the pair deals damage
+pub fn pair_steps(a: (bool, bool, bool, bool), b: (bool, bool, bool, bool)) -> (u8, u8) {
+    let (fa, fb) = pair_step_flags(a, b);
+    (fa.iter().filter(|&&x| x).count() as u8, fb.iter().filter(|&&x| x).count() as u8)
+}
+
+/// the damage steps (0 = first strike, 1 = regular) in which `a` deals its damage to one recipient: both for a double
+/// striker whose damage is dealt twice (`twice`), the first-strike step for a first striker, else the regular step
+pub fn damage_steps(g: &Game, a: PermId, twice: bool) -> Vec<usize> {
+    if twice && double_strike(g, a) {
+        vec![0, 1]
+    } else if first_strike(g, a) && !double_strike(g, a) {
+        vec![0]
+    } else {
+        vec![1]
+    }
+}
+
+/// Jitte triggers of creature `c` for the damage steps `steps` that the damage steps already counted in `cover` do not
+/// include (one damage step is one trigger, however many recipients it has); marks them counted
+pub fn jitte_steps(g: &mut Game, c: PermId, cover: &mut [bool; 2], steps: &[usize]) -> Res {
+    for &s in steps {
+        if !cover[s] {
+            cover[s] = true;
+            jitte_hits(g, c, 1)?;
+        }
+    }
+    Ok(())
 }
 
 /// Attacker `a` and its blocker `b` deal combat damage to each other: Umezawa's Jitte on either
 /// triggers once for each damage step in which its creature dealt damage. Called before either creature dies, so a
-/// creature that dies in the damage still counts. Returns how many damage steps `a` dealt damage to `b` in (the caller
-/// counts `a`'s trample damage to the player only when this is 0: one damage step is one trigger).
-pub fn jitte_pair(g: &mut Game, a: PermId, b: PermId) -> Res<u8> {
+/// creature that dies in the damage still counts. Returns the damage steps `a` dealt damage to `b` in (the caller counts
+/// `a`'s trample damage to the player, a planeswalker or a battle only in the other steps: one damage step is one
+/// trigger).
+pub fn jitte_pair(g: &mut Game, a: PermId, b: PermId) -> Res<[bool; 2]> {
     if jittes_on(g, a).is_empty() && jittes_on(g, b).is_empty() {
-        return Ok(0);
+        return Ok([false; 2]);
     }
     let t0 = crate::impls::t0_giada::combat_proof;
     let fogged = g.fog == Some(g.turn_stamp()) && !g.unpreventable();
@@ -255,13 +294,13 @@ pub fn jitte_pair(g: &mut Game, a: PermId, b: PermId) -> Res<u8> {
         && !crate::cardcode::prot_vs(g, a, b);
     let a_kills = a_hits && (pa >= etgh(g, b) || g.perm(a).dt) && !indestructible(g, b);
     let b_kills = b_hits && (pb >= etgh(g, a) || g.perm(b).dt) && !indestructible(g, a);
-    let (na, nb) = pair_steps(
+    let (fa, fb) = pair_step_flags(
         (a_hits, a_kills, first_strike(g, a), double_strike(g, a)),
         (b_hits, b_kills, first_strike(g, b), double_strike(g, b)),
     );
-    jitte_hits(g, a, na)?;
-    jitte_hits(g, b, nb)?;
-    Ok(na)
+    jitte_hits(g, a, fa.iter().filter(|&&x| x).count() as u8)?;
+    jitte_hits(g, b, fb.iter().filter(|&&x| x).count() as u8)?;
+    Ok(fa)
 }
 
 /// is creature `t` a legal target of Jitte `src`'s -1/-1 (a creature on the battlefield that its controller's
