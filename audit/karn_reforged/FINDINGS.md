@@ -59,7 +59,8 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 - Aetherflux Reservoir and Steel Overseer have no shared plan with the rest of the list (Opus review); keep them only if the
   baseline shows them cast and useful.
 - Winter Orb and Defense Grid were cut on 2026-11-27 (see the last section; JD kept Unwinding Clock); the stax lines above describe the baseline list.
-- Ownership: every card is recorded as `proxy`; JD has not marked which he owns.
+- Spellbook: the fetch (2026-11-27, `data/spellbook/karn_reforged.json`) lists 6 included combos. Five are modelled or already covered by a line (Basalt Monolith + Rings of Brighthearth; Karn, the Great Creator + Mycosynth Lattice; Sensei's Divining Top + Mystic Forge with Foundry Inspector or Ugin, the Ineffable; Voltaic Key + Rings + Everflowing Chalice). One is not: **Karn, the Great Creator + Aetherflux Reservoir** (variant 4740-5089, infinite damage; it needs a way to give the Reservoir lifelink and a life total of at least 51). It is in `KNOWN_GAPS` in `rust/crates/sim-core/tests/spellbook.rs`, as the marchesa entries are. A line needs the loop in the combo catalogue (`impls/combos.rs`), which is engine work; 51 life is rare at 40 starting life. Ticket.
+- Ownership: every card is recorded as `proxy`; JD has not marked which he owns (JD will provide it).
 
 ### Opus diagnosis (2026-11-27; a rough mana model and six goldfish traces, not a paired test)
 - **Karn on turn 2-3 is rare for this list:** a rough Monte Carlo of the mana puts Karn by T3 at about 24% and by T4 at about 41% (the sim does

@@ -1,0 +1,2209 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-11-27",
+  "deck": "karn_reforged",
+  "commanders": [
+    "Karn, Legacy Reforged"
+  ],
+  "request_sha256": "cd21612fa3ee88304e67b98a7d481d6bea7d0578fd11cd036b86ee48f1991724",
+  "identity": "C",
+  "included": [
+    {
+      "id": "777-985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 60939
+    },
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 54861
+    },
+    {
+      "id": "985-2604-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23973
+    },
+    {
+      "id": "3263-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 23111
+    },
+    {
+      "id": "617-4235-4563",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Everflowing Chalice has 4 or more charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12219
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10085
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 68295,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "985-2146-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 39232,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "985-5078-5705",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 27434,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "985-4985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 25841,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "181-1571",
+      "cards": [
+        {
+          "name": "Cybermen Squadron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blightsteel Colossus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Blightsteel Colossus does not have summoning sickness. Opponents are unable to block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19309,
+      "missing": [
+        "Cybermen Squadron"
+      ]
+    },
+    {
+      "id": "2604-5078-5642",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Echoes of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16670,
+      "missing": [
+        "Echoes of Eternity"
+      ]
+    },
+    {
+      "id": "985-2510-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14177,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "578-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Metalworker does not have summoning sickness. You have at least three artifact cards in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12250,
+      "missing": [
+        "Metalworker"
+      ]
+    },
+    {
+      "id": "777-5078-5642",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Echoes of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10614,
+      "missing": [
+        "Echoes of Eternity"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10199,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "617-1766-4235-4547",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thran Dynamo",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10131,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "985-1594-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9337,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "578-617-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "2 or more artifacts in hand.\nMetalworker does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8897,
+      "missing": [
+        "Metalworker"
+      ]
+    },
+    {
+      "id": "2585-4235-4547",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7904,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "617-2364-4235-4547",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7514,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "661-1651-2645-4131",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5674,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "985-3375-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5287,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "617-1283-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5187,
+      "missing": [
+        "Chromatic Orrery"
+      ]
+    },
+    {
+      "id": "132-2645-5034",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5172,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "1571-3851",
+      "cards": [
+        {
+          "name": "Blightsteel Colossus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blade of Selves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Blade of Selves attached to Blightsteel Colossus.\nBlightsteel Colossus does not have summoning sickness.\nOpponents are unable to block and kill your creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4756,
+      "missing": [
+        "Blade of Selves"
+      ]
+    },
+    {
+      "id": "661-1651-1766-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thran Dynamo",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4545,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "661-1651-2364-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "\n",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4275,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 4075,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "617-4235-6893",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Eternity Elevator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "The Eternity Elevator has twenty or more charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4060,
+      "missing": [
+        "The Eternity Elevator"
+      ]
+    },
+    {
+      "id": "1651-2645-4131-4563",
+      "cards": [
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Everflowing Chalice has at least five charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3784,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "661-777-3685-4659",
+      "cards": [
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spine of Ish Sah",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 3603,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "132-2645-4131",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3349,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "661-1651-2585-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "\n",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3302,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "1978-4131-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3016,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "1766-1978-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thran Dynamo",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2829,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "132-1766-2645",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Thran Dynamo",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2183,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "1978-2364-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1877,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "1978-4563-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1777,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "132-2364-2645",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1754,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "1651-2585-2645-4563",
+      "cards": [
+        {
+          "name": "Clock of Omens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Everflowing Chalice has at least six charge counters on it.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1754,
+      "missing": [
+        "Clock of Omens"
+      ]
+    },
+    {
+      "id": "617-2776-4235",
+      "cards": [
+        {
+          "name": "Doubling Cube",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1727,
+      "missing": [
+        "Doubling Cube"
+      ]
+    },
+    {
+      "id": "661-2604-3685-4659",
+      "cards": [
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spine of Ish Sah",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sculpting Steel",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1698,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1571,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1978-2585-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1405,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "132-2585-2645",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1269,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "132-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Myr Welder lifelink.\nYour life total is at least 51.\nMyr Welder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1141,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "4241-4740",
+      "cards": [
+        {
+          "name": "Karn, Silver Golem",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 972,
+      "missing": [
+        "Karn, Silver Golem"
+      ]
+    },
+    {
+      "id": "186-4131-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartstone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 912,
+      "missing": [
+        "Heartstone"
+      ]
+    },
+    {
+      "id": "617-2593-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Cornucopia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 824,
+      "missing": [
+        "Astral Cornucopia"
+      ]
+    },
+    {
+      "id": "198-617-4235",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Empowered Autogenerator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Empowered Autogenerator has at least three charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 710,
+      "missing": [
+        "Empowered Autogenerator"
+      ]
+    },
+    {
+      "id": "132-2645-3436",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Worn Powerstone",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite colorless mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 693,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "3263-4246",
+      "cards": [
+        {
+          "name": "Null Rod",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Nobody can activate the abilites of any permanent on the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 474,
+      "missing": [
+        "Null Rod"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 320,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 302,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "985-2350-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 297,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "2636-3263-4787",
+      "cards": [
+        {
+          "name": "Kill Switch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unwinding Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control permanents that can tap for at least {2}.",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Kill Switch"
+      ]
+    },
+    {
+      "id": "3007-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Toymaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYou have at least one card in hand.\nToymaker does not have summoning sickness.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 232,
+      "missing": [
+        "Toymaker"
+      ]
+    },
+    {
+      "id": "617-4235-4306",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyx Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana artifacts you control can produce",
+        "Infinite mana among colors with which you have devotion"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to any color is at least four.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 197,
+      "missing": [
+        "Nyx Lotus"
+      ]
+    },
+    {
+      "id": "3911-4235-4563",
+      "cards": [
+        {
+          "name": "Galvanic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "At least six charge counters on Everflowing Chalice.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 165,
+      "missing": [
+        "Galvanic Key"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "1261-6717",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret, Cruel Captain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "617-1261",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    }
+  ]
+}

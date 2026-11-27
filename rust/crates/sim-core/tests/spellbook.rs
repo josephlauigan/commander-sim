@@ -45,6 +45,7 @@ const KNOWN_GAPS: &[(&str, &str)] = &[
     ("sisay-legends-toolbox", "527-2608-4499"), // Derevi, Empyrial Tactician + Emiel the Blessed + Selvala, Heart of the Wilds
     ("marchesa", "628-3693"), // Walking Ballista + Mikaeus, the Unhallowed (2026-11-26; audit/marchesa/FINDINGS.md)
     ("marchesa", "586-4050-5003"), // Priest of Gix + Nim Deathmantle + Phyrexian Altar (2026-11-26; audit/marchesa/FINDINGS.md)
+    ("karn_reforged", "4740-5089"), // Karn, the Great Creator + Aetherflux Reservoir (2026-11-27; audit/karn_reforged/FINDINGS.md)
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
