@@ -2,8 +2,8 @@
 
 The deck's living list of strengths and weaknesses and what was tested.
 
-**List:** `decklists/JD/karn-reforged-tempo.md`, registered 2026-11-26 (Karn, Legacy Reforged, colourless; 26 lands, 73 spells; six
-Game Changers, Bracket 4). **Tiers:** t4 and t5 (`data/my_decks.toml`, JD: Commander Bracket 4). Not simulated yet.
+**List:** `decklists/JD/karn-reforged-tempo.md`, registered 2026-11-26 (Karn, Legacy Reforged, colourless; since 2026-11-27 28 lands, 71 spells; six
+Game Changers, Bracket 4). **Tiers:** t4 and t5 (`data/my_decks.toml`, JD: Commander Bracket 4). Baseline and a re-run after the stax cut are under Tested.
 
 ## Plan (what the deck is meant to do)
 - **Engine:** fast mana and cheap artifacts put Karn down on turn 2-3; his upkeep mana ({C} per artifact, for artifact spells
@@ -17,7 +17,7 @@ Game Changers, Bracket 4). **Tiers:** t4 and t5 (`data/my_decks.toml`, JD: Comma
   Hedron Archive and Burnished Hart (too slow for a tempo deck).
 
 ## Strengths and weaknesses
-Not measured. The retired Karn deck (`audit/retired/karn/FINDINGS.md`, 2026-10, an older engine and list) lost to creature beatdown
+Not measured when written (the baseline is under Tested). The retired Karn deck (`audit/retired/karn/FINDINGS.md`, 2026-10, an older engine and list) lost to creature beatdown
 (eliminated in 77% of games against Tier 0), saw Karn removed 0.87 times a game, and cast its finishers in only 10-16% of games. This
 list adds Boots, Greaves, Mithril Coat and hexproof equipment against the removal, and Meteor Golem, Duplicant, Spine and the two Ugins
 against the beatdown; whether that is enough is the first thing the baseline must show.
@@ -38,7 +38,7 @@ Outputs: `/tmp/handoff/kr-sims/` (`pool-all.txt`, `goldfish.txt`). All 100 cards
 | Opponents it eliminates per game | 0.48 (combat 61%, commander damage 25%) | 0.53 (combat 58%, commander damage 31%) |
 | Main killers | Krenko combat 12.4%, Edgar Markov combat 10.5%, Chulane combo 10.1%, Yuriko 8.3% | Kinnan combo 16.3%, Urza combo 15.1%, Zur combo 9.9%, Miirym 9.1% |
 
-Goldfish (three inert seats): median kill turn 10.0 (mean 9.8); won by turn 7 in only 9.1% of games (by turn 8, 33.0%); 41% of kills are commander damage; Karn
+Goldfish (three inert seats): median kill turn 10.0 (mean 9.8); won by turn 7 in only 7.4% of games (by turn 8, 23.9%); 41% of kills are commander damage; Karn
 cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; the plan ("ready") is reached in 13.9% of games.
 
 ### Why (first reading; the Opus diagnosis of 2026-11-27, `/tmp/handoff/kr-opus-diag.md`, is under it)
@@ -76,9 +76,9 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 
 ## 2026-11-27: stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like")
 - **Out (job lost):** Winter Orb (a stax lock that only stops lands untapping; it was dead in the baseline sim and chokes the deck's own Urza lands and Workshop), Defense Grid (counter protection on the turn Karn lands; it taxes everyone's spells outside their own turn), Unwinding Clock (untaps our artifacts on opponents' turns; not a lock, cut for tempo on the Opus diagnosis, never cast in the baseline).
-- **In (job gained):** two Wastes (lands 26 -> 28; the Opus mana model puts Karn by turn 4 at about 45% instead of 41%, an estimate) and Hedron Archive (a {C}{C} rock that draws two later; an artifact for Karn's count; Full). Mana artifacts 15 -> 16.
+- **In (job gained):** two Wastes (lands 26 -> 28; the Opus mana model puts Karn by turn 4 at about 45% instead of 41%, an estimate) and Hedron Archive (a {C}{C} rock that draws two later; Full). It was cut in the 2026-11-26 list review as too slow for tempo and returns because it is an artifact for Karn's count and Karn's upkeep mana pays both its cast and its {2} draw ability; its effect is unmeasured (it is in neither card-report list in the new run). Mana artifacts 15 -> 16.
 - **Kept on purpose (JD):** Karn, the Great Creator and the Mycosynth Lattice lock; Strip Mine and Wasteland.
-- **Counts after (before):** lands 28 (26); mana artifacts 16 (15); disruption 0 (3); Game Changers 6 (6). Karn's protection now comes from The One Ring, Swiftfoot Boots, Lightning Greaves, Mithril Coat and Command Beacon.
+- **Counts after (before):** lands 28 (26); mana artifacts 16 (15); disruption 0 (3); Game Changers 6 (6). Nothing now protects Karn on the stack (Defense Grid was the only answer to a counterspell on him); once he is on the battlefield Swiftfoot Boots (hexproof), Lightning Greaves (shroud), Champion's Helm (hexproof), Whispersilk Cloak (shroud), Mithril Coat and Hammer of Nazahn (indestructible) protect him, and Command Beacon returns him to hand.
 - **Measured (same sims as the baseline: loose, look-ahead, 1,500 games per tier, seed 500000, `--analyze`; goldfish 1,000; two separate runs, not a paired test, one tier is about +/-1 point of noise):**
 
 | | before (t4 / t5) | after (t4 / t5) |
@@ -88,6 +88,6 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 | Karn resolves | 84.5% / 81.9% | 85.8% / 84.3% |
 | Karn resolved by T4 | 56% / 52% | 55% / 52% |
 | Goldfish median kill turn | 10 | 9 |
-| Goldfish won by T7 / T8 | 9.1% / 33.0% | 10.7% / 36.6% |
+| Goldfish won by T7 / T8 (cumulative) | 7.4% / 23.9% | 8.4% / 25.9% |
 
-  Reading: the cut cost nothing (all three were dead cards in the baseline) and the t4 gain is about 2 standard errors of the difference, so it is suggestive, not proven. t5 is flat to slightly lower (combo opponents still eliminate it in 41% of games). The two extra lands did not move Karn's timing (T4 55-56% / 52%): the mana ceiling is not the whole story, and the AI sequencing fixes (Mana Vault held for Karn, tutors fetching Sol Ring) are still unmeasured.
+  Reading: Winter Orb and Unwinding Clock were dead cards in the baseline (cast in 0-0.9% of games). Defense Grid was not: it was cast in 16.6% of t4 games (win rate when cast 24.1%, +5.8, correlation only), so its cut is a real loss of counter protection. The net is within noise: the t4 gain (+3.0) is about 2 standard errors of the difference, suggestive and not proven, and t5 (-1.3) is about 1 standard error; averaged over t4-t5 it is +0.85 with a 95% interval of about -1.2 to +2.9. So the data shows no measurable cost, and cannot show a gain or tell the three moves (the cuts, two Wastes, Hedron Archive) apart. A paired `--swap` package test would be needed for a confirmed number. Combo opponents (Kinnan, Urza, Zur) now eliminate it in about 43% of t5 games (41% before). The two extra lands did not move Karn's timing (resolved by T4: 56% -> 55% at t4, 52% -> 52% at t5), although the Opus mana model predicted 41% -> 45%: the mana ceiling is not the whole story, and the AI sequencing fixes (Mana Vault held for Karn, tutors fetching Sol Ring) are still unmeasured.

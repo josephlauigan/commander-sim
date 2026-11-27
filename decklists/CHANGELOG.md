@@ -150,7 +150,7 @@ Deck key `karn_reforged`, `decklists/JD/karn-reforged-tempo.md`. Tiers t4-t5. No
 ### Changes
 
 - **2026-11-26.** Registered (JD): a new Karn, Legacy Reforged tempo deck for Commander Bracket 4 (JD: "i want tempo. i can proxy any card"), built from the catalog's colourless cards. Started as a Cali Commander list; Mana Crypt, Jeweled Lotus and Sundering Titan were removed as Commander-banned, below-Full cards were swapped for Full ones except Wasteland and Umezawa's Jitte (modelled on branch `karn-reforged-model`), and an Opus list review cut Isochron Scepter, Academy Manufactor, Ratchet Bomb, Panharmonicon, Colossus Hammer, Hall of the Bandit Lord, Gilded Lotus, Hedron Archive and Burnished Hart and added Rings of Brighthearth, Rogue's Passage, Whispersilk Cloak, Hammer of Nazahn, Retrofitter Foundry, The Mightstone and Weakstone, Batterskull, War Room, Bonders' Enclave, Buried Ruin, Champion's Helm, Mazemind Tome, Defense Grid, Unwinding Clock and Scroll Rack. Not simulated.
-- **2026-11-27.** Stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like"): Winter Orb, Defense Grid and Unwinding Clock => two Wastes and Hedron Archive (lands 28, mana artifacts 16). Karn, the Great Creator and the Lattice lock, Strip Mine and Wasteland stay. Not simulated yet.
+- **2026-11-27.** Stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like"): Winter Orb, Defense Grid and Unwinding Clock => two Wastes and Hedron Archive (lands 28, mana artifacts 16). Karn, the Great Creator and the Lattice lock, Strip Mine and Wasteland stay. Re-run against the baseline (two separate runs, not a paired test): see `audit/karn_reforged/FINDINGS.md`.
 
 ## Kefka, Court Mage — Grixis Discard
 

@@ -5,7 +5,7 @@
 # Monolith + Rings of Brighthearth into Walking Ballista as the one infinite line. Karn's cast priority and his mana are CARD
 # CODE (karn_prio, search_bonus, impls/karn.rs): there is NO [commander] or [[prio]] row for Karn here, on purpose, because
 # the card-code priority decides (a plan row would override it).
-# PROVISIONAL: nothing here has been measured; no sim has run on this list. The keep rule and the tutor order are the
+# PROVISIONAL: the rows below have not been measured (the baseline is in audit/karn_reforged/FINDINGS.md). The keep rule and the tutor order are the
 # generic ones plus the rows below.
 deck = "karn_reforged"
 default = "plan"

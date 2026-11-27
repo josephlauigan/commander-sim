@@ -9,8 +9,7 @@ Blightsteel Colossus and the planeswalkers behind him. Mana Crypt and Jeweled Lo
 Commander, so the fastest start is turn 2. The deck is colourless, so All Is Dust, Ugin, the Spirit Dragon's -X and Ugin, the Ineffable's -3 hit only the
 opponents' coloured permanents. It is weak to artifact removal that exiles or destroys everything (Vandalblast, Bane of
 Progress, Austere Command), to Collector Ouphe, Null Rod and Stony Silence, to a counterspell on Karn when he is cast, and
-to chump blockers when Karn has no evasion. **No sim has measured this list; every number below is a count from the list or
-a labelled estimate.**
+to chump blockers when Karn has no evasion. **Every number below is a count from the list or a labelled estimate; sim results are in `audit/karn_reforged/FINDINGS.md`.**
 
 | | |
 |---|---|
@@ -43,9 +42,10 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 ### The packages
 
 1. **Fast mana (16 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
-   Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone and Solemn
-   Simulacrum and Hedron Archive. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the Monoliths. *Chrome Mox, Mox Amber, Arcane Signet and
-   Commander's Sphere are not in the list: they cannot make mana with a colourless commander.*
+   Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn
+   Simulacrum and Hedron Archive. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the
+   Monoliths. *Chrome Mox, Mox Amber, Arcane Signet and Commander's Sphere are not in the list: they cannot make mana
+   with a colourless commander.*
 2. **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry
    Inspector, Retrofitter Foundry and Wayfarer's Bauble raise Karn's count for little, and Walking Ballista, Hangarback
    Walker and Retrofitter Foundry are mana sinks for the Karn mana.
@@ -93,7 +93,7 @@ Walker or Ballista) and a land. Mulligan: only lands with no artifact; only five
 
 ## Limits (what the simulator and the engine do not do)
 
-- No sim has measured this list.
+- Sim results are in `audit/karn_reforged/FINDINGS.md`; nothing here is a measured number.
 - Karn's mana is modelled to cast only artifact spells and to pay ability costs; the Rings of Brighthearth loop resolves as
   its result.
 
