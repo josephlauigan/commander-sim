@@ -272,13 +272,13 @@
     "deck": "karn_gilded",
     "partner": "marchesa",
     "replay": {
-      "events": 88,
-      "game_hash": "00e6d75987f9db77",
-      "hash": "f183e2dc61bd9341",
-      "live_answers": 32,
+      "events": 83,
+      "game_hash": "9f2b6acdb878ac81",
+      "hash": "4c10f320dda6a337",
+      "live_answers": 30,
       "live_by_seat": {
-        "karn_gilded": 17,
-        "marchesa": 15
+        "karn_gilded": 16,
+        "marchesa": 14
       },
       "over": {
         "how": "timeout",
@@ -313,7 +313,7 @@
         "marchesa",
         "marchesa",
         "marchesa",
-        "marchesa",
+        "karn_gilded",
         "karn_gilded",
         "karn_gilded",
         "karn_gilded",
@@ -335,15 +335,12 @@
           "do": "pass"
         },
         {
-          "card": 7,
-          "do": "land"
-        },
-        {
           "do": "pass"
         },
         {
           "do": "pass"
         },
+        0,
         {
           "do": "pass"
         },
@@ -384,10 +381,6 @@
           "do": "pass"
         },
         {
-          "do": "tap",
-          "source": 0
-        },
-        {
           "do": "pass"
         },
         {
@@ -404,6 +397,9 @@
         {
           "do": "tap",
           "source": 0
+        },
+        {
+          "do": "pass"
         },
         {
           "do": "pass"
@@ -4374,14 +4370,14 @@
       "tier": "t5"
     },
     {
-      "answers": 30,
+      "answers": 27,
       "answers_by_seat": {
-        "marchesa": 30
+        "marchesa": 27
       },
       "deck": "marchesa",
-      "events": 81,
-      "game_hash": "8d45140dc56f4c25",
-      "hash": "c28c1524dae56812",
+      "events": 73,
+      "game_hash": "260c8949bd0edb2f",
+      "hash": "767ef58bb48d421d",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -4398,14 +4394,14 @@
       "tier": "t3"
     },
     {
-      "answers": 28,
+      "answers": 27,
       "answers_by_seat": {
-        "marchesa": 28
+        "marchesa": 27
       },
       "deck": "marchesa",
-      "events": 79,
-      "game_hash": "e6769d9e9c33ee28",
-      "hash": "3f36d1a3a3df742c",
+      "events": 77,
+      "game_hash": "0a0b20a8e76cb0d3",
+      "hash": "ad8c14ab7e04ccc4",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -4518,15 +4514,15 @@
       "tier": "t5"
     },
     {
-      "answers": 58,
+      "answers": 56,
       "answers_by_seat": {
         "karn_gilded": 30,
-        "marchesa": 28
+        "marchesa": 26
       },
       "deck": "karn_gilded",
-      "events": 118,
-      "game_hash": "c943515a3c891809",
-      "hash": "c53f4d015241fc49",
+      "events": 114,
+      "game_hash": "5736faf437c94d8e",
+      "hash": "9070a19b8254909a",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
