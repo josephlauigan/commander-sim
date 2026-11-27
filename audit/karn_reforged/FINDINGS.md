@@ -58,7 +58,7 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 - Wasteland and Umezawa's Jitte are modelled in `impls/kr_model.rs`. Jitte limits (none can matter at t4-t5 per the Opus review, JD to accept): one blocker per attacker (engine-wide), no trigger for Pariah-redirected damage, Gisela's halving not applied, and the counters are added at once instead of by a stack trigger (the opponent gets no response, lifelink comes after). The AI spends Jitte counters only after blocks and in its own main phase, never in response to removal or between first-strike and regular damage.
 - Aetherflux Reservoir and Steel Overseer have no shared plan with the rest of the list (Opus review); keep them only if the
   baseline shows them cast and useful.
-- Winter Orb is asymmetric here (Karn's mana and the rocks ignore it) but chokes our own Tron lands and Workshop; keep it only with evidence.
+- Winter Orb, Defense Grid and Unwinding Clock were cut on 2026-11-27 (see the next section); the stax lines above describe the baseline list.
 - Ownership: every card is recorded as `proxy`; JD has not marked which he owns.
 
 ### Opus diagnosis (2026-11-27; a rough mana model and six goldfish traces, not a paired test)
@@ -74,3 +74,20 @@ cast in 99.1% of games, median own turn 4.0; mana-short on 12.3% of turns 1-4; t
 - Possible tickets: the t5 Urza opponent has no plan file, so its Winter Orb, Static Orb, Back to Basics and Unwinding Clock may never be cast (unconfirmed);
   Karn, Gilded Guardian may share the Sword tag gap (unconfirmed).
 
+## 2026-11-27: stax removed (JD: "remove the stax aspect of the karn deck - that is not a playstyle I like")
+- **Out (job lost):** Winter Orb (a stax lock that only stops lands untapping; it was dead in the baseline sim and chokes the deck's own Urza lands and Workshop), Defense Grid (counter protection on the turn Karn lands; it taxes everyone's spells outside their own turn), Unwinding Clock (untaps our artifacts on opponents' turns; not a lock, cut for tempo on the Opus diagnosis, never cast in the baseline).
+- **In (job gained):** two Wastes (lands 26 -> 28; the Opus mana model puts Karn by turn 4 at about 45% instead of 41%, an estimate) and Hedron Archive (a {C}{C} rock that draws two later; an artifact for Karn's count; Full). Mana artifacts 15 -> 16.
+- **Kept on purpose (JD):** Karn, the Great Creator and the Mycosynth Lattice lock; Strip Mine and Wasteland.
+- **Counts after (before):** lands 28 (26); mana artifacts 16 (15); disruption 0 (3); Game Changers 6 (6). Karn's protection now comes from The One Ring, Swiftfoot Boots, Lightning Greaves, Mithril Coat and Command Beacon.
+- **Measured (same sims as the baseline: loose, look-ahead, 1,500 games per tier, seed 500000, `--analyze`; goldfish 1,000; two separate runs, not a paired test, one tier is about +/-1 point of noise):**
+
+| | before (t4 / t5) | after (t4 / t5) |
+|---|---|---|
+| Win rate | 18.3% / 18.8% | 21.3% / 17.5% |
+| Eliminated | 81.7% / 81.1% | 78.7% / 82.5% |
+| Karn resolves | 84.5% / 81.9% | 85.8% / 84.3% |
+| Karn resolved by T4 | 56% / 52% | 55% / 52% |
+| Goldfish median kill turn | 10 | 9 |
+| Goldfish won by T7 / T8 | 9.1% / 33.0% | 10.7% / 36.6% |
+
+  Reading: the cut cost nothing (all three were dead cards in the baseline) and the t4 gain is about 2 standard errors of the difference, so it is suggestive, not proven. t5 is flat to slightly lower (combo opponents still eliminate it in 41% of games). The two extra lands did not move Karn's timing (T4 55-56% / 52%): the mana ceiling is not the whole story, and the AI sequencing fixes (Mana Vault held for Karn, tutors fetching Sol Ring) are still unmeasured.

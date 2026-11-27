@@ -38,14 +38,13 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 - **If he is removed.** Command Beacon ({T}, sacrifice) puts him into your hand from the command zone, so he is cast
   from hand without commander tax (from the command zone the recasts cost {7}, then {9}). Swiftfoot Boots (hexproof), Lightning Greaves (shroud and haste) and Mithril Coat (indestructible) keep him
   alive; Champion's Helm gives hexproof for equip {1} because he is legendary, and Hammer of Nazahn gives indestructible.
-  None of them stops an exile or bounce wipe, and Defense Grid is the stack protection for the turn he lands.
+  None of them stops an exile or bounce wipe.
 
 ### The packages
 
-1. **Fast mana (15 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
+1. **Fast mana (16 cards).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith,
    Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone and Solemn
-   Simulacrum. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the Monoliths, and
-   Unwinding Clock untaps the artifacts you control during an opponent's untap step. *Chrome Mox, Mox Amber, Arcane Signet and
+   Simulacrum and Hedron Archive. Every one is also an artifact for Karn's count. Voltaic Key untaps Mana Vault and the Monoliths. *Chrome Mox, Mox Amber, Arcane Signet and
    Commander's Sphere are not in the list: they cannot make mana with a colourless commander.*
 2. **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry
    Inspector, Retrofitter Foundry and Wayfarer's Bauble raise Karn's count for little, and Walking Ballista, Hangarback
@@ -59,9 +58,8 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
    Colossus. Rogue's Passage ({4}, {T}) makes Karn unblockable too, paid by Karn's mana.
 5. **Planeswalkers (5).** Tezzeret, Cruel Captain, Karn, the Great Creator (opponents' artifacts can't use their abilities),
    Karn, Scion of Urza, Ugin, the Ineffable and Ugin, the Spirit Dragon.
-6. **Interaction (5) and disruption (3).** Meteor Golem, Duplicant, Spine of Ish Sah, All Is Dust, The Mightstone and
-   Weakstone (-5/-5 or draw two, and it is an artifact that Karn's mana pays for), Winter Orb (only lands stop untapping:
-   Karn's mana and the rocks ignore it), Defense Grid and Unwinding Clock.
+6. **Interaction (5).** Meteor Golem, Duplicant, Spine of Ish Sah, All Is Dust, The Mightstone and
+   Weakstone (-5/-5 or draw two, and it is an artifact that Karn's mana pays for).
 7. **Late engines (4) and enablers (4).** Mycosynth Lattice (every permanent becomes an artifact, so Karn's upkeep mana
    counts every permanent you control and his size is the greatest mana value among your permanents; it also makes everything
    colourless, which turns off All Is Dust and Ugin, the Spirit Dragon's -X, so don't count them live with it out; with Karn,
@@ -82,7 +80,7 @@ cast nonartifact spells. Until end of turn, you don't lose this mana as steps an
 
 ### Game plan
 
-Turn 1: a fast rock or a cheap artifact. Turn 2-3: Karn, with Defense Grid or a protection piece ready if you can.
+Turn 1: a fast rock or a cheap artifact. Turn 2-3: Karn, with a protection piece ready if you can.
 Each upkeep: count the artifacts, then spend Karn's mana first (on equip, Mystic Forge, Skullclamp, Rogue's Passage and
 artifact spells) and keep lands and rocks for the nonartifact cards. Wasteland can destroy only a nonbasic land; Strip
 Mine any land. Use them on a utility or fixing land when it costs the opponent the most.
@@ -101,27 +99,27 @@ Walker or Ballista) and a land. Mulligan: only lands with no artifact; only five
 
 ## Mana
 
-26 lands: Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant,
+28 lands: Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant,
 Urza's Tower, Strip Mine, Wasteland, Mutavault, Inventors' Fair, Rogue's Passage, War Room, Bonders' Enclave, Buried Ruin
-and ten Wastes. The three Urza lands make {C}{C}{C} together and Urza's Saga fetches an artifact with mana cost {0} or {1} (Sol Ring,
+and twelve Wastes. The three Urza lands make {C}{C}{C} together and Urza's Saga fetches an artifact with mana cost {0} or {1} (Sol Ring,
 Mana Vault, Mox Opal, Lotus Petal, Mox Diamond, Ornithopter, Mishra's Bauble, Voltaic Key, Wayfarer's Bauble, Skullclamp,
 Shadowspear, Sensei's Divining Top, Expedition Map, Hope of Ghirapur, Retrofitter Foundry; not Walking Ballista, which would enter
 with no counters and die). With
-the fifteen mana artifacts, that is 41 mana sources before Karn. War Room draws for {3} and no life, because Karn has no
+the sixteen mana artifacts, that is 44 mana sources before Karn. War Room draws for {3} and no life, because Karn has no
 colours. Bonders' Enclave draws for {3} and {T} when you control a creature with power 4 or more (Karn is at least 5/5).
 
 ## Bracket and Rule 0
 
 **Bracket 4,** with six Game Changers: **Ancient Tomb**, **Grim Monolith**, **Mana Vault**, **Mishra's Workshop**,
 **Mox Diamond** and **The One Ring**. It has no extra turns. It does have land destruction (Strip Mine and Wasteland, one
-land each) and a stax piece (Winter Orb).
+land each).
 
 Disclose before the game:
 
 - **The six Game Changers** above.
 - **Infinite line:** Basalt Monolith with Rings of Brighthearth, ending in Walking Ballista.
 - **Lock:** Karn, the Great Creator with Mycosynth Lattice (the opponents' lands can't be activated).
-- **Land destruction and stax:** Strip Mine, Wasteland and Winter Orb.
+- **Land destruction:** Strip Mine and Wasteland.
 - **Tutors:** Urza's Saga (an artifact with mana cost {0} or {1}), Expedition Map (a land) and Karn, the Great Creator's -2 (an artifact from exile).
 - **Fast mana:** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Ancient Tomb and Mishra's Workshop.
 
@@ -131,9 +129,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Karn, Legacy Reforged
 
-**Lands (26).** Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant, Urza's Tower, Strip Mine, Wasteland, Mutavault, Inventors' Fair, Rogue's Passage, War Room, Bonders' Enclave, Buried Ruin, 10 Wastes
+**Lands (28).** Ancient Tomb, Mishra's Workshop, Urza's Saga, Darksteel Citadel, Command Beacon, Urza's Mine, Urza's Power Plant, Urza's Tower, Strip Mine, Wasteland, Mutavault, Inventors' Fair, Rogue's Passage, War Room, Bonders' Enclave, Buried Ruin, 12 Wastes
 
-**Mana artifacts (15).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith, Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn Simulacrum
+**Mana artifacts (16).** Sol Ring, Mana Vault, Grim Monolith, Mox Opal, Lotus Petal, Mox Diamond, Basalt Monolith, Thran Dynamo, Mind Stone, Thought Vessel, Everflowing Chalice, Worn Powerstone, Coalition Relic, Fellwar Stone, Solemn Simulacrum, Hedron Archive
 
 **Cheap artifacts (8).** Ornithopter, Mishra's Bauble, Walking Ballista, Hangarback Walker, Hope of Ghirapur, Foundry Inspector, Retrofitter Foundry, Wayfarer's Bauble
 
@@ -144,8 +142,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 **Threats and equipment (16).** Wurmcoil Engine, Myr Battlesphere, Steel Hellkite, Blightsteel Colossus, Triplicate Titan, Sword of Fire and Ice, Sword of Feast and Famine, Sword of Truth and Justice, Sword of Forge and Frontier, Sword of War and Peace, Sword of Sinew and Steel, Whispersilk Cloak, Batterskull, Umezawa's Jitte, Shadowspear, Champion's Helm
 
 **Interaction (5).** Meteor Golem, Duplicant, Spine of Ish Sah, All Is Dust, The Mightstone and Weakstone
-
-**Disruption (3).** Winter Orb, Defense Grid, Unwinding Clock
 
 **Protection (3).** Swiftfoot Boots, Lightning Greaves, Mithril Coat
 
@@ -169,7 +165,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Coalition Relic
 1 Command Beacon
 1 Darksteel Citadel
-1 Defense Grid
 1 Duplicant
 1 Everflowing Chalice
 1 Expedition Map
@@ -178,6 +173,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grim Monolith
 1 Hammer of Nazahn
 1 Hangarback Walker
+1 Hedron Archive
 1 Hope of Ghirapur
 1 Inventors' Fair
 1 Karn, Legacy Reforged
@@ -232,7 +228,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Ugin, the Ineffable
 1 Ugin, the Spirit Dragon
 1 Umezawa's Jitte
-1 Unwinding Clock
 1 Urza's Mine
 1 Urza's Power Plant
 1 Urza's Saga
@@ -241,10 +236,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Walking Ballista
 1 War Room
 1 Wasteland
-10 Wastes
+12 Wastes
 1 Wayfarer's Bauble
 1 Whispersilk Cloak
-1 Winter Orb
 1 Worn Powerstone
 1 Wurmcoil Engine
 ```

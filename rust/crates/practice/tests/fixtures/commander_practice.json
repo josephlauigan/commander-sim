@@ -275,7 +275,7 @@
     "replay": {
       "events": 100,
       "game_hash": "0198cbe1cd4a2731",
-      "hash": "6e57fe678bf1057a",
+      "hash": "6b56b06358fe0022",
       "live_answers": 37,
       "live_by_seat": {
         "karn_gilded": 20,
@@ -5344,7 +5344,7 @@
       "deck": "karn_reforged",
       "events": 87,
       "game_hash": "6f0385c07ec0e1d9",
-      "hash": "8e39e68acfa8b66d",
+      "hash": "497840b8be57f812",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
@@ -5529,15 +5529,15 @@
       "tier": "t5"
     },
     {
-      "answers": 60,
+      "answers": 61,
       "answers_by_seat": {
         "karn_gilded": 30,
-        "karn_reforged": 30
+        "karn_reforged": 31
       },
       "deck": "karn_gilded",
-      "events": 123,
-      "game_hash": "eb13a82f98dbb5c3",
-      "hash": "625d17b547c5d7a7",
+      "events": 126,
+      "game_hash": "53a0a20d3c095852",
+      "hash": "4a366cecb7d66ec7",
       "max_rounds": 3,
       "over": {
         "how": "timeout",
