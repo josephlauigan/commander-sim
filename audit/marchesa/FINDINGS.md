@@ -5,6 +5,17 @@ work. Updated after every run. Newest evidence first; numbers are look-ahead, lo
 tiers (t3, t4: `data/my_decks.toml`) unless noted. The guide is `decklists/JD/marchesa-grixis-sacrifice-recursion.md`; the
 plan file is `data/plans/marchesa.toml`. No game has been simulated with this list yet.
 
+## 2026-11-26: Chromatic Lantern, one Swamp => Bolas's Citadel, Barad-dûr (JD's choice, not simulated)
+
+**Not slot-for-slot (a package change).** Out: Chromatic Lantern (a proxy; the deck's only any-colour rock) and one Swamp. In: Bolas's Citadel (draw engine and
+ten-permanent finisher; a Game Changer, so 2 become 3) and Barad-dûr (a Swamp-for-land swap: {B}, untapped with any of seven legendary
+creatures, amasses Orcs late). Mana package 10 to 9 slots (rocks 9 to 8), draw package 4 to 5, average mana value 2.74 to 2.78, rock colour
+sources 6/6/6 to 5/5/5, black land sources unchanged at 24. Under Blood Moon Barad-dûr is a Mountain, so one {B} source that survived it is gone.
+**Evidence there is:** none for this deck. The nearest is Sheoldred's 11-23 baseline (an older, higher-curve list), where Bolas's Citadel was among the cards
+often stuck in hand (cast in 34.1% of the games it was drawn at t3, 25.6% at t4; `audit/sheoldred/FINDINGS.md`). **To check in the first run:** Citadel's drawn/cast/average round and
+stuck-in-hand numbers, how often it casts a card off the top, and any early-game colour failures from the missing rock. The AI never casts counterspells, X spells
+(Walking Ballista) or Reanimate off the top (`citadel_options`), and its life floor is the largest opposing board + 6 (at least 10).
+
 ## Design 2026-11-26 (JD's choice, not simulated)
 **Goal.** JD split the old Sheoldred list in two. The sacrifice and recursion half (Mikaeus, Triskelion, Yawgmoth, the
 outlets and payoffs, the graveyard start) is the new Marchesa deck, a Grixis list with Marchesa, the Black Rose
@@ -25,7 +36,7 @@ design review (Opus, 2026-11-26) asked for redundant two-card wins and named the
 | Draw and finisher | 5 | Fact or Fiction, Deadly Dispute, Skullclamp, Black Market Connections, Bolas's Citadel | Refill; Citadel plays off the top for life and is a ten-permanent finisher |
 | Protection | 1 | Lightning Greaves | Shroud and haste |
 By type (the guide's list): creatures 23, enchantments 5, artifacts 17, sorceries 5, instants 14, lands 35, commander 1.
-Average mana value of the 64 spells and the commander: 2.74 (X spells at X = 0).
+Average mana value of the 64 spells and the commander: 2.78 (X spells at X = 0; 2.74 before Bolas's Citadel replaced Chromatic Lantern).
 
 **Win lines (all in the engine's combo catalogue unless noted).** Mikaeus + Triskelion (`mikaeus_trisk.rs`); Yawgmoth +
 Mikaeus + two nontoken non-Human creatures + a death payoff (`combos.rs`); Nim Deathmantle + Ashnod's Altar + Priest
@@ -47,7 +58,7 @@ Mikaeus, Bolas's Citadel and Grave Pact ({B}{B}{B}), Counterspell and Mindbreak 
 (`cardgen find --full` for each of the 86 non-basic cards; `cardgen audit --mine` reports 0 not Full for 89 unique
 cards, counting Full-auto as Full). Grave Pact goes to JD as a below-Full card with the swap list.
 
-**Ownership** (`data/ownership.toml`, `[deck.marchesa]`, not confirmed by JD): 25 `have` and 60 `proxy` of the 85
+**Ownership** (`data/ownership.toml`, `[deck.marchesa]`, not confirmed by JD): 27 `have` and 59 `proxy` of the 86
 non-basic cards; Marchesa herself is a proxy. A deck without `confirmed` is unconfirmed: treat the statuses as unknown
 until JD marks the list.
 
