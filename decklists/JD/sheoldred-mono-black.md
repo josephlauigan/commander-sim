@@ -301,7 +301,7 @@ opponent loses 2), **Witch of the Moors**, **Sanguine Bond**, **Enduring Tenacit
 Blight-Priest**. The life is also a resource: it pays for The One Ring's burden counters, Snuff Out, Infernal Grasp and
 Toxic Deluge.
 
-#### Drain creatures
+#### Drain creatures and enchantments
 
 **Bloodthirsty Conqueror** (5/5 flying deathtouch) gains you life equal to whatever an opponent loses, and is the second
 Blood half. **Vito** and **Marauding Blight-Priest** are the cheap Bond halves: each point of life you gain, from any source,
@@ -325,7 +325,7 @@ life loss is 2 more for you. It starts Line 1 on its own once a Blood half and a
 
 #### Remove threats
 
-Nine spot removal spells, two sweepers and Rooftop Assassin. **Cheap instants:** **Infernal Grasp** ({1}{B}: destroy
+Nine spot removal spells, one sweeper and Rooftop Assassin. **Cheap instants:** **Infernal Grasp** ({1}{B}: destroy
 target creature, lose 2 life), **Go for the Throat** ({1}{B}: destroy target nonartifact creature), **Bitter Triumph**
 ({1}{B}: discard a card or pay 3 life; destroy target creature or planeswalker), **Foolish Fate** and **Overkill**
 (-0/-9999), **Sephiroth's Intervention** (destroy, gain 2 life), **Deadly Rollick** ({3}{B} instant, exile target
@@ -372,7 +372,7 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 - **No black source goes back.** A hand with only Bonders' Enclave, Mikokoro, the Sanitarium or Cabal Coffers (which
   needs Swamps) can't cast Sheoldred. With Urborg in the hand and in play, every land taps for {B}.
 - **Count turn 3-4 mana.** Three lands plus a rock is Sheoldred on turn 3; four lands is turn 4. A hand with only
-  6-7 mana spells (Peer into the Abyss, Invoke Despair) is a ship, whatever the lands. K'rrik counts as
+  5-7 mana spells (Peer into the Abyss, Invoke Despair) is a ship, whatever the lands. K'rrik counts as
   a 4-mana spell ({4} and 6 life), not a 7.
 - **Bottom first:** lands past the fourth, Peer into the Abyss, Memory Jar. Keep rocks, Dark Ritual,
   tutors and the cheap punishers.

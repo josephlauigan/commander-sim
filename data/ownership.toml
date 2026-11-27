@@ -35,7 +35,7 @@
 # owned copies leaving Sheoldred move to Marchesa or spares; incoming owned spares move into the lists.
 # Cards whose owned copies stay in another deck, and cards not recorded as owned, are proxies; Marchesa awaits confirmation, and so do the 26 incoming Sheoldred statuses.
 # 2026-11-26 (JD): Marchesa: Barad-dûr and Bolas's Citadel (owned spares, so `have`, inferred) in for a Swamp and Chromatic Lantern; the Lantern (a proxy) is out and stays a proxy in Arzakon only.
-# 2026-11-26 (JD): Sheoldred: Ill-Gotten Inheritance (not recorded as owned: `proxy`) in for Massacre Wurm (his owned copy goes back to [spare]). The Sheoldred deck is `confirmed` from before the split; this card's status is inferred.
+# 2026-11-26 (JD): Sheoldred: Ill-Gotten Inheritance (not recorded as owned: `proxy`) in for Massacre Wurm (his owned copy goes back to [spare]). The Sheoldred deck is `confirmed` from before the split, but this card's status is INFERRED (JD may own a copy: it was in his Y'shtola list until 2026-11-07); ask JD before cutting it as a proxy.
 # A deck without `confirmed` is unconfirmed: treat its statuses as unknown.
 # Checked by `cardgen ownership --check`. Basic lands are never listed.
 
