@@ -676,6 +676,13 @@ fn to_zone_card_inner(g: &mut Game, m: PermId, zone: Zone, keep_cmd: bool) {
         return; // a token with a card face (the Jace token) just ceases to exist
     }
     let owner = x.orig;
+    // Decline the command-zone move when Marchesa is waiting to return this card from the graveyard.
+    let keep_cmd = keep_cmd
+        || (zone == Zone::Gy
+            && !crate::engine::repl::no_graveyard(g, owner)
+            && g.marchesa_due
+                .iter()
+                .any(|&(p, cd, o)| p == o && o == owner && Some(cd) == x.phys.or(x.cd) && g.player(p).alive));
     if let Some(cd) = x.phys {
         if !keep_cmd && g.player(owner).is_commander(cd) {
             g.player_mut(owner).set_cmd_zone(cd, true); // --- scion: Scion as a copy is still the commander
@@ -1105,12 +1112,17 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
             return Ok(());
         }
     }
+    let mut ghostform_moved = false;
     if let Some(Val::Player(q)) = x.data.get(DataKey::Ghostform).cloned()
+        && g.player(q).alive
         && returns_left(g, cd)
         && !repl::no_graveyard(g, p)
-        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
     {
-        return Ok(()); // Kaya's Ghostform: it returns to the battlefield under its Aura's controller
+        to_zone_card_inner(g, m, Zone::Gy, true); // leave a commander here for Ghostform's return
+        ghostform_moved = true;
+        if crate::impls::sephfs_cards::ghostform_return(g, m, q)? {
+            return Ok(());
+        }
     }
     if x.data.truthy(DataKey::Ferocity)
         && returns_left(g, cd)
@@ -1124,7 +1136,9 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     if !x.eot_kw.is_empty() && crate::impls::sheoldred::returns_when_dies(g, &x, cause)? {
         return Ok(()); // Perigee Beckoner: it returns to the battlefield
     }
-    to_zone_card(g, m, Zone::Gy);
+    if !ghostform_moved {
+        to_zone_card(g, m, Zone::Gy);
+    }
     if !g.hooks.is_empty() && creature {
         fire_trigger(g, Event::CreatureToGy, Call::Leaves { m })?; // Nim Deathmantle
     }
@@ -1154,9 +1168,11 @@ fn exile_perm_inner(g: &mut Game, m: PermId, keep_cmd: bool) -> Res {
     r?;
     if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned() {
         let mark = g.enter_no; // what entered after this was not on the battlefield when m left
+        to_zone_card_inner(g, m, Zone::Exile, keep_cmd || g.player(q).alive);
         if crate::impls::sephfs_cards::ghostform_return(g, m, q)? {
             return exiled_from_bf_upto(g, m, Some(mark)); // it came back, but it was exiled first
         }
+        return exiled_from_bf(g, m, None);
     }
     to_zone_card_inner(g, m, Zone::Exile, keep_cmd);
     exiled_from_bf(g, m, None)
