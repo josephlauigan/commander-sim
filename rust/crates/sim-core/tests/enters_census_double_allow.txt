@@ -80,6 +80,7 @@ Orcish Bowmasters | [nonlinear] The first amass instance creates the Army, while
 Perigee Beckoner | [nonlinear] The AI can put the extra counter/pump on the copier creature instead of the original target; sentinel state is deliberately normalized out of the census.
 Petrified Hamlet | [idempotent] The mixed land hook chooses the same land name on each instance; naming is idempotent.
 Phyrexian Delver | [nonlinear] The extra reanimation/exile chooses a creature with a different mana value/power, so the linked life change differs from the first instance.
+Polluted Bonds | [fixture] Every standard observer land belongs to the observer's controller; the opponent-controlled land guard is not exercised.
 Portable Hole | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Preston, the Vanisher | [fixture] The only standard nontoken creature is cast; the tokens are tokens, so the another-nontoken-not-cast guard is not exercised.
 Prison Sentence | [nonlinear] The mixed Aura helper repeats scry 2; the retained library top remains the same in this deterministic fixture (cards_enter_event_copies counts both scry calls).

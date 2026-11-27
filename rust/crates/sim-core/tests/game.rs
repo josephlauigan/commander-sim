@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 28); // four decks of yours x seven tiers (thrasios and cloud retired as keys 2026-11-21, yshtola and yoshimaru 2026-11-24)
+    assert_eq!(played, 35); // five decks of yours x seven tiers (marchesa registered 2026-11-26)
 }
 
 #[test]
