@@ -18,7 +18,7 @@ mod play_common;
 use play_common::*;
 use sim_core::control::Human;
 use sim_core::engine::{combat, life, turn, zones};
-use sim_core::state::Step;
+use sim_core::state::{DataKey, Step, Val};
 use sim_core::sym::intern;
 use std::collections::{BTreeMap, BTreeSet};
 use std::panic::{AssertUnwindSafe, catch_unwind};
@@ -436,6 +436,14 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
         g.in_combat.push(w);
     };
     match name {
+        // Pay 50 life with enough left to survive the activation.
+        "Aetherflux Reservoir" => g.player_mut(P0).life = 60,
+        // Combat happened earlier this turn; the activation probe itself starts in main phase 1.
+        "Hope of Ghirapur" => {
+            let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == name).unwrap();
+            let st = g.turn_stamp();
+            g.perm_mut(m).data.set(DataKey::Hit, Val::List(vec![Val::Stamp(st), Val::Player(P1)]));
+        }
         // an attacking creature
         "Angelic Page" | "Ballista Squad" => g.in_combat.push(e0),
         // an attacking Assembly-Worker (the Factory's {T} pump only needs an Assembly-Worker)
@@ -761,6 +769,17 @@ fn a_condition_naming_the_card_itself_drives_only_its_own_death() {
 }
 
 #[test]
+fn the_new_decks_conditional_activations_are_exercised() {
+    let cache = json("scryfall_cache.json");
+    for name in ["Aetherflux Reservoir", "Hope of Ghirapur"] {
+        let text = oracle(&cache, name).unwrap();
+        let want = &activated_lines(&text)[0];
+        let o = run("karn_reforged", name, name, false, false, false, Sc::Activate(0), want);
+        assert!(o.error.is_none() && o.fired && !o.asked.is_empty(), "{name}: {:?}, {:?}", o.error, o.asked);
+    }
+}
+
+#[test]
 fn every_trigger_choice_of_the_owned_decks_is_asked_of_a_person() {
     let cache = json("scryfall_cache.json");
     let decks = json("decks.json");
@@ -944,6 +963,14 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn_reforged: Karn, Scion of Urza (Activate(0))",
+        "the +1 asks an opponent which revealed card goes to your hand; the opponent is an AI seat, so the person controlling Karn has no further choice (human/walkers.rs karn_su_plus)",
+    ),
+    (
+        "karn_reforged: Tezzeret, Cruel Captain (Activate(2))",
+        "the -7 only creates the emblem; its target is chosen at the beginning of combat, not during this activation (t6_godo::tez_emblem asks the person)",
+    ),
+    (
         "karn_gilded: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
@@ -968,6 +995,10 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 /// untap: the person's Rings offer exists only for the abilities that carry out their copies (`stack::ability_run`,
 /// `ability_window_ex`, `ability_window_rc`), see `tests/play_rings.rs`.
 const UNPROBED: &[(&str, &str)] = &[
+    (
+        "karn_reforged: Umezawa's Jitte",
+        "the equipment has no charge counters in the activation fixture; with counters the person picks each mode (cards_kr_model a_person_pumps_the_equipped_creature_plus_two_plus_two, a_person_shrinks_a_creature_and_a_one_toughness_creature_dies, a_person_gains_two_life)",
+    ),
     (
         "karn_gilded: Herd Heirloom",
         "an activated ability that needs a creature of yours with power 4 or greater: the probe's driven moments never have one, so it does not fire",

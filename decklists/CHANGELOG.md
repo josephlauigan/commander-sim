@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` (and of the retired ones, now in `de
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Sheoldred, Thanos, Ur-Dragon, Karn, Gilded Guardian (Y'shtola, Yoshimaru/Tymna, Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
+JD's decks: Sheoldred, Marchesa, Arzakon, Ur-Dragon, Karn, Gilded Guardian, Karn, Legacy Reforged (Y'shtola, Yoshimaru/Tymna, Cloud, Aragorn and Tymna/Thrasios retired as decks; Veyran retired 2026-11-01; Ghave broken
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka

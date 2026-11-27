@@ -12,6 +12,7 @@ Authority of the Consuls | [fixture] Every standard observer entrant belongs to 
 Avengers Quinjet | [exhausted] quinjet_trigger uses the fixture's only Hero in hand; there is no second Hero in hand or graveyard for the extra instance.
 Badgermole Cub | [deferred] Earthbend entry is explicitly unmodelled (Partial in card_overrides.toml); only its body and extra mana are implemented.
 Banishing Light | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Batterskull | [nonlinear] Each living-weapon instance creates a Germ and attaches Batterskull to it; moving it to the second Germ leaves the first 0/0 to die, so the final live-token count stays one.
 Bloodghast | [fixture] The observer pass installs the source on the battlefield, while its landfall ability operates only from the graveyard (gy_landfall).
 Bloodthirsty Adversary | [exhausted] adversary_etb pays with the available mana on its first instance; repeating the optional payment has fewer resources and eligible spells.
 Bojuka Bog | [exhausted] The first chosen graveyard is emptied; the extra instance can affect a different player's graveyard, so the original player's graveyard metrics do not repeat (graveyard target selection).
@@ -45,6 +46,7 @@ Goblin Ringleader | [exhausted] The successive revealed library slices contain d
 Grasp of Fate | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Grinding Station | [idempotent] Its may-untap trigger sees an already untapped Station; all standard artifact entrants leave it untapped.
 Guardian Project | [fixture] The cast Serra Angel shares its name with a fixture creature; tokens do not qualify, so the nontoken distinct-name condition is never met.
+Hammer of Nazahn | [idempotent] hammer_etb attaches the same entering Equipment to the same best creature on both instances; repeating that attachment adds no final state change.
 Hero's Blade | [fixture] No standard observer entrant is legendary; the legendary-creature attach guard is not exercised.
 Heroic Return | [fixture] This spell is SETUP by its own Oracle text, but its blink/reanimation payload creates real creature entries whose triggers the doublers correctly copy.
 Hydroelectric Specimen // Hydroelectric Laboratory | [fixture] No single-target instant or sorcery is waiting on the stack for the entry trigger to redirect; its land face is not the tested entry.
@@ -82,6 +84,7 @@ Petrified Hamlet | [idempotent] The mixed land hook chooses the same land name o
 Phyrexian Delver | [nonlinear] The extra reanimation/exile chooses a creature with a different mana value/power, so the linked life change differs from the first instance.
 Polluted Bonds | [fixture] Every standard observer land belongs to the observer's controller; the opponent-controlled land guard is not exercised.
 Portable Hole | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
+Portal to Phyrexia | [exhausted] Each opponent has five creatures in the fixture; the first instance sacrifices three and the extra can sacrifice only the remaining two.
 Preston, the Vanisher | [fixture] The only standard nontoken creature is cast; the tokens are tokens, so the another-nontoken-not-cast guard is not exercised.
 Prison Sentence | [nonlinear] The mixed Aura helper repeats scry 2; the retained library top remains the same in this deterministic fixture (cards_enter_event_copies counts both scry calls).
 Puresteel Paladin | [fixture] The standard observer entrants contain neither an Aura nor an Equipment; the cast-Aura or Equipment-enter guard is not exercised.
@@ -107,6 +110,7 @@ Skemfar Shadowsage | [nonlinear] The compiled model uses creatures_you_control f
 Skyclave Apparition | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Solitude | [nonlinear] The extra reanimation/exile chooses a creature with a different mana value/power, so the linked life change differs from the first instance.
 Soul of Windgrace | [exhausted] soul_pick takes a land from another graveyard on the extra instance; the first graveyard's single Island is already used.
+Spine of Ish Sah | [exhausted] spine_etb destroys the best opposing permanent on each instance; the extra picks the other opponent, so removals do not repeat in the first opponent's metrics.
 Static Prison | [exhausted] The first instance consumes its chosen target; the extra instance picks another target or seat, so the first seat's removal metrics do not repeat (queued removal/target selection; Aura links retain both cards).
 Tataru Taru | [once-per-turn] Both enters draws repeat, but tataru_draw creates only one Treasure per turn from the opponent's draws.
 Temple of Epiphany | [deferred] Entry scry is absent from the current land model (only colors and tapped tags); no baseline scry to suppress.
