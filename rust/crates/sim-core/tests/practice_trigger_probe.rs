@@ -444,6 +444,11 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
             let st = g.turn_stamp();
             g.perm_mut(m).data.set(DataKey::Hit, Val::List(vec![Val::Stamp(st), Val::Player(P1)]));
         }
+        // charge counters to remove (the person picks the mode; the equip below attaches it to e0 before the activation)
+        "Umezawa's Jitte" => {
+            let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == name).unwrap();
+            g.perm_mut(m).data.set(DataKey::Charge, Val::Int(2));
+        }
         // an attacking creature
         "Angelic Page" | "Ballista Squad" => g.in_combat.push(e0),
         // an attacking Assembly-Worker (the Factory's {T} pump only needs an Assembly-Worker)
@@ -971,6 +976,10 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "the -7 only creates the emblem; its target is chosen at the beginning of combat, not during this activation (t6_godo::tez_emblem asks the person)",
     ),
     (
+        "karn_reforged: Umezawa's Jitte (Activate(0))",
+        "with two charge counters (`precondition`) the person is offered the three modes as separate abilities in the \"which ability?\" menu (+2/+2, -1/-1, gain 2 life) and picks one there, so no further question follows; the probe skips that menu when it looks for what the person was asked (`cards_kr_model.rs` drives each mode)",
+    ),
+    (
         "karn_gilded: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
@@ -995,10 +1004,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 /// untap: the person's Rings offer exists only for the abilities that carry out their copies (`stack::ability_run`,
 /// `ability_window_ex`, `ability_window_rc`), see `tests/play_rings.rs`.
 const UNPROBED: &[(&str, &str)] = &[
-    (
-        "karn_reforged: Umezawa's Jitte",
-        "the equipment has no charge counters in the activation fixture; with counters the person picks each mode (cards_kr_model a_person_pumps_the_equipped_creature_plus_two_plus_two, a_person_shrinks_a_creature_and_a_one_toughness_creature_dies, a_person_gains_two_life)",
-    ),
     (
         "karn_gilded: Herd Heirloom",
         "an activated ability that needs a creature of yours with power 4 or greater: the probe's driven moments never have one, so it does not fire",
@@ -1102,12 +1107,15 @@ fn pick_ability(choices: &[String], want: &str) -> usize {
     let cost = cost.replace('−', "-");
     let cost = cost.trim();
     let words: Vec<&str> = effect.split(|c: char| !c.is_alphanumeric()).filter(|w| w.len() > 3).collect();
+    // the effect line may only say "choose one" (Umezawa's Jitte): then the cost's words ("remove a charge counter") pick
+    let cost_words: Vec<&str> = cost.split(|c: char| !c.is_alphanumeric()).filter(|w| w.len() > 3).collect();
     let n = choices.len().saturating_sub(1).max(1).min(choices.len());
-    (0..n)
-        .max_by_key(|&i| {
-            let l = choices[i].to_lowercase().replace('−', "-");
-            let loyalty = cost.starts_with(['+', '-', '0']) && l.ends_with(cost);
-            (loyalty as usize * 100 + words.iter().filter(|w| l.contains(**w)).count(), std::cmp::Reverse(i))
-        })
-        .unwrap_or(0)
+    let score = |i: usize, words: &[&str]| {
+        let l = choices[i].to_lowercase().replace('−', "-");
+        let loyalty = cost.starts_with(['+', '-', '0']) && l.ends_with(cost);
+        loyalty as usize * 100 + words.iter().filter(|w| l.contains(**w)).count()
+    };
+    let by = |words: &[&str]| (0..n).max_by_key(|&i| (score(i, words), std::cmp::Reverse(i))).unwrap_or(0);
+    let best = by(&words);
+    if score(best, &words) == 0 && !cost.starts_with(['+', '-', '0']) { by(&cost_words) } else { best }
 }
