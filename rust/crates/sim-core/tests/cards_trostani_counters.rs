@@ -291,6 +291,23 @@ fn kalonian_attack_under_every_doubler() {
 }
 
 #[test]
+fn kalonian_attack_trigger_survives_its_source_leaving() {
+    // CR 113.7a: a triggered ability exists without its source. The trigger is put on hold (a spell is resolving), an
+    // opponent removes the Hydra, and the trigger still resolves: a creature with 3 counters ends at 6
+    let mut g = tbl();
+    let k = perm(&mut g, P0, "Kalonian Hydra");
+    let a = bear(&mut g, P0);
+    g.perm_mut(a).plus = 3;
+    g.resolving += 1;
+    hooks::fire_trigger(&mut g, Event::Attack, Call::Attack { p: P0, atk: vec![k], d: P1 }).unwrap();
+    zones::exile_perm(&mut g, k).unwrap();
+    assert!(!g.perm(k).on_bf);
+    g.resolving -= 1;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(plus(&g, a), 6);
+}
+
+#[test]
 fn another_creature_attacking_does_not_double() {
     let mut g = tbl();
     perm(&mut g, P0, "Kalonian Hydra");

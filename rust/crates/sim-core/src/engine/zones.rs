@@ -1402,8 +1402,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     if repl::enters_tapped(g, p, Some(m)) {
         g.perm_mut(m).tapped = true;
     }
+    let entered = g.perm(m).plus; // the counters it entered with (the enter step's, undying's, Hangarback's X)
     cardcode::as_enters(g, p, m)?; // naming a creature type
-    if v_plus > 0 && g.perm(m).on_bf {
+    if entered > 0 && g.perm(m).on_bf {
         repl::scourge_grows(g, m); // counters it enters with are counters put on it (CR 122.6): Wildwood Scourge
     }
     let st = g.turn_stamp();

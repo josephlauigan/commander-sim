@@ -57,7 +57,8 @@ fn kalonian_as(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// (N with Doubling Season makes 3N). A creature with none gets none (so Conclave Mentor adds nothing to it). The
 /// numbers are read as the trigger resolves, all before any counter goes on.
 fn kalonian_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
-    if g.perm(src).owner != p || !atk.contains(&src) || !g.perm(src).on_bf {
+    if g.perm(src).owner != p || !atk.contains(&src) {
+        // (no on-battlefield guard: the trigger exists without its source, CR 113.7a)
         return Ok(vec![]);
     }
     if !trigger_window(g, p, Some(src), "double the +1/+1 counters on each creature you control", Some(5.0))? {
@@ -120,22 +121,22 @@ fn has_counters(g: &Game, m: PermId) -> bool {
         || [DataKey::Charge, DataKey::Counters, DataKey::Lore, DataKey::Vanish].iter().any(|&k| x.data.int(k) > 0)
 }
 
-/// can `src`'s trigger target `m`: not hexproof or shroud against an opponent, and no protection from a colour of the
+/// can the ability of `src` that `o` controls (CR 113.8: not whoever controls `src` now) target `m`: not hexproof or shroud against an opponent, and no protection from a colour of the
 /// source (our own creature: hexproof lets us target it)
-fn targetable_by(g: &Game, src: PermId, m: PermId) -> bool {
-    if g.perm(m).owner == g.perm(src).owner {
+fn targetable_by(g: &Game, o: PlayerId, src: PermId, m: PermId) -> bool {
+    if g.perm(m).owner == o {
         return !untargetable_by_its_controller(g, m, colors_of(g, src));
     }
     !(untargetable(g, m) || protected_from(g, m, colors_of(g, src)))
 }
 
 /// the creatures the trigger may target: any creature on the battlefield, ours or an opponent's
-fn doctor_targets(g: &Game, src: PermId) -> Vec<PermId> {
+fn doctor_targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
     g.players
         .iter()
         .filter(|q| q.alive)
         .flat_map(|q| q.perms.iter().copied())
-        .filter(|&m| live(g, m) && g.is_creature(m) && targetable_by(g, src, m))
+        .filter(|&m| live(g, m) && g.is_creature(m) && targetable_by(g, o, src, m))
         .collect()
 }
 
@@ -158,7 +159,7 @@ fn doctor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = crate::engine::hooks::trigger_controller(g, src);
-    let cands = doctor_targets(g, src);
+    let cands = doctor_targets(g, o, src);
     if cands.is_empty() {
         return Ok(());
     }
@@ -183,14 +184,16 @@ fn doctor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// each creature `o` controls that has a counter on it (the target too, if it is `o`'s). Every placement is its own event
 /// (Doubling Season, Branching Evolution ...); the creatures are fixed before any counter goes on
 pub fn doctor_resolve(g: &mut Game, src: PermId, o: PlayerId, target: PermId) -> Res {
-    if !live(g, target) || !g.is_creature(target) || !targetable_by(g, src, target) {
+    if !live(g, target) || !g.is_creature(target) || !targetable_by(g, o, src, target) {
         return Ok(());
     }
     if g.perm(target).owner != o && !crate::engine::ward::pay_ward(g, o, target)? {
         return Ok(());
     }
-    repl::put_counters(g, o, target, 1);
-    let each: Vec<PermId> = creatures(g, o).into_iter().filter(|&m| has_counters(g, m)).collect();
+    let k = repl::put_counters(g, o, target, 1);
+    // the target has a counter now even if a -1/-1 counter it had was cancelled by it (SBA 704.5q comes later)
+    let each: Vec<PermId> =
+        creatures(g, o).into_iter().filter(|&m| has_counters(g, m) || (m == target && k > 0)).collect();
     for m in each {
         if g.perm(m).on_bf {
             repl::put_counters(g, o, m, 1);

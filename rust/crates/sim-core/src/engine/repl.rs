@@ -587,7 +587,8 @@ pub fn scourge_grows(g: &mut Game, m: PermId) {
 /// trigger), each putting a +1/+1 counter on each creature p controls. One placement for each creature and trigger, so
 /// every counter effect applies to each (Doubling Season, Hardened Scales, Branching Evolution ...).
 pub fn crusade_counters(g: &mut Game, p: PlayerId, triggers: i32) {
-    let cs: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
+    let cs: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
     for _ in 0..triggers.max(0) {
         for &m in &cs {
             if g.perm(m).on_bf {
