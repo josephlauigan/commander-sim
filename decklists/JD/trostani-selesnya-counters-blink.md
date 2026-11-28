@@ -67,8 +67,8 @@ Four lines. Lines 1 and 2 are the plan; 3 and 4 finish when the board or the lif
    one on a creature or enchantment. The counters raise toughness, so the next entry gains more.
 3. At 40 life Felidar Sovereign wins at your upkeep; at 50 life Test of Endurance does. Both check at the beginning of your
    upkeep, so you must survive to it with the card on the battlefield, and Rhox Faithmender's doubling gets you there a turn earlier.
-4. Aetherflux Reservoir turns the surplus into damage: pay 50 life for 50 damage to one target. You need more than 50
-   life to pay it, and it kills any one opponent at 50 life or less.
+4. Aetherflux Reservoir turns the surplus into damage: pay 50 life for 50 damage to one target. You pay it at 50 life or
+   more (and lose the game at exactly 50 unless the damage wins), and it kills any one opponent at 50 life or less.
 
 #### Line 2: the counter engine
 
@@ -153,9 +153,13 @@ costs 4 life for each extra card, which this deck's lifegain pays back.
 
 ## What the simulator cannot do yet
 
-- **There is no Trostani-specific AI.** The deck plays the generic policy plus `data/plans/trostani.toml` (the Heliod and
-  Ballista line, priorities for the engine cards and Trostani). Which creature to blink, when to pay Emiel's {G/W} and when to
-  use Gavony Township and Castle Ardenvale are decided by the generic rules, not by a plan.
+- **The AI plays the deck from card code and a small plan, not a full strategy.** `data/plans/trostani.toml` holds the Heliod
+  and Ballista line and priorities for the engine cards and Trostani. Card code decides when to use Gavony Township and Castle
+  Ardenvale (an opponent's end step with the spare mana), when to populate, which Elder Gargaroth mode to take, when
+  Aetherflux Reservoir shoots (only a kill, never while Felidar Sovereign or Test of Endurance would win at the next upkeep)
+  and when Sunblast Angel is cast (whenever none of its own creatures would die, so also as a plain 4/5 flier). Emiel pays his
+  {G/W} whenever it can, and which creature to blink is the generic rule: there is no mana reserve for Heroic Intervention or
+  Teferi's Protection, and Austere Command's mode choice is not tuned for the deck.
 - **Teferi's Protection is Approximate** (see `documents/design-teferis-protection-phasing.md`).
 
 ## Mana
@@ -179,8 +183,8 @@ to you) and four land-fetch sorceries.
 
 Bracket 3 or 4, by what the table allows: one Game Changer (Teferi's Protection) and one two-card infinite, Heliod,
 Sun-Crowned + Walking Ballista (a late-game combo with no way to start it early). Commander Spellbook also lists Archangel of Thune + Walking Ballista for this list (`data/spellbook/trostani.json`); check its steps before you name it at a table. There are no extra turns and no mass
-land destruction. Tell the table before the game about the infinite and Aetherflux Reservoir (a one-shot, 50 damage for 50
-life), that the deck has two sweepers (Austere Command and Sunblast Angel) it only casts when behind, and that Archon of
+land destruction. Tell the table before the game about the infinite and Aetherflux Reservoir (50 damage for 50 life, as often as the
+life total allows), that the deck has two sweepers (Austere Command and Sunblast Angel) it only casts when behind, and that Archon of
 Absolution and Sphere of Safety make attacking you cost mana.
 
 ## Decklist by type (100)
