@@ -249,6 +249,7 @@ fn call(g: &mut Game, t: &Trigger) -> Res {
         }
         TrigAct::EtbOnce { p, m } => crate::engine::zones::etb_once(g, *p, *m),
         TrigAct::Dsl { p, src, card, idx, ctx } => crate::dsl::run_trigger(g, *p, *src, *card, *idx, ctx),
+        TrigAct::Scourge { y, .. } => crate::impls::trostani_counters::scourge_resolve(g, *y),
     };
     g.last_cast_etb = prev;
     r

@@ -418,9 +418,10 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         g.resolving -= 1;
         crate::human::choices::batch_end(g, batch);
         r?;
-        if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
-            crate::engine::stack::flush_triggers(g)?;
-        }
+    }
+    // what Cathars' Crusade and Wildwood Scourge queued without flushing goes on the stack at the end of the creation
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(out)
 }
@@ -1433,7 +1434,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         {
             f(g, m, p, m)?;
         }
-        return Ok(m);
+        return held_triggers_go(g, m);
     }
     if creature {
         creature_entered(g, p, m)?;
@@ -1450,6 +1451,15 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         let r = fire_trigger(g, Event::Etb, Call::Etb { p, m });
         g.last_cast_etb = false;
         r?;
+    }
+    held_triggers_go(g, m)
+}
+
+/// the end of an entry at top level: what it queued without flushing (Wildwood Scourge's trigger for counters it entered with,
+/// or put by Cathars' Crusade) goes on the stack now (CR 603.3); inside a spell or ability the flush at its end does it
+fn held_triggers_go(g: &mut Game, m: PermId) -> Res<PermId> {
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(m)
 }

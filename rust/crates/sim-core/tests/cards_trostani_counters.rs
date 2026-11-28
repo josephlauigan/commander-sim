@@ -6,7 +6,7 @@
 //! order for +1/+1 counters puts every "plus one" before every doubling).
 
 use sim_core::ai::act;
-use sim_core::engine::{hooks, repl, zones};
+use sim_core::engine::{hooks, life, repl, stack, turn, zones};
 use sim_core::hooks::{Call, Event};
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::impls::trostani_counters::doctor_resolve;
@@ -27,7 +27,9 @@ fn bear(g: &mut Game, p: PlayerId) -> PermId {
 
 /// +1/+1 counters p's effect puts on m, through every counter effect; how many went on
 fn put(g: &mut Game, p: PlayerId, m: PermId, n: i32) -> i32 {
-    repl::put_counters(g, p, m, n)
+    let k = repl::put_counters(g, p, m, n);
+    stack::flush_triggers(g).unwrap(); // the end of the effect: what it triggered goes on the stack
+    k
 }
 
 fn plus(g: &Game, m: PermId) -> i32 {
@@ -653,4 +655,162 @@ fn elspeth_plus_one_makes_six_soldiers_with_anointed_procession_and_twelve_with_
     plus_one(&mut g, e);
     assert_eq!(tokens(&g), 12);
     assert_eq!(g.perm(e).loyalty, Some(9), "the +1 is a cost: Doubling Season does not double it");
+}
+
+// ======================================================== Wildwood Scourge on the stack
+// "Whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1 counter on this
+// creature." A triggered ability (CR 603.3): it goes on the stack the next time a player would get priority, after the spell,
+// ability or trigger that put the counters has finished. Each path the deck uses ends with the counter landed and nothing
+// left in `trig_queue`.
+
+fn landed(g: &Game) {
+    assert!(g.trig_queue.is_empty(), "a Scourge trigger is still queued: {:?}", g.trig_queue);
+}
+
+#[test]
+fn gavony_activation_ends_with_the_scourges_counters_landed() {
+    // each of 3 creatures gets one counter (the Scourge among them: a Hydra, no trigger); the two Bears are non-Hydra:
+    // two triggers. 2 + 1 + 2 = 5
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let a = bear(&mut g, P0);
+    let b = bear(&mut g, P0);
+    gavony_with(&mut g, 4);
+    g.active = Some(P1);
+    let o = gavony_opts(&mut g, None);
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert_eq!((plus(&g, a), plus(&g, b)), (1, 1));
+    assert_eq!(plus(&g, s), 5);
+    landed(&g);
+}
+
+#[test]
+fn heliod_life_gain_counter_ends_with_the_scourges_counter_landed() {
+    // "Whenever you gain life, put a +1/+1 counter on target creature or enchantment you control": if it goes on the
+    // Bear (a non-Hydra) the Scourge triggers once
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let a = perm(&mut g, P0, "Serra Angel"); // (the AI aims the counter at its best creature)
+    let h = perm(&mut g, P0, "Heliod, Sun-Crowned");
+    life::gain(&mut g, P0, 3).unwrap();
+    landed(&g);
+    assert_eq!(plus(&g, a), 1, "Heliod's counter went on the Bear (scourge {}, heliod {})", plus(&g, s), plus(&g, h));
+    assert_eq!(plus(&g, s), 3);
+}
+
+#[test]
+fn crusade_on_a_creature_land_entry_ends_with_the_scourges_counters_landed() {
+    // the land-entry path (a token copy of a land that is a creature) has its own flush: Crusade puts one counter on each
+    // creature (the Scourge, then the land creature itself, a non-Hydra: one trigger): 2 + 1 + 1 = 4
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    perm(&mut g, P0, "Cathars' Crusade");
+    let exc = sim_core::state::CopyExc {
+        add_types: sim_core::cards::Types::CREATURE,
+        pt: Some((3, 3)),
+        ..Default::default()
+    };
+    let forest = card(&g, "Forest");
+    let l = turn::enter_token_land_copy(&mut g, P0, forest, exc).unwrap().unwrap();
+    assert_eq!(plus(&g, l), 1);
+    assert_eq!(plus(&g, s), 4);
+    landed(&g);
+}
+
+#[test]
+fn crusade_on_a_spell_entry_and_on_tokens_ends_with_the_scourges_counters_landed() {
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    perm(&mut g, P0, "Cathars' Crusade");
+    // an Elf enters: one trigger; counters on the Scourge (own) and the Elf (a Scourge trigger): 2 + 1 + 1
+    perm(&mut g, P0, "Llanowar Elves");
+    assert_eq!(plus(&g, s), 4);
+    landed(&g);
+    // two tokens at once: two Crusade triggers, each a counter on each of the 4 creatures: 2 own placements on the
+    // Scourge and a Scourge trigger for each placement on a non-Hydra (3 non-Hydras x 2 = 6): 4 + 2 + 6 = 12
+    zones::make_tokens(&mut g, P0, zones::Tokens::new(2, 1)).unwrap();
+    assert_eq!(plus(&g, s), 12);
+    landed(&g);
+}
+
+#[test]
+fn the_doctors_enters_trigger_ends_with_the_scourges_counters_landed() {
+    // the Angel (no counters) is the target: two placements on it (two Scourge triggers); the Scourge has counters, so the
+    // second sentence puts one on it (a Hydra: no trigger): 2 + 1 + 2 = 5
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let angel = perm(&mut g, P0, "Serra Angel");
+    let d = perm(&mut g, P0, "The Doctor, EMH");
+    assert_eq!((plus(&g, angel), plus(&g, d)), (2, 0));
+    assert_eq!(plus(&g, s), 5);
+    landed(&g);
+}
+
+#[test]
+fn kalonians_attack_trigger_ends_with_the_scourges_counter_landed() {
+    // the Bear's 3 counters are doubled (one placement: one Scourge trigger); the Scourge doubles its own 2: 2 + 2 + 1 = 5
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let k = perm(&mut g, P0, "Kalonian Hydra");
+    let a = bear(&mut g, P0);
+    g.perm_mut(a).plus = 3;
+    attack(&mut g, k);
+    assert_eq!(plus(&g, a), 6);
+    assert_eq!(plus(&g, s), 5);
+    landed(&g);
+}
+
+#[test]
+fn emiels_counter_ends_with_the_scourges_counter_landed() {
+    // Emiel: whenever another creature enters under your control, you may pay {G/W}: a +1/+1 counter on it. A token and a
+    // spell's creature each enter with one more counter, and the Scourge grows for each
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    perm(&mut g, P0, "Emiel the Blessed");
+    lands(&mut g, P0, "Plains", 2, false);
+    let toks = zones::make_tokens(&mut g, P0, zones::Tokens::new(1, 1)).unwrap();
+    assert_eq!(plus(&g, toks[0]), 1);
+    assert_eq!(plus(&g, s), 3);
+    landed(&g);
+    let e = perm(&mut g, P0, "Llanowar Elves");
+    assert_eq!(plus(&g, e), 1);
+    assert_eq!(plus(&g, s), 4);
+    landed(&g);
+}
+
+#[test]
+fn a_scourge_that_left_before_its_trigger_resolves_gets_nothing() {
+    // "the same permanent": the trigger is on its way, the Scourge is exiled; a new Scourge (another object) gets no counter
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let a = bear(&mut g, P0);
+    g.resolving += 1;
+    repl::put_counters(&mut g, P0, a, 1);
+    zones::exile_perm(&mut g, s).unwrap();
+    let s2 = scourge(&mut g, P0, 1);
+    g.resolving -= 1;
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(plus(&g, s2), 1);
+    assert!(!g.perm(s).on_bf);
+    landed(&g);
+}
+
+#[test]
+fn trostanis_life_trigger_still_resolves_after_the_scourges_triggers() {
+    // Trostani's trigger is late: it resolves after the other triggers of the same batch even when it was queued first.
+    // The Scourge enters (Trostani's trigger queued: she gains life equal to its toughness), then a counter goes on a Bear in
+    // the same ability (the Scourge's trigger, queued after hers): the Scourge's counter lands first, so she reads 3, not 2
+    let mut g = tbl();
+    perm(&mut g, P0, "Trostani, Selesnya's Voice");
+    let a = bear(&mut g, P0);
+    g.player_mut(P0).life = 20;
+    g.resolving += 1;
+    let s = scourge(&mut g, P0, 2);
+    repl::put_counters(&mut g, P0, a, 1);
+    assert_eq!(g.trig_queue.len(), 2, "Trostani's trigger and the Scourge's");
+    g.resolving -= 1;
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(plus(&g, s), 3);
+    assert_eq!(g.player(P0).life, 23);
+    landed(&g);
 }

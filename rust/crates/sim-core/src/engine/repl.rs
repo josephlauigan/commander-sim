@@ -564,23 +564,48 @@ pub fn put_counters(g: &mut Game, actor: PlayerId, m: PermId, n: i32) -> i32 {
 }
 
 /// Wildwood Scourge: whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1
-/// counter on it. One call is one placement event (a Scourge grows once for each creature a spell or ability puts counters
-/// on, not once for each counter); its own counter is a placement by an effect too (the doublers apply). Counters a
-/// creature enters with count as put on it (CR 122.6: `zones::enter` calls this). It resolves at once, without a stack item.
+/// counter on it. One call is one placement event (a Scourge triggers once for each creature a spell or ability puts counters
+/// on, not once for each counter). Counters a creature enters with count as put on it (CR 122.6: `zones::enter` calls this).
+/// It is a triggered ability: one `TrigAct::Scourge` for each Scourge is queued without flushing (`resolving` is held), so it
+/// goes on the stack the next time a player would get priority (CR 603.3), after the spell, ability or trigger that put the
+/// counters has finished (`stack::flush_triggers` at its end), with the other triggers of that event. At top level, with
+/// nothing resolving, the caller of `put_counters` must flush (`resolving_with`); the next stack window does it otherwise.
+/// Its own counter is a placement by an effect too (`trostani_counters::scourge_resolve`: the doublers apply).
 pub fn scourge_grows(g: &mut Game, m: PermId) {
     let o = g.perm(m).owner;
     let any = g.player(o).perms.iter().any(|&y| y != m && is(g, y, ReplFx::Scourge) && src_on(g, y));
     if !any || !g.is_creature(m) || crate::engine::values::has_type(g, m, "hydra") {
         return;
     }
-    let scourges: Vec<PermId> =
-        g.player(o).perms.iter().copied().filter(|&y| y != m && is(g, y, ReplFx::Scourge) && src_on(g, y)).collect();
-    for y in scourges {
-        let k = put_counters(g, o, y, 1); // (a Hydra: no further trigger)
-        if k > 0 {
-            crate::glog!(g, "    {} grows by {} (a counter on {})", g.perm(y).name, k, g.perm(m).name);
-        }
+    let name = crate::sym::intern("Wildwood Scourge: a +1/+1 counter");
+    let entries: Vec<crate::hooks::Trigger> = g
+        .player(o)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&y| y != m && is(g, y, ReplFx::Scourge) && src_on(g, y))
+        .map(|y| crate::hooks::Trigger {
+            known: true,
+            name: Some(name),
+            ..crate::hooks::Trigger::new(o, Some(y), crate::hooks::TrigAct::Scourge { y, m })
+        })
+        .collect();
+    g.resolving += 1;
+    let _ = crate::engine::stack::queue_triggers(g, entries); // (held: it only queues)
+    g.resolving -= 1;
+}
+
+/// Run `f` with triggers held, then (at top level) put what it queued on the stack: the end of an ability or effect the
+/// engine has no other flush for (CR 603.3).
+pub fn resolving_with(g: &mut Game, f: impl FnOnce(&mut Game) -> crate::flow::Res) -> crate::flow::Res {
+    g.resolving += 1;
+    let r = f(g);
+    g.resolving -= 1;
+    r?;
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
+    Ok(())
 }
 
 /// Cathars' Crusade: `triggers` triggers of it (one for each Crusade, each creature that entered, each extra copy of a

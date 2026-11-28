@@ -1263,6 +1263,9 @@ pub enum TrigAct {
     EtbOnce { p: PlayerId, m: PermId },
     /// a compiled triggered ability: ability `idx` of `card` on permanent `src`, with what triggered it
     Dsl { p: PlayerId, src: PermId, card: CardId, idx: u16, ctx: Box<crate::dsl::DslCtx> },
+    /// Wildwood Scourge `y`: +1/+1 counters were put on another non-Hydra creature `m` of its controller's
+    /// (`repl::scourge_grows`; resolved by `trostani_counters::scourge_resolve`)
+    Scourge { y: PermId, m: PermId },
 }
 
 // ------------------------------------------------------------------ AI options

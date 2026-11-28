@@ -66,11 +66,15 @@ fn kalonian_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Play
     }
     let each: Vec<(PermId, i32)> =
         creatures(g, p).into_iter().map(|m| (m, g.perm(m).plus)).filter(|&(_, n)| n > 0).collect();
-    for (m, n) in each {
-        if g.perm(m).on_bf {
-            repl::put_counters(g, p, m, n);
+    // (the Scourge's triggers for these counters wait for the end of this one, then go on the stack)
+    repl::resolving_with(g, |g| {
+        for (m, n) in each {
+            if g.perm(m).on_bf {
+                repl::put_counters(g, p, m, n);
+            }
         }
-    }
+        Ok(())
+    })?;
     crate::glog!(g, "    {} doubles the +1/+1 counters on {}'s creatures", g.perm(src).name, g.player(p).name);
     g.bf_ver += 1;
     Ok(vec![])
@@ -83,6 +87,21 @@ fn scourge_as(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let x = g.perm(m).data.int(DataKey::CastX) as i32;
     if x > 0 {
         repl::put_counters(g, p, m, x);
+    }
+    Ok(())
+}
+
+/// The Scourge's trigger as it resolves: a +1/+1 counter on it (a placement by an effect: the doublers apply), if it is still
+/// the same permanent on the battlefield, not phased out and with its abilities on. Nothing happens otherwise.
+pub fn scourge_resolve(g: &mut Game, y: PermId) -> Res {
+    let x = g.perm(y);
+    if !x.on_bf || x.phased || x.neutered {
+        return Ok(());
+    }
+    let o = x.owner;
+    let k = repl::put_counters(g, o, y, 1); // (a Hydra: it triggers nothing further)
+    if k > 0 {
+        crate::glog!(g, "    {} grows by {}", g.perm(y).name, k);
     }
     Ok(())
 }
@@ -190,15 +209,18 @@ pub fn doctor_resolve(g: &mut Game, src: PermId, o: PlayerId, target: PermId) ->
     if g.perm(target).owner != o && !crate::engine::ward::pay_ward(g, o, target)? {
         return Ok(());
     }
-    let k = repl::put_counters(g, o, target, 1);
-    // the target has a counter now even if a -1/-1 counter it had was cancelled by it (SBA 704.5q comes later)
-    let each: Vec<PermId> =
-        creatures(g, o).into_iter().filter(|&m| has_counters(g, m) || (m == target && k > 0)).collect();
-    for m in each {
-        if g.perm(m).on_bf {
-            repl::put_counters(g, o, m, 1);
+    repl::resolving_with(g, |g| {
+        let k = repl::put_counters(g, o, target, 1);
+        // the target has a counter now even if a -1/-1 counter it had was cancelled by it (SBA 704.5q comes later)
+        let each: Vec<PermId> =
+            creatures(g, o).into_iter().filter(|&m| has_counters(g, m) || (m == target && k > 0)).collect();
+        for m in each {
+            if g.perm(m).on_bf {
+                repl::put_counters(g, o, m, 1);
+            }
         }
-    }
+        Ok(())
+    })?;
     crate::glog!(g, "    {}: counters on {} and each creature with a counter", DOCTOR, g.perm(target).name);
     g.bf_ver += 1;
     Ok(())
@@ -251,9 +273,12 @@ fn gavony_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !ability_window_card(g, p, cd, "a +1/+1 counter on each creature you control", Some(4.0), None)? {
         return Ok(true);
     }
-    for m in creatures(g, p) {
-        repl::put_counters(g, p, m, 1);
-    }
+    repl::resolving_with(g, |g| {
+        for m in creatures(g, p) {
+            repl::put_counters(g, p, m, 1);
+        }
+        Ok(())
+    })?;
     g.bf_ver += 1;
     Ok(true)
 }

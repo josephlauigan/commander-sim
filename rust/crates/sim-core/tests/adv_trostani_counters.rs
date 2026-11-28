@@ -19,6 +19,11 @@ fn scourge(g: &mut Game) -> PermId {
     zones::enter(g, P0, c, zones::Enter { x: 2, was_cast: true, ..Default::default() }).unwrap()
 }
 
+/// the end of the effect that put the counters: what it triggered goes on the stack (CR 603.3)
+fn flush(g: &mut Game) {
+    stack::flush_triggers(g).unwrap();
+}
+
 fn doctor(g: &mut Game) -> PermId {
     g.skip_etb = true;
     let d = perm(g, P0, "The Doctor, EMH");
@@ -164,6 +169,7 @@ fn scourge_one_trigger_for_large_placement() {
     let s = scourge(&mut g);
     let a = token(&mut g, P0, 2);
     repl::put_counters(&mut g, P0, a, 100);
+    flush(&mut g);
     assert_eq!(g.perm(s).plus, 3);
 }
 
@@ -175,6 +181,7 @@ fn panharmonicon_does_not_copy_ordinary_scourge_trigger() {
     perm(&mut g, P0, "Panharmonicon");
     let a = token(&mut g, P0, 2);
     repl::put_counters(&mut g, P0, a, 1);
+    flush(&mut g);
     assert_eq!(g.perm(s).plus, 3);
 }
 
@@ -246,23 +253,34 @@ fn phased_scourge_does_not_trigger() {
     g.perm_mut(s).phased = true;
     let a = token(&mut g, P0, 2);
     repl::put_counters(&mut g, P0, a, 1);
+    flush(&mut g);
     assert_eq!(g.perm(s).plus, 2);
 }
 
 // Scourge is a "Whenever" triggered ability, not a replacement (CR 603.3, 608.2): while another ability
 // resolves, it must wait. This uses the engine's real resolving-depth and trigger-flush mechanism.
 #[test]
-#[ignore = "A11: Scourge on the stack (step 7, after B merges), pending coordinator"]
 fn scourge_trigger_waits_until_current_ability_finishes() {
     let mut g = game();
     let s = scourge(&mut g);
     let a = token(&mut g, P0, 2);
+    let b = token(&mut g, P0, 2);
     g.resolving += 1;
     repl::put_counters(&mut g, P0, a, 1);
     assert_eq!(g.perm(s).plus, 2, "Scourge's trigger has not resolved yet");
+    assert_eq!(g.trig_queue.len(), 1);
     g.resolving -= 1;
     stack::flush_triggers(&mut g).unwrap();
     assert_eq!(g.perm(s).plus, 3);
+    // two placement events in one ability: two triggers, both after it
+    g.resolving += 1;
+    repl::put_counters(&mut g, P0, a, 1);
+    repl::put_counters(&mut g, P0, b, 1);
+    assert_eq!((g.perm(s).plus, g.trig_queue.len()), (3, 2));
+    g.resolving -= 1;
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.perm(s).plus, 5);
+    assert!(g.trig_queue.is_empty());
 }
 
 // Each Scourge is a Hydra, so the two triggers do not recursively trigger one another.
@@ -274,6 +292,7 @@ fn two_scourges_and_branching_do_not_recurse() {
     perm(&mut g, P0, "Branching Evolution");
     let a = token(&mut g, P0, 2);
     repl::put_counters(&mut g, P0, a, 1);
+    flush(&mut g);
     assert_eq!((g.perm(s1).plus, g.perm(s2).plus), (4, 4));
 }
 
@@ -287,6 +306,7 @@ fn proliferate_grows_scourge_for_each_non_hydra() {
         g.perm_mut(a).plus = 1;
     }
     common::proliferate(&mut g, P0, 1).unwrap();
+    flush(&mut g);
     assert_eq!(g.perm(s).plus, 5, "one proliferated counter and two Scourge triggers");
 }
 
