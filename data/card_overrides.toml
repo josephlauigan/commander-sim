@@ -10088,7 +10088,7 @@ paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (
 paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Castle Ardenvale"]
-paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "card code: the activation and its AI use are the land_options hook (impls/trostani_misc.rs), which takes the compiled activated ability out of the AI's offers (dsl::ability_options skips a land with a land_options hook); the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 status = "Full"
 note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: a 1/1 Human; the AI makes one at an opponent's end step with the mana spare (card code, tested)"
 
@@ -10503,7 +10503,7 @@ note = "Red spells you cast cost {1} less (the compiled static:cost: generic man
 ["Trostani, Selesnya's Voice"]
 dsl = [] # the compiled life trigger would fire next to the card-code one, and populate does not compile
 status = "Full"
-note = "Whenever another creature you control enters, you gain life equal to its toughness (card code, impls/trostani_life.rs: an Etb hook, plus tokens_enter/enter_queues so each creature token is its own trigger; not for herself; the toughness is read as the trigger resolves, last known if it left). The trigger is marked late (CardImpl::late, engine/stack.rs late_order): it resolves after the other triggers of the same entering (Emiel's counter, Archangel of Thune's gain), in both resolve paths. {1}{G}{W},{T}: populate (the AI's option: at an opponent's end step, and in its own main phase only when a Cathars' Crusade or Archangel of Thune is out or the copy takes it to 40/50 life with Felidar/Test; zur::populate: zones::token_copy_of, copiable values only, no counters, doublers apply; picks by what the copy would be, toughness double while she or the Avatar is out). Not modeled: practice mode has no populate button for her (AI only)."
+note = "Whenever another creature you control enters, you gain life equal to its toughness (card code, impls/trostani_life.rs: an Etb hook, plus tokens_enter/enter_queues so each creature token is its own trigger; not for herself; the toughness is read as the trigger resolves, last known if it left). The trigger is marked late (CardImpl::late, engine/stack.rs late_order): it resolves after the other triggers of the same entering (Emiel's counter, Archangel of Thune's gain), in both resolve paths. {1}{G}{W},{T}: populate (the AI's option: at an opponent's end step, and in its own main phase only when a Cathars' Crusade or Archangel of Thune is out or the copy takes it to 40/50 life with Felidar/Test; zur::populate: zones::token_copy_of, copiable values only, no counters, doublers apply; picks by what the copy would be, toughness double while she or the Avatar is out). Practice mode: a person is offered populate on an opponent's turn only (not in their own main phases), and the AI picks which token is copied."
 
 ["Branching Evolution"]
 dsl = [] # it compiles as Doubling Season's counters rule (every kind of counter on every permanent); it doubles +1/+1 counters on your creatures only
