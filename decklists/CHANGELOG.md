@@ -1053,4 +1053,5 @@ Deck key `trostani`, `decklists/JD/trostani-selesnya-counters-blink.md`.
 
 ### Changes
 
+- **2026-11-27.** Out: Rootborn Defenses. In: Felidar Retreat, Witch Enchanter // Witch-Blessed Meadow. Out: Rootborn Defenses, one Plains. In: Felidar Retreat, Witch Enchanter // Witch-Blessed Meadow. JD's choice (11/27), not simulated; JD owns both. Package-level: Felidar Retreat takes Rootborn Defenses' token and populate job (mana value 3 to 4; direct populate cards 2 to 1, the instant indestructible is lost); Witch Enchanter // Witch-Blessed Meadow takes a Plains' land slot (land for land, the W sources stay 21) and adds an artifact and enchantment answer.
 - **2026-11-27.** Out: nothing. In: nothing. Register JD's Trostani, Selesnya's Voice counters, blink and lifegain list.

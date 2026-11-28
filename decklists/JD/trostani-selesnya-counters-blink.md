@@ -49,10 +49,10 @@ Each package has a job. The 64 spells split as follows (Trostani is the 100th ca
 | Lifegain and wins (7) | Archangel of Thune, Felidar Sovereign, Test of Endurance, Aetherflux Reservoir, Rhox Faithmender, Heliod Sun-Crowned, Craterhoof Behemoth | Make the life total the clock; Craterhoof finishes a wide board |
 | Pillowfort (3) | Thalia the Survivor, Archon of Absolution, Sphere of Safety | Archon of Absolution and Sphere of Safety make attacking you cost mana while the life total climbs; Thalia is a lifelink body that taxes the opponents' noncreature spells |
 | Reset (2) | Sunblast Angel, Austere Command | Two sweepers the deck can cast when it is behind; Austere Command picks two modes, so it can leave the enchantments or your creatures |
-| Populate (2) | Rootborn Defenses, Elspeth Sun's Champion | Tokens for Trostani to copy and for Doubling Season and Anointed Procession to double |
+| Tokens and populate (2) | Felidar Retreat, Elspeth Sun's Champion | Tokens for Trostani to copy and for Doubling Season and Anointed Procession to double: Felidar Retreat makes a 2/2 Cat Beast on each land drop (or a +1/+1 counter on each creature), Elspeth three Soldiers a turn |
 | Draw (4) | Guardian Project, Beast Whisperer, Sylvan Library, Harmonize | Refill; the creature-heavy list triggers Beast Whisperer and Guardian Project constantly |
 | Tutors (3) | Green Sun's Zenith, Sterling Grove, Eladamri's Call | Find a creature (Zenith: a green one, X or less), the engine enchantment (Sterling Grove) or any creature (Eladamri's Call) |
-| Interaction and protection (8) | Swords to Plowshares, Path to Exile, Generous Gift, Darksteel Mutation, Heroic Intervention, Teferi's Protection, Akroma's Will, Flawless Maneuver | Spot removal, and the four cards that protect the engine from a sweeper or exile |
+| Interaction and protection (8) | Swords to Plowshares, Path to Exile, Generous Gift, Darksteel Mutation, Heroic Intervention, Teferi's Protection, Akroma's Will, Flawless Maneuver | Spot removal, and the four cards that protect the engine from a sweeper or exile (Witch Enchanter, counted with the lands, is the artifact and enchantment answer) |
 
 Plus 35 lands (see "Mana").
 
@@ -82,6 +82,9 @@ Mentor adds one before each doubling is applied, in the order you choose.
   Doubling Season doubles it again (a creature with three counters ends at nine, not six). A creature with no counters stays
   at none.
 - **Gavony Township** ({2}{G}{W}, {T}) puts a counter on each creature you control, every turn, with no card in hand.
+- **Felidar Retreat** ({3}{W}) turns every land into a trigger: choose a 2/2 Cat Beast token (Trostani gains 2 life, and
+  Doubling Season or Anointed Procession doubles it) or a +1/+1 counter on each creature you control (the doublers apply, and
+  Wildwood Scourge grows once for each other creature that gets one).
 - **Cathars' Crusade** puts a counter on each creature you control whenever a creature enters; the counters are put as the
   trigger resolves, and with Wildwood Scourge on the table each is another counter on the Scourge.
 - **Counters are lost when a creature is blinked or bounced:** blink the creature with an enters trigger and few counters,
@@ -164,8 +167,8 @@ costs 4 life for each extra card, which this deck's lifegain pays back.
 
 ## Mana
 
-35 lands: Command Tower, Path of Ancestry, Exotic Orchard, Temple Garden, Sunpetal Grove, Fabled Passage, Evolving Wilds,
-Gavony Township, Boseiju Who Endures, Castle Ardenvale, 12 Forest and 13 Plains. Twenty-one lands make {W} and twenty make
+35 land slots (34 lands and one modal double-faced card): Command Tower, Path of Ancestry, Exotic Orchard, Temple Garden, Sunpetal Grove, Fabled Passage, Evolving Wilds,
+Gavony Township, Boseiju Who Endures, Castle Ardenvale, Witch Enchanter // Witch-Blessed Meadow, 12 Forest and 12 Plains. Twenty-one lands make {W} and twenty make
 {G} (counting Command Tower, Path of Ancestry, Exotic Orchard, Temple Garden, Sunpetal Grove, Fabled Passage and Evolving
 Wilds for both). Eleven ramp cards on top: three green mana creatures (Elvish Mystic, Llanowar Elves, Birds of Paradise, which
 also makes {W}), Sol Ring, Arcane Signet, Moss Diamond (enters tapped, {G} only), Talisman of Unity ({G} or {W} for 1 damage
@@ -177,6 +180,9 @@ to you) and four land-fetch sorceries.
 - **Exotic Orchard** makes only colours an opponent's land could make; with one-colour opposition it may make none.
 - **Castle Ardenvale** ({2}{W}{W}, {T}: a 1/1 Human) and **Gavony Township** ({2}{G}{W}, {T}) are the deck's lands that
   work late; Gavony makes {C} for itself.
+- **Witch Enchanter // Witch-Blessed Meadow** is the 35th land slot. Played as a land it taps for {W} and enters tapped unless you
+  pay 3 life; cast as a creature ({3}{W}, 2/2 Human Warlock) it destroys an artifact or enchantment an opponent controls as it
+  enters, and Trostani and Emiel reward it like any creature. Either way it triggers Felidar Retreat if you play it as a land.
 - **Fixing spells:** Farseek finds a Plains or Temple Garden, Nature's Lore a Forest or Temple Garden; Cultivate and Kodama's Reach find either basic.
 
 ## Bracket and Rule 0
@@ -190,19 +196,19 @@ Absolution and Sphere of Safety make attacking you cost mana.
 ## Decklist by type (100)
 **Commander (1).** Trostani, Selesnya's Voice
 
-**Lands (35).** Boseiju Who Endures, Castle Ardenvale, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Gavony Township, Path of Ancestry, Sunpetal Grove, Temple Garden, 12 Forest, 13 Plains
+**Lands (34).** Boseiju Who Endures, Castle Ardenvale, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Gavony Township, Path of Ancestry, Sunpetal Grove, Temple Garden, 12 Forest, 12 Plains
 
-**Creatures (28).** Archangel of Thune, Archon of Absolution, Beast Whisperer, Birds of Paradise, Conclave Mentor, Craterhoof Behemoth, Elder Gargaroth, Elvish Mystic, Emiel the Blessed, Felidar Sovereign, Flickerwisp, Hangarback Walker, Heliod Sun-Crowned, Kalonian Hydra, Llanowar Elves, Restoration Angel, Rhox Faithmender, Serra Angel, Sunblast Angel, Sunpearl Kirin, Thalia the Survivor, The Doctor EMH, Tireless Tracker, Treebeard Gracious Host, Verdant Sun's Avatar, Walking Ballista, Wall of Omens, Wildwood Scourge
+**Creatures (29).** Archangel of Thune, Archon of Absolution, Beast Whisperer, Birds of Paradise, Conclave Mentor, Craterhoof Behemoth, Elder Gargaroth, Elvish Mystic, Emiel the Blessed, Felidar Sovereign, Flickerwisp, Hangarback Walker, Heliod Sun-Crowned, Kalonian Hydra, Llanowar Elves, Restoration Angel, Rhox Faithmender, Serra Angel, Sunblast Angel, Sunpearl Kirin, Thalia the Survivor, The Doctor EMH, Tireless Tracker, Treebeard Gracious Host, Verdant Sun's Avatar, Walking Ballista, Wall of Omens, Wildwood Scourge, Witch Enchanter // Witch-Blessed Meadow
 
 **Planeswalkers (1).** Elspeth Sun's Champion
 
-**Enchantments (11).** Anointed Procession, Branching Evolution, Cathars' Crusade, Darksteel Mutation, Doubling Season, Guardian Project, Innkeeper's Talent, Sphere of Safety, Sterling Grove, Sylvan Library, Test of Endurance
+**Enchantments (12).** Anointed Procession, Branching Evolution, Cathars' Crusade, Darksteel Mutation, Doubling Season, Felidar Retreat, Guardian Project, Innkeeper's Talent, Sphere of Safety, Sterling Grove, Sylvan Library, Test of Endurance
 
 **Artifacts (6).** Aetherflux Reservoir, Arcane Signet, Conjurer's Closet, Moss Diamond, Sol Ring, Talisman of Unity
 
 **Sorceries (7).** Austere Command, Cultivate, Farseek, Green Sun's Zenith, Harmonize, Kodama's Reach, Nature's Lore
 
-**Instants (11).** Akroma's Will, Cloudshift, Eladamri's Call, Ephemerate, Flawless Maneuver, Generous Gift, Heroic Intervention, Path to Exile, Rootborn Defenses, Swords to Plowshares, Teferi's Protection
+**Instants (10).** Akroma's Will, Cloudshift, Eladamri's Call, Ephemerate, Flawless Maneuver, Generous Gift, Heroic Intervention, Path to Exile, Swords to Plowshares, Teferi's Protection
 
 ## Import list (100)
 
@@ -238,6 +244,7 @@ Absolution and Sphere of Safety make attacking you cost mana.
 1 Exotic Orchard
 1 Fabled Passage
 1 Farseek
+1 Felidar Retreat
 1 Felidar Sovereign
 1 Flawless Maneuver
 1 Flickerwisp
@@ -259,7 +266,6 @@ Absolution and Sphere of Safety make attacking you cost mana.
 1 Path to Exile
 1 Restoration Angel
 1 Rhox Faithmender
-1 Rootborn Defenses
 1 Serra Angel
 1 Sol Ring
 1 Sphere of Safety
@@ -282,6 +288,7 @@ Absolution and Sphere of Safety make attacking you cost mana.
 1 Walking Ballista
 1 Wall of Omens
 1 Wildwood Scourge
+1 Witch Enchanter // Witch-Blessed Meadow
 12 Forest
-13 Plains
+12 Plains
 ```

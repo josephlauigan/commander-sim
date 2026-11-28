@@ -696,8 +696,11 @@ cards = [
 ]
 
 [deck.trostani]
-# 2026-11-27: registered from JD's list. Ownership is not confirmed: every card is recorded as proxy (the Karn, Legacy Reforged precedent) until JD marks which ones he has; the deck is unconfirmed.
-have = []
+# 2026-11-27: registered from JD's list. Ownership is not confirmed: every card is recorded as proxy (JD owns Felidar Retreat and Witch Enchanter // Witch-Blessed Meadow: `have`) (the Karn, Legacy Reforged precedent) until JD marks which ones he has; the deck is unconfirmed.
+have = [
+  "Felidar Retreat",
+  "Witch Enchanter // Witch-Blessed Meadow",
+]
 proxy = [
   "Aetherflux Reservoir",
   "Akroma's Will",
@@ -751,7 +754,6 @@ proxy = [
   "Path to Exile",
   "Restoration Angel",
   "Rhox Faithmender",
-  "Rootborn Defenses",
   "Serra Angel",
   "Sol Ring",
   "Sphere of Safety",
