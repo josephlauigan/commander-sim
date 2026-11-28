@@ -2202,21 +2202,13 @@ fn landfall_once(g: &mut Game, p: PlayerId, pass: i32, copies: &[i32], land: Opt
             ];
             let k = crate::human::choices::choose_one(g, p, "choose", "Felidar Retreat: choose a mode", &labels)?;
             if k == 0 {
-                make_tokens(g, p, Tokens::new(1, 2))?;
+                crate::impls::trostani_misc::retreat_cat(g, p)?;
             } else {
-                for m in g.player(p).perms.clone() {
-                    if g.is_creature(m) {
-                        repl::put_plus(g, m, 1);
-                        let x = g.perm_mut(m);
-                        if !x.eot_kw.contains(&"vigilance") {
-                            x.eot_kw.push("vigilance");
-                        }
-                    }
-                }
+                crate::impls::trostani_misc::retreat_counter_mode(g, p)?;
             }
             continue;
         }
-        make_tokens(g, p, Tokens::new(1, 2))?; // Felidar Retreat: 2/2 Cat per land
+        crate::impls::trostani_misc::retreat_ai(g, p)?; // Felidar Retreat: the AI chooses a mode (Cat, or counters)
     }
     let lands = g.player(p).lands.clone();
     let fields = lands.iter().filter(|&&l| g.db.get(g.perm(l).card()).tag(Tag::Fotd)).count();

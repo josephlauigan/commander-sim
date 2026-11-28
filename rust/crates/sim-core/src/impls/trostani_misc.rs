@@ -22,6 +22,7 @@ const GARGAROTH: &str = "Elder Gargaroth";
 const SUNBLAST: &str = "Sunblast Angel";
 const RESERVOIR: &str = "Aetherflux Reservoir";
 const ARDENVALE: &str = "Castle Ardenvale";
+const RETREAT: &str = "Felidar Retreat";
 
 /// the deck key these AI rules belong to
 const DECK: &str = "trostani";
@@ -318,12 +319,121 @@ fn ardenvale_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Felidar Retreat
+// Landfall: whenever a land you control enters, choose one: a 2/2 white Cat Beast creature token; or a +1/+1 counter on
+// each creature you control, and those creatures gain vigilance until end of turn. The landfall trigger itself is
+// `zones::landfall_once`; this is the AI's cast rule and its mode. The card is tagged only `landfall2`, which the derived
+// worth reads as nothing, so its priority was 0 and the AI never cast it ("cast 0.0% of the games it was drawn").
+
+/// permanents that make the Cat worth more than its 2/2 body: Trostani and the Avatar gain life equal to its toughness
+const CAT_PAYOFFS: [&str; 2] = ["Trostani, Selesnya's Voice", "Verdant Sun's Avatar"];
+
+/// permanents that make Retreat's trigger worth more: the doublers of its tokens and counters, and the counter payoffs
+const RETREAT_ENGINES: [&str; 6] = [
+    "Trostani, Selesnya's Voice",
+    "Doubling Season",
+    "Anointed Procession",
+    "Cathars' Crusade",
+    "Wildwood Scourge",
+    "Kalonian Hydra",
+];
+
+fn creatures_out(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count()
+}
+
+/// The AI's cast priority. Every land that enters later is a Cat or a counter on each creature, so the worth is the land
+/// drops to come: a land in hand each (more of them, more worth), an extra land drop (Exploration, Azusa), else the
+/// chance the library gives one (the share of lands in it); with none to expect it is not cast. More with creatures
+/// out for the counter mode, and with Trostani, a doubler or Crusade out. Capped below the plan's multipliers (60) and
+/// Trostani herself (90), so a turn's mana goes to them first.
+fn retreat_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let pl = g.player(p);
+    let in_hand = pl.hand.iter().filter(|&&x| x != c && g.db.get(x).land).count() as i32;
+    let extra = crate::cardcode::extra_lands(g, p) as i32;
+    let lib_lands = pl.library.iter().filter(|&&x| g.db.get(x).land).count();
+    let base = if in_hand > 0 {
+        44 + 5 * in_hand.min(3)
+    } else if extra > 0 && lib_lands > 0 {
+        40
+    } else if lib_lands * 5 >= pl.library.len() && lib_lands > 0 {
+        30 // a land drop is likely next turn (a fifth of the library or more)
+    } else {
+        return 0; // no land to come: nothing for it to trigger on
+    };
+    let body = 2 * creatures_out(g, p).min(4) as i32;
+    let engines = 4 * RETREAT_ENGINES.iter().filter(|n| controls(g, p, n)).count() as i32;
+    (base + body + engines).min(58)
+}
+
+/// true: the counters mode; false: the Cat. Each mode in stat points, counters and tokens as the doublers would make
+/// them: the Cat is a 2/2 (4 points) plus one for being a body (blink, populate, Craterhoof), more for a life payoff;
+/// the counters are one point per creature, doubled by Doubling Season and the like, plus the creatures they grow
+/// (Wildwood Scourge, Kalonian Hydra). With Cathars' Crusade out the Cat is the better mode: it enters, so the Crusade puts a
+/// counter on every creature including the Cat itself. A tie is the Cat.
+pub fn retreat_counters(g: &Game, p: PlayerId) -> bool {
+    if controls(g, p, "Cathars' Crusade") {
+        return false;
+    }
+    let creatures = creatures_out(g, p) as f64;
+    if creatures == 0.0 {
+        return false;
+    }
+    let mult = repl::counter_mult(g, p).max(1) as f64;
+    // what the counters grow: each Wildwood Scourge gets a counter for each other non-Hydra creature that got one, and a
+    // Kalonian Hydra's attack doubles the counters on it (about one more)
+    let non_hydra = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| live(g, m) && g.is_creature(m) && !crate::engine::values::has_type(g, m, "hydra"))
+        .count() as f64;
+    let scourges =
+        g.player(p).perms.iter().filter(|&&m| live(g, m) && g.perm(m).name == "Wildwood Scourge").count() as f64;
+    let hydras = g.player(p).perms.iter().filter(|&&m| live(g, m) && g.perm(m).name == "Kalonian Hydra").count() as f64;
+    let grown = scourges * (non_hydra - 1.0).max(0.0) + hydras;
+    let counters = mult * (creatures + grown);
+    let tokens = repl::tokens(g, p, 1) as f64;
+    let payoff = CAT_PAYOFFS.iter().filter(|n| controls(g, p, n)).count() as f64;
+    let cat = tokens * (2.0 + 0.5 * payoff) + 1.0;
+    counters > cat
+}
+
+/// the Cat Beast token(s) of the first mode: a 2/2 white Cat Beast creature token (the doublers make more)
+pub fn retreat_cat(g: &mut Game, p: PlayerId) -> Res {
+    let spec = Tokens { color: Some(Colors::from_letters("W")), types: vec!["cat", "beast"], ..Tokens::new(1, 2) };
+    make_tokens(g, p, spec).map(|_| ())
+}
+
+/// the second mode: a +1/+1 counter on each creature p controls (one placement for each, so every counter effect
+/// applies), and those creatures gain vigilance until end of turn
+pub fn retreat_counter_mode(g: &mut Game, p: PlayerId) -> Res {
+    repl::resolving_with(g, |g| {
+        for m in g.player(p).perms.clone() {
+            if g.is_creature(m) {
+                repl::put_plus(g, m, 1);
+                let x = g.perm_mut(m);
+                if !x.eot_kw.contains(&"vigilance") {
+                    x.eot_kw.push("vigilance");
+                }
+            }
+        }
+        Ok(())
+    })
+}
+
+/// the AI's choice of mode at one landfall
+pub fn retreat_ai(g: &mut Game, p: PlayerId) -> Res {
+    if retreat_counters(g, p) { retreat_counter_mode(g, p) } else { retreat_cat(g, p) }
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, GARGAROTH)?;
     c.attack = Some(gargaroth_attack);
     c.blocks = Some(gargaroth_blocks);
     r.card(db, SUNBLAST)?.prio = Some(sunblast_prio);
+    r.card(db, RETREAT)?.prio = Some(retreat_prio);
     r.card(db, RESERVOIR)?.options = Some(aetherflux_options);
     r.card(db, ARDENVALE)?.land_options = Some(ardenvale_options);
     Ok(())
