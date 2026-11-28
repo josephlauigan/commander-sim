@@ -61,7 +61,7 @@ cardgen validate                                                                
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `sheoldred`, `marchesa`, `arzakon`, `urdragon`, `karn_gilded` or `karn_reforged`.
+- `--deck`: `sheoldred`, `marchesa`, `arzakon`, `urdragon`, `karn_gilded`, `karn_reforged` or `trostani`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -100,7 +100,7 @@ the same opponents and draws.
 | --- | --- |
 | urdragon | t5 |
 | arzakon | t5-t6 |
-| sheoldred, marchesa | t3-t4 |
+| sheoldred, marchesa, trostani | t3-t4 |
 | karn_gilded, karn_reforged | t4-t5 |
 
 ## The realism loop

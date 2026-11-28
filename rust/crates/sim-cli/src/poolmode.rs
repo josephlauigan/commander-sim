@@ -970,13 +970,14 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str], Option<&str>); 6] = [
+        let want: [(&str, &[&str], Option<&str>); 7] = [
             ("sheoldred", &["t3", "t4"], None), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("marchesa", &["t3", "t4"], None),
             ("arzakon", &["t5", "t6"], Some("cali")), // JD 11/23: Cali Commander, matched tiers t5 and t6
             ("urdragon", &["t5"], None),
             ("karn_gilded", &["t4", "t5"], None), // JD 11/24: replaces yshtola (t5) and yoshimaru (t4-t5)
             ("karn_reforged", &["t4", "t5"], None),
+            ("trostani", &["t3", "t4"], None),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t, fmt) in want {
@@ -1039,6 +1040,7 @@ mod tier_tests {
             ("urdragon".to_string(), v(&["t5"])),
             ("karn_gilded".to_string(), v(&["t4", "t5"])),
             ("karn_reforged".to_string(), v(&["t4", "t5"])),
+            ("trostani".to_string(), v(&["t3", "t4"])),
         ];
         let plan = tier_plan(&sim, &args("--all-decks --pool all")).unwrap();
         assert_eq!(plan.per_deck, want);
@@ -1057,7 +1059,7 @@ mod tier_tests {
         let plan = tier_plan(&sim, &args("--all-decks --pool all --any-tier")).unwrap();
         assert_eq!(
             plan.per_deck.iter().map(|(d, _)| d.as_str()).collect::<Vec<_>>(),
-            ["sheoldred", "marchesa", "urdragon", "karn_gilded", "karn_reforged"]
+            ["sheoldred", "marchesa", "urdragon", "karn_gilded", "karn_reforged", "trostani"]
         );
         assert!(plan.per_deck.iter().all(|(_, t)| t.len() == 7));
         assert_eq!(plan.skipped.len(), 1);

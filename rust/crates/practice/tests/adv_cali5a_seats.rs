@@ -343,7 +343,7 @@ fn choose_seats_without_a_format_is_the_decks_own_table() {
 #[test]
 fn old_seatings_are_accepted_back_as_exact_seats() {
     let e = sess::engine();
-    for deck in ["karn_gilded", "karn_reforged", "sheoldred", "marchesa", "urdragon"] {
+    for deck in ["karn_gilded", "karn_reforged", "sheoldred", "marchesa", "urdragon", "trostani"] {
         for tier in ["t1", "t3", "t5", "t6"] {
             for seed in 1..=15u64 {
                 let base = SeatArgs { deck, tier, partner: None, seed, seat: None, opponents: None, seats: None };

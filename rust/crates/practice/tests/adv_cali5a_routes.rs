@@ -118,7 +118,7 @@ fn texts_for_a_commander_request_are_as_before() {
         (
             json!({"deck": "nope", "tier": tier}),
             "",
-            "deck: one of sheoldred, marchesa, arzakon, urdragon, karn_gilded, karn_reforged".into(),
+            "deck: one of sheoldred, marchesa, arzakon, urdragon, karn_gilded, karn_reforged, trostani".into(),
         ),
         (json!({"deck": deck, "tier": "t9"}), "", "tier: one of t0, t1, t2, t3, t4, t5, t6".into()),
         (json!({"deck": deck, "tier": tier, "opponents": "x"}), "", "opponents: a list of deck keys".into()),
