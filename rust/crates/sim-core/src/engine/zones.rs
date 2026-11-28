@@ -370,12 +370,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         if has(g, p, Tag::Crusade) {
             let copies = 1 + hooks::enter_copies(g, p, Some(out[0])) as i32;
             let n = k * find(g, p, Tag::Crusade).len() as i32 * copies;
-            for m in g.player(p).perms.clone() {
-                if g.is_creature(m) {
-                    let x = g.perm_mut(m);
-                    x.plus = (x.plus + n).min(999);
-                }
-            }
+            repl::crusade_counters(g, p, n); // a placement for each creature and trigger: the counter effects apply
         }
         if has(g, p, Tag::Warleader) {
             let copies = 1 + hooks::enter_copies(g, p, Some(out[0])) as i32;
@@ -522,12 +517,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if !hooks::enter_silenced(g, p, Some(m)) {
         if has(g, p, Tag::Crusade) {
             let n = find(g, p, Tag::Crusade).len() as i32 * (1 + hooks::enter_copies(g, p, Some(m)) as i32);
-            for x in g.player(p).perms.clone() {
-                if g.is_creature(x) {
-                    let y = g.perm_mut(x);
-                    y.plus = (y.plus + n).min(999);
-                }
-            }
+            repl::crusade_counters(g, p, n); // a placement for each creature and trigger: the counter effects apply
         }
         if has(g, p, Tag::Warleader) {
             let copies = 1 + hooks::enter_copies(g, p, Some(m)) as i32;
@@ -1413,6 +1403,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         g.perm_mut(m).tapped = true;
     }
     cardcode::as_enters(g, p, m)?; // naming a creature type
+    if v_plus > 0 && g.perm(m).on_bf {
+        repl::scourge_grows(g, m); // counters it enters with are counters put on it (CR 122.6): Wildwood Scourge
+    }
     let st = g.turn_stamp();
     g.entered.retain(|e| e.0 == st);
     g.entered.push((st, m));

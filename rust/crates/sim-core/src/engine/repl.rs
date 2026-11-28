@@ -64,6 +64,11 @@ pub enum ReplFx {
     LabMan,
     /// Spelunking: lands you control enter untapped
     Spelunking,
+    /// Branching Evolution: twice as many +1/+1 counters on a creature you control
+    Branching,
+    /// Wildwood Scourge: a +1/+1 counter on it when +1/+1 counters are put on another non-Hydra creature you control
+    /// (not a replacement: `scourge_grows` is its trigger, looked up here by the same one-enum-per-permanent table)
+    Scourge,
 }
 
 pub struct Named {
@@ -73,7 +78,7 @@ pub struct Named {
 }
 
 /// the named replacement effects: one entry per card the engine knew by name
-pub const NAMED: [Named; 10] = [
+pub const NAMED: [Named; 13] = [
     Named { name: "Hardened Scales", ev: Ev::Counters, fx: ReplFx::Scales },
     Named { name: "Vorinclex, Monstrous Raider", ev: Ev::Counters, fx: ReplFx::Vorinclex },
     Named { name: "Solemnity", ev: Ev::Counters, fx: ReplFx::Solemnity },
@@ -84,6 +89,10 @@ pub const NAMED: [Named; 10] = [
     Named { name: "Jace, Wielder of Mysteries", ev: Ev::Draw, fx: ReplFx::LabMan },
     Named { name: "Spelunking", ev: Ev::Enter, fx: ReplFx::Spelunking },
     Named { name: "Melira, Sylvok Outcast", ev: Ev::Counters, fx: ReplFx::Melira },
+    Named { name: "Branching Evolution", ev: Ev::Counters, fx: ReplFx::Branching },
+    // Conclave Mentor's "that many plus one" is Hardened Scales' replacement exactly
+    Named { name: "Conclave Mentor", ev: Ev::Counters, fx: ReplFx::Scales },
+    Named { name: "Wildwood Scourge", ev: Ev::Counters, fx: ReplFx::Scourge },
 ];
 
 /// the tags that are replacement or prohibition effects
@@ -316,8 +325,10 @@ impl Path {
     pub const MULT: Path = Path(16);
     /// Melira (and Solemnity) stop poison and -1/-1 counters
     pub const MELIRA: Path = Path(32);
+    /// Branching Evolution (+1/+1 on a creature)
+    pub const BRANCH: Path = Path(64);
     /// every effect: a placement by an effect
-    pub const ALL: Path = Path(1 | 2 | 4 | 8 | 16 | 32);
+    pub const ALL: Path = Path(1 | 2 | 4 | 8 | 16 | 32 | 64);
     /// poison: Melira (Solemnity), Vorinclex
     pub const POISON: Path = Path(2 | 32);
 
@@ -373,13 +384,14 @@ struct Seen {
     melira: bool,
     mauhur: bool,
     scales: i32,
+    branching: i32,
     mult: i32,
 }
 
 /// one pass over every permanent (one byte and one small number per card, no name), collecting the counters
 /// effects; Vorinclex goes straight onto `mods` in seat order (applied after the others when nobody orders them)
 fn gather(g: &Game, o: PlayerId, actor: PlayerId, vor: &mut Mods) -> Seen {
-    let mut s = Seen { solemnity: false, melira: false, mauhur: false, scales: 0, mult: 1 };
+    let mut s = Seen { solemnity: false, melira: false, mauhur: false, scales: 0, branching: 0, mult: 1 };
     for pl in &g.players {
         for &y in &pl.perms {
             let Some(c) = g.perm(y).cd else { continue };
@@ -396,6 +408,7 @@ fn gather(g: &Game, o: PlayerId, actor: PlayerId, vor: &mut Mods) -> Seen {
                 Some(ReplFx::Melira) if mine => s.melira = true,
                 Some(ReplFx::Mauhur) if mine => s.mauhur = true,
                 Some(ReplFx::Scales) if mine => s.scales += 1,
+                Some(ReplFx::Branching) if mine => s.branching += 1,
                 Some(ReplFx::Vorinclex) => {
                     if pl.id == actor {
                         vor.push(Mod::Double, "Vorinclex (yours)");
@@ -439,6 +452,11 @@ pub fn counters(g: &Game, actor: PlayerId, on: On, kind: Ctr, n: i32, path: Path
             for _ in 0..s.scales {
                 mods.push(Mod::Add(1), "Hardened Scales");
             }
+        }
+        // Branching Evolution: +1/+1 counters on a creature its controller controls (not loyalty, not -1/-1, not an
+        // opponent's creature); each copy is its own doubling (a single `Mul`: they commute, and it keeps the list short)
+        if path.has(Path::BRANCH) && s.branching > 0 && g.is_creature(m) {
+            mods.push(Mod::Mul(1 << s.branching.min(16)), "Branching Evolution");
         }
     }
     if path.has(Path::MULT) && s.mult != 1 && matches!(on, On::Perm(_) | On::Kept(_)) {
@@ -538,8 +556,45 @@ pub fn put_counters(g: &mut Game, actor: PlayerId, m: PermId, n: i32) -> i32 {
         let plus = &mut g.perm_mut(m).plus;
         *plus = plus.saturating_add(k);
         crate::impls::t0_captain::counters_put(g, m, k); // Captain Marvel copies counters
+        if k > 0 {
+            scourge_grows(g, m); // Wildwood Scourge
+        }
     }
     k
+}
+
+/// Wildwood Scourge: whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1
+/// counter on it. One call is one placement event (a Scourge grows once for each creature a spell or ability puts counters
+/// on, not once for each counter); its own counter is a placement by an effect too (the doublers apply). Counters a
+/// creature enters with count as put on it (CR 122.6: `zones::enter` calls this). It resolves at once, without a stack item.
+pub fn scourge_grows(g: &mut Game, m: PermId) {
+    let o = g.perm(m).owner;
+    let any = g.player(o).perms.iter().any(|&y| y != m && is(g, y, ReplFx::Scourge) && src_on(g, y));
+    if !any || !g.is_creature(m) || crate::engine::values::has_type(g, m, "hydra") {
+        return;
+    }
+    let scourges: Vec<PermId> =
+        g.player(o).perms.iter().copied().filter(|&y| y != m && is(g, y, ReplFx::Scourge) && src_on(g, y)).collect();
+    for y in scourges {
+        let k = put_counters(g, o, y, 1); // (a Hydra: no further trigger)
+        if k > 0 {
+            crate::glog!(g, "    {} grows by {} (a counter on {})", g.perm(y).name, k, g.perm(m).name);
+        }
+    }
+}
+
+/// Cathars' Crusade: `triggers` triggers of it (one for each Crusade, each creature that entered, each extra copy of a
+/// trigger), each putting a +1/+1 counter on each creature p controls. One placement for each creature and trigger, so
+/// every counter effect applies to each (Doubling Season, Hardened Scales, Branching Evolution ...).
+pub fn crusade_counters(g: &mut Game, p: PlayerId, triggers: i32) {
+    let cs: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
+    for _ in 0..triggers.max(0) {
+        for &m in &cs {
+            if g.perm(m).on_bf {
+                put_counters(g, p, m, 1);
+            }
+        }
+    }
 }
 
 /// put `n` +1/+1 counters (negative: -1/-1) on m as its owner would (`put_counters`)
