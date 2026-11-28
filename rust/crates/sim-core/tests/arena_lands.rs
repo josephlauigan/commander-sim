@@ -2,7 +2,7 @@
 //! effect. A temple scries once and a gain land gains once (their compiled enter triggers; the engine's land_etb_fx is
 //! gone); a surveil land surveils (it never did); Seraph Sanctuary's Angel trigger runs; a fetch land cracks once (the
 //! f tag) and its compiled fetch is not offered; Boseiju channels from the hand, not the battlefield; Castle Ardenvale
-//! makes a Soldier, paid by other lands; Skemfar Elderhall is sacrificed as a land; a manland animates and attacks.
+//! makes a Human, paid by other lands (card code since the Trostani deck); Skemfar Elderhall is sacrificed as a land; a manland animates and attacks.
 //! Seat 0 plays the sauron deck, seat 1 the seph deck.
 
 use sim_core::ai::act::perform;
@@ -106,20 +106,28 @@ fn boseiju_channels_from_the_hand_and_not_from_the_battlefield() {
     assert!(ability(&mut g, P0, "Boseiju, Who Endures ability").is_none());
 }
 
+/// Castle Ardenvale's activation is card code now (`land_options`, impls/trostani_misc.rs: offered in the end-of-turn
+/// window only, `post == None`), which takes the compiled path out of the offers (tests/cards_trostani_misc.rs has the
+/// AI cases): {2}{W}{W},{T}: a 1/1 white Human, paid by the other four lands, the Castle tapping itself as the {T}
 #[test]
-fn castle_ardenvale_makes_a_soldier_paid_by_other_lands() {
+fn castle_ardenvale_makes_a_human_paid_by_other_lands() {
     let mut g = game();
+    g.active = Some(P1);
+    g.step = sim_core::state::Step::End;
     let castle = g.add_land(P0, card(&g, "Castle Ardenvale"), false);
     let plains = lands(&mut g, P0, "Plains", 4, false);
+    assert!(ability(&mut g, P0, "Castle Ardenvale ability").is_none(), "the compiled path is not offered");
     let before = g.player(P0).perms.len();
-    let o = ability(&mut g, P0, "Castle Ardenvale ability").expect("offered");
-    assert!(perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    let o = cardcode::land_options(&mut g, P0, None).unwrap();
+    assert_eq!(o.len(), 1, "the Castle's one option");
+    assert!(perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
     assert_eq!(g.player(P0).perms.len(), before + 1, "a 1/1 token");
     let m = *g.player(P0).perms.last().unwrap();
     assert_eq!((g.perm(m).pow, g.perm(m).tgh, g.perm(m).token), (1, 1, true));
+    assert!(g.perm(m).ttypes.contains(&"human"), "a Human");
     assert!(g.perm(castle).tapped, "{{T}}");
     assert!(plains.iter().all(|&l| g.perm(l).tapped), "{{2}}{{W}}{{W}} from the four Plains, not the Castle");
-    assert!(ability(&mut g, P0, "Castle Ardenvale ability").is_none(), "tapped: not again");
+    assert!(cardcode::land_options(&mut g, P0, None).unwrap().is_empty(), "tapped: not again");
 }
 
 #[test]

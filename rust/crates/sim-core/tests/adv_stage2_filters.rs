@@ -99,7 +99,11 @@ fn inventory_every_compiled_zone_filter_against_every_card() {
             eprintln!("{name} | {path} | {} | old/new delta candidates: {deltas}", e["filter"]);
         }
     }
-    assert_eq!(count, 103);
+    // 103 before the Trostani deck: Kodama's Reach's two compiled searches (a basic land tapped onto the battlefield, a
+    // basic land to hand) went when data/carddb.txt gave it Cultivate's land-ramp tags (lr=1 lrt lh=1), which the engine runs
+    // as it does Cultivate's; no other card lost an effect (the six dsl = [] overrides of the Trostani deck: Trostani,
+    // Branching Evolution, Conclave Mentor, Treebeard, The Doctor and Elder Gargaroth, had no zone effect to lose)
+    assert_eq!(count, 101);
     assert_eq!(changed, ["Maelstrom of the Spirit Dragon", "Morcant's Loyalist", "Sarkhan Unbroken"]);
     eprintln!("Compared {count} effects against all {} card definitions", g.db.len());
 }

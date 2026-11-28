@@ -32,6 +32,7 @@ Cast Out | Leaves | S | | 'until this leaves the battlefield': a duration ending
 Chains of Custody | Leaves | S | | 'until this leaves the battlefield': a duration ending, not a triggered ability
 Champions of the Perfect | Leaves | T
 Chromatic Star | SelfDies | T
+Conclave Mentor | SelfDies | T
 Crime Novelist | Sacrifice | N | | 'Whenever you sacrifice an artifact': a sacrifice is not a leaving
 Cruel Celebrant | Dies | T
 Cryogen Relic | Leaves | T

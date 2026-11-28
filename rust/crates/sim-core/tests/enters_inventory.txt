@@ -138,6 +138,7 @@ Elvish Warmaster | Etb | T
 Embercleave | Etb | T
 Emeria Shepherd | Landfall | T
 Emiel the Blessed | Etb | T
+Emiel the Blessed | TokensEnter | T |  | enter_queues: runs once; queues each creature token's real triggers
 Empyrial Armor | Etb | S
 Emry, Lurker of the Loch | Etb | T
 Endurance | Etb | T
@@ -420,6 +421,7 @@ Tezzeret, Cruel Captain | Etb | T
 Thassa's Oracle | Etb | T |  | a trigger that runs at once (marked enter_trigger)
 The Binding of the Titans | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Cruelty of Gix | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
+The Doctor, EMH | Etb | T
 The Eldest Reborn | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
 The Meathook Massacre | Etb | T
 The Mending of Dominaria | Etb | N |  | chapter I triggers on the lore counter (CR 714.2b), a triggered ability the entering did not cause: source doublers apply
@@ -446,9 +448,12 @@ Tocasia's Welcome | TokensEnter | T | | enter_queues: queues its real Etb trigge
 Tome of Legends | Etb | T |  | its commander trigger; the page it enters with is `as_enters`
 Touch the Spirit Realm | Etb | T
 Trail of Crumbs | Etb | T
+Treebeard, Gracious Host | Etb | T
 Tribute Mage | Etb | T
 Triskelion | Etb | S
 Trophy Mage | Etb | T
+Trostani, Selesnya's Voice | Etb | T
+Trostani, Selesnya's Voice | TokensEnter | T |  | enter_queues: runs once; queues each creature token's real triggers
 Twilight Diviner | Etb | T
 Twinblade Blessing | Etb | S
 Tymna the Weaver | Etb | S |  | bookkeeping of the turn it came down
@@ -463,6 +468,8 @@ Vampire Socialite | Etb | M | opponent_elesh_blanks_socialites_own_enters_trigge
 Vampire Socialite | TokensEnter | S
 Vault Plunderer | Etb | T
 Venomous Brutalizer | Etb | T
+Verdant Sun's Avatar | Etb | T
+Verdant Sun's Avatar | TokensEnter | T |  | enter_queues: runs once; queues each creature token's real triggers
 Vibrance | Etb | T
 Void Winnower | Etb | S
 Volatile Stormdrake | Etb | T

@@ -33,7 +33,9 @@ fn a_gain_land_gains_its_life_once() {
 fn a_lands_compiled_ability_is_offered_unless_another_path_runs_it() {
     // Phase 3: a land's compiled activated ability is offered as a permanent's is, except a fetch land's (the f tag
     // cracks it: turn::crack_fetch) and a channel ability (used from the hand by card code: Boseiju's hand_options);
-    // Treasure Vault's {X}{X}, {T}, sacrifice: X Treasures is offered too (the ability language's {X} cost, 10-30)
+    // Treasure Vault's {X}{X}, {T}, sacrifice: X Treasures is offered too (the ability language's {X} cost, 10-30).
+    // Castle Ardenvale is not: card code offers it (`land_options`, impls/trostani_misc.rs), which removes the compiled
+    // path (dsl::ability_options skips a land with a land_options hook); tests/arena_lands.rs checks the card-code path
     let mut g = game();
     for name in ["Flooded Strand", "Boseiju, Who Endures", "Castle Ardenvale", "Treasure Vault"] {
         let c = take(&mut g, P0, name);
@@ -44,7 +46,7 @@ fn a_lands_compiled_ability_is_offered_unless_another_path_runs_it() {
     let opts = sim_core::dsl::ability_options(&mut g, P0, true).unwrap();
     let mut labels: Vec<&str> = opts.iter().map(|o| o.label.as_str()).collect();
     labels.sort();
-    assert_eq!(labels, ["Castle Ardenvale ability", "Treasure Vault ability"]);
+    assert_eq!(labels, ["Treasure Vault ability"]);
 }
 
 #[test]
