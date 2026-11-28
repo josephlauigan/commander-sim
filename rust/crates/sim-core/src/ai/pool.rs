@@ -1131,7 +1131,7 @@ const PROTECTORS: [Protector; 32] = [
     ("Angelic Shield", Where::BfSac, None, How::Bounce, Scope::One, false),
     ("Eerie Interlude", Where::Hand, Some((2, "W")), How::Interlude, Scope::Creatures, false),
     // --- Karn, Gilded Guardian (kg-e4): Cloudshift blinks him out of the removal (and he draws again). A protector only
-    // for him (`protect_cands`): every other deck holds Cloudshift for value or a combo, as before
+    // for him and for the trostani deck (`protect_cands`): every other deck holds Cloudshift for value or a combo, as before
     ("Cloudshift", Where::Hand, Some((0, "W")), How::Blink, Scope::One, false),
 ];
 
@@ -1376,9 +1376,12 @@ fn protect_cands(
         }
         if how == How::Blink {
             // Karn, Gilded Guardian: a blink that would deck the owner (or return a stolen Karn) is no protection: losing
-            // him to the command zone is better. Cloudshift protects only him.
+            // him to the command zone is better. Cloudshift protects only him, and in the trostani deck (blink away
+            // from targeted removal: the spell fizzles, the enters trigger happens again).
             let bonus = crate::impls::karn_gilded::reenter_bonus(g, owner, m, false);
-            if bonus.is_some_and(|v| v < 0.0) || (name == "Cloudshift" && bonus.is_none()) {
+            let cloudshift_off =
+                name == "Cloudshift" && bonus.is_none() && !crate::impls::trostani_misc::cloudshift_protects(g, owner);
+            if bonus.is_some_and(|v| v < 0.0) || cloudshift_off {
                 continue;
             }
         }

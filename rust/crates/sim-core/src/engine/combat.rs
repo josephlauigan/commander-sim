@@ -1554,6 +1554,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                         && (!x.sick || haste_all || has_haste(g, m))
                         && (!x.noatk || epow(g, m) >= 3 || vig_utility(g, p, m)) // pumped dorks attack (casual speed)
                         && epow(g, m) > 0
+                        && !kw(g, m, "defender") // CR 702.3b: a Wall of Omens pumped to power 3 or more still can't attack
                         && !crate::impls::mine::ring_loot_decks(g, p, m)
                 })
                 .collect();
