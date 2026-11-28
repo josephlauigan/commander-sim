@@ -814,3 +814,91 @@ fn trostanis_life_trigger_still_resolves_after_the_scourges_triggers() {
     assert_eq!(g.player(P0).life, 23);
     landed(&g);
 }
+
+#[test]
+fn hangarback_walkers_activation_ends_with_the_scourges_counter_landed() {
+    // Hangarback Walker: "{1}, {T}: Put a +1/+1 counter on Hangarback Walker." A compiled top-level activation: the counter
+    // makes the Scourge trigger, and its counter lands before control returns (not at some later window). 2, +1 for the
+    // Walker entering with a counter, +1 for the activation = 4
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let c = take(&mut g, P0, "Hangarback Walker");
+    let w =
+        zones::enter(&mut g, P0, c, zones::Enter { x: 1, was_cast: true, sick: false, ..Default::default() }).unwrap();
+    assert_eq!((plus(&g, w), plus(&g, s)), (1, 3));
+    landed(&g);
+    lands(&mut g, P0, "Forest", 1, false);
+    g.active = Some(P0);
+    let o = sim_core::dsl::ability_options(&mut g, P0, true)
+        .unwrap()
+        .into_iter()
+        .find(|o| o.label.contains("Hangarback Walker"))
+        .expect("the Walker's {1},{T} is offered");
+    assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert_eq!(plus(&g, w), 2);
+    assert_eq!(plus(&g, s), 4, "the Scourge's counter landed at the end of the activation");
+    landed(&g);
+}
+
+#[test]
+fn proliferate_ends_with_the_scourges_counter_landed() {
+    // Proliferate: one +1/+1 counter more on each permanent with one. The Scourge (a Hydra) and the Bear (a non-Hydra, one
+    // Scourge trigger): 2 + 1 + 1 = 4; the Bear 1 + 1 = 2
+    let mut g = tbl();
+    let s = scourge(&mut g, P0, 2);
+    let a = bear(&mut g, P0);
+    g.perm_mut(a).plus = 1;
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert_eq!(plus(&g, a), 2);
+    assert_eq!(plus(&g, s), 4);
+    landed(&g);
+}
+
+// ======================================================== Heliod + Walking Ballista readiness
+// Walking Ballista: "Remove a +1/+1 counter from Walking Ballista: It deals 1 damage to any target." Heliod gives it lifelink
+// ({1}{W}), the life gained puts a counter back. With one counter the cost leaves it 0/0: it dies before the ping resolves
+// and before Heliod's trigger can target it. With two, the Ballista stays and the loop runs.
+
+#[test]
+fn heliod_with_one_counter_on_the_ballista_is_not_a_ready_line() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Heliod, Sun-Crowned");
+    g.last_x = 2; // {X}{X} with X = 1
+    let c = take(&mut g, P0, "Walking Ballista");
+    let b = zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, sick: false, ..Default::default() }).unwrap();
+    let i = sim_core::impls::combos::combo_index("Heliod, Sun-Crowned + Walking Ballista").unwrap();
+    assert_eq!(plus(&g, b), 1);
+    assert!(!sim_core::impls::combos::ready(&g, P0, i), "one counter is spent as the cost: the Ballista dies");
+    g.perm_mut(b).plus = 2;
+    assert!(sim_core::impls::combos::ready(&g, P0, i), "two counters: one stays after paying");
+}
+
+// ======================================================== Innkeeper's Talent: the combat trigger
+// "At the beginning of combat on your turn, put a +1/+1 counter on target creature you control." (CR 113.7a: a triggered
+// ability exists apart from its source.)
+
+#[test]
+fn innkeepers_combat_trigger_survives_its_source_leaving() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Innkeeper's Talent");
+    let a = bear(&mut g, P0);
+    g.active = Some(P0);
+    g.resolving += 1;
+    hooks::fire_trigger(&mut g, Event::EachCombat, Call::Player { p: P0 }).unwrap();
+    zones::exile_perm(&mut g, t).unwrap();
+    assert!(!g.perm(t).on_bf);
+    g.resolving -= 1;
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(plus(&g, a), 1, "the trigger was already on its way: it resolves without the Talent");
+}
+
+#[test]
+fn innkeepers_combat_trigger_is_for_its_controllers_turn_only() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Innkeeper's Talent");
+    let a = bear(&mut g, P0);
+    g.active = Some(P1);
+    hooks::fire_trigger(&mut g, Event::EachCombat, Call::Player { p: P1 }).unwrap();
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(plus(&g, a), 0);
+}

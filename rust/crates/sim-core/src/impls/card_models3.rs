@@ -367,14 +367,28 @@ fn innkeepers(g: &Game, p: PlayerId) -> impl Iterator<Item = i64> + '_ {
 fn innkeeper_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
     use crate::dsl::has_kw;
     let o = g.perm(src).owner;
-    if !live(g, src) || p != o || g.active != Some(o) {
+    if p != o || g.active != Some(o) {
+        return Ok(()); // (no on-battlefield guard: the trigger exists without its source, CR 113.7a)
+    }
+    const NAME: &str = "put a +1/+1 counter on target creature you control";
+    let mine: Vec<PermId> = g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    if crate::human::is_human(g, o) && mine.len() > 1 {
+        // a person picks the target (once: the probe call only asks whether the trigger goes on the stack)
+        if g.trig_probe {
+            return trigger_window(g, o, Some(src), NAME, None).map(|_| ());
+        }
+        let prompt = "Innkeeper's Talent: put a +1/+1 counter on which creature?";
+        let t = crate::human::cards::pick_perm(g, o, "target", prompt, &mine, None)?.unwrap_or(mine[0]);
+        if trigger_window(g, o, Some(src), NAME, None)? && live(g, t) {
+            crate::engine::repl::put_plus(g, t, 1);
+        }
         return Ok(());
     }
-    let pick = g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).max_by_key(|&m| {
+    let pick = mine.iter().copied().max_by_key(|&m| {
         ((has_kw(g, m, "infect") || has_kw(g, m, "toxic")) as i32, crate::engine::values::epow(g, m), m.0)
     });
     let Some(t) = pick else { return Ok(()) };
-    if trigger_window(g, o, Some(src), "put a +1/+1 counter on target creature you control", None)? && live(g, t) {
+    if trigger_window(g, o, Some(src), NAME, None)? && live(g, t) {
         crate::engine::repl::put_plus(g, t, 1);
     }
     Ok(())
@@ -392,7 +406,9 @@ fn innkeeper_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) ->
         _ => return Ok(vec![]),
     };
     let countered = g.player(p).perms.iter().any(|&m| live(g, m) && has_counters(g, m));
-    if (level == 2 && !countered) || !crate::engine::mana::can_pay(g, p, generic, "G", false) {
+    // (a person may level up without a counter in play: Level 2 is what makes counters worth having)
+    let wants = countered || crate::human::is_human(g, p);
+    if (level == 2 && !wants) || !crate::engine::mana::can_pay(g, p, generic, "G", false) {
         return Ok(vec![]);
     }
     Ok(vec![crate::hooks::Opt {

@@ -420,6 +420,11 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
                 let c = sim_core::testkit::take(g, P0, "Blood Artist");
                 g.player_mut(P0).gy.push(c);
             }
+            // a second Treefolk to put the counters on: the person picks the target when there is a choice
+            ("Treebeard, Gracious Host", Sc::GainLife) => {
+                let t = token(g, P0, 2);
+                g.perm_mut(t).ttypes.push("treefolk");
+            }
             // an ability of the person's that Rings of Brighthearth copies (karn.rs: monolith)
             ("Rings of Brighthearth", Sc::UseAbility) => {
                 let mon = perm(g, P0, "Grim Monolith");
@@ -664,7 +669,18 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
                 let victim = if g.perm(e1).on_bf { e1 } else { b1 };
                 zones::die(&mut g, victim, destroy)?
             }
-            Sc::SacOwn => zones::die(&mut g, b0, intern("sac"))?,
+            Sc::SacOwn => {
+                zones::die(&mut g, b0, intern("sac"))?;
+                if name == "Tireless Tracker" {
+                    // "whenever you sacrifice a Clue": the person cracks one (human/tokens.rs fires this)
+                    let what = sim_core::hooks::Sacrificed::Token("Clue");
+                    sim_core::engine::hooks::fire_trigger(
+                        &mut g,
+                        sim_core::hooks::Event::Sacrifice,
+                        sim_core::hooks::Call::Sacrifice { p: P0, what },
+                    )?;
+                }
+            }
             Sc::GainLife => life::gain(&mut g, P0, 3)?,
             Sc::LoseLife => life::lose_life(&mut g, P0, 2, Some(P1), intern("other"), None)?,
             Sc::OppLife => {
@@ -967,6 +983,10 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
+    (
+        "trostani: Tireless Tracker (SacOwn)",
+        "\"whenever you sacrifice a Clue, put a +1/+1 counter on this creature\": a mandatory trigger with no target and no choice, so there is nothing to ask a person (the probe cracks a Clue for it)",
+    ),
     (
         "karn_reforged: Karn, Scion of Urza (Activate(0))",
         "the +1 asks an opponent which revealed card goes to your hand; the opponent is an AI seat, so the person controlling Karn has no further choice (human/walkers.rs karn_su_plus)",

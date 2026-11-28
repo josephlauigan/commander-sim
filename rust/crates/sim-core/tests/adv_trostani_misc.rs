@@ -118,7 +118,6 @@ fn defender_filter_does_not_stop_an_ordinary_attacker_in_another_deck() {
 
 // Gargaroth has only an attack/block trigger, no ETB token ability.
 #[test]
-#[ignore = "C7: the Gargaroth data override is applied by the coordinator"]
 fn gargaroth_unmodified_export_must_not_make_an_etb_beast() {
     let mut g = tbl();
     perm(&mut g, P0, "Elder Gargaroth");

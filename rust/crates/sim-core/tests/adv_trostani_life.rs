@@ -390,9 +390,10 @@ fn trostani_cannot_pay_populate_using_her_own_mana_tap() {
     assert!(sim_core::engine::mana::can_pay(&g, P0, 1, "GW", false), "fixture includes Trostani's mana");
     let options = g.registry.get(g.perm(t).cd.unwrap()).unwrap().options.unwrap();
     let opts = options(&mut g, t, P0, None).unwrap();
-    if let Some(Action::Ability { src, f, arg }) = opts.first().and_then(|o| o.act.clone()) {
-        assert!(!f(&mut g, src, P0, arg).unwrap(), "cannot tap Trostani twice to pay one activation");
-    }
+    let Some(Action::Ability { src, f, arg }) = opts.first().and_then(|o| o.act.clone()) else {
+        panic!("populate must be offered: the test checks that its payment cannot use Trostani's own {{T}}");
+    };
+    assert!(!f(&mut g, src, P0, arg).unwrap(), "cannot tap Trostani twice to pay one activation");
 }
 
 fn upkeep(g: &mut Game) {

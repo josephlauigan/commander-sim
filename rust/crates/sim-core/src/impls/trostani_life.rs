@@ -95,7 +95,8 @@ fn trostani_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if p != owner(g, src) || !live(g, src) || !can_populate(g, src, p) {
         return Ok(vec![]);
     }
-    if post.is_some() && !(g.active == Some(p) && populate_pays_now(g, p)) {
+    // (a person may use it at any step, at instant speed: only the AI keeps the mana for an opponent's end step)
+    if post.is_some() && !(g.active == Some(p) && populate_pays_now(g, p)) && !crate::human::is_human(g, p) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -157,13 +158,26 @@ fn treebeard_gain(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
             && (has_type(g, m, "halfling") || has_type(g, m, "treefolk"))
             && !crate::engine::values::untargetable_by_its_controller(g, m, shades)
     };
-    let target = if ok(g, src) {
+    const NAME: &str = "put +1/+1 counters equal to the life gained";
+    let legal: Vec<PermId> = if crate::human::is_human(g, p) {
+        g.player(p).perms.iter().copied().filter(|&m| ok(g, m)).collect()
+    } else {
+        vec![]
+    };
+    let target = if legal.len() > 1 {
+        // a person picks the target (once: the probe call only asks whether the trigger goes on the stack)
+        if g.trig_probe {
+            return trigger_window(g, p, Some(src), NAME, Some(2.0)).map(|_| ());
+        }
+        let prompt = format!("Treebeard: put {n} +1/+1 counters on which Halfling or Treefolk?");
+        crate::human::cards::pick_perm(g, p, "target", &prompt, &legal, None)?
+    } else if ok(g, src) {
         Some(src)
     } else {
         g.player(p).perms.iter().copied().filter(|&m| ok(g, m)).max_by_key(|&m| etgh(g, m))
     };
     let Some(t) = target else { return Ok(()) };
-    if !trigger_window(g, p, Some(src), "put +1/+1 counters equal to the life gained", Some(2.0))? || !live(g, t) {
+    if !trigger_window(g, p, Some(src), NAME, Some(2.0))? || !live(g, t) {
         return Ok(()); // (its only target is gone)
     }
     crate::engine::repl::put_counters(g, p, t, n);

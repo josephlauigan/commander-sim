@@ -577,7 +577,7 @@ pub fn scourge_grows(g: &mut Game, m: PermId) {
     if !any || !g.is_creature(m) || crate::engine::values::has_type(g, m, "hydra") {
         return;
     }
-    let name = crate::sym::intern("Wildwood Scourge: a +1/+1 counter");
+    let name = crate::sym::intern("a +1/+1 counter");
     let entries: Vec<crate::hooks::Trigger> = g
         .player(o)
         .perms

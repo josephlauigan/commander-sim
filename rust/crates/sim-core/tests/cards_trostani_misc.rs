@@ -103,7 +103,6 @@ fn gargaroth(g: &mut Game) -> PermId {
 }
 
 #[test]
-#[ignore = "needs the data override that removes the tok/tokp tags of Elder Gargaroth (coordinator, at integration); run with --include-ignored after it"]
 fn gargaroth_has_no_enters_trigger() {
     let mut g = tbl();
     let before = hand_len(&g, P0);
@@ -579,6 +578,19 @@ fn castle_ardenvale_end_of_turn_window_uses_it() {
     g.step = Step::End;
     ai::end_of_turn_window(&mut g, P0).unwrap();
     assert_eq!(tokens_of(&g, P0), 1, "the AI made a Human at the end of the opponent's turn");
+}
+
+#[test]
+fn castle_ardenvale_is_not_used_at_its_own_controllers_end_step() {
+    // the AI makes its Human at an opponent's end step only (the card's note), not at its own
+    let mut g = tbl();
+    lands(&mut g, P0, "Castle Ardenvale", 1, false);
+    lands(&mut g, P0, "Plains", 4, false);
+    g.active = Some(P0);
+    g.step = Step::End;
+    assert!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().is_empty());
+    g.active = Some(P1);
+    assert_eq!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().len(), 1);
 }
 
 #[test]

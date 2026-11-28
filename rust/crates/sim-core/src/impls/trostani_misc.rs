@@ -285,6 +285,7 @@ fn aetherflux_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 // the more with a payoff for a creature entering out. The land taps itself; the mana comes from other sources.
 fn ardenvale_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_some()
+        || g.active == Some(p) // (an opponent's end step only, as Gavony Township's)
         || !live(g, l)
         || g.perm(l).tapped
         || !g.player(p).lands.contains(&l)

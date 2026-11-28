@@ -517,6 +517,11 @@ fn copy_value(g: &Game, m: PermId, life_payoff: bool) -> f64 {
         + if x.lifelink { 1.0 } else { 0.0 }
 }
 
+/// the creature tokens p could copy with populate
+fn populate_tokens(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.is_creature(m) && !g.perm(m).phased).collect()
+}
+
 /// the creature token p's populate copies: the one whose copy is worth the most (never by its current size); None with no
 /// creature token
 pub fn populate_source(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -524,13 +529,7 @@ pub fn populate_source(g: &Game, p: PlayerId) -> Option<PermId> {
         let x = g.perm(m);
         x.on_bf && !x.phased && !x.neutered && matches!(&*x.name, "Trostani, Selesnya's Voice" | "Verdant Sun's Avatar")
     });
-    let toks: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.perm(m).token && g.is_creature(m) && !g.perm(m).phased)
-        .collect();
+    let toks = populate_tokens(g, p);
     let mut best: Option<(PermId, f64)> = None;
     for &m in &toks {
         let v = copy_value(g, m, payoff);
@@ -544,8 +543,21 @@ pub fn populate_source(g: &Game, p: PlayerId) -> Option<PermId> {
 /// zur.populate: p creates a token that's a copy of a creature token they control (CR 701.36): nothing with none. The copy
 /// is made by `zones::token_copy_of` (CR 707.2: copiable values only, no counters; token doublers apply; a new
 /// creature entering, so its enters triggers fire).
+/// A person chooses the token to copy when there is more than one (the AI takes `populate_source`).
 pub fn populate(g: &mut Game, p: PlayerId) -> Res {
-    let Some(t) = populate_source(g, p) else { return Ok(()) };
+    let Some(best) = populate_source(g, p) else { return Ok(()) };
+    let toks = if crate::human::is_human(g, p) { populate_tokens(g, p) } else { vec![] };
+    let t = if toks.len() > 1 {
+        let prompt = "Populate: copy which creature token?";
+        crate::human::cards::pick_perm(g, p, "target", prompt, &toks, None)?.unwrap_or(best)
+    } else {
+        best
+    };
+    populate_of(g, p, t)
+}
+
+/// p populates with token `t` as the copy
+pub fn populate_of(g: &mut Game, p: PlayerId, t: PermId) -> Res {
     crate::engine::zones::token_copy_of(g, p, t, &[])?;
     Ok(())
 }
