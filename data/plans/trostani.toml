@@ -1,0 +1,46 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Trostani, Selesnya's Voice deck (key `trostani`, tiers t3-t4:
+# decklists/JD/trostani-selesnya-counters-blink.md, Selesnya counters, blink and lifegain). The plan: mana first, then Trostani or
+# Emiel, then the counter multipliers (Doubling Season, Branching Evolution, Innkeeper's Talent), then creatures that enter
+# with counters; the life total is the clock (Felidar Sovereign, Test of Endurance, Aetherflux Reservoir), with Craterhoof
+# Behemoth for a wide board and the Heliod, Sun-Crowned + Walking Ballista loop as the one infinite line.
+# PROVISIONAL: the priorities and wishes below have not been measured (the baseline goes in audit/trostani/FINDINGS.md). The
+# keep rule and the tutor order are the generic ones plus the rows below. Trostani's, Emiel's and the doublers' behaviour is
+# CARD CODE (impls/trostani_*.rs, engine/repl.rs), not a plan row.
+deck = "trostani"
+default = "plan"
+# card engines the tutors want once no line wants a card: the multipliers and the life engine
+engines = ["Doubling Season", "Emiel the Blessed", "Archangel of Thune", "Heliod, Sun-Crowned"]
+
+[commander]
+prio = 90
+
+[[prio]]
+cards = ["Doubling Season", "Branching Evolution", "Innkeeper's Talent", "Emiel the Blessed", "Archangel of Thune"]
+value = 60
+
+[key_cards]
+"Walking Ballista" = 60
+"Heliod, Sun-Crowned" = 60
+
+# Win line: Heliod gives Ballista lifelink once ({1}{W}), and each ping gains the life that Heliod turns back into the counter.
+[[line]]
+name = "Heliod + Walking Ballista"
+kind = "combo"
+pieces = [["Heliod, Sun-Crowned"], ["Walking Ballista"]]
+
+# What the tutors fetch: the missing half of the line, then the multiplier or the finisher.
+[[wish]]
+cards = ["Walking Ballista"]
+when = ["out:Heliod, Sun-Crowned"]
+score = 90
+
+[[wish]]
+cards = ["Heliod, Sun-Crowned"]
+when = ["out:Walking Ballista"]
+score = 90
+
+[[wish]]
+cards = ["Doubling Season", "Branching Evolution", "Emiel the Blessed"]
+when = ["lands+rocks>=4"]
+score = 85

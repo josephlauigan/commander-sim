@@ -150,7 +150,7 @@ Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola t5 (band 1); arzakon t5 (Arzakon artifact combo, a Cali Commander list since 11/13; this key was `kyodai` until 11/23 and `thanos` until 11/22, and `--deck kyodai` and `--deck thanos` are now refused);
-yoshimaru t4-t5 (Yoshimaru and Tymna blink deck, registered 11/21; it replaces thrasios); marchesa t3-t4 (Grixis sacrifice and recursion list, registered 11/26); sheoldred t3-t4 (band 2;
+yoshimaru t4-t5 (Yoshimaru and Tymna blink deck, registered 11/21; it replaces thrasios); marchesa t3-t4 (Grixis sacrifice and recursion list, registered 11/26); trostani t3-t4 (Selesnya counters, blink and lifegain list, registered 11/27); sheoldred t3-t4 (band 2;
 ghave retired 11/02); cloud retired 11/21 (JD; its Equipment package moved into the yoshimaru deck, its list stays only as a
 test seat, its card code stays in the engine; veyran retired 11/01); urdragon t5 (new Dragons list 11/13; the old Ur-Dragon
 list retired 11/05); thrasios retired 11/21 (the Tymna/Thrasios Doomsday list stays only as a test seat, its card code

@@ -43,3 +43,10 @@ name = "Karn, Legacy Reforged"
 commander = "Karn, Legacy Reforged"
 ident = "C"
 tiers = ["t4", "t5"]
+
+[trostani]
+file = "JD/trostani-selesnya-counters-blink.md"
+name = "Trostani"
+commander = "Trostani, Selesnya's Voice"
+ident = "WG"
+tiers = ["t3", "t4"]

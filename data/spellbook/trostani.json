@@ -1,0 +1,2787 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-11-28",
+  "deck": "trostani",
+  "commanders": [
+    "Trostani, Selesnya's Voice"
+  ],
+  "request_sha256": "c58a6a504f192d3013b21976b3eebb9eab6bf90247847dba0d8f57cfbad1a2fc",
+  "identity": "GW",
+  "included": [
+    {
+      "id": "1274-3693",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 54090
+    },
+    {
+      "id": "2919-3693",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13206
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 56730,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "372-1090-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17637,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1090-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16725,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12632,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "2744-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Basking Broodscale does not have a +1/+1 counter on it.",
+      "mana": "{1}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12067,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10134,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10085,
+      "missing": [
+        "Karn, the Great Creator"
+      ]
+    },
+    {
+      "id": "104-3693",
+      "cards": [
+        {
+          "name": "Cleric Class",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Cleric Class is at least level two.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9869,
+      "missing": [
+        "Cleric Class"
+      ]
+    },
+    {
+      "id": "2744-4186",
+      "cards": [
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9763,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1274-1495",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6371,
+      "missing": [
+        "Triskelion"
+      ]
+    },
+    {
+      "id": "2445-3693-6593",
+      "cards": [
+        {
+          "name": "Gatta and Luzzu",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Branching Evolution",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6266,
+      "missing": [
+        "Gatta and Luzzu"
+      ]
+    },
+    {
+      "id": "2445-3693-4120",
+      "cards": [
+        {
+          "name": "Vigor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Branching Evolution",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6068,
+      "missing": [
+        "Vigor"
+      ]
+    },
+    {
+      "id": "2744-3197",
+      "cards": [
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5974,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "1274-2290",
+      "cards": [
+        {
+          "name": "Spike Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Spike feeder has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5942,
+      "missing": [
+        "Spike Feeder"
+      ]
+    },
+    {
+      "id": "2067-2744",
+      "cards": [
+        {
+          "name": "Storm Herd",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite +1/+1 counters on creatures you control",
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{W}{W}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 5908,
+      "missing": [
+        "Storm Herd"
+      ]
+    },
+    {
+      "id": "2290-2919",
+      "cards": [
+        {
+          "name": "Spike Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Spike Feeder has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5383,
+      "missing": [
+        "Spike Feeder"
+      ]
+    },
+    {
+      "id": "2059-4499",
+      "cards": [
+        {
+          "name": "Village Bell-Ringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {4}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5140,
+      "missing": [
+        "Village Bell-Ringer"
+      ]
+    },
+    {
+      "id": "3693-5902-6593",
+      "cards": [
+        {
+          "name": "Gatta and Luzzu",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Innkeeper's Talent is level 3.\n",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5093,
+      "missing": [
+        "Gatta and Luzzu"
+      ]
+    },
+    {
+      "id": "3693-4120-5902",
+      "cards": [
+        {
+          "name": "Vigor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has a +1/+1 counter on it. Innkeeper's Talent is level 3.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3763,
+      "missing": [
+        "Vigor"
+      ]
+    },
+    {
+      "id": "3693-4120-4772",
+      "cards": [
+        {
+          "name": "Vigor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3745,
+      "missing": [
+        "Vigor"
+      ]
+    },
+    {
+      "id": "1027-2808",
+      "cards": [
+        {
+          "name": "Wildwood Scourge",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Scalelord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on certain creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2567,
+      "missing": [
+        "Enduring Scalelord"
+      ]
+    },
+    {
+      "id": "3693-4772-6593",
+      "cards": [
+        {
+          "name": "Gatta and Luzzu",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2553,
+      "missing": [
+        "Gatta and Luzzu"
+      ]
+    },
+    {
+      "id": "338-3693",
+      "cards": [
+        {
+          "name": "Light of Promise",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Light of Promise attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2485,
+      "missing": [
+        "Light of Promise"
+      ]
+    },
+    {
+      "id": "1495-2919",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Triskelion has at least one +1/+1 counter on it.\nYou have a way to give Triskelion lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2107,
+      "missing": [
+        "Triskelion"
+      ]
+    },
+    {
+      "id": "372-4499",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanent card(s) you own that can produce at least {4} exiled by Abdel Adrian.",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1937,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "1090-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1704,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1090-3603-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1614,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "2313-3693-6593",
+      "cards": [
+        {
+          "name": "Gatta and Luzzu",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Conclave Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1540,
+      "missing": [
+        "Gatta and Luzzu"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1458,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "3693-6996",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Destined White Mage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1430,
+      "missing": [
+        "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "2313-3693-4120",
+      "cards": [
+        {
+          "name": "Vigor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conclave Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1262,
+      "missing": [
+        "Vigor"
+      ]
+    },
+    {
+      "id": "132-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Myr Welder lifelink.\nYour life total is at least 51.\nMyr Welder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1141,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "3693-4017",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sunbond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Sunbond attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1126,
+      "missing": [
+        "Sunbond"
+      ]
+    },
+    {
+      "id": "2143-4772",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1104,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "3693-5902-6919",
+      "cards": [
+        {
+          "name": "Strength of Will",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Innkeeper's Talent is level 3.\n",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1016,
+      "missing": [
+        "Strength of Will"
+      ]
+    },
+    {
+      "id": "4241-4740",
+      "cards": [
+        {
+          "name": "Karn, Silver Golem",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 972,
+      "missing": [
+        "Karn, Silver Golem"
+      ]
+    },
+    {
+      "id": "1308-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 937,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "1996-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brood Monitor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 871,
+      "missing": [
+        "Brood Monitor"
+      ]
+    },
+    {
+      "id": "1545-2919-4186",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 866,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "292-2445-3693",
+      "cards": [
+        {
+          "name": "Rite of Passage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Branching Evolution",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 816,
+      "missing": [
+        "Rite of Passage"
+      ]
+    },
+    {
+      "id": "3693-6824",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man, Peter Parker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 803,
+      "missing": [
+        "Spider-Man, Peter Parker"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 786,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "1071-2988-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Purity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rhox Faithmender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 51.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 765,
+      "missing": [
+        "Purity"
+      ]
+    },
+    {
+      "id": "1545-4186-4384",
+      "cards": [
+        {
+          "name": "Treebeard, Gracious Host",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 764,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1274-1545-4186",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 713,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "678-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 649,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "1545-4499-8160",
+      "cards": [
+        {
+          "name": "Kwia Vigorbloom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 646,
+      "missing": [
+        "Kwia Vigorbloom"
+      ]
+    },
+    {
+      "id": "3693-4772-6919",
+      "cards": [
+        {
+          "name": "Strength of Will",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 630,
+      "missing": [
+        "Strength of Will"
+      ]
+    },
+    {
+      "id": "3693-5017",
+      "cards": [
+        {
+          "name": "Urban Daggertooth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite proliferate"
+      ],
+      "requires": [],
+      "prerequisites": "Urban Daggertooth has at least one +1/+1 counter.\nWalking Ballista has at least two +1/+1 counters.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 550,
+      "missing": [
+        "Urban Daggertooth"
+      ]
+    },
+    {
+      "id": "3693-7743",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heroic Feast",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 495,
+      "missing": [
+        "Heroic Feast"
+      ]
+    },
+    {
+      "id": "292-3693-4772",
+      "cards": [
+        {
+          "name": "Rite of Passage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 469,
+      "missing": [
+        "Rite of Passage"
+      ]
+    },
+    {
+      "id": "292-3693-5902",
+      "cards": [
+        {
+          "name": "Rite of Passage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Innkeeper's Talent is level 3.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 458,
+      "missing": [
+        "Rite of Passage"
+      ]
+    },
+    {
+      "id": "4499-6111",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dionus, Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana Elves you control can produce",
+        "Infinite untap of Elves you control",
+        "Infinite +1/+1 counters on certain creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Elves you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 446,
+      "missing": [
+        "Dionus, Elvish Archdruid"
+      ]
+    },
+    {
+      "id": "1545-2919-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite colorless mana",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to put a +1/+1 counter on Basking Broodscale.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 445,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "4499-5296",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Workhorse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Workhorse has at least 4 counters.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 429,
+      "missing": [
+        "Workhorse"
+      ]
+    },
+    {
+      "id": "1308-4772-7858",
+      "cards": [
+        {
+          "name": "Hollowhenge Overlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 426,
+      "missing": [
+        "Hollowhenge Overlord"
+      ]
+    },
+    {
+      "id": "1545-2919-3197",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 368,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "1274-1545-3197",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 325,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "2313-3693-6919",
+      "cards": [
+        {
+          "name": "Strength of Will",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Conclave Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 316,
+      "missing": [
+        "Strength of Will"
+      ]
+    },
+    {
+      "id": "1274-1545-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trostani, Selesnya's Voice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 311,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "3778-7299",
+      "cards": [
+        {
+          "name": "Biorhythm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Austere Command",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{G}{G}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 261,
+      "missing": [
+        "Biorhythm"
+      ]
+    },
+    {
+      "id": "3007-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Toymaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYou have at least one card in hand.\nToymaker does not have summoning sickness.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 232,
+      "missing": [
+        "Toymaker"
+      ]
+    },
+    {
+      "id": "678-2363",
+      "cards": [
+        {
+          "name": "Hangarback Walker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 211,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "292-2313-3693",
+      "cards": [
+        {
+          "name": "Rite of Passage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conclave Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 207,
+      "missing": [
+        "Rite of Passage"
+      ]
+    },
+    {
+      "id": "1617-3693",
+      "cards": [
+        {
+          "name": "Bellowing Aegisaur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on most creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters.\nYou have a way to give Bellowing Aegisaur indestructible.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 188,
+      "missing": [
+        "Bellowing Aegisaur"
+      ]
+    },
+    {
+      "id": "2744-3575",
+      "cards": [
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aerie Ouphes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on most creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "An additional creature with flying and indestructible on the battlefield.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 150,
+      "missing": [
+        "Aerie Ouphes"
+      ]
+    },
+    {
+      "id": "4384-4499-4659",
+      "cards": [
+        {
+          "name": "Treebeard, Gracious Host",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite +1/+1 counters on certain creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 103,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "108-4499-4772",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eyeless Watcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 99,
+      "missing": [
+        "Eyeless Watcher"
+      ]
+    },
+    {
+      "id": "108-1308-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eyeless Watcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 93,
+      "missing": [
+        "Eyeless Watcher"
+      ]
+    },
+    {
+      "id": "2038-4499-4772",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kozilek's Predator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 82,
+      "missing": [
+        "Kozilek's Predator"
+      ]
+    },
+    {
+      "id": "1308-2038-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kozilek's Predator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 80,
+      "missing": [
+        "Kozilek's Predator"
+      ]
+    },
+    {
+      "id": "1496-4186-4384",
+      "cards": [
+        {
+          "name": "Treebeard, Gracious Host",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 44,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1274-1496-4186",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1496-4499-8160",
+      "cards": [
+        {
+          "name": "Kwia Vigorbloom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Kwia Vigorbloom"
+      ]
+    },
+    {
+      "id": "1496-2919-4186",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 24,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1274-1496-3197",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 18,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "1274-1496-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "1496-2919-3197",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "1496-2919-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Verdant Sun's Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite colorless mana",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to put a +1/+1 counter on Basking Broodscale.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "2744-3693-3828-4772",
+      "cards": [
+        {
+          "name": "Druid's Call",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Druid's Call attached to Walking Ballista.\nWalking Ballista has at least three +1/+1 counters.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Druid's Call"
+      ]
+    },
+    {
+      "id": "2445-2744-3693-3828",
+      "cards": [
+        {
+          "name": "Druid's Call",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Branching Evolution",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Druid's Call attached to Walking Ballista.\nWalking Ballista has at least three +1/+1 counters.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5,
+      "missing": [
+        "Druid's Call"
+      ]
+    }
+  ]
+}

@@ -16290,6 +16290,42 @@
    "spell_prio": false
   },
   {
+   "name": "Branching Evolution",
+   "types": "E",
+   "generic": 2,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Branchloft Pathway // Boulderloft Pathway",
    "types": "L",
    "generic": 0,
@@ -25065,6 +25101,47 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Conclave Mentor",
+   "types": "C",
+   "generic": 0,
+   "pips": "GW",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "centaur",
+    "cleric"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -38119,6 +38196,59 @@
    "spell_prio": false
   },
   {
+   "name": "Elder Gargaroth",
+   "types": "C",
+   "generic": 3,
+   "pips": "GG",
+   "tags": {
+    "pow": "6",
+    "bomb": "6",
+    "reach": true,
+    "vig": true,
+    "trample": true,
+    "tok": "1",
+    "tokp": "3"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "reach",
+    "trample",
+    "vigilance"
+   ],
+   "subtypes": [
+    "beast"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ attacks or blocks, choose one —",
+    "• Draw a card."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Elderfang Disciple",
    "types": "C",
    "generic": 1,
@@ -51038,6 +51168,67 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Gavony Township",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "C"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "2GW",
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        }
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "hybrid": [],
@@ -69705,6 +69896,59 @@
    "spell_prio": false
   },
   {
+   "name": "Kalonian Hydra",
+   "types": "C",
+   "generic": 3,
+   "pips": "GG",
+   "tags": {
+    "pow": "0",
+    "tgh": "0",
+    "trample": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with four +1/+1 counters on it"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "double",
+    "trample"
+   ],
+   "subtypes": [
+    "hydra"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever ~ attacks, double the number of +1/+1 counters on each creature you control."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kambal, Consul of Allocation",
    "types": "C",
    "generic": 1,
@@ -72026,36 +72270,15 @@
    "types": "S",
    "generic": 2,
    "pips": "G",
-   "tags": {},
+   "tags": {
+    "lr": "1",
+    "lrt": true,
+    "lh": "1"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": true
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": true
-      },
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": true
-       },
-       "to": "hand",
-       "n": 1
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -72065,7 +72288,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -106106,6 +106329,57 @@
    "spell_prio": false
   },
   {
+   "name": "Rhox Faithmender",
+   "types": "C",
+   "generic": 3,
+   "pips": "W",
+   "tags": {
+    "pow": "1",
+    "tgh": "5",
+    "lifelink": true
+   },
+   "pow": 1,
+   "tgh": 5,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "replacement",
+     "replace": "lifegain",
+     "multiplier": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "lifelink"
+   ],
+   "subtypes": [
+    "monk",
+    "rhino"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Rhys the Exiled",
    "types": "C",
    "generic": 2,
@@ -124447,7 +124721,9 @@
    "types": "E",
    "generic": 0,
    "pips": "GW",
-   "tags": {},
+   "tags": {
+    "x": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -124459,7 +124735,7 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -129832,7 +130108,8 @@
    "generic": 2,
    "pips": "",
    "tags": {
-    "rock": "1:C"
+    "rock": "1:GW",
+    "pain": true
    },
    "pow": 0,
    "tgh": 0,
@@ -132224,6 +132501,44 @@
    "spell_prio": false
   },
   {
+   "name": "Test of Endurance",
+   "types": "E",
+   "generic": 2,
+   "pips": "WW",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "At the beginning of your upkeep, if you have 50 or more life, you win the game."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Tether Technician",
    "types": "C",
    "generic": 4,
@@ -133213,6 +133528,51 @@
    },
    "phyrexian": "",
    "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "The Doctor, EMH",
+   "types": "AC",
+   "generic": 3,
+   "pips": "GG",
+   "tags": {
+    "leg": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "doctor",
+    "illusion"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [
+    "GW",
+    "GW"
+   ],
    "xcount": 0,
    "enters_rule": null,
    "land_types": [],
@@ -138588,6 +138948,53 @@
    "spell_prio": false
   },
   {
+   "name": "Treebeard, Gracious Host",
+   "types": "C",
+   "generic": 2,
+   "pips": "GW",
+   "tags": {
+    "leg": true,
+    "pow": "0",
+    "tgh": "5",
+    "trample": true
+   },
+   "pow": 0,
+   "tgh": 5,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "food",
+    "trample",
+    "ward"
+   ],
+   "subtypes": [
+    "treefolk"
+   ],
+   "protfrom": "",
+   "ward": 2,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Treno, Dark City",
    "types": "L",
    "generic": 0,
@@ -139122,6 +139529,50 @@
    "unparsed": [],
    "derived": {
     "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Trostani, Selesnya's Voice",
+   "types": "C",
+   "generic": 0,
+   "pips": "GGWW",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tgh": "5"
+   },
+   "pow": 2,
+   "tgh": 5,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "populate"
+   ],
+   "subtypes": [
+    "dryad"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": true,
     "instant": false,
@@ -144419,6 +144870,50 @@
    "spell_prio": false
   },
   {
+   "name": "Verdant Sun's Avatar",
+   "types": "C",
+   "generic": 5,
+   "pips": "GG",
+   "tags": {
+    "pow": "5",
+    "bomb": "5"
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "avatar",
+    "dinosaur"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ or another creature you control enters, you gain life equal to that creature's toughness."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Verduran Enchantress",
    "types": "C",
    "generic": 1,
@@ -149138,6 +149633,55 @@
    "phyrexian": "",
    "hybrid": [],
    "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Wildwood Scourge",
+   "types": "C",
+   "generic": 0,
+   "pips": "G",
+   "tags": {
+    "pow": "0",
+    "tgh": "0"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with x +1/+1 counters on it"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "hydra"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1 counter on ~."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "hybrid": [],
+   "xcount": 1,
    "enters_rule": null,
    "land_types": [],
    "basic": false,
