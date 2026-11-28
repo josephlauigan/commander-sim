@@ -132,7 +132,9 @@ fn derevi_hit(g: &mut Game, src: Src, p: PlayerId, _a: PermId, d: PlayerId, _dmg
 /// creature you control enters, you may pay {G/W} (paid with W, else G) to put a +1/+1 counter on it (two if it is a
 /// Unicorn). The AI pays whenever it can spare the mana.
 fn emiel_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m == src || p != owner(g, src) || !live(g, src) || !live(g, m) || !g.is_creature(m) || owner(g, m) != p {
+    // (no `live(src)` test: a triggered ability exists apart from its source, CR 113.7a; `hooked` already left out a source that was
+    // gone as the creature entered)
+    if m == src || p != owner(g, src) || !live(g, m) || !g.is_creature(m) || owner(g, m) != p {
         return Ok(());
     }
     let col = if can_pay(g, p, 0, "W", false) {

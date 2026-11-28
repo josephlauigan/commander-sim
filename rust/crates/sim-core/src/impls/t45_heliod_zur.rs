@@ -516,7 +516,8 @@ fn selfpt_on(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// "At the beginning of your upkeep, if you have `need` or more life, you win the game" (an intervening "if", CR 603.4:
 /// it is true as the trigger goes on the stack and checked again as it resolves)
 fn life_win_upkeep(g: &mut Game, src: Src, p: PlayerId, need: i32, name: &'static str) -> Res {
-    if p != owner(g, src) || g.player(p).life < need || !live(g, src) {
+    // (no `live(src)` test: the trigger exists apart from its source, CR 113.7a; `hooked` left out a source that was gone at the upkeep)
+    if p != owner(g, src) || g.player(p).life < need {
         return Ok(());
     }
     if !trigger_window(g, p, Some(src), "win the game", Some(9.0))? || g.player(p).life < need {

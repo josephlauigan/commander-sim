@@ -113,10 +113,15 @@ fn can_populate(g: &Game, src: PermId, p: PlayerId) -> bool {
 }
 
 fn trostani_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || owner(g, src) != p || !can_populate(g, src, p) || !pay(g, p, 1, "GW", false)? {
+    if !live(g, src) || owner(g, src) != p || !can_populate(g, src, p) {
         return Ok(false);
     }
+    // {T} is a cost like the mana: Trostani is tapped first, so her own mana ability can't pay for it (CR 602.2b)
     g.perm_mut(src).tapped = true;
+    if !pay(g, p, 1, "GW", false)? {
+        g.perm_mut(src).tapped = false;
+        return Ok(false);
+    }
     crate::glog!(g, "  {} activates Trostani: populate", g.player(p).name);
     if ability_window(g, p, Some(src), "populate", None, None)? {
         crate::impls::zur::populate(g, p)?;
@@ -140,18 +145,22 @@ fn treebeard_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 /// n the life really gained (after the doubling). The AI aims it at Treebeard, else at its Halfling or Treefolk with the
 /// most toughness.
 fn treebeard_gain(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
-    if n <= 0 || p != crate::engine::hooks::trigger_controller(g, src) || !live(g, src) {
-        return Ok(());
+    if n <= 0 || p != crate::engine::hooks::trigger_controller(g, src) {
+        return Ok(()); // (no `live(src)` test: the trigger exists apart from its source, CR 113.7a)
     }
-    let target = if has_type(g, src, "treefolk") || has_type(g, src, "halfling") {
+    // a legal target: a Halfling or Treefolk on the battlefield that its controller may target (no shroud, no protection
+    // from Treebeard's colours); Treebeard itself first
+    let shades = crate::engine::values::colors_of(g, src);
+    let ok = |g: &Game, m: PermId| {
+        live(g, m)
+            && g.is_creature(m)
+            && (has_type(g, m, "halfling") || has_type(g, m, "treefolk"))
+            && !crate::engine::values::untargetable_by_its_controller(g, m, shades)
+    };
+    let target = if ok(g, src) {
         Some(src)
     } else {
-        g.player(p)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| live(g, m) && g.is_creature(m) && (has_type(g, m, "halfling") || has_type(g, m, "treefolk")))
-            .max_by_key(|&m| etgh(g, m))
+        g.player(p).perms.iter().copied().filter(|&m| ok(g, m)).max_by_key(|&m| etgh(g, m))
     };
     let Some(t) = target else { return Ok(()) };
     if !trigger_window(g, p, Some(src), "put +1/+1 counters equal to the life gained", Some(2.0))? || !live(g, t) {
