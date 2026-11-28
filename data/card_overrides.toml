@@ -743,7 +743,7 @@ note = "destroys the best opposing artifact, creature, enchantment, planeswalker
 
 ["Cathars' Crusade"]
 status = "Full"
-note = "a +1/+1 counter on each creature you control whenever a creature enters under your control"
+note = "a +1/+1 counter on each creature you control whenever a creature enters under your control: one placement per creature and trigger through the counter effects (Doubling Season, Hardened Scales, Branching Evolution, Conclave Mentor apply); repl::crusade_counters"
 
 ["Caves of Koilos"]
 add_tags = ["pain"]
@@ -9162,7 +9162,7 @@ note = "{G},{T}: X mana of any colours (X = greatest power among your creatures)
 ["Emiel the Blessed"]
 paths_ok = "compiled: the {3} blink; card code: the paid +1/+1 counter when another creature enters (t6_legends1.rs)"
 status = "Full"
-note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"
+note = "{3}: blink another creature you control (compiled). Whenever another creature you control enters (a token too: tokens_enter, one trigger per creature token), pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs). The AI pays whenever it can."
 
 ["Agatha's Soul Cauldron"]
 dsl = []
@@ -10089,6 +10089,8 @@ paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (
 
 ["Castle Ardenvale"]
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+status = "Full"
+note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: a 1/1 Human; the AI makes one at an opponent's end step with the mana spare (card code, tested)"
 
 ["High Market"]
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
@@ -10500,18 +10502,70 @@ note = "Red spells you cast cost {1} less (the compiled static:cost: generic man
 # (the compiled output of these five is wrong or incomplete for the deck; statuses are applied when each batch lands)
 ["Trostani, Selesnya's Voice"]
 dsl = [] # the compiled life trigger would fire next to the card-code one, and populate does not compile
+status = "Full"
+note = "Whenever another creature you control enters, you gain life equal to its toughness (card code, impls/trostani_life.rs: an Etb hook, plus tokens_enter/enter_queues so each creature token is its own trigger; not for herself; the toughness is read as the trigger resolves, last known if it left). The trigger is marked late (CardImpl::late, engine/stack.rs late_order): it resolves after the other triggers of the same entering (Emiel's counter, Archangel of Thune's gain), in both resolve paths. {1}{G}{W},{T}: populate (the AI's option: at an opponent's end step, and in its own main phase only when a Cathars' Crusade or Archangel of Thune is out or the copy takes it to 40/50 life with Felidar/Test; zur::populate: zones::token_copy_of, copiable values only, no counters, doublers apply; picks by what the copy would be, toughness double while she or the Avatar is out). Not modeled: practice mode has no populate button for her (AI only)."
 
 ["Branching Evolution"]
 dsl = [] # it compiles as Doubling Season's counters rule (every kind of counter on every permanent); it doubles +1/+1 counters on your creatures only
+status = "Full"
+note = "+1/+1 counters put on a creature you control are doubled (each copy is its own doubling, ordered with the other counter effects); loyalty, -1/-1 counters, noncreatures and opponents' creatures are not (repl.rs ReplFx::Branching)"
 
 ["Conclave Mentor"]
 dsl = [] # the "plus one" replacement does not compile and the dies line compiles to the wrong target
+status = "Full"
+note = "+1/+1 counters on your creatures: one more (Hardened Scales' replacement, ordered best with the doublers); dies: you gain life equal to its last-known power (impls/trostani_counters.rs)"
 
 ["Treebeard, Gracious Host"]
 dsl = [] # the lifegain trigger puts counters on a Halfling or Treefolk only
+status = "Full"
+note = "Trample and ward {2} from the keyword line. When it enters, two Food (token doublers apply). Whenever you gain life, that many +1/+1 counters (the life really gained, one trigger per gain event, counters through repl::put_counters so doublers apply) on a Halfling or Treefolk you control: the AI picks Treebeard, else the Halfling/Treefolk with the most toughness (an opponent's Treefolk is never chosen). impls/trostani_life.rs."
 
 ["The Doctor, EMH"]
 dsl = [] # "target creature, then each creature you control with a counter" needs the card-code two-step
+status = "Full"
+note = "enters: a +1/+1 counter on target creature (AI: its own creature with no counter), then one on each creature you control with a counter on it; fizzles whole if the target is illegal; every placement through the counter effects (impls/trostani_counters.rs)"
 
 ["Gavony Township"]
-paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "card code: the activation and its AI use are the land_options hook (impls/trostani_counters.rs), which takes the compiled activated ability out of the AI's offers; the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+status = "Full"
+note = "{2}{G}{W},{T}: a +1/+1 counter on each creature you control, paid by other lands; the AI uses it at an opponent's end step with 2 or more creatures, or before its combat with 3 or more, valued by the counters that really go on (impls/trostani_counters.rs land_options)"
+
+# --- trostani: statuses of the batch A, B and C cards (impls/trostani_counters.rs, trostani_life.rs, trostani_misc.rs)
+
+["Kalonian Hydra"]
+status = "Full"
+note = "enters with four +1/+1 counters (a placement: the doublers apply); attack trigger: each creature you control with +1/+1 counters gets that many more, one placement per creature (Doubling Season makes N into 3N); impls/trostani_counters.rs"
+
+["Verdant Sun's Avatar"]
+status = "Full"
+note = "Whenever this creature or another creature you control enters, you gain life equal to that creature's toughness (card code, impls/trostani_life.rs; the same shape as Trostani with itself included; tokens one trigger each; resolves late, reads toughness on resolution, so with Archangel of Thune out the second gain reads +1)."
+
+["Test of Endurance"]
+status = "Full"
+note = "At the beginning of your upkeep, if you have 50 or more life, you win the game: checked as it triggers and again as it resolves (t45_heliod_zur.rs life_win_upkeep, shared with Felidar Sovereign's 40)."
+
+["Rhox Faithmender"]
+status = "Full"
+note = "Lifelink; life gain doubled (compiled, repl::lifegain_mod: applied after the +1 effects of Angel of Vitality and Cleric Class; two copies multiply, 3 -> 12). Tested in tests/cards_trostani_life.rs."
+
+["Elder Gargaroth"]
+tags = "pow=6 bomb=6 reach vig trample"
+dsl = []
+status = "Full"
+note = "reach, vigilance, trample; whenever it attacks or blocks, one of: a 3/3 Beast, 3 life, a card (the AI: life when that reaches Felidar's 40 or Test's 50, a Beast with Trostani, Verdant Sun's Avatar or Cathars' Crusade out or no other creature, else a card)"
+
+["Sunblast Angel"]
+status = "Full"
+note = "flying; enters: destroy all tapped creatures (every player's, ours too, indestructible ones survive); the AI casts it only when nothing of ours would be tapped (the payment included) or their tapped creatures are worth clearly more (cast rule in trostani_misc, tested)"
+
+["Aetherflux Reservoir"]
+status = "Full"
+note = "gain 1 life per spell cast this turn on each cast; pay 50 life: 50 damage to any target; the AI shoots only when the shot kills an opponent (life 50 or less, not hexproof, no damage prevention such as Glacial Chasm, not unable to lose such as Platinum Angel) and leaves it alive (life 51 or more), and holds the life when a controlled Felidar Sovereign (40) or Test of Endurance (50) would win at its next upkeep, unless the shot wins now (impls/trostani_misc.rs); practice mode as before"
+
+["Cloudshift"]
+status = "Full"
+note = "blink a creature you control; the AI uses it against targeted removal in the trostani deck (and Karn's), else as before"
+
+["Wall of Omens"]
+status = "Full"
+note = "defender (enforced for the AI's attackers); enters: draw a card"

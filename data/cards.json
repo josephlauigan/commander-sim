@@ -38205,9 +38205,7 @@
     "bomb": "6",
     "reach": true,
     "vig": true,
-    "trample": true,
-    "tok": "1",
-    "tokp": "3"
+    "trample": true
    },
    "pow": 6,
    "tgh": 6,
@@ -38226,11 +38224,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks or blocks, choose one —",
-    "• Draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -69928,9 +69923,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ attacks, double the number of +1/+1 counters on each creature you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -132518,9 +132511,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your upkeep, if you have 50 or more life, you win the game."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -144893,9 +144884,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ or another creature you control enters, you gain life equal to that creature's toughness."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
