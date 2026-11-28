@@ -626,7 +626,8 @@ const NO_CHOICE: &[&str] = &[
 
 /// the creatures whose `options` hook asks the person its own questions (the hook runs for a person with the same
 /// choices as for the AI's pick: Breya's mode, target and the two artifacts, impls/karn_gilded_cards.rs)
-const ASKS_IN_HOOK: &[&str] = &["Breya, Etherium Shaper"];
+/// (Trostani's populate asks which creature token to copy: `zur::populate`.)
+const ASKS_IN_HOOK: &[&str] = &["Breya, Etherium Shaper", "Trostani, Selesnya's Voice"];
 
 #[test]
 fn every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_an_ability() {

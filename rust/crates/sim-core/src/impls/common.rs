@@ -2736,7 +2736,8 @@ fn privileged(g: &Game, src: Src, m: PermId, k: Sym) -> bool {
 
 /// Sterling Grove (Full): sacrificed late to put an enchantment on top
 fn grove(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(true) || !can_pay(g, p, 1, "", false) {
+    // (a person may use it at any time {1} is payable, at instant speed: only the AI waits for its second main phase)
+    if (post != Some(true) && !crate::human::is_human(g, p)) || !can_pay(g, p, 1, "", false) {
         return Ok(vec![]);
     }
     if !g.player(p).library.iter().any(|&c| g.db.get(c).types.has(Types::ENCHANTMENT)) {
@@ -2757,7 +2758,14 @@ fn grove_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| g.db.get(c).types.has(Types::ENCHANTMENT)).collect();
-    let Some(c) = max_by(&cs, |c| card_worth(g, p, c, false)) else {
+    let pick = if crate::human::is_human(g, p) {
+        // a person chooses which enchantment (or fails to find one)
+        let prompt = "Sterling Grove: search for which enchantment?";
+        crate::human::gaps_t2::pick_card(g, p, &cs, prompt, Some("none"))?
+    } else {
+        max_by(&cs, |c| card_worth(g, p, c, false))
+    };
+    let Some(c) = pick else {
         shuffle_library(g, p); // (Aven Mindcensor: maybe none in the top four)
         return Ok(true);
     };
@@ -3261,6 +3269,10 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
         }
         crate::impls::card_models2::voidwing_return(g, p)?; // --- card-models-2: from the graveyard
+    }
+    // what the counters triggered (Wildwood Scourge) goes on the stack at the end of the proliferate, at top level
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(())
 }

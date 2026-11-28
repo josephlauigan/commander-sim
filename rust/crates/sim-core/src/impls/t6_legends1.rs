@@ -4,7 +4,7 @@
 
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
-use crate::engine::stack::trigger_window;
+use crate::engine::stack::{may_window_ask, trigger_window};
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{die, draw, max_by};
 use crate::flow::Res;
@@ -144,7 +144,9 @@ fn emiel_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     } else {
         return Ok(());
     };
-    if !trigger_window(g, p, Some(src), "pay {G/W} for a +1/+1 counter", None)? || !pay(g, p, 0, col, false)? {
+    // ("you may pay": a person is asked at resolution; for the AI this is `trigger_window`, its value test above)
+    let ask = "Emiel the Blessed: pay {G/W} for a +1/+1 counter?";
+    if !may_window_ask(g, p, Some(src), "pay {G/W} for a +1/+1 counter", None, ask)? || !pay(g, p, 0, col, false)? {
         return Ok(());
     }
     let n = if crate::engine::values::has_type(g, m, "unicorn") { 2 } else { 1 };

@@ -2670,7 +2670,17 @@ fn activate_ability(g: &mut Game, p: PlayerId, src: PermId, cd: CardId, idx: u16
         }
     }
     execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
+    flush_held_triggers(g)?;
     Ok(true)
+}
+
+/// the end of an ability resolved at top level: what its counters triggered (Wildwood Scourge) goes on the stack now, not
+/// at some later window (CR 603.3)
+fn flush_held_triggers(g: &mut Game) -> Res {
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
+    }
+    Ok(())
 }
 
 /// p uses planeswalker src's loyalty ability idx
@@ -2709,6 +2719,7 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     if aimed.is_none() || r.target.is_some_and(|t| g.perm(t).on_bf) {
         execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     }
+    flush_held_triggers(g)?;
     if g.perm(src).loyalty.unwrap_or(0) <= 0 && g.perm(src).on_bf {
         // --- urdragon: a transformed walker (Nicol Bolas, the Arisen) goes to the graveyard as its front face
         let back = g.perm(src).phys.unwrap_or(cd);

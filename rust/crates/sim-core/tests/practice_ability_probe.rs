@@ -93,6 +93,14 @@ fn offered(key: &str, name: &str, land: bool, active: PlayerId, step: Step) -> R
             lands(&mut g, P0, b, 3, false);
         }
         let m = if land { lands(&mut g, P0, name, 1, false)[0] } else { perm(&mut g, P0, name) };
+        if key == "trostani" {
+            // the deck's activations that a person pays from their pool: Level 2 {G}, Sterling Grove {1}, populate
+            // {1}{G}{W} (which also needs a creature token to copy)
+            for c in ['W', 'G', 'C'] {
+                g.player_mut(P0).pool.add(c, 1);
+            }
+            token(&mut g, P0, 1);
+        }
         // the person sits down after the card entered: its enter prompts (Stoneforge Mystic, Inferno Titan) are not the probe's
         g.humans.add(P0, Arc::new(ScriptHuman::new(vec![])));
         g.active = Some(active);

@@ -1568,7 +1568,8 @@ fn heliod(g: &Game, p: PlayerId) -> Ready {
     let Some(h) = on_bf(g, p, "Heliod, Sun-Crowned") else { return NOT_READY() };
     let b = g.player(p).perms.iter().copied().find(|&m| {
         let x = g.perm(m);
-        x.cd.is_some_and(|c| name_of(g, c) == "Walking Ballista") && x.plus > 0 && !x.phased
+        // two counters: paying "remove a counter" for the first ping leaves one, and the Ballista dies with none left
+        x.cd.is_some_and(|c| name_of(g, c) == "Walking Ballista") && x.plus >= 2 && !x.phased
     });
     if let Some(b) = b {
         return (true, vec![h, b], vec![]);
