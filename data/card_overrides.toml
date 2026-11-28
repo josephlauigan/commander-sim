@@ -10569,3 +10569,7 @@ note = "blink a creature you control; the AI uses it against targeted removal in
 ["Wall of Omens"]
 status = "Full"
 note = "defender (enforced for the AI's attackers); enters: draw a card"
+
+["Wildwood Scourge"]
+status = "Full"
+note = "enters with X +1/+1 counters (a placement: the doublers apply); whenever one or more +1/+1 counters are put on another non-Hydra creature you control (a placement, or entering with counters, undying included), a triggered ability goes on the stack and it puts a +1/+1 counter on it through the doublers if it is still the same permanent, once per placement event (TrigAct::Scourge, repl::scourge_grows, impls/trostani_counters.rs)"

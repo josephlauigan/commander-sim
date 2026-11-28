@@ -149657,9 +149657,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever one or more +1/+1 counters are put on another non-Hydra creature you control, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

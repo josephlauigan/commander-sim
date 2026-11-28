@@ -149,12 +149,14 @@ fn gargaroth_makes_a_beast_with_trostani_out() {
     let a = gargaroth(&mut g);
     token(&mut g, P0, 1);
     let before = hand_len(&g, P0);
+    let life0 = g.player(P0).life;
     attacks(&mut g, a);
     let b = beasts(&g, P0);
     assert_eq!(b.len(), 1, "a Beast token (the creature entering feeds Trostani)");
     assert_eq!((sim_core::engine::values::epow(&g, b[0]), sim_core::engine::values::etgh(&g, b[0])), (3, 3));
     assert_eq!(hand_len(&g, P0), before, "not the card");
-    assert_eq!(g.player(P0).life, 40, "not the life");
+    // Trostani gains the Beast's toughness (3) as it enters; the life mode would add 3 more (6 in all)
+    assert_eq!(g.player(P0).life, life0 + 3, "Trostani's 3 for the Beast, not the life mode on top");
 }
 
 #[test]
