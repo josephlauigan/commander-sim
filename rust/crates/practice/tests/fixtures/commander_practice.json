@@ -5,6 +5,7 @@
     "karn_reforged",
     "marchesa",
     "sheoldred",
+    "trostani",
     "urdragon"
   ],
   "legacy_save": {
@@ -597,6 +598,36 @@
             "urza-mono-blue-artifacts",
             "yawgmoth-mono-black-aristocrats",
             "sheoldred",
+            "trostani"
+          ],
+          "short": {
+            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          },
+          "wrong": {
+            "err": "seats: your decks and 2 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          }
+        }
+      },
+      "trostani": {
+        "one_person": {
+          "again": [
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts",
+            "trostani",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "short": {
+            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          },
+          "wrong": {
+            "err": "seats: your deck and 3 of kinnan-simic-mana-combo, miirym-temur-dragons, urza-mono-blue-artifacts, yawgmoth-mono-black-aristocrats, zur-esper-enchantment-control, in turn order"
+          }
+        },
+        "two_people": {
+          "again": [
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "trostani",
             "urdragon"
           ],
           "short": {
@@ -2135,6 +2166,380 @@
           ]
         }
       },
+      "trostani": {
+        "t1": {
+          "1": [
+            "tatyova-simic-landfall",
+            "trostani",
+            "light-paws-aura-voltron",
+            "isshin-mardu-attack-triggers"
+          ],
+          "10": [
+            "light-paws-aura-voltron",
+            "isshin-mardu-attack-triggers",
+            "teysa-orzhov-aristocrats",
+            "trostani"
+          ],
+          "2": [
+            "lathril-golgari-elves",
+            "light-paws-aura-voltron",
+            "trostani",
+            "tatyova-simic-landfall"
+          ],
+          "3": [
+            "tatyova-simic-landfall",
+            "isshin-mardu-attack-triggers",
+            "trostani",
+            "teysa-orzhov-aristocrats"
+          ],
+          "4": [
+            "isshin-mardu-attack-triggers",
+            "trostani",
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall"
+          ],
+          "5": [
+            "light-paws-aura-voltron",
+            "lathril-golgari-elves",
+            "tatyova-simic-landfall",
+            "trostani"
+          ],
+          "6": [
+            "trostani",
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall",
+            "lathril-golgari-elves"
+          ],
+          "7": [
+            "trostani",
+            "isshin-mardu-attack-triggers",
+            "lathril-golgari-elves",
+            "light-paws-aura-voltron"
+          ],
+          "8": [
+            "tatyova-simic-landfall",
+            "teysa-orzhov-aristocrats",
+            "trostani",
+            "light-paws-aura-voltron"
+          ],
+          "9": [
+            "lathril-golgari-elves",
+            "teysa-orzhov-aristocrats",
+            "tatyova-simic-landfall",
+            "trostani"
+          ]
+        },
+        "t2": {
+          "1": [
+            "meren-golgari-recursion",
+            "trostani",
+            "lord-windgrace-jund-lands",
+            "brago-azorius-blink-control"
+          ],
+          "10": [
+            "lord-windgrace-jund-lands",
+            "brago-azorius-blink-control",
+            "sythis-selesnya-enchantress",
+            "trostani"
+          ],
+          "2": [
+            "kaalia-mardu-creature-cheat",
+            "lord-windgrace-jund-lands",
+            "trostani",
+            "meren-golgari-recursion"
+          ],
+          "3": [
+            "meren-golgari-recursion",
+            "brago-azorius-blink-control",
+            "trostani",
+            "sythis-selesnya-enchantress"
+          ],
+          "4": [
+            "brago-azorius-blink-control",
+            "trostani",
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion"
+          ],
+          "5": [
+            "lord-windgrace-jund-lands",
+            "kaalia-mardu-creature-cheat",
+            "meren-golgari-recursion",
+            "trostani"
+          ],
+          "6": [
+            "trostani",
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion",
+            "kaalia-mardu-creature-cheat"
+          ],
+          "7": [
+            "trostani",
+            "brago-azorius-blink-control",
+            "kaalia-mardu-creature-cheat",
+            "lord-windgrace-jund-lands"
+          ],
+          "8": [
+            "meren-golgari-recursion",
+            "sythis-selesnya-enchantress",
+            "trostani",
+            "lord-windgrace-jund-lands"
+          ],
+          "9": [
+            "kaalia-mardu-creature-cheat",
+            "sythis-selesnya-enchantress",
+            "meren-golgari-recursion",
+            "trostani"
+          ]
+        },
+        "t3": {
+          "1": [
+            "marwyn-mono-green-elves",
+            "trostani",
+            "korvold-jund-sacrifice",
+            "atraxa-infect"
+          ],
+          "10": [
+            "korvold-jund-sacrifice",
+            "atraxa-infect",
+            "tergrid-mono-black-disruption",
+            "trostani"
+          ],
+          "2": [
+            "aurelia-boros-extra-combats",
+            "korvold-jund-sacrifice",
+            "trostani",
+            "marwyn-mono-green-elves"
+          ],
+          "3": [
+            "marwyn-mono-green-elves",
+            "atraxa-infect",
+            "trostani",
+            "tergrid-mono-black-disruption"
+          ],
+          "4": [
+            "atraxa-infect",
+            "trostani",
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves"
+          ],
+          "5": [
+            "korvold-jund-sacrifice",
+            "aurelia-boros-extra-combats",
+            "marwyn-mono-green-elves",
+            "trostani"
+          ],
+          "6": [
+            "trostani",
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves",
+            "aurelia-boros-extra-combats"
+          ],
+          "7": [
+            "trostani",
+            "atraxa-infect",
+            "aurelia-boros-extra-combats",
+            "korvold-jund-sacrifice"
+          ],
+          "8": [
+            "marwyn-mono-green-elves",
+            "tergrid-mono-black-disruption",
+            "trostani",
+            "korvold-jund-sacrifice"
+          ],
+          "9": [
+            "aurelia-boros-extra-combats",
+            "tergrid-mono-black-disruption",
+            "marwyn-mono-green-elves",
+            "trostani"
+          ]
+        },
+        "t4": {
+          "1": [
+            "prosper-rakdos-exile-treasure",
+            "trostani",
+            "krenko-mono-red-goblins",
+            "chulane-bant-value-combo"
+          ],
+          "10": [
+            "krenko-mono-red-goblins",
+            "chulane-bant-value-combo",
+            "yuriko-dimir-ninjas",
+            "trostani"
+          ],
+          "2": [
+            "edgar-markov-mardu-vampires",
+            "krenko-mono-red-goblins",
+            "trostani",
+            "prosper-rakdos-exile-treasure"
+          ],
+          "3": [
+            "prosper-rakdos-exile-treasure",
+            "chulane-bant-value-combo",
+            "trostani",
+            "yuriko-dimir-ninjas"
+          ],
+          "4": [
+            "chulane-bant-value-combo",
+            "trostani",
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure"
+          ],
+          "5": [
+            "krenko-mono-red-goblins",
+            "edgar-markov-mardu-vampires",
+            "prosper-rakdos-exile-treasure",
+            "trostani"
+          ],
+          "6": [
+            "trostani",
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure",
+            "edgar-markov-mardu-vampires"
+          ],
+          "7": [
+            "trostani",
+            "chulane-bant-value-combo",
+            "edgar-markov-mardu-vampires",
+            "krenko-mono-red-goblins"
+          ],
+          "8": [
+            "prosper-rakdos-exile-treasure",
+            "yuriko-dimir-ninjas",
+            "trostani",
+            "krenko-mono-red-goblins"
+          ],
+          "9": [
+            "edgar-markov-mardu-vampires",
+            "yuriko-dimir-ninjas",
+            "prosper-rakdos-exile-treasure",
+            "trostani"
+          ]
+        },
+        "t5": {
+          "1": [
+            "yawgmoth-mono-black-aristocrats",
+            "trostani",
+            "urza-mono-blue-artifacts",
+            "kinnan-simic-mana-combo"
+          ],
+          "10": [
+            "urza-mono-blue-artifacts",
+            "kinnan-simic-mana-combo",
+            "zur-esper-enchantment-control",
+            "trostani"
+          ],
+          "2": [
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts",
+            "trostani",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "3": [
+            "yawgmoth-mono-black-aristocrats",
+            "kinnan-simic-mana-combo",
+            "trostani",
+            "zur-esper-enchantment-control"
+          ],
+          "4": [
+            "kinnan-simic-mana-combo",
+            "trostani",
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats"
+          ],
+          "5": [
+            "urza-mono-blue-artifacts",
+            "miirym-temur-dragons",
+            "yawgmoth-mono-black-aristocrats",
+            "trostani"
+          ],
+          "6": [
+            "trostani",
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "miirym-temur-dragons"
+          ],
+          "7": [
+            "trostani",
+            "kinnan-simic-mana-combo",
+            "miirym-temur-dragons",
+            "urza-mono-blue-artifacts"
+          ],
+          "8": [
+            "yawgmoth-mono-black-aristocrats",
+            "zur-esper-enchantment-control",
+            "trostani",
+            "urza-mono-blue-artifacts"
+          ],
+          "9": [
+            "miirym-temur-dragons",
+            "zur-esper-enchantment-control",
+            "yawgmoth-mono-black-aristocrats",
+            "trostani"
+          ]
+        },
+        "t6": {
+          "1": [
+            "rograkh-thrasios-creature-combo",
+            "trostani",
+            "kinnan-bonder-mana-combo",
+            "sisay-legends-toolbox"
+          ],
+          "10": [
+            "sisay-legends-toolbox",
+            "trostani",
+            "kinnan-bonder-mana-combo",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "2": [
+            "sisay-legends-toolbox",
+            "trostani",
+            "rograkh-silas-turbo-breach",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "3": [
+            "rograkh-thrasios-creature-combo",
+            "trostani",
+            "kinnan-bonder-mana-combo",
+            "dack-fayden-white-stax"
+          ],
+          "4": [
+            "trostani",
+            "rograkh-silas-turbo-breach",
+            "sisay-legends-toolbox",
+            "kinnan-bonder-mana-combo"
+          ],
+          "5": [
+            "rograkh-silas-turbo-breach",
+            "trostani",
+            "sisay-legends-toolbox",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "6": [
+            "rograkh-thrasios-creature-combo",
+            "rograkh-silas-turbo-breach",
+            "kraum-tymna-blue-breach-midrange",
+            "trostani"
+          ],
+          "7": [
+            "dack-fayden-white-stax",
+            "rograkh-silas-turbo-breach",
+            "trostani",
+            "kinnan-bonder-mana-combo"
+          ],
+          "8": [
+            "dack-fayden-white-stax",
+            "kinnan-bonder-mana-combo",
+            "trostani",
+            "rograkh-silas-turbo-breach"
+          ],
+          "9": [
+            "kraum-tymna-blue-breach-midrange",
+            "kinnan-bonder-mana-combo",
+            "trostani",
+            "rograkh-thrasios-creature-combo"
+          ]
+        }
+      },
       "urdragon": {
         "t1": {
           "1": [
@@ -2662,7 +3067,7 @@
               "kinnan-simic-mana-combo",
               "miirym-temur-dragons",
               "sheoldred",
-              "urdragon"
+              "trostani"
             ]
           },
           "2": {
@@ -2676,7 +3081,7 @@
               "miirym-temur-dragons",
               "kinnan-simic-mana-combo",
               "sheoldred",
-              "urdragon"
+              "trostani"
             ]
           },
           "3": {
@@ -2689,6 +3094,52 @@
             "two_people": [
               "miirym-temur-dragons",
               "sheoldred",
+              "trostani",
+              "kinnan-simic-mana-combo"
+            ]
+          }
+        }
+      },
+      "trostani": {
+        "t5": {
+          "1": {
+            "one_person": [
+              "kinnan-simic-mana-combo",
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "trostani"
+            ],
+            "two_people": [
+              "kinnan-simic-mana-combo",
+              "miirym-temur-dragons",
+              "trostani",
+              "urdragon"
+            ]
+          },
+          "2": {
+            "one_person": [
+              "miirym-temur-dragons",
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "trostani"
+            ],
+            "two_people": [
+              "miirym-temur-dragons",
+              "kinnan-simic-mana-combo",
+              "trostani",
+              "urdragon"
+            ]
+          },
+          "3": {
+            "one_person": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "trostani",
+              "kinnan-simic-mana-combo"
+            ],
+            "two_people": [
+              "miirym-temur-dragons",
+              "trostani",
               "urdragon",
               "kinnan-simic-mana-combo"
             ]
@@ -3275,6 +3726,140 @@
               "miirym-temur-dragons",
               "yawgmoth-mono-black-aristocrats",
               "sheoldred"
+            ]
+          }
+        }
+      },
+      "trostani": {
+        "t5": {
+          "1": {
+            "1": [
+              "trostani",
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo"
+            ],
+            "2": [
+              "yawgmoth-mono-black-aristocrats",
+              "trostani",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo"
+            ],
+            "3": [
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "trostani",
+              "kinnan-simic-mana-combo"
+            ],
+            "4": [
+              "yawgmoth-mono-black-aristocrats",
+              "urza-mono-blue-artifacts",
+              "kinnan-simic-mana-combo",
+              "trostani"
+            ]
+          },
+          "2": {
+            "1": [
+              "trostani",
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "miirym-temur-dragons",
+              "trostani",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "trostani",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "miirym-temur-dragons",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats",
+              "trostani"
+            ]
+          },
+          "3": {
+            "1": [
+              "trostani",
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control"
+            ],
+            "2": [
+              "yawgmoth-mono-black-aristocrats",
+              "trostani",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control"
+            ],
+            "3": [
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "trostani",
+              "zur-esper-enchantment-control"
+            ],
+            "4": [
+              "yawgmoth-mono-black-aristocrats",
+              "kinnan-simic-mana-combo",
+              "zur-esper-enchantment-control",
+              "trostani"
+            ]
+          },
+          "4": {
+            "1": [
+              "trostani",
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "kinnan-simic-mana-combo",
+              "trostani",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "trostani",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "kinnan-simic-mana-combo",
+              "urza-mono-blue-artifacts",
+              "yawgmoth-mono-black-aristocrats",
+              "trostani"
+            ]
+          },
+          "5": {
+            "1": [
+              "trostani",
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "2": [
+              "urza-mono-blue-artifacts",
+              "trostani",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "3": [
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "trostani",
+              "yawgmoth-mono-black-aristocrats"
+            ],
+            "4": [
+              "urza-mono-blue-artifacts",
+              "miirym-temur-dragons",
+              "yawgmoth-mono-black-aristocrats",
+              "trostani"
             ]
           }
         }
@@ -4543,11 +5128,11 @@
             "tatyova-simic-landfall",
             "light-paws-aura-voltron",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "teysa-orzhov-aristocrats",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "isshin-mardu-attack-triggers"
           ],
@@ -4555,35 +5140,35 @@
             "light-paws-aura-voltron",
             "tatyova-simic-landfall",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "teysa-orzhov-aristocrats",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "isshin-mardu-attack-triggers"
           ],
           "4": [
             "light-paws-aura-voltron",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "isshin-mardu-attack-triggers"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "tatyova-simic-landfall",
             "sheoldred",
             "lathril-golgari-elves"
           ],
           "6": [
             "tatyova-simic-landfall",
-            "urdragon",
+            "trostani",
             "light-paws-aura-voltron",
             "sheoldred"
           ],
           "7": [
             "lathril-golgari-elves",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "isshin-mardu-attack-triggers"
           ],
@@ -4591,12 +5176,12 @@
             "tatyova-simic-landfall",
             "teysa-orzhov-aristocrats",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "9": [
             "teysa-orzhov-aristocrats",
             "lathril-golgari-elves",
-            "urdragon",
+            "trostani",
             "sheoldred"
           ]
         },
@@ -4605,11 +5190,11 @@
             "meren-golgari-recursion",
             "lord-windgrace-jund-lands",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "sythis-selesnya-enchantress",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "brago-azorius-blink-control"
           ],
@@ -4617,35 +5202,35 @@
             "lord-windgrace-jund-lands",
             "meren-golgari-recursion",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "sythis-selesnya-enchantress",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "brago-azorius-blink-control"
           ],
           "4": [
             "lord-windgrace-jund-lands",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "brago-azorius-blink-control"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "meren-golgari-recursion",
             "sheoldred",
             "kaalia-mardu-creature-cheat"
           ],
           "6": [
             "meren-golgari-recursion",
-            "urdragon",
+            "trostani",
             "lord-windgrace-jund-lands",
             "sheoldred"
           ],
           "7": [
             "kaalia-mardu-creature-cheat",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "brago-azorius-blink-control"
           ],
@@ -4653,12 +5238,12 @@
             "meren-golgari-recursion",
             "sythis-selesnya-enchantress",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "9": [
             "sythis-selesnya-enchantress",
             "kaalia-mardu-creature-cheat",
-            "urdragon",
+            "trostani",
             "sheoldred"
           ]
         },
@@ -4667,11 +5252,11 @@
             "marwyn-mono-green-elves",
             "korvold-jund-sacrifice",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "tergrid-mono-black-disruption",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "atraxa-infect"
           ],
@@ -4679,35 +5264,35 @@
             "korvold-jund-sacrifice",
             "marwyn-mono-green-elves",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "tergrid-mono-black-disruption",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "atraxa-infect"
           ],
           "4": [
             "korvold-jund-sacrifice",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "atraxa-infect"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "marwyn-mono-green-elves",
             "sheoldred",
             "aurelia-boros-extra-combats"
           ],
           "6": [
             "marwyn-mono-green-elves",
-            "urdragon",
+            "trostani",
             "korvold-jund-sacrifice",
             "sheoldred"
           ],
           "7": [
             "aurelia-boros-extra-combats",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "atraxa-infect"
           ],
@@ -4715,12 +5300,12 @@
             "marwyn-mono-green-elves",
             "tergrid-mono-black-disruption",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "9": [
             "tergrid-mono-black-disruption",
             "aurelia-boros-extra-combats",
-            "urdragon",
+            "trostani",
             "sheoldred"
           ]
         },
@@ -4729,11 +5314,11 @@
             "prosper-rakdos-exile-treasure",
             "krenko-mono-red-goblins",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "yuriko-dimir-ninjas",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "chulane-bant-value-combo"
           ],
@@ -4741,35 +5326,35 @@
             "krenko-mono-red-goblins",
             "prosper-rakdos-exile-treasure",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "yuriko-dimir-ninjas",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "chulane-bant-value-combo"
           ],
           "4": [
             "krenko-mono-red-goblins",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "chulane-bant-value-combo"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "prosper-rakdos-exile-treasure",
             "sheoldred",
             "edgar-markov-mardu-vampires"
           ],
           "6": [
             "prosper-rakdos-exile-treasure",
-            "urdragon",
+            "trostani",
             "krenko-mono-red-goblins",
             "sheoldred"
           ],
           "7": [
             "edgar-markov-mardu-vampires",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "chulane-bant-value-combo"
           ],
@@ -4777,12 +5362,12 @@
             "prosper-rakdos-exile-treasure",
             "yuriko-dimir-ninjas",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "9": [
             "yuriko-dimir-ninjas",
             "edgar-markov-mardu-vampires",
-            "urdragon",
+            "trostani",
             "sheoldred"
           ]
         },
@@ -4791,11 +5376,11 @@
             "yawgmoth-mono-black-aristocrats",
             "urza-mono-blue-artifacts",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "zur-esper-enchantment-control",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "kinnan-simic-mana-combo"
           ],
@@ -4803,35 +5388,35 @@
             "urza-mono-blue-artifacts",
             "yawgmoth-mono-black-aristocrats",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "zur-esper-enchantment-control",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "kinnan-simic-mana-combo"
           ],
           "4": [
             "urza-mono-blue-artifacts",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "kinnan-simic-mana-combo"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "yawgmoth-mono-black-aristocrats",
             "sheoldred",
             "miirym-temur-dragons"
           ],
           "6": [
             "yawgmoth-mono-black-aristocrats",
-            "urdragon",
+            "trostani",
             "urza-mono-blue-artifacts",
             "sheoldred"
           ],
           "7": [
             "miirym-temur-dragons",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "kinnan-simic-mana-combo"
           ],
@@ -4839,12 +5424,12 @@
             "yawgmoth-mono-black-aristocrats",
             "zur-esper-enchantment-control",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "9": [
             "zur-esper-enchantment-control",
             "miirym-temur-dragons",
-            "urdragon",
+            "trostani",
             "sheoldred"
           ]
         },
@@ -4853,11 +5438,11 @@
             "sisay-legends-toolbox",
             "rograkh-thrasios-creature-combo",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "10": [
             "sisay-legends-toolbox",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "kinnan-bonder-mana-combo"
           ],
@@ -4865,35 +5450,35 @@
             "sisay-legends-toolbox",
             "kraum-tymna-blue-breach-midrange",
             "sheoldred",
-            "urdragon"
+            "trostani"
           ],
           "3": [
             "kinnan-bonder-mana-combo",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "rograkh-thrasios-creature-combo"
           ],
           "4": [
             "sisay-legends-toolbox",
             "sheoldred",
-            "urdragon",
+            "trostani",
             "kinnan-bonder-mana-combo"
           ],
           "5": [
-            "urdragon",
+            "trostani",
             "sisay-legends-toolbox",
             "sheoldred",
             "kraum-tymna-blue-breach-midrange"
           ],
           "6": [
             "rograkh-silas-turbo-breach",
-            "urdragon",
+            "trostani",
             "rograkh-thrasios-creature-combo",
             "sheoldred"
           ],
           "7": [
             "rograkh-silas-turbo-breach",
-            "urdragon",
+            "trostani",
             "sheoldred",
             "dack-fayden-white-stax"
           ],
@@ -4901,13 +5486,387 @@
             "rograkh-silas-turbo-breach",
             "dack-fayden-white-stax",
             "sheoldred",
+            "trostani"
+          ],
+          "9": [
+            "kraum-tymna-blue-breach-midrange",
+            "rograkh-thrasios-creature-combo",
+            "trostani",
+            "sheoldred"
+          ]
+        }
+      },
+      "trostani": {
+        "t1": {
+          "1": [
+            "tatyova-simic-landfall",
+            "light-paws-aura-voltron",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "teysa-orzhov-aristocrats",
+            "urdragon",
+            "trostani",
+            "isshin-mardu-attack-triggers"
+          ],
+          "2": [
+            "light-paws-aura-voltron",
+            "tatyova-simic-landfall",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "teysa-orzhov-aristocrats",
+            "trostani",
+            "urdragon",
+            "isshin-mardu-attack-triggers"
+          ],
+          "4": [
+            "light-paws-aura-voltron",
+            "trostani",
+            "urdragon",
+            "isshin-mardu-attack-triggers"
+          ],
+          "5": [
+            "urdragon",
+            "tatyova-simic-landfall",
+            "trostani",
+            "lathril-golgari-elves"
+          ],
+          "6": [
+            "tatyova-simic-landfall",
+            "urdragon",
+            "light-paws-aura-voltron",
+            "trostani"
+          ],
+          "7": [
+            "lathril-golgari-elves",
+            "urdragon",
+            "trostani",
+            "isshin-mardu-attack-triggers"
+          ],
+          "8": [
+            "tatyova-simic-landfall",
+            "teysa-orzhov-aristocrats",
+            "trostani",
+            "urdragon"
+          ],
+          "9": [
+            "teysa-orzhov-aristocrats",
+            "lathril-golgari-elves",
+            "urdragon",
+            "trostani"
+          ]
+        },
+        "t2": {
+          "1": [
+            "meren-golgari-recursion",
+            "lord-windgrace-jund-lands",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "sythis-selesnya-enchantress",
+            "urdragon",
+            "trostani",
+            "brago-azorius-blink-control"
+          ],
+          "2": [
+            "lord-windgrace-jund-lands",
+            "meren-golgari-recursion",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "sythis-selesnya-enchantress",
+            "trostani",
+            "urdragon",
+            "brago-azorius-blink-control"
+          ],
+          "4": [
+            "lord-windgrace-jund-lands",
+            "trostani",
+            "urdragon",
+            "brago-azorius-blink-control"
+          ],
+          "5": [
+            "urdragon",
+            "meren-golgari-recursion",
+            "trostani",
+            "kaalia-mardu-creature-cheat"
+          ],
+          "6": [
+            "meren-golgari-recursion",
+            "urdragon",
+            "lord-windgrace-jund-lands",
+            "trostani"
+          ],
+          "7": [
+            "kaalia-mardu-creature-cheat",
+            "urdragon",
+            "trostani",
+            "brago-azorius-blink-control"
+          ],
+          "8": [
+            "meren-golgari-recursion",
+            "sythis-selesnya-enchantress",
+            "trostani",
+            "urdragon"
+          ],
+          "9": [
+            "sythis-selesnya-enchantress",
+            "kaalia-mardu-creature-cheat",
+            "urdragon",
+            "trostani"
+          ]
+        },
+        "t3": {
+          "1": [
+            "marwyn-mono-green-elves",
+            "korvold-jund-sacrifice",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "tergrid-mono-black-disruption",
+            "urdragon",
+            "trostani",
+            "atraxa-infect"
+          ],
+          "2": [
+            "korvold-jund-sacrifice",
+            "marwyn-mono-green-elves",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "tergrid-mono-black-disruption",
+            "trostani",
+            "urdragon",
+            "atraxa-infect"
+          ],
+          "4": [
+            "korvold-jund-sacrifice",
+            "trostani",
+            "urdragon",
+            "atraxa-infect"
+          ],
+          "5": [
+            "urdragon",
+            "marwyn-mono-green-elves",
+            "trostani",
+            "aurelia-boros-extra-combats"
+          ],
+          "6": [
+            "marwyn-mono-green-elves",
+            "urdragon",
+            "korvold-jund-sacrifice",
+            "trostani"
+          ],
+          "7": [
+            "aurelia-boros-extra-combats",
+            "urdragon",
+            "trostani",
+            "atraxa-infect"
+          ],
+          "8": [
+            "marwyn-mono-green-elves",
+            "tergrid-mono-black-disruption",
+            "trostani",
+            "urdragon"
+          ],
+          "9": [
+            "tergrid-mono-black-disruption",
+            "aurelia-boros-extra-combats",
+            "urdragon",
+            "trostani"
+          ]
+        },
+        "t4": {
+          "1": [
+            "prosper-rakdos-exile-treasure",
+            "krenko-mono-red-goblins",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "yuriko-dimir-ninjas",
+            "urdragon",
+            "trostani",
+            "chulane-bant-value-combo"
+          ],
+          "2": [
+            "krenko-mono-red-goblins",
+            "prosper-rakdos-exile-treasure",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "yuriko-dimir-ninjas",
+            "trostani",
+            "urdragon",
+            "chulane-bant-value-combo"
+          ],
+          "4": [
+            "krenko-mono-red-goblins",
+            "trostani",
+            "urdragon",
+            "chulane-bant-value-combo"
+          ],
+          "5": [
+            "urdragon",
+            "prosper-rakdos-exile-treasure",
+            "trostani",
+            "edgar-markov-mardu-vampires"
+          ],
+          "6": [
+            "prosper-rakdos-exile-treasure",
+            "urdragon",
+            "krenko-mono-red-goblins",
+            "trostani"
+          ],
+          "7": [
+            "edgar-markov-mardu-vampires",
+            "urdragon",
+            "trostani",
+            "chulane-bant-value-combo"
+          ],
+          "8": [
+            "prosper-rakdos-exile-treasure",
+            "yuriko-dimir-ninjas",
+            "trostani",
+            "urdragon"
+          ],
+          "9": [
+            "yuriko-dimir-ninjas",
+            "edgar-markov-mardu-vampires",
+            "urdragon",
+            "trostani"
+          ]
+        },
+        "t5": {
+          "1": [
+            "yawgmoth-mono-black-aristocrats",
+            "urza-mono-blue-artifacts",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "zur-esper-enchantment-control",
+            "urdragon",
+            "trostani",
+            "kinnan-simic-mana-combo"
+          ],
+          "2": [
+            "urza-mono-blue-artifacts",
+            "yawgmoth-mono-black-aristocrats",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "zur-esper-enchantment-control",
+            "trostani",
+            "urdragon",
+            "kinnan-simic-mana-combo"
+          ],
+          "4": [
+            "urza-mono-blue-artifacts",
+            "trostani",
+            "urdragon",
+            "kinnan-simic-mana-combo"
+          ],
+          "5": [
+            "urdragon",
+            "yawgmoth-mono-black-aristocrats",
+            "trostani",
+            "miirym-temur-dragons"
+          ],
+          "6": [
+            "yawgmoth-mono-black-aristocrats",
+            "urdragon",
+            "urza-mono-blue-artifacts",
+            "trostani"
+          ],
+          "7": [
+            "miirym-temur-dragons",
+            "urdragon",
+            "trostani",
+            "kinnan-simic-mana-combo"
+          ],
+          "8": [
+            "yawgmoth-mono-black-aristocrats",
+            "zur-esper-enchantment-control",
+            "trostani",
+            "urdragon"
+          ],
+          "9": [
+            "zur-esper-enchantment-control",
+            "miirym-temur-dragons",
+            "urdragon",
+            "trostani"
+          ]
+        },
+        "t6": {
+          "1": [
+            "sisay-legends-toolbox",
+            "rograkh-thrasios-creature-combo",
+            "trostani",
+            "urdragon"
+          ],
+          "10": [
+            "sisay-legends-toolbox",
+            "urdragon",
+            "trostani",
+            "kinnan-bonder-mana-combo"
+          ],
+          "2": [
+            "sisay-legends-toolbox",
+            "kraum-tymna-blue-breach-midrange",
+            "trostani",
+            "urdragon"
+          ],
+          "3": [
+            "kinnan-bonder-mana-combo",
+            "trostani",
+            "urdragon",
+            "rograkh-thrasios-creature-combo"
+          ],
+          "4": [
+            "sisay-legends-toolbox",
+            "trostani",
+            "urdragon",
+            "kinnan-bonder-mana-combo"
+          ],
+          "5": [
+            "urdragon",
+            "sisay-legends-toolbox",
+            "trostani",
+            "kraum-tymna-blue-breach-midrange"
+          ],
+          "6": [
+            "rograkh-silas-turbo-breach",
+            "urdragon",
+            "rograkh-thrasios-creature-combo",
+            "trostani"
+          ],
+          "7": [
+            "rograkh-silas-turbo-breach",
+            "urdragon",
+            "trostani",
+            "dack-fayden-white-stax"
+          ],
+          "8": [
+            "rograkh-silas-turbo-breach",
+            "dack-fayden-white-stax",
+            "trostani",
             "urdragon"
           ],
           "9": [
             "kraum-tymna-blue-breach-midrange",
             "rograkh-thrasios-creature-combo",
             "urdragon",
-            "sheoldred"
+            "trostani"
           ]
         }
       },
@@ -5475,6 +6434,54 @@
         "edgar-markov-mardu-vampires",
         "krenko-mono-red-goblins",
         "sheoldred",
+        "prosper-rakdos-exile-treasure"
+      ],
+      "seed": 2,
+      "tier": "t4"
+    },
+    {
+      "answers": 29,
+      "answers_by_seat": {
+        "trostani": 29
+      },
+      "deck": "trostani",
+      "events": 79,
+      "game_hash": "0759573159b8b1de",
+      "hash": "21e5b42920a3609b",
+      "max_rounds": 3,
+      "over": {
+        "how": "timeout",
+        "winner": "atraxa-infect"
+      },
+      "partner": null,
+      "seats": [
+        "marwyn-mono-green-elves",
+        "trostani",
+        "korvold-jund-sacrifice",
+        "atraxa-infect"
+      ],
+      "seed": 1,
+      "tier": "t3"
+    },
+    {
+      "answers": 25,
+      "answers_by_seat": {
+        "trostani": 25
+      },
+      "deck": "trostani",
+      "events": 71,
+      "game_hash": "08d4632ec438eb7a",
+      "hash": "f510ed4a749e12ec",
+      "max_rounds": 3,
+      "over": {
+        "how": "timeout",
+        "winner": "edgar-markov-mardu-vampires"
+      },
+      "partner": null,
+      "seats": [
+        "edgar-markov-mardu-vampires",
+        "krenko-mono-red-goblins",
+        "trostani",
         "prosper-rakdos-exile-treasure"
       ],
       "seed": 2,
