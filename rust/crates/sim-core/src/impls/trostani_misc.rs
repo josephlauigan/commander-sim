@@ -69,7 +69,10 @@ const ENTER_PAYOFFS: [&str; 3] = ["Trostani, Selesnya's Voice", "Verdant Sun's A
 /// Beast when a payoff for a creature entering is out or no other creature is left to block, otherwise a card
 fn gargaroth_mode(g: &Game, p: PlayerId, src: PermId) -> u8 {
     let life = g.player(p).life;
-    if let Some(gain) = repl::life_gain(g, p, 3) {
+    // a locked life total gains nothing, and a gain that is replaced to 0 reaches no line
+    if !g.player(p).life_locked
+        && let Some(gain) = repl::life_gain(g, p, 3).filter(|&n| n > 0)
+    {
         for (name, line) in UPKEEP_WINS {
             if controls(g, p, name) && life < line && life + gain >= line {
                 return LIFE;
@@ -96,10 +99,13 @@ fn gargaroth_modes(g: &mut Game, p: PlayerId, src: PermId) -> Res<u8> {
     Ok(gargaroth_mode(g, p, src))
 }
 
-/// the trigger: one mode, chosen as it goes on the stack, done as it resolves
+/// the trigger: one mode, chosen once as it goes on the stack, done as it resolves. The source need not still be on the
+/// battlefield (CR 113.7a: an ability on the stack exists independently of its source), so there is no `live(src)` guard:
+/// `hooked()` already left out a source that was gone when the event fired.
 fn gargaroth_trigger(g: &mut Game, src: PermId, p: PlayerId) -> Res {
-    if !live(g, src) {
-        return Ok(());
+    // the probe call only asks whether the trigger may go on the stack: no mode is chosen (a person is asked once)
+    if g.trig_probe {
+        return trigger_window(g, p, Some(src), "choose one", Some(5.0)).map(|_| ());
     }
     let mode = gargaroth_modes(g, p, src)?;
     let what = match mode {
@@ -196,16 +202,43 @@ fn aetherflux_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
     if g.player(p).life <= 50 || g.player(p).life_locked {
         return None;
     }
-    let kills: Vec<PlayerId> = g.opps(p).filter(|&q| still_kills(g, p, q)).collect();
+    let kills: Vec<PlayerId> = g.opps(p).filter(|&q| shot_ok(g, p, q)).collect();
     kills.into_iter().max_by(|&a, &b| threat(g, p, a).total_cmp(&threat(g, p, b)))
 }
 
-/// q is a legal target the shot kills, and p can pay and live
+/// q is a legal target the shot kills, and p can pay and live. The Reservoir is colourless, so only player hexproof
+/// (Shalai, Leyline of Sanctity, Metropolis Reformer) and protection (the Ring) make a player an illegal target; damage
+/// that is prevented (Glacial Chasm, a damage shield) or a player who can't lose (Platinum Angel, Herald of Eternal Dawn)
+/// is no kill.
 fn still_kills(g: &Game, p: PlayerId, q: PlayerId) -> bool {
     g.player(p).life > 50
         && !g.player(p).life_locked
         && crate::human::legal::player_targetable(g, q)
+        && !crate::engine::values::player_hexproof(g, q)
         && g.player(q).life <= 50
+        && !crate::engine::life::prevents_damage(g, q, Some(p))
+        && !crate::impls::t0_giada::cant_lose(g, q)
+}
+
+/// the shot wins the game now: q is the last opponent alive and the shot kills it
+fn wins_now(g: &Game, p: PlayerId, q: PlayerId) -> bool {
+    still_kills(g, p, q) && !g.opps(p).any(|o| o != q && g.player(o).alive)
+}
+
+/// p controls an upkeep win (Felidar Sovereign 40, Test of Endurance 50) that its life reaches now and the shot's 50
+/// would drop it below: p's next upkeep comes before any other chance to win, so the life is worth more held
+fn holds_for_upkeep_win(g: &Game, p: PlayerId) -> bool {
+    let life = g.player(p).life;
+    UPKEEP_WINS.iter().any(|&(name, line)| {
+        life >= line
+            && life - 50 < line
+            && g.player(p).perms.iter().any(|&m| live(g, m) && !g.perm(m).neutered && g.perm(m).name == name)
+    })
+}
+
+/// the AI's rule for shooting q: it kills, and either it wins the game now or no upkeep win is thrown away
+fn shot_ok(g: &Game, p: PlayerId, q: PlayerId) -> bool {
+    still_kills(g, p, q) && (wins_now(g, p, q) || !holds_for_upkeep_win(g, p))
 }
 
 fn aetherflux_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
@@ -221,7 +254,7 @@ fn aetherflux_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) 
 
 fn aetherflux_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let q = PlayerId(arg as u8);
-    if !live(g, src) || owner(g, src) != p || !still_kills(g, p, q) {
+    if !live(g, src) || owner(g, src) != p || !shot_ok(g, p, q) {
         return Ok(false);
     }
     lose_life(g, p, 50, Some(p), "other", None)?; // the cost
