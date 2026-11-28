@@ -208,6 +208,32 @@ pub fn apnap(g: &Game, mut ts: Vec<Trigger>) -> Vec<Trigger> {
     ts
 }
 
+/// Does this trigger resolve after the others that go on the stack with it (a hook marked `CardImpl::late` for its event)?
+pub fn is_late(g: &Game, t: &Trigger) -> bool {
+    let (TrigAct::Hook { event, .. }, Some(src)) = (&t.act, t.src) else { return false };
+    g.perm(src).cd.and_then(|c| g.registry.get(c)).is_some_and(|imp| imp.is_late(*event))
+}
+
+/// Within each controller's group (`apnap` keeps a group together), the late triggers resolve last: after the others in
+/// the order the batch resolves in. `late_last`: the batch resolves first to last (nobody could respond); otherwise
+/// it goes on the stack in this order and the last one pushed resolves first, so the late ones are pushed first.
+/// Only triggers marked late move, so no other trigger's order changes.
+fn late_order(g: &Game, ts: Vec<Trigger>, late_last: bool) -> Vec<Trigger> {
+    if !ts.iter().any(|t| is_late(g, t)) {
+        return ts;
+    }
+    let mut out = Vec::with_capacity(ts.len());
+    let mut i = 0;
+    while i < ts.len() {
+        let j = (i..ts.len()).find(|&k| ts[k].controller != ts[i].controller).unwrap_or(ts.len());
+        let (late, rest): (Vec<&Trigger>, Vec<&Trigger>) = ts[i..j].iter().partition(|t| is_late(g, t));
+        let (first, second) = if late_last { (rest, late) } else { (late, rest) };
+        out.extend(first.into_iter().chain(second).cloned());
+        i = j;
+    }
+    out
+}
+
 /// carry out a trigger's effect
 fn call(g: &mut Game, t: &Trigger) -> Res {
     let prev = std::mem::replace(&mut g.last_cast_etb, t.cast_etb);
@@ -254,8 +280,8 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
     // --- Tiers 1/2 (brago-meren): a Strionic Resonator copies triggers too
     let copier = |g: &Game, q: PlayerId| camera_ready(g, q) || crate::impls::t12_brago_meren::resonator_ready(g, q);
     if !abilities_answered(g, None) && !batch.iter().any(|t| copier(g, t.controller)) {
-        // nobody could respond: as before the stack, in order
-        for t in &batch {
+        // nobody could respond: as before the stack, in order (a late trigger last in its controller's group)
+        for t in &late_order(g, batch, true) {
             if g.over {
                 break;
             }
@@ -264,7 +290,7 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
         return Ok(());
     }
     let mut real = vec![];
-    for mut t in batch {
+    for mut t in late_order(g, batch, false) {
         // which hooks really trigger (guards only, no effects yet)
         if t.known {
             real.push(t);

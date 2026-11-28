@@ -8,7 +8,7 @@ use crate::engine::stack::trigger_window;
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{die, draw, max_by};
 use crate::flow::Res;
-use crate::hooks::{Action, Opt, Registry, Src};
+use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
@@ -151,6 +151,16 @@ fn emiel_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+/// creature tokens entered under p's control (a run-now hook): one of Emiel's enters triggers for each, as for any
+/// creature entering (`hooks::queue_etb_per_token`)
+fn emiel_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
+    if p != owner(g, src) {
+        return Ok(());
+    }
+    let toks: Vec<PermId> = toks.iter().copied().filter(|&t| g.is_creature(t)).collect();
+    crate::engine::hooks::queue_etb_per_token(g, src, p, &toks)
+}
+
 // ================================================================== Selvala, Heart of the Wilds
 /// **Selvala**: whenever another creature enters, its controller may draw a card if its power is greater than each
 /// other creature's power. The mana ability ({G}, {T}: X mana of any colours, X the greatest power among your
@@ -265,7 +275,10 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
     let c = r.card(db, "Derevi, Empyrial Tactician")?;
     c.etb = Some(derevi_etb);
     c.combat_damage = Some(derevi_hit);
-    r.card(db, "Emiel the Blessed")?.etb = Some(emiel_etb);
+    let c = r.card(db, "Emiel the Blessed")?;
+    c.etb = Some(emiel_etb);
+    c.tokens_enter = Some(emiel_tokens);
+    *c = c.enter_queues(Event::TokensEnter); // queues the real triggers once per token; blanked as a trigger
     let c = r.card(db, "Selvala, Heart of the Wilds")?;
     c.etb = Some(selvala_etb);
     c.dyn_mana_perm = Some(selvala_mana);

@@ -501,8 +501,29 @@ fn prayer_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
     crate::impls::common::oring_return(g, src)
 }
 
-/// zur.populate: a copy of p's best creature token
-pub fn populate(g: &mut Game, p: PlayerId) -> Res {
+/// What a token copy of `m` would be worth to p: its copiable values only (CR 707.2): base power and toughness, flying,
+/// lifelink, never its counters, pumps or damage. With a card that gains life from a creature's toughness out (Trostani,
+/// Verdant Sun's Avatar) toughness counts twice.
+fn copy_value(g: &Game, m: PermId, life_payoff: bool) -> f64 {
+    let x = g.perm(m);
+    let (pw, th) = match x.cd {
+        Some(c) => (g.db.get(c).pow, g.db.get(c).tgh),
+        None => (x.pow, x.tgh),
+    };
+    let flying = x.fly;
+    f64::from(pw)
+        + f64::from(th) * if life_payoff { 2.0 } else { 1.0 }
+        + if flying { 1.5 } else { 0.0 }
+        + if x.lifelink { 1.0 } else { 0.0 }
+}
+
+/// the creature token p's populate copies: the one whose copy is worth the most (never by its current size); None with no
+/// creature token
+pub fn populate_source(g: &Game, p: PlayerId) -> Option<PermId> {
+    let payoff = g.player(p).perms.iter().any(|&m| {
+        let x = g.perm(m);
+        x.on_bf && !x.phased && !x.neutered && matches!(&*x.name, "Trostani, Selesnya's Voice" | "Verdant Sun's Avatar")
+    });
     let toks: Vec<PermId> = g
         .player(p)
         .perms
@@ -510,30 +531,22 @@ pub fn populate(g: &mut Game, p: PlayerId) -> Res {
         .copied()
         .filter(|&m| g.perm(m).token && g.is_creature(m) && !g.perm(m).phased)
         .collect();
-    let mut best: Option<(PermId, (i32, bool))> = None;
+    let mut best: Option<(PermId, f64)> = None;
     for &m in &toks {
-        let k = (epow(g, m), g.perm(m).fly);
-        if best.is_none_or(|b| k > b.1) {
-            best = Some((m, k));
+        let v = copy_value(g, m, payoff);
+        if best.is_none_or(|b| v > b.1) {
+            best = Some((m, v));
         }
     }
-    let Some((t, _)) = best else { return Ok(()) };
-    let x = g.perm(t).clone();
-    let spec = Tokens {
-        tgh: Some(x.tgh),
-        fly: x.fly,
-        color: Some(x.colors),
-        types: x.ttypes.clone(),
-        ..Tokens::new(1, x.pow)
-    };
-    for n in make_tokens(g, p, spec)? {
-        let y = g.perm_mut(n);
-        y.lifelink = x.lifelink;
-        y.dt = x.dt;
-        if !x.data.is_empty() {
-            y.data = x.data.clone();
-        }
-    }
+    best.map(|b| b.0)
+}
+
+/// zur.populate: p creates a token that's a copy of a creature token they control (CR 701.36): nothing with none. The copy
+/// is made by `zones::token_copy_of` (CR 707.2: copiable values only, no counters; token doublers apply; a new
+/// creature entering, so its enters triggers fire).
+pub fn populate(g: &mut Game, p: PlayerId) -> Res {
+    let Some(t) = populate_source(g, p) else { return Ok(()) };
+    crate::engine::zones::token_copy_of(g, p, t, &[])?;
     Ok(())
 }
 

@@ -512,16 +512,27 @@ fn selfpt_on(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-// ================================================================== Felidar Sovereign
-/// your upkeep, if you have 40 or more life: you win the game
-fn felidar_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) || g.player(p).life < 40 || !live(g, src) {
+// ================================================================== Felidar Sovereign, Test of Endurance
+/// "At the beginning of your upkeep, if you have `need` or more life, you win the game" (an intervening "if", CR 603.4:
+/// it is true as the trigger goes on the stack and checked again as it resolves)
+fn life_win_upkeep(g: &mut Game, src: Src, p: PlayerId, need: i32, name: &'static str) -> Res {
+    if p != owner(g, src) || g.player(p).life < need || !live(g, src) {
         return Ok(());
     }
-    if !trigger_window(g, p, Some(src), "win the game", Some(9.0))? || g.player(p).life < 40 {
+    if !trigger_window(g, p, Some(src), "win the game", Some(9.0))? || g.player(p).life < need {
         return Ok(()); // the "if" is checked again as it resolves
     }
-    crate::ai::win(g, p, "Felidar Sovereign", Some(false))
+    crate::ai::win(g, p, name, Some(false))
+}
+
+/// Felidar Sovereign: your upkeep, if you have 40 or more life: you win the game
+fn felidar_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    life_win_upkeep(g, src, p, 40, "Felidar Sovereign")
+}
+
+/// Test of Endurance: your upkeep, if you have 50 or more life: you win the game
+fn test_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    life_win_upkeep(g, src, p, 50, "Test of Endurance")
 }
 
 // ================================================================== Haliya, Guided by Light
@@ -970,6 +981,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, "Felidar Sovereign")?;
         c.upkeep = Some(felidar_upkeep);
         c.pval = Some(6.0); // a win at the next upkeep: removal looks at it first
+    }
+    if has("Test of Endurance") {
+        let c = r.card(db, "Test of Endurance")?;
+        c.upkeep = Some(test_upkeep);
+        c.pval = Some(6.0); // a win at the next upkeep at 50 life
     }
     if has(HALIYA) {
         let c = r.card(db, HALIYA)?;

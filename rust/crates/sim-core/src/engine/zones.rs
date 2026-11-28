@@ -416,9 +416,16 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     if k > 0 && !g.hooks.is_empty() {
         // a person's "damage to any target" trigger of each token (Terror of the Peaks): asked once for the batch
         let batch = out.len() > 1 && crate::human::choices::batch_begin(g, p);
+        // every hook's triggers for these tokens are put on the stack together, so one that resolves late (Trostani)
+        // goes after the others (Emiel's counter) whichever hook was queued first
+        g.resolving += 1;
         let r = fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() }); // Plumecreed Mentor
+        g.resolving -= 1;
         crate::human::choices::batch_end(g, batch);
         r?;
+        if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+            crate::engine::stack::flush_triggers(g)?;
+        }
     }
     Ok(out)
 }

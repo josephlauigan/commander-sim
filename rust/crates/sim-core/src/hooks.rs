@@ -707,6 +707,11 @@ pub struct CardImpl {
     /// `Event`; never set together with `enter_trigger`. For a leave event: a queued hook that the leave did not
     /// cause (a duration the engine queues, "until this leaves the battlefield").
     pub enter_setup: u128,
+    /// the events whose queued hook is a trigger that resolves after the other triggers put on the stack with it, within
+    /// its controller's group (Trostani's and Verdant Sun's Avatar's life gain reads toughness once every counter trigger
+    /// of the same entering has resolved, CR 603.3b: their controller orders them). A bit per `Event`; see
+    /// `engine::stack::is_late` and `late_order`.
+    pub late: u128,
 }
 
 impl CardImpl {
@@ -823,6 +828,7 @@ impl CardImpl {
             enter_trigger: _,
             enter_queues: _,
             enter_setup: _,
+            late: _,
         } = self;
         [
             ("etb", etb.is_some()),
@@ -971,6 +977,16 @@ impl CardImpl {
 
     pub fn is_enter_queues(&self, e: Event) -> bool {
         self.enter_queues >> (e as u32) & 1 == 1
+    }
+
+    /// Mark the queued hook for e as one that resolves late (see `late`).
+    pub fn late(mut self, e: Event) -> CardImpl {
+        self.late |= 1u128 << (e as u32);
+        self
+    }
+
+    pub fn is_late(&self, e: Event) -> bool {
+        self.late >> (e as u32) & 1 == 1
     }
 
     /// Mark the hook for e as not an enters-caused trigger, or mixed (see `enter_setup`).
